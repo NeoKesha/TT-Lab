@@ -6,11 +6,11 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
     public interface ITwinSerializeable
     {
-        UInt64 Read(BinaryReader reader);
-        UInt64 Writer(BinaryWriter writer);
-        UInt64 FromAsset(BinaryReader reader);
-        UInt64 ToAsset(BinaryWriter writer);
-        UInt64 GetLength();
-        UInt64 GetID();
+        Int32 Read(BinaryReader reader, Int32 length);
+        Int32 Write(BinaryWriter writer);
+        Int32 FromAsset(BinaryReader reader, Int32 length);
+        Int32 ToAsset(BinaryWriter writer);
+        Int32 GetLength();
+        UInt32 GetID();
     }
 }
