@@ -2,6 +2,34 @@
 {
     public enum EnumItems
     {
-        TYPE_UNKNOWN
+        ITEM_UNKNOWN,
+        ITEM_PARTICLE,
+        ITEM_COLLISION,
+        ITEM_SCENERY,
+        ITEM_DYNAMIC_SCENERY,
+        ITEM_CHUNK_LINKS,
+        ITEM_TEXTURE,
+        ITEM_MATERIAL,
+        ITEM_MODEL,
+        ITEM_RIGID_MODEL,
+        ITEM_SKIN,
+        ITEM_BLEND_SKIN,
+        ITEM_LOD,
+        ITEM_SKYDOME,
+        ITEM_GAME_OBJECT,
+        ITEM_SCRIPT,
+        ITEM_ANIMATION,
+        ITEM_OBJECT_GEOMETRY_INTERFACE,
+        ITEM_CODE_MODEL,
+        ITEM_SOUND,
+        ITEM_INSTANCE_PREFAB,
+        ITEM_AI_POSITION,
+        ITEM_AI_PATH,
+        ITEM_POSITION,
+        ITEM_PATH,
+        ITEM_COLLISION_SURFACE,
+        ITEM_INSTANCE,
+        ITEM_TRIGGES,
+        ITEM_CAMERA
     }
 }

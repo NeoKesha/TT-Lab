@@ -8,5 +8,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
     public interface ITwinItem : ITwinSerializeable
     {
+        UInt32 GetID();
     }
 }

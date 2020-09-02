@@ -1,14 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
-    public interface ITwinSection : ITwinSerializeable
+    public interface ITwinSection : ITwinItem
     {
-        ITwinItem GetItemById(UInt32 id);
+        /**
+         * Get's item by it's id
+         */
+        ITwinItem GetItem(UInt32 id);
+        /**
+         * Get's item by it's key. For unique items like "GameObjects", "Scripts" and etc.
+         */
+        ITwinItem GetItem(String key);
+        /**
+         * Get keyset of unique special items
+         */
+        HashSet<String> GetKeyset();
+        /**
+         * Remove item by ID
+         */
         void RemoveItem(UInt32 id);
+        /**
+         * Remove item (search by ID field)
+         */
         void RemoveItem(ITwinItem item);
+        /**
+         * Add new item. 
+         */
         void AddItem(ITwinItem item);
     }
 }
