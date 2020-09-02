@@ -22,10 +22,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
          */
         void RemoveItem(UInt32 id);
         /**
-         * Remove item (search by ID field)
-         */
-        void RemoveItem(ITwinItem item);
-        /**
          * Add new item. 
          */
         void AddItem(ITwinItem item);

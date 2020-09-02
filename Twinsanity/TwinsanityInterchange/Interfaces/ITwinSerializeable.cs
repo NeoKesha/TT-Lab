@@ -8,11 +8,11 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
         /**
          * Deserialize item from stream
          */
-        Int32 Read(BinaryReader reader, Int32 length);
+        void Read(BinaryReader reader, Int32 length);
         /**
          * Serialize item
          */
-        Int32 Write(BinaryWriter writer);
+        void Write(BinaryWriter writer);
         /**
          * Get length of item
          */
