@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{14348117-4503-49CD-94F9-1852069543E3}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Twinsanity</RootNamespace>
-    <AssemblyName>Twinsanity</AssemblyName>
+    <ProjectGuid>{8251F455-C874-414A-B9AE-792375197C79}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Twinsanity_Command_Interface</RootNamespace>
+    <AssemblyName>Twinsanity Command Interface</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,19 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Meta.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Record.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinLevel.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\ITwinItem.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\ITwinSerializeable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="TwinsanityInterchange\Enumerations\" />
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Twinsanity\Twinsanity.csproj">
+      <Project>{14348117-4503-49cd-94f9-1852069543e3}</Project>
+      <Name>Twinsanity</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

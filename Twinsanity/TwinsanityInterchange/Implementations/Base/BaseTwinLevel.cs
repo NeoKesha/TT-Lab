@@ -9,9 +9,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
     public class BaseTwinLevel : ITwinSection
     {
         List<ITwinItem> Items { get; }
+        UInt32 magicNumber;
         public BaseTwinLevel()
         {
             Items = new List<ITwinItem>();
+            magicNumber = 0x00010001;
         }
         public void AddItem(ITwinItem item)
         {
@@ -40,7 +42,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public int GetLength()
         {
-            Int32 length = 12 + Items.Count * 12;
+            return 12 + Items.Count * 12 + GetContentLength();
+        }
+        public int GetContentLength()
+        {
+            Int32 length = 0;
             foreach (ITwinItem item in Items)
             {
                 length += item.GetLength();
@@ -50,7 +56,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public void Read(BinaryReader reader, int length)
         {
-            UInt32 magicNumber = reader.ReadUInt32();
+            magicNumber = reader.ReadUInt32();
             UInt32 itemsCount = reader.ReadUInt32();
             UInt32 streamLength = reader.ReadUInt32();
             Record[] records = new Record[itemsCount];
@@ -66,6 +72,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 BaseTwinItem item = new BaseTwinItem();
                 reader.BaseStream.Position = records[i].Offset;
                 item.Read(reader, (Int32)records[i].Size);
+                item.SetID(records[i].ItemId);
                 Items.Add(item);
             }
         }
@@ -86,9 +93,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write((Int32)0x00010001);
+            writer.Write(magicNumber);
             writer.Write(Items.Count);
-            writer.Write(GetLength() - 12);
+            writer.Write(GetContentLength());
             Record record = new Record();
             record.Offset = (UInt32)(12 + Items.Count * 12);
             foreach (ITwinItem item in Items)

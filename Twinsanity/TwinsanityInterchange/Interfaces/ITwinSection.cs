@@ -6,6 +6,10 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
     public interface ITwinSection : ITwinItem
     {
         /**
+         * Get length of payload
+         */
+        int GetContentLength();
+        /**
          * Get's item by it's id
          */
         ITwinItem GetItem(UInt32 id);

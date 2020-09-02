@@ -41,14 +41,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public int GetLength()
         {
-            Int32 length = 12 + Items.Count * 12;
+            return 12 + Items.Count * 12 + GetContentLength();
+        }
+        public int GetContentLength()
+        {
+            Int32 length = 0;
             foreach (ITwinItem item in Items)
             {
                 length += item.GetLength();
             }
             return length;
         }
-
         public void Read(BinaryReader reader, int length)
         {
             UInt32 magicNumber = reader.ReadUInt32();
