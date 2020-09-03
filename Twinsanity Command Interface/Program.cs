@@ -17,7 +17,7 @@ namespace Twinsanity_Command_Interface
             List<BaseTwinLevel> levels = new List<BaseTwinLevel>();
             foreach (String levelPath in levelsPaths)
             {
-                BaseTwinLevel twinLevel = new BaseTwinLevel();
+                ITwinSection twinLevel = new PS2AnyTwinsanityRM2();
                 using (System.IO.FileStream stream = new System.IO.FileStream(levelPath, System.IO.FileMode.Open,System.IO.FileAccess.Read)) 
                 using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
                 {
