@@ -35,7 +35,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public int GetLength()
         {
-            return 12 + Items.Count * 12 + GetContentLength();
+            if (Items.Count == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return 12 + Items.Count * 12 + GetContentLength();
+            }
         }
         public int GetContentLength()
         {

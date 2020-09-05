@@ -45,9 +45,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TwinsanityInterchange\Common\Record.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinLevel.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyGraphicsSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSerializeable.cs" />

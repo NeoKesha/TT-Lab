@@ -24,7 +24,7 @@ namespace Twinsanity_Command_Interface
                 using (System.IO.FileStream stream = new System.IO.FileStream(levelPath, System.IO.FileMode.Open,System.IO.FileAccess.Read)) 
                 using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
                 {
-                    twinLevel.Read(reader, 0);
+                    twinLevel.Read(reader, (Int32)reader.BaseStream.Length);
                     levels.Add(twinLevel);
                 }
                 using (System.IO.FileStream stream = new System.IO.FileStream(System.IO.Path.Combine(testSavePath,System.IO.Path.GetFileName(levelPath)), 
