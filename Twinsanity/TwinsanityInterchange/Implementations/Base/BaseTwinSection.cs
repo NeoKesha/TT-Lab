@@ -58,6 +58,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             if (length > 0)
             {
+                Int64 baseOffset = reader.BaseStream.Position;
                 magicNumber = reader.ReadUInt32();
                 UInt32 itemsCount = reader.ReadUInt32();
                 UInt32 streamLength = reader.ReadUInt32();
@@ -81,7 +82,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                     {
                         item = (ITwinItem)Activator.CreateInstance(defaultType);
                     }
-                    reader.BaseStream.Position = records[i].Offset;
+                    reader.BaseStream.Position = records[i].Offset + baseOffset;
                     item.Read(reader, (Int32)records[i].Size);
                     item.SetID(records[i].ItemId);
                     Items.Add(item);
