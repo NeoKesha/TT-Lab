@@ -11,6 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         protected List<ITwinItem> Items { get; }
         protected UInt32 magicNumber;
         protected Dictionary<UInt32, Type> idToClassDictionary = new Dictionary<uint, Type>();
+        protected Type defaultType = typeof(BaseTwinItem);
         public BaseTwinLevel()
         {
             Items = new List<ITwinItem>();
@@ -67,7 +68,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 }
                 else
                 {
-                    item = new BaseTwinItem();
+                    item = (ITwinItem)Activator.CreateInstance(defaultType);
 
                 }
                 reader.BaseStream.Position = records[i].Offset;
