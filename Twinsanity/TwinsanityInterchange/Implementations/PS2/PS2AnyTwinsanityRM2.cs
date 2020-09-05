@@ -8,7 +8,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
 {
-    public class PS2AnyTwinsanityRM2 : BaseTwinLevel
+    public class PS2AnyTwinsanityRM2 : BaseTwinSection
     {
         public PS2AnyTwinsanityRM2() : base()
         {
