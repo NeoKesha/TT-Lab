@@ -8,12 +8,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 {
     public class BaseTwinLevel : ITwinSection
     {
-        List<ITwinItem> Items { get; }
-        UInt32 magicNumber;
+        protected List<ITwinItem> Items { get; }
+        protected UInt32 magicNumber;
+        protected Dictionary<UInt32, Type> idToClassDictionary = new Dictionary<uint, Type>();
         public BaseTwinLevel()
         {
             Items = new List<ITwinItem>();
-            magicNumber = 0x00010001;
         }
         public void AddItem(ITwinItem item)
         {
@@ -28,16 +28,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         public ITwinItem GetItem(uint id)
         {
             return Items.Where(item => item.GetID() == id).FirstOrDefault();
-        }
-
-        public ITwinItem GetItem(string key)
-        {
-            return null;
-        }
-
-        public HashSet<string> GetKeyset()
-        {
-            return new HashSet<string>();
         }
 
         public int GetLength()
@@ -69,7 +59,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             Items.Clear();
             for (int i = 0; i < itemsCount; ++i)
             {
-                BaseTwinItem item = new BaseTwinItem();
+                ITwinItem item = null;
+                if (idToClassDictionary.ContainsKey(records[i].ItemId))
+                {
+                    Type type = idToClassDictionary[records[i].ItemId];
+                    item = (ITwinItem)Activator.CreateInstance(type);
+                }
+                else
+                {
+                    item = new BaseTwinItem();
+
+                }
                 reader.BaseStream.Position = records[i].Offset;
                 item.Read(reader, (Int32)records[i].Size);
                 item.SetID(records[i].ItemId);
@@ -109,6 +109,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             {
                 item.Write(writer);
             }
+        }
+
+        public Type IdToClass(uint id)
+        {
+            return idToClassDictionary[id];
         }
     }
 }

@@ -9,7 +9,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 {
     public class BaseTwinSection : ITwinSection
     {
-        List<ITwinItem> Items { get; }
+        protected List<ITwinItem> Items { get; }
+        protected UInt32 magicNumber;
+        protected Dictionary<UInt32, Type> idToClassDictionary = new Dictionary<uint, Type>();
+        protected UInt32 id;
         public BaseTwinSection()
         {
             Items = new List<ITwinItem>();
@@ -21,22 +24,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public uint GetID()
         {
-            throw new NotImplementedException();
+            return id;
         }
 
         public ITwinItem GetItem(uint id)
         {
             return Items.Where(item => item.GetID() == id).FirstOrDefault();
-        }
-
-        public ITwinItem GetItem(string key)
-        {
-            return null;
-        }
-
-        public HashSet<string> GetKeyset()
-        {
-            return new HashSet<string>();
         }
 
         public int GetLength()
@@ -52,25 +45,40 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             }
             return length;
         }
+
         public void Read(BinaryReader reader, int length)
         {
-            UInt32 magicNumber = reader.ReadUInt32();
-            UInt32 itemsCount = reader.ReadUInt32();
-            UInt32 streamLength = reader.ReadUInt32();
-            Record[] records = new Record[itemsCount];
-            for (int i = 0; i < itemsCount; ++i)
+            if (length > 0)
             {
-                Record record = new Record();
-                record.Read(reader, 12);
-                records[i] = record;
-            }
-            Items.Clear();
-            for (int i = 0; i < itemsCount; ++i)
-            {
-                BaseTwinItem item = new BaseTwinItem();
-                reader.BaseStream.Position = records[i].Offset;
-                item.Read(reader, (Int32)records[i].Size);
-                Items.Add(item);
+                magicNumber = reader.ReadUInt32();
+                UInt32 itemsCount = reader.ReadUInt32();
+                UInt32 streamLength = reader.ReadUInt32();
+                Record[] records = new Record[itemsCount];
+                for (int i = 0; i < itemsCount; ++i)
+                {
+                    Record record = new Record();
+                    record.Read(reader, 12);
+                    records[i] = record;
+                }
+                Items.Clear();
+                for (int i = 0; i < itemsCount; ++i)
+                {
+                    ITwinItem item = null;
+                    if (idToClassDictionary.ContainsKey(records[i].ItemId))
+                    {
+                        Type type = idToClassDictionary[records[i].ItemId];
+                        item = (ITwinItem)Activator.CreateInstance(type);
+                    }
+                    else
+                    {
+                        item = new BaseTwinItem();
+
+                    }
+                    reader.BaseStream.Position = records[i].Offset;
+                    item.Read(reader, (Int32)records[i].Size);
+                    item.SetID(records[i].ItemId);
+                    Items.Add(item);
+                }
             }
         }
 
@@ -85,14 +93,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public void SetID(uint id)
         {
-            throw new NotImplementedException();
+            this.id = id;
         }
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write((Int32)0x00010001);
+            writer.Write(magicNumber);
             writer.Write(Items.Count);
-            writer.Write(GetLength() - 12);
+            writer.Write(GetContentLength());
             Record record = new Record();
             record.Offset = (UInt32)(12 + Items.Count * 12);
             foreach (ITwinItem item in Items)
@@ -107,5 +115,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 item.Write(writer);
             }
         }
+
+        public Type IdToClass(uint id)
+        {
+            return idToClassDictionary[id];
+        }
     }
-}
+   }

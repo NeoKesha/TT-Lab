@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+
 namespace Twinsanity_Command_Interface
 {
     class Program
@@ -14,7 +17,7 @@ namespace Twinsanity_Command_Interface
             String testSavePath = @"D:\Documents\";
             String[] levelsPaths = System.IO.Directory.GetFiles(testPath, "*.rm2", System.IO.SearchOption.AllDirectories);
             levelsPaths.Concat(System.IO.Directory.GetFiles(testPath, "*.sm2", System.IO.SearchOption.AllDirectories));
-            List<BaseTwinLevel> levels = new List<BaseTwinLevel>();
+            List<ITwinSection> levels = new List<ITwinSection>();
             foreach (String levelPath in levelsPaths)
             {
                 ITwinSection twinLevel = new PS2AnyTwinsanityRM2();

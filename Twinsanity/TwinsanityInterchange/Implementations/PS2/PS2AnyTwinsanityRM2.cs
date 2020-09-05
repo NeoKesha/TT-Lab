@@ -2,115 +2,28 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
 {
-    public class PS2AnyTwinsanityRM2 : ITwinSection
+    public class PS2AnyTwinsanityRM2 : BaseTwinLevel
     {
-        List<ITwinItem> Items { get; }
-        UInt32 magicNumber;
-        public PS2AnyTwinsanityRM2()
+        public PS2AnyTwinsanityRM2() : base()
         {
-            Items = new List<ITwinItem>();
-            magicNumber = 0x00010001;
-        }
-        public void AddItem(ITwinItem item)
-        {
-            Items.Add(item);
-        }
-
-        public uint GetID()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ITwinItem GetItem(uint id)
-        {
-            return Items.Where(item => item.GetID() == id).FirstOrDefault();
-        }
-
-        public ITwinItem GetItem(string key)
-        {
-            return null;
-        }
-
-        public HashSet<string> GetKeyset()
-        {
-            return new HashSet<string>();
-        }
-
-        public int GetLength()
-        {
-            return 12 + Items.Count * 12 + GetContentLength();
-        }
-        public int GetContentLength()
-        {
-            Int32 length = 0;
-            foreach (ITwinItem item in Items)
-            {
-                length += item.GetLength();
-            }
-            return length;
-        }
-
-        public void Read(BinaryReader reader, int length)
-        {
-            magicNumber = reader.ReadUInt32();
-            UInt32 itemsCount = reader.ReadUInt32();
-            UInt32 streamLength = reader.ReadUInt32();
-            Record[] records = new Record[itemsCount];
-            for (int i = 0; i < itemsCount; ++i)
-            {
-                Record record = new Record();
-                record.Read(reader, 12);
-                records[i] = record;
-            }
-            Items.Clear();
-            for (int i = 0; i < itemsCount; ++i)
-            {
-                BaseTwinItem item = new BaseTwinItem();
-                reader.BaseStream.Position = records[i].Offset;
-                item.Read(reader, (Int32)records[i].Size);
-                item.SetID(records[i].ItemId);
-                Items.Add(item);
-            }
-        }
-
-        public void RemoveItem(uint id)
-        {
-            ITwinItem listItem = GetItem(id);
-            if (listItem != null)
-            {
-                Items.Remove(listItem);
-            }
-        }
-
-        public void SetID(uint id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Write(BinaryWriter writer)
-        {
-            writer.Write(magicNumber);
-            writer.Write(Items.Count);
-            writer.Write(GetContentLength());
-            Record record = new Record();
-            record.Offset = (UInt32)(12 + Items.Count * 12);
-            foreach (ITwinItem item in Items)
-            {
-                record.Size = (UInt32)item.GetLength();
-                record.ItemId = item.GetID();
-                record.Write(writer);
-                record.Offset += record.Size;
-            }
-            foreach (ITwinItem item in Items)
-            {
-                item.Write(writer);
-            }
+            idToClassDictionary.Add(11, typeof(BaseTwinSection));
+            idToClassDictionary.Add(10, typeof(BaseTwinSection));
+            idToClassDictionary.Add(0, typeof(BaseTwinSection));
+            idToClassDictionary.Add(1, typeof(BaseTwinSection));
+            idToClassDictionary.Add(2, typeof(BaseTwinSection));
+            idToClassDictionary.Add(3, typeof(BaseTwinSection));
+            idToClassDictionary.Add(4, typeof(BaseTwinSection));
+            idToClassDictionary.Add(5, typeof(BaseTwinSection));
+            idToClassDictionary.Add(6, typeof(BaseTwinSection));
+            idToClassDictionary.Add(7, typeof(BaseTwinSection));
+            idToClassDictionary.Add(8, typeof(BaseTwinItem));
+            idToClassDictionary.Add(9, typeof(BaseTwinItem));
         }
     }
 }
