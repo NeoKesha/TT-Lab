@@ -106,21 +106,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(magicNumber);
-            writer.Write(Items.Count);
-            writer.Write(GetContentLength());
-            Record record = new Record();
-            record.Offset = (UInt32)(12 + Items.Count * 12);
-            foreach (ITwinItem item in Items)
+            if (Items.Count > 0)
             {
-                record.Size = (UInt32)item.GetLength();
-                record.ItemId = item.GetID();
-                record.Write(writer);
-                record.Offset += record.Size;
-            }
-            foreach (ITwinItem item in Items)
-            {
-                item.Write(writer);
+                writer.Write(magicNumber);
+                writer.Write(Items.Count);
+                writer.Write(GetContentLength());
+                Record record = new Record();
+                record.Offset = (UInt32)(12 + Items.Count * 12);
+                foreach (ITwinItem item in Items)
+                {
+                    record.Size = (UInt32)item.GetLength();
+                    record.ItemId = item.GetID();
+                    record.Write(writer);
+                    record.Offset += record.Size;
+                }
+                foreach (ITwinItem item in Items)
+                {
+                    item.Write(writer);
+                }
             }
         }
 

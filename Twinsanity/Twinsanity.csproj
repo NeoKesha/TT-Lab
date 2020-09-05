@@ -47,6 +47,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyGraphicsSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
