@@ -16,7 +16,7 @@ namespace Twinsanity_Command_Interface
             String testPath = @"D:\Documents\Twinsanity\NTSC_Data\Levels";
             String testSavePath = @"D:\Documents\";
             String[] levelsPaths = System.IO.Directory.GetFiles(testPath, "*.rm2", System.IO.SearchOption.AllDirectories);
-            levelsPaths.Concat(System.IO.Directory.GetFiles(testPath, "*.sm2", System.IO.SearchOption.AllDirectories));
+            levelsPaths = levelsPaths.Concat(System.IO.Directory.GetFiles(testPath, "*.sm2", System.IO.SearchOption.AllDirectories)).ToArray();
             List<ITwinSection> levels = new List<ITwinSection>();
             foreach (String levelPath in levelsPaths)
             {
@@ -45,7 +45,6 @@ namespace Twinsanity_Command_Interface
                 {
                     twinLevel.Write(writer);
                 }
-                break;
             }
         }
     }
