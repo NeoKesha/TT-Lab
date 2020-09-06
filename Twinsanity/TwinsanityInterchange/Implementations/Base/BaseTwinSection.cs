@@ -111,10 +111,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             this.id = id;
         }
 
+        public void rebuildExtraData()
+        {
+
+        }
+
         public void Write(BinaryWriter writer)
         {
             if (!skip)
             {
+                rebuildExtraData();
                 writer.Write(magicNumber);
                 writer.Write(Items.Count);
                 writer.Write(GetContentLength());
