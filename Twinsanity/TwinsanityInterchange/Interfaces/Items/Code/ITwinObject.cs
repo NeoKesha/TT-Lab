@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
 {
-    interface ITwinBlendSkin : ITwinItem
+    interface ITwinObject : ITwinItem
     {
     }
 }
