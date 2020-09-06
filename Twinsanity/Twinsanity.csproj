@@ -49,20 +49,28 @@
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyOGIsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnySoundsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyAnimationsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyScriptsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyGameObjectSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyCodeSection .cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyGraphicsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyMeshesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnySkydomesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyLODsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyBlendSkinsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnySkinsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyRigidModelsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyModelsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyMaterialsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyTexturesSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyMeshesSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnySkydomesSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyLODsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyBlendSkinsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnySkinsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyRigidModelsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyModelsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyMaterialsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyTexturesSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSerializeable.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

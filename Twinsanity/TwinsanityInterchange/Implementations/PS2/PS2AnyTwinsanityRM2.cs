@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
@@ -12,8 +13,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
     {
         public PS2AnyTwinsanityRM2() : base()
         {
-            idToClassDictionary.Add(Constants.LEVEL_GRAPHICS_SECTION, typeof(BaseTwinSection));
-            idToClassDictionary.Add(Constants.LEVEL_CODE_SECTION, typeof(BaseTwinSection));
+            idToClassDictionary.Add(Constants.LEVEL_GRAPHICS_SECTION, typeof(PS2AnyGraphicsSection));
+            idToClassDictionary.Add(Constants.LEVEL_CODE_SECTION, typeof(PS2AnyCodeSection));
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_1_SECTION, typeof(BaseTwinSection));
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_2_SECTION, typeof(BaseTwinSection));
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_3_SECTION, typeof(BaseTwinSection));

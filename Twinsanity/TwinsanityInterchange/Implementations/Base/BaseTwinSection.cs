@@ -14,9 +14,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         protected Dictionary<UInt32, Type> idToClassDictionary = new Dictionary<uint, Type>();
         protected Type defaultType = typeof(BaseTwinItem);
         protected UInt32 id;
+        protected bool skip;
         public BaseTwinSection()
         {
             Items = new List<ITwinItem>();
+            skip = false;
         }
         public void AddItem(ITwinItem item)
         {
@@ -35,7 +37,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public int GetLength()
         {
-            if (Items.Count == 0)
+            if (skip)
             {
                 return 0;
             }
@@ -87,6 +89,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                     item.SetID(records[i].ItemId);
                     Items.Add(item);
                 }
+            } else
+            {
+                skip = true;
             }
         }
 
@@ -106,7 +111,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         public void Write(BinaryWriter writer)
         {
-            if (Items.Count > 0)
+            if (!skip)
             {
                 writer.Write(magicNumber);
                 writer.Write(Items.Count);
