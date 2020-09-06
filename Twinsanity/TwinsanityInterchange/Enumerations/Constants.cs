@@ -62,5 +62,6 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public const Int32 LAYOUT_SURFACES_SECTION = 5;
         public const Int32 LAYOUT_INSTANCES_SECTION = 6;
         public const Int32 LAYOUT_TRIGGERS_SECTION = 7;
+        public const Int32 LAYOUT_CAMERAS_SECTION = 8;
     }
 }

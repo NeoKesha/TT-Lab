@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
-using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
 {
@@ -12,7 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
     {
         public PS2AnyTwinsanitySM2() : base()
         {
-            idToClassDictionary.Add(Constants.SCENERY_GRAPHICS_SECTION, typeof(BaseTwinSection));
+            idToClassDictionary.Add(Constants.SCENERY_GRAPHICS_SECTION, typeof(PS2AnySceneryGraphicsSection));
             idToClassDictionary.Add(Constants.SCENERY_SECENERY_ITEM, typeof(BaseTwinItem));
             idToClassDictionary.Add(Constants.SCENERY_UNK_1_ITEM, typeof(BaseTwinItem));
             idToClassDictionary.Add(Constants.SCENERY_UNK_2_ITEM, typeof(BaseTwinItem));

@@ -54,7 +54,18 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyAnimationsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyScriptsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyGameObjectSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyCamerasSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyTriggersSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyPathsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyAIPathsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyPositionsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyAIPositionsSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyInstancesSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnySurfacesSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyTemplatesSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyCodeSection .cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyLayoutSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnySceneryGraphicsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyGraphicsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyMeshesSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnySkydomesSection.cs" />
@@ -69,8 +80,6 @@
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSerializeable.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

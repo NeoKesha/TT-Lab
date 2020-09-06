@@ -45,7 +45,6 @@ namespace Twinsanity_Command_Interface
                 {
                     twinLevel.Write(writer);
                 }
-                break;
             }
         }
     }
