@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
@@ -12,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt32 ItemId { get; set; }
         public int GetLength()
         {
-            return 12;
+            return Constants.SIZE_RECORD;
         }
 
         public void Read(BinaryReader reader, int length)
