@@ -15,6 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         protected Type defaultType = typeof(BaseTwinItem);
         protected UInt32 id;
         protected bool skip;
+        protected Byte[] extraData;
         public BaseTwinSection()
         {
             Items = new List<ITwinItem>();
@@ -43,7 +44,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             }
             else
             {
-                return 12 + Items.Count * 12 + GetContentLength();
+                return 12 + Items.Count * 12 + GetContentLength() + extraData.Length;
             }
         }
         public int GetContentLength()
@@ -89,6 +90,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                     item.SetID(records[i].ItemId);
                     Items.Add(item);
                 }
+                extraData = reader.ReadBytes((Int32)(length - (reader.BaseStream.Position - baseOffset)));
             } else
             {
                 skip = true;
@@ -129,6 +131,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 {
                     item.Write(writer);
                 }
+                writer.Write(extraData);
             }
         }
 
