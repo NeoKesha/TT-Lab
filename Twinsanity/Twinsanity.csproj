@@ -45,10 +45,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TwinsanityInterchange\Common\Record.cs" />
     <Compile Include="TwinsanityInterchange\Common\Matrix4.cs" />
+    <Compile Include="TwinsanityInterchange\Common\TwinBlob.cs" />
+    <Compile Include="TwinsanityInterchange\Common\TwinShader.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector4.cs" />
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyMaterial.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyTrigger.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
