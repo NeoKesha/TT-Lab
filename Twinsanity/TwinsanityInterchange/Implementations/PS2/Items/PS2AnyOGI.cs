@@ -127,7 +127,45 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
 
         public void Write(BinaryWriter writer)
         {
-            
+            headerData[0] = (Byte)Type1List.Count;
+            headerData[1] = (Byte)Type2List.Count;
+            headerData[5] = (Byte)RigidModelIds.Count;
+            headerData[6] = (Byte)((SkinID == 0) ? 0 : 1);
+            headerData[7] = (Byte)((BlendSkinID == 0) ? 0 : 1);
+            headerData[8] = (Byte)Type3List.Count;
+            writer.Write(headerData);
+            BoundingBox[0].Write(writer);
+            BoundingBox[1].Write(writer);
+            foreach(ITwinSerializeable item in Type1List)
+            {
+                item.Write(writer);
+            }
+            foreach (ITwinSerializeable item in Type2List)
+            {
+                item.Write(writer);
+            }
+            foreach (Byte item in RigidRelatedList)
+            {
+                writer.Write(item);
+            }
+            foreach (UInt32 item in RigidModelIds)
+            {
+                writer.Write(item);
+            }
+            foreach (ITwinSerializeable item in Type1RelatedMatrix)
+            {
+                item.Write(writer);
+            }
+            writer.Write(SkinID);
+            writer.Write(BlendSkinID);
+            foreach (ITwinSerializeable item in Type3List)
+            {
+                item.Write(writer);
+            }
+            foreach (Byte item in Type3RelatedList)
+            {
+                writer.Write(item);
+            }
         }
     }
 }
