@@ -15,7 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
     {
         UInt32 id;
         public UInt32 Header1 { get; set; }
-        public UInt32 Header2 { get; set; }
+        public UInt32 Enabled { get; set; }
         public Single HeaderT { get; set; }
         public UInt32 HeaderH { get; set; }
         public Vector4 Rotation { get; }
@@ -44,7 +44,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public void Read(BinaryReader reader, int length)
         {
             Header1 = reader.ReadUInt32();
-            Header2 = reader.ReadUInt32();
+            Enabled = reader.ReadUInt32();
             HeaderT = reader.ReadSingle();
             Rotation.Read(reader, Constants.SIZE_VECTOR4);
             Position.Read(reader, Constants.SIZE_VECTOR4);
@@ -71,7 +71,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public void Write(BinaryWriter writer)
         {
             writer.Write(Header1);
-            writer.Write(Header2);
+            writer.Write(Enabled);
             writer.Write(HeaderT);
             Rotation.Write(writer);
             Position.Write(writer);

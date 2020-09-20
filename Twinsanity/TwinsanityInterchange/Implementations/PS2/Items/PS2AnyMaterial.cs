@@ -12,7 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
 {
-    public class PS2AnyMaterial : ITwinTrigger
+    public class PS2AnyMaterial : ITwinMaterial
     {
         UInt32 id;
         public UInt64 Header { get; set; }

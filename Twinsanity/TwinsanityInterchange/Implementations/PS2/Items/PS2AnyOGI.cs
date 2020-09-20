@@ -12,7 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
 {
-    public class PS2AnyOGI : ITwinTrigger
+    public class PS2AnyOGI : ITwinOGI
     {
         UInt32 id;
         Byte[] headerData;
