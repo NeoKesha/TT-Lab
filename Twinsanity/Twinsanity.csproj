@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TwinsanityInterchange\Common\CameraSub1C02.cs" />
+    <Compile Include="TwinsanityInterchange\Common\CameraSub0A19.cs" />
     <Compile Include="TwinsanityInterchange\Common\OGIType3.cs" />
     <Compile Include="TwinsanityInterchange\Common\OGIType2.cs" />
     <Compile Include="TwinsanityInterchange\Common\OGIType1.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyOGI.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyMaterial.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyCamera.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyTrigger.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
