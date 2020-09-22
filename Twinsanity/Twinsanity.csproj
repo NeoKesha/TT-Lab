@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TwinsanityInterchange\Common\CameraSub1C04.cs" />
+    <Compile Include="TwinsanityInterchange\Common\CameraSub1C03.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSub1C02.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSub0A19.cs" />
     <Compile Include="TwinsanityInterchange\Common\OGIType3.cs" />
