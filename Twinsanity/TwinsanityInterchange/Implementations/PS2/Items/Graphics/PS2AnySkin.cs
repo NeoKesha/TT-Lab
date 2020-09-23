@@ -27,7 +27,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public int GetLength()
         {
-            return 4 + SubSkins.Count * SubSkins.Sum( (ss) => { return ss.GetLength(); });
+            return 4 + SubSkins.Sum( (ss) => { return ss.GetLength(); });
         }
 
         public void Read(BinaryReader reader, int length)

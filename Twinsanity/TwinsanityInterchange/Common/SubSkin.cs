@@ -12,17 +12,19 @@ namespace Twinsanity.TwinsanityInterchange.Common
     {
         public UInt32 Material;
         public Int32 BlobSize;
+        public Int32 VertexAmount;
         public Byte[] Blob;
 
         public int GetLength()
         {
-            return 8 + Blob.Length;
+            return 12 + Blob.Length;
         }
 
         public void Read(BinaryReader reader, int length)
         {
             Material = reader.ReadUInt32();
             BlobSize = reader.ReadInt32();
+            VertexAmount = reader.ReadInt32();
             Blob = reader.ReadBytes(BlobSize);
         }
 
@@ -30,6 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             writer.Write(Material);
             writer.Write(BlobSize);
+            writer.Write(VertexAmount);
             writer.Write(Blob);
         }
     }

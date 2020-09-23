@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TwinsanityInterchange\Common\BlendSkinType1.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C04.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C03.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C02.cs" />
@@ -59,6 +60,8 @@
     <Compile Include="TwinsanityInterchange\Common\OGIType1.cs" />
     <Compile Include="TwinsanityInterchange\Common\Record.cs" />
     <Compile Include="TwinsanityInterchange\Common\Matrix4.cs" />
+    <Compile Include="TwinsanityInterchange\Common\SubBlendSkin.cs" />
+    <Compile Include="TwinsanityInterchange\Common\SubSkin.cs" />
     <Compile Include="TwinsanityInterchange\Common\TwinBlob.cs" />
     <Compile Include="TwinsanityInterchange\Common\TwinShader.cs" />
     <Compile Include="TwinsanityInterchange\Common\TwinTrigger.cs" />
@@ -66,10 +69,17 @@
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyOGI.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyMaterial.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyCamera.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyTrigger.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyOGI.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyBlendSkin.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyLOD.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyMaterial.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyMesh.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyModel.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyRigidModel.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkin.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkydome.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyCamera.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyTrigger.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyOGIsSection.cs" />
