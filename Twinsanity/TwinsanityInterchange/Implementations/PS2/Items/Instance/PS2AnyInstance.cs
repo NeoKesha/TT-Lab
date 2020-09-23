@@ -12,14 +12,14 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 {
-    public class PS2AnyAIPath : ITwinAIPath
+    public class PS2AnyInstance : ITwinInstance
     {
         UInt32 id;
-        public UInt16[] Args { get; private set; }
+        public Vector4 Position { get; private set; }
         
-        public PS2AnyAIPath()
+        public PS2AnyInstance()
         {
-            Args = new ushort[5];
+            Position = new Vector4();
         }
         public uint GetID()
         {
@@ -28,15 +28,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 
         public int GetLength()
         {
-            return 10;
+            return Constants.SIZE_VECTOR4;
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            for (int i = 0; i < Args.Length; ++i)
-            {
-                Args[i] = reader.ReadUInt16();
-            }
+            Position.Read(reader, Constants.SIZE_VECTOR4);
         }
 
         public void SetID(uint id)
@@ -46,10 +43,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 
         public void Write(BinaryWriter writer)
         {
-            for (int i = 0; i < Args.Length; ++i)
-            {
-                writer.Write(Args[i]);
-            }
+            Position.Write(writer);
         }
     }
 }

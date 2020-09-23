@@ -12,7 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 {
-    public class PS2AnyPosition : ITwinCamera
+    public class PS2AnyPosition : ITwinPosition
     {
         UInt32 id;
         public Vector4 Position { get; private set; }

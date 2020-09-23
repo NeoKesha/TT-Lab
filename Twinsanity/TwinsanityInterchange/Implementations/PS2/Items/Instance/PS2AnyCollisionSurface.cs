@@ -12,7 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 {
-    public class PS2AnyCollisionSurface : ITwinCamera
+    public class PS2AnyCollisionSurface : ITwinSurface
     {
         UInt32 id;
         public UInt32 Flags { get; set; }

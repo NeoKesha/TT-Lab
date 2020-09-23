@@ -13,7 +13,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 {
-    public class PS2AnyPath : ITwinCamera
+    public class PS2AnyPath : ITwinPath
     {
         UInt32 id;
         public List<Vector4> PointList { get; private set; }
