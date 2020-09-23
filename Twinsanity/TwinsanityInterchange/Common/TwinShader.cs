@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class TwinShader : ITwinSerializeable
+    public class TwinShader : ITwinSerializable
     {
         public UInt32 ShaderType { get; set; }
         public UInt32 IntParam { get; set; }

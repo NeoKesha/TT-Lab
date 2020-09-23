@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class TwinBlob : ITwinSerializeable
+    public class TwinBlob : ITwinSerializable
     {
         UInt32 UnkBlobInt;
         UInt32 BlockSizePacked;

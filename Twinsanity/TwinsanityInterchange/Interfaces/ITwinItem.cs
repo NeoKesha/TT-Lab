@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
-    public interface ITwinItem : ITwinSerializeable
+    public interface ITwinItem : ITwinSerializable
     {
         /**
          * Get item's ID

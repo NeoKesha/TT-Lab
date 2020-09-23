@@ -49,7 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public int GetLength()
         {
             int dynamic_size = 0;
-            foreach (ITwinSerializeable e in Type3List)
+            foreach (ITwinSerializable e in Type3List)
             {
                 dynamic_size += e.GetLength();
             }
@@ -136,11 +136,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
             writer.Write(headerData);
             BoundingBox[0].Write(writer);
             BoundingBox[1].Write(writer);
-            foreach(ITwinSerializeable item in Type1List)
+            foreach(ITwinSerializable item in Type1List)
             {
                 item.Write(writer);
             }
-            foreach (ITwinSerializeable item in Type2List)
+            foreach (ITwinSerializable item in Type2List)
             {
                 item.Write(writer);
             }
@@ -152,13 +152,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
             {
                 writer.Write(item);
             }
-            foreach (ITwinSerializeable item in Type1RelatedMatrix)
+            foreach (ITwinSerializable item in Type1RelatedMatrix)
             {
                 item.Write(writer);
             }
             writer.Write(SkinID);
             writer.Write(BlendSkinID);
-            foreach (ITwinSerializeable item in Type3List)
+            foreach (ITwinSerializable item in Type3List)
             {
                 item.Write(writer);
             }

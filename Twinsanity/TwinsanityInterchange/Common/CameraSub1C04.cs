@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class CameraSub1C04 : ITwinSerializeable
+    public class CameraSub1C04 : ITwinSerializable
     {
         public UInt32 UnkInt { get; set; }
         public Single UnkFloat1 { get; set; }
@@ -48,7 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(UnkFloat1);
             writer.Write(UnkFloat2);
             writer.Write(UnkVectors.Count);
-            foreach(ITwinSerializeable e in UnkVectors) {
+            foreach(ITwinSerializable e in UnkVectors) {
                 e.Write(writer);
             }
             writer.Write(UnkData.Length / 8);

@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class OGIType2 : ITwinSerializeable
+    public class OGIType2 : ITwinSerializable
     {
         public UInt32 UnkInt1 { get; set; }
         public UInt32 UnkInt2 { get; set; }

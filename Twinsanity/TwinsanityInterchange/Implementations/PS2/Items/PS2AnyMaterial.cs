@@ -18,10 +18,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public UInt64 Header { get; set; }
         public UInt32 UnkInt { get; set; }
         public String Name { get; set; }
-        public List<ITwinSerializeable> Shaders { get; }
+        public List<ITwinSerializable> Shaders { get; }
         public PS2AnyMaterial()
         {
-            Shaders = new List<ITwinSerializeable>();
+            Shaders = new List<ITwinSerializable>();
         }
         public uint GetID()
         {
@@ -31,7 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public int GetLength()
         {
             Int32 shaderLength = 0;
-            foreach (ITwinSerializeable shader in Shaders)
+            foreach (ITwinSerializable shader in Shaders)
             {
                 shaderLength += shader.GetLength();
             }
@@ -70,7 +70,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
             writer.Write(Shaders.Count);
-            foreach (ITwinSerializeable shader in Shaders)
+            foreach (ITwinSerializable shader in Shaders)
             {
                 shader.Write(writer);
             }
