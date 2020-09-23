@@ -8,24 +8,24 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    public class CameraSub1C0C : ITwinSerializable
+    public class CameraSub1C0C : CameraSubBase
     {
         public Byte[] UnkData { get; set; }
         public CameraSub1C0C()
         {
             UnkData = new byte[4];
         }
-        public int GetLength()
+        public new int GetLength()
         {
             return 4;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public new void Read(BinaryReader reader, int length)
         {
             UnkData = reader.ReadBytes(4);
         }
 
-        public void Write(BinaryWriter writer)
+        public new void Write(BinaryWriter writer)
         {
             writer.Write(UnkData);
         }

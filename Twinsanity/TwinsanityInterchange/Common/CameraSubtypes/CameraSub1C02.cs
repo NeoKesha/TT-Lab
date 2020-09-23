@@ -9,34 +9,27 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    public class CameraSub1C02 : ITwinSerializable
+    public class CameraSub1C02 : CameraSubBase
     {
-        public UInt32 UnkInt { get; set; }
-        public Single UnkFloat1 { get; set; }
-        public Single UnkFloat2 { get; set; }
         public Vector4 UnkVector { get; private set; }
         public CameraSub1C02()
         {
             UnkVector = new Vector4();
         }
-        public int GetLength()
+        public new int GetLength()
         {
-            return 12 + Constants.SIZE_VECTOR4;
+            return base.GetLength() + Constants.SIZE_VECTOR4;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public new void Read(BinaryReader reader, int length)
         {
-            UnkInt = reader.ReadUInt32();
-            UnkFloat1 = reader.ReadSingle();
-            UnkFloat2 = reader.ReadSingle();
+            base.Read(reader, base.GetLength());
             UnkVector.Read(reader, Constants.SIZE_VECTOR4);
         }
 
-        public void Write(BinaryWriter writer)
+        public new void Write(BinaryWriter writer)
         {
-            writer.Write(UnkInt);
-            writer.Write(UnkFloat1);
-            writer.Write(UnkFloat2);
+            base.Write(writer);
             UnkVector.Write(writer);
         }
     }

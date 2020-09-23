@@ -9,11 +9,8 @@ using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    public class CameraSub1C0B : ITwinSerializable
+    public class CameraSub1C0B : CameraSubBase
     {
-        public UInt32 UnkInt { get; set; }
-        public Single UnkFloat1 { get; set; }
-        public Single UnkFloat2 { get; set; }
         public Vector4 UnkVec { get; private set; }
         public Single UnkFloat3 { get; set; }
         public Byte UnkByte { get; set; }
@@ -21,26 +18,22 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         {
             UnkVec = new Vector4();
         }
-        public int GetLength()
+        public new int GetLength()
         {
-            return 17 + Constants.SIZE_VECTOR4;
+            return base.GetLength() + 5 + Constants.SIZE_VECTOR4;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public new void Read(BinaryReader reader, int length)
         {
-            UnkInt = reader.ReadUInt32();
-            UnkFloat1 = reader.ReadSingle();
-            UnkFloat2 = reader.ReadSingle();
+            base.Read(reader, base.GetLength());
             UnkVec.Read(reader, Constants.SIZE_VECTOR4);
             UnkFloat3 = reader.ReadSingle();
             UnkByte = reader.ReadByte();
         }
 
-        public void Write(BinaryWriter writer)
+        public new void Write(BinaryWriter writer)
         {
-            writer.Write(UnkInt);
-            writer.Write(UnkFloat1);
-            writer.Write(UnkFloat2);
+            base.Write(writer);
             UnkVec.Write(writer);
             writer.Write(UnkFloat3);
             writer.Write(UnkByte);

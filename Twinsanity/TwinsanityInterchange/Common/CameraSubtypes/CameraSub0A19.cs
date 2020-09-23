@@ -9,11 +9,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    public class CameraSub0A19 : ITwinSerializable
+    public class CameraSub0A19 : CameraSubBase
     {
-        public UInt32 UnkInt { get; set; }
-        public Single UnkFloat1 { get; set; }
-        public Single UnkFloat2 { get; set; }
         public Matrix4 UnkMatrix1 { get; private set; }
         public Matrix4 UnkMatrix2 { get; private set; }
         public Vector4 UnkVector { get; private set; }
@@ -29,17 +26,15 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             UnkMatrix2 = new Matrix4();
             UnkVector = new Vector4();
         }
-        public int GetLength()
+        public new int GetLength()
         {
-            return 30 + Constants.SIZE_MATRIX4 * 2 + Constants.SIZE_VECTOR4;
+            return base.GetLength() + 18 + Constants.SIZE_MATRIX4 * 2 + Constants.SIZE_VECTOR4;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public new void Read(BinaryReader reader, int length)
         {
             int pos1 = (int)reader.BaseStream.Position;
-            UnkInt = reader.ReadUInt32();
-            UnkFloat1 = reader.ReadSingle();
-            UnkFloat2 = reader.ReadSingle();
+            base.Read(reader, base.GetLength());
             UnkMatrix1.Read(reader, Constants.SIZE_MATRIX4);
             UnkMatrix2.Read(reader, Constants.SIZE_MATRIX4);
             UnkVector.Read(reader, Constants.SIZE_VECTOR4);
@@ -55,11 +50,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             int a = 0;
         }
 
-        public void Write(BinaryWriter writer)
+        public new void Write(BinaryWriter writer)
         {
-            writer.Write(UnkInt);
-            writer.Write(UnkFloat1);
-            writer.Write(UnkFloat2);
+            base.Write(writer);
             UnkMatrix1.Write(writer);
             UnkMatrix1.Write(writer);
             UnkVector.Write(writer);
