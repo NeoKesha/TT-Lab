@@ -4,16 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
-using Twinsanity.TwinsanityInterchange.Implementations.Base;
-using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
+namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class PS2AnyTrigger : ITwinTrigger
+    public class TwinTrigger : ITwinSerializable
     {
-        UInt32 id;
         public UInt32 Header1 { get; set; }
         public UInt32 Enabled { get; set; }
         public Single HeaderT { get; set; }
@@ -22,23 +19,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public Vector4 Position { get; }
         public Vector4 Scale { get; }
         public List<UInt16> Instances { get; }
-        public UInt16[] Argument { get; }
-        public PS2AnyTrigger()
+        public TwinTrigger()
         {
-            Argument = new UInt16[4];
             Rotation = new Vector4();
             Position = new Vector4();
             Scale = new Vector4();
             Instances = new List<UInt16>();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
         public int GetLength()
         {
-            return 16 + Position.GetLength() + Rotation.GetLength() + Scale.GetLength() + 8 + Instances.Count * Constants.SIZE_UINT16 + 8;
+            return 16 + Position.GetLength() + Rotation.GetLength() + Scale.GetLength() + 8 + Instances.Count * Constants.SIZE_UINT16;
         }
 
         public void Read(BinaryReader reader, int length)
@@ -57,15 +48,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
             {
                 Instances.Add(reader.ReadUInt16());
             }
-            for (int i = 0; i < 4; ++i)
-            {
-                Argument[i] = reader.ReadUInt16();
-            }
-        }
-
-        public void SetID(uint id)
-        {
-            this.id = id;
         }
 
         public void Write(BinaryWriter writer)
@@ -82,10 +64,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
             for (int i = 0; i < Instances.Count; ++i)
             {
                 writer.Write(Instances[i]);
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                writer.Write(Argument[i]);
             }
         }
     }

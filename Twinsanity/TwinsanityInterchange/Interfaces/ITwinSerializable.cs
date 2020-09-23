@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
-    public interface ITwinSerializeable
+    public interface ITwinSerializable
     {
         /**
          * Deserialize item from stream

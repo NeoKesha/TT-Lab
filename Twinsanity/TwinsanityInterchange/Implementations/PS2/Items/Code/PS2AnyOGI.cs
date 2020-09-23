@@ -10,10 +10,21 @@ using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
 {
     public class PS2AnyOGI : ITwinOGI
     {
+
+        public enum HeaderInfo
+        {
+            TYPE1_AMOUNT = 0,
+            TYPE2_AMOUNT = 1,
+            RIGID_MODELS_AMOUNT = 5,
+            HAS_SKIN = 6,
+            HAS_BLEND_SKIN = 7,
+            TYPE3_AMOUNT = 8,
+        }
+
         UInt32 id;
         Byte[] headerData;
         public List<OGIType1> Type1List { get; private set; }
@@ -49,7 +60,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public int GetLength()
         {
             int dynamic_size = 0;
-            foreach (ITwinSerializeable e in Type3List)
+            foreach (ITwinSerializable e in Type3List)
             {
                 dynamic_size += e.GetLength();
             }
@@ -65,12 +76,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
         public void Read(BinaryReader reader, int length)
         {
             reader.Read(headerData, 0, headerData.Length);
-            Byte t1cnt = headerData[0];
-            Byte t2cnt = headerData[1];
-            Byte rigidcnt = headerData[5];
-            Byte skinFlag = headerData[6];
-            Byte blendFlag = headerData[7];
-            Byte t3cnt = headerData[8];
+            Byte t1cnt = headerData[(int)HeaderInfo.TYPE1_AMOUNT];
+            Byte t2cnt = headerData[(int)HeaderInfo.TYPE2_AMOUNT];
+            Byte rigidcnt = headerData[(int)HeaderInfo.RIGID_MODELS_AMOUNT];
+            Byte skinFlag = headerData[(int)HeaderInfo.HAS_SKIN];
+            Byte blendFlag = headerData[(int)HeaderInfo.HAS_BLEND_SKIN];
+            Byte t3cnt = headerData[(int)HeaderInfo.TYPE3_AMOUNT];
             BoundingBox[0].Read(reader, Constants.SIZE_VECTOR4);
             BoundingBox[1].Read(reader, Constants.SIZE_VECTOR4);
             Type1List.Clear();
@@ -127,20 +138,20 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
 
         public void Write(BinaryWriter writer)
         {
-            headerData[0] = (Byte)Type1List.Count;
-            headerData[1] = (Byte)Type2List.Count;
-            headerData[5] = (Byte)RigidModelIds.Count;
-            headerData[6] = (Byte)((SkinID == 0) ? 0 : 1);
-            headerData[7] = (Byte)((BlendSkinID == 0) ? 0 : 1);
-            headerData[8] = (Byte)Type3List.Count;
+            headerData[(int)HeaderInfo.TYPE1_AMOUNT] = (Byte)Type1List.Count;
+            headerData[(int)HeaderInfo.TYPE2_AMOUNT] = (Byte)Type2List.Count;
+            headerData[(int)HeaderInfo.RIGID_MODELS_AMOUNT] = (Byte)RigidModelIds.Count;
+            headerData[(int)HeaderInfo.HAS_SKIN] = (Byte)((SkinID == 0) ? 0 : 1);
+            headerData[(int)HeaderInfo.HAS_BLEND_SKIN] = (Byte)((BlendSkinID == 0) ? 0 : 1);
+            headerData[(int)HeaderInfo.TYPE3_AMOUNT] = (Byte)Type3List.Count;
             writer.Write(headerData);
             BoundingBox[0].Write(writer);
             BoundingBox[1].Write(writer);
-            foreach(ITwinSerializeable item in Type1List)
+            foreach(ITwinSerializable item in Type1List)
             {
                 item.Write(writer);
             }
-            foreach (ITwinSerializeable item in Type2List)
+            foreach (ITwinSerializable item in Type2List)
             {
                 item.Write(writer);
             }
@@ -152,13 +163,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
             {
                 writer.Write(item);
             }
-            foreach (ITwinSerializeable item in Type1RelatedMatrix)
+            foreach (ITwinSerializable item in Type1RelatedMatrix)
             {
                 item.Write(writer);
             }
             writer.Write(SkinID);
             writer.Write(BlendSkinID);
-            foreach (ITwinSerializeable item in Type3List)
+            foreach (ITwinSerializable item in Type3List)
             {
                 item.Write(writer);
             }

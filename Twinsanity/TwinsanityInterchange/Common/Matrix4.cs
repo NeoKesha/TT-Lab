@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class Matrix4 : ITwinSerializeable
+    public class Matrix4 : ITwinSerializable
     {
         public Vector4 V1 { get; set; }
         public Vector4 V2 { get; set; }

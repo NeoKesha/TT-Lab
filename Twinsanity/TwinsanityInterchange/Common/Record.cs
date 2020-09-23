@@ -6,7 +6,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class Record : ITwinSerializeable
+    public class Record : ITwinSerializable
     {
         public UInt32 Offset { get; set; }
         public UInt32 Size { get; set; }

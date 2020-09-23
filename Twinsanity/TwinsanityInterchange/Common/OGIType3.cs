@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class OGIType3 : ITwinSerializeable
+    public class OGIType3 : ITwinSerializable
     {
         public Byte[] Data { get; private set; }
         public Byte[] Blob { get; set; }
