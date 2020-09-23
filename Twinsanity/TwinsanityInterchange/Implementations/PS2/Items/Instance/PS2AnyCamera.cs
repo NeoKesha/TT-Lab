@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 {
     public class PS2AnyCamera : ITwinCamera
     {

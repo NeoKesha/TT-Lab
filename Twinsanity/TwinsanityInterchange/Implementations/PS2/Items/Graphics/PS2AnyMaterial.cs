@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyMaterial : ITwinMaterial
     {

@@ -32,11 +32,11 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         //Graphics section level constants
         public const Int32 GRAPHICS_TEXTURES_SECTION = 0;
         public const Int32 GRAPHICS_MATERIALS_SECTION = 1;
-        public const Int32 GRAPHICS_MESHES_SECTION = 2;
-        public const Int32 GRAPHICS_MODELS_SECTION = 3;
-        public const Int32 GRAPHICS_RIGID_MODELS_SECTION = 4;
-        public const Int32 GRAPHICS_SKINS_SECTION = 5;
-        public const Int32 GRAPHICS_BLEND_SKINS_SECTION = 6;
+        public const Int32 GRAPHICS_MODELS_SECTION = 2;
+        public const Int32 GRAPHICS_RIGID_MODELS_SECTION = 3;
+        public const Int32 GRAPHICS_SKINS_SECTION = 4;
+        public const Int32 GRAPHICS_BLEND_SKINS_SECTION = 5;
+        public const Int32 GRAPHICS_MESHES_SECTION = 6;
         public const Int32 GRAPHICS_LODS_SECTION = 7;
         public const Int32 GRAPHICS_SKYDOMES_SECTION = 8;
         //Code section level constants
