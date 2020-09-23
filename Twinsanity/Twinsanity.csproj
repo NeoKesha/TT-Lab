@@ -82,6 +82,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyAIPath.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyPath.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyAIPosition.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyCollisionSurface.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyCamera.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyTrigger.cs" />
