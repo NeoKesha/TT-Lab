@@ -19,7 +19,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         }
         public int GetLength()
         {
-            return 12 + Constants.SIZE_VECTOR4;
+            return 12;
         }
 
         public void Read(BinaryReader reader, int length)
