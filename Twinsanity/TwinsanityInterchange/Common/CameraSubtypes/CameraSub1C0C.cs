@@ -8,7 +8,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    class CameraSub1C0C : ITwinSerializable
+    public class CameraSub1C0C : ITwinSerializable
     {
         public Byte[] UnkData { get; set; }
         public CameraSub1C0C()
