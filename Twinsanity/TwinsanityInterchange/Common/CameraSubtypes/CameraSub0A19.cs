@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
-namespace Twinsanity.TwinsanityInterchange.Common
+namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     public class CameraSub0A19 : ITwinSerializable
     {

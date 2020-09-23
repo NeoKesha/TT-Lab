@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
-namespace Twinsanity.TwinsanityInterchange.Common
+namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     class CameraSub1C0C : ITwinSerializable
     {
