@@ -21,6 +21,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public List<UInt16> Instances { get; }
         public TwinTrigger()
         {
+            Rotation = new Vector4();
+            Position = new Vector4();
+            Scale = new Vector4();
             Instances = new List<UInt16>();
         }
 
