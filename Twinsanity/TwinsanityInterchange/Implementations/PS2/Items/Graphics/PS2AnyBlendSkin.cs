@@ -40,6 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 var subBlend = new SubBlendSkin();
                 subBlend.ListLength = listLength;
                 subBlend.Read(reader, length);
+                SubBlends.Add(subBlend);
             }
         }
 

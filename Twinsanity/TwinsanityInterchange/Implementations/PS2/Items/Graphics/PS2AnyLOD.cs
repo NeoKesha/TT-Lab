@@ -37,7 +37,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             {
                 return 28 + Meshes.Count * Constants.SIZE_UINT32;
             }
-            return 21 + Meshes.Count * Constants.SIZE_UINT32;
+            return 25 + Meshes.Count * Constants.SIZE_UINT32;
         }
 
         public void Read(BinaryReader reader, int length)

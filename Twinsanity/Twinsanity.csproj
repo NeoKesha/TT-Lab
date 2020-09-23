@@ -98,7 +98,6 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Layout\PS2AnyTemplatesSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyCodeSection .cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyLayoutSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnySceneryGraphicsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyGraphicsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyMeshesSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnySkydomesSection.cs" />

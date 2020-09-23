@@ -27,7 +27,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public int GetLength()
         {
-            return 20 + Blob.Length + UnkInts.Count * Constants.SIZE_UINT32 + UnkBlobs.Sum((blob) => blob.Length);
+            return 20 + Blob.Length + UnkInts.Count * Constants.SIZE_UINT32 + UnkBlobs.Sum((blob) => blob.Length) + UnkBlobs.Count * Constants.SIZE_UINT32;
         }
 
         public void Read(BinaryReader reader, int length)
@@ -52,6 +52,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(UnkData);
             for (int i = 0; i < ListLength; ++i)
             {
+                writer.Write(UnkBlobs[i].Length);
                 writer.Write(UnkInts[i]);
                 writer.Write(UnkBlobs[i]);
             }

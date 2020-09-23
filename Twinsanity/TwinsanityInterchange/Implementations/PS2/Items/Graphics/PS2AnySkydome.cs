@@ -28,7 +28,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public int GetLength()
         {
-            return 4 + Meshes.Count * Constants.SIZE_UINT32;
+            return 8 + Meshes.Count * Constants.SIZE_UINT32;
         }
 
         public void Read(BinaryReader reader, int length)
@@ -49,6 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public void Write(BinaryWriter writer)
         {
             writer.Write(Header);
+            writer.Write(Meshes.Count);
             for (int i = 0; i < Meshes.Count; ++i)
             {
                 writer.Write(Meshes[i]);
