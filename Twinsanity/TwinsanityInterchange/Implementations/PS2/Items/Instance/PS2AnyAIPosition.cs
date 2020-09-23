@@ -16,7 +16,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
     {
         UInt32 id;
         public Vector4 Position { get; private set; }
-        public UInt32 UnkInt { get; set; }
+        public UInt16 UnkShort { get; set; }
 
         public PS2AnyAIPosition()
         {
@@ -29,13 +29,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
 
         public int GetLength()
         {
-            return Constants.SIZE_VECTOR4 + 4;
+            return Constants.SIZE_VECTOR4 + 2;
         }
 
         public void Read(BinaryReader reader, int length)
         {
             Position.Read(reader, Constants.SIZE_VECTOR4);
-            UnkInt = reader.ReadUInt32();
+            UnkShort = reader.ReadUInt16();
         }
 
         public void SetID(uint id)
@@ -46,7 +46,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
         public void Write(BinaryWriter writer)
         {
             Position.Write(writer);
-            writer.Write(UnkInt);
+            writer.Write(UnkShort);
         }
     }
 }
