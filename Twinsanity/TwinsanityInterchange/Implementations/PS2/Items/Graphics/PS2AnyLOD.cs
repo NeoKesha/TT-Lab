@@ -15,7 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public Int32 Type;
         public Int32 MeshAmount;
         public Int32 UnkInt1;
-        public Int32 UnkInt2;
+        public Int32 UnkInt2; // Draw distance?
         public Int32[] UnkInts; // For Type 0x1001
         public Byte[] UnkData; // For Type 0x1002
         public List<UInt32> Meshes;

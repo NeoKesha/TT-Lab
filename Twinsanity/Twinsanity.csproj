@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TwinsanityInterchange\Common\AgentLab\PS2ScriptCommand.cs" />
     <Compile Include="TwinsanityInterchange\Common\BlendSkinType1.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C04.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C03.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyObject.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyOGI.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyBlendSkin.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyLOD.cs" />
