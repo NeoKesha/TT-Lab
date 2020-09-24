@@ -76,6 +76,7 @@
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyAnimation.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyObject.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyOGI.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyScript.cs" />
