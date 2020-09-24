@@ -7,7 +7,7 @@ using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Code
 {
     public class PS2AnyOGIsSection : BaseTwinSection
     {

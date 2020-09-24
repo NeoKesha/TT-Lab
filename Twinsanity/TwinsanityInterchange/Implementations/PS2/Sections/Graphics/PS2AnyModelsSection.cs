@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics
 {
     public class PS2AnyModelsSection : BaseTwinSection
     {
@@ -12,5 +12,5 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections
         {
             defaultType = typeof(BaseTwinItem);
         }
-}
+    }
 }

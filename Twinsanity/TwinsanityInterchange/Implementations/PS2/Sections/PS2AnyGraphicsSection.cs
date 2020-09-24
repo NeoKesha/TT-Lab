@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections
 {

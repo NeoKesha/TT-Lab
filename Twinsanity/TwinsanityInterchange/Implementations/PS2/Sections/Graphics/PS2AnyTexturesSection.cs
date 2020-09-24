@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics
 {
     public class PS2AnyTexturesSection : BaseTwinSection
     {

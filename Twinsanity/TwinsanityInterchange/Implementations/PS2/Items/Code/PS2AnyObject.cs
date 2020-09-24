@@ -48,8 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         public List<UInt16> RefScripts;
         public List<UInt16> RefUnknowns;
         public List<UInt16> RefSounds;
-        public Int32 ScriptCommandsAmount;
-        public ScriptCommand ScriptCommand;
+        public ScriptPack ScriptPack;
 
         public bool HasInstanceProperties
         {
@@ -141,8 +140,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
                 AnimationSlots.Count * Constants.SIZE_UINT16 + ScriptSlots.Count * Constants.SIZE_UINT16 +
                 ObjectSlots.Count * Constants.SIZE_UINT16 + SoundSlots.Count * Constants.SIZE_UINT16 +
                 (HasInstanceProperties ? 20 + InstFlags.Count * Constants.SIZE_UINT32 + InstFloats.Count * 4 +
-                InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + 4 +
-                (ScriptCommand == null ? 0 : ScriptCommand.GetLength());
+                InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + ScriptPack.GetLength();
         }
 
         public void Read(BinaryReader reader, int length)
@@ -209,12 +207,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
                     FillResourceList(reader, RefSounds);
                 }
             }
-            ScriptCommandsAmount = reader.ReadInt32();
-            if (ScriptCommandsAmount != 0)
-            {
-                ScriptCommand = new ScriptCommand();
-                ScriptCommand.Read(reader, length);
-            }
+            ScriptPack = new ScriptPack();
+            ScriptPack.Read(reader, length);
         }
 
         public void SetID(uint id)
@@ -281,11 +275,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
                     WriteResourceList(writer, RefSounds);
                 }
             }
-            writer.Write(ScriptCommandsAmount);
-            if (ScriptCommandsAmount > 0)
-            {
-                ScriptCommand.Write(writer);
-            }
+            ScriptPack.Write(writer);
         }
 
         private void FillResourceList(BinaryReader reader, IList list, bool UI32 = false)

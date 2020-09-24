@@ -44,6 +44,7 @@
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\MainScript.cs" />
+    <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptPack.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptState.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptStateBody.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptType1.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyAnimation.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyCodeModel.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyObject.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyOGI.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyScript.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyTrigger.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyCodeModelsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyOGIsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnySoundsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Code\PS2AnyAnimationsSection.cs" />
@@ -150,6 +153,10 @@
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSerializable.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
