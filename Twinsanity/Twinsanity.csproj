@@ -66,6 +66,8 @@
     <Compile Include="TwinsanityInterchange\Common\TwinBlob.cs" />
     <Compile Include="TwinsanityInterchange\Common\TwinShader.cs" />
     <Compile Include="TwinsanityInterchange\Common\TwinTrigger.cs" />
+    <Compile Include="TwinsanityInterchange\Common\TwinIntegerRotation.cs" />
+    <Compile Include="TwinsanityInterchange\Common\Vector2.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector4.cs" />
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
@@ -80,6 +82,13 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyRigidModel.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkin.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkydome.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyAIPath.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyPath.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyAIPosition.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyCollisionSurface.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyInstance.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyTemplate.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyCamera.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyTrigger.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />

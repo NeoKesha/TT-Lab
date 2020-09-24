@@ -65,6 +65,7 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public const Int32 LAYOUT_CAMERAS_SECTION = 8;
         //Sizes
         public const Int32 SIZE_RECORD = 12;
+        public const Int32 SIZE_VECTOR2 = 8;
         public const Int32 SIZE_VECTOR4 = 16;
         public const Int32 SIZE_MATRIX4 = 64;
         public const Int32 SIZE_UINT16 = 2;
