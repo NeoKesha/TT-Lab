@@ -9,13 +9,13 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2HeaderScript : ITwinSerializable
+    public class HeaderScript : ITwinSerializable
     {
         public UInt32 UnkPairsAmount;
         public List<Int32> MainScriptIndices;
         public List<UInt32> UnkUI32s;
 
-        public PS2HeaderScript()
+        public HeaderScript()
         {
             MainScriptIndices = new List<Int32>();
             UnkUI32s = new List<UInt32>();

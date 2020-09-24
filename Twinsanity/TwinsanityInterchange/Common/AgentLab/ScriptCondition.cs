@@ -8,7 +8,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2ScriptCondition : ITwinSerializable
+    public class ScriptCondition : ITwinSerializable
     {
         public Int32 Bitfield;
         public Single Modifier;

@@ -8,13 +8,13 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2ScriptStateBody : ITwinSerializable
+    public class ScriptStateBody : ITwinSerializable
     {
         public UInt32 Bitfield;
         public Int32 JumpToState;
-        public PS2ScriptCondition ScriptCondition;
-        public PS2ScriptCommand ScriptCommand;
-        public PS2ScriptStateBody NextStateBody;
+        public ScriptCondition Condition;
+        public ScriptCommand Command;
+        public ScriptStateBody NextStateBody;
 
         public bool HasStateJump
         {
@@ -77,8 +77,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public int GetLength()
         {
-            return 4 + (HasStateJump ? 4 : 0) + (HasCommand ? ScriptCommand.GetLength() : 0) +
-                (HasCondition ? ScriptCondition.GetLength() : 0) +
+            return 4 + (HasStateJump ? 4 : 0) + (HasCommand ? Command.GetLength() : 0) +
+                (HasCondition ? Condition.GetLength() : 0) +
                 (HasNextBody ? NextStateBody.GetLength() : 0);
         }
 
@@ -91,17 +91,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             if (HasCondition)
             {
-                ScriptCondition = new PS2ScriptCondition();
-                ScriptCondition.Read(reader, length);
+                Condition = new ScriptCondition();
+                Condition.Read(reader, length);
             }
             if (HasCommand)
             {
-                ScriptCommand = new PS2ScriptCommand();
-                ScriptCommand.Read(reader, length);
+                Command = new ScriptCommand();
+                Command.Read(reader, length);
             }
             if (HasNextBody)
             {
-                NextStateBody = new PS2ScriptStateBody();
+                NextStateBody = new ScriptStateBody();
                 NextStateBody.Read(reader, length);
             }
         }
@@ -115,11 +115,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             if (HasCondition)
             {
-                ScriptCondition.Write(writer);
+                Condition.Write(writer);
             }
             if (HasCommand)
             {
-                ScriptCommand.Write(writer);
+                Command.Write(writer);
             }
             if (HasNextBody)
             {

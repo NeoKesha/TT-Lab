@@ -15,8 +15,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         private UInt16 scriptID;
         public Byte Mask;
         public Byte Flag;
-        public PS2HeaderScript Header;
-        public PS2MainScript Main;
+        public HeaderScript Header;
+        public MainScript Main;
         public bool IsHeader
         {
             get
@@ -42,12 +42,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             Flag = reader.ReadByte();
             if (IsHeader)
             {
-                Header = new PS2HeaderScript();
+                Header = new HeaderScript();
                 Header.Read(reader, length);
             }
             else
             {
-                Main = new PS2MainScript();
+                Main = new MainScript();
                 Main.Read(reader, length);
             }
         }

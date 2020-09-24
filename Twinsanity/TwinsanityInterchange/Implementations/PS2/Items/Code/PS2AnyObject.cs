@@ -49,7 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         public List<UInt16> RefUnknowns;
         public List<UInt16> RefSounds;
         public Int32 ScriptCommandsAmount;
-        public PS2ScriptCommand ScriptCommand;
+        public ScriptCommand ScriptCommand;
 
         public bool HasInstanceProperties
         {
@@ -212,7 +212,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             ScriptCommandsAmount = reader.ReadInt32();
             if (ScriptCommandsAmount != 0)
             {
-                ScriptCommand = new PS2ScriptCommand();
+                ScriptCommand = new ScriptCommand();
                 ScriptCommand.Read(reader, length);
             }
         }

@@ -8,7 +8,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2ScriptType1 : ITwinSerializable
+    public class ScriptType1 : ITwinSerializable
     {
         public Byte UnkByte1;
         public Byte UnkByte2;
@@ -17,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public UInt16 UnkUShort;
         public Int32 UnkInt;
 
-        public PS2ScriptType1()
+        public ScriptType1()
         {
             Bytes = new List<Byte>();
             Floats = new List<Single>();

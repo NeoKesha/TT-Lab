@@ -8,11 +8,11 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2ScriptCommand : ITwinSerializable
+    public class ScriptCommand : ITwinSerializable
     {
         public UInt32 Bitfield;
         public List<UInt32> Arguments;
-        public PS2ScriptCommand NextCommand;
+        public ScriptCommand NextCommand;
         public Boolean HasNextCommand
         {
             get
@@ -50,7 +50,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public PS2ScriptCommand()
+        public ScriptCommand()
         {
             Arguments = new List<UInt32>();
         }
@@ -74,7 +74,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             if (HasNextCommand)
             {
-                NextCommand = new PS2ScriptCommand();
+                NextCommand = new ScriptCommand();
                 NextCommand.Read(reader, length);
             }
         }

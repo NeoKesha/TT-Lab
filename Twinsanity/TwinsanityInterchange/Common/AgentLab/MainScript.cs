@@ -8,12 +8,12 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2MainScript : ITwinSerializable
+    public class MainScript : ITwinSerializable
     {
         public String Name;
         public Int32 StatesAmount;
         public Int32 UnkInt;
-        public PS2ScriptState ScriptState;
+        public ScriptState ScriptState;
 
         public int GetLength()
         {
@@ -39,14 +39,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             UnkInt = reader.ReadInt32();
             if (StatesAmount > 0)
             {
-                ScriptState = new PS2ScriptState();
+                ScriptState = new ScriptState();
                 ScriptState.Read(reader, length);
                 var state = ScriptState;
                 while (state != null)
                 {
                     if (state.HasBody)
                     {
-                        state.Body = new PS2ScriptStateBody();
+                        state.Body = new ScriptStateBody();
                         state.Body.Read(reader, length);
                     }
                     state = state.NextState;

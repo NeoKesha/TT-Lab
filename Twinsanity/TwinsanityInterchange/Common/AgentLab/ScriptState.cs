@@ -8,13 +8,13 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2ScriptState : ITwinSerializable
+    public class ScriptState : ITwinSerializable
     {
         public UInt16 Bitfield;
         public Int16 ScriptIndexOrSlot;
-        public PS2ScriptType1 Type1;
-        public PS2ScriptState NextState;
-        public PS2ScriptStateBody Body;
+        public ScriptType1 Type1;
+        public ScriptState NextState;
+        public ScriptStateBody Body;
 
         public bool HasNextState
         {
@@ -69,12 +69,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             ScriptIndexOrSlot = reader.ReadInt16();
             if (HasType1)
             {
-                Type1 = new PS2ScriptType1();
+                Type1 = new ScriptType1();
                 Type1.Read(reader, length);
             }
             if (HasNextState)
             {
-                NextState = new PS2ScriptState();
+                NextState = new ScriptState();
                 NextState.Read(reader, length);
             }
         }
