@@ -82,6 +82,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyObject.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyOGI.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnyScript.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Code\PS2AnySound.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyBlendSkin.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyLOD.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyMaterial.cs" />

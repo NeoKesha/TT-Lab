@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Code
 {
@@ -12,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Code
     {
         public PS2AnySoundsSection() : base()
         {
-            defaultType = typeof(BaseTwinItem);
+            defaultType = typeof(PS2AnySound);
         }
     }
 }
