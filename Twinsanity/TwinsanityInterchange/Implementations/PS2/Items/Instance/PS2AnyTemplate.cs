@@ -80,7 +80,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Instance
             {
                 Ints.Add(reader.ReadUInt32());
             }
-            int len = GetLength();
         }
 
         public void SetID(uint id)

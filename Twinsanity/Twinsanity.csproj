@@ -65,6 +65,7 @@
     <Compile Include="TwinsanityInterchange\Common\TwinBlob.cs" />
     <Compile Include="TwinsanityInterchange\Common\TwinShader.cs" />
     <Compile Include="TwinsanityInterchange\Common\TwinTrigger.cs" />
+    <Compile Include="TwinsanityInterchange\Common\TwinIntegerRotation.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector2.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector4.cs" />
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
