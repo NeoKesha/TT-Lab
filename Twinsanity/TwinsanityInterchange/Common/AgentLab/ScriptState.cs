@@ -19,7 +19,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public int GetLength()
         {
-            return 4 + (Type1 != null ? Type1.GetLength() : 0) + (next != null ? next.GetLength() : 0);
+            return 4 + (Type1 != null ? Type1.GetLength() : 0) + (Body != null ? Body.GetLength() : 0);
         }
 
         public void Read(BinaryReader reader, int length)

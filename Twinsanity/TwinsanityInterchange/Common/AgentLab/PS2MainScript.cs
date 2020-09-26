@@ -24,13 +24,6 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         {
             var totalLen = 4 + Name.Length + 8;
             totalLen += ScriptStates.Sum(s => s.GetLength());
-            foreach (var state in ScriptStates)
-            {
-                if (state.Body != null)
-                {
-                    totalLen += state.Body.GetLength();
-                }
-            }
             totalLen += base.GetLength();
             return totalLen;
         }
@@ -57,10 +50,16 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                     }
                 }
             }
+            int calculated = GetLength();
+            if (calculated != length)
+            {
+                int a = 0; // i know about conditional breakpoints, but that's easier to copy paste
+            }
         }
 
         public override void Write(BinaryWriter writer)
         {
+            int pos1 = (int)writer.BaseStream.Position;
             base.Write(writer);
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
@@ -84,6 +83,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                         state.Body.Write(writer);
                     }
                 }
+            }
+            int pos2 = (int)writer.BaseStream.Position;
+            int writen = pos2 - pos1;
+            int calculated = GetLength();
+            if (writen != calculated)
+            {
+                int a = 0; // i know about conditional breakpoints, but that's easier to copy paste
             }
         }
     }
