@@ -57,7 +57,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return length;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public virtual void Read(BinaryReader reader, int length)
         {
             if (length > 0)
             {
@@ -91,7 +91,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                     Items.Add(item);
                 }
                 extraData = reader.ReadBytes((Int32)(length - (reader.BaseStream.Position - baseOffset)));
-            } else
+            }
+            else
             {
                 skip = true;
             }
@@ -111,7 +112,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             this.id = id;
         }
 
-        public void rebuildExtraData()
+        public virtual void rebuildExtraData()
         {
 
         }

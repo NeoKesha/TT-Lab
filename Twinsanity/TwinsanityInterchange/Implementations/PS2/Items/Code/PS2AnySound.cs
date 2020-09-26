@@ -11,6 +11,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
     public class PS2AnySound : ITwinSound
     {
         UInt32 id;
+        internal Int32 offset;
+
         public UInt32 Header;
         public Byte UnkFlag;
         public Byte FreqFac;
@@ -18,8 +20,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         public UInt16 Param2;
         public UInt16 Param3;
         public UInt16 Param4;
-        public UInt32 SoundSize;
-        public UInt32 SoundOffset;
+        public Byte[] Sound;
 
         public UInt32 GetID()
         {
@@ -40,8 +41,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             Param2 = reader.ReadUInt16();
             Param3 = reader.ReadUInt16();
             Param4 = reader.ReadUInt16();
-            SoundSize = reader.ReadUInt32();
-            SoundOffset = reader.ReadUInt32();
+            Sound = new Byte[reader.ReadUInt32()];
+            reader.ReadUInt32(); // Discard offset
         }
 
         public void SetID(UInt32 id)
@@ -58,8 +59,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             writer.Write(Param2);
             writer.Write(Param3);
             writer.Write(Param4);
-            writer.Write(SoundSize);
-            writer.Write(SoundOffset);
+            writer.Write(Sound.Length);
+            writer.Write(offset);
         }
     }
 }
