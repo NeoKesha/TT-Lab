@@ -41,14 +41,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         {
             writer.Write(scriptID);
             writer.Write(Mask);
-            if (id % 2 == 0)
-            {
-                writer.Write((Byte)1);
-            }
-            else
-            {
-                writer.Write((Byte)0);
-            }
+            writer.Write((Byte)((id + 1) % 2));
         }
     }
 }
