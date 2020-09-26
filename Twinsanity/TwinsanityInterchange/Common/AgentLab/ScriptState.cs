@@ -47,7 +47,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void Write(BinaryWriter writer)
         {
-            var newBitfield = 0;
+            UInt16 newBitfield = 0;
             if (Type1 != null)
             {
                 newBitfield |= 0x4000;
