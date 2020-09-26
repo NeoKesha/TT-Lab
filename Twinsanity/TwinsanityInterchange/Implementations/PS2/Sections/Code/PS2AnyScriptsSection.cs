@@ -18,7 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Code
         public PS2AnyScriptsSection() : base()
         {
             defaultType = typeof(PS2AnyScript);
-            idToClassDictionary[0] = typeof(BaseTwinItem); // Not identical file
+            idToClassDictionary[0] = typeof(PS2HeaderScript);
             idToClassDictionary[1] = typeof(BaseTwinItem); // Breaks shit up
         }
         protected override UInt32 ProcessId(UInt32 id)
