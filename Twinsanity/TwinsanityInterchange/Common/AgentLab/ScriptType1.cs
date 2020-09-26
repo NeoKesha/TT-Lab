@@ -10,8 +10,6 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
     public class ScriptType1 : ITwinSerializable
     {
-        public Byte UnkByte1;
-        public Byte UnkByte2;
         public List<Byte> Bytes;
         public List<Single> Floats;
         public UInt16 UnkUShort;
@@ -30,17 +28,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void Read(BinaryReader reader, int length)
         {
-            UnkByte1 = reader.ReadByte();
-            UnkByte2 = reader.ReadByte();
+            Byte bytesCnt = reader.ReadByte();
+            Byte floatsCnt = reader.ReadByte();
             UnkUShort = reader.ReadUInt16();
             UnkInt = reader.ReadInt32();
             Floats.Clear();
-            for (var i = 0; i < UnkByte2; ++i)
+            for (var i = 0; i < floatsCnt; ++i)
             {
                 Floats.Add(reader.ReadSingle());
             }
             Bytes.Clear();
-            for (var i = 0; i < UnkByte1; ++i)
+            for (var i = 0; i < bytesCnt; ++i)
             {
                 Bytes.Add(reader.ReadByte());
             }
@@ -48,8 +46,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(UnkByte1);
-            writer.Write(UnkByte2);
+            writer.Write((Byte)Bytes.Count);
+            writer.Write((Byte)Floats.Count);
             writer.Write(UnkUShort);
             writer.Write(UnkInt);
             foreach (var f in Floats)
