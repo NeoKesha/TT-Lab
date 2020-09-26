@@ -39,15 +39,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             for (int i = 0; i < statesAmt; ++i)
             {
                 ScriptState state = new ScriptState();
-                state.Read(reader, 0);
+                state.Read(reader, length);
                 ScriptStates.Add(state);
             }
             foreach (var state in ScriptStates)
             {
+                state.Bodies.Clear();
                 if ((state.Bitfield & 0x1F) != 0)
                 {
-                    state.Body = new ScriptStateBody();
-                    state.Body.Read(reader, length);
+                    var stateBody = new ScriptStateBody();
+                    state.Bodies.Add(stateBody);
+                    stateBody.Read(reader, length, state.Bodies);
                 }
             }
         }
@@ -59,16 +61,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(Name.ToCharArray());
             writer.Write(ScriptStates.Count);
             writer.Write(UnkInt);
-            foreach (ScriptState state in ScriptStates)
+            foreach (var state in ScriptStates)
             {
                 state.hasNext = !(ScriptStates.Last().Equals(state));
                 state.Write(writer);
             }
-            foreach (ScriptState state in ScriptStates)
+            foreach (var state in ScriptStates)
             {
-                if (state.Body != null)
+                foreach (var body in state.Bodies)
                 {
-                    state.Body.Write(writer);
+                    body.hasNext = !(state.Bodies.Last().Equals(body));
+                    body.Write(writer);
                 }
             }
         }

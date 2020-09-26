@@ -13,13 +13,18 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public UInt16 Bitfield;
         public Int16 ScriptIndexOrSlot;
         public ScriptType1 Type1;
-        public ScriptStateBody Body;
+        public List<ScriptStateBody> Bodies;
 
         internal bool hasNext;
 
+        public ScriptState()
+        {
+            Bodies = new List<ScriptStateBody>(0x1F);
+        }
+
         public int GetLength()
         {
-            return 4 + (Type1 != null ? Type1.GetLength() : 0) + (Body != null ? Body.GetLength() : 0);
+            return 4 + (Type1 != null ? Type1.GetLength() : 0) + Bodies.Sum(body => body.GetLength());
         }
 
         public void Read(BinaryReader reader, int length)
@@ -47,18 +52,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void Write(BinaryWriter writer)
         {
-            UInt16 newBitfield = 0;
+            UInt16 newBitfield = (UInt16)Bodies.Count;
             if (Type1 != null)
             {
                 newBitfield |= 0x4000;
             }
-            if (hasNext == true)
+            if (hasNext)
             {
                 newBitfield |= 0x8000;
-            }
-            if (Body != null)
-            {
-                newBitfield |= 0x1F; // The values are different for any state that has a body, needs proper research
             }
             newBitfield |= Bitfield;
             writer.Write(newBitfield);

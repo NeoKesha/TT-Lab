@@ -54,7 +54,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         {
             get
             {
-                return (Bitfield & 0x20000000) != 0;
+                return InstFlags.Count > 0 || InstFloats.Count > 0 || InstIntegers.Count > 0;
             }
         }
 
@@ -62,7 +62,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         {
             get
             {
-                return (Bitfield & 0x40000000) != 0;
+                return RefObjects.Count > 0 || RefOGIs.Count > 0 || RefAnimations.Count > 0 ||
+                    RefCodeModels.Count > 0 || RefScripts.Count > 0 || RefUnknowns.Count > 0 ||
+                    RefSounds.Count > 0;
             }
         }
 
@@ -146,6 +148,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
+            var hasInstProps = (Bitfield & 0x20000000) != 0;
+            var refRes = (Bitfield & 0x40000000) != 0;
             for (var i = 0; i < 8; ++i)
             {
                 SlotsMap[i] = reader.ReadByte();
@@ -160,7 +164,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             FillResourceList(reader, ObjectSlots);
             FillResourceList(reader, SoundSlots);
 
-            if (HasInstanceProperties)
+            if (hasInstProps)
             {
                 InstancePropsHeader = reader.ReadUInt32();
                 UnkUInt = reader.ReadUInt32();
@@ -175,7 +179,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
                 FillResourceList(reader, InstIntegers, true);
             }
 
-            if (ReferencesResources)
+            if (refRes)
             {
                 Resources = (ResourcesBitfield)reader.ReadUInt32();
                 if (Resources.HasFlag(ResourcesBitfield.OBJECTS))
@@ -218,7 +222,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Bitfield);
+            UInt32 newBitfield = 0;
+            if (ReferencesResources)
+            {
+                newBitfield |= 0x40000000;
+            }
+            if (HasInstanceProperties)
+            {
+                newBitfield |= 0x20000000;
+            }
+            newBitfield |= (Bitfield & 0x9FFFFFFF);
+            writer.Write(newBitfield);
             writer.Write(SlotsMap);
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray(), 0, Name.Length);

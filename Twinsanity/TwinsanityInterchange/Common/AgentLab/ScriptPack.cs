@@ -10,30 +10,40 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
     public class ScriptPack : ITwinSerializable
     {
-        public Int32 CommandsAmount;
-        public ScriptCommand Command;
+        public List<ScriptCommand> Commands;
+
+        public ScriptPack()
+        {
+            Commands = new List<ScriptCommand>();
+        }
 
         public int GetLength()
         {
-            return 4 + (CommandsAmount > 0 ? Command.GetLength() : 0);
+            return 4 + Commands.Sum(com => com.GetLength());
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            CommandsAmount = reader.ReadInt32();
-            if (CommandsAmount > 0)
+            var amt = reader.ReadInt32();
+            Commands.Clear();
+            if (amt > 0)
             {
-                Command = new ScriptCommand();
-                Command.Read(reader, length);
+                var com = new ScriptCommand();
+                Commands.Add(com);
+                com.Read(reader, length, Commands);
             }
         }
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(CommandsAmount);
-            if (CommandsAmount > 0)
+            writer.Write(Commands.Count);
+            if (Commands.Count > 0)
             {
-                Command.Write(writer);
+                foreach (var com in Commands)
+                {
+                    com.hasNext = !(Commands.Last().Equals(com));
+                    com.Write(writer);
+                }
             }
         }
     }

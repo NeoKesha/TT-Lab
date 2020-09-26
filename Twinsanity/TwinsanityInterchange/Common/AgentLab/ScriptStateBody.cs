@@ -11,119 +11,93 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
     public class ScriptStateBody : ITwinSerializable
     {
         public UInt32 Bitfield;
+        public Boolean HasStateJump;
         public Int32 JumpToState;
         public ScriptCondition Condition;
-        public ScriptCommand Command;
-        public ScriptStateBody NextStateBody;
+        public List<ScriptCommand> Commands;
 
-        public bool HasStateJump
-        {
-            get
-            {
-                return (Bitfield & 0x400) != 0;
-            }
-            set
-            {
-                if (value)
-                {
-                    Bitfield |= 0x400;
-                    return;
-                }
-                Bitfield &= 0xFFFFFBFF;
-            }
-        }
+        internal bool hasNext;
 
-        public bool HasCondition
+        public ScriptStateBody()
         {
-            get
-            {
-                return (Bitfield & 0x200) != 0;
-            }
-            set
-            {
-                if (value)
-                {
-                    Bitfield |= 0x200;
-                    return;
-                }
-                Bitfield &= 0xFFFFFDFF;
-            }
-        }
-
-        public bool HasCommand
-        {
-            get
-            {
-                return (Bitfield & 0xFF) != 0;
-            }
-        }
-
-        public bool HasNextBody
-        {
-            get
-            {
-                return (Bitfield & 0x800) != 0;
-            }
-            set
-            {
-                if (value)
-                {
-                    Bitfield |= 0x800;
-                    return;
-                }
-                Bitfield &= 0xFFFFF7FF;
-            }
+            Commands = new List<ScriptCommand>();
         }
 
         public int GetLength()
         {
-            return 4 + (HasStateJump ? 4 : 0) + (HasCommand ? Command.GetLength() : 0) +
-                (HasCondition ? Condition.GetLength() : 0) +
-                (HasNextBody ? NextStateBody.GetLength() : 0);
+            return 4 + (HasStateJump ? 4 : 0) + Commands.Sum(command => command.GetLength()) +
+                (Condition != null ? Condition.GetLength() : 0);
         }
 
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
+            var hasStateJump = (Bitfield & 0x400) != 0;
+            var hasCondition = (Bitfield & 0x200) != 0;
+            var hasCommand = (Bitfield & 0xFF) != 0;
+            HasStateJump = hasStateJump;
             if (HasStateJump)
             {
                 JumpToState = reader.ReadInt32();
             }
-            if (HasCondition)
+            if (hasCondition)
             {
                 Condition = new ScriptCondition();
                 Condition.Read(reader, length);
             }
-            if (HasCommand)
+            Commands.Clear();
+            if (hasCommand)
             {
-                Command = new ScriptCommand();
-                Command.Read(reader, length);
+                var com = new ScriptCommand();
+                Commands.Add(com);
+                com.Read(reader, length, Commands);
             }
-            if (HasNextBody)
+        }
+
+        public void Read(BinaryReader reader, int length, IList<ScriptStateBody> bodies)
+        {
+            Read(reader, length);
+            var hasNext = (Bitfield & 0x800) != 0;
+            if (hasNext)
             {
-                NextStateBody = new ScriptStateBody();
-                NextStateBody.Read(reader, length);
+                var stateBody = new ScriptStateBody();
+                bodies.Add(stateBody);
+                stateBody.Read(reader, length, bodies);
             }
         }
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Bitfield);
+            UInt32 newBitfield = (UInt32)Commands.Count;
+            if (hasNext)
+            {
+                newBitfield |= 0x800;
+            }
+            if (HasStateJump)
+            {
+                newBitfield |= 0x400;
+            }
+            if (Condition != null)
+            {
+                newBitfield |= 0x200;
+            }
+            newBitfield |= (Bitfield & 0xFFFF0100);
+            writer.Write(newBitfield);
             if (HasStateJump)
             {
                 writer.Write(JumpToState);
             }
-            if (HasCondition)
+            if (Condition != null)
             {
                 Condition.Write(writer);
             }
-            if (HasCommand)
+            if (Commands.Count > 0)
             {
-                Command.Write(writer);
-            }
-            if (HasNextBody)
-            {
-                NextStateBody.Write(writer);
+                foreach (var com in Commands)
+                {
+                    com.hasNext = !(Commands.Last().Equals(com));
+                    com.Write(writer);
+                };
             }
         }
     }
