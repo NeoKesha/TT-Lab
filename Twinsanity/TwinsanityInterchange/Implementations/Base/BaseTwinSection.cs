@@ -91,8 +91,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                         item = (ITwinItem)Activator.CreateInstance(defaultType);
                     }
                     reader.BaseStream.Position = records[i].Offset + baseOffset;
-                    item.Read(reader, (Int32)records[i].Size);
                     item.SetID(records[i].ItemId);
+                    item.Read(reader, (Int32)records[i].Size);
                     Items.Add(item);
                 }
                 extraData = reader.ReadBytes((Int32)(length - (reader.BaseStream.Position - baseOffset)));
@@ -117,7 +117,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             this.id = id;
         }
 
-        public virtual void rebuildExtraData()
+        protected virtual void PreprocessWrite()
         {
 
         }
@@ -126,7 +126,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             if (!skip)
             {
-                rebuildExtraData();
+                PreprocessWrite();
                 writer.Write(magicNumber);
                 writer.Write(Items.Count);
                 writer.Write(GetContentLength());

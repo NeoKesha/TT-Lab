@@ -28,7 +28,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Code
             }
         }
 
-        public override void rebuildExtraData()
+        protected override void PreprocessWrite()
         {
             using (var newExtraData = new MemoryStream())
             {
