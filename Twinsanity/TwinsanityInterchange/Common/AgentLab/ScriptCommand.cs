@@ -8,40 +8,14 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class PS2ScriptCommand : ITwinSerializable
+    public class ScriptCommand : ITwinSerializable
     {
         public UInt32 Bitfield;
+        public UInt16 CommandIndex;
         public List<UInt32> Arguments;
-        public PS2ScriptCommand NextCommand;
-        public Boolean HasNextCommand
-        {
-            get
-            {
-                return (Bitfield & 0x1000000) != 0;
-            }
-            set
-            {
-                if (value)
-                {
-                    Bitfield |= 0x1000000;
-                }
-                else
-                {
-                    Bitfield &= 0xFEFFFFFF;
-                }
-            }
-        }
-        public UInt16 CommandIndex
-        {
-            get
-            {
-                return (UInt16)(Bitfield & 0xFFFF);
-            }
-            set
-            {
-                Bitfield = (UInt32)((Int32)(Bitfield & 0xFFFF0000) | (value & 0xFFFF));
-            }
-        }
+
+        internal Boolean hasNext;
+
         public UInt32 CommandSize
         {
             get
@@ -50,19 +24,20 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public PS2ScriptCommand()
+        public ScriptCommand()
         {
             Arguments = new List<UInt32>();
         }
 
         public int GetLength()
         {
-            return 4 + Arguments.Count * 4 + (HasNextCommand ? NextCommand.GetLength() : 0);
+            return 4 + Arguments.Count * 4;
         }
 
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
+            CommandIndex = (UInt16)(Bitfield & 0xFFFF);
             Arguments.Clear();
             if (CommandSize - 0xC > 0)
             {
@@ -72,28 +47,44 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                     Arguments.Add(reader.ReadUInt32());
                 }
             }
-            if (HasNextCommand)
+        }
+
+        public void Read(BinaryReader reader, int length, IList<ScriptCommand> commands)
+        {
+            Read(reader, length);
+            var hasNext = (Bitfield & 0x1000000) != 0;
+            if (hasNext)
             {
-                NextCommand = new PS2ScriptCommand();
-                NextCommand.Read(reader, length);
+                var com = new ScriptCommand();
+                commands.Add(com);
+                com.Read(reader, length, commands);
             }
         }
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Bitfield);
+            UInt32 newBitfield = CommandIndex;
+            if (hasNext)
+            {
+                newBitfield |= 0x1000000;
+            }
+            // In reality all Bitfields should be obsoleted and only used to construct
+            // the member variables during Read only, but for unresearched stuff we need
+            // to carry over the unknown bits to preserve consistency
+            newBitfield |= (Bitfield & 0xFEFF0000);
+            writer.Write(newBitfield);
             foreach (UInt32 arg in Arguments)
             {
                 writer.Write(arg);
-            }
-            if (HasNextCommand)
-            {
-                NextCommand.Write(writer);
             }
         }
 
         public static UInt32 GetCommandSize(UInt16 index)
         {
+            if (index < 0 || index >= commandSizeMap.Length)
+            {
+                return 0;
+            }
             return commandSizeMap[index];
         }
 

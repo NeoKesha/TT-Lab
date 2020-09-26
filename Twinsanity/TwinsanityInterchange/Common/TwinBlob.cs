@@ -11,7 +11,6 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class TwinBlob : ITwinSerializable
     {
-        UInt32 UnkBlobInt;
         UInt32 BlockSizePacked;
         UInt16 BlockSizeHelper;
         public Byte[] Blob { get; private set; }

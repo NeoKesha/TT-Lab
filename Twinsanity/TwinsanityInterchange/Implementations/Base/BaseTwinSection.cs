@@ -57,7 +57,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return length;
         }
 
-        public void Read(BinaryReader reader, int length)
+        protected virtual UInt32 ProcessId(UInt32 id)
+        {
+            return id;
+        }
+        public virtual void Read(BinaryReader reader, int length)
         {
             if (length > 0)
             {
@@ -76,9 +80,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 for (int i = 0; i < itemsCount; ++i)
                 {
                     ITwinItem item = null;
-                    if (idToClassDictionary.ContainsKey(records[i].ItemId))
+                    UInt32 mapperId = ProcessId(records[i].ItemId);
+                    if (idToClassDictionary.ContainsKey(mapperId))
                     {
-                        Type type = idToClassDictionary[records[i].ItemId];
+                        Type type = idToClassDictionary[mapperId];
                         item = (ITwinItem)Activator.CreateInstance(type);
                     }
                     else
@@ -86,12 +91,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                         item = (ITwinItem)Activator.CreateInstance(defaultType);
                     }
                     reader.BaseStream.Position = records[i].Offset + baseOffset;
-                    item.Read(reader, (Int32)records[i].Size);
                     item.SetID(records[i].ItemId);
+                    item.Read(reader, (Int32)records[i].Size);
                     Items.Add(item);
                 }
                 extraData = reader.ReadBytes((Int32)(length - (reader.BaseStream.Position - baseOffset)));
-            } else
+            }
+            else
             {
                 skip = true;
             }
@@ -111,7 +117,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             this.id = id;
         }
 
-        public void rebuildExtraData()
+        protected virtual void PreprocessWrite()
         {
 
         }
@@ -120,7 +126,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             if (!skip)
             {
-                rebuildExtraData();
+                PreprocessWrite();
                 writer.Write(magicNumber);
                 writer.Write(Items.Count);
                 writer.Write(GetContentLength());

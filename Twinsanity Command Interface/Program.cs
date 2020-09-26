@@ -13,8 +13,8 @@ namespace Twinsanity_Command_Interface
     {
         static void Main(string[] args)
         {
-            String testPath = @"D:\Documents\Twinsanity\NTSC_Data\";
-            String testSavePath = @"D:\Documents\";
+            String testPath = @"D:\Twinsanity Discs\ScriptModding_Tests\ModdedFilesTest\";
+            String testSavePath = @"D:\Twinsanity Discs\ScriptModding_Tests\ExtractedLevels\";
             String[] levelsPaths = System.IO.Directory.GetFiles(testPath, "*.rm2", System.IO.SearchOption.AllDirectories);
             levelsPaths = levelsPaths.Concat(System.IO.Directory.GetFiles(testPath, "*.sm2", System.IO.SearchOption.AllDirectories)).ToArray();
             List<ITwinSection> levels = new List<ITwinSection>();

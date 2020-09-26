@@ -40,7 +40,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         public List<UInt32> InstFlags;
         public List<Single> InstFloats;
         public List<UInt32> InstIntegers;
-        public ResourcesBitfield Resources;
         public List<UInt16> RefObjects;
         public List<UInt16> RefOGIs;
         public List<UInt16> RefAnimations;
@@ -48,14 +47,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         public List<UInt16> RefScripts;
         public List<UInt16> RefUnknowns;
         public List<UInt16> RefSounds;
-        public Int32 ScriptCommandsAmount;
-        public PS2ScriptCommand ScriptCommand;
+        public ScriptPack ScriptPack;
 
         public bool HasInstanceProperties
         {
             get
             {
-                return (Bitfield & 0x20000000) != 0;
+                return InstFlags.Count > 0 || InstFloats.Count > 0 || InstIntegers.Count > 0;
             }
         }
 
@@ -63,7 +61,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         {
             get
             {
-                return (Bitfield & 0x40000000) != 0;
+                return RefObjects.Count > 0 || RefOGIs.Count > 0 || RefAnimations.Count > 0 ||
+                    RefCodeModels.Count > 0 || RefScripts.Count > 0 || RefUnknowns.Count > 0 ||
+                    RefSounds.Count > 0;
             }
         }
 
@@ -99,37 +99,37 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             if (ReferencesResources)
             {
                 resourcesLength += 4;
-                if (Resources.HasFlag(ResourcesBitfield.OBJECTS))
+                if (RefObjects.Count > 0)
                 {
                     resourcesLength += 4;
                     resourcesLength += RefObjects.Count * Constants.SIZE_UINT16;
                 }
-                if (Resources.HasFlag(ResourcesBitfield.OGIS))
+                if (RefOGIs.Count > 0)
                 {
                     resourcesLength += 4;
                     resourcesLength += RefOGIs.Count * Constants.SIZE_UINT16;
                 }
-                if (Resources.HasFlag(ResourcesBitfield.ANIMATIONS))
+                if (RefAnimations.Count > 0)
                 {
                     resourcesLength += 4;
                     resourcesLength += RefAnimations.Count * Constants.SIZE_UINT16;
                 }
-                if (Resources.HasFlag(ResourcesBitfield.CODE_MODELS))
+                if (RefCodeModels.Count > 0)
                 {
                     resourcesLength += 4;
                     resourcesLength += RefCodeModels.Count * Constants.SIZE_UINT16;
                 }
-                if (Resources.HasFlag(ResourcesBitfield.SCRIPTS))
+                if (RefScripts.Count > 0)
                 {
                     resourcesLength += 4;
                     resourcesLength += RefScripts.Count * Constants.SIZE_UINT16;
                 }
-                if (Resources.HasFlag(ResourcesBitfield.UNKNOWN))
+                if (RefUnknowns.Count > 0)
                 {
                     resourcesLength += 4;
                     resourcesLength += RefUnknowns.Count * Constants.SIZE_UINT16;
                 }
-                if (Resources.HasFlag(ResourcesBitfield.SOUNDS))
+                if (RefSounds.Count > 0)
                 {
                     resourcesLength += 4;
                     resourcesLength += RefSounds.Count * Constants.SIZE_UINT16;
@@ -141,13 +141,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
                 AnimationSlots.Count * Constants.SIZE_UINT16 + ScriptSlots.Count * Constants.SIZE_UINT16 +
                 ObjectSlots.Count * Constants.SIZE_UINT16 + SoundSlots.Count * Constants.SIZE_UINT16 +
                 (HasInstanceProperties ? 20 + InstFlags.Count * Constants.SIZE_UINT32 + InstFloats.Count * 4 +
-                InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + 4 +
-                (ScriptCommand == null ? 0 : ScriptCommand.GetLength());
+                InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + ScriptPack.GetLength();
         }
 
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
+            var hasInstProps = (Bitfield & 0x20000000) != 0;
+            var refRes = (Bitfield & 0x40000000) != 0;
             for (var i = 0; i < 8; ++i)
             {
                 SlotsMap[i] = reader.ReadByte();
@@ -162,7 +163,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             FillResourceList(reader, ObjectSlots);
             FillResourceList(reader, SoundSlots);
 
-            if (HasInstanceProperties)
+            if (hasInstProps)
             {
                 InstancePropsHeader = reader.ReadUInt32();
                 UnkUInt = reader.ReadUInt32();
@@ -177,44 +178,40 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
                 FillResourceList(reader, InstIntegers, true);
             }
 
-            if (ReferencesResources)
+            if (refRes)
             {
-                Resources = (ResourcesBitfield)reader.ReadUInt32();
-                if (Resources.HasFlag(ResourcesBitfield.OBJECTS))
+                var resources = (ResourcesBitfield)reader.ReadUInt32();
+                if (resources.HasFlag(ResourcesBitfield.OBJECTS))
                 {
                     FillResourceList(reader, RefObjects);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.OGIS))
+                if (resources.HasFlag(ResourcesBitfield.OGIS))
                 {
                     FillResourceList(reader, RefOGIs);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.ANIMATIONS))
+                if (resources.HasFlag(ResourcesBitfield.ANIMATIONS))
                 {
                     FillResourceList(reader, RefAnimations);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.CODE_MODELS))
+                if (resources.HasFlag(ResourcesBitfield.CODE_MODELS))
                 {
                     FillResourceList(reader, RefCodeModels);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.SCRIPTS))
+                if (resources.HasFlag(ResourcesBitfield.SCRIPTS))
                 {
                     FillResourceList(reader, RefScripts);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.UNKNOWN))
+                if (resources.HasFlag(ResourcesBitfield.UNKNOWN))
                 {
                     FillResourceList(reader, RefUnknowns);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.SOUNDS))
+                if (resources.HasFlag(ResourcesBitfield.SOUNDS))
                 {
                     FillResourceList(reader, RefSounds);
                 }
             }
-            ScriptCommandsAmount = reader.ReadInt32();
-            if (ScriptCommandsAmount != 0)
-            {
-                ScriptCommand = new PS2ScriptCommand();
-                ScriptCommand.Read(reader, length);
-            }
+            ScriptPack = new ScriptPack();
+            ScriptPack.Read(reader, length);
         }
 
         public void SetID(uint id)
@@ -224,7 +221,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Bitfield);
+            UInt32 newBitfield = 0;
+            if (ReferencesResources)
+            {
+                newBitfield |= 0x40000000;
+            }
+            if (HasInstanceProperties)
+            {
+                newBitfield |= 0x20000000;
+            }
+            newBitfield |= (Bitfield & 0x9FFFFFFF);
+            writer.Write(newBitfield);
             writer.Write(SlotsMap);
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray(), 0, Name.Length);
@@ -251,41 +258,66 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
 
             if (ReferencesResources)
             {
-                writer.Write((UInt32)Resources);
-                if (Resources.HasFlag(ResourcesBitfield.OBJECTS))
+                ResourcesBitfield newResources = new ResourcesBitfield();
+                if (RefObjects.Count > 0)
+                {
+                    newResources |= ResourcesBitfield.OBJECTS;
+                }
+                if (RefOGIs.Count > 0)
+                {
+                    newResources |= ResourcesBitfield.OGIS;
+                }
+                if (RefAnimations.Count > 0)
+                {
+                    newResources |= ResourcesBitfield.ANIMATIONS;
+                }
+                if (RefCodeModels.Count > 0)
+                {
+                    newResources |= ResourcesBitfield.CODE_MODELS;
+                }
+                if (RefScripts.Count > 0)
+                {
+                    newResources |= ResourcesBitfield.SCRIPTS;
+                }
+                if (RefUnknowns.Count > 0)
+                {
+                    newResources |= ResourcesBitfield.UNKNOWN;
+                }
+                if (RefSounds.Count > 0)
+                {
+                    newResources |= ResourcesBitfield.SOUNDS;
+                }
+                writer.Write((UInt32)newResources);
+                if (RefObjects.Count > 0)
                 {
                     WriteResourceList(writer, RefObjects);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.OGIS))
+                if (RefOGIs.Count > 0)
                 {
                     WriteResourceList(writer, RefOGIs);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.ANIMATIONS))
+                if (RefAnimations.Count > 0)
                 {
                     WriteResourceList(writer, RefAnimations);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.CODE_MODELS))
+                if (RefCodeModels.Count > 0)
                 {
                     WriteResourceList(writer, RefCodeModels);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.SCRIPTS))
+                if (RefScripts.Count > 0)
                 {
                     WriteResourceList(writer, RefScripts);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.UNKNOWN))
+                if (RefUnknowns.Count > 0)
                 {
                     WriteResourceList(writer, RefUnknowns);
                 }
-                if (Resources.HasFlag(ResourcesBitfield.SOUNDS))
+                if (RefSounds.Count > 0)
                 {
                     WriteResourceList(writer, RefSounds);
                 }
             }
-            writer.Write(ScriptCommandsAmount);
-            if (ScriptCommandsAmount > 0)
-            {
-                ScriptCommand.Write(writer);
-            }
+            ScriptPack.Write(writer);
         }
 
         private void FillResourceList(BinaryReader reader, IList list, bool UI32 = false)
