@@ -65,23 +65,16 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(Name.ToCharArray());
             writer.Write(ScriptStates.Count);
             writer.Write(UnkInt);
-            for (var i = 0; i < ScriptStates.Count; ++i)
+            foreach (ScriptState state in ScriptStates)
             {
-                var state = ScriptStates[i];
-                if (i + 1 < ScriptStates.Count)
-                {
-                    state.next = ScriptStates[i + 1];
-                }
+                state.hasNext = !(ScriptStates.Last().Equals(state));
+                state.Write(writer);
             }
-            if (ScriptStates.Count > 0)
+            foreach (ScriptState state in ScriptStates)
             {
-                ScriptStates[0].Write(writer);
-                foreach (var state in ScriptStates)
+                if (state.Body != null)
                 {
-                    if (state.Body != null)
-                    {
-                        state.Body.Write(writer);
-                    }
+                    state.Body.Write(writer);
                 }
             }
             int pos2 = (int)writer.BaseStream.Position;

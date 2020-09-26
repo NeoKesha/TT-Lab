@@ -15,7 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public ScriptType1 Type1;
         public ScriptStateBody Body;
 
-        internal ScriptState next;
+        internal bool hasNext;
 
         public int GetLength()
         {
@@ -52,7 +52,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             {
                 newBitfield |= 0x4000;
             }
-            if (next != null)
+            if (hasNext == true)
             {
                 newBitfield |= 0x8000;
             }
@@ -66,10 +66,6 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             if (Type1 != null)
             {
                 Type1.Write(writer);
-            }
-            if (next != null)
-            {
-                next.Write(writer);
             }
         }
     }
