@@ -45,11 +45,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             foreach (var state in ScriptStates)
             {
                 state.Bodies.Clear();
-                if ((state.Bitfield & 0x1F) != 0)
+                var bodiesAmt = (state.Bitfield & 0x1F);
+                for (var i = 0; i < bodiesAmt; ++i)
                 {
                     var stateBody = new ScriptStateBody();
                     state.Bodies.Add(stateBody);
-                    stateBody.Read(reader, length, state.Bodies);
+                    stateBody.Read(reader, length);
                 }
             }
         }

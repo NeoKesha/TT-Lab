@@ -34,7 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             Bitfield = reader.ReadUInt32();
             var hasStateJump = (Bitfield & 0x400) != 0;
             var hasCondition = (Bitfield & 0x200) != 0;
-            var hasCommand = (Bitfield & 0xFF) != 0;
+            var commandsAmt = (Bitfield & 0xFF);
             HasStateJump = hasStateJump;
             if (HasStateJump)
             {
@@ -46,23 +46,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 Condition.Read(reader, length);
             }
             Commands.Clear();
-            if (hasCommand)
+            for (var i = 0; i < commandsAmt; ++i)
             {
                 var com = new ScriptCommand();
                 Commands.Add(com);
-                com.Read(reader, length, Commands);
-            }
-        }
-
-        public void Read(BinaryReader reader, int length, IList<ScriptStateBody> bodies)
-        {
-            Read(reader, length);
-            var hasNext = (Bitfield & 0x800) != 0;
-            if (hasNext)
-            {
-                var stateBody = new ScriptStateBody();
-                bodies.Add(stateBody);
-                stateBody.Read(reader, length, bodies);
+                com.Read(reader, length);
             }
         }
 
@@ -91,14 +79,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             {
                 Condition.Write(writer);
             }
-            if (Commands.Count > 0)
+            foreach (var com in Commands)
             {
-                foreach (var com in Commands)
-                {
-                    com.hasNext = !(Commands.Last().Equals(com));
-                    com.Write(writer);
-                };
-            }
+                com.hasNext = !(Commands.Last().Equals(com));
+                com.Write(writer);
+            };
         }
     }
 }

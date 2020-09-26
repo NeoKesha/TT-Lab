@@ -26,24 +26,21 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         {
             var amt = reader.ReadInt32();
             Commands.Clear();
-            if (amt > 0)
+            for (var i = 0; i < amt; ++i)
             {
                 var com = new ScriptCommand();
                 Commands.Add(com);
-                com.Read(reader, length, Commands);
+                com.Read(reader, length);
             }
         }
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(Commands.Count);
-            if (Commands.Count > 0)
+            foreach (var com in Commands)
             {
-                foreach (var com in Commands)
-                {
-                    com.hasNext = !(Commands.Last().Equals(com));
-                    com.Write(writer);
-                }
+                com.hasNext = !(Commands.Last().Equals(com));
+                com.Write(writer);
             }
         }
     }
