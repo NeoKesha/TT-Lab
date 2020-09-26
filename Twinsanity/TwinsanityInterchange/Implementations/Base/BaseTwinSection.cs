@@ -57,6 +57,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return length;
         }
 
+        protected virtual UInt32 ProcessId(UInt32 id)
+        {
+            return id;
+        }
         public virtual void Read(BinaryReader reader, int length)
         {
             if (length > 0)
@@ -76,9 +80,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 for (int i = 0; i < itemsCount; ++i)
                 {
                     ITwinItem item = null;
-                    if (idToClassDictionary.ContainsKey(records[i].ItemId))
+                    UInt32 mapperId = ProcessId(records[i].ItemId);
+                    if (idToClassDictionary.ContainsKey(mapperId))
                     {
-                        Type type = idToClassDictionary[records[i].ItemId];
+                        Type type = idToClassDictionary[mapperId];
                         item = (ITwinItem)Activator.CreateInstance(type);
                     }
                     else
