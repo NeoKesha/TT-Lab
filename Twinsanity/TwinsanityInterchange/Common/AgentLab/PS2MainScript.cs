@@ -36,18 +36,18 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             var statesAmt = reader.ReadInt32();
             UnkInt = reader.ReadInt32();
             ScriptStates.Clear();
-            if (statesAmt > 0)
+            for (int i = 0; i < statesAmt; ++i)
             {
-                var st = new ScriptState();
-                ScriptStates.Add(st);
-                st.Read(reader, length, ScriptStates);
-                foreach (var state in ScriptStates)
+                ScriptState state = new ScriptState();
+                state.Read(reader, 0);
+                ScriptStates.Add(state);
+            }
+            foreach (var state in ScriptStates)
+            {
+                if ((state.Bitfield & 0x1F) != 0)
                 {
-                    if ((state.Bitfield & 0x1F) != 0)
-                    {
-                        state.Body = new ScriptStateBody();
-                        state.Body.Read(reader, length);
-                    }
+                    state.Body = new ScriptStateBody();
+                    state.Body.Read(reader, length);
                 }
             }
             int calculated = GetLength();
