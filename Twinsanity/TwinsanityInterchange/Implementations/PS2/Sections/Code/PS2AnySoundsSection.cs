@@ -30,16 +30,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Code
 
         public override void rebuildExtraData()
         {
-            var newExtraData = new MemoryStream();
-            var offset = 0;
-            foreach (PS2AnySound item in Items)
+            using (var newExtraData = new MemoryStream())
             {
-                newExtraData.Write(item.Sound, 0, item.Sound.Length);
-                item.offset = offset;
-                offset += item.Sound.Length;
+                var offset = 0;
+                foreach (PS2AnySound item in Items)
+                {
+                    newExtraData.Write(item.Sound, 0, item.Sound.Length);
+                    item.offset = offset;
+                    offset += item.Sound.Length;
+                }
+                extraData = newExtraData.ToArray();
             }
-            extraData = newExtraData.ToArray();
-            newExtraData.Dispose();
         }
     }
 }
