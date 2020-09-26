@@ -52,7 +52,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(UnkData);
             for (int i = 0; i < ListLength; ++i)
             {
-                writer.Write(UnkBlobs[i].Length);
+                writer.Write(UnkBlobs[i].Length >> 4);
                 writer.Write(UnkInts[i]);
                 writer.Write(UnkBlobs[i]);
             }
