@@ -13,83 +13,63 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public UInt16 Bitfield;
         public Int16 ScriptIndexOrSlot;
         public ScriptType1 Type1;
-        public ScriptState NextState;
         public ScriptStateBody Body;
 
-        public bool HasNextState
-        {
-            get
-            {
-                return (Bitfield & 0x8000) != 0;
-            }
-            set
-            {
-                if (value)
-                {
-                    Bitfield |= 0x8000;
-                    return;
-                }
-                Bitfield &= 0x7FFF;
-            }
-        }
-
-        public bool HasType1
-        {
-            get
-            {
-                return (Bitfield & 0x4000) != 0;
-            }
-            set
-            {
-                if (value)
-                {
-                    Bitfield |= 0x4000;
-                    return;
-                }
-                Bitfield &= 0xBFFF;
-            }
-        }
-
-        public bool HasBody
-        {
-            get
-            {
-                return (Bitfield & 0x1F) != 0;
-            }
-        }
+        internal ScriptState next;
 
         public int GetLength()
         {
-            return 4 + (HasType1 ? Type1.GetLength() : 0) + (HasNextState ? NextState.GetLength() : 0);
+            return 4 + (Type1 != null ? Type1.GetLength() : 0) + (next != null ? next.GetLength() : 0);
         }
 
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt16();
             ScriptIndexOrSlot = reader.ReadInt16();
-            if (HasType1)
+            if ((Bitfield & 0x4000) != 0)
             {
                 Type1 = new ScriptType1();
                 Type1.Read(reader, length);
             }
-            if (HasNextState)
+        }
+
+        public void Read(BinaryReader reader, int length, IList<ScriptState> scriptStates)
+        {
+            Read(reader, length);
+            var hasNext = (Bitfield & 0x8000) != 0;
+            if (hasNext)
             {
-                NextState = new ScriptState();
-                NextState.Read(reader, length);
+                var state = new ScriptState();
+                scriptStates.Add(state);
+                state.Read(reader, length, scriptStates);
             }
         }
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Bitfield);
+            var newBitfield = 0;
+            if (Type1 != null)
+            {
+                newBitfield |= 0x4000;
+            }
+            if (next != null)
+            {
+                newBitfield |= 0x8000;
+            }
+            if (Body != null)
+            {
+                newBitfield |= 0x1F; // The values are different for any state that has a body, needs proper research
+            }
+            newBitfield |= Bitfield;
+            writer.Write(newBitfield);
             writer.Write(ScriptIndexOrSlot);
-            if (HasType1)
+            if (Type1 != null)
             {
                 Type1.Write(writer);
             }
-            if (HasNextState)
+            if (next != null)
             {
-                NextState.Write(writer);
+                next.Write(writer);
             }
         }
     }

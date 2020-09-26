@@ -94,6 +94,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public static UInt32 GetCommandSize(UInt16 index)
         {
+            if (index < 0 || index >= commandSizeMap.Length)
+            {
+                return 0;
+            }
             return commandSizeMap[index];
         }
 

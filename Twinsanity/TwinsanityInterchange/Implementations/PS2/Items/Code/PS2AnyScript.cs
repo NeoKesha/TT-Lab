@@ -14,42 +14,22 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
         UInt32 id;
         private UInt16 scriptID;
         public Byte Mask;
-        public Byte Flag;
-        public HeaderScript Header;
-        public MainScript Main;
-        public bool IsHeader
-        {
-            get
-            {
-                return (scriptID & 0x1) == 0;
-            }
-        }
 
         public UInt32 GetID()
         {
             return id;
         }
 
-        public int GetLength()
+        public virtual int GetLength()
         {
-            return 4 + (IsHeader ? Header.GetLength() : Main.GetLength());
+            return 4;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public virtual void Read(BinaryReader reader, int length)
         {
             scriptID = reader.ReadUInt16();
             Mask = reader.ReadByte();
-            Flag = reader.ReadByte();
-            if (IsHeader)
-            {
-                Header = new HeaderScript();
-                Header.Read(reader, length);
-            }
-            else
-            {
-                Main = new MainScript();
-                Main.Read(reader, length);
-            }
+            reader.ReadByte(); // Skip flag
         }
 
         public void SetID(UInt32 id)
@@ -57,19 +37,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
             this.id = id;
         }
 
-        public void Write(BinaryWriter writer)
+        public virtual void Write(BinaryWriter writer)
         {
             writer.Write(scriptID);
             writer.Write(Mask);
-            writer.Write(Flag);
-            if (IsHeader)
-            {
-                Header.Write(writer);
-            }
-            else
-            {
-                Main.Write(writer);
-            }
+            writer.Write((Byte)id % 2);
         }
     }
 }

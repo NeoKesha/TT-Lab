@@ -43,12 +43,12 @@
   <ItemGroup>
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\MainScript.cs" />
+    <Compile Include="TwinsanityInterchange\Common\AgentLab\PS2MainScript.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptPack.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptState.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptStateBody.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptType1.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\HeaderScript.cs" />
+    <Compile Include="TwinsanityInterchange\Common\AgentLab\PS2HeaderScript.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCommand.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCondition.cs" />
     <Compile Include="TwinsanityInterchange\Common\BlendSkinType1.cs" />
