@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
@@ -18,7 +19,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
             idToClassDictionary.Add(Constants.SCENERY_UNK_2_ITEM, typeof(BaseTwinItem));
             idToClassDictionary.Add(Constants.SCENERY_UNK_3_ITEM, typeof(BaseTwinItem));
             idToClassDictionary.Add(Constants.SCENERY_DYNAMIC_SECENERY_ITEM, typeof(BaseTwinItem));
-            idToClassDictionary.Add(Constants.SCENERY_LINK_ITEM, typeof(BaseTwinItem));
+            idToClassDictionary.Add(Constants.SCENERY_LINK_ITEM, typeof(PS2AnyLink));
         }
     }
 }

@@ -63,6 +63,7 @@
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C0D.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C0F.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSubBase.cs" />
+    <Compile Include="TwinsanityInterchange\Common\TwinChunkLink.cs" />
     <Compile Include="TwinsanityInterchange\Common\OGIType3.cs" />
     <Compile Include="TwinsanityInterchange\Common\OGIType2.cs" />
     <Compile Include="TwinsanityInterchange\Common\OGIType1.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyAIPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyCollisionSurface.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyInstance.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\PS2AnyLink.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyTemplate.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Instance\PS2AnyCamera.cs" />
