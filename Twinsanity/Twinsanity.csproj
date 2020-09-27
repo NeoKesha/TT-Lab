@@ -90,6 +90,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyMaterial.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyMesh.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyModel.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyTexture.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyRigidModel.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkin.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkydome.cs" />
