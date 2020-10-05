@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.VIF;
 
 namespace Twinsanity_Command_Interface
 {
@@ -13,6 +14,13 @@ namespace Twinsanity_Command_Interface
     {
         static void Main(string[] args)
         {
+            using (System.IO.FileStream stream = new System.IO.FileStream(@"D:\VIF", System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
+            {
+                VIFInterpreter interpreter = new VIFInterpreter();
+                interpreter.Execute(reader);
+            }
+            return;
             String testPath = @"D:\Twinsanity Discs\ScriptModding_Tests\ModdedFilesTest\";
             String testSavePath = @"D:\Twinsanity Discs\ScriptModding_Tests\ExtractedLevels\";
             String[] levelsPaths = System.IO.Directory.GetFiles(testPath, "*.rm2", System.IO.SearchOption.AllDirectories);

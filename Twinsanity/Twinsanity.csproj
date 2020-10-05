@@ -186,6 +186,9 @@
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\ITwinSerializable.cs" />
+    <Compile Include="VIF\GIFTag.cs" />
+    <Compile Include="VIF\VIFCode.cs" />
+    <Compile Include="VIF\VIFInterpreter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">
