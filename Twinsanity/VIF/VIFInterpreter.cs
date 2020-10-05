@@ -25,6 +25,16 @@ namespace Twinsanity.VIF
                     UInt16 addr = (UInt16)(vif.Immediate & 0b111111111);
                     Byte usn = (Byte)(vif.Immediate & 0b010000000000000);
                     Byte flg = (Byte)(vif.Immediate & 0b100000000000000);
+
+                    UInt32 dimensions = (UInt32)(vn + 1);
+                    UInt32 size = 0;
+                    switch (vl)
+                    {
+                        case 0b00: size = 4; break;
+                        case 0b01: size = 2; break;
+                        case 0b10: size = 1; break;
+                        case 0b11: size = 2; break;
+                    }
                 } 
                 else
                 {
