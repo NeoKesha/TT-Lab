@@ -43,23 +43,34 @@ namespace Twinsanity.VIF
                 prim.Output = PRIM;
                 Data.Add(prim);
             }
-            if (FLG == GIFModeEnum.IMAGE)
+            switch (FLG)
             {
-                for (int i = 0; i < NLOOP; ++i)
-                {
-                    Interpret(reader, REGSEnum.HWREG, Data);
-                }
-            } else
-            {
-                for (int i = 0; i < NLOOP; ++i)
-                {
-                    for (int j = 0; j < NREG; ++j)
+                case GIFModeEnum.IMAGE:
+                    for (int i = 0; i < NLOOP; ++i)
                     {
-                        Interpret(reader, REGS[j], Data);
+                        Interpret(reader, REGSEnum.HWREG, Data);
                     }
-                }
+                    break;
+                case GIFModeEnum.REGLIST:
+                    for (int i = 0; i < NLOOP; ++i)
+                    {
+                        for (int j = 0; j < NREG; ++j)
+                        {
+                            Interpret(reader, REGS[j], Data);
+                        }
+                    }
+                    break;
+                case GIFModeEnum.PACKED:
+                    for (int i = 0; i < NLOOP; ++i)
+                    {
+                        for (int j = 0; j < NREG; ++j)
+                        {
+                            Interpret(reader, REGS[j], Data);
+                        }
+                    }
+                    break;
             }
-            
+
         }
         private void Interpret(BinaryReader reader, REGSEnum REG, List<RegOutput> list)
         {
@@ -85,7 +96,7 @@ namespace Twinsanity.VIF
                             UInt64 t = GetBits(low, 32, 32);
                             UInt64 q = GetBits(high, 32, 0);
                             Q = q;
-                            output.Output = SetBits(s,t,32);
+                            output.Output = SetBits(s, t, 32);
                             break;
                         case REGSEnum.UV:
                             UInt64 v = GetBits(low, 14, 0);
@@ -126,7 +137,7 @@ namespace Twinsanity.VIF
                                 }
                                 output.Output = SetBits(SetBits(x, y, 16), z, 32);
                             }
-                            
+
                             break;
                         case REGSEnum.FOG:
                             {
@@ -155,7 +166,9 @@ namespace Twinsanity.VIF
                     list.Add(output);
                     break;
                 case GIFModeEnum.REGLIST:
-
+                    output.Output = reader.ReadUInt64();
+                    output.REG = REG;
+                    list.Add(output);
                     break;
                 case GIFModeEnum.IMAGE:
                     RegOutput output1 = new RegOutput();
