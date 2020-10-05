@@ -85,31 +85,31 @@ namespace Twinsanity.VIF
                     switch (REG)
                     {
                         case REGSEnum.RGBAQ:
-                            UInt64 r = GetBits(low, 8, 0);
-                            UInt64 g = GetBits(low, 8, 23);
-                            UInt64 b = GetBits(low, 8, 46);
-                            UInt64 a = GetBits(low, 8, 69);
-                            output.Output = SetBits(SetBits(SetBits(r, g, 23), b, 46), a, 69);
+                            UInt64 r = BitUtils.GetBits(low, 8, 0);
+                            UInt64 g = BitUtils.GetBits(low, 8, 23);
+                            UInt64 b = BitUtils.GetBits(low, 8, 46);
+                            UInt64 a = BitUtils.GetBits(low, 8, 69);
+                            output.Output = BitUtils.SetBits(BitUtils.SetBits(BitUtils.SetBits(BitUtils.SetBits(r, g, 8), b, 16), a, 24), Q, 32);
                             break;
                         case REGSEnum.ST:
-                            UInt64 s = GetBits(low, 32, 0);
-                            UInt64 t = GetBits(low, 32, 32);
-                            UInt64 q = GetBits(high, 32, 0);
+                            UInt64 s = BitUtils.GetBits(low, 32, 0);
+                            UInt64 t = BitUtils.GetBits(low, 32, 32);
+                            UInt64 q = BitUtils.GetBits(high, 32, 0);
                             Q = q;
-                            output.Output = SetBits(s, t, 32);
+                            output.Output = BitUtils.SetBits(s, t, 32);
                             break;
                         case REGSEnum.UV:
-                            UInt64 v = GetBits(low, 14, 0);
-                            UInt64 u = GetBits(low, 14, 32);
-                            output.Output = SetBits(v, u, 16);
+                            UInt64 v = BitUtils.GetBits(low, 14, 0);
+                            UInt64 u = BitUtils.GetBits(low, 14, 32);
+                            output.Output = BitUtils.SetBits(v, u, 16);
                             break;
                         case REGSEnum.XYZF2:
                             {
-                                UInt64 x = GetBits(low, 16, 0);
-                                UInt64 y = GetBits(low, 16, 32);
-                                UInt64 z = GetBits(high, 24, 4);
-                                UInt64 f = GetBits(high, 8, 36);
-                                UInt64 adc = GetBits(high, 1, 47);
+                                UInt64 x = BitUtils.GetBits(low, 16, 0);
+                                UInt64 y = BitUtils.GetBits(low, 16, 32);
+                                UInt64 z = BitUtils.GetBits(high, 24, 4);
+                                UInt64 f = BitUtils.GetBits(high, 8, 36);
+                                UInt64 adc = BitUtils.GetBits(high, 1, 47);
                                 if (adc == 0)
                                 {
                                     output.REG = REGSEnum.XYZF2;
@@ -118,15 +118,15 @@ namespace Twinsanity.VIF
                                 {
                                     output.REG = REGSEnum.XYZF3;
                                 }
-                                output.Output = SetBits(SetBits(SetBits(x, y, 16), z, 32), f, 56);
+                                output.Output = BitUtils.SetBits(BitUtils.SetBits(BitUtils.SetBits(x, y, 16), z, 32), f, 56);
                             }
                             break;
                         case REGSEnum.XYZ2:
                             {
-                                UInt64 x = GetBits(low, 16, 0);
-                                UInt64 y = GetBits(low, 16, 32);
-                                UInt64 z = GetBits(high, 32, 0);
-                                UInt64 adc = GetBits(high, 1, 47);
+                                UInt64 x = BitUtils.GetBits(low, 16, 0);
+                                UInt64 y = BitUtils.GetBits(low, 16, 32);
+                                UInt64 z = BitUtils.GetBits(high, 32, 0);
+                                UInt64 adc = BitUtils.GetBits(high, 1, 47);
                                 if (adc == 0)
                                 {
                                     output.REG = REGSEnum.XYZ2;
@@ -135,19 +135,19 @@ namespace Twinsanity.VIF
                                 {
                                     output.REG = REGSEnum.XYZ3;
                                 }
-                                output.Output = SetBits(SetBits(x, y, 16), z, 32);
+                                output.Output = BitUtils.SetBits(BitUtils.SetBits(x, y, 16), z, 32);
                             }
 
                             break;
                         case REGSEnum.FOG:
                             {
-                                UInt64 f = GetBits(high, 8, 36);
-                                output.Output = SetBits(0, f, 56);
+                                UInt64 f = BitUtils.GetBits(high, 8, 36);
+                                output.Output = BitUtils.SetBits(0, f, 56);
                             }
                             break;
                         case REGSEnum.ApD:
-                            UInt64 Data = GetBits(low, 64, 0);
-                            UInt64 Addr = GetBits(high, 7, 0);
+                            UInt64 Data = BitUtils.GetBits(low, 64, 0);
+                            UInt64 Addr = BitUtils.GetBits(high, 7, 0);
                             output.Output = Data;
                             output.Address = Addr;
                             break;
@@ -185,19 +185,6 @@ namespace Twinsanity.VIF
                 case GIFModeEnum.DISABLE:
                     break;
             }
-        }
-        private UInt64 GetBits(UInt64 src, Byte len, Byte offset)
-        {
-            UInt64 mask = 0;
-            for (int i = 0; i < len; ++i)
-            {
-                mask = (mask << 1) | 1;
-            }
-            return ((src & ((UInt64)0b11111111 << offset)) >> offset);
-        }
-        private UInt64 SetBits(UInt64 src, UInt64 val, Byte offset)
-        {
-            return src | (val << offset);
         }
         public void Write(BinaryWriter writer)
         {
@@ -263,8 +250,130 @@ namespace Twinsanity.VIF
     }
     public class RegOutput
     {
-        public UInt64 Output { get; set; }
+        private UInt64 _Output;
+        public UInt64 Output { 
+            get
+            {
+                return _Output;
+            }
+            set
+            {
+                _Output = value;
+                switch (REG)
+                {
+                    case REGSEnum.RGBAQ:
+                        R = (Byte)BitUtils.GetBits(_Output, 8, 0);
+                        G = (Byte)BitUtils.GetBits(_Output, 8, 8);
+                        B = (Byte)BitUtils.GetBits(_Output, 8, 16);
+                        A = (Byte)BitUtils.GetBits(_Output, 8, 24);
+                        Q = BitConverter.ToSingle(BitConverter.GetBytes((UInt32)BitUtils.GetBits(_Output, 32, 32)), 0);
+                        break;
+                    case REGSEnum.ST:
+                        S = BitConverter.ToSingle(BitConverter.GetBytes((UInt32)BitUtils.GetBits(_Output, 32, 0)),0);
+                        T = BitConverter.ToSingle(BitConverter.GetBytes((UInt32)BitUtils.GetBits(_Output, 32, 32)), 0);
+                        break;
+                    case REGSEnum.UV:
+                        UInt64 v = BitUtils.GetBits(_Output, 14, 0);
+                        UInt64 v_int = BitUtils.GetBits(v, 10, 4);
+                        UInt64 v_fract = BitUtils.GetBits(v, 4, 0);
+                        UInt64 u = BitUtils.GetBits(_Output, 14, 16);
+                        UInt64 u_int = BitUtils.GetBits(u, 10, 4);
+                        UInt64 u_fract = BitUtils.GetBits(u, 4, 0);
+                        U = BitUtils.FixedToSingle(u_int, u_fract, 4);
+                        V = BitUtils.FixedToSingle(v_int, v_fract, 4);
+                        break;
+                    case REGSEnum.XYZF3:
+                    case REGSEnum.XYZF2:
+                        {
+                            Z = (UInt32)BitUtils.GetBits(_Output, 24, 32);
+                            UInt64 x = BitUtils.GetBits(_Output, 16, 0);
+                            UInt64 x_int = BitUtils.GetBits(x, 12, 4);
+                            UInt64 x_fract = BitUtils.GetBits(x, 4, 0);
+                            UInt64 y = BitUtils.GetBits(_Output, 16, 16);
+                            UInt64 y_int = BitUtils.GetBits(y, 12, 4);
+                            UInt64 y_fract = BitUtils.GetBits(y, 4, 0);
+                            X = BitUtils.FixedToSingle(x_int, x_fract, 4);
+                            Y = BitUtils.FixedToSingle(y_int, y_fract, 4);
+                            F = (Byte)BitUtils.GetBits(_Output, 8, 56);
+                        }
+                        break;
+                    case REGSEnum.XYZ3:
+                    case REGSEnum.XYZ2:
+                        {
+                            Z = (UInt32)(_Output >> 32);
+                            UInt64 x = BitUtils.GetBits(_Output, 16, 0);
+                            UInt64 x_int = BitUtils.GetBits(x, 12, 4);
+                            UInt64 x_fract = BitUtils.GetBits(x, 4, 0);
+                            UInt64 y = BitUtils.GetBits(_Output, 16, 16);
+                            UInt64 y_int = BitUtils.GetBits(y, 12, 4);
+                            UInt64 y_fract = BitUtils.GetBits(y, 4, 0);
+                            X = BitUtils.FixedToSingle(x_int, x_fract, 4);
+                            Y = BitUtils.FixedToSingle(y_int, y_fract, 4);
+                        }
+                        break;
+                    case REGSEnum.FOG:
+                        {
+                            F = (Byte)(_Output >> 56);
+                        }
+                        break;
+                }
+            }
+        }
         public REGSEnum REG { get; set; }
         public UInt64 Address { get; set; }
+        public UInt16 PRIM { get; set; }
+        public Byte A { get; set; }
+        public Byte R { get; set; }
+        public Byte G { get; set; }
+        public Byte B { get; set; }
+        public Single Q { get; set; }
+        public Single T { get; set; }
+        public Single S { get; set; }
+        public Single V { get; set; }
+        public Single U { get; set; }
+        public Single X { get; set; }
+        public Single Y { get; set; }
+        public UInt32 Z { get; set; }
+        public Byte F { get; set; }
     }
+    public static class BitUtils
+    {
+        public static Single[] Fracts;
+
+        static BitUtils()
+        {
+            Fracts = new Single[64];
+            for (int i = 0; i < 64; ++i)
+            {
+                Fracts[i] = 1.0f / ((Single)Math.Pow(2, i));
+            }
+        }
+        public static UInt64 GetBits(UInt64 src, Byte len, Byte offset)
+        {
+            UInt64 mask = 0;
+            for (int i = 0; i < len; ++i)
+            {
+                mask = (mask << 1) | 1;
+            }
+            return ((src & ((UInt64)0b11111111 << offset)) >> offset);
+        }
+        public static UInt64 SetBits(UInt64 src, UInt64 val, Byte offset)
+        {
+            return src | (val << offset);
+        }
+        public static Single FixedToSingle(UInt64 I, UInt64 F, Byte fractLength)
+        {
+            Single result = (Single)I;
+            for (int i = 1; i <= fractLength; ++i)
+            {
+                Single fract = Fracts[fractLength - i];
+                if ((F & 0b1) != 0)
+                {
+                    result += fract;
+                }
+                F >>= 1;
+            }
+            return result;
+        }
+    } 
 }
