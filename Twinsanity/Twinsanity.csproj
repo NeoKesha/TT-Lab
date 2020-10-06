@@ -63,6 +63,7 @@
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C0D.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C0F.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSubBase.cs" />
+    <Compile Include="TwinsanityInterchange\Common\DynamicSceneryModel.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\AmbientLight.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\DirectionalLight.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\Light.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Instance\PS2AnyAIPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Instance\PS2AnyCollisionSurface.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Instance\PS2AnyInstance.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyDynamicScenery.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyLink.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Instance\PS2AnyTemplate.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Instance\PS2AnyPosition.cs" />
@@ -161,6 +163,7 @@
     <Compile Include="TwinsanityInterchange\Interfaces\Items\Code\ITwinAnimation.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\Items\Code\ITwinOGI.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\Items\Code\ITwinSound.cs" />
+    <Compile Include="TwinsanityInterchange\Interfaces\Items\ITwinDynamicScenery.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\Items\ITwinLink.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\Items\ITwinScenery.cs" />
     <Compile Include="TwinsanityInterchange\Interfaces\Items\ITwinCollision.cs" />

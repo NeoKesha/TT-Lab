@@ -18,7 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
             idToClassDictionary.Add(Constants.SCENERY_UNK_1_ITEM, typeof(BaseTwinItem));
             idToClassDictionary.Add(Constants.SCENERY_UNK_2_ITEM, typeof(BaseTwinItem));
             idToClassDictionary.Add(Constants.SCENERY_UNK_3_ITEM, typeof(BaseTwinItem));
-            idToClassDictionary.Add(Constants.SCENERY_DYNAMIC_SECENERY_ITEM, typeof(BaseTwinItem));
+            idToClassDictionary.Add(Constants.SCENERY_DYNAMIC_SECENERY_ITEM, typeof(PS2AnyDynamicScenery));
             idToClassDictionary.Add(Constants.SCENERY_LINK_ITEM, typeof(PS2AnyLink));
         }
     }
