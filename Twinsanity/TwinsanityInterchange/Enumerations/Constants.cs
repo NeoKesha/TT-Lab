@@ -24,9 +24,9 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         //Senery root level constants
         public const Int32 SCENERY_GRAPHICS_SECTION = 6;
         public const Int32 SCENERY_SECENERY_ITEM = 0;
-        public const Int32 SCENERY_UNK_1_ITEM = 1;
-        public const Int32 SCENERY_UNK_2_ITEM = 2;
-        public const Int32 SCENERY_UNK_3_ITEM = 3;
+        public const Int32 SCENERY_UNK_1_ITEM = 1; // Unused by the game
+        public const Int32 SCENERY_UNK_2_ITEM = 2; // Unused by the game
+        public const Int32 SCENERY_UNK_3_ITEM = 3; // Unused by the game
         public const Int32 SCENERY_DYNAMIC_SECENERY_ITEM = 4;
         public const Int32 SCENERY_LINK_ITEM = 5;
         //Graphics section level constants
@@ -45,7 +45,7 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public const Int32 CODE_ANIMATIONS_SECTION = 2;
         public const Int32 CODE_OGIS_SECTION = 3;
         public const Int32 CODE_CODE_MODELS_SECTION = 4;
-        public const Int32 CODE_UNK_ITEM = 5;
+        public const Int32 CODE_UNK_ITEM = 5; // Unused by the game
         public const Int32 CODE_SOUND_EFFECTS_SECTION = 6;
         public const Int32 CODE_LANG_ENG_SECTION = 7;
         public const Int32 CODE_LANG_FRE_SECTION = 8;
