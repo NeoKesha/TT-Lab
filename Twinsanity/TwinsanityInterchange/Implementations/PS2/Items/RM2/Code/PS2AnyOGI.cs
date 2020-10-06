@@ -8,9 +8,9 @@ using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
-using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
-namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Code
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
     public class PS2AnyOGI : ITwinOGI
     {

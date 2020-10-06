@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
-using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 {

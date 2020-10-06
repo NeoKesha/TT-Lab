@@ -5,6 +5,7 @@ using System.Linq;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
