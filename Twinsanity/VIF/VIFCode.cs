@@ -62,7 +62,7 @@ namespace Twinsanity.VIF
         MSCALF      =           0b0010101,
         STMASK      =           0b0100000,
         STROW       =           0b0110000,
-        STCOL       =           0b0110000,
+        STCOL       =           0b0110001,
         MPG         =           0b1001010,
         DIRECT      =           0b1010000,
         DIRECTHL    =           0b1010001,
