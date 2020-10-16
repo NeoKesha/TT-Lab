@@ -91,6 +91,7 @@
     <Compile Include="TwinsanityInterchange\Common\SubModel.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector2.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector3.cs" />
+    <Compile Include="TwinsanityInterchange\Common\Color.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector4.cs" />
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />

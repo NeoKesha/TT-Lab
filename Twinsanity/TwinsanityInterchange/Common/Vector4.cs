@@ -35,5 +35,25 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(Z);
             writer.Write(W);
         }
+        public void SetBinaryX(UInt32 src)
+        {
+            X = BitConverter.ToSingle(BitConverter.GetBytes(src), 0);
+        }
+        public void SetBinaryY(UInt32 src)
+        {
+            Y = BitConverter.ToSingle(BitConverter.GetBytes(src), 0);
+        }
+        public void SetBinaryZ(UInt32 src)
+        {
+            Z = BitConverter.ToSingle(BitConverter.GetBytes(src), 0);
+        }
+        public void SetBinaryW(UInt32 src)
+        {
+            W = BitConverter.ToSingle(BitConverter.GetBytes(src), 0);
+        }
+        public override String ToString()
+        {
+            return $"({X:0.00000}; {Y:0.00000}; {Z:0.00000}; {W:0.00000})";
+        }
     }
 }
