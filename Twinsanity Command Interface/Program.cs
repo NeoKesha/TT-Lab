@@ -14,10 +14,12 @@ namespace Twinsanity_Command_Interface
     {
         static void Main(string[] args)
         {
-            using (System.IO.FileStream stream = new System.IO.FileStream(@"D:\VIF", System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            using (System.IO.FileStream stream = new System.IO.FileStream(@"D:\meshVif", System.IO.FileMode.Open, System.IO.FileAccess.Read))
             using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
             {
                 VIFInterpreter interpreter = new VIFInterpreter();
+                reader.ReadUInt64();
+                UInt32 len = reader.ReadUInt32();
                 interpreter.Execute(reader);
             }
             return;
