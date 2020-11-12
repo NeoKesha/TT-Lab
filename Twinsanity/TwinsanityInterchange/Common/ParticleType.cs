@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
@@ -13,7 +8,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
     public class ParticleType : ITwinSerializable
     {
         public UInt32 Version;
-        public char[] Name;
+        public Char[] Name;
         public Byte UnkByte1;
         public UInt16 UnkUShort1;
         public UInt16 UnkUShort2;
@@ -79,19 +74,17 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Byte UnkByte9;
         private Int32 padAmount;
         public Single UnkFloat37;
-        public Int16[] UnkShorts; // Short index 1
+        public Int16[] UnkShorts;
         public Single UnkFloat38;
-        // Short index 2
         public Single UnkFloat39;
         public Single UnkFloat40;
         public Int32 UnkInt;
-        // UnkFloat37 again
         public Vector4 UnkVec3;
 
         public ParticleType(UInt32 ver)
         {
             Version = ver;
-            Name = new char[16];
+            Name = new Char[16];
             UnkVec1 = new Vector3();
             UnkVec2 = new Vector3();
             UnkVecs = new Vector4[8];
@@ -274,10 +267,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             if (Version > 0x16 && Version < 0x1D && Version != 0x20)
             {
                 padAmount = reader.ReadInt32();
-                for (var i = 0; i < padAmount; ++i)
-                {
-                    reader.ReadBytes(24);
-                }
+                reader.ReadBytes(padAmount * 24);
             }
             else
             {
@@ -347,7 +337,203 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Write(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(Name, 0, 16);
+            if (Version == 0x20)
+            {
+                writer.Write((Byte)0);
+                writer.Write(UnkByte1);
+            }
+            writer.Write(UnkUShort1);
+            writer.Write(UnkUShort2);
+            writer.Write(UnkUShort3);
+            writer.Write(UnkUShort4);
+            writer.Write(UnkUShort5);
+            writer.Write(UnkUShort6);
+            writer.Write(UnkUShort7);
+            writer.Write(UnkByte2);
+            writer.Write(UnkByte3);
+            writer.Write(UnkByte4);
+            writer.Write(UnkByte5);
+            writer.Write(UnkFloat1);
+            if (Version >= 0x6)
+            {
+                writer.Write(UnkFloat2);
+                writer.Write(UnkFloat3);
+            }
+            if (Version >= 0xA)
+            {
+                writer.Write(UnkFloat4);
+            }
+            if (!(Version <= 0x16 || Version == 0x20))
+            {
+                writer.Write(UnkFloat5);
+            }
+            if (!(Version < 0x18 || Version == 0x20))
+            {
+                writer.Write(UnkFloat6);
+            }
+            if (Version < 0x7)
+            {
+                writer.Write(0);
+                writer.Write(0);
+            }
+            writer.Write(UnkFloat7);
+            UnkVec1.Write(writer);
+            if (Version < 0x12)
+            {
+                writer.Write(0);
+                writer.Write(0);
+                writer.Write(0);
+            }
+            UnkVec2.Write(writer);
+            if (Version < 0x12)
+            {
+                writer.Write(0);
+                writer.Write(0);
+                writer.Write(0);
+            }
+            writer.Write(UnkFloat8);
+            writer.Write(UnkFloat9);
+            writer.Write(UnkFloat10);
+            writer.Write(UnkFloat11);
+            writer.Write(UnkFloat12);
+            writer.Write(UnkFloat13);
+            writer.Write(UnkFloat14);
+            writer.Write(UnkFloat15);
+            writer.Write(UnkFloat16);
+            writer.Write(UnkFloat17);
+            writer.Write(UnkFloat18);
+            writer.Write(UnkFloat19);
+            writer.Write(UnkFloat20);
+            writer.Write(UnkFloat21);
+            writer.Write(UnkUShort8);
+            writer.Write(UnkByte6);
+            writer.Write(UnkByte7);
+            writer.Write(UnkFloat22);
+            writer.Write(UnkFloat23);
+            writer.Write(UnkFloat24);
+            writer.Write(UnkFloat25);
+            writer.Write(UnkFloat26);
+            for (var i = 0; i < 8; ++i)
+            {
+                UnkVecs[i].Write(writer);
+            }
+            for (var i = 0; i < 8; ++i)
+            {
+                writer.Write(UnkLongs1[i]);
+            }
+            if (Version > 0x15)
+            {
+                writer.Write(UnkFloat27);
+                writer.Write(UnkFloat28);
+            }
+            writer.Write(UnkFloat29);
+            writer.Write(UnkFloat30);
+            for (var i = 0; i < 8; ++i)
+            {
+                writer.Write(UnkLongs2[i]);
+            }
+            for (var i = 0; i < 8; ++i)
+            {
+                writer.Write(UnkLongs3[i]);
+            }
+            writer.Write(UnkFloat31);
+            writer.Write(UnkFloat32);
+            for (var i = 0; i < 8; ++i)
+            {
+                writer.Write(UnkLongs4[i]);
+            }
+            for (var i = 0; i < 8; ++i)
+            {
+                writer.Write(UnkLongs5[i]);
+            }
+            for (var i = 0; i < 8; ++i)
+            {
+                writer.Write(UnkLongs6[i]);
+            }
+            writer.Write(UnkFloat33);
+            writer.Write(UnkFloat34);
+            writer.Write(UnkFloat35);
+            writer.Write(UnkFloat36);
+            if (Version == 0x20)
+            {
+                writer.Write(0);
+            }
+            if (Version >= 0x3)
+            {
+                for (var i = 0; i < 8; ++i)
+                {
+                    writer.Write(UnkLongs7[i]);
+                }
+                writer.Write(UnkByte8);
+            }
+            if (Version >= 0x11)
+            {
+                writer.Write(UnkByte9);
+            }
+            if (Version == 0x20)
+            {
+                writer.Write(0);
+                writer.Write((Byte)0);
+                writer.Write((Byte)0);
+            }
+            if (Version > 0x16 && Version < 0x1D && Version != 0x20)
+            {
+                writer.Write(padAmount);
+                for (var i = 0; i < padAmount * 6; ++i)
+                {
+                    writer.Write(0);
+                }
+            }
+            else
+            {
+                if (Version == 0x20)
+                {
+                    writer.Write(UnkFloat37);
+                    for (var i = 0; i < 14; ++i)
+                    {
+                        writer.Write(0);
+                    }
+                }
+            }
+            if (Version >= 0x10)
+            {
+                if (Version == 0x20)
+                {
+                    writer.Write(UnkShorts[1]);
+                    writer.Write((Byte)0);
+                    writer.Write((Byte)0);
+                }
+                else
+                {
+                    writer.Write((Int32)UnkShorts[1]);
+                }
+                writer.Write(UnkFloat38);
+            }
+            if (Version >= 0x19 && Version != 0x20)
+            {
+                writer.Write((Int32)UnkShorts[2]);
+                writer.Write(UnkFloat39);
+            }
+            if (Version >= 0x1A && Version != 0x20)
+            {
+                writer.Write(UnkFloat40);
+            }
+            if (Version != 0x20)
+            {
+                if (Version > 0x1A)
+                {
+                    writer.Write(UnkInt);
+                }
+                if (Version > 0x1B)
+                {
+                    writer.Write(UnkFloat37);
+                }
+            }
+            if (Version >= 0x1E)
+            {
+                UnkVec3.Write(writer);
+            }
         }
     }
 }
