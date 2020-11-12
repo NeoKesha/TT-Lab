@@ -11,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class ParticleInstance : ITwinSerializable
     {
-        public Int32 Version;
+        public UInt32 Version;
         public Vector3 Position;
         public Int16 UnkShort1;
         public Int16 UnkShort2;
@@ -29,7 +29,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Single UnkFloat3;
         public Int16 UnkShort8;
 
-        public ParticleInstance(Int32 ver)
+        private Dictionary<UInt32, Int32> versionSizeMap = new Dictionary<UInt32, Int32>();
+
+        public ParticleInstance(UInt32 ver)
         {
             Version = ver;
             Position = new Vector3();
@@ -38,11 +40,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public Int32 GetLength()
         {
-            throw new NotImplementedException();
+            return versionSizeMap[Version];
         }
 
         public void Read(BinaryReader reader, Int32 length)
         {
+            var basePos = reader.BaseStream.Position;
             Position.Read(reader, Constants.SIZE_VECTOR3);
             if (Version >= 0x7)
             {
@@ -88,6 +91,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
             {
                 UnkShort8 = reader.ReadInt16();
             }
+            var sizePos = reader.BaseStream.Position;
+            versionSizeMap.Add(Version, (Int32)(sizePos - basePos));
         }
 
         public void Write(BinaryWriter writer)

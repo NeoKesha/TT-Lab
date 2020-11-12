@@ -13,12 +13,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
     {
         UInt32 id;
         public UInt32 Version;
-        public Int32 ParticleTypesAmount;
         public List<ParticleType> ParticleTypes;
+        public List<ParticleInstance> ParticleInstances;
 
         public PS2AnyParticleData()
         {
             ParticleTypes = new List<ParticleType>();
+            ParticleInstances = new List<ParticleInstance>();
         }
 
         public UInt32 GetID()
@@ -26,14 +27,32 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             return id;
         }
 
-        public Int32 GetLength()
+        public virtual Int32 GetLength()
         {
-            throw new NotImplementedException();
+            return 12 + ParticleTypes.Sum(t => t.GetLength()) + ParticleInstances.Sum(i => i.GetLength());
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public virtual void Read(BinaryReader reader, Int32 length)
         {
-            throw new NotImplementedException();
+            Version = reader.ReadUInt32();
+            if ((Version < 0x5 || Version > 0x1E) && Version != 0x20)
+            {
+                throw new Exception($"Invalid/Deprecated particle data section version: {Version}");
+            }
+            var typesAmt = reader.ReadInt32();
+            for (var i = 0; i < typesAmt; ++i)
+            {
+                var type = new ParticleType(Version);
+                type.Read(reader, length);
+                ParticleTypes.Add(type);
+            }
+            var instAmt = reader.ReadInt32();
+            for (var i = 0; i < instAmt; ++i)
+            {
+                var inst = new ParticleInstance(Version);
+                inst.Read(reader, length);
+                ParticleInstances.Add(inst);
+            }
         }
 
         public void SetID(UInt32 id)
@@ -41,9 +60,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             this.id = id;
         }
 
-        public void Write(BinaryWriter writer)
+        public virtual void Write(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(Version);
+            writer.Write(ParticleTypes.Count);
+            foreach (var t in ParticleTypes)
+            {
+                t.Write(writer);
+            }
+            writer.Write(ParticleInstances.Count);
+            foreach (var i in ParticleInstances)
+            {
+                i.Write(writer);
+            }
         }
     }
 }

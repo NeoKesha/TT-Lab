@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -81,6 +82,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Int32 UnkInt;
         public Vector4 UnkVec3;
 
+        private Dictionary<UInt32, Int32> versionSizeMap = new Dictionary<UInt32, Int32>();
+
         public ParticleType(UInt32 ver)
         {
             Version = ver;
@@ -101,11 +104,13 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public Int32 GetLength()
         {
-            throw new NotImplementedException();
+            return versionSizeMap[Version];
         }
 
         public void Read(BinaryReader reader, Int32 length)
         {
+            var basePos = reader.BaseStream.Position;
+
             Name = reader.ReadChars(16);
             if (Version == 0x20)
             {
@@ -199,6 +204,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkFloat26 = reader.ReadSingle();
             for (var i = 0; i < 8; ++i)
             {
+                UnkVecs[i] = new Vector4();
                 UnkVecs[i].Read(reader, Constants.SIZE_VECTOR4);
             }
             for (var i = 0; i < 8; ++i)
@@ -333,6 +339,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
                     UnkVec3.Z = ((UnkFloat7 + UnkVec1.Z) * UnkFloat21 + UnkVec2.Z + f1) * 0.75f;
                 }
             }
+            var sizePos = reader.BaseStream.Position;
+            versionSizeMap.Add(Version, (Int32)(sizePos - basePos));
         }
 
         public void Write(BinaryWriter writer)
