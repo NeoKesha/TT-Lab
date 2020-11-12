@@ -112,6 +112,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyAIPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyCollisionSurface.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyInstance.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2AnyParticleData.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyDynamicScenery.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyLink.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyTemplate.cs" />
