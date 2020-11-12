@@ -69,6 +69,8 @@
     <Compile Include="TwinsanityInterchange\Common\Lights\Light.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\NegativeLight.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\PointLight.cs" />
+    <Compile Include="TwinsanityInterchange\Common\ParticleInstance.cs" />
+    <Compile Include="TwinsanityInterchange\Common\ParticleType.cs" />
     <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryBaseType.cs" />
     <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryRoot.cs" />
     <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryType_0x1600.cs" />
@@ -88,6 +90,7 @@
     <Compile Include="TwinsanityInterchange\Common\TwinIntegerRotation.cs" />
     <Compile Include="TwinsanityInterchange\Common\SubModel.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector2.cs" />
+    <Compile Include="TwinsanityInterchange\Common\Vector3.cs" />
     <Compile Include="TwinsanityInterchange\Common\Vector4.cs" />
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
@@ -112,6 +115,8 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyAIPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyCollisionSurface.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyInstance.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2AnyParticleData.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2DefaultParticleData.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyDynamicScenery.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyLink.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyTemplate.cs" />
@@ -121,6 +126,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyScenery.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2Default.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyCodeModelsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyOGIsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnySoundsSection.cs" />

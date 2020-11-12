@@ -66,6 +66,7 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         //Sizes
         public const Int32 SIZE_RECORD = 12;
         public const Int32 SIZE_VECTOR2 = 8;
+        public const Int32 SIZE_VECTOR3 = 12;
         public const Int32 SIZE_VECTOR4 = 16;
         public const Int32 SIZE_MATRIX4 = 64;
         public const Int32 SIZE_UINT16 = 2;

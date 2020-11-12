@@ -21,7 +21,11 @@ namespace Twinsanity_Command_Interface
             foreach (String levelPath in levelsPaths)
             {
                 ITwinSection twinLevel = null;
-                if (levelPath.EndsWith("rm2"))
+                if (levelPath.EndsWith("Default.rm2"))
+                {
+                    twinLevel = new PS2Default();
+                }
+                else if (levelPath.EndsWith("rm2"))
                 {
                     twinLevel = new PS2AnyTwinsanityRM2();
                 }

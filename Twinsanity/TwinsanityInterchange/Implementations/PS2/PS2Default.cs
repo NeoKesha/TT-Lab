@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
@@ -10,9 +11,9 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
 {
-    public class PS2AnyTwinsanityRM2 : BaseTwinSection
+    public class PS2Default : BaseTwinSection
     {
-        public PS2AnyTwinsanityRM2() : base()
+        public PS2Default() : base()
         {
             idToClassDictionary.Add(Constants.LEVEL_GRAPHICS_SECTION, typeof(PS2AnyGraphicsSection));
             idToClassDictionary.Add(Constants.LEVEL_CODE_SECTION, typeof(PS2AnyCodeSection));
@@ -24,7 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_6_SECTION, typeof(PS2AnyLayoutSection));
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_7_SECTION, typeof(PS2AnyLayoutSection));
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_8_SECTION, typeof(PS2AnyLayoutSection));
-            idToClassDictionary.Add(Constants.LEVEL_PARTICLES_ITEM, typeof(PS2AnyParticleData));
+            idToClassDictionary.Add(Constants.LEVEL_PARTICLES_ITEM, typeof(PS2DefaultParticleData));
             idToClassDictionary.Add(Constants.LEVEL_COLLISION_ITEM, typeof(BaseTwinItem));
         }
     }
