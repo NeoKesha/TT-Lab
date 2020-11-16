@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Twinsanity.VIF
+namespace Twinsanity.PS2Hardware
 {
     public class GIFTag
     {
@@ -183,18 +183,19 @@ namespace Twinsanity.VIF
                     list.Add(output2);
                     break;
                 case GIFModeEnum.DISABLE:
+                    // Nothing
                     break;
             }
         }
         public void Write(BinaryWriter writer)
         {
             UInt64 low = 0;
-            low |= (UInt64)NLOOP & (0b111111111111111 << 0);
-            low |= (UInt64)EOP & (0b1 << 15);
-            low |= (UInt64)PRE & (0b1 << 46);
-            low |= (UInt64)PRIM & (0b1 << 47);
-            low |= (UInt64)FLG & (0b1 << 58);
-            low |= (UInt64)NREG & (0b1 << 60);
+            low |= (UInt64)NLOOP & 0b111111111111111 << 0;
+            low |= (UInt64)EOP & 0b1 << 15;
+            low |= (UInt64)PRE & 0b1 << 46;
+            low |= (UInt64)PRIM & 0b1 << 47;
+            low |= (UInt64)FLG & 0b1 << 58;
+            low |= (UInt64)NREG & 0b1 << 60;
             writer.Write(low);
             UInt64 high = 0;
             for (int i = 0; i < 16; ++i)
@@ -203,7 +204,23 @@ namespace Twinsanity.VIF
                 high <<= 4;
             }
             writer.Write(high);
-            //TODO: DATA WRITE
+            switch (FLG)
+            {
+                case GIFModeEnum.PACKED:
+                    break;
+                case GIFModeEnum.REGLIST:
+                    break;
+                case GIFModeEnum.IMAGE:
+                    for (var i = 0; i < Data.Count; i += 2)
+                    {
+                        writer.Write(Data[i + 1].Output);
+                        writer.Write(Data[i].Output);
+                    }
+                    break;
+                case GIFModeEnum.DISABLE:
+                    // Nothing
+                    break;
+            }
         }
         public Int32 GetLength()
         {

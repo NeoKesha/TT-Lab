@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Interfaces;
-using Twinsanity.VIF;
+using Twinsanity.PS2Hardware;
 
 namespace Twinsanity_Command_Interface
 {
@@ -14,13 +14,10 @@ namespace Twinsanity_Command_Interface
     {
         static void Main(string[] args)
         {
-            using (System.IO.FileStream stream = new System.IO.FileStream(@"D:\meshVif", System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            using (System.IO.FileStream stream = new System.IO.FileStream(@"D:\Twinsanity Discs\ScriptModding_Tests\CrashSkinVIF", System.IO.FileMode.Open, System.IO.FileAccess.Read))
             using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
             {
-                VIFInterpreter interpreter = new VIFInterpreter();
-                reader.ReadUInt64();
-                UInt32 len = reader.ReadUInt32();
-                interpreter.Execute(reader);
+                var vifParsed = VIFInterpreter.InterpretCode(reader);
             }
             return;
             String testPath = @"D:\Twinsanity Discs\ScriptModding_Tests\ModdedFilesTest\";

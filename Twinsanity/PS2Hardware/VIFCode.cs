@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Twinsanity.VIF
+namespace Twinsanity.PS2Hardware
 {
     public class VIFCode
     {
