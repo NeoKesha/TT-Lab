@@ -29,21 +29,25 @@ namespace Twinsanity.PS2Hardware
         private List<GIFTag> GifBuffer = new List<GIFTag>();
         private List<UInt32> tmpStack = new List<UInt32>();
 
+        // Wrapper function for generating Interpreter instances
         public static VIFInterpreter InterpretCode(BinaryReader reader)
         {
             DMATag tag = new DMATag();
             tag.Read(reader);
-            var mem = new MemoryStream();
-            var writer = new BinaryWriter(mem);
-            writer.Write(tag.Extra);
-            writer.Write(reader.ReadBytes(tag.QWC * 0x10));
-            mem.Position = 0;
-            var vifReader = new BinaryReader(mem);
-            var vifCode = new VIFInterpreter();
-            vifCode.Execute(vifReader);
-            writer.Close();
-            vifReader.Close();
-            return vifCode;
+            using (var mem = new MemoryStream())
+            using (var writer = new BinaryWriter(mem))
+            {
+                // Transfer tag's extra data and its QWC data to VIF
+                writer.Write(tag.Extra);
+                writer.Write(reader.ReadBytes(tag.QWC * 0x10));
+                mem.Position = 0;
+                using (var vifReader = new BinaryReader(mem))
+                {
+                    var vifCode = new VIFInterpreter();
+                    vifCode.Execute(vifReader);
+                    return vifCode;
+                }
+            }
         }
 
         public List<List<Vector4>> GetMem()
@@ -196,11 +200,11 @@ namespace Twinsanity.PS2Hardware
             }
         }
 
-
         private void SEXT(ref UInt32 n)
         {
             n = ((n & 0x8000) != 0) ? n | 0xFFFF0000 : n;
         }
+        
         private void Unpack(List<UInt32> src, List<Vector4> dst, PackFormat fmt, Byte amount, Byte unsigned)
         {
             var srcIdx = 0;

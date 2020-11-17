@@ -14,7 +14,7 @@ namespace Twinsanity_Command_Interface
     {
         static void Main(string[] args)
         {
-            using (System.IO.FileStream stream = new System.IO.FileStream(@"D:\Twinsanity Discs\ScriptModding_Tests\CrashSkinVIF", System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            using (System.IO.FileStream stream = new System.IO.FileStream(@"D:\Twinsanity Discs\ScriptModding_Tests\CrashTextureVIF", System.IO.FileMode.Open, System.IO.FileAccess.Read))
             using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
             {
                 var vifParsed = VIFInterpreter.InterpretCode(reader);

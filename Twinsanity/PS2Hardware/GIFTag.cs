@@ -146,8 +146,8 @@ namespace Twinsanity.PS2Hardware
                             }
                             break;
                         case REGSEnum.ApD:
-                            UInt64 Data = BitUtils.GetBits(low, 64, 0);
-                            UInt64 Addr = BitUtils.GetBits(high, 7, 0);
+                            UInt64 Data = high;
+                            UInt64 Addr = BitUtils.GetBits(low, 7, 0);
                             output.Output = Data;
                             output.Address = Addr;
                             break;
@@ -207,8 +207,23 @@ namespace Twinsanity.PS2Hardware
             switch (FLG)
             {
                 case GIFModeEnum.PACKED:
+                    // Twinsanity textures only use A+D with PACKED, so we can safely ignore all the other writes
+                    for (var i = 0; i < Data.Count; ++i)
+                    {
+                        switch (Data[i].REG)
+                        {
+                            case REGSEnum.ApD:
+                                writer.Write(Data[i].Output);
+                                writer.Write(Data[i].Address);
+                                break;
+                        }
+                    }
                     break;
                 case GIFModeEnum.REGLIST:
+                    for (var i = 0; i < Data.Count; ++i)
+                    {
+                        writer.Write(Data[i].Output);
+                    }
                     break;
                 case GIFModeEnum.IMAGE:
                     for (var i = 0; i < Data.Count; i += 2)
@@ -227,11 +242,11 @@ namespace Twinsanity.PS2Hardware
             switch (FLG)
             {
                 case GIFModeEnum.PACKED:
-                    return NREG * NLOOP;
+                    return NREG * NLOOP; // QWORD
                 case GIFModeEnum.REGLIST:
-                    return NREG * NLOOP;
+                    return NREG * NLOOP; // DWORD
                 case GIFModeEnum.IMAGE:
-                    return NLOOP;
+                    return NLOOP; // QWORD
                 case GIFModeEnum.DISABLE:
                     return 0;
             }
