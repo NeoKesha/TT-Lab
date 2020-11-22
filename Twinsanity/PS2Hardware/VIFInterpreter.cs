@@ -483,12 +483,268 @@ namespace Twinsanity.PS2Hardware
                         }
                         Color c1 = new Color
                         {
-                            R = (Byte)(rgba1 & 0x1111 << 3),
-                            G = (Byte)((rgba1 & (0x1111 << 5)) >> 5 << 3),
-                            B = (Byte)((rgba1 & (0x1111 << 10)) >> 10 << 3),
-                            A = (Byte)((rgba1 & (0x1 << 15)) >> 15 << 7)
+                            R = (Byte)(rgba1 & 0b11111 << 3),
+                            G = (Byte)((rgba1 & (0b11111 << 5)) >> 5 << 3),
+                            B = (Byte)((rgba1 & (0b11111 << 10)) >> 10 << 3),
+                            A = (Byte)((rgba1 & (0b1 << 15)) >> 15 << 7)
                         };
                         dst.Add(c1.GetVector());
+                    }
+                    break;
+            }
+        }
+
+        private void Pack(List<Vector4> src, List<UInt32> dst, PackFormat fmt)
+        {
+            UInt32 resUInt = 0;
+            switch (fmt)
+            {
+                case PackFormat.S_32:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        dst.Add(src[i].GetBinaryX());
+                    }
+                    break;
+                case PackFormat.S_16:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var vecPart = (src[i].GetBinaryX() & 0xFFFF);
+                        if (i % 2 != 0)
+                        {
+                            resUInt |= (vecPart << 16);
+                            dst.Add(resUInt);
+                            resUInt = 0; // Reset bits
+                        }
+                        else
+                        {
+                            resUInt |= vecPart;
+                            // Add last vector with padding 0 bits
+                            if (i == src.Count - 1)
+                            {
+                                dst.Add(resUInt);
+                            }
+                        }
+                    }
+                    break;
+                case PackFormat.S_8:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var vecPart = (src[i].GetBinaryX() & 0xFF);
+                        switch(i % 4)
+                        {
+                            case 0:
+                                resUInt |= vecPart;
+                                break;
+                            case 1:
+                                resUInt |= (vecPart << 8);
+                                break;
+                            case 2:
+                                resUInt |= (vecPart << 16);
+                                break;
+                            case 3:
+                                resUInt |= (vecPart << 24);
+                                dst.Add(resUInt);
+                                resUInt = 0; // Reset bits
+                                break;
+                        }
+                        // Add last vector with padding 0 bits
+                        if (i == src.Count - 1 && i % 4 != 3)
+                        {
+                            dst.Add(resUInt);
+                        }
+                    }
+                    break;
+                case PackFormat.V2_32:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        dst.Add(src[i].GetBinaryX());
+                        dst.Add(src[i].GetBinaryY());
+                    }
+                    break;
+                case PackFormat.V2_16:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        resUInt |= src[i].GetBinaryX() & 0xFFFF;
+                        resUInt |= (src[i].GetBinaryY() & 0xFFFF) << 16;
+                        dst.Add(resUInt);
+                        resUInt = 0; // Reset bits
+                    }
+                    break;
+                case PackFormat.V2_8:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var vecX = src[i].GetBinaryX() & 0xFF;
+                        var vecY = src[i].GetBinaryY() & 0xFF;
+                        if (i % 2 != 0)
+                        {
+                            resUInt |= (vecX << 16);
+                            resUInt |= (vecY << 24);
+                            dst.Add(resUInt);
+                            resUInt = 0; // Reset bits
+                        }
+                        else
+                        {
+                            resUInt |= vecX;
+                            resUInt |= (vecY << 8);
+                            // Add last vector with padding 0 bits
+                            if (i == src.Count - 1)
+                            {
+                                dst.Add(resUInt);
+                            }
+                        }
+                    }
+                    break;
+                case PackFormat.V3_32:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        dst.Add(src[i].GetBinaryX());
+                        dst.Add(src[i].GetBinaryY());
+                        dst.Add(src[i].GetBinaryZ());
+                    }
+                    break;
+                case PackFormat.V3_16:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var vecX = src[i].GetBinaryX() & 0xFFFF;
+                        var vecY = src[i].GetBinaryY() & 0xFFFF;
+                        var vecZ = src[i].GetBinaryZ() & 0xFFFF;
+                        if (i % 2 != 0)
+                        {
+                            resUInt |= (vecX << 16);
+                            dst.Add(resUInt);
+                            resUInt = 0; // Reset bits
+                            resUInt |= vecY;
+                            resUInt |= (vecZ << 16);
+                            dst.Add(resUInt);
+                            resUInt = 0; // Reset bits
+                        }
+                        else
+                        {
+                            resUInt |= vecX;
+                            resUInt |= (vecY << 16);
+                            dst.Add(resUInt);
+                            resUInt = 0; // Reset bits
+                            resUInt |= vecZ;
+                            // Add last vector with padding 0 bits
+                            if (i == src.Count - 1)
+                            {
+                                dst.Add(resUInt);
+                            }
+                        }
+                    }
+                    break;
+                case PackFormat.V3_8:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var vecX = src[i].GetBinaryX() & 0xFF;
+                        var vecY = src[i].GetBinaryY() & 0xFF;
+                        var vecZ = src[i].GetBinaryZ() & 0xFF;
+                        switch (i % 4)
+                        {
+                            case 0:
+                                resUInt |= vecX;
+                                resUInt |= (vecY << 8);
+                                resUInt |= (vecZ << 16);
+                                break;
+                            case 1:
+                                resUInt |= (vecX << 24);
+                                dst.Add(resUInt);
+                                resUInt = 0; // Reset bits
+                                resUInt |= vecY;
+                                resUInt |= (vecZ << 8);
+                                break;
+                            case 2:
+                                resUInt |= (vecX << 16);
+                                resUInt |= (vecY << 24);
+                                dst.Add(resUInt);
+                                resUInt = 0; // Reset bits
+                                resUInt |= vecZ;
+                                break;
+                            case 3:
+                                resUInt |= (vecX << 8);
+                                resUInt |= (vecY << 16);
+                                resUInt |= (vecZ << 24);
+                                dst.Add(resUInt);
+                                resUInt = 0; // Reset bits
+                                break;
+                        }
+                        // Add last vector with padding 0 bits
+                        if (i == src.Count - 1 && i % 4 != 3)
+                        {
+                            dst.Add(resUInt);
+                        }
+                    }
+                    break;
+                case PackFormat.V4_32:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        dst.Add(src[i].GetBinaryX());
+                        dst.Add(src[i].GetBinaryY());
+                        dst.Add(src[i].GetBinaryZ());
+                        dst.Add(src[i].GetBinaryW());
+                    }
+                    break;
+                case PackFormat.V4_16:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var vecX = src[i].GetBinaryX() & 0xFFFF;
+                        var vecY = src[i].GetBinaryY() & 0xFFFF;
+                        var vecZ = src[i].GetBinaryZ() & 0xFFFF;
+                        var vecW = src[i].GetBinaryW() & 0xFFFF;
+                        resUInt |= vecX;
+                        resUInt |= (vecY << 16);
+                        dst.Add(resUInt);
+                        resUInt = 0; // Reset bits
+                        resUInt |= vecZ;
+                        resUInt |= (vecW << 16);
+                        dst.Add(resUInt);
+                        resUInt = 0; // Reset bits
+                    }
+                    break;
+                case PackFormat.V4_8:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var vecX = src[i].GetBinaryX() & 0xFF;
+                        var vecY = src[i].GetBinaryY() & 0xFF;
+                        var vecZ = src[i].GetBinaryZ() & 0xFF;
+                        var vecW = src[i].GetBinaryW() & 0xFF;
+                        resUInt |= vecX;
+                        resUInt |= (vecY << 8);
+                        resUInt |= (vecZ << 16);
+                        resUInt |= (vecW << 24);
+                        dst.Add(resUInt);
+                        resUInt = 0; // Reset bits
+                    }
+                    break;
+                case PackFormat.V4_5:
+                    for (var i = 0; i < src.Count; ++i)
+                    {
+                        var c = src[i].GetColor();
+                        UInt32 r = (UInt32)c.R >> 3 & 0b11111;
+                        UInt32 g = (UInt32)c.G >> 3 & 0b11111;
+                        UInt32 b = (UInt32)c.B >> 3 & 0b11111;
+                        UInt32 a = (UInt32)c.A >> 7 & 0b1;
+                        if (i % 2 != 0)
+                        {
+                            resUInt |= (r << 16);
+                            resUInt |= (g << 21);
+                            resUInt |= (b << 26);
+                            resUInt |= (a << 31);
+                            dst.Add(resUInt);
+                            resUInt = 0; // Reset bits
+                        }
+                        else
+                        {
+                            resUInt |= r;
+                            resUInt |= (g << 5);
+                            resUInt |= (b << 10);
+                            resUInt |= (a << 15);
+                            // Add last vector with padding 0 bits
+                            if (i == src.Count - 1)
+                            {
+                                dst.Add(resUInt);
+                            }
+                        }
                     }
                     break;
             }

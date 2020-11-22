@@ -51,9 +51,36 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             W = BitConverter.ToSingle(BitConverter.GetBytes(src), 0);
         }
+        public UInt32 GetBinaryX()
+        {
+            return BitConverter.ToUInt32(BitConverter.GetBytes(X), 0);
+        }
+        public UInt32 GetBinaryY()
+        {
+            return BitConverter.ToUInt32(BitConverter.GetBytes(Y), 0);
+        }
+        public UInt32 GetBinaryZ()
+        {
+            return BitConverter.ToUInt32(BitConverter.GetBytes(Z), 0);
+        }
+        public UInt32 GetBinaryW()
+        {
+            return BitConverter.ToUInt32(BitConverter.GetBytes(W), 0);
+        }
         public override String ToString()
         {
             return $"({X:0.00000}; {Y:0.00000}; {Z:0.00000}; {W:0.00000})";
+        }
+        public Color GetColor()
+        {
+            var c = new Color
+            {
+                R = (Byte)(X * 255),
+                G = (Byte)(Y * 255),
+                B = (Byte)(Z * 255),
+                A = (Byte)(W * 255),
+            };
+            return c;
         }
     }
 }
