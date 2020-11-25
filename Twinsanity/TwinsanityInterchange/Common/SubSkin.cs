@@ -13,11 +13,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt32 Material;
         public Int32 BlobSize;
         public Int32 VertexAmount;
-        public Byte[] Blob;
+        public Byte[] VifCode;
 
         public int GetLength()
         {
-            return 12 + Blob.Length;
+            return 12 + VifCode.Length;
         }
 
         public void Read(BinaryReader reader, int length)
@@ -25,7 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             Material = reader.ReadUInt32();
             BlobSize = reader.ReadInt32();
             VertexAmount = reader.ReadInt32();
-            Blob = reader.ReadBytes(BlobSize);
+            VifCode = reader.ReadBytes(BlobSize);
         }
 
         public void Write(BinaryWriter writer)
@@ -33,7 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(Material);
             writer.Write(BlobSize);
             writer.Write(VertexAmount);
-            writer.Write(Blob);
+            writer.Write(VifCode);
         }
     }
 }

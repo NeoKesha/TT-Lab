@@ -12,9 +12,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
     public class BlendSkinType1 : ITwinSerializable
     {
         public Int32 ListLength { set; get; }
-        public Int32 BlobSize;
         public Int32 UnkInt;
-        public Byte[] Blob;
+        public Byte[] VifCode;
         public Byte[] UnkData;
         public List<Byte[]> UnkBlobs;
         public List<Int32> UnkInts;
@@ -27,14 +26,14 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public int GetLength()
         {
-            return 20 + Blob.Length + UnkInts.Count * Constants.SIZE_UINT32 + UnkBlobs.Sum((blob) => blob.Length) + UnkBlobs.Count * Constants.SIZE_UINT32;
+            return 20 + VifCode.Length + UnkInts.Count * Constants.SIZE_UINT32 + UnkBlobs.Sum((blob) => blob.Length) + UnkBlobs.Count * Constants.SIZE_UINT32;
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            BlobSize = reader.ReadInt32();
+            var blobLen = reader.ReadInt32();
             UnkInt = reader.ReadInt32();
-            Blob = reader.ReadBytes(BlobSize);
+            VifCode = reader.ReadBytes(blobLen);
             UnkData = reader.ReadBytes(0xC);
             for (int i = 0; i < ListLength; ++i)
             {
@@ -46,9 +45,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(BlobSize);
+            writer.Write(VifCode.Length);
             writer.Write(UnkInt);
-            writer.Write(Blob);
+            writer.Write(VifCode);
             writer.Write(UnkData);
             for (int i = 0; i < ListLength; ++i)
             {

@@ -13,14 +13,14 @@ namespace Twinsanity.TwinsanityInterchange.Common
     {
         public UInt32 Vertixes { get; set; }
         public Byte[] VertexData { get; private set; }
-        public Byte[] Blob { get; private set; }
+        public Byte[] UnusedBlob { get; private set; }
         public SubModel()
         {
 
         }
         public int GetLength()
         {
-            return 12 + (VertexData != null ? VertexData.Length : 0) + (Blob != null ? Blob.Length : 0);
+            return 12 + (VertexData != null ? VertexData.Length : 0) + (UnusedBlob != null ? UnusedBlob.Length : 0);
         }
 
         public void Read(BinaryReader reader, int length)
@@ -29,7 +29,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             int vertexLen = reader.ReadInt32();
             VertexData = reader.ReadBytes(vertexLen);
             int blobLen = reader.ReadInt32();
-            Blob = reader.ReadBytes(blobLen);
+            UnusedBlob = reader.ReadBytes(blobLen);
         }
 
         public void Write(BinaryWriter writer)
@@ -37,8 +37,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(Vertixes);
             writer.Write(VertexData.Length);
             writer.Write(VertexData);
-            writer.Write(Blob.Length);
-            writer.Write(Blob);
+            writer.Write(UnusedBlob.Length);
+            writer.Write(UnusedBlob);
         }
     }
 }
