@@ -4,33 +4,34 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    public class CameraSub1C02 : CameraSubBase
+    public class CameraZone : CameraSubBase
     {
-        public Vector4 UnkVector { get; private set; }
-        public CameraSub1C02()
+        public Byte[] UnkData1 { get; set; }
+        public Byte[] UnkData2 { get; set; }
+        public CameraZone()
         {
-            UnkVector = new Vector4();
+            UnkData1 = new byte[80];
+            UnkData2 = new byte[80];
         }
         public override int GetLength()
         {
-            return base.GetLength() + Constants.SIZE_VECTOR4;
+            return 160;
         }
 
         public override void Read(BinaryReader reader, int length)
         {
-            base.Read(reader, base.GetLength());
-            UnkVector.Read(reader, Constants.SIZE_VECTOR4);
+            UnkData1 = reader.ReadBytes(80);
+            UnkData2 = reader.ReadBytes(80);
         }
 
         public override void Write(BinaryWriter writer)
         {
-            base.Write(writer);
-            UnkVector.Write(writer);
+            writer.Write(UnkData1);
+            writer.Write(UnkData2);
         }
     }
 }

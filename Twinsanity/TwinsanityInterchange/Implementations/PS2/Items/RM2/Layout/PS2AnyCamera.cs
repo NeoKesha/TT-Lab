@@ -48,16 +48,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             CamTrigger = new TwinTrigger();
             UnkVector1 = new Vector4();
             UnkVector2 = new Vector4();
-            subCamIdToCamera.Add(0xA19, typeof(CameraSub0A19));
-            subCamIdToCamera.Add(0x1C02, typeof(CameraSub1C02));
-            subCamIdToCamera.Add(0x1C03, typeof(CameraSub1C03));
-            subCamIdToCamera.Add(0x1C04, typeof(CameraSub1C04));
-            subCamIdToCamera.Add(0x1C06, typeof(CameraSub1C06));
+            subCamIdToCamera.Add(0xA19, typeof(BossCamera));
+            subCamIdToCamera.Add(0x1C02, typeof(CameraPoint));
+            subCamIdToCamera.Add(0x1C03, typeof(CameraLine));
+            subCamIdToCamera.Add(0x1C04, typeof(CameraPath));
+            subCamIdToCamera.Add(0x1C06, typeof(CameraSpline));
             subCamIdToCamera.Add(0x1C09, typeof(CameraSub1C09));
-            subCamIdToCamera.Add(0x1C0B, typeof(CameraSub1C0B));
+            subCamIdToCamera.Add(0x1C0B, typeof(CameraPoint2));
             subCamIdToCamera.Add(0x1C0C, typeof(CameraSub1C0C));
-            subCamIdToCamera.Add(0x1C0D, typeof(CameraSub1C0D));
-            subCamIdToCamera.Add(0x1C0F, typeof(CameraSub1C0F));
+            subCamIdToCamera.Add(0x1C0D, typeof(CameraLine2));
+            subCamIdToCamera.Add(0x1C0F, typeof(CameraZone));
         }
         public uint GetID()
         {

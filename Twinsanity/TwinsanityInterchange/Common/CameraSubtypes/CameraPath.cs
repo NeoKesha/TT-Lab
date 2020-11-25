@@ -9,47 +9,43 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    public class CameraSub1C06 : CameraSubBase
+    public class CameraPath : CameraSubBase
     {
-        public Single UnkFloat3 { get; set; }
         public List<Vector4> UnkVectors { get; private set; }
         public Byte[] UnkData { get; private set; }
-        public UInt16 UnkShort { get; set; }
-        public CameraSub1C06()
+        public CameraPath()
         {
             UnkVectors = new List<Vector4>();
         }
         public override int GetLength()
         {
-            return base.GetLength() + 4 + 4 + UnkVectors.Count * Constants.SIZE_VECTOR4 * 2 + UnkData.Length + 2;
+            return base.GetLength() + 4 + UnkVectors.Count * Constants.SIZE_VECTOR4 + 4 + UnkData.Length;
         }
 
         public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, base.GetLength());
             int cnt1 = reader.ReadInt32();
-            UnkFloat3 = reader.ReadSingle();
             UnkVectors.Clear();
-            for (int i = 0; i < 2 * cnt1; ++i)
+            for (int i = 0; i < cnt1; ++i)
             {
                 Vector4 vec = new Vector4();
                 vec.Read(reader, Constants.SIZE_VECTOR4);
                 UnkVectors.Add(vec);
             }
-            UnkData = reader.ReadBytes(cnt1 * 8);
-            UnkShort = reader.ReadUInt16();
+            int cnt2 = reader.ReadInt32();
+            UnkData = reader.ReadBytes(cnt2 * 8);
         }
 
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(UnkVectors.Count / 2);
-            writer.Write(UnkFloat3);
-            foreach (ITwinSerializable e in UnkVectors) {
+            writer.Write(UnkVectors.Count);
+            foreach(ITwinSerializable e in UnkVectors) {
                 e.Write(writer);
             }
+            writer.Write(UnkData.Length / 8);
             writer.Write(UnkData);
-            writer.Write(UnkShort);
         }
     }
 }

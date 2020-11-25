@@ -9,12 +9,12 @@ using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
-    public class CameraSub1C0B : CameraSubBase
+    public class CameraPoint2 : CameraSubBase
     {
         public Vector4 UnkVec { get; private set; }
         public Single UnkFloat3 { get; set; }
         public Byte UnkByte { get; set; }
-        public CameraSub1C0B()
+        public CameraPoint2()
         {
             UnkVec = new Vector4();
         }
