@@ -50,6 +50,19 @@ namespace Twinsanity.PS2Hardware
             }
         }
 
+        // Wrapper function for generating Interpreter instances using pure bytecode
+        public static VIFInterpreter InterpretCode(Byte[] code)
+        {
+            using (MemoryStream codeStr = new MemoryStream(code))
+            {
+                using (BinaryReader codeReader = new BinaryReader(codeStr))
+                {
+                    return InterpretCode(codeReader);
+                }
+            }
+
+        }
+
         public List<List<Vector4>> GetMem()
         {
             return VUMem;
