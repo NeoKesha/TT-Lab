@@ -64,6 +64,9 @@
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C0D.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C0F.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSubBase.cs" />
+    <Compile Include="TwinsanityInterchange\Common\Collision\CollisionTriangle.cs" />
+    <Compile Include="TwinsanityInterchange\Common\Collision\CollisionTrigger.cs" />
+    <Compile Include="TwinsanityInterchange\Common\Collision\GroupInformation.cs" />
     <Compile Include="TwinsanityInterchange\Common\DynamicSceneryModel.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\AmbientLight.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\DirectionalLight.cs" />
@@ -117,6 +120,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyAIPosition.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyCollisionSurface.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyInstance.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2AnyCollisionData.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2AnyParticleData.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2DefaultParticleData.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyDynamicScenery.cs" />
