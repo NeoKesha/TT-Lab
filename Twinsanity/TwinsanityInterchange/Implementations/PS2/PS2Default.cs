@@ -16,6 +16,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
         public PS2Default() : base()
         {
             idToClassDictionary[Constants.LEVEL_PARTICLES_ITEM] = typeof(PS2DefaultParticleData);
+            idToClassDictionary[Constants.LEVEL_COLLISION_ITEM] = typeof(BaseTwinSection);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_7_SECTION, typeof(PS2AnyLayoutSection));
             idToClassDictionary.Add(Constants.LEVEL_LAYOUT_8_SECTION, typeof(PS2AnyLayoutSection));
             idToClassDictionary.Add(Constants.LEVEL_PARTICLES_ITEM, typeof(PS2AnyParticleData));
-            idToClassDictionary.Add(Constants.LEVEL_COLLISION_ITEM, typeof(BaseTwinItem));
+            idToClassDictionary.Add(Constants.LEVEL_COLLISION_ITEM, typeof(PS2AnyCollisionData));
         }
     }
 }
