@@ -17,18 +17,18 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             UnkData1 = new byte[80];
             UnkData2 = new byte[80];
         }
-        public new int GetLength()
+        public override int GetLength()
         {
             return 160;
         }
 
-        public new void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             UnkData1 = reader.ReadBytes(80);
             UnkData2 = reader.ReadBytes(80);
         }
 
-        public new void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(UnkData1);
             writer.Write(UnkData2);

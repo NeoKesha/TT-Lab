@@ -16,19 +16,20 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         public CameraSubBase()
         {
         }
-        public int GetLength()
+
+        public virtual int GetLength()
         {
             return 12;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public virtual void Read(BinaryReader reader, int length)
         {
             UnkInt = reader.ReadUInt32();
             UnkFloat1 = reader.ReadSingle();
             UnkFloat2 = reader.ReadSingle();
         }
 
-        public void Write(BinaryWriter writer)
+        public virtual void Write(BinaryWriter writer)
         {
             writer.Write(UnkInt);
             writer.Write(UnkFloat1);

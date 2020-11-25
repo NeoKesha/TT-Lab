@@ -115,12 +115,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             if (TypeIndex1 != 3 && subCamIdToCamera.ContainsKey(TypeIndex1))
             {
                 MainCamera1 = (CameraSubBase)Activator.CreateInstance(subCamIdToCamera[TypeIndex1]);
-                MainCamera1.Read(reader, MainCamera1.GetLength());
+                MainCamera1.Read(reader, length);
             }
             if (TypeIndex2 != 3 && subCamIdToCamera.ContainsKey(TypeIndex2))
             {
                 MainCamera2 = (CameraSubBase)Activator.CreateInstance(subCamIdToCamera[TypeIndex2]);
-                MainCamera2.Read(reader, MainCamera2.GetLength());
+                MainCamera2.Read(reader, length);
             }
         }
 

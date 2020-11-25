@@ -18,12 +18,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         {
             UnkVec = new Vector4();
         }
-        public new int GetLength()
+        public override int GetLength()
         {
             return base.GetLength() + 5 + Constants.SIZE_VECTOR4;
         }
 
-        public new void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, base.GetLength());
             UnkVec.Read(reader, Constants.SIZE_VECTOR4);
@@ -31,7 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             UnkByte = reader.ReadByte();
         }
 
-        public new void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
             UnkVec.Write(writer);

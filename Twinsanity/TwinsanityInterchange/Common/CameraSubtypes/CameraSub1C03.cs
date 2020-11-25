@@ -20,12 +20,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
                 BoundingBox[i] = new Vector4();
             }
         }
-        public new int GetLength()
+        public override int GetLength()
         {
             return base.GetLength() + BoundingBox.Length * Constants.SIZE_VECTOR4;
         }
 
-        public new void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, base.GetLength());
             for (int i = 0; i < BoundingBox.Length; ++i)
@@ -34,7 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             }
         }
 
-        public new void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
             for (int i = 0; i < BoundingBox.Length; ++i)

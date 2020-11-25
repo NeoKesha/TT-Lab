@@ -26,12 +26,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             UnkMatrix2 = new Matrix4();
             UnkVector = new Vector4();
         }
-        public new int GetLength()
+        public override int GetLength()
         {
             return base.GetLength() + 18 + Constants.SIZE_MATRIX4 * 2 + Constants.SIZE_VECTOR4;
         }
 
-        public new void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             int pos1 = (int)reader.BaseStream.Position;
             base.Read(reader, base.GetLength());
@@ -50,7 +50,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             int a = 0;
         }
 
-        public new void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
             UnkMatrix1.Write(writer);
