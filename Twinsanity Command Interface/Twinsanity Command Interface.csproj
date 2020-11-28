@@ -50,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Twinsanity\Twinsanity.csproj">
+    <ProjectReference Include="..\TwinTech\TwinTech.csproj">
       <Project>{14348117-4503-49cd-94f9-1852069543e3}</Project>
-      <Name>Twinsanity</Name>
+      <Name>TwinTech</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
