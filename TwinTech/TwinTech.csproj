@@ -44,6 +44,7 @@
     <Compile Include="Libraries\ADPCM.cs" />
     <Compile Include="Libraries\BitConv.cs" />
     <Compile Include="Libraries\EzSwizzle.cs" />
+    <Compile Include="Libraries\RIFF.cs" />
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PS2Hardware\DMATag.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="TwinsanityInterchange\Common\Lights\Light.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\NegativeLight.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\PointLight.cs" />
+    <Compile Include="TwinsanityInterchange\Common\MDRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\MHRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\ParticleInstance.cs" />
     <Compile Include="TwinsanityInterchange\Common\ParticleType.cs" />
