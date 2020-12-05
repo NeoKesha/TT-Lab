@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
@@ -11,7 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
     public class PS2MD : ITwinSerializable
     {
         public PS2MH Header;
-
+        public List<MDRecord> Records;
 
         // A requirement to provide the header archive
         public PS2MD(PS2MH header)
@@ -21,17 +22,26 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 
         public Int32 GetLength()
         {
-            throw new NotImplementedException();
+            return Records.Sum(r => r.GetLength());
         }
 
         public void Read(BinaryReader reader, Int32 length)
         {
-            throw new NotImplementedException();
+            foreach (var record in Header.Records)
+            {
+                reader.BaseStream.Position = record.Offset;
+                var r = new MDRecord(record);
+                r.Read(reader, record.Size);
+                Records.Add(r);
+            }
         }
 
         public void Write(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            foreach (var r in Records)
+            {
+                r.Write(writer);
+            }
         }
     }
 }
