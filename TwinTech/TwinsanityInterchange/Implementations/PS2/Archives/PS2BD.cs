@@ -18,6 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
         public PS2BD(PS2BH header)
         {
             Header = header;
+            Items = new List<ITwinSerializable>();
         }
 
         public Int32 GetLength()
@@ -32,6 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
                 var item = new BaseTwinItem();
                 reader.BaseStream.Position = record.Offset;
                 item.Read(reader, record.Length);
+                Items.Add(item);
             }
         }
 

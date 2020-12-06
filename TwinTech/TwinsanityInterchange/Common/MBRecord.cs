@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class MDRecord : ITwinSerializable
+    public class MBRecord : ITwinSerializable
     {
-        MHRecord RecordHeader;
+        private MHRecord RecordHeader;
 
         // Validation stuff
         private readonly Char[] MSVp = "MSVp".ToCharArray();
@@ -21,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public String Name;
         public Byte[] TrackData;
 
-        public MDRecord(MHRecord header)
+        public MBRecord(MHRecord header)
         {
             RecordHeader = header;
         }
@@ -48,9 +44,16 @@ namespace Twinsanity.TwinsanityInterchange.Common
                     {
                         throw new Exception("MSVp key not provided!");
                     }
-                    if (reader.ReadUInt32() != Key || reader.ReadInt32() != 0)
+                    var testKey = reader.ReadUInt32();
+                    var testZero = reader.ReadInt32();
+                    if (testKey != Key || testZero != 0)
                     {
                         throw new Exception("Invalid key provided!");
+                    }
+                    var testSize = BitConv.FlipBytes(reader.ReadUInt32());
+                    if (testSize != GetLength())
+                    {
+                        throw new Exception("Sizes in header and main archives do not match!");
                     }
                     SampleRate = BitConv.FlipBytes(reader.ReadInt32());
                     reader.ReadInt32();

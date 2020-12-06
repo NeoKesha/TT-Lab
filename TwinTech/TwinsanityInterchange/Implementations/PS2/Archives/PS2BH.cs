@@ -14,6 +14,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
         public Int32 Header;
         public List<BHRecord> Records;
 
+        public PS2BH()
+        {
+            Records = new List<BHRecord>();
+        }
+
         public Int32 GetLength()
         {
             return 4 + Records.Sum(r => r.GetLength());

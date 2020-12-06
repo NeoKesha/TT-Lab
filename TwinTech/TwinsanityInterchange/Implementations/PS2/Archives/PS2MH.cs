@@ -14,9 +14,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
         public Int32 Interleave;
         public List<MHRecord> Records;
 
+        public PS2MH()
+        {
+            Records = new List<MHRecord>();
+        }
+
         public Int32 GetLength()
         {
             return 8 + Records.Sum(r => r.GetLength());
+        }
+
+        public List<MHRecord> GetSortedRecords()
+        {
+            var resList = Records.ToList();
+            resList.Sort(delegate (MHRecord r1, MHRecord r2)
+            {
+                return (Int32)r1.Offset - (Int32)r2.Offset;
+            });
+            return resList;
         }
 
         public void Read(BinaryReader reader, Int32 length)

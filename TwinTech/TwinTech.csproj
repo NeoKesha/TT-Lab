@@ -78,7 +78,7 @@
     <Compile Include="TwinsanityInterchange\Common\Lights\Light.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\NegativeLight.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\PointLight.cs" />
-    <Compile Include="TwinsanityInterchange\Common\MDRecord.cs" />
+    <Compile Include="TwinsanityInterchange\Common\MBRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\MHRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\ParticleInstance.cs" />
     <Compile Include="TwinsanityInterchange\Common\ParticleType.cs" />
@@ -108,7 +108,7 @@
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2BD.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2MD.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2MB.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2MH.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyAnimation.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyCodeModel.cs" />
