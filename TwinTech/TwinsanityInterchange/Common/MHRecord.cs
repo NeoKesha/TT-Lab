@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class MHRecord : ITwinSerializable
+    internal class MHRecord : ITwinSerializable
     {
-        public RecordType Type;
+        public PS2MB.RecordType Type;
         public Int32 Size;
         public UInt32 Offset;
         public Int32 SampleRate;
@@ -23,7 +24,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Read(BinaryReader reader, Int32 length)
         {
-            Type = (RecordType)reader.ReadInt32();
+            Type = (PS2MB.RecordType)reader.ReadInt32();
             Size = reader.ReadInt32();
             Offset = reader.ReadUInt32();
             SampleRate = reader.ReadInt32();
@@ -39,11 +40,5 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(UnkInt);
         }
 
-        public enum RecordType
-        {
-            MONO,
-            STEREO,
-            NULL
-        }
     }
 }

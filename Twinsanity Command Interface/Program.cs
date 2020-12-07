@@ -24,45 +24,29 @@ namespace Twinsanity_Command_Interface
                 String[] archivePaths = System.IO.Directory.GetFiles(testPath, "*.BD", System.IO.SearchOption.TopDirectoryOnly);
                 archivePaths = archivePaths.Concat(System.IO.Directory.GetFiles(testPath, "*.MB", System.IO.SearchOption.TopDirectoryOnly)).ToArray();
                 List<ITwinSerializable> archives = new List<ITwinSerializable>();
-                List<ITwinSerializable> headers = new List<ITwinSerializable>();
                 foreach (var path in archivePaths)
                 {
                     var headerPath = String.Empty;
-                    ITwinSerializable header = null;
                     ITwinSerializable archive = null;
                     if (path.EndsWith("MB") || path.EndsWith("mb"))
                     {
-                        header = new PS2MH();
                         headerPath = path.Replace(".MB", ".MH");
                         if (headerPath == path)
                         {
                             headerPath = path.Replace(".mb", ".mh");
                         }
-                        archive = new PS2MB((PS2MH)header);
+                        archive = new PS2MB(headerPath, System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(headerPath)));
                     }
                     else if (path.EndsWith("BD"))
                     {
-                        header = new PS2BH();
                         headerPath = path.Replace(".BD", ".BH");
-                        archive = new PS2BD((PS2BH)header);
+                        archive = new PS2BD(headerPath, System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(headerPath)));
                     }
-                    using (System.IO.FileStream headerStream = new System.IO.FileStream(headerPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-                    using (System.IO.BinaryReader headerReader = new System.IO.BinaryReader(headerStream))
+                    using (System.IO.FileStream stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                    using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
                     {
-                        header.Read(headerReader, (Int32)headerReader.BaseStream.Length);
-                        headers.Add(header);
-                        using (System.IO.FileStream stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-                        using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
-                        {
-                            archive.Read(reader, (Int32)reader.BaseStream.Length);
-                            archives.Add(archive);
-                        }
-                    }
-                    using (System.IO.FileStream stream = new System.IO.FileStream(System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(headerPath)),
-                        System.IO.FileMode.Create, System.IO.FileAccess.Write))
-                    using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(stream))
-                    {
-                        header.Write(writer);
+                        archive.Read(reader, (Int32)reader.BaseStream.Length);
+                        archives.Add(archive);
                     }
                     using (System.IO.FileStream stream = new System.IO.FileStream(System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(path)),
                         System.IO.FileMode.Create, System.IO.FileAccess.Write))

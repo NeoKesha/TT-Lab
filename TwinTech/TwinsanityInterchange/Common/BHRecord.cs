@@ -8,7 +8,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class BHRecord : ITwinSerializable
+    internal class BHRecord : ITwinSerializable
     {
         public String Path;
         public Int32 Offset;

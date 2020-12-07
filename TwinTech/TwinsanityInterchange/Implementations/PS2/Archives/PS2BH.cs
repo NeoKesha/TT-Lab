@@ -9,10 +9,10 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 {
-    public class PS2BH : ITwinSerializable
+    internal class PS2BH : ITwinSerializable
     {
-        public Int32 Header;
-        public List<BHRecord> Records;
+        private Int32 Header;
+        internal List<BHRecord> Records;
 
         public PS2BH()
         {

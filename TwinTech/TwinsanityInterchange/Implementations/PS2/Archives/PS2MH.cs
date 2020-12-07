@@ -9,10 +9,10 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 {
-    public class PS2MH : ITwinSerializable
+    internal class PS2MH : ITwinSerializable
     {
-        public Int32 Interleave;
-        public List<MHRecord> Records;
+        private Int32 Interleave;
+        internal List<MHRecord> Records;
 
         public PS2MH()
         {
@@ -24,7 +24,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             return 8 + Records.Sum(r => r.GetLength());
         }
 
-        public List<MHRecord> GetSortedRecords()
+        internal List<MHRecord> GetSortedRecords()
         {
             var resList = Records.ToList();
             resList.Sort(delegate (MHRecord r1, MHRecord r2)
@@ -32,6 +32,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
                 return (Int32)r1.Offset - (Int32)r2.Offset;
             });
             return resList;
+        }
+
+        public UInt32 GetNewOffset()
+        {
+            var sortedList = GetSortedRecords();
+            var lastElem = sortedList[sortedList.Count - 1];
+            UInt32 newOffset = lastElem.Offset + (UInt32)lastElem.Size;
+            newOffset += (0x800 - newOffset % 0x800); // Align to 2048
+            return newOffset;
         }
 
         public void Read(BinaryReader reader, Int32 length)

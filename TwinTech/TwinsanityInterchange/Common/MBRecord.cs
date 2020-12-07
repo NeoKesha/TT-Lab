@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using Twinsanity.Libraries;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class MBRecord : ITwinSerializable
+    internal class MBRecord : ITwinSerializable
     {
         private MHRecord RecordHeader;
 
@@ -26,9 +27,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             switch (RecordHeader.Type)
             {
-                case MHRecord.RecordType.MONO:
-                    return RecordHeader.Size - 0x30;
-                case MHRecord.RecordType.STEREO:
+                case PS2MB.RecordType.MONO:
+                case PS2MB.RecordType.STEREO:
                     return RecordHeader.Size;
             }
             return 0;
@@ -38,7 +38,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             switch (RecordHeader.Type)
             {
-                case MHRecord.RecordType.MONO:
+                case PS2MB.RecordType.MONO:
                     var msvp = reader.ReadChars(4);
                     if (!String.Equals(new String(msvp), new String(MSVp), StringComparison.Ordinal))
                     {
@@ -51,7 +51,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                         throw new Exception("Invalid key provided!");
                     }
                     var testSize = BitConv.FlipBytes(reader.ReadUInt32());
-                    if (testSize != GetLength())
+                    if (testSize != GetLength() - 0x30)
                     {
                         throw new Exception("Sizes in header and main archives do not match!");
                     }
@@ -59,20 +59,23 @@ namespace Twinsanity.TwinsanityInterchange.Common
                     reader.ReadInt32();
                     reader.ReadInt64();
                     Name = new String(reader.ReadChars(0x10));
+                    TrackData = reader.ReadBytes(GetLength() - 0x30);
+                    break;
+                default:
+                    TrackData = reader.ReadBytes(GetLength());
                     break;
             }
-            TrackData = reader.ReadBytes(GetLength());
         }
 
         public void Write(BinaryWriter writer)
         {
             switch (RecordHeader.Type)
             {
-                case MHRecord.RecordType.MONO:
-                    writer.Write(MSVp);
+                case PS2MB.RecordType.MONO:
+                    writer.Write(MSVp, 0, 4);
                     writer.Write(Key);
                     writer.Write(0);
-                    writer.Write(BitConv.FlipBytes(GetLength()));
+                    writer.Write(BitConv.FlipBytes(GetLength() - 0x30));
                     writer.Write(BitConv.FlipBytes(SampleRate));
                     writer.Write(0);
                     writer.Write((Int64)0);
