@@ -41,7 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Libraries\ADPCM.cs" />
+    <Compile Include="Libraries\BitConv.cs" />
     <Compile Include="Libraries\EzSwizzle.cs" />
+    <Compile Include="Libraries\RIFF.cs" />
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PS2Hardware\DMATag.cs" />
@@ -53,6 +56,7 @@
     <Compile Include="TwinsanityInterchange\Common\AgentLab\PS2HeaderScript.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCommand.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCondition.cs" />
+    <Compile Include="TwinsanityInterchange\Common\BHRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\BlendSkinType1.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraPath.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraLine.cs" />
@@ -74,6 +78,8 @@
     <Compile Include="TwinsanityInterchange\Common\Lights\Light.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\NegativeLight.cs" />
     <Compile Include="TwinsanityInterchange\Common\Lights\PointLight.cs" />
+    <Compile Include="TwinsanityInterchange\Common\MBRecord.cs" />
+    <Compile Include="TwinsanityInterchange\Common\MHRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\ParticleInstance.cs" />
     <Compile Include="TwinsanityInterchange\Common\ParticleType.cs" />
     <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryBaseType.cs" />
@@ -101,6 +107,9 @@
     <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2BD.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2MB.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2MH.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyAnimation.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyCodeModel.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyObject.cs" />
@@ -133,7 +142,11 @@
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyScenery.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2BH.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2Default.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2PSF.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2PSM.cs" />
+    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2PTC.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyCodeModelsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyOGIsSection.cs" />
     <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnySoundsSection.cs" />

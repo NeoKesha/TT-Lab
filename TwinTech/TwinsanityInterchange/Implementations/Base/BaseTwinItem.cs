@@ -11,7 +11,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         Byte[] data;
         public BaseTwinItem()
         {
-            data = new byte[0];
+            data = new Byte[0];
+        }
+        public BaseTwinItem(Byte[] data)
+        {
+            this.data = data;
         }
         public uint GetID()
         {
@@ -23,12 +27,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return data.Length;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public void Read(BinaryReader reader, Int32 length)
         {
             data = reader.ReadBytes(length);
         }
 
-        public void SetID(uint id)
+        public void SetID(UInt32 id)
         {
             this.id = id;
         }
