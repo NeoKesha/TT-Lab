@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using TT_Lab.Project;
 using WK.Libraries.BetterFolderBrowserNS;
 
 namespace TT_Lab
@@ -10,7 +11,6 @@ namespace TT_Lab
     /// </summary>
     public partial class ProjectCreationWizard : Window
     {
-
         public ProjectCreationWizard()
         {
             InitializeComponent();
@@ -18,8 +18,15 @@ namespace TT_Lab
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            Project.Project pr = new Project.Project(ProjectName.Text, ProjectPath.Text, DiscContentPath.Text);
-            Console.WriteLine("Project created!");
+            try
+            {
+                ProjectManagerSingleton.PM.CreateProject(ProjectName.Text, ProjectPath.Text, DiscContentPath.Text);
+                Close();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Failed to create project: {ex.Message}", "Error creating project!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

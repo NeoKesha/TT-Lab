@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TT_Lab"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="TT_Lab.MainWindow"
+        xmlns:Project="clr-namespace:TT_Lab.Project" x:Class="TT_Lab.MainWindow"
         mc:Ignorable="d"
-        Title="TT Lab" Height="720" Width="1280" MinWidth="854" MinHeight="480">
+        Title="{Binding ProjectTitle}" Height="720" Width="1280" MinWidth="854" MinHeight="480">
     <Window.Resources>
         <SolidColorBrush x:Key="TabItem.Selected.Background" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="TabItem.Selected.Border" Color="#ACACAC"/>
@@ -280,13 +280,13 @@
         </Grid.RowDefinitions>
         <Menu x:Name="MainMenu" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="6,2,0,0">
             <MenuItem x:Name="ProjectSubMenu" Header="Project">
-                <MenuItem x:Name="CreateProject" Header="Create Project..." Click="CreateProject_Click"/>
+                <MenuItem x:Name="CreateProject" Header="Create Project..."/>
                 <MenuItem x:Name="OpenProject" Header="Open Project..." Click="OpenProject_Click"/>
                 <MenuItem x:Name="OpenRecentSubMenu" Header="Open Recent" IsEnabled="False"/>
-                <MenuItem x:Name="CloseProject" Header="Close Project" IsEnabled="False" Click="CloseProject_Click"/>
+                <MenuItem x:Name="CloseProject" Header="Close Project" Click="CloseProject_Click" IsEnabled="{Binding ProjectOpened}"/>
             </MenuItem>
             <MenuItem x:Name="ToolsSubmenu" Header="Tools" HorizontalAlignment="Center" IsEnabled="False"/>
-            <MenuItem x:Name="About" Header="About" HorizontalAlignment="Center" Click="About_Click"/>
+            <MenuItem x:Name="About" Header="About" HorizontalAlignment="Center"/>
         </Menu>
 
         <Grid x:Name="MainControlsGrid" Margin="0" Grid.Row="1">
