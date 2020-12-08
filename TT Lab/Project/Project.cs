@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TT_Lab.Project
 {
@@ -21,6 +17,14 @@ namespace TT_Lab.Project
 
         [JsonProperty]
         public DateTime LastModified { get; set; }
+
+        public string ProjectPath
+        {
+            get
+            {
+                return System.IO.Path.Combine(Path, Name);
+            }
+        }
 
         public Project() { }
 

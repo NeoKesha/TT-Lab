@@ -7,10 +7,12 @@ namespace TT_Lab.Command
     {
         private readonly object target;
         private readonly string propName;
+        private readonly string startPath;
 
-        public SelectFolderCommand(object target, string textStoragePropName)
+        public SelectFolderCommand(object target, string textStoragePropName, string startPath = "")
         {
             this.target = target;
+            this.startPath = startPath;
             propName = textStoragePropName;
         }
 
@@ -23,7 +25,10 @@ namespace TT_Lab.Command
 
         public void Execute(object parameter = null)
         {
-            using (BetterFolderBrowser bfb = new BetterFolderBrowser())
+            using (BetterFolderBrowser bfb = new BetterFolderBrowser
+            {
+                RootFolder = startPath
+            })
             {
                 if (bfb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

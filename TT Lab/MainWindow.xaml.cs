@@ -19,22 +19,26 @@ namespace TT_Lab
             About.Command = new OpenDialogueCommand(typeof(TT_Lab.About));
             CreateProject.Command = new OpenDialogueCommand(typeof(TT_Lab.ProjectCreationWizard));
             DataContext = ProjectManagerSingleton.PM;
+            Closed += MainWindow_Closed;
+        }
+
+        private void MainWindow_Closed(Object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Save();
         }
 
         private void OpenProject_Click(object sender, RoutedEventArgs e)
         {
-            using (BetterFolderBrowser bfb = new BetterFolderBrowser())
+            var recents = Properties.Settings.Default.RecentProjects;
+            using (BetterFolderBrowser bfb = new BetterFolderBrowser
+            {
+                RootFolder = recents != null ? recents[0] : ""
+            })
             {
                 if (System.Windows.Forms.DialogResult.OK == bfb.ShowDialog())
                 {
-                    try
-                    {
-                        ProjectManagerSingleton.PM.OpenProject(bfb.SelectedPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Failed to open project: {ex.Message}", "Error opening project!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    var open = new OpenProjectCommand(bfb.SelectedPath);
+                    open.Execute();
                 }
             }
         }

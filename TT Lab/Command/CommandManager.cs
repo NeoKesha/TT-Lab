@@ -7,6 +7,22 @@ namespace TT_Lab.Command
         private readonly Stack<ICommand> RedoStack = new Stack<ICommand>();
         private readonly Stack<ICommand> UndoStack = new Stack<ICommand>();
 
+        public bool CanUndo
+        {
+            get
+            {
+                return UndoStack.Count != 0;
+            }
+        }
+
+        public bool CanRedo
+        {
+            get
+            {
+                return RedoStack.Count != 0;
+            }
+        }
+
         public void Execute(ICommand command)
         {
             command.Execute();

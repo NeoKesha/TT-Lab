@@ -2,6 +2,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls;
+using TT_Lab.Command;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Project
@@ -31,6 +33,7 @@ namespace TT_Lab.Project
     public class ProjectManager : ObservableObject
     {
         private Project _openedProject;
+        private CommandManager commandManager = new CommandManager();
 
         public Project OpenedProject
         {
@@ -63,6 +66,36 @@ namespace TT_Lab.Project
             }
         }
 
+        public MenuItem[] RecentlyOpened
+        {
+            get
+            {
+                if (Properties.Settings.Default.RecentProjects != null)
+                {
+                    var recents = Properties.Settings.Default.RecentProjects;
+                    var menus = new MenuItem[recents.Count];
+                    for (var i = 0; i < recents.Count; ++i)
+                    {
+                        menus[i] = new MenuItem
+                        {
+                            Header = $"{i + 1}. {recents[i]}",
+                            Command = new OpenProjectCommand(recents[i])
+                        };
+                    }
+                    return menus;
+                }
+                return new MenuItem[0];
+            }
+        }
+
+        public bool HasRecents
+        {
+            get
+            {
+                return RecentlyOpened.Length != 0;
+            }
+        }
+
         public void CreateProject(string name, string path, string discContentPath)
         {
             var discFiles = Directory.GetFiles(discContentPath).Select(s => Path.GetFileName(s)).ToArray();
@@ -72,27 +105,66 @@ namespace TT_Lab.Project
                 throw new Exception("Improper disc content provided!");
             }
             OpenedProject = new Project(name, path, discContentPath);
+            AddRecentlyOpened(OpenedProject.ProjectPath);
         }
 
         public void OpenProject(string path)
         {
-            if (Directory.GetFiles(path, "*.tson").Length == 0)
+            try
             {
-                throw new Exception("No project root found!");
-            }
+                if (Directory.GetFiles(path, "*.tson").Length == 0)
+                {
+                    throw new Exception("No project root found!");
+                }
 
-            var prFile = Directory.GetFiles(path, "*.tson")[0];
-            using (FileStream fs = new FileStream(prFile, FileMode.Open, FileAccess.Read))
-            using (BinaryReader reader = new BinaryReader(fs))
-            {
-                var prText = new string(reader.ReadChars((Int32)fs.Length));
-                OpenedProject = JsonConvert.DeserializeObject<Project>(prText);
+                var prFile = Directory.GetFiles(path, "*.tson")[0];
+                using (FileStream fs = new FileStream(prFile, FileMode.Open, FileAccess.Read))
+                using (BinaryReader reader = new BinaryReader(fs))
+                {
+                    var prText = new string(reader.ReadChars((Int32)fs.Length));
+                    OpenedProject = JsonConvert.DeserializeObject<Project>(prText);
+                }
             }
+            catch (Exception ex)
+            {
+                RemoveRecentlyOpened(path);
+                throw ex;
+            }
+            AddRecentlyOpened(path);
         }
 
         public void CloseProject()
         {
             OpenedProject = null;
+        }
+
+        private void AddRecentlyOpened(string path)
+        {
+            if (Properties.Settings.Default.RecentProjects == null)
+            {
+                Properties.Settings.Default.RecentProjects = new System.Collections.Specialized.StringCollection();
+            }
+            if (!Properties.Settings.Default.RecentProjects.Contains(path))
+            {
+                Properties.Settings.Default.RecentProjects.Insert(0, path);
+                // Store only last 10 paths
+                if (Properties.Settings.Default.RecentProjects.Count >= 10)
+                {
+                    Properties.Settings.Default.RecentProjects.RemoveAt(9);
+                }
+                RaisePropertyChangedEvent("RecentlyOpened");
+                RaisePropertyChangedEvent("HasRecents");
+            }
+        }
+
+        private void RemoveRecentlyOpened(string path)
+        {
+            if (Properties.Settings.Default.RecentProjects == null || !Properties.Settings.Default.RecentProjects.Contains(path)) return;
+
+            var recents = Properties.Settings.Default.RecentProjects;
+            recents.Remove(path);
+            RaisePropertyChangedEvent("RecentlyOpened");
+            RaisePropertyChangedEvent("HasRecents");
         }
     }
 }
