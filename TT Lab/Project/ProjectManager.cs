@@ -34,6 +34,7 @@ namespace TT_Lab.Project
     {
         private Project _openedProject;
         private CommandManager commandManager = new CommandManager();
+        private MenuItem[] _recentMenus = new MenuItem[0];
 
         public Project OpenedProject
         {
@@ -70,9 +71,9 @@ namespace TT_Lab.Project
         {
             get
             {
-                if (Properties.Settings.Default.RecentProjects != null)
+                var recents = Properties.Settings.Default.RecentProjects;
+                if (recents != null && _recentMenus.Length != recents.Count)
                 {
-                    var recents = Properties.Settings.Default.RecentProjects;
                     var menus = new MenuItem[recents.Count];
                     for (var i = 0; i < recents.Count; ++i)
                     {
@@ -82,9 +83,9 @@ namespace TT_Lab.Project
                             Command = new OpenProjectCommand(recents[i])
                         };
                     }
-                    return menus;
+                    _recentMenus = menus;
                 }
-                return new MenuItem[0];
+                return _recentMenus;
             }
         }
 

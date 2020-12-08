@@ -32,7 +32,7 @@ namespace TT_Lab
             var recents = Properties.Settings.Default.RecentProjects;
             using (BetterFolderBrowser bfb = new BetterFolderBrowser
             {
-                RootFolder = recents != null ? recents[0] : ""
+                RootFolder = recents != null && recents.Count != 0 ? recents[0] : ""
             })
             {
                 if (System.Windows.Forms.DialogResult.OK == bfb.ShowDialog())
