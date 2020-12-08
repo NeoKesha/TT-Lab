@@ -1,11 +1,14 @@
-﻿namespace TT_Lab.Command
+﻿using System;
+
+namespace TT_Lab.Command
 {
-    public interface ICommand
+    public interface ICommand : System.Windows.Input.ICommand
     {
+
         /**
-         * Performs the command
-         */
-        void Execute();
+        * Performs the command
+        */
+        new void Execute(object parameter = null);
         /**
          * Undoes the performed command
          */

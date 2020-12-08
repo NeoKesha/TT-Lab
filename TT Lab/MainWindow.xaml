@@ -283,7 +283,7 @@
                 <MenuItem x:Name="CreateProject" Header="Create Project..." Click="CreateProject_Click"/>
                 <MenuItem x:Name="OpenProject" Header="Open Project..." Click="OpenProject_Click"/>
                 <MenuItem x:Name="OpenRecentSubMenu" Header="Open Recent" IsEnabled="False"/>
-                <MenuItem x:Name="CloseProject" Header="Close Project" IsEnabled="False"/>
+                <MenuItem x:Name="CloseProject" Header="Close Project" IsEnabled="False" Click="CloseProject_Click"/>
             </MenuItem>
             <MenuItem x:Name="ToolsSubmenu" Header="Tools" HorizontalAlignment="Center" IsEnabled="False"/>
             <MenuItem x:Name="About" Header="About" HorizontalAlignment="Center" Click="About_Click"/>
@@ -308,7 +308,7 @@
                 </Grid.ColumnDefinitions>
                 <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Rows" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Center" Height="5"/>
                 <ScrollViewer x:Name="ChunkInformationViewer" VerticalScrollBarVisibility="Auto">
-                    <TextBox TextWrapping="Wrap" Text="TextBox"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" AllowDrop="False"/>
                 </ScrollViewer>
                 <GroupBox Header="Instance properties" Grid.Row="2">
                     <ScrollViewer x:Name="InstancePropertiesViewer" Margin="0"/>
@@ -343,7 +343,7 @@
                     <TabItem Header="Log">
                         <Grid Background="#FFE5E5E5">
                             <ScrollViewer x:Name="LogViewer" Margin="0">
-                                <TextBox TextWrapping="Wrap" AllowDrop="False" IsEnabled="False"/>
+                                <TextBox TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
                             </ScrollViewer>
                         </Grid>
                     </TabItem>

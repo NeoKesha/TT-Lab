@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Windows;
+using TT_Lab.Project;
 using WK.Libraries.BetterFolderBrowserNS;
 
 namespace TT_Lab
@@ -34,22 +35,18 @@ namespace TT_Lab
             {
                 if (System.Windows.Forms.DialogResult.OK == bfb.ShowDialog())
                 {
-                    if (Directory.GetFiles(bfb.SelectedPath, "*.tson").Length > 0)
+                    var suc = ProjectManager.OpenProject(bfb.SelectedPath);
+                    if (!suc)
                     {
-                        var prFile = Directory.GetFiles(bfb.SelectedPath, "*.tson")[0];
-                        using (FileStream fs = new FileStream(prFile, FileMode.Open, FileAccess.Read))
-                        using (BinaryReader reader = new BinaryReader(fs))
-                        {
-                            var prText = new string(reader.ReadChars((Int32)fs.Length));
-                            Project.Project pr = JsonConvert.DeserializeObject<Project.Project>(prText);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Can't find project file!", "No project file found!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Failed to open project!", "Error opening project!", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
+        }
+
+        private void CloseProject_Click(Object sender, RoutedEventArgs e)
+        {
+            ProjectManager.CloseProject();
         }
     }
 }
