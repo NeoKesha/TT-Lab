@@ -61,7 +61,8 @@ namespace TT_Lab
 
         private void CreateButton_Click(Object sender, RoutedEventArgs e)
         {
-            
+            Project.Project pr = new Project.Project(ProjectName.Text, ProjectPath.Text, DiscContentPath.Text);
+            Console.WriteLine("Project created!");
         }
 
         private void ProjectName_TextChanged(Object sender, System.Windows.Controls.TextChangedEventArgs e)

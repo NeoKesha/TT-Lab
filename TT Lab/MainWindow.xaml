@@ -281,7 +281,7 @@
         <Menu x:Name="MainMenu" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="6,2,0,0">
             <MenuItem x:Name="ProjectSubMenu" Header="Project">
                 <MenuItem x:Name="CreateProject" Header="Create Project..." Click="CreateProject_Click"/>
-                <MenuItem x:Name="OpenProject" Header="Open Project..."/>
+                <MenuItem x:Name="OpenProject" Header="Open Project..." Click="OpenProject_Click"/>
                 <MenuItem x:Name="OpenRecentSubMenu" Header="Open Recent" IsEnabled="False"/>
                 <MenuItem x:Name="CloseProject" Header="Close Project" IsEnabled="False"/>
             </MenuItem>
@@ -343,7 +343,7 @@
                     <TabItem Header="Log">
                         <Grid Background="#FFE5E5E5">
                             <ScrollViewer x:Name="LogViewer" Margin="0">
-                                <TextBox TextWrapping="Wrap" Text="TextBox"/>
+                                <TextBox TextWrapping="Wrap" AllowDrop="False" IsEnabled="False"/>
                             </ScrollViewer>
                         </Grid>
                     </TabItem>
