@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.IO;
+﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using TT_Lab.Command;
 using TT_Lab.Project;
 using WK.Libraries.BetterFolderBrowserNS;
@@ -13,11 +12,20 @@ namespace TT_Lab
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
+            // Suppress Binding errors for dynamically changing item collection within UIs: ListBox, MenuItem, etc.
+#if DEBUG
+            System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Critical;
+#endif
             InitializeComponent();
             About.Command = new OpenDialogueCommand(typeof(TT_Lab.About));
             CreateProject.Command = new OpenDialogueCommand(typeof(TT_Lab.ProjectCreationWizard));
+            OpenProject.Command = new OpenProjectDialogueCommand();
+            SaveProject.Command = new SaveProjectCommand();
+            AddKeybind(OpenProject.Command, Key.O, ModifierKeys.Control);
+            AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control);
             DataContext = ProjectManagerSingleton.PM;
             Closed += MainWindow_Closed;
         }
@@ -27,25 +35,14 @@ namespace TT_Lab
             Properties.Settings.Default.Save();
         }
 
-        private void OpenProject_Click(object sender, RoutedEventArgs e)
-        {
-            var recents = Properties.Settings.Default.RecentProjects;
-            using (BetterFolderBrowser bfb = new BetterFolderBrowser
-            {
-                RootFolder = recents != null && recents.Count != 0 ? recents[0] : ""
-            })
-            {
-                if (System.Windows.Forms.DialogResult.OK == bfb.ShowDialog())
-                {
-                    var open = new OpenProjectCommand(bfb.SelectedPath);
-                    open.Execute();
-                }
-            }
-        }
-
         private void CloseProject_Click(object sender, RoutedEventArgs e)
         {
             ProjectManagerSingleton.PM.CloseProject();
+        }
+
+        private void AddKeybind(System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
+        {
+            InputBindings.Add(new KeyBinding(command, key, modifierKeys));
         }
     }
 }

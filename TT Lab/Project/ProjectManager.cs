@@ -80,7 +80,9 @@ namespace TT_Lab.Project
                         menus[i] = new MenuItem
                         {
                             Header = $"{i + 1}. {recents[i]}",
-                            Command = new OpenProjectCommand(recents[i])
+                            Command = new OpenProjectCommand(recents[i]),
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                            VerticalAlignment = System.Windows.VerticalAlignment.Center
                         };
                     }
                     _recentMenus = menus;
