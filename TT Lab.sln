@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Blend for Visual Studio Version 16
+# Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinTech", "TwinTech\TwinTech.csproj", "{14348117-4503-49CD-94F9-1852069543E3}"
@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twinsanity Command Interface", "Twinsanity Command Interface\Twinsanity Command Interface.csproj", "{8251F455-C874-414A-B9AE-792375197C79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TT Lab", "TT Lab\TT Lab.csproj", "{640EEAEC-CB84-4499-B5A9-E084CAB68D91}"
+	ProjectSection(ProjectDependencies) = postProject
+		{14348117-4503-49CD-94F9-1852069543E3} = {14348117-4503-49CD-94F9-1852069543E3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

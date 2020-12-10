@@ -63,6 +63,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Assets\IAsset.cs" />
+    <Compile Include="Assets\SerializableAsset.cs" />
+    <Compile Include="Assets\Texture.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
     <Compile Include="Command\OpenProjectCommand.cs" />
     <Compile Include="Command\OpenProjectDialogueCommand.cs" />
@@ -139,6 +141,11 @@
   <ItemGroup>
     <Resource Include="Images\boat_guy.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\TwinTech\TwinTech.csproj">
+      <Project>{14348117-4503-49cd-94f9-1852069543e3}</Project>
+      <Name>TwinTech</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

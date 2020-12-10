@@ -111,6 +111,7 @@ namespace TT_Lab.Project
             if (discFiles.Contains("System.cnf"))
             {
                 OpenedProject = new PS2Project(name, path, discContentPath);
+                OpenedProject.Serialize();
             }
             else
             {
@@ -136,12 +137,7 @@ namespace TT_Lab.Project
                 if (Directory.GetFiles(path, "*.tson").Length != 0)
                 {
                     var prFile = Directory.GetFiles(path, "*.tson")[0];
-                    using (FileStream fs = new FileStream(prFile, FileMode.Open, FileAccess.Read))
-                    using (BinaryReader reader = new BinaryReader(fs))
-                    {
-                        var prText = new string(reader.ReadChars((Int32)fs.Length));
-                        OpenedProject = JsonConvert.DeserializeObject<PS2Project>(prText);
-                    }
+                    OpenedProject = PS2Project.Deserialize(prFile);
                 }
             }
             catch (Exception ex)

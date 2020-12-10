@@ -56,6 +56,7 @@
     <Compile Include="TwinsanityInterchange\Common\AgentLab\PS2HeaderScript.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCommand.cs" />
     <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCondition.cs" />
+    <Compile Include="TwinsanityInterchange\Common\BDRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\BHRecord.cs" />
     <Compile Include="TwinsanityInterchange\Common\BlendSkinType1.cs" />
     <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraPath.cs" />

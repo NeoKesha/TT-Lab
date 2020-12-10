@@ -15,7 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
         private PS2BH Header;
         private String headerPath;
         private String headerWritePath;
-        internal List<ITwinSerializable> Items;
+        public List<BDRecord> Items;
 
         // A requirement to provide the header path
         public PS2BD(String headerPath, String headerWritePath)
@@ -23,32 +23,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             this.headerWritePath = headerWritePath;
             this.headerPath = headerPath;
             Header = new PS2BH();
-            Items = new List<ITwinSerializable>();
-        }
-
-        public void AddRecord(String path, Byte[] data)
-        {
-            var headRec = new BHRecord
-            {
-                Length = data.Length,
-                Path = path,
-                Offset = GetLength()
-            };
-            Header.Records.Add(headRec);
-            var item = new BaseTwinItem(data);
-            Items.Add(item);
-        }
-
-        public void RemoveRecord(Int32 id)
-        {
-            if (Items.Count >= id) return;
-            Items.RemoveAt(id);
-            Header.Records.RemoveAt(id);
+            Items = new List<BDRecord>();
         }
 
         public Int32 GetLength()
         {
-            return Items.Sum(i => i.GetLength());
+            return Items.Sum(i => i.Data.Length);
         }
 
         public void Read(BinaryReader reader, Int32 length)
@@ -60,10 +40,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             }
             foreach (var record in Header.Records)
             {
-                var item = new BaseTwinItem();
                 reader.BaseStream.Position = record.Offset;
-                item.Read(reader, record.Length);
-                Items.Add(item);
+                var r = new BDRecord(record, reader.ReadBytes(record.Length));
+                Items.Add(r);
             }
         }
 
@@ -76,7 +55,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             }
             foreach (var item in Items)
             {
-                item.Write(writer);
+                writer.Write(item.Data);
             }
         }
     }

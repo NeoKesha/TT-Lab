@@ -8,37 +8,54 @@ using TT_Lab.Assets;
 
 namespace TT_Lab.Project
 {
+    /// <summary>
+    /// Base interface for the PS2 and XBox project types
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public interface IProject
     {
         /// <summary>
+        /// Maps a string to an asset Type
+        /// </summary>
+        /// <example>
+        /// IAsset newTex = (IAsset)Activator.CreateInstance(StringToAsset["texture"]);
+        /// </example>
+        Dictionary<string, Type> StringToAsset { get; }
+
+        /// <summary>
+        /// Project's collection of assets
+        /// </summary>
+        [JsonProperty(ItemIsReference = true)]
+        Dictionary<Guid, IAsset> Assets { get; }
+
+        /// <summary>
         /// Project's UUID
         /// </summary>
-        [JsonProperty]
+        [JsonProperty(Required = Required.Always)]
         Guid UUID { get; }
 
         /// <summary>
         /// Project's name
         /// </summary>
-        [JsonProperty]
+        [JsonProperty(Required = Required.Always)]
         string Name { get; set; }
 
         /// <summary>
         /// Project's folder location
         /// </summary>
-        [JsonProperty]
+        [JsonProperty(Required = Required.Always)]
         string Path { get; set; }
 
         /// <summary>
         /// Game's disc content path
         /// </summary>
-        [JsonProperty]
+        [JsonProperty(Required = Required.Always)]
         string DiscContentPath { get; set; }
 
         /// <summary>
         /// Date and time when project was last modified
         /// </summary>
-        [JsonProperty]
+        [JsonProperty(Required = Required.Always)]
         DateTime LastModified { get; set; }
 
         /// <summary>
@@ -58,5 +75,10 @@ namespace TT_Lab.Project
         /// <param name="id">Asset ID</param>
         /// <returns>Returns requested asset or null if not found</returns>
         T GetAsset<T>(Guid id) where T : IAsset;
+
+        /// <summary>
+        /// Dump on disk in JSON format
+        /// </summary>
+        void Serialize(string path = "");
     }
 }

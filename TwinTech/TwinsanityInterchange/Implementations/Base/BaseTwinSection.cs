@@ -26,14 +26,25 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             Items.Add(item);
         }
 
+        public Int32 GetItemsAmount()
+        {
+            return Items.Count;
+        }
+
         public uint GetID()
         {
             return id;
         }
 
-        public ITwinItem GetItem(uint id)
+        public ITwinItem GetItem(Int32 index)
         {
-            return Items.Where(item => item.GetID() == id).FirstOrDefault();
+            if (index >= Items.Count) return null;
+            return Items[index];
+        }
+
+        public T GetItem<T>(uint id) where T : ITwinItem
+        {
+            return (T)Items.Where(item => item.GetID() == id).FirstOrDefault();
         }
 
         public int GetLength()
@@ -103,9 +114,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             }
         }
 
-        public void RemoveItem(uint id)
+        public void RemoveItem<T>(uint id) where T : ITwinItem
         {
-            ITwinItem listItem = GetItem(id);
+            ITwinItem listItem = GetItem<T>(id);
             if (listItem != null)
             {
                 Items.Remove(listItem);
@@ -152,4 +163,4 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return idToClassDictionary[id];
         }
     }
-   }
+}

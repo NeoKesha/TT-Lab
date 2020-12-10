@@ -17,6 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             this.data = data;
         }
+
         public uint GetID()
         {
             return id;
