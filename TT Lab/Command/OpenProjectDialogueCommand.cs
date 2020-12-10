@@ -19,14 +19,15 @@ namespace TT_Lab.Command
         public void Execute(Object parameter = null)
         {
             var recents = Properties.Settings.Default.RecentProjects;
-            using (BetterFolderBrowser bfb = new BetterFolderBrowser
+            using (System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog
             {
-                RootFolder = recents != null && recents.Count != 0 ? recents[0] : ""
+                InitialDirectory = recents != null && recents.Count != 0 ? recents[0] : "",
+                Filter = "PS2 TT Lab Project|*.tson|XBox TT Lab Project|*.xson"
             })
             {
-                if (System.Windows.Forms.DialogResult.OK == bfb.ShowDialog())
+                if (System.Windows.Forms.DialogResult.OK == ofd.ShowDialog())
                 {
-                    var open = new OpenProjectCommand(bfb.SelectedPath);
+                    var open = new OpenProjectCommand(System.IO.Path.GetDirectoryName(ofd.FileName));
                     open.Execute();
                 }
             }

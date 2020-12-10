@@ -32,11 +32,11 @@ namespace TT_Lab.Project
 
     public class ProjectManager : ObservableObject
     {
-        private Project _openedProject;
-        private CommandManager commandManager = new CommandManager();
+        private IProject _openedProject;
+        private CommandManager _commandManager = new CommandManager();
         private MenuItem[] _recentMenus = new MenuItem[0];
 
-        public Project OpenedProject
+        public IProject OpenedProject
         {
             get
             {
@@ -107,25 +107,41 @@ namespace TT_Lab.Project
             {
                 throw new Exception("Improper disc content provided!");
             }
-            OpenedProject = new Project(name, path, discContentPath);
+            // Create PS2 type project
+            if (discFiles.Contains("System.cnf"))
+            {
+                OpenedProject = new PS2Project(name, path, discContentPath);
+            }
+            else
+            {
+                // TODO: XBox type project
+                throw new Exception("XBox project type not supported!");
+            }
             AddRecentlyOpened(OpenedProject.ProjectPath);
+            // Unpack assets
+            Directory.CreateDirectory("assets");
+            Directory.SetCurrentDirectory("assets");
+            OpenedProject.UnpackAssets();
         }
 
         public void OpenProject(string path)
         {
             try
             {
-                if (Directory.GetFiles(path, "*.tson").Length == 0)
+                // Check for PS2 and XBox project root files
+                if (Directory.GetFiles(path, "*.tson").Length == 0 && Directory.GetFiles(path, "*.xson").Length == 0)
                 {
                     throw new Exception("No project root found!");
                 }
-
-                var prFile = Directory.GetFiles(path, "*.tson")[0];
-                using (FileStream fs = new FileStream(prFile, FileMode.Open, FileAccess.Read))
-                using (BinaryReader reader = new BinaryReader(fs))
+                if (Directory.GetFiles(path, "*.tson").Length != 0)
                 {
-                    var prText = new string(reader.ReadChars((Int32)fs.Length));
-                    OpenedProject = JsonConvert.DeserializeObject<Project>(prText);
+                    var prFile = Directory.GetFiles(path, "*.tson")[0];
+                    using (FileStream fs = new FileStream(prFile, FileMode.Open, FileAccess.Read))
+                    using (BinaryReader reader = new BinaryReader(fs))
+                    {
+                        var prText = new string(reader.ReadChars((Int32)fs.Length));
+                        OpenedProject = JsonConvert.DeserializeObject<PS2Project>(prText);
+                    }
                 }
             }
             catch (Exception ex)
@@ -151,9 +167,9 @@ namespace TT_Lab.Project
             {
                 Properties.Settings.Default.RecentProjects.Insert(0, path);
                 // Store only last 10 paths
-                if (Properties.Settings.Default.RecentProjects.Count >= 10)
+                if (Properties.Settings.Default.RecentProjects.Count > 10)
                 {
-                    Properties.Settings.Default.RecentProjects.RemoveAt(9);
+                    Properties.Settings.Default.RecentProjects.RemoveAt(10);
                 }
                 RaisePropertyChangedEvent("RecentlyOpened");
                 RaisePropertyChangedEvent("HasRecents");

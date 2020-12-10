@@ -352,7 +352,9 @@
                 </TabControl>
             </Grid>
             <GroupBox Header="Project tree" Grid.Column="4">
-                <ScrollViewer x:Name="ProjectTreeViewer" Margin="0"/>
+                <ScrollViewer x:Name="ProjectTreeViewer" Margin="0">
+                    <TreeView x:Name="ProjectTree"/>
+                </ScrollViewer>
             </GroupBox>
             <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Columns" HorizontalAlignment="Stretch" Grid.Column="1"/>
             <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Columns" HorizontalAlignment="Stretch" Grid.Column="3"/>

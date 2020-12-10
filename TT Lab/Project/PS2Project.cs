@@ -1,21 +1,23 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.Assets;
 
 namespace TT_Lab.Project
 {
-    [JsonObject(MemberSerialization.OptIn)]
-    public class Project
+    /// <summary>
+    /// PS2 project class, the root has the reserved extension .tson.
+    /// When implementing XBox project use .xson extension to differentiate between the two
+    /// </summary>
+    public class PS2Project : IProject
     {
-        [JsonProperty]
+        public Guid UUID { get; }
+
         public string Name { get; set; }
 
-        [JsonProperty]
         public string Path { get; set; }
 
-        [JsonProperty]
         public string DiscContentPath { get; set; }
 
-        [JsonProperty]
         public DateTime LastModified { get; set; }
 
         public string ProjectPath
@@ -26,14 +28,15 @@ namespace TT_Lab.Project
             }
         }
 
-        public Project() { }
+        public PS2Project() { }
 
-        public Project(string name, string path, string discContentPath)
+        public PS2Project(string name, string path, string discContentPath)
         {
             Name = name;
             Path = path;
             DiscContentPath = discContentPath;
             LastModified = DateTime.Now;
+            UUID = Guid.NewGuid();
             var projDir = System.IO.Path.Combine(Path, Name);
             System.IO.Directory.CreateDirectory(projDir);
             System.IO.Directory.SetCurrentDirectory(projDir);
@@ -42,6 +45,16 @@ namespace TT_Lab.Project
             {
                 writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
             }
+        }
+
+        public void UnpackAssets()
+        {
+            throw new NotImplementedException();
+        }
+
+        public T GetAsset<T>(Guid id) where T : IAsset
+        {
+            throw new NotImplementedException();
         }
     }
 }

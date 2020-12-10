@@ -62,11 +62,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Assets\IAsset.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
     <Compile Include="Command\OpenProjectCommand.cs" />
     <Compile Include="Command\OpenProjectDialogueCommand.cs" />
     <Compile Include="Command\SaveProjectCommand.cs" />
     <Compile Include="Command\SelectFolderCommand.cs" />
+    <Compile Include="Project\IProject.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
     <Page Include="About.xaml">
@@ -103,7 +105,7 @@
     <Compile Include="ProjectCreationWizard.xaml.cs">
       <DependentUpon>ProjectCreationWizard.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Project\Project.cs" />
+    <Compile Include="Project\PS2Project.cs" />
     <Compile Include="Project\ProjectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
