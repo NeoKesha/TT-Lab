@@ -6,11 +6,28 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
     public class PS2MainScript : PS2AnyScript
     {
+        private static AgentLabDefs AgentLabDefs = null;
+
+        public static AgentLabDefs GetAgentLabDefs()
+        {
+            if (AgentLabDefs == null)
+            {
+                using (FileStream stream = new FileStream(@"AgentLabDefs.json", FileMode.Open, FileAccess.Read))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
+                }            
+            }
+            return AgentLabDefs;
+        }
+
         public String Name;
         public Int32 UnkInt;
         public List<ScriptState> ScriptStates;

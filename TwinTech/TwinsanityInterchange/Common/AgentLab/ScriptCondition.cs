@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -51,14 +52,30 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void WriteText(StreamWriter writer)
         {
-            writer.WriteLine($"            Condition ({ConditionIndex}, {Parameter}) {"{"}");
-            writer.WriteLine($"                ({Modifier}, {ReturnCheck}, {ConditionPowerMultiplier}) == {(NotGate?"false":"true")}");
+            AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
+            writer.WriteLine($"            Condition {MapIndex(ConditionIndex, defs)}({Parameter}) {"{"}");
+            writer.WriteLine($"                ({Modifier.ToString(CultureInfo.InvariantCulture)}, " +
+                $"{ReturnCheck.ToString(CultureInfo.InvariantCulture)}, " +
+                $"{ConditionPowerMultiplier.ToString(CultureInfo.InvariantCulture)}) == {(NotGate?"false":"true")}");
             writer.WriteLine($"            {"}"}");
         }
 
         public void ReadText(StreamReader reader)
         {
             throw new NotImplementedException();
+        }
+
+        private string MapIndex(UInt32 index, AgentLabDefs defs)
+        {
+            string str_index = index.ToString();
+            if (defs.condition_map.ContainsKey(str_index))
+            {
+                return defs.condition_map[str_index];
+            } 
+            else
+            {
+                return $"ById_{str_index}";
+            }
         }
     }
 }

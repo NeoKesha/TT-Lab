@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -75,7 +76,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write    ($"            floats = [");
             for (var i = 0; i < Floats.Count; ++i)
             {
-                writer.Write($"{Floats[i]}");
+                writer.Write($"{Floats[i].ToString(CultureInfo.InvariantCulture)}");
                 if (i < Floats.Count - 1)
                 {
                     writer.Write(", ");

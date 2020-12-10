@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -81,16 +82,63 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void WriteText(StreamWriter writer)
         {
-            writer.Write($"            {CommandIndex}(");
-            for (var i = 0; i < Arguments.Count; ++i)
+            AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
+            writer.Write($"            {MapCommand(CommandIndex, defs)}(");
+            for (Int32 i = 0; i < Arguments.Count; ++i)
             {
-                writer.Write($"{Arguments[i]}");
+                writer.Write($"{ToStringArgument(Arguments[i], i, CommandIndex, defs)}");
                 if (i < Arguments.Count - 1)
                 {
                     writer.Write(", ");
                 }
             }
             writer.WriteLine($")");
+        }
+
+        private string MapCommand(UInt32 index, AgentLabDefs defs)
+        {
+            string str_index = index.ToString();
+            if (defs.command_map.ContainsKey(str_index))
+            {
+                return defs.command_map[str_index].name;
+            }
+            else
+            {
+                return $"ById_{str_index}";
+            }
+        }
+
+        private string ToStringArgument(UInt32 arg, Int32 pos, UInt32 index, AgentLabDefs defs)
+        {
+            string type = "hex";
+            string str_index = index.ToString();
+            if (defs.command_map.ContainsKey(str_index.ToString()))
+            {
+                List<string> types = defs.command_map[str_index].arguments;
+                if (pos < types.Count)
+                {
+                    type = types[pos].ToLower();
+                }
+            }
+            switch (type)
+            {
+                case "int32":
+                    return BitConverter.ToInt32(BitConverter.GetBytes(arg), 0).ToString();
+                case "int16":
+                    return BitConverter.ToInt16(BitConverter.GetBytes(0xFFFF & arg),0).ToString();
+                case "int8":
+                case "uint32":
+                    return arg.ToString();
+                case "uint16":
+                    return (0xFFFF & arg).ToString();
+                case "byte":
+                    return (0xFF & arg).ToString();
+                case "single":
+                    return BitConverter.ToSingle(BitConverter.GetBytes(arg), 0).ToString(CultureInfo.InvariantCulture);
+                case "hex":
+                default:
+                    return "0x"+arg.ToString("X8");
+            }
         }
 
         public void ReadText(StreamReader reader)

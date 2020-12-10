@@ -71,7 +71,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         }
         public void WriteText(StreamWriter writer)
         {
-            writer.WriteLine($"    State({ScriptIndexOrSlot}) {"{"}");
+            if (ScriptIndexOrSlot != -1)
+            {
+                writer.WriteLine($"    State({ScriptIndexOrSlot}) {"{"}");
+            } else
+            {
+                writer.WriteLine($"    State() {"{"}");
+            }
             //writer.WriteLine($"        SET BITFIELD {Bitfield}");
             if (Type1 != null)
             {
