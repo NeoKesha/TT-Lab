@@ -59,5 +59,35 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 writer.Write(b);
             }
         }
+        public void WriteText(StreamWriter writer)
+        {
+            writer.WriteLine($"        Head {"{"}");
+            writer.Write    ($"            bytes = [");
+            for (var i = 0; i < Bytes.Count; ++i)
+            {
+                writer.Write($"{Bytes[i]}");
+                if (i < Bytes.Count - 1)
+                {
+                    writer.Write(", ");
+                }
+            }
+            writer.WriteLine($"]");
+            writer.Write    ($"            floats = [");
+            for (var i = 0; i < Floats.Count; ++i)
+            {
+                writer.Write($"{Floats[i]}");
+                if (i < Floats.Count - 1)
+                {
+                    writer.Write(", ");
+                }
+            }
+            writer.WriteLine($"]");
+            writer.WriteLine($"        {"}"}");
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

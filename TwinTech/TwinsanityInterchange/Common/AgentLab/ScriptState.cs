@@ -69,5 +69,24 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 Type1.Write(writer);
             }
         }
+        public void WriteText(StreamWriter writer)
+        {
+            writer.WriteLine($"    State({ScriptIndexOrSlot}) {"{"}");
+            //writer.WriteLine($"        SET BITFIELD {Bitfield}");
+            if (Type1 != null)
+            {
+                Type1.WriteText(writer);
+            }
+            foreach(var body in Bodies)
+            {
+                body.WriteText(writer);
+            }
+            writer.WriteLine($"    {"}"}");
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

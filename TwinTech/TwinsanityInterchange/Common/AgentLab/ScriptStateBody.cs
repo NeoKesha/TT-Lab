@@ -85,5 +85,28 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 com.Write(writer);
             };
         }
+        public void WriteText(StreamWriter writer)
+        {
+            writer.WriteLine($"        Body {"{"}");
+            //writer.WriteLine($"            SET BITFIELD {Bitfield}");
+            if (HasStateJump)
+            {
+                writer.WriteLine($"            next_state = {JumpToState}");
+            }
+            if (Condition != null)
+            {
+                Condition.WriteText(writer);
+            }
+            foreach (var cmd in Commands)
+            {
+                cmd.WriteText(writer);
+            }
+            writer.WriteLine($"        {"}"}");
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -48,5 +48,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(ReturnCheck);
             writer.Write(ConditionPowerMultiplier);
         }
+
+        public void WriteText(StreamWriter writer)
+        {
+            writer.WriteLine($"            Condition ({ConditionIndex}, {Parameter}) {"{"}");
+            writer.WriteLine($"                ({Modifier}, {ReturnCheck}, {ConditionPowerMultiplier}) == {(NotGate?"false":"true")}");
+            writer.WriteLine($"            {"}"}");
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

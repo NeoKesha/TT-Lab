@@ -79,6 +79,25 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
+        public void WriteText(StreamWriter writer)
+        {
+            writer.Write($"            {CommandIndex}(");
+            for (var i = 0; i < Arguments.Count; ++i)
+            {
+                writer.Write($"{Arguments[i]}");
+                if (i < Arguments.Count - 1)
+                {
+                    writer.Write(", ");
+                }
+            }
+            writer.WriteLine($")");
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
         public static UInt32 GetCommandSize(UInt16 index)
         {
             if (index < 0 || index >= commandSizeMap.Length)

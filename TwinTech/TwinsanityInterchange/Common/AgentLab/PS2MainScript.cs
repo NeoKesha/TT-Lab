@@ -76,5 +76,22 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 }
             }
         }
+
+        public void WriteText(StreamWriter writer)
+        {
+            writer.WriteLine($"Script({Name}) {"{"}");
+            writer.WriteLine($"    bitfield = {UnkInt}");
+            foreach(var state in ScriptStates)
+            {
+                state.WriteText(writer);
+            }
+            writer.WriteLine("}");
+            writer.Flush();
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
