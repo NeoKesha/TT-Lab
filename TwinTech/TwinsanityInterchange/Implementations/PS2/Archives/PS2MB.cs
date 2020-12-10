@@ -25,7 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 
         public void RemoveRecord(Int32 id)
         {
-            if (Items.Count >= id) return;
+            if (id >= Items.Count) return;
             Items.RemoveAt(id);
             Header.Records.RemoveAt(id);
         }
