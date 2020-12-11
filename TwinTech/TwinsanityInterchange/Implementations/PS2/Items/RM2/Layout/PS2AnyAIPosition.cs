@@ -48,5 +48,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             Position.Write(writer);
             writer.Write(UnkShort);
         }
+
+        public String GetName()
+        {
+            return $"AI Position {id:X}";
+        }
     }
 }

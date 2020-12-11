@@ -14,11 +14,11 @@ namespace TT_Lab.Assets
         public String Data { get; set; }
         public UInt32 ID { get; set; }
 
-        public SerializableAsset(UInt32 id)
+        public SerializableAsset(UInt32 id, String name)
         {
             UUID = Guid.NewGuid();
             ID = id;
-            Name = $"{Type} {ID:X}";
+            Name = name;
             Raw = true;
             Data = null; // Indicates that game's original data is preserved
         }

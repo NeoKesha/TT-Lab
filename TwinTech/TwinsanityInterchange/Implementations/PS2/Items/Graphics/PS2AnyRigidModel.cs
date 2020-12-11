@@ -11,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyRigidModel : ITwinRigidModel
     {
-        UInt32 id;
+        protected UInt32 id;
         public UInt32 Header { get; set; } // Unused by the game
         public List<UInt32> Materials { get; private set; }
         public UInt32 Model { get; set; }
@@ -56,6 +56,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 writer.Write(Materials[i]);
             }
             writer.Write(Model);
+        }
+
+        public virtual String GetName()
+        {
+            return $"Rigid Model {id:X}";
         }
     }
 }

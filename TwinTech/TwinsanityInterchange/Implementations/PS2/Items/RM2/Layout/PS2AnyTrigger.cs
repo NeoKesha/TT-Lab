@@ -78,5 +78,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 writer.Write(Argument[i]);
             }
         }
+
+        public String GetName()
+        {
+            return $"Trigger {id:X}";
+        }
     }
 }

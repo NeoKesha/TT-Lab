@@ -105,5 +105,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
                 v.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Collision data {id:X}";
+        }
     }
 }

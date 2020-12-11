@@ -24,6 +24,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             return base.GetLength() + 4 + Pairs.Count * (Constants.SIZE_UINT32 + Constants.SIZE_UINT32);
         }
 
+        public override String GetName()
+        {
+            return $"Header Script {id:X}";
+        }
+
         public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, length);

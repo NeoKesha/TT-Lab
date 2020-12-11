@@ -74,5 +74,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
                 i.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Particle data {id:X}";
+        }
     }
 }

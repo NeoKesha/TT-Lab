@@ -57,5 +57,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
                 model.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Dynamic scenery {id:X}";
+        }
     }
 }

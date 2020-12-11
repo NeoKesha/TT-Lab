@@ -45,5 +45,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         {
             Position.Write(writer);
         }
+
+        public String GetName()
+        {
+            return $"Position {id:X}";
+        }
     }
 }

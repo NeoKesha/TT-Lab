@@ -58,5 +58,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 subBlend.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Blend Skin {id:X}";
+        }
     }
 }

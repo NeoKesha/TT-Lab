@@ -162,5 +162,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             return idToClassDictionary[id];
         }
+
+        public String GetName()
+        {
+            return $"Section {id}";
+        }
     }
 }

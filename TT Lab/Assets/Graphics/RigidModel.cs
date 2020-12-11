@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace TT_Lab.Assets
+namespace TT_Lab.Assets.Graphics
 {
-    public class Texture : SerializableAsset
+    public class RigidModel : SerializableAsset
     {
-        public override String Type => "Texture";
+        public override String Type => "RigidModel";
 
-        public Texture(UInt32 id) : base(id) {}
+        public RigidModel(UInt32 id, String name) : base(id, name) {}
 
         public override void ToRaw(Byte[] data)
         {

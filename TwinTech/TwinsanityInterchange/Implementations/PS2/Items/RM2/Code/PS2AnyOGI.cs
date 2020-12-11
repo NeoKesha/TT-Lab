@@ -178,5 +178,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 writer.Write(item);
             }
         }
+
+        public String GetName()
+        {
+            return $"OGI/Skeleton {id:X}";
+        }
     }
 }

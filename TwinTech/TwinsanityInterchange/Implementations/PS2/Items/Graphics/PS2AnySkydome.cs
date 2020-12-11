@@ -55,5 +55,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 writer.Write(Meshes[i]);
             }
         }
+
+        public String GetName()
+        {
+            return $"Skydome {id:X}";
+        }
     }
 }

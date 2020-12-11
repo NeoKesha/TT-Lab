@@ -106,5 +106,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 }
             }
         }
+
+        public String GetName()
+        {
+            return $"LOD {id:X}";
+        }
     }
 }
