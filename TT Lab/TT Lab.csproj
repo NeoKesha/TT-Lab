@@ -62,6 +62,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Assets\Code\GameObject.cs" />
+    <Compile Include="Assets\Code\OGI.cs" />
+    <Compile Include="Assets\Code\Script.cs" />
+    <Compile Include="Assets\Code\SoundEffect.cs" />
+    <Compile Include="Assets\Code\CodeModel.cs" />
+    <Compile Include="Assets\Code\Animation.cs" />
     <Compile Include="Assets\Graphics\BlendSkin.cs" />
     <Compile Include="Assets\Graphics\LodModel.cs" />
     <Compile Include="Assets\Graphics\RigidModel.cs" />

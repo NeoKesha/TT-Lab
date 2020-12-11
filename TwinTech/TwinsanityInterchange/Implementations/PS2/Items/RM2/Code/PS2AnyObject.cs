@@ -355,7 +355,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public String GetName()
         {
-            return Name;
+            return Name.Replace("|","_");
         }
     }
 }

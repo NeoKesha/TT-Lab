@@ -3,14 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Project
@@ -107,8 +110,7 @@ namespace TT_Lab.Project
                 { Constants.CODE_LANG_SPA_SECTION, new List<uint>() },
                 { Constants.CODE_OGIS_SECTION, new List<uint>() },
                 { Constants.CODE_SCRIPTS_SECTION, new List<uint>() },
-                { Constants.CODE_SOUND_EFFECTS_SECTION, new List<uint>() },
-                { Constants.CODE_UNK_ITEM, new List<uint>() }
+                { Constants.CODE_SOUND_EFFECTS_SECTION, new List<uint>() }
             };
             string[] archivePaths = System.IO.Directory.GetFiles(System.IO.Path.Combine(DiscContentPath, "Crash6"), "*.BD", System.IO.SearchOption.TopDirectoryOnly);
             PS2BD archive = new PS2BD(archivePaths[0].Replace(".BD", ".BH"), "");
@@ -162,6 +164,35 @@ namespace TT_Lab.Project
                             (graphics, graphicsCheck, Constants.GRAPHICS_LODS_SECTION);
                         ReadSectionItems<Mesh, PS2AnyMeshesSection, PS2AnyMesh>
                             (graphics, graphicsCheck, Constants.GRAPHICS_MESHES_SECTION);
+                        // Read code stuff
+                        var code = chunk.GetItem<PS2AnyCodeSection>(Constants.LEVEL_CODE_SECTION);
+                        if (code != null)
+                        {
+                            ReadSectionItems<GameObject, PS2AnyGameObjectSection, PS2AnyObject>
+                                (code, codeCheck, Constants.CODE_GAME_OBJECTS_SECTION);
+                            ReadSectionItems<Animation, PS2AnyAnimationsSection, PS2AnyAnimation>
+                                (code, codeCheck, Constants.CODE_ANIMATIONS_SECTION);
+                            ReadSectionItems<OGI, PS2AnyOGIsSection, PS2AnyOGI>
+                                (code, codeCheck, Constants.CODE_OGIS_SECTION);
+                            ReadSectionItems<CodeModel, PS2AnyCodeModelsSection, PS2AnyCodeModel>
+                                (code, codeCheck, Constants.CODE_CODE_MODELS_SECTION);
+                            ReadSectionItems<Script, PS2AnyScriptsSection, PS2AnyScript>
+                                (code, codeCheck, Constants.CODE_SCRIPTS_SECTION);
+                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                                (code, codeCheck, Constants.CODE_SOUND_EFFECTS_SECTION);
+                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                                (code, codeCheck, Constants.CODE_LANG_SPA_SECTION);
+                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                                (code, codeCheck, Constants.CODE_LANG_JPN_SECTION);
+                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                                (code, codeCheck, Constants.CODE_LANG_ITA_SECTION);
+                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                                (code, codeCheck, Constants.CODE_LANG_GER_SECTION);
+                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                                (code, codeCheck, Constants.CODE_LANG_FRE_SECTION);
+                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                                (code, codeCheck, Constants.CODE_LANG_ENG_SECTION);
+                        }
                     }
                 }
             }
