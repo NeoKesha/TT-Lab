@@ -8,6 +8,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Twinsanity.Libraries;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
@@ -98,9 +99,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         {
             writer.WriteLine($"Script({Name}) {"{"}");
             writer.WriteLine($"    bitfield = {UnkInt}");
+            int i = 0;
             foreach(var state in ScriptStates)
             {
-                state.WriteText(writer);
+                state.WriteText(writer, i);
+                ++i;
             }
             writer.WriteLine("}");
             writer.Flush();
@@ -108,7 +111,52 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void ReadText(StreamReader reader)
         {
-            throw new NotImplementedException();
+            String line = "";
+            ScriptStates.Clear();
+            while (!line.StartsWith("Script"))
+            {
+                line = reader.ReadLine().Trim();
+            }
+            Name = StringUtils.GetStringInBetween(line, "(", ")");
+            while (!line.EndsWith("{"))
+            {
+                line = reader.ReadLine().Trim();
+            }
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                if (line.StartsWith("bitfield"))
+                {
+                    UnkInt = Int32.Parse(StringUtils.GetStringAfter(line, "="));
+                }
+                if (line.StartsWith("State_"))
+                {
+                    String arg = StringUtils.GetStringInBetween(line, "(", ")");
+                    Int32 index = Int32.Parse(StringUtils.GetStringInBetween(line, "_", "("));
+                    while (ScriptStates.Count <= index)
+                    {
+                        ScriptStates.Add(new ScriptState());
+                    }
+                    ScriptState state = ScriptStates[index];
+                    if (String.IsNullOrWhiteSpace(arg))
+                    {
+                        state.ScriptIndexOrSlot = -1;
+                    } else
+                    {
+                        state.ScriptIndexOrSlot = Int16.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                    }
+                    while (!line.EndsWith("{"))
+                    {
+                        line = reader.ReadLine().Trim();
+                    }
+                    state.ReadText(reader);
+                    
+                }
+            }
         }
     }
 }

@@ -73,6 +73,7 @@
     <Compile Include="Libraries\BitConv.cs" />
     <Compile Include="Libraries\EzSwizzle.cs" />
     <Compile Include="Libraries\RIFF.cs" />
+    <Compile Include="Libraries\StringUtils.cs" />
     <Compile Include="Meta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PS2Hardware\DMATag.cs" />

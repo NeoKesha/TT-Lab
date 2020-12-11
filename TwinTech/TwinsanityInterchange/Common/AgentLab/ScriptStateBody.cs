@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
@@ -106,7 +107,38 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void ReadText(StreamReader reader)
         {
-            throw new NotImplementedException();
+            String line = "";
+            Condition = null;
+            Commands.Clear();
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                if (line.StartsWith("next_state "))
+                {
+                    JumpToState = Int32.Parse(StringUtils.GetStringAfter(line, "="));
+                } 
+                else if  (line.StartsWith("Condition"))
+                {
+                    Condition = new ScriptCondition();
+                    String condName = StringUtils.GetStringInBetween(line, "Condition ", "(").Trim();
+                    Condition.Parameter = UInt16.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                    while (!line.EndsWith("{"))
+                    {
+                        line = reader.ReadLine().Trim();
+                    }
+                    Condition.ReadText(reader, condName);
+                } 
+                else if (!line.StartsWith("}"))
+                {
+                    ScriptCommand cmd = new ScriptCommand();
+                    cmd.ReadText(line);
+                    Commands.Add(cmd);
+                }
+            }
         }
     }
 }

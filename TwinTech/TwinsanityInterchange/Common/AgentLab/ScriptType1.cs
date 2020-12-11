@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
@@ -88,7 +89,33 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void ReadText(StreamReader reader)
         {
-            throw new NotImplementedException();
+            String line = "";
+            Bytes.Clear();
+            Floats.Clear();
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                if (line.StartsWith("bytes"))
+                {
+                    String[] str_bytes = StringUtils.GetStringInBetween(line, "[", "]").Split(',');
+                    foreach (var str in str_bytes)
+                    {
+                        Bytes.Add(Byte.Parse(str));
+                    }
+                }
+                if (line.StartsWith("floats"))
+                {
+                    String[] str_floats = StringUtils.GetStringInBetween(line, "[", "]").Split(',');
+                    foreach (var str in str_floats)
+                    {
+                        Floats.Add(Single.Parse(str, CultureInfo.InvariantCulture));
+                    }
+                }
+            }
         }
     }
 }
