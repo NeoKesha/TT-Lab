@@ -6,11 +6,29 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Twinsanity.Libraries;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
     public class PS2MainScript : PS2AnyScript
     {
+        private static AgentLabDefs AgentLabDefs = null;
+
+        public static AgentLabDefs GetAgentLabDefs()
+        {
+            if (AgentLabDefs == null)
+            {
+                using (FileStream stream = new FileStream(@"AgentLabDefs.json", FileMode.Open, FileAccess.Read))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
+                }            
+            }
+            return AgentLabDefs;
+        }
+
         public String Name;
         public Int32 UnkInt;
         public List<ScriptState> ScriptStates;
@@ -73,6 +91,70 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 {
                     body.hasNext = !(state.Bodies.Last().Equals(body));
                     body.Write(writer);
+                }
+            }
+        }
+
+        public void WriteText(StreamWriter writer)
+        {
+            writer.WriteLine($"Script({Name}) {"{"}");
+            writer.WriteLine($"    bitfield = {UnkInt}");
+            int i = 0;
+            foreach(var state in ScriptStates)
+            {
+                state.WriteText(writer, i);
+                ++i;
+            }
+            writer.WriteLine("}");
+            writer.Flush();
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            String line = "";
+            ScriptStates.Clear();
+            while (!line.StartsWith("Script"))
+            {
+                line = reader.ReadLine().Trim();
+            }
+            Name = StringUtils.GetStringInBetween(line, "(", ")");
+            while (!line.EndsWith("{"))
+            {
+                line = reader.ReadLine().Trim();
+            }
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                if (line.StartsWith("bitfield"))
+                {
+                    UnkInt = Int32.Parse(StringUtils.GetStringAfter(line, "="));
+                }
+                if (line.StartsWith("State_"))
+                {
+                    String arg = StringUtils.GetStringInBetween(line, "(", ")");
+                    Int32 index = Int32.Parse(StringUtils.GetStringInBetween(line, "_", "("));
+                    while (ScriptStates.Count <= index)
+                    {
+                        ScriptStates.Add(new ScriptState());
+                    }
+                    ScriptState state = ScriptStates[index];
+                    if (String.IsNullOrWhiteSpace(arg))
+                    {
+                        state.ScriptIndexOrSlot = -1;
+                    } else
+                    {
+                        state.ScriptIndexOrSlot = Int16.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                    }
+                    while (!line.EndsWith("{"))
+                    {
+                        line = reader.ReadLine().Trim();
+                    }
+                    state.ReadText(reader);
+                    
                 }
             }
         }

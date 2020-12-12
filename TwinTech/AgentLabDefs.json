@@ -1,0 +1,397 @@
+{
+	"condition_map": {
+		"0": "Always",
+		"2": "DefaultCase",
+		"3": "GetRandomFloat",
+		"4": "IsVisible",
+		"5": "AnimationProgress",
+		"7": "AnimationFinished",
+		"9": "DistanceToSpawn",
+		"10": "DistanceToPlayer2",
+		"12": "PersistentFlag",
+		"47": "InstanceType",
+		"51": "TriggerArgument1",
+		"67": "InstanceProperties",
+		"88": "DistanceToTarget",
+		"92": "InstanceSubtype",
+		"118": "HasXLinks",
+		"176": "ChunksLoaded",
+		"517": "DistanceToPlayer",
+		"520": "PlayerCollision",
+		"521": "HitBySpin",
+		"522": "HitByBodySlam",
+		"523": "BitBySlide",
+		"524": "IsHoldingTool",
+		"532": "HitByTwinSlam",
+		"533": "HitByTwinThrow",
+		"535": "HitByJumpedOn",
+		"545": "IsChargingShot",
+		"562": "CoOpLinkActive",
+		"572": "CutsceneSkipped",
+		"579": "IsChargedShot",
+		"580": "IsDownBlast",
+		"589": "HitByPunch",
+		"590": "HitByBodySlam2",
+		"591": "HitBySpinHitbox",
+		"592": "HitByBodySlamHitbox",
+		"594": "IsVehicleRollerbrawl",
+		"596": "IsVehicleHumiliskate",
+		"598": "IsVehicle3",
+		"610": "HitByCortexBolt",
+		"617": "IsPushingObject",
+		"623": "HasActorWeight",
+		"634": "HasAmmo",
+		"639": "GlobalProgression",
+		"641": "IsMoviePlaying"
+	},
+	"command_map": {
+		"0": {
+			"name": "Error",
+			"arguments": []
+		},
+		"1": {
+			"name": "SpecialEffects",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"3": {
+			"name": "SetPosition",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"8": {
+			"name": "SpawnGlobalObject",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"9": {
+			"name": "PlayAnimation",
+			"arguments": [ "int32", "single", "int32", "int32", "int32", "int32" ]
+		},
+		"10": {
+			"name": "SpawnParticle",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"11": {
+			"name": "PlaySound",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"12": {
+			"name": "SetObjectMovement",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"29": {
+			"name": "SetRotation",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"34": {
+			"name": "SetPersistentFlag",
+			"arguments": [ "hex" ]
+		},
+		"47": {
+			"name": "AttachLink",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"54": {
+			"name": "TriggerSignal",
+			"arguments": [ "hex", "hex", "hex", "hex" ]
+		},
+		"60": {
+			"name": "AI_FindNode",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"61": {
+			"name": "StopMoving",
+			"arguments": []
+		},
+		"63": {
+			"name": "ResetObject",
+			"arguments": []
+		},
+		"64": {
+			"name": "AttachLink_Duplicate",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"65": {
+			"name": "TriggerSignal_Duplicate",
+			"arguments": [ "hex", "hex", "hex", "hex" ]
+		},
+		"82": {
+			"name": "SetPhysics2",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"83": {
+			"name": "SetPhysics",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"85": {
+			"name": "DestroyHost",
+			"arguments": [ "hex" ]
+		},
+		"86": {
+			"name": "PlayGlobalSound",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"88": {
+			"name": "PlayGlobalSound2",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"92": {
+			"name": "AddLives",
+			"arguments": [ "hex" ]
+		},
+		"93": {
+			"name": "AddLives_Duplicate2",
+			"arguments": [ "hex" ]
+		},
+		"105": {
+			"name": "SetRotation2",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"111": {
+			"name": "CacheLinkedInstance",
+			"arguments": []
+		},
+		"112": {
+			"name": "SpawnCachedObject",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"120": {
+			"name": "PhysicsResetVelocity",
+			"arguments": []
+		},
+		"187": {
+			"name": "SetShadow",
+			"arguments": [ "hex", "hex", "hex", "hex" ]
+		},
+		"188": {
+			"name": "SetShadowCircle",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"189": {
+			"name": "SetShadowMesh",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"190": {
+			"name": "SetShadowRectangle",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"512": {
+			"name": "SpawnObject",
+			"arguments": [ "hex", "hex" ]
+		},
+		"513": {
+			"name": "AddWumpa",
+			"arguments": [ "hex" ]
+		},
+		"514": {
+			"name": "CreateDamageZone",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"515": {
+			"name": "ToggleActive",
+			"arguments": [ "hex" ]
+		},
+		"516": {
+			"name": "SetCheckpoint",
+			"arguments": [ "hex" ]
+		},
+		"517": {
+			"name": "RestartFromCheckpoint",
+			"arguments": []
+		},
+		"518": {
+			"name": "SetWumpaContained",
+			"arguments": [ "hex", "hex" ]
+		},
+		"519": {
+			"name": "CrateUnsupport",
+			"arguments": []
+		},
+		"520": {
+			"name": "AddHealth",
+			"arguments": []
+		},
+		"521": {
+			"name": "ToggleActiveAndState",
+			"arguments": [ "hex", "hex" ]
+		},
+		"522": {
+			"name": "NitroSwitchCrateTriggered",
+			"arguments": []
+		},
+		"523": {
+			"name": "PropelPlayer",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"528": {
+			"name": "DamageHealth",
+			"arguments": [ "hex" ]
+		},
+		"529": {
+			"name": "SetHealth",
+			"arguments": [ "hex" ]
+		},
+		"531": {
+			"name": "ResetObject_Duplicate",
+			"arguments": []
+		},
+		"533": {
+			"name": "ForceLand",
+			"arguments": [ "hex" ]
+		},
+		"534": {
+			"name": "SetGlobalProgression",
+			"arguments": [ "hex", "hex" ]
+		},
+		"535": {
+			"name": "AddCrystal",
+			"arguments": []
+		},
+		"537": {
+			"name": "AddGem",
+			"arguments": [ "hex" ]
+		},
+		"541": {
+			"name": "SpecialEffects_Duplicate",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"542": {
+			"name": "Command_2_Duplicate",
+			"arguments": []
+		},
+		"543": {
+			"name": "PlayAnimation_Duplicate",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"544": {
+			"name": "SpawnParticle_Duplicate",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"545": {
+			"name": "PlaySound_Duplicate",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"546": {
+			"name": "CreateDamageZone_Duplicate",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"548": {
+			"name": "SpawnGlobalObject_Projectile",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"555": {
+			"name": "SetVehicleHumiliskate",
+			"arguments": [ "hex", "hex", "hex" ]
+		},
+		"569": {
+			"name": "ExitVehicleMode",
+			"arguments": [ "hex" ]
+		},
+		"570": {
+			"name": "SetVehicleRollerbrawl",
+			"arguments": [ "hex" ]
+		},
+		"571": {
+			"name": "SetVehicleHoverboard",
+			"arguments": [ "hex" ]
+		},
+		"585": {
+			"name": "AddLives_Duplicate",
+			"arguments": [ "hex" ]
+		},
+		"589": {
+			"name": "CutsceneStart",
+			"arguments": [ "hex" ]
+		},
+		"590": {
+			"name": "CutsceneEnd",
+			"arguments": [ "hex" ]
+		},
+		"596": {
+			"name": "StartWhackaworm",
+			"arguments": [ "hex", "hex", "hex" ]
+		},
+		"597": {
+			"name": "ProgressWhackaworm",
+			"arguments": [ "hex" ]
+		},
+		"598": {
+			"name": "EndWhackaworm",
+			"arguments": []
+		},
+		"602": {
+			"name": "FadeoutScreen",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"603": {
+			"name": "DisplayBottomText",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"606": {
+			"name": "CameraFocusObject",
+			"arguments": []
+		},
+		"607": {
+			"name": "CameraStopFocusObject",
+			"arguments": []
+		},
+		"618": {
+			"name": "ForceGameOver",
+			"arguments": []
+		},
+		"619": {
+			"name": "ShowBottomText",
+			"arguments": [ "hex" ]
+		},
+		"620": {
+			"name": "HideBottomText",
+			"arguments": [ "hex" ]
+		},
+		"625": {
+			"name": "SwitchCharacter",
+			"arguments": [ "hex", "hex" ]
+		},
+		"633": {
+			"name": "SetPlayerMode",
+			"arguments": [ "hex", "hex", "hex" ]
+		},
+		"634": {
+			"name": "PlayMovie",
+			"arguments": [ "hex", "hex" ]
+		},
+		"636": {
+			"name": "AddAmmo",
+			"arguments": [ "hex" ]
+		},
+		"638": {
+			"name": "EnableBossMode",
+			"arguments": [ "hex", "hex", "hex" ]
+		},
+		"639": {
+			"name": "DamageBoss",
+			"arguments": [ "hex" ]
+		},
+		"640": {
+			"name": "ExitBossMode",
+			"arguments": []
+		},
+		"647": {
+			"name": "SetGlobalProgression2",
+			"arguments": [ "hex", "hex" ]
+		},
+		"652": {
+			"name": "CameraTopdownMode",
+			"arguments": []
+		},
+		"654": {
+			"name": "PlayCredits",
+			"arguments": []
+		},
+		"657": {
+			"name": "DisplayBottomTextInstance",
+			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+		},
+		"662": {
+			"name": "ResetCamera",
+			"arguments": []
+		}
+	}
+}

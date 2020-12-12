@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
@@ -47,6 +49,66 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(Modifier);
             writer.Write(ReturnCheck);
             writer.Write(ConditionPowerMultiplier);
+        }
+
+        public void WriteText(StreamWriter writer)
+        {
+            AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
+            writer.WriteLine($"            Condition {MapIndex(ConditionIndex, defs)}({Parameter}) {"{"}");
+            writer.WriteLine($"                ({Modifier.ToString(CultureInfo.InvariantCulture)}, " +
+                $"{ReturnCheck.ToString(CultureInfo.InvariantCulture)}, " +
+                $"{ConditionPowerMultiplier.ToString(CultureInfo.InvariantCulture)}) == {(NotGate?"false":"true")}");
+            writer.WriteLine($"            {"}"}");
+        }
+
+        public void ReadText(StreamReader reader, String condName)
+        {
+            String line = "";
+            if (condName.StartsWith("ById_"))
+            {
+                ConditionIndex = UInt16.Parse(StringUtils.GetStringAfter(condName, "ById_"));
+            } else
+            {
+                AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
+                ConditionIndex = UInt16.Parse((defs.condition_map.FirstOrDefault(x => x.Value == condName).Key));
+            }
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                if (line.StartsWith("("))
+                {
+                    String right = StringUtils.GetStringAfter(line, "==").Trim();
+                    if (right == "true")
+                    {
+                        NotGate = false;
+                    } 
+                    else
+                    {
+                        NotGate = true;
+                    }
+                    String[] floats = StringUtils.GetStringInBetween(line, "(", ")").Split(',');
+                    Modifier = Single.Parse(floats[0], CultureInfo.InvariantCulture);
+                    ReturnCheck = Single.Parse(floats[1], CultureInfo.InvariantCulture);
+                    ConditionPowerMultiplier = Single.Parse(floats[2], CultureInfo.InvariantCulture);
+                }
+            }
+        }
+
+        private string MapIndex(UInt32 index, AgentLabDefs defs)
+        {
+            string str_index = index.ToString();
+            if (defs.condition_map.ContainsKey(str_index))
+            {
+                return defs.condition_map[str_index];
+            } 
+            else
+            {
+                return $"ById_{str_index}";
+            }
         }
     }
 }

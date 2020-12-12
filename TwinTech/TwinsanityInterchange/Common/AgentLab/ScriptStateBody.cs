@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
@@ -84,6 +85,60 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 com.hasNext = !(Commands.Last().Equals(com));
                 com.Write(writer);
             };
+        }
+        public void WriteText(StreamWriter writer)
+        {
+            writer.WriteLine($"        Body {"{"}");
+            //writer.WriteLine($"            SET BITFIELD {Bitfield}");
+            if (HasStateJump)
+            {
+                writer.WriteLine($"            next_state = {JumpToState}");
+            }
+            if (Condition != null)
+            {
+                Condition.WriteText(writer);
+            }
+            foreach (var cmd in Commands)
+            {
+                cmd.WriteText(writer);
+            }
+            writer.WriteLine($"        {"}"}");
+        }
+
+        public void ReadText(StreamReader reader)
+        {
+            String line = "";
+            Condition = null;
+            Commands.Clear();
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                if (line.StartsWith("next_state "))
+                {
+                    JumpToState = Int32.Parse(StringUtils.GetStringAfter(line, "="));
+                } 
+                else if  (line.StartsWith("Condition"))
+                {
+                    Condition = new ScriptCondition();
+                    String condName = StringUtils.GetStringInBetween(line, "Condition ", "(").Trim();
+                    Condition.Parameter = UInt16.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                    while (!line.EndsWith("{"))
+                    {
+                        line = reader.ReadLine().Trim();
+                    }
+                    Condition.ReadText(reader, condName);
+                } 
+                else if (!line.StartsWith("}"))
+                {
+                    ScriptCommand cmd = new ScriptCommand();
+                    cmd.ReadText(line);
+                    Commands.Add(cmd);
+                }
+            }
         }
     }
 }

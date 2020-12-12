@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
@@ -76,6 +78,137 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             foreach (UInt32 arg in Arguments)
             {
                 writer.Write(arg);
+            }
+        }
+
+        public void WriteText(StreamWriter writer)
+        {
+            AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
+            writer.Write($"            {MapCommand(CommandIndex, defs)}(");
+            for (Int32 i = 0; i < Arguments.Count; ++i)
+            {
+                writer.Write($"{ToStringArgument(Arguments[i], i, CommandIndex, defs)}");
+                if (i < Arguments.Count - 1)
+                {
+                    writer.Write(", ");
+                }
+            }
+            writer.WriteLine($")");
+        }
+
+        private string MapCommand(UInt32 index, AgentLabDefs defs)
+        {
+            string str_index = index.ToString();
+            if (defs.command_map.ContainsKey(str_index))
+            {
+                return defs.command_map[str_index].name;
+            }
+            else
+            {
+                return $"ById_{str_index}";
+            }
+        }
+
+        private string ToStringArgument(UInt32 arg, Int32 pos, UInt32 index, AgentLabDefs defs)
+        {
+            string type = "hex";
+            string str_index = index.ToString();
+            if (defs.command_map.ContainsKey(str_index.ToString()))
+            {
+                List<string> types = defs.command_map[str_index].arguments;
+                if (pos < types.Count)
+                {
+                    type = types[pos].ToLower();
+                }
+            }
+            switch (type)
+            {
+                case "int32":
+                    return BitConverter.ToInt32(BitConverter.GetBytes(arg), 0).ToString();
+                case "int16":
+                    return BitConverter.ToInt16(BitConverter.GetBytes(0xFFFF & arg),0).ToString();
+                case "uint32":
+                    return arg.ToString();
+                case "uint16":
+                    return (0xFFFF & arg).ToString();
+                case "byte":
+                    return (0xFF & arg).ToString();
+                case "single":
+                    return BitConverter.ToSingle(BitConverter.GetBytes(arg), 0).ToString(CultureInfo.InvariantCulture);
+                case "hex":
+                default:
+                    return "0x"+arg.ToString("X8");
+            }
+        }
+
+        private UInt32 ToArgumentString(string arg, Int32 pos, UInt32 index, AgentLabDefs defs)
+        {
+            String type = "hex";
+            if (!arg.StartsWith("0x"))
+            {
+                if (pos < defs.command_map[index.ToString()].arguments.Count)
+                {
+                    type = defs.command_map[index.ToString()].arguments[pos];
+                }
+            }
+            switch (type)
+            {
+                case "int32":
+                    {
+                        Int32 val = Convert.ToInt32(arg);
+                        return BitConverter.ToUInt32(BitConverter.GetBytes(val), 0);
+                    }
+                case "int16":
+                    {
+                        Int16 val = Convert.ToInt16(arg);
+                        return BitConverter.ToUInt32(BitConverter.GetBytes(val), 0);
+                    }
+                case "uint32":
+                    {
+                        UInt32 val = Convert.ToUInt32(arg);
+                        return BitConverter.ToUInt32(BitConverter.GetBytes(val), 0);
+                    }
+                case "uint16":
+                    {
+                        UInt16 val = Convert.ToUInt16(arg);
+                        return BitConverter.ToUInt16(BitConverter.GetBytes(val), 0);
+                    }
+                case "byte":
+                    {
+                        Byte val = Convert.ToByte(arg);
+                        return BitConverter.ToUInt32(BitConverter.GetBytes(val), 0);
+                    }
+                case "single":
+                    {
+                        Single val = Convert.ToSingle(arg, CultureInfo.InvariantCulture);
+                        return BitConverter.ToUInt32(BitConverter.GetBytes(val), 0);
+                    }
+                case "hex":
+                default:
+                    return Convert.ToUInt32(arg.Substring(2), 16);
+            }
+        }
+
+        public void ReadText(String line)
+        {
+            AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
+            Arguments.Clear();
+            if (line.StartsWith("ById_"))
+            {
+                CommandIndex = UInt16.Parse(StringUtils.GetStringInBetween(line, "ById_","("));
+            } else
+            {
+                String cmd_name = StringUtils.GetStringBefore(line, "(");
+                CommandIndex = UInt16.Parse((defs.command_map.FirstOrDefault(x => x.Value.name == cmd_name).Key));
+            }
+            String[] args = StringUtils.GetStringInBetween(line, "(", ")").Split(',');
+            for (Int32 i = 0; i < args.Length; ++i)
+            {
+                if (String.IsNullOrWhiteSpace(args[i]))
+                {
+                    continue;
+                }
+                Arguments.Add(ToArgumentString(args[i].Trim(),i,CommandIndex,defs));
             }
         }
 
