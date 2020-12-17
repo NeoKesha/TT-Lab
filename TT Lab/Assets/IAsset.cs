@@ -43,6 +43,12 @@ namespace TT_Lab.Assets
         string Data { get; set; }
 
         /// <summary>
+        /// Name for the asset to display in project tree
+        /// </summary>
+        [JsonProperty(Required = Required.AllowNull)]
+        string Alias { get; set; }
+
+        /// <summary>
         /// Dump on disk in JSON format
         /// </summary>
         void Serialize();

@@ -5,15 +5,18 @@ using System.Linq;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Assets.Instance;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Project
@@ -121,24 +124,24 @@ namespace TT_Lab.Project
             }
             foreach (var item in archive.Items)
             {
-                var pathUp = item.Header.Path.ToUpper();
+                var pathLow = item.Header.Path.ToLower();
                 using (System.IO.MemoryStream ms = new System.IO.MemoryStream(item.Data))
                 using (System.IO.BinaryReader reader = new System.IO.BinaryReader(ms))
                 {
                     // Check for chunk file
-                    if (pathUp.EndsWith(".RM2") || pathUp.ToUpper().EndsWith(".SM2") || pathUp.ToUpper().EndsWith("DEFAULT.RM2"))
+                    if (pathLow.EndsWith(".rm2") || pathLow.ToUpper().EndsWith(".sm2") || pathLow.ToUpper().EndsWith("default.rm2"))
                     {
                         ITwinSection chunk = null;
                         uint graphicsSectionID = Constants.LEVEL_GRAPHICS_SECTION;
-                        if (pathUp.EndsWith("DEFAULT.RM2"))
+                        if (pathLow.EndsWith("default.rm2"))
                         {
                             chunk = new PS2Default();
                         }
-                        else if (pathUp.EndsWith(".RM2"))
+                        else if (pathLow.EndsWith(".rm2"))
                         {
                             chunk = new PS2AnyTwinsanityRM2();
                         }
-                        else if (pathUp.EndsWith(".SM2"))
+                        else if (pathLow.EndsWith(".sm2"))
                         {
                             chunk = new PS2AnyTwinsanitySM2();
                             graphicsSectionID = Constants.SCENERY_GRAPHICS_SECTION;
@@ -193,6 +196,33 @@ namespace TT_Lab.Project
                             ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_ENG_SECTION);
                         }
+                        // RM2 per chunk instances
+                        if (pathLow.EndsWith(".rm2"))
+                        {
+                            for (var i = 0; i < 8; ++i)
+                            {
+                                var layId = Constants.LEVEL_LAYOUT_1_SECTION + i;
+                                var layout = chunk.GetItem<PS2AnyLayoutSection>((UInt32)layId);
+                                ReadSectionItems<ObjectInstance, PS2AnyInstancesSection, PS2AnyInstance>
+                                    (layout, Constants.LAYOUT_INSTANCES_SECTION, pathLow, layId);
+                                ReadSectionItems<AiPath, PS2AnyAIPathsSection, PS2AnyAIPath>
+                                    (layout, Constants.LAYOUT_AI_PATHS_SECTION, pathLow, layId);
+                                ReadSectionItems<AiPosition, PS2AnyAIPositionsSection, PS2AnyAIPosition>
+                                    (layout, Constants.LAYOUT_AI_POSITIONS_SECTION, pathLow, layId);
+                                ReadSectionItems<Camera, PS2AnyCamerasSection, PS2AnyCamera>
+                                    (layout, Constants.LAYOUT_CAMERAS_SECTION, pathLow, layId);
+                                ReadSectionItems<CollisionSurface, PS2AnySurfacesSection, PS2AnyCollisionSurface>
+                                    (layout, Constants.LAYOUT_SURFACES_SECTION, pathLow, layId);
+                                ReadSectionItems<InstanceTemplate, PS2AnyTemplatesSection, PS2AnyTemplate>
+                                    (layout, Constants.LAYOUT_TEMPLATES_SECTION, pathLow, layId);
+                                ReadSectionItems<Path, PS2AnyPathsSection, PS2AnyPath>
+                                    (layout, Constants.LAYOUT_PATHS_SECTION, pathLow, layId);
+                                ReadSectionItems<Position, PS2AnyPositionsSection, PS2AnyPosition>
+                                    (layout, Constants.LAYOUT_POSITIONS_SECTION, pathLow, layId);
+                                ReadSectionItems<Trigger, PS2AnyTriggersSection, PS2AnyTrigger>
+                                    (layout, Constants.LAYOUT_TRIGGERS_SECTION, pathLow, layId);
+                            }
+                        }
                     }
                 }
             }
@@ -212,7 +242,6 @@ namespace TT_Lab.Project
         /// <param name="fromSection">Which section to read from</param>
         /// <param name="globalCheck">Dictionary of global resources to check against</param>
         /// <param name="secId">Subsection ID where game asset is stored at</param>
-        /// <returns>Map of GUID to the asset type instance</returns>
         private void ReadSectionItems<T, S, I>(ITwinSection fromSection, Dictionary<uint, List<uint>> globalCheck, uint secId)
             where T : SerializableAsset where S : ITwinSection where I : ITwinItem
         {
@@ -225,6 +254,30 @@ namespace TT_Lab.Project
                 var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName());
                 metaAsset.Serialize();
                 Assets.Add(metaAsset.UUID, metaAsset);
+            }
+        }
+
+        /// <summary>
+        /// Reads items from a section, converts them into project assets and serializes them on disk
+        /// </summary>
+        /// <typeparam name="T">Project asset type</typeparam>
+        /// <typeparam name="S">Section type</typeparam>
+        /// <typeparam name="I">Game asset type</typeparam>
+        /// <param name="fromSection">Which section to read from</param>
+        /// <param name="secId">Subsection ID where game asset is stored at</param>
+        private void ReadSectionItems<T, S, I>(ITwinSection fromSection, uint secId, string chunkName, int layId)
+            where T : SerializableAsset where S : ITwinSection where I : ITwinItem
+        {
+            var items = fromSection.GetItem<S>(secId);
+            if (items != null)
+            {
+                for (var i = 0; i < items.GetItemsAmount(); ++i)
+                {
+                    var asset = items.GetItem<I>(items.GetItem(i).GetID());
+                    var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), chunkName, layId);
+                    metaAsset.Serialize();
+                    Assets.Add(metaAsset.UUID, metaAsset);
+                }
             }
         }
     }

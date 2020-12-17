@@ -76,6 +76,16 @@
     <Compile Include="Assets\Graphics\Model.cs" />
     <Compile Include="Assets\IAsset.cs" />
     <Compile Include="Assets\Graphics\Material.cs" />
+    <Compile Include="Assets\Instance\AiPath.cs" />
+    <Compile Include="Assets\Instance\AiPosition.cs" />
+    <Compile Include="Assets\Instance\Camera.cs" />
+    <Compile Include="Assets\Instance\CollisionSurface.cs" />
+    <Compile Include="Assets\Instance\InstanceTemplate.cs" />
+    <Compile Include="Assets\Instance\ObjectInstance.cs" />
+    <Compile Include="Assets\Instance\Path.cs" />
+    <Compile Include="Assets\Instance\Position.cs" />
+    <Compile Include="Assets\Instance\SerializableInstance.cs" />
+    <Compile Include="Assets\Instance\Trigger.cs" />
     <Compile Include="Assets\SerializableAsset.cs" />
     <Compile Include="Assets\Graphics\Skydome.cs" />
     <Compile Include="Assets\Graphics\Texture.cs" />
