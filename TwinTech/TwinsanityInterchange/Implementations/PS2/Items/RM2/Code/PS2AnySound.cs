@@ -62,5 +62,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             writer.Write(Sound.Length);
             writer.Write(offset);
         }
+
+        public String GetName()
+        {
+            return $"Sound {id:X}";
+        }
     }
 }

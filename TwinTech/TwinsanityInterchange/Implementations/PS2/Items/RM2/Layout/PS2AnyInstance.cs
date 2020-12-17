@@ -183,5 +183,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 writer.Write(id);
             }
         }
+
+        public String GetName()
+        {
+            return $"Instance {id:X}";
+        }
     }
 }

@@ -15,10 +15,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
     {
         UInt32 id;
         public TwinTrigger Trigger { get; }
-        public UInt16[] Argument { get; }
+        public UInt16[] Arguments { get; }
         public PS2AnyTrigger()
         {
-            Argument = new UInt16[4];
+            Arguments = new UInt16[4];
             Trigger = new TwinTrigger();
         }
         public uint GetID()
@@ -49,7 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
             for (int i = 0; i < 4; ++i)
             {
-                Argument[i] = reader.ReadUInt16();
+                Arguments[i] = reader.ReadUInt16();
             }
         }
 
@@ -75,8 +75,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
             for (int i = 0; i < 4; ++i)
             {
-                writer.Write(Argument[i]);
+                writer.Write(Arguments[i]);
             }
+        }
+
+        public String GetName()
+        {
+            return $"Trigger {id:X}";
         }
     }
 }

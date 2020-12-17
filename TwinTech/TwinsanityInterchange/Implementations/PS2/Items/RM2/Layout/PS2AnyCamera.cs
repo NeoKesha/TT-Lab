@@ -178,5 +178,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 MainCamera2.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Camera {id:X}";
+        }
     }
 }

@@ -75,5 +75,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 shader.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return Name.Replace("\0", "");
+        }
     }
 }

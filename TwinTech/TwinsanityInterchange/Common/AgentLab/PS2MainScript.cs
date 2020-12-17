@@ -46,6 +46,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             return totalLen;
         }
 
+        public override String GetName()
+        {
+            return Name;
+        }
+
         public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, length);

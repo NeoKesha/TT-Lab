@@ -16,5 +16,9 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
          * Set item's ID
          */
         void SetID(UInt32 id);
+        /**
+         * Get item's name
+         */
+        String GetName();
     }
 }

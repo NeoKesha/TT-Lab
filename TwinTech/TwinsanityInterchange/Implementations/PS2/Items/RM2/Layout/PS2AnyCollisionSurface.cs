@@ -77,5 +77,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 writer.Write(UnkShorts[i]);
             }
         }
+
+        public String GetName()
+        {
+            return $"Collision surface {id:X}";
+        }
     }
 }

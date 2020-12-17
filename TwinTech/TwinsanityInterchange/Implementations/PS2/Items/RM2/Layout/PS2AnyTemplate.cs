@@ -121,5 +121,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 writer.Write(e);
             }
         }
+
+        public String GetName()
+        {
+            return Name;
+        }
     }
 }

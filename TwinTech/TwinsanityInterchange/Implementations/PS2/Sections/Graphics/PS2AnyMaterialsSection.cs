@@ -7,11 +7,11 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics
 {
-    class PS2AnyMaterialsSection : BaseTwinSection
+    public class PS2AnyMaterialsSection : BaseTwinSection
     {
         public PS2AnyMaterialsSection() : base()
         {
             defaultType = typeof(PS2AnyMaterial);
         }
-}
+    }
 }

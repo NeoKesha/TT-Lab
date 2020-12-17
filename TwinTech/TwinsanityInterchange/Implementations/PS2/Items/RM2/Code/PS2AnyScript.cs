@@ -9,9 +9,9 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
-    public class PS2AnyScript : ITwinScript
+    public abstract class PS2AnyScript : ITwinScript
     {
-        UInt32 id;
+        protected UInt32 id;
         private UInt16 scriptID;
         public Byte Mask;
 
@@ -43,5 +43,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             writer.Write(Mask);
             writer.Write((Byte)((id + 1) % 2));
         }
+
+        public abstract String GetName();
     }
 }

@@ -54,5 +54,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 subSkin.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Skin {id:X}";
+        }
     }
 }

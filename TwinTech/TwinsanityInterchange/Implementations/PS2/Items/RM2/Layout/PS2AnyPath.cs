@@ -71,5 +71,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 e.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Path {id:X}";
+        }
     }
 }

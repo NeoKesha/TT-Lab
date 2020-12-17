@@ -59,5 +59,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 e.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Model {id:X}";
+        }
     }
 }

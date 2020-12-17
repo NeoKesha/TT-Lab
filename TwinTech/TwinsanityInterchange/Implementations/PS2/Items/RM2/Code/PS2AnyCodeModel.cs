@@ -73,5 +73,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 com.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Code Model {id:X}";
+        }
     }
 }

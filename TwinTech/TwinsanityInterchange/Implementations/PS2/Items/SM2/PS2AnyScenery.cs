@@ -163,5 +163,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
                 }
             }
         }
+
+        public String GetName()
+        {
+            return $"Scenery {id:X}";
+        }
     }
 }

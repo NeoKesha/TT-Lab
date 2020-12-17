@@ -120,6 +120,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             writer.Write(TextureData);
         }
 
+        public String GetName()
+        {
+            return $"Texture {id:X}";
+        }
+
         #region Enums
         public enum TexturePixelFormat
         {

@@ -28,6 +28,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return data.Length;
         }
 
+        public virtual String GetName()
+        {
+            return $"Item {id:X}";
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             data = reader.ReadBytes(length);

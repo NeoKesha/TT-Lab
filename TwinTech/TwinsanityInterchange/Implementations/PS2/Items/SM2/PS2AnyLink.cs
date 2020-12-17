@@ -62,5 +62,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
                 e.Write(writer);
             }
         }
+
+        public String GetName()
+        {
+            return $"Chunk link {id:X}";
+        }
     }
 }

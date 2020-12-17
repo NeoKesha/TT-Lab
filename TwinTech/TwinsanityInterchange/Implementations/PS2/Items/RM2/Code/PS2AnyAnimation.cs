@@ -50,5 +50,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             UnkBlob1.Write(writer);
             UnkBlob2.Write(writer);
         }
+
+        public String GetName()
+        {
+            return $"Animation {id:X}";
+        }
     }
 }
