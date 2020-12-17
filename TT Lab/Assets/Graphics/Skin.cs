@@ -1,4 +1,5 @@
 ﻿using System;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
@@ -6,7 +7,9 @@ namespace TT_Lab.Assets.Graphics
     {
         public override String Type => "Skin";
 
-        public Skin(UInt32 id, String name) : base(id, name) {}
+        public Skin(UInt32 id, String name, PS2AnySkin skin) : base(id, name)
+        {
+        }
 
         public override void ToRaw(Byte[] data)
         {

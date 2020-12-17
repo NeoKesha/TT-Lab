@@ -1,15 +1,22 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
     public class CollisionSurface : SerializableInstance
     {
-        public CollisionSurface(UInt32 id, String name, String chunk, Int32 layId) : base(id, name, chunk, layId)
+
+        [JsonProperty(Required = Required.Always)]
+        public UInt16 SurfaceID { get; set; }
+
+        public CollisionSurface(UInt32 id, String name, String chunk, Int32 layId, PS2AnyCollisionSurface surface) : base(id, name, chunk, layId)
         {
+            SurfaceID = surface.SurfaceId;
         }
 
         public override String Type => base.Type + "CollisionSurface";

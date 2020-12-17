@@ -129,7 +129,7 @@ namespace TT_Lab.Project
                 using (System.IO.BinaryReader reader = new System.IO.BinaryReader(ms))
                 {
                     // Check for chunk file
-                    if (pathLow.EndsWith(".rm2") || pathLow.ToUpper().EndsWith(".sm2") || pathLow.ToUpper().EndsWith("default.rm2"))
+                    if (pathLow.EndsWith(".rm2") || pathLow.EndsWith(".sm2"))
                     {
                         ITwinSection chunk = null;
                         uint graphicsSectionID = Constants.LEVEL_GRAPHICS_SECTION;
@@ -179,6 +179,18 @@ namespace TT_Lab.Project
                                 (code, codeCheck, Constants.CODE_OGIS_SECTION);
                             ReadSectionItems<CodeModel, PS2AnyCodeModelsSection, PS2AnyCodeModel>
                                 (code, codeCheck, Constants.CODE_CODE_MODELS_SECTION);
+                            // Scripts are kinda special because they are ID oddity dependent
+                            var items = code.GetItem<PS2AnyScriptsSection>(Constants.CODE_SCRIPTS_SECTION);
+                            for (var i = 0; i < items.GetItemsAmount(); ++i)
+                            {
+                                var asset = items.GetItem<PS2AnyScript>(items.GetItem(i).GetID());
+                                if (codeCheck[Constants.CODE_SCRIPTS_SECTION].Contains(asset.GetID())) continue;
+                                codeCheck[Constants.CODE_SCRIPTS_SECTION].Add(asset.GetID());
+                                var metaAsset = (IAsset)Activator.CreateInstance(asset.GetID() % 2 == 0 ? typeof(HeaderScript) : typeof(MainScript),
+                                    asset.GetID(), asset.GetName(), asset);
+                                metaAsset.Serialize();
+                                Assets.Add(metaAsset.UUID, metaAsset);
+                            }
                             ReadSectionItems<Script, PS2AnyScriptsSection, PS2AnyScript>
                                 (code, codeCheck, Constants.CODE_SCRIPTS_SECTION);
                             ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
@@ -251,7 +263,7 @@ namespace TT_Lab.Project
                 var asset = items.GetItem<I>(items.GetItem(i).GetID());
                 if (globalCheck[secId].Contains(asset.GetID())) continue;
                 globalCheck[secId].Add(asset.GetID());
-                var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName());
+                var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), asset);
                 metaAsset.Serialize();
                 Assets.Add(metaAsset.UUID, metaAsset);
             }
@@ -274,7 +286,7 @@ namespace TT_Lab.Project
                 for (var i = 0; i < items.GetItemsAmount(); ++i)
                 {
                     var asset = items.GetItem<I>(items.GetItem(i).GetID());
-                    var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), chunkName, layId);
+                    var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), chunkName, layId, asset);
                     metaAsset.Serialize();
                     Assets.Add(metaAsset.UUID, metaAsset);
                 }

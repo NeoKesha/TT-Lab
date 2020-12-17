@@ -4,21 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
-    public class OGI : SerializableAsset
+    public class MainScript : Script
     {
         [JsonProperty(Required = Required.Always)]
-        public Vector4[] BoundingBox { get; set; } = new Vector4[2];
+        public Int32 UnkInt { get; set; }
 
-        public override String Type => "OGI";
-
-        public OGI(UInt32 id, String name, PS2AnyOGI ogi) : base(id, name)
+        public MainScript(UInt32 id, String name, PS2MainScript script) : base(id, name, script)
         {
-            BoundingBox = ogi.BoundingBox;
+            UnkInt = script.UnkInt;
         }
 
         public override Byte[] ToFormat()

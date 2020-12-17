@@ -63,6 +63,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Assets\Code\GameObject.cs" />
+    <Compile Include="Assets\Code\HeaderScript.cs" />
+    <Compile Include="Assets\Code\MainScript.cs" />
     <Compile Include="Assets\Code\OGI.cs" />
     <Compile Include="Assets\Code\Script.cs" />
     <Compile Include="Assets\Code\SoundEffect.cs" />
