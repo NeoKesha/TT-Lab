@@ -11,8 +11,12 @@ namespace TT_Lab.Assets.Code
 {
     public class HeaderScript : Script
     {
+        public override String Type => "HeaderScript";
+
         [JsonProperty(Required = Required.Always)]
         public List<KeyValuePair<int, uint>> Pairs { get; private set; } = new List<KeyValuePair<int, uint>>();
+
+        public HeaderScript() { }
 
         public HeaderScript(UInt32 id, String name, PS2HeaderScript script) : base(id, name, script)
         {

@@ -19,7 +19,13 @@ namespace TT_Lab.Assets.Instance
             Args = path.Args;
         }
 
-        public override String Type => base.Type + "AiPath";
+        public AiPath()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "AiPath";
+
+        public override String Type => "AiPath";
 
         public override Byte[] ToFormat()
         {

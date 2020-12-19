@@ -14,12 +14,19 @@ namespace TT_Lab.Assets.Instance
         [JsonProperty(Required = Required.Always)]
         public Int32 LayoutID { get; }
 
-        public override String Type => $"Instance\\{Chunk}\\";
+        protected override String SavePath => $"Instance\\{Chunk}\\";
+
+        public override String Type => $"InstanceAsset";
 
         public SerializableInstance(UInt32 id, String name, String chunk, Int32 layId) : base(id, name)
         {
             Chunk = chunk;
             LayoutID = layId;
         }
+
+        protected SerializableInstance()
+        {
+        }
+
     }
 }

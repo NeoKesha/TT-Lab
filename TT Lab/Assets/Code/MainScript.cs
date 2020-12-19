@@ -11,8 +11,12 @@ namespace TT_Lab.Assets.Code
 {
     public class MainScript : Script
     {
+        public override String Type => "MainScript";
+
         [JsonProperty(Required = Required.Always)]
         public Int32 UnkInt { get; set; }
+
+        public MainScript() { }
 
         public MainScript(UInt32 id, String name, PS2MainScript script) : base(id, name, script)
         {

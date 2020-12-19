@@ -33,5 +33,29 @@ namespace TT_Lab.Properties {
                 this["RecentProjects"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ProjectPath {
+            get {
+                return ((string)(this["ProjectPath"]));
+            }
+            set {
+                this["ProjectPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DiscContentPath {
+            get {
+                return ((string)(this["DiscContentPath"]));
+            }
+            set {
+                this["DiscContentPath"] = value;
+            }
+        }
     }
 }

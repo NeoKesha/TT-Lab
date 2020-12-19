@@ -16,6 +16,10 @@ namespace TT_Lab.Assets.Graphics
             Header = skydome.Header;
         }
 
+        public Skydome()
+        {
+        }
+
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();

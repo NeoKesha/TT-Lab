@@ -19,7 +19,13 @@ namespace TT_Lab.Assets.Instance
             SurfaceID = surface.SurfaceId;
         }
 
-        public override String Type => base.Type + "CollisionSurface";
+        public CollisionSurface()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "CollisionSurface";
+
+        public override String Type => "CollisionSurface";
 
         public override Byte[] ToFormat()
         {

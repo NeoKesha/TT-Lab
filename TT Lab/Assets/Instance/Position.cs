@@ -19,7 +19,13 @@ namespace TT_Lab.Assets.Instance
             Coords = position.Position;
         }
 
-        public override String Type => base.Type + "Position";
+        public Position()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "Position";
+
+        public override String Type => "Position";
 
         public override Byte[] ToFormat()
         {

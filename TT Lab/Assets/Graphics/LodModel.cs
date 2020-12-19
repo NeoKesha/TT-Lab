@@ -22,6 +22,10 @@ namespace TT_Lab.Assets.Graphics
             UnkInt2 = lod.UnkInt2;
         }
 
+        public LodModel()
+        {
+        }
+
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();

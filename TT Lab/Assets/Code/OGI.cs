@@ -16,6 +16,8 @@ namespace TT_Lab.Assets.Code
 
         public override String Type => "OGI";
 
+        public OGI() { }
+
         public OGI(UInt32 id, String name, PS2AnyOGI ogi) : base(id, name)
         {
             BoundingBox = ogi.BoundingBox;

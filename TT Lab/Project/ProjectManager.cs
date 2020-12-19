@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
@@ -35,6 +36,7 @@ namespace TT_Lab.Project
         private IProject _openedProject;
         private CommandManager _commandManager = new CommandManager();
         private MenuItem[] _recentMenus = new MenuItem[0];
+        private List<AssetViewModel> _projectTree = new List<AssetViewModel>();
 
         public IProject OpenedProject
         {
@@ -48,6 +50,15 @@ namespace TT_Lab.Project
                 RaisePropertyChangedEvent("OpenedProject");
                 RaisePropertyChangedEvent("ProjectOpened");
                 RaisePropertyChangedEvent("ProjectTitle");
+                RaisePropertyChangedEvent("ProjectTree");
+            }
+        }
+
+        public List<AssetViewModel> ProjectTree
+        {
+            get
+            {
+                return _projectTree;
             }
         }
 
@@ -81,8 +92,9 @@ namespace TT_Lab.Project
                         {
                             Header = $"{i + 1}. {recents[i]}",
                             Command = new OpenProjectCommand(recents[i]),
-                            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
-                            VerticalAlignment = System.Windows.VerticalAlignment.Center
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
+                            VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                            
                         };
                     }
                     _recentMenus = menus;
@@ -90,7 +102,7 @@ namespace TT_Lab.Project
                 return _recentMenus;
             }
         }
-
+        
         public bool HasRecents
         {
             get
@@ -111,18 +123,20 @@ namespace TT_Lab.Project
             if (discFiles.Contains("System.cnf"))
             {
                 OpenedProject = new PS2Project(name, path, discContentPath);
-                OpenedProject.Serialize();
+                OpenedProject.Serialize(); // Call to create initial project folder
             }
             else
             {
                 // TODO: XBox type project
                 throw new Exception("XBox project type not supported!");
             }
-            AddRecentlyOpened(OpenedProject.ProjectPath);
             // Unpack assets
             Directory.CreateDirectory("assets");
             Directory.SetCurrentDirectory("assets");
             OpenedProject.UnpackAssets();
+            OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
+
+            AddRecentlyOpened(OpenedProject.ProjectPath);
         }
 
         public void OpenProject(string path)

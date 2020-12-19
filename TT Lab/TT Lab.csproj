@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Assets\AssetFactory.cs" />
     <Compile Include="Assets\Code\GameObject.cs" />
     <Compile Include="Assets\Code\HeaderScript.cs" />
     <Compile Include="Assets\Code\MainScript.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Assets\Code\SoundEffect.cs" />
     <Compile Include="Assets\Code\CodeModel.cs" />
     <Compile Include="Assets\Code\Animation.cs" />
+    <Compile Include="Assets\Folder.cs" />
     <Compile Include="Assets\Graphics\BlendSkin.cs" />
     <Compile Include="Assets\Graphics\LodModel.cs" />
     <Compile Include="Assets\Graphics\RigidModel.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Command\SaveProjectCommand.cs" />
     <Compile Include="Command\SelectFolderCommand.cs" />
     <Compile Include="Project\IProject.cs" />
+    <Compile Include="ViewModels\AssetViewModel.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
     <Page Include="About.xaml">

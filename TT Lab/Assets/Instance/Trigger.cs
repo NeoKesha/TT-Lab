@@ -22,7 +22,13 @@ namespace TT_Lab.Assets.Instance
             Position = trigger.Trigger.Position;
         }
 
-        public override String Type => base.Type + "Trigger";
+        public Trigger()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "Trigger";
+
+        public override String Type => "Trigger";
 
         public override Byte[] ToFormat()
         {

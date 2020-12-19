@@ -22,7 +22,13 @@ namespace TT_Lab.Assets.Instance
             Position = camera.CamTrigger.Position;
         }
 
-        public override String Type => base.Type + "Camera";
+        public Camera()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "Camera";
+
+        public override String Type => "Camera";
 
         public override Byte[] ToFormat()
         {

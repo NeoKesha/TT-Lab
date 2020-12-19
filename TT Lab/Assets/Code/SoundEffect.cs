@@ -19,6 +19,8 @@ namespace TT_Lab.Assets.Code
 
         public override String Type => "SoundEffect";
 
+        public SoundEffect() { }
+
         public SoundEffect(UInt32 id, String name, PS2AnySound sound) : base(id, name)
         {
             Header = sound.Header;

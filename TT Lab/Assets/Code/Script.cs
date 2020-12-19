@@ -15,6 +15,8 @@ namespace TT_Lab.Assets.Code
 
         public override String Type => "Script";
 
+        public Script() { }
+
         public Script(UInt32 id, String name, PS2AnyScript script) : base(id, name)
         {
             Mask = script.Mask;
