@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.ViewModels;
 
@@ -50,7 +51,6 @@ namespace TT_Lab.Project
                 RaisePropertyChangedEvent("OpenedProject");
                 RaisePropertyChangedEvent("ProjectOpened");
                 RaisePropertyChangedEvent("ProjectTitle");
-                RaisePropertyChangedEvent("ProjectTree");
             }
         }
 
@@ -59,6 +59,10 @@ namespace TT_Lab.Project
             get
             {
                 return _projectTree;
+            }
+            private set
+            {
+                _projectTree = value;
             }
         }
 
@@ -135,8 +139,8 @@ namespace TT_Lab.Project
             Directory.SetCurrentDirectory("assets");
             OpenedProject.UnpackAssets();
             OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
-
             AddRecentlyOpened(OpenedProject.ProjectPath);
+            BuildProjectTree();
         }
 
         public void OpenProject(string path)
@@ -152,6 +156,7 @@ namespace TT_Lab.Project
                 {
                     var prFile = Directory.GetFiles(path, "*.tson")[0];
                     OpenedProject = PS2Project.Deserialize(prFile);
+                    BuildProjectTree();
                 }
             }
             catch (Exception ex)
@@ -165,6 +170,16 @@ namespace TT_Lab.Project
         public void CloseProject()
         {
             OpenedProject = null;
+        }
+
+        private void BuildProjectTree()
+        {
+            ProjectTree = (from asset in OpenedProject.Assets.Values
+                           where asset.Type == "Folder"
+                           let folder = asset as Folder
+                           where folder.Parent == null
+                           select new AssetViewModel(folder.UUID)).ToList();
+            RaisePropertyChangedEvent("ProjectTree");
         }
 
         private void AddRecentlyOpened(string path)

@@ -33,6 +33,13 @@ namespace TT_Lab.ViewModels
             }
         }
 
+        public IReadOnlyCollection<AssetViewModel> Children
+        {
+            get
+            {
+                return _children;
+            }
+        }
         public Boolean IsSelected
         {
             get { return _isSelected; }
