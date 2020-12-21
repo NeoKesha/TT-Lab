@@ -98,10 +98,6 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var pos2 = reader.BaseStream.Position;
             var read = pos2 - pos1;
             var calc = GetLength();
-            if (calc != read)
-            {
-                int a = 0;
-            }
         }
 
         public void Write(BinaryWriter writer)
