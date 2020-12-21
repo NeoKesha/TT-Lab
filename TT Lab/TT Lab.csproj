@@ -98,6 +98,7 @@
     <Compile Include="Command\OpenProjectDialogueCommand.cs" />
     <Compile Include="Command\SaveProjectCommand.cs" />
     <Compile Include="Command\SelectFolderCommand.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Project\IProject.cs" />
     <Compile Include="ViewModels\AssetViewModel.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />

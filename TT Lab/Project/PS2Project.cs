@@ -167,6 +167,7 @@ namespace TT_Lab.Project
             };
             string[] archivePaths = System.IO.Directory.GetFiles(System.IO.Path.Combine(DiscContentPath, "Crash6"), "*.BD", System.IO.SearchOption.TopDirectoryOnly);
             PS2BD archive = new PS2BD(archivePaths[0].Replace(".BD", ".BH"), "");
+            Log.WriteLine("Reading game archives...");
             using (System.IO.FileStream fs = new System.IO.FileStream(archivePaths[0], System.IO.FileMode.Open, System.IO.FileAccess.Read))
             using (System.IO.BinaryReader reader = new System.IO.BinaryReader(fs))
             {
@@ -221,6 +222,7 @@ namespace TT_Lab.Project
             foreach (var item in archive.Items)
             {
                 var pathLow = item.Header.Path.ToLower();
+                Log.WriteLine($"Unpacking {System.IO.Path.GetFileName(pathLow)}...");
                 using (System.IO.MemoryStream ms = new System.IO.MemoryStream(item.Data))
                 using (System.IO.BinaryReader reader = new System.IO.BinaryReader(ms))
                 {

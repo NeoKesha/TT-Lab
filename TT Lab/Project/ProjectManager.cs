@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.Assets;
 using TT_Lab.Command;
@@ -49,8 +50,6 @@ namespace TT_Lab.Project
             {
                 _openedProject = value;
                 RaisePropertyChangedEvent("OpenedProject");
-                RaisePropertyChangedEvent("ProjectOpened");
-                RaisePropertyChangedEvent("ProjectTitle");
             }
         }
 
@@ -137,10 +136,18 @@ namespace TT_Lab.Project
             // Unpack assets
             Directory.CreateDirectory("assets");
             Directory.SetCurrentDirectory("assets");
-            OpenedProject.UnpackAssets();
-            OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
-            AddRecentlyOpened(OpenedProject.ProjectPath);
-            BuildProjectTree();
+            Task.Factory.StartNew(() =>
+            {
+                Log.WriteLine("Unpacking assets...");
+                OpenedProject.UnpackAssets();
+                Log.WriteLine("Serializing assets...");
+                OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
+                AddRecentlyOpened(OpenedProject.ProjectPath);
+                Log.WriteLine("Building project tree...");
+                BuildProjectTree();
+                RaisePropertyChangedEvent("ProjectOpened");
+                RaisePropertyChangedEvent("ProjectTitle");
+            });
         }
 
         public void OpenProject(string path)

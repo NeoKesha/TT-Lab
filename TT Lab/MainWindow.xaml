@@ -387,8 +387,8 @@
                 <TabControl x:Name="LogTabs" Grid.Row="2">
                     <TabItem Header="Log">
                         <Grid Background="#FFE5E5E5">
-                            <ScrollViewer x:Name="LogViewer" Margin="0">
-                                <TextBox TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
+                            <ScrollViewer x:Name="LogViewer" Margin="0" ScrollChanged="LogViewer_ScrollChanged">
+                                <TextBox x:Name="LogText" TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
                             </ScrollViewer>
                         </Grid>
                     </TabItem>
