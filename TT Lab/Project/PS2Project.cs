@@ -13,6 +13,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
@@ -88,6 +89,9 @@ namespace TT_Lab.Project
                 { "Texture", typeof(Texture) },
                 { "CollisionData", typeof(CollisionData) },
                 { "ParticleData", typeof(ParticleData) },
+                { "Scenery", typeof(Scenery) },
+                { "DynamicScenery", typeof(DynamicScenery) },
+                { "ChunkLinks", typeof(ChunkLinks) },
                 { "Folder", typeof(Folder) },
             };
         }
@@ -225,26 +229,35 @@ namespace TT_Lab.Project
             foreach (var item in archive.Items)
             {
                 var pathLow = item.Header.Path.ToLower();
+                var isRm2 = pathLow.EndsWith(".rm2");
+                var isSm2 = pathLow.EndsWith(".sm2");
+                var isDefault = pathLow.EndsWith("default.rm2");
+                // TODO: Add these misc formats
+                var isTxt = pathLow.EndsWith(".txt");
+                var isPsm = pathLow.EndsWith(".psm");
+                var isFont = pathLow.EndsWith(".psf");
+                var isPtc = pathLow.EndsWith(".ptc");
+                var isFrontend = pathLow.EndsWith("frontend.bin");
                 Log.WriteLine($"Unpacking {System.IO.Path.GetFileName(pathLow)}...");
                 using (System.IO.MemoryStream ms = new System.IO.MemoryStream(item.Data))
                 using (System.IO.BinaryReader reader = new System.IO.BinaryReader(ms))
                 {
                     // Check for chunk file
-                    if (pathLow.EndsWith(".rm2") || pathLow.EndsWith(".sm2"))
+                    if (isRm2 || isSm2)
                     {
                         ITwinSection chunk = null;
                         uint graphicsSectionID = Constants.LEVEL_GRAPHICS_SECTION;
-                        if (pathLow.EndsWith("default.rm2"))
+                        if (isDefault)
                         {
                             chunk = new PS2Default();
                             ChunkPaths.Add(pathLow.Remove(pathLow.Length - 4, 4));
                         }
-                        else if (pathLow.EndsWith(".rm2"))
+                        else if (isRm2)
                         {
                             chunk = new PS2AnyTwinsanityRM2();
                             ChunkPaths.Add(pathLow.Remove(pathLow.Length - 4, 4));
                         }
-                        else if (pathLow.EndsWith(".sm2"))
+                        else if (isSm2)
                         {
                             chunk = new PS2AnyTwinsanitySM2();
                             graphicsSectionID = Constants.SCENERY_GRAPHICS_SECTION;
@@ -314,37 +327,41 @@ namespace TT_Lab.Project
                             ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_ENG_SECTION, enFolder);
                         }
-                        // RM2 per chunk instances
-                        if (pathLow.EndsWith(".rm2"))
+
+                        // Chunk folder
+                        pathLow = pathLow.Substring(0, pathLow.Length - 4);
+                        var chunkName = System.IO.Path.GetFileNameWithoutExtension(pathLow);
+                        var otherFolders = pathLow.Split(System.IO.Path.DirectorySeparatorChar);
+                        Folder prevFolder = chunksFolder;
+                        Folder chunkFolder = null;
+                        // Create chunk folder hierarchy
+                        for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            var chunkName = System.IO.Path.GetFileNameWithoutExtension(pathLow);
-                            var otherFolders = pathLow.Split(System.IO.Path.DirectorySeparatorChar);
-                            Folder prevFolder = chunksFolder;
-                            // Create chunk folder hierarchy
-                            for (var i = 1; i < otherFolders.Length - 1; ++i)
+                            var existFolder = Assets.FirstOrDefault(p => p.Value.Name == otherFolders[i]).Value;
+                            if (existFolder != null)
                             {
-                                var existFolder = Assets.FirstOrDefault(p => p.Value.Name == otherFolders[i]).Value;
-                                if (existFolder != null)
-                                {
-                                    prevFolder = existFolder as Folder;
-                                    continue;
-                                }
-                                var nextFolder = new Folder(otherFolders[i], prevFolder);
-                                Assets.Add(nextFolder.UUID, nextFolder);
-                                prevFolder = nextFolder;
+                                prevFolder = existFolder as Folder;
+                                continue;
                             }
-                            var chunkFolder = new Folder(chunkName, prevFolder);
+                            var nextFolder = new Folder(otherFolders[i], prevFolder);
+                            Assets.Add(nextFolder.UUID, nextFolder);
+                            prevFolder = nextFolder;
+                        }
+                        chunkFolder = prevFolder;
+                        // RM2 per chunk instances
+                        if (isRm2)
+                        {
                             if (chunkName != "default")
                             {
                                 // Extract collision data
                                 var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
-                                var colData = new CollisionData(collisionData.GetID(), collisionData.GetName(), chunkName, collisionData);
+                                var colData = new CollisionData(collisionData.GetID(), collisionData.GetName(), pathLow, collisionData);
                                 Assets.Add(colData.UUID, colData);
                                 chunkFolder.Children.Add(colData.UUID);
                             }
                             // Extract particle data
                             var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
-                            var partData = new ParticleData(particleData.GetID(), particleData.GetName(), chunkName, particleData);
+                            var partData = new ParticleData(particleData.GetID(), particleData.GetName(), pathLow, particleData);
                             Assets.Add(partData.UUID, partData);
                             chunkFolder.Children.Add(partData.UUID);
                             // Instance layout
@@ -357,7 +374,6 @@ namespace TT_Lab.Project
                             var pathFolder = new Folder("Paths", chunkFolder);
                             var posFolder = new Folder("Positions", chunkFolder);
                             var trgFolder = new Folder("Triggers", chunkFolder);
-                            Assets.Add(chunkFolder.UUID, chunkFolder);
                             Assets.Add(instFolder.UUID, instFolder);
                             Assets.Add(aiPathFolder.UUID, aiPathFolder);
                             Assets.Add(aiPosFolder.UUID, aiPosFolder);
@@ -372,26 +388,41 @@ namespace TT_Lab.Project
                                 var layId = Constants.LEVEL_LAYOUT_1_SECTION + i;
                                 var layout = chunk.GetItem<PS2AnyLayoutSection>((UInt32)layId);
                                 ReadSectionItems<ObjectInstance, PS2AnyInstancesSection, PS2AnyInstance>
-                                    (layout, Constants.LAYOUT_INSTANCES_SECTION, chunkName, layId, instFolder);
+                                    (layout, Constants.LAYOUT_INSTANCES_SECTION, pathLow, layId, instFolder);
                                 ReadSectionItems<AiPath, PS2AnyAIPathsSection, PS2AnyAIPath>
-                                    (layout, Constants.LAYOUT_AI_PATHS_SECTION, chunkName, layId, aiPathFolder);
+                                    (layout, Constants.LAYOUT_AI_PATHS_SECTION, pathLow, layId, aiPathFolder);
                                 ReadSectionItems<AiPosition, PS2AnyAIPositionsSection, PS2AnyAIPosition>
-                                    (layout, Constants.LAYOUT_AI_POSITIONS_SECTION, chunkName, layId, aiPosFolder);
+                                    (layout, Constants.LAYOUT_AI_POSITIONS_SECTION, pathLow, layId, aiPosFolder);
                                 ReadSectionItems<Camera, PS2AnyCamerasSection, PS2AnyCamera>
-                                    (layout, Constants.LAYOUT_CAMERAS_SECTION, chunkName, layId, cameraFolder);
+                                    (layout, Constants.LAYOUT_CAMERAS_SECTION, pathLow, layId, cameraFolder);
                                 ReadSectionItems<CollisionSurface, PS2AnySurfacesSection, PS2AnyCollisionSurface>
-                                    (layout, Constants.LAYOUT_SURFACES_SECTION, chunkName, layId, colSurfaceFolder);
+                                    (layout, Constants.LAYOUT_SURFACES_SECTION, pathLow, layId, colSurfaceFolder);
                                 ReadSectionItems<InstanceTemplate, PS2AnyTemplatesSection, PS2AnyTemplate>
-                                    (layout, Constants.LAYOUT_TEMPLATES_SECTION, chunkName, layId, instTempFolder);
+                                    (layout, Constants.LAYOUT_TEMPLATES_SECTION, pathLow, layId, instTempFolder);
                                 ReadSectionItems<Path, PS2AnyPathsSection, PS2AnyPath>
-                                    (layout, Constants.LAYOUT_PATHS_SECTION, chunkName, layId, pathFolder);
+                                    (layout, Constants.LAYOUT_PATHS_SECTION, pathLow, layId, pathFolder);
                                 ReadSectionItems<Position, PS2AnyPositionsSection, PS2AnyPosition>
-                                    (layout, Constants.LAYOUT_POSITIONS_SECTION, chunkName, layId, posFolder);
+                                    (layout, Constants.LAYOUT_POSITIONS_SECTION, pathLow, layId, posFolder);
                                 ReadSectionItems<Trigger, PS2AnyTriggersSection, PS2AnyTrigger>
-                                    (layout, Constants.LAYOUT_TRIGGERS_SECTION, chunkName, layId, trgFolder);
+                                    (layout, Constants.LAYOUT_TRIGGERS_SECTION, pathLow, layId, trgFolder);
                             }
                         }
-                        // TODO: SM2 Scenery, Dynamic Scenery and Chunk Links
+                        // SM2 per chunk instances
+                        if (isSm2)
+                        {
+                            var scenery = chunk.GetItem<PS2AnyScenery>(Constants.SCENERY_SECENERY_ITEM);
+                            var dynamicScenery = chunk.GetItem<PS2AnyDynamicScenery>(Constants.SCENERY_DYNAMIC_SECENERY_ITEM);
+                            var chunkLinks = chunk.GetItem<PS2AnyLink>(Constants.SCENERY_LINK_ITEM);
+                            var sceneryAsset = new Scenery(scenery.GetID(), scenery.GetName(), pathLow, scenery);
+                            var dynamicSceneryAsset = new DynamicScenery(dynamicScenery.GetID(), dynamicScenery.GetName(), pathLow, dynamicScenery);
+                            var chunkLinksAsset = new ChunkLinks(chunkLinks.GetID(), chunkLinks.GetName(), pathLow, chunkLinks);
+                            Assets.Add(sceneryAsset.UUID, sceneryAsset);
+                            Assets.Add(dynamicSceneryAsset.UUID, dynamicSceneryAsset);
+                            Assets.Add(chunkLinksAsset.UUID, chunkLinksAsset);
+                            chunkFolder.Children.Add(sceneryAsset.UUID);
+                            chunkFolder.Children.Add(dynamicSceneryAsset.UUID);
+                            // Chunk links not added because they are very attached to the chunk and can located in a different UI place from Project Tree
+                        }
                     }
                 }
             }

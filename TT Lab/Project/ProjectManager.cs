@@ -162,8 +162,22 @@ namespace TT_Lab.Project
                 if (Directory.GetFiles(path, "*.tson").Length != 0)
                 {
                     var prFile = Directory.GetFiles(path, "*.tson")[0];
-                    OpenedProject = PS2Project.Deserialize(prFile);
-                    BuildProjectTree();
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
+                            OpenedProject = PS2Project.Deserialize(prFile);
+                            Log.WriteLine($"Building project tree...");
+                            BuildProjectTree();
+                            RaisePropertyChangedEvent("ProjectOpened");
+                            RaisePropertyChangedEvent("ProjectTitle");
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.WriteLine($"Error opening project: {ex.Message}");
+                        }
+                    });
                 }
             }
             catch (Exception ex)

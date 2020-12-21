@@ -29,7 +29,7 @@ namespace TT_Lab.Command
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open project: {ex.Message}", "Error opening project!", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.WriteLine($"Failed to open project: {ex.Message}");
             }
         }
 
