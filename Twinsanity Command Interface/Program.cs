@@ -67,19 +67,19 @@ namespace Twinsanity_Command_Interface
                     ITwinSection twinLevel = null;
                     if (levelPath.EndsWith("Default.rm2"))
                     {
-                        twinLevel = new PS2Default();
+                        twinLevel = new PS2Default(true);
                     }
                     else if (levelPath.EndsWith("rm2"))
                     {
-                        twinLevel = new PS2AnyTwinsanityRM2();
+                        twinLevel = new PS2AnyTwinsanityRM2(true);
                     }
                     else if (levelPath.EndsWith("sm2"))
                     {
-                        twinLevel = new PS2AnyTwinsanitySM2();
+                        twinLevel = new PS2AnyTwinsanitySM2(true);
                     }
                     else
                     {
-                        twinLevel = new BaseTwinSection();
+                        twinLevel = new BaseTwinSection(true);
                     }
                     using (System.IO.FileStream stream = new System.IO.FileStream(levelPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
                     using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))

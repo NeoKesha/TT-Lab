@@ -17,6 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
          * Gets item by its id
          */
         T GetItem<T>(UInt32 id) where T : ITwinItem;
+        UInt32 GetIdByIndex(Int32 index);
         /**
          * Remove item by ID
          */

@@ -22,6 +22,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public UInt16 Param4;
         public Byte[] Sound;
 
+        public int originalIndex;
+
         public override Int32 GetLength()
         {
             return 22;

@@ -19,6 +19,18 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             Items = new List<ITwinItem>();
             skip = false;
+            isLazy = false;
+            isLoaded = true;
+        }
+        public BaseTwinSection(bool isLazy)
+        {
+            Items = new List<ITwinItem>();
+            skip = false;
+            SetIsLazy(isLazy);
+            if (isLazy)
+            {
+                root = this;
+            }
         }
         public void AddItem(ITwinItem item)
         {
@@ -30,15 +42,37 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return Items.Count;
         }
 
-        public ITwinItem GetItem(Int32 index)
+        public virtual ITwinItem GetItem(Int32 index)
         {
             if (index >= Items.Count) return null;
-            return Items[index];
+            ITwinItem twinItem = Items[index];
+            LoadItem(twinItem);
+            return twinItem;
+        }
+        public UInt32 GetIdByIndex(Int32 index)
+        {
+            if (index >= Items.Count) {
+                throw new IndexOutOfRangeException();
+            }
+            return Items[index].GetID();
         }
 
-        public T GetItem<T>(uint id) where T : ITwinItem
+        public virtual T GetItem<T>(uint id) where T : ITwinItem
         {
-            return (T)Items.Where(item => item.GetID() == id).FirstOrDefault();
+            ITwinItem twinItem = Items.Where(item => item.GetID() == id).FirstOrDefault();
+            LoadItem(twinItem);
+            return (T)twinItem;
+        }
+
+        private void LoadItem(ITwinItem twinItem)
+        {
+            if (twinItem != null && !twinItem.GetIsLoaded() && isLazy)
+            {
+                BinaryReader reader = new BinaryReader(root.GetStream());
+                reader.BaseStream.Position = twinItem.GetOriginalOffset();
+                twinItem.Read(reader, twinItem.GetOriginalSize());
+                twinItem.SetIsLoaded(true);
+            }
         }
 
         public override int GetLength()
@@ -57,6 +91,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             Int32 length = 0;
             foreach (ITwinItem item in Items)
             {
+                LoadItem(item);
                 length += item.GetLength();
             }
             return length;
@@ -68,6 +103,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         }
         public override void Read(BinaryReader reader, int length)
         {
+            if (this == root && isLazy)
+            {
+                int len = (int)reader.BaseStream.Length - (int)reader.BaseStream.Position;
+                stream = new MemoryStream(reader.ReadBytes(len));
+                reader.BaseStream.Position -= len;
+            }
             if (length > 0)
             {
                 Int64 baseOffset = reader.BaseStream.Position;
@@ -82,6 +123,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                     records[i] = record;
                 }
                 Items.Clear();
+                int extraPos = (int)reader.BaseStream.Position - (int)baseOffset;
                 for (int i = 0; i < itemsCount; ++i)
                 {
                     ITwinItem item = null;
@@ -95,12 +137,27 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                     {
                         item = (ITwinItem)Activator.CreateInstance(defaultType);
                     }
-                    reader.BaseStream.Position = records[i].Offset + baseOffset;
+                    
+                    item.SetIsLazy(isLazy);
+                    item.SetRoot(root);
+                    item.SetStream(stream);
                     item.SetID(records[i].ItemId);
-                    item.Read(reader, (Int32)records[i].Size);
+                    item.SetOriginalOffset((int)records[i].Offset + (int)baseOffset);
+                    item.SetOriginalSize((Int32)records[i].Size);
+
+                    if (!isLazy)
+                    {
+                        reader.BaseStream.Position = records[i].Offset + baseOffset;
+                        item.Read(reader, (Int32)records[i].Size);
+                    } 
+                    else
+                    {
+                        item.SetIsLoaded(false);
+                    }
+                    extraPos += (Int32)records[i].Size;
                     Items.Add(item);
                 }
-                extraData = reader.ReadBytes((Int32)(length - (reader.BaseStream.Position - baseOffset)));
+                extraData = reader.ReadBytes((Int32)(length - (extraPos)));
             }
             else
             {
@@ -136,11 +193,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 {
                     record.Size = (UInt32)item.GetLength();
                     record.ItemId = item.GetID();
+                    LoadItem(item);
                     record.Write(writer);
                     record.Offset += record.Size;
                 }
                 foreach (ITwinItem item in Items)
                 {
+                    LoadItem(item);
                     item.Write(writer);
                 }
                 writer.Write(extraData);

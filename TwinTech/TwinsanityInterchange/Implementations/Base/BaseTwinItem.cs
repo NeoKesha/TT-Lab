@@ -12,14 +12,26 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         protected bool isLazy;
         protected ITwinItem root;
         protected MemoryStream stream;
+        protected int originalPosition;
+        protected int originalSize;
         Byte[] data;
         public BaseTwinItem()
         {
             data = new Byte[0];
+            isLazy = false;
         }
         public BaseTwinItem(Byte[] data)
         {
             this.data = data;
+            isLazy = false;
+        }
+
+        public void Dispose()
+        {
+            if (stream != null)
+            {
+                stream.Dispose();
+            }
         }
 
         public virtual uint GetID()
@@ -40,6 +52,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         public virtual String GetName()
         {
             return $"Item {id:X}";
+        }
+
+        public Int32 GetOriginalOffset()
+        {
+            return originalPosition;
+        }
+
+        public Int32 GetOriginalSize()
+        {
+            return originalSize;
         }
 
         public virtual ITwinItem GetRoot()
@@ -65,6 +87,21 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         public virtual void SetIsLazy(Boolean isLazy)
         {
             this.isLazy = isLazy;
+        }
+
+        public void SetIsLoaded(Boolean isLoaded)
+        {
+            this.isLoaded = isLoaded;
+        }
+
+        public void SetOriginalOffset(Int32 offset)
+        {
+            originalPosition = offset;
+        }
+
+        public void SetOriginalSize(Int32 size)
+        {
+            originalSize = size;
         }
 
         public virtual void SetRoot(ITwinItem root)

@@ -135,15 +135,15 @@ namespace TT_Lab.Project
                         uint graphicsSectionID = Constants.LEVEL_GRAPHICS_SECTION;
                         if (pathLow.EndsWith("default.rm2"))
                         {
-                            chunk = new PS2Default();
+                            chunk = new PS2Default(true);
                         }
                         else if (pathLow.EndsWith(".rm2"))
                         {
-                            chunk = new PS2AnyTwinsanityRM2();
+                            chunk = new PS2AnyTwinsanityRM2(true);
                         }
                         else if (pathLow.EndsWith(".sm2"))
                         {
-                            chunk = new PS2AnyTwinsanitySM2();
+                            chunk = new PS2AnyTwinsanitySM2(true);
                             graphicsSectionID = Constants.SCENERY_GRAPHICS_SECTION;
                         }
                         chunk.Read(reader, (Int32)ms.Length);
@@ -260,8 +260,10 @@ namespace TT_Lab.Project
             var items = fromSection.GetItem<S>(secId);
             for (var i = 0; i < items.GetItemsAmount(); ++i)
             {
+                var index = items.GetIdByIndex(i);
+                if (globalCheck[secId].Contains(index)) continue;
+
                 var asset = items.GetItem<I>(items.GetItem(i).GetID());
-                if (globalCheck[secId].Contains(asset.GetID())) continue;
                 globalCheck[secId].Add(asset.GetID());
                 var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), asset);
                 metaAsset.Serialize();

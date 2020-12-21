@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
-    public interface ITwinItem : ITwinSerializable
+    public interface ITwinItem : ITwinSerializable, IDisposable
     {
         /**
          * Get item's ID
@@ -23,10 +23,15 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
         String GetName();
 
         bool GetIsLoaded();
+        void SetIsLoaded(bool isLoaded);
         void SetIsLazy(bool isLazy);
         ITwinItem GetRoot();
         void SetRoot(ITwinItem root);
         MemoryStream GetStream();
         void SetStream(MemoryStream stream);
+        void SetOriginalOffset(int offset);
+        void SetOriginalSize(int size);
+        int GetOriginalOffset();
+        int GetOriginalSize();
     }
 }
