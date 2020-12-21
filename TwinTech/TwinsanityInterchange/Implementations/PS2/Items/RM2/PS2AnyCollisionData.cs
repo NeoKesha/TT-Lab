@@ -14,7 +14,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
     public class PS2AnyCollisionData : ITwinCollision
     {
         UInt32 id;
-        private UInt32 UnkInt;
+        public UInt32 UnkInt;
         public List<CollisionTrigger> Triggers;
         public List<GroupInformation> Groups;
         public List<CollisionTriangle> Triangles;

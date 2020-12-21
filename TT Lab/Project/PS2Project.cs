@@ -10,6 +10,7 @@ using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
@@ -85,6 +86,8 @@ namespace TT_Lab.Project
                 { "Skin", typeof(Skin) },
                 { "Skydome", typeof(Skydome) },
                 { "Texture", typeof(Texture) },
+                { "CollisionData", typeof(CollisionData) },
+                { "ParticleData", typeof(ParticleData) },
                 { "Folder", typeof(Folder) },
             };
         }
@@ -312,7 +315,6 @@ namespace TT_Lab.Project
                                 (code, codeCheck, Constants.CODE_LANG_ENG_SECTION, enFolder);
                         }
                         // RM2 per chunk instances
-                        // TODO: RM2 Particle and Collision data
                         if (pathLow.EndsWith(".rm2"))
                         {
                             var chunkName = System.IO.Path.GetFileNameWithoutExtension(pathLow);
@@ -332,6 +334,20 @@ namespace TT_Lab.Project
                                 prevFolder = nextFolder;
                             }
                             var chunkFolder = new Folder(chunkName, prevFolder);
+                            if (chunkName != "default")
+                            {
+                                // Extract collision data
+                                var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
+                                var colData = new CollisionData(collisionData.GetID(), collisionData.GetName(), chunkName, collisionData);
+                                Assets.Add(colData.UUID, colData);
+                                chunkFolder.Children.Add(colData.UUID);
+                            }
+                            // Extract particle data
+                            var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
+                            var partData = new ParticleData(particleData.GetID(), particleData.GetName(), chunkName, particleData);
+                            Assets.Add(partData.UUID, partData);
+                            chunkFolder.Children.Add(partData.UUID);
+                            // Instance layout
                             var instFolder = new Folder("Instances", chunkFolder);
                             var aiPathFolder = new Folder("AI Paths", chunkFolder);
                             var aiPosFolder = new Folder("AI Positions", chunkFolder);
