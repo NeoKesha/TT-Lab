@@ -333,21 +333,20 @@ namespace TT_Lab.Project
                         var chunkName = System.IO.Path.GetFileNameWithoutExtension(pathLow);
                         var otherFolders = pathLow.Split(System.IO.Path.DirectorySeparatorChar);
                         Folder prevFolder = chunksFolder;
-                        Folder chunkFolder = null;
                         // Create chunk folder hierarchy
                         for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            var existFolder = Assets.FirstOrDefault(p => p.Value.Name == otherFolders[i]).Value;
-                            if (existFolder != null)
+                            var existFolder = prevFolder.Children.FirstOrDefault(c => GetAsset<Folder>(c)?.Name == otherFolders[i]);
+                            if (existFolder != Guid.Empty)
                             {
-                                prevFolder = existFolder as Folder;
+                                prevFolder = GetAsset<Folder>(existFolder);
                                 continue;
                             }
                             var nextFolder = new Folder(otherFolders[i], prevFolder);
                             Assets.Add(nextFolder.UUID, nextFolder);
                             prevFolder = nextFolder;
                         }
-                        chunkFolder = prevFolder;
+                        var chunkFolder = prevFolder;
                         // RM2 per chunk instances
                         if (isRm2)
                         {
@@ -430,7 +429,12 @@ namespace TT_Lab.Project
 
         public T GetAsset<T>(Guid id) where T : IAsset
         {
-            return (T)Assets[id];
+            IAsset getAss;
+            if (Assets.TryGetValue(id, out getAss))
+            {
+                return (T)getAss;
+            }
+            return default;
         }
 
         /// <summary>
