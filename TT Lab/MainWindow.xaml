@@ -395,7 +395,13 @@
                 </TabControl>
             </Grid>
             <GroupBox Header="Project tree" Grid.Column="4">
-                <TreeView x:Name="ProjectTree" ItemsSource="{Binding ProjectTree}" Margin="0" Style="{DynamicResource ProjectTreeStyle}">
+                <TreeView 
+                    x:Name="ProjectTree" 
+                    ItemsSource="{Binding ProjectTree}" 
+                    Margin="0" 
+                    Style="{DynamicResource ProjectTreeStyle}" 
+                    VirtualizingStackPanel.IsVirtualizing="True"
+                    VirtualizingStackPanel.VirtualizationMode="Recycling">
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
