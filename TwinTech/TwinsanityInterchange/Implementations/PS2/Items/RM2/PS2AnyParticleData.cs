@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
 {
-    public class PS2AnyParticleData : ITwinPatricle
+    public class PS2AnyParticleData : BaseTwinItem, ITwinPatricle
     {
-        UInt32 id;
         public UInt32 Version;
         public List<ParticleType> ParticleTypes;
         public List<ParticleInstance> ParticleInstances;
@@ -22,17 +22,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             ParticleInstances = new List<ParticleInstance>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public virtual Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 12 + ParticleTypes.Sum(t => t.GetLength()) + ParticleInstances.Sum(i => i.GetLength());
         }
 
-        public virtual void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             Version = reader.ReadUInt32();
             if ((Version < 0x5 || Version > 0x1E) && Version != 0x20)
@@ -55,12 +50,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public virtual void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Version);
             writer.Write(ParticleTypes.Count);
@@ -75,7 +65,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Particle data {id:X}";
         }

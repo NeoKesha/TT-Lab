@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 {
-    public class PS2AnyScenery : ITwinScenery
+    public class PS2AnyScenery : BaseTwinItem, ITwinScenery
     {
-        UInt32 id;
         public UInt32 Flags;
         public String Name;
         public UInt32 UnkUInt;
@@ -34,12 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             Sceneries = new List<SceneryBaseType>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 4 + 4 + Name.Length + 4 + 4 + 1 + 
                 (SkydomeID != 0 ? 4 : 0) +
@@ -49,7 +44,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
                 Sceneries.Sum(s => s.GetLength());
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             Flags = reader.ReadUInt32();
             var nameLen = reader.ReadInt32();
@@ -102,12 +97,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             UInt32 newFlags = 0x0;
             if (SkydomeID != 0)
@@ -164,7 +154,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Scenery {id:X}";
         }

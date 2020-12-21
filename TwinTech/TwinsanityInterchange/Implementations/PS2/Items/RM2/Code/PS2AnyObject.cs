@@ -7,11 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
-    public class PS2AnyObject : ITwinObject
+    public class PS2AnyObject : BaseTwinItem, ITwinObject
     {
         [Flags]
         public enum ResourcesBitfield
@@ -25,7 +26,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             SOUNDS = 1 << 6,
         }
 
-        UInt32 id;
         public UInt32 Bitfield;
         public Byte[] SlotsMap;
         public String Name;
@@ -88,12 +88,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             RefSounds = new List<UInt16>();
         }
 
-        public uint GetID()
-        {
-            return id;
-        }
-
-        public int GetLength()
+        public override int GetLength()
         {
             var resourcesLength = 0;
             if (ReferencesResources)
@@ -144,7 +139,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + ScriptPack.GetLength();
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
             var hasInstProps = (Bitfield & 0x20000000) != 0;
@@ -214,12 +209,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             ScriptPack.Read(reader, length);
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             UInt32 newBitfield = 0;
             if (ReferencesResources)
@@ -353,7 +343,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return Name.Replace("|","_");
         }

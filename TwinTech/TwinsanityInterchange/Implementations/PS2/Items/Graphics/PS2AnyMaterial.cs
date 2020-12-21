@@ -12,9 +12,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
-    public class PS2AnyMaterial : ITwinMaterial
+    public class PS2AnyMaterial : BaseTwinItem, ITwinMaterial
     {
-        UInt32 id;
         public UInt64 Header { get; set; }
         public UInt32 UnkInt { get; set; }
         public String Name { get; set; }
@@ -23,12 +22,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         {
             Shaders = new List<ITwinSerializable>();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             Int32 shaderLength = 0;
             foreach (ITwinSerializable shader in Shaders)
@@ -38,7 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             return 20 + Name.Length + shaderLength;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Header = reader.ReadUInt64();
             UnkInt = reader.ReadUInt32();
@@ -52,18 +47,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 shader.Read(reader, 0);
                 Shaders.Add(shader);
             }
-            if (GetLength() != length)
-            {
-                int a = 0;
-            }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Header);
             writer.Write(UnkInt);
@@ -76,7 +62,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return Name.Replace("\0", "");
         }

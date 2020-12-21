@@ -12,9 +12,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyAIPosition : ITwinAIPosition
+    public class PS2AnyAIPosition : BaseTwinItem, ITwinAIPosition
     {
-        UInt32 id;
         public Vector4 Position { get; private set; }
         public UInt16 UnkShort { get; set; }
 
@@ -22,34 +21,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         {
             Position = new Vector4();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             return Constants.SIZE_VECTOR4 + 2;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Position.Read(reader, Constants.SIZE_VECTOR4);
             UnkShort = reader.ReadUInt16();
         }
-
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             Position.Write(writer);
             writer.Write(UnkShort);
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"AI Position {id:X}";
         }

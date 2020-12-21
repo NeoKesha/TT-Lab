@@ -12,26 +12,21 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyAIPath : ITwinAIPath
+    public class PS2AnyAIPath : BaseTwinItem, ITwinAIPath
     {
-        UInt32 id;
         public UInt16[] Args { get; private set; }
         
         public PS2AnyAIPath()
         {
             Args = new ushort[5];
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             return 10;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             for (int i = 0; i < Args.Length; ++i)
             {
@@ -39,12 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             for (int i = 0; i < Args.Length; ++i)
             {
@@ -52,7 +42,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"AI Path {id:X}";
         }

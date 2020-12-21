@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
-    public class PS2AnySound : ITwinSound
+    public class PS2AnySound : BaseTwinItem, ITwinSound
     {
-        UInt32 id;
         internal Int32 offset;
 
         public UInt32 Header;
@@ -22,17 +22,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public UInt16 Param4;
         public Byte[] Sound;
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 22;
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             Header = reader.ReadUInt32();
             UnkFlag = reader.ReadByte();
@@ -45,12 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             reader.ReadUInt32(); // Discard offset
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Header);
             writer.Write(UnkFlag);
@@ -63,7 +53,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             writer.Write(offset);
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Sound {id:X}";
         }

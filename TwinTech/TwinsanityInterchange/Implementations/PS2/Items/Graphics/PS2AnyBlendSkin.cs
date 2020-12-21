@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
-    public class PS2AnyBlendSkin : ITwinBlendSkin
+    public class PS2AnyBlendSkin : BaseTwinItem, ITwinBlendSkin
     {
-        UInt32 id;
         Int32 listLength;
         public List<SubBlendSkin> SubBlends;
 
@@ -21,17 +21,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             SubBlends = new List<SubBlendSkin>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 8 + SubBlends.Sum((subBlend) => subBlend.GetLength());
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             var subBlends = reader.ReadInt32();
             listLength = reader.ReadInt32();
@@ -44,12 +39,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(SubBlends.Count);
             writer.Write(listLength);
@@ -59,7 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Blend Skin {id:X}";
         }

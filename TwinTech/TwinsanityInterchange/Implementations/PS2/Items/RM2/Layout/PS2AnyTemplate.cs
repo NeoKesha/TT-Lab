@@ -12,9 +12,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyTemplate : ITwinTemplate
+    public class PS2AnyTemplate : BaseTwinItem, ITwinTemplate
     {
-        UInt32 id;
         public String Name { get; set; }
         public UInt16 ObjectId { get; set; }
         public UInt16 Bitfield { get; set; }
@@ -34,17 +33,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             Ints = new List<uint>();
             Flags = new List<uint>();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             return 4 + Name.Length + 16 + ((Header1 == 1)?2:0) + UnkFlags.Length + 4 + 12 + Flags.Count*4 + Floats.Count*4 + Ints.Count*4;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Int32 nameLen = reader.ReadInt32();
             Name = new string(reader.ReadChars(nameLen));
@@ -82,12 +77,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
@@ -122,7 +112,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return Name;
         }

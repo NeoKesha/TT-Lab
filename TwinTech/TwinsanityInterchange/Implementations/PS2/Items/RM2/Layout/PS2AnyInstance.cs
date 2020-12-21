@@ -12,9 +12,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyInstance : ITwinInstance
+    public class PS2AnyInstance : BaseTwinItem, ITwinInstance
     {
-        UInt32 id;
         public Vector4 Position { get; private set; }
         public TwinIntegerRotation RotationX { get; private set; }
         public TwinIntegerRotation RotationY { get; private set; }
@@ -46,12 +45,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             ParamList2 = new List<float>();
             ParamList3 = new List<uint>();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             return Constants.SIZE_VECTOR4 + Constants.SIZE_UINT32 * 3 +
                 12 + Instances.Count * 2 +
@@ -62,7 +57,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 4 + ParamList3.Count * 4;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Position.Read(reader, Constants.SIZE_VECTOR4);
             RotationX.Read(reader, Constants.SIZE_UINT32);
@@ -123,13 +118,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
                 ParamList3.Add(reader.ReadUInt32());
             }
         }
-
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             Position.Write(writer);
             RotationX.Write(writer);
@@ -184,7 +173,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Instance {id:X}";
         }

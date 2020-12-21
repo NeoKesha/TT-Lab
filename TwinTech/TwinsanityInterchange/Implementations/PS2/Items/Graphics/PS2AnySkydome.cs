@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
-    public class PS2AnySkydome : ITwinSkydome
+    public class PS2AnySkydome : BaseTwinItem, ITwinSkydome
     {
-        UInt32 id;
 
         public Int32 Header; // Unused by the game
         public List<UInt32> Meshes;
@@ -21,17 +21,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             Meshes = new List<UInt32>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public int GetLength()
+        public override int GetLength()
         {
             return 8 + Meshes.Count * Constants.SIZE_UINT32;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Header = reader.ReadInt32();
             var meshes = reader.ReadInt32();
@@ -41,12 +36,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Header);
             writer.Write(Meshes.Count);
@@ -56,7 +46,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Skydome {id:X}";
         }

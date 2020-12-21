@@ -7,7 +7,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 {
     public class BaseTwinItem : ITwinItem
     {
-        UInt32 id;
+        protected UInt32 id;
+        protected bool isLoaded;
+        protected bool isLazy;
+        protected ITwinItem root;
+        protected MemoryStream stream;
         Byte[] data;
         public BaseTwinItem()
         {
@@ -18,12 +22,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             this.data = data;
         }
 
-        public uint GetID()
+        public virtual uint GetID()
         {
             return id;
         }
 
-        public int GetLength()
+        public virtual Boolean GetIsLoaded()
+        {
+            return isLoaded;
+        }
+
+        public virtual int GetLength()
         {
             return data.Length;
         }
@@ -33,17 +42,42 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return $"Item {id:X}";
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public virtual ITwinItem GetRoot()
+        {
+            return root;
+        }
+
+        public virtual MemoryStream GetStream()
+        {
+            return stream;
+        }
+
+        public virtual void Read(BinaryReader reader, Int32 length)
         {
             data = reader.ReadBytes(length);
         }
 
-        public void SetID(UInt32 id)
+        public virtual void SetID(UInt32 id)
         {
             this.id = id;
         }
 
-        public void Write(BinaryWriter writer)
+        public virtual void SetIsLazy(Boolean isLazy)
+        {
+            this.isLazy = isLazy;
+        }
+
+        public virtual void SetRoot(ITwinItem root)
+        {
+            this.root = root;
+        }
+
+        public virtual void SetStream(MemoryStream stream)
+        {
+            this.stream = stream;
+        }
+
+        public virtual void Write(BinaryWriter writer)
         {
             writer.Write(data);
         }

@@ -7,13 +7,12 @@ using Twinsanity.TwinsanityInterchange.Common;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 {
-    public class BaseTwinSection : ITwinSection
+    public class BaseTwinSection : BaseTwinItem, ITwinSection
     {
         protected List<ITwinItem> Items { get; }
         protected UInt32 magicNumber;
         protected Dictionary<UInt32, Type> idToClassDictionary = new Dictionary<uint, Type>();
         protected Type defaultType = typeof(BaseTwinItem);
-        protected UInt32 id;
         protected bool skip;
         protected Byte[] extraData;
         public BaseTwinSection()
@@ -31,11 +30,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return Items.Count;
         }
 
-        public uint GetID()
-        {
-            return id;
-        }
-
         public ITwinItem GetItem(Int32 index)
         {
             if (index >= Items.Count) return null;
@@ -47,7 +41,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return (T)Items.Where(item => item.GetID() == id).FirstOrDefault();
         }
 
-        public int GetLength()
+        public override int GetLength()
         {
             if (skip)
             {
@@ -72,7 +66,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             return id;
         }
-        public virtual void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             if (length > 0)
             {
@@ -123,17 +117,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
         protected virtual void PreprocessWrite()
         {
 
         }
 
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             if (!skip)
             {
@@ -163,7 +152,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return idToClassDictionary[id];
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Section {id}";
         }
