@@ -294,7 +294,6 @@ namespace TT_Lab.Project
                                 {
                                     scriptsFolder.Children.Add(metaAsset.UUID);
                                 }
-                                metaAsset.Serialize();
                                 Assets.Add(metaAsset.UUID, metaAsset);
                             }
                             ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
