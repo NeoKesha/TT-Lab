@@ -4,28 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class AiPath : SerializableInstance
+    public class ChunkLinks : SerializableInstance
     {
-
         [JsonProperty(Required = Required.Always)]
-        public UInt16[] Args { get; } = new UInt16[5];
+        public List<ChunkLink> Links = new List<ChunkLink>();
 
-        public AiPath(UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(id, name, chunk, layId)
-        {
-            Args = path.Args;
-        }
-
-        public AiPath()
+        public ChunkLinks()
         {
         }
 
-        protected override String SavePath => base.SavePath + "AiPath";
+        public ChunkLinks(UInt32 id, String name, String chunk, PS2AnyLink links) : base(id, name, chunk, -1)
+        {
+            foreach (var link in links.LinksList)
+            {
+                Links.Add(new ChunkLink(link));
+            }
+        }
 
-        public override String Type => "AiPath";
+        public override String Type => "ChunkLinks";
 
         public override Byte[] ToFormat()
         {

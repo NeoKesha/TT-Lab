@@ -16,6 +16,10 @@ namespace TT_Lab.Assets.Graphics
             Header = rigidModel.Header;
         }
 
+        public RigidModel()
+        {
+        }
+
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();

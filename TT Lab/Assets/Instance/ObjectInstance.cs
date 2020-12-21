@@ -19,7 +19,13 @@ namespace TT_Lab.Assets.Instance
             Position = instance.Position;
         }
 
-        public override String Type => base.Type + "ObjectInstance";
+        public ObjectInstance()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "ObjectInstance";
+
+        public override String Type => "ObjectInstance";
 
         public override Byte[] ToFormat()
         {

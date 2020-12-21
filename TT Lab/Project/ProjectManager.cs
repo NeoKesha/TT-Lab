@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
+using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.ViewModels;
 
@@ -35,6 +38,7 @@ namespace TT_Lab.Project
         private IProject _openedProject;
         private CommandManager _commandManager = new CommandManager();
         private MenuItem[] _recentMenus = new MenuItem[0];
+        private List<AssetViewModel> _projectTree = new List<AssetViewModel>();
 
         public IProject OpenedProject
         {
@@ -46,8 +50,18 @@ namespace TT_Lab.Project
             {
                 _openedProject = value;
                 RaisePropertyChangedEvent("OpenedProject");
-                RaisePropertyChangedEvent("ProjectOpened");
-                RaisePropertyChangedEvent("ProjectTitle");
+            }
+        }
+
+        public List<AssetViewModel> ProjectTree
+        {
+            get
+            {
+                return _projectTree;
+            }
+            private set
+            {
+                _projectTree = value;
             }
         }
 
@@ -81,8 +95,9 @@ namespace TT_Lab.Project
                         {
                             Header = $"{i + 1}. {recents[i]}",
                             Command = new OpenProjectCommand(recents[i]),
-                            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
-                            VerticalAlignment = System.Windows.VerticalAlignment.Center
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
+                            VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                            
                         };
                     }
                     _recentMenus = menus;
@@ -90,7 +105,7 @@ namespace TT_Lab.Project
                 return _recentMenus;
             }
         }
-
+        
         public bool HasRecents
         {
             get
@@ -111,18 +126,28 @@ namespace TT_Lab.Project
             if (discFiles.Contains("System.cnf"))
             {
                 OpenedProject = new PS2Project(name, path, discContentPath);
-                OpenedProject.Serialize();
+                OpenedProject.Serialize(); // Call to create initial project folder
             }
             else
             {
                 // TODO: XBox type project
                 throw new Exception("XBox project type not supported!");
             }
-            AddRecentlyOpened(OpenedProject.ProjectPath);
             // Unpack assets
             Directory.CreateDirectory("assets");
             Directory.SetCurrentDirectory("assets");
-            OpenedProject.UnpackAssets();
+            Task.Factory.StartNew(() =>
+            {
+                Log.WriteLine("Unpacking assets...");
+                OpenedProject.UnpackAssets();
+                Log.WriteLine("Serializing assets...");
+                OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
+                AddRecentlyOpened(OpenedProject.ProjectPath);
+                Log.WriteLine("Building project tree...");
+                BuildProjectTree();
+                RaisePropertyChangedEvent("ProjectOpened");
+                RaisePropertyChangedEvent("ProjectTitle");
+            });
         }
 
         public void OpenProject(string path)
@@ -137,7 +162,22 @@ namespace TT_Lab.Project
                 if (Directory.GetFiles(path, "*.tson").Length != 0)
                 {
                     var prFile = Directory.GetFiles(path, "*.tson")[0];
-                    OpenedProject = PS2Project.Deserialize(prFile);
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
+                            OpenedProject = PS2Project.Deserialize(prFile);
+                            Log.WriteLine($"Building project tree...");
+                            BuildProjectTree();
+                            RaisePropertyChangedEvent("ProjectOpened");
+                            RaisePropertyChangedEvent("ProjectTitle");
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.WriteLine($"Error opening project: {ex.Message}");
+                        }
+                    });
                 }
             }
             catch (Exception ex)
@@ -151,6 +191,16 @@ namespace TT_Lab.Project
         public void CloseProject()
         {
             OpenedProject = null;
+        }
+
+        private void BuildProjectTree()
+        {
+            ProjectTree = (from asset in OpenedProject.Assets.Values
+                           where asset.Type == "Folder"
+                           let folder = asset as Folder
+                           where folder.Parent == null
+                           select new AssetViewModel(folder.UUID)).ToList();
+            RaisePropertyChangedEvent("ProjectTree");
         }
 
         private void AddRecentlyOpened(string path)

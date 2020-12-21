@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Assets\AssetFactory.cs" />
     <Compile Include="Assets\Code\GameObject.cs" />
     <Compile Include="Assets\Code\HeaderScript.cs" />
     <Compile Include="Assets\Code\MainScript.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Assets\Code\SoundEffect.cs" />
     <Compile Include="Assets\Code\CodeModel.cs" />
     <Compile Include="Assets\Code\Animation.cs" />
+    <Compile Include="Assets\Folder.cs" />
     <Compile Include="Assets\Graphics\BlendSkin.cs" />
     <Compile Include="Assets\Graphics\LodModel.cs" />
     <Compile Include="Assets\Graphics\RigidModel.cs" />
@@ -81,13 +83,22 @@
     <Compile Include="Assets\Instance\AiPath.cs" />
     <Compile Include="Assets\Instance\AiPosition.cs" />
     <Compile Include="Assets\Instance\Camera.cs" />
+    <Compile Include="Assets\Instance\ChunkLink.cs" />
+    <Compile Include="Assets\Instance\ChunkLinks.cs" />
+    <Compile Include="Assets\Instance\CollisionData.cs" />
     <Compile Include="Assets\Instance\CollisionSurface.cs" />
+    <Compile Include="Assets\Instance\Collision\CollisionTriangle.cs" />
+    <Compile Include="Assets\Instance\Collision\CollisionTrigger.cs" />
+    <Compile Include="Assets\Instance\Collision\GroupInformation.cs" />
+    <Compile Include="Assets\Instance\DynamicScenery.cs" />
     <Compile Include="Assets\Instance\InstanceTemplate.cs" />
     <Compile Include="Assets\Instance\ObjectInstance.cs" />
     <Compile Include="Assets\Instance\Path.cs" />
     <Compile Include="Assets\Instance\Position.cs" />
+    <Compile Include="Assets\Instance\Scenery.cs" />
     <Compile Include="Assets\Instance\SerializableInstance.cs" />
     <Compile Include="Assets\Instance\Trigger.cs" />
+    <Compile Include="Assets\Instance\ParticleData.cs" />
     <Compile Include="Assets\SerializableAsset.cs" />
     <Compile Include="Assets\Graphics\Skydome.cs" />
     <Compile Include="Assets\Graphics\Texture.cs" />
@@ -96,7 +107,9 @@
     <Compile Include="Command\OpenProjectDialogueCommand.cs" />
     <Compile Include="Command\SaveProjectCommand.cs" />
     <Compile Include="Command\SelectFolderCommand.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Project\IProject.cs" />
+    <Compile Include="ViewModels\AssetViewModel.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
     <Page Include="About.xaml">

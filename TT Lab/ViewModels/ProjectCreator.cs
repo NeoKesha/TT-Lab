@@ -1,13 +1,14 @@
 ﻿using System;
 using TT_Lab.Command;
+using TT_Lab.Properties;
 
 namespace TT_Lab.ViewModels
 {
     public class ProjectCreator : ObservableObject
     {
         private string _projectName = "New project";
-        private string _projectPath = "";
-        private string _discContentPath = "";
+        private string _projectPath = Settings.Default.ProjectPath;
+        private string _discContentPath = Settings.Default.DiscContentPath;
 
         public ICommand SetProjectPathCommand
         {
@@ -55,6 +56,7 @@ namespace TT_Lab.ViewModels
             set
             {
                 _projectPath = value;
+                Settings.Default.ProjectPath = _projectPath;
                 RaisePropertyChangedEvent("CanCreate");
                 RaisePropertyChangedEvent("ProjectPath");
             }
@@ -68,6 +70,7 @@ namespace TT_Lab.ViewModels
             set
             {
                 _discContentPath = value;
+                Settings.Default.DiscContentPath = _discContentPath;
                 RaisePropertyChangedEvent("CanCreate");
                 RaisePropertyChangedEvent("DiscContentPath");
             }

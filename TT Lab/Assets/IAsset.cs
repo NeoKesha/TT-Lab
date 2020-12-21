@@ -54,6 +54,11 @@ namespace TT_Lab.Assets
         void Serialize();
 
         /// <summary>
+        /// Convert JSON format to the project asset object
+        /// </summary>
+        void Deserialize(string json);
+
+        /// <summary>
         /// Converts given data to raw game's data
         /// </summary>
         /// <param name="data">Data to convert</param>

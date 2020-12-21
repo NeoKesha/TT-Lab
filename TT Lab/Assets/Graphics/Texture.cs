@@ -16,6 +16,10 @@ namespace TT_Lab.Assets.Graphics
             Header = texture.HeaderSignature;
         }
 
+        public Texture()
+        {
+        }
+
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();

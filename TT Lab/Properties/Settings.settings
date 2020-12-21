@@ -5,5 +5,11 @@
     <Setting Name="RecentProjects" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ProjectPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DiscContentPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

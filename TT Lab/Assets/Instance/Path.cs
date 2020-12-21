@@ -19,7 +19,13 @@ namespace TT_Lab.Assets.Instance
             Points = path.PointList;
         }
 
-        public override String Type => base.Type + "Path";
+        public Path()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "Path";
+
+        public override String Type => "Path";
 
         public override Byte[] ToFormat()
         {

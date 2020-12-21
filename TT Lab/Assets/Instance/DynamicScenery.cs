@@ -4,28 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class AiPath : SerializableInstance
+    public class DynamicScenery : SerializableInstance
     {
-
         [JsonProperty(Required = Required.Always)]
-        public UInt16[] Args { get; } = new UInt16[5];
+        public Int32 UnkInt;
 
-        public AiPath(UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(id, name, chunk, layId)
-        {
-            Args = path.Args;
-        }
-
-        public AiPath()
+        public DynamicScenery()
         {
         }
 
-        protected override String SavePath => base.SavePath + "AiPath";
+        public DynamicScenery(UInt32 id, String name, String chunk, PS2AnyDynamicScenery dynamicScenery) : base(id, name, chunk, -1)
+        {
+            UnkInt = dynamicScenery.UnkInt;
+        }
 
-        public override String Type => "AiPath";
+        public override String Type => "DynamicScenery";
 
         public override Byte[] ToFormat()
         {

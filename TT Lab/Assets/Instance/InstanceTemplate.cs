@@ -22,7 +22,13 @@ namespace TT_Lab.Assets.Instance
             ObjectId = template.ObjectId;
         }
 
-        public override String Type => base.Type + "InstanceTemplate";
+        public InstanceTemplate()
+        {
+        }
+
+        protected override String SavePath => base.SavePath + "InstanceTemplate";
+
+        public override String Type => "InstanceTemplate";
 
         public override Byte[] ToFormat()
         {

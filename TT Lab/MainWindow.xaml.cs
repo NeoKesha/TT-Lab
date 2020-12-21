@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using TT_Lab.Command;
 using TT_Lab.Project;
@@ -28,6 +29,7 @@ namespace TT_Lab
             AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control);
             DataContext = ProjectManagerSingleton.PM;
             Closed += MainWindow_Closed;
+            Log.SetLogBox(LogText);
         }
 
         private void MainWindow_Closed(Object sender, EventArgs e)
@@ -43,6 +45,29 @@ namespace TT_Lab
         private void AddKeybind(System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
         {
             InputBindings.Add(new KeyBinding(command, key, modifierKeys));
+        }
+
+        // Props to https://stackoverflow.com/a/25765336
+        private void LogViewer_ScrollChanged(Object sender, ScrollChangedEventArgs e)
+        {
+            ScrollViewer sv = sender as ScrollViewer;
+            bool AutoScrollToEnd = true;
+            if (sv.Tag != null)
+            {
+                AutoScrollToEnd = (bool)sv.Tag;
+            }
+            if (e.ExtentHeightChange == 0)// user scroll
+            {
+                AutoScrollToEnd = sv.ScrollableHeight == sv.VerticalOffset;
+            }
+            else// content change
+            {
+                if (AutoScrollToEnd)
+                {
+                    sv.ScrollToEnd();
+                }
+            }
+            sv.Tag = AutoScrollToEnd;
         }
     }
 }

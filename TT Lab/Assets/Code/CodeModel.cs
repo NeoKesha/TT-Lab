@@ -15,6 +15,8 @@ namespace TT_Lab.Assets.Code
 
         public override String Type => "CodeModel";
 
+        public CodeModel() {}
+
         public CodeModel(UInt32 id, String name, PS2AnyCodeModel codeModel) : base(id, name)
         {
             Header = codeModel.Header;

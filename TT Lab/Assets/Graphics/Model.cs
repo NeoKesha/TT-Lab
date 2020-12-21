@@ -12,6 +12,10 @@ namespace TT_Lab.Assets.Graphics
 
         }
 
+        public Model()
+        {
+        }
+
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();

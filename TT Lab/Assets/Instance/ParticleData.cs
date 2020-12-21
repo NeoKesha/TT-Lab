@@ -4,28 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class AiPath : SerializableInstance
+    public class ParticleData : SerializableInstance
     {
 
         [JsonProperty(Required = Required.Always)]
-        public UInt16[] Args { get; } = new UInt16[5];
+        public UInt32 Version { get; set; }
 
-        public AiPath(UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(id, name, chunk, layId)
-        {
-            Args = path.Args;
-        }
+        public override String Type => "ParticleData";
 
-        public AiPath()
+        public ParticleData()
         {
         }
 
-        protected override String SavePath => base.SavePath + "AiPath";
-
-        public override String Type => "AiPath";
+        public ParticleData(UInt32 id, String name, String chunk, PS2AnyParticleData particleData) : base(id, name, chunk, -1)
+        {
+            Version = particleData.Version;
+        }
 
         public override Byte[] ToFormat()
         {

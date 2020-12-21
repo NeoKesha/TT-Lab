@@ -18,15 +18,26 @@ namespace TT_Lab.Project
         /// Maps a string to an asset Type
         /// </summary>
         /// <example>
-        /// IAsset newTex = (IAsset)Activator.CreateInstance(StringToAsset["texture"]);
+        /// IAsset newTex = (IAsset)Activator.CreateInstance(StringToAsset["Texture"]);
         /// </example>
         Dictionary<string, Type> StringToAsset { get; }
 
         /// <summary>
         /// Project's collection of assets
         /// </summary>
-        [JsonProperty(ItemIsReference = true)]
         Dictionary<Guid, IAsset> Assets { get; }
+
+        /// <summary>
+        /// List of present chunks
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        List<string> ChunkPaths { get; }
+
+        /// <summary>
+        /// Project's list of assets
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        List<Guid> AssetIds { get; }
 
         /// <summary>
         /// Project's UUID
@@ -64,7 +75,7 @@ namespace TT_Lab.Project
         string ProjectPath { get; }
 
         /// <summary>
-        /// Unpacks game archives data into necessary folders
+        /// Unpacks game assets data into project readable format
         /// </summary>
         void UnpackAssets();
 

@@ -23,6 +23,10 @@ namespace TT_Lab.Assets.Graphics
             UnkInt = material.UnkInt;
         }
 
+        public Material()
+        {
+        }
+
         public override Byte[] ToFormat()
         {
             throw new NotImplementedException();

@@ -7,6 +7,8 @@ namespace TT_Lab.Assets.Graphics
     {
         public override String Type => "Mesh";
 
+        public Mesh() { }
+
         public Mesh(UInt32 id, String name, PS2AnyMesh mesh) : base(id, name, mesh)
         {
         }
