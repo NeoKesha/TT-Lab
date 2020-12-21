@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
-    public class PS2AnyLOD : ITwinLOD
+    public class PS2AnyLOD : BaseTwinItem, ITwinLOD
     {
-        UInt32 id;
         public Int32 Type;
         public Int32 UnkInt1;
         public Int32 UnkInt2; // Draw distance?
@@ -25,12 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             Meshes = new List<UInt32>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public int GetLength()
+        public override int GetLength()
         {
             if (Type == 0x1001)
             {
@@ -39,7 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             return 25 + Meshes.Count * Constants.SIZE_UINT32;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Type = reader.ReadInt32();
             if (Type == 0x1001)
@@ -70,12 +65,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Type);
             if (Type == 0x1001)
@@ -106,7 +96,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"LOD {id:X}";
         }

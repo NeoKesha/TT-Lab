@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 {
-    public class PS2AnyDynamicScenery : ITwinDynamicScenery
+    public class PS2AnyDynamicScenery : BaseTwinItem, ITwinDynamicScenery
     {
-        UInt32 id;
 
         public Int32 UnkInt;
         public List<DynamicSceneryModel> DynamicModels;
@@ -21,17 +21,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             DynamicModels = new List<DynamicSceneryModel>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 6 + DynamicModels.Sum(d => d.GetLength());
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             UnkInt = reader.ReadInt32();
             var models = reader.ReadInt16();
@@ -43,12 +38,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(UnkInt);
             writer.Write((Int16)DynamicModels.Count);
@@ -58,7 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Dynamic scenery {id:X}";
         }

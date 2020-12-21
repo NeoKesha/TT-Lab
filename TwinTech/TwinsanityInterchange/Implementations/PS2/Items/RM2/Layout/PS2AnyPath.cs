@@ -13,9 +13,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyPath : ITwinPath
-    {
-        UInt32 id;
+    public class PS2AnyPath : BaseTwinItem, ITwinPath 
+    { 
         public List<Vector4> PointList { get; private set; }
         public List<Vector2> ParameterList { get; private set; }
         public PS2AnyPath()
@@ -23,17 +22,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             PointList = new List<Vector4>();
             ParameterList = new List<Vector2>();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             return 8 + Constants.SIZE_VECTOR4 * PointList.Count + Constants.SIZE_VECTOR2 * ParameterList.Count;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Int32 points = reader.ReadInt32();
             PointList.Clear();
@@ -53,12 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(PointList.Count);
             foreach(ITwinSerializable e in PointList)
@@ -72,7 +62,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Path {id:X}";
         }

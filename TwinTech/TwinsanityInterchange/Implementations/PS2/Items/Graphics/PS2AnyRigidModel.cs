@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
-    public class PS2AnyRigidModel : ITwinRigidModel
+    public class PS2AnyRigidModel : BaseTwinItem, ITwinRigidModel
     {
-        protected UInt32 id;
         public UInt32 Header { get; set; } // Unused by the game
         public List<UInt32> Materials { get; private set; }
         public UInt32 Model { get; set; }
@@ -21,17 +21,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             Materials = new List<UInt32>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 12 + Materials.Count * Constants.SIZE_UINT32;
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             Header = reader.ReadUInt32();
             var matAmt = reader.ReadInt32();
@@ -42,12 +37,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             Model = reader.ReadUInt32();
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Header);
             writer.Write(Materials.Count);
@@ -58,7 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             writer.Write(Model);
         }
 
-        public virtual String GetName()
+        public override String GetName()
         {
             return $"Rigid Model {id:X}";
         }

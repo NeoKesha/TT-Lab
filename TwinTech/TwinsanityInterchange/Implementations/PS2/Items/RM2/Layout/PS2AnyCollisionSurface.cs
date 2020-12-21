@@ -12,9 +12,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyCollisionSurface : ITwinSurface
+    public class PS2AnyCollisionSurface : BaseTwinItem, ITwinSurface
     {
-        UInt32 id;
         public UInt32 Flags { get; set; }
         public UInt16 SurfaceId { get; set; }
         public UInt16[] StepSoundIds { get; private set; }
@@ -27,17 +26,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             Parameters = new float[16];
             UnkShorts = new ushort[12];
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             return 114;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Flags = reader.ReadUInt32();
             SurfaceId = reader.ReadUInt16();
@@ -55,12 +50,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Flags);
             writer.Write(SurfaceId);
@@ -78,7 +68,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Collision surface {id:X}";
         }

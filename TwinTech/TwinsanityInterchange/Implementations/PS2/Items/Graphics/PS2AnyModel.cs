@@ -5,26 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
-    public class PS2AnyModel : ITwinModel
+    public class PS2AnyModel : BaseTwinItem, ITwinModel
     {
-        UInt32 id;
         public List<SubModel> SubModels { get; private set; }
         public PS2AnyModel()
         {
             SubModels = new List<SubModel>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             Int32 totalLength = 4;
             foreach (ITwinSerializable e in SubModels)
@@ -34,7 +29,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             return totalLength;
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             int subCnt = reader.ReadInt32();
             SubModels.Clear();
@@ -46,12 +41,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(SubModels.Count);
             foreach(ITwinSerializable e in SubModels)
@@ -60,7 +50,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Model {id:X}";
         }

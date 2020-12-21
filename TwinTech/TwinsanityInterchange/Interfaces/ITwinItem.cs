@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,12 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
          * Get item's name
          */
         String GetName();
+
+        bool GetIsLoaded();
+        void SetIsLazy(bool isLazy);
+        ITwinItem GetRoot();
+        void SetRoot(ITwinItem root);
+        MemoryStream GetStream();
+        void SetStream(MemoryStream stream);
     }
 }

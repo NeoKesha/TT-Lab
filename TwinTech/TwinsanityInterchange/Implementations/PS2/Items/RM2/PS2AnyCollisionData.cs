@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.Collision;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
 {
-    public class PS2AnyCollisionData : ITwinCollision
+    public class PS2AnyCollisionData : BaseTwinItem, ITwinCollision
     {
-        UInt32 id;
         private UInt32 UnkInt;
         public List<CollisionTrigger> Triggers;
         public List<GroupInformation> Groups;
@@ -28,18 +28,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             Vectors = new List<Vector4>();
         }
 
-        public UInt32 GetID()
-        {
-            return id;
-        }
-
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 20 + Triggers.Sum(t => t.GetLength()) + Groups.Sum(g => g.GetLength())
                 + Triangles.Sum(t => t.GetLength()) + Vectors.Sum(v => v.GetLength());
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             UnkInt = reader.ReadUInt32();
             var trgAmt = reader.ReadUInt32();
@@ -76,12 +71,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             }
         }
 
-        public void SetID(UInt32 id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(UnkInt);
             writer.Write(Triggers.Count);
@@ -106,7 +96,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Collision data {id:X}";
         }

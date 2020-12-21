@@ -11,9 +11,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyTrigger : ITwinTrigger
+    public class PS2AnyTrigger : BaseTwinItem, ITwinTrigger
     {
-        UInt32 id;
         public TwinTrigger Trigger { get; }
         public UInt16[] Arguments { get; }
         public PS2AnyTrigger()
@@ -21,17 +20,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             Arguments = new UInt16[4];
             Trigger = new TwinTrigger();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             return Trigger.GetLength() + 8;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             Trigger.Header1 = reader.ReadUInt32();
             Trigger.Enabled = reader.ReadUInt32();
@@ -53,12 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(Trigger.Header1);
             writer.Write(Trigger.Enabled);
@@ -79,7 +69,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Trigger {id:X}";
         }

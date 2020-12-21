@@ -12,7 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
-    public class PS2AnyOGI : ITwinOGI
+    public class PS2AnyOGI : BaseTwinItem, ITwinOGI
     {
 
         public enum HeaderInfo
@@ -25,7 +25,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             TYPE3_AMOUNT = 8,
         }
 
-        UInt32 id;
         Byte[] headerData;
         public List<OGIType1> Type1List { get; private set; }
         public List<OGIType2> Type2List { get; private set; }
@@ -52,12 +51,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             Type3List = new List<OGIType3>();
             Type3RelatedList = new List<byte>();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             int dynamic_size = 0;
             foreach (ITwinSerializable e in Type3List)
@@ -73,7 +68,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 + 8 + dynamic_size + Type3RelatedList.Count;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             reader.Read(headerData, 0, headerData.Length);
             Byte t1cnt = headerData[(int)HeaderInfo.TYPE1_AMOUNT];
@@ -131,12 +126,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             headerData[(int)HeaderInfo.TYPE1_AMOUNT] = (Byte)Type1List.Count;
             headerData[(int)HeaderInfo.TYPE2_AMOUNT] = (Byte)Type2List.Count;
@@ -179,7 +169,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"OGI {id:X}";
         }

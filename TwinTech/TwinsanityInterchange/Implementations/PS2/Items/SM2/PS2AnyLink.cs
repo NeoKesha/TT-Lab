@@ -13,21 +13,16 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 {
-    public class PS2AnyLink : ITwinLink
+    public class PS2AnyLink : BaseTwinItem, ITwinLink
     {
-        UInt32 id;
         public List<TwinChunkLink> LinksList;
         
         public PS2AnyLink()
         {
             LinksList = new List<TwinChunkLink>();
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             int linksSize = 0;
             foreach (ITwinSerializable e in LinksList)
@@ -37,7 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             return 4 + linksSize;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             int links = reader.ReadInt32();
             LinksList.Clear();
@@ -49,12 +44,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(LinksList.Count);
             foreach (ITwinSerializable e in LinksList)
@@ -63,7 +53,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Chunk link {id:X}";
         }

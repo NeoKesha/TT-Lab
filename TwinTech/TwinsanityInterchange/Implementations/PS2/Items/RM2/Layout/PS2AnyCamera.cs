@@ -12,9 +12,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyCamera : ITwinCamera
+    public class PS2AnyCamera : BaseTwinItem, ITwinCamera
     {
-        UInt32 id;
         Dictionary<UInt32, Type> subCamIdToCamera = new Dictionary<UInt32, Type>();
         public TwinTrigger CamTrigger { get; }
         public UInt32 CameraHeader { get; set; }
@@ -59,19 +58,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             subCamIdToCamera.Add(0x1C0D, typeof(CameraLine2));
             subCamIdToCamera.Add(0x1C0F, typeof(CameraZone));
         }
-        public uint GetID()
-        {
-            return id;
-        }
 
-        public int GetLength()
+        public override int GetLength()
         {
             var mainCam1Len = MainCamera1 == null ? 0 : MainCamera1.GetLength();
             var mainCam2Len = MainCamera2 == null ? 0 : MainCamera2.GetLength();
             return CamTrigger.GetLength() + 115 + mainCam1Len + mainCam2Len;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             CamTrigger.Header1 = reader.ReadUInt32();
             CamTrigger.Enabled = reader.ReadUInt32();
@@ -124,12 +119,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public void SetID(uint id)
-        {
-            this.id = id;
-        }
-
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(CamTrigger.Header1);
             writer.Write(CamTrigger.Enabled);
@@ -179,7 +169,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
         }
 
-        public String GetName()
+        public override String GetName()
         {
             return $"Camera {id:X}";
         }
