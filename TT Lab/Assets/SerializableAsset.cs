@@ -1,13 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
 {
-    public abstract class SerializableAsset : IAsset
+    public abstract class SerializableAsset<T> : IAsset where T : AbstractAssetData, new()
     {
         public Guid UUID { get; private set; }
 
         protected virtual String SavePath => Type;
+
+        protected T assetData;
 
         public virtual String Type => "Asset";
 
@@ -16,8 +19,14 @@ namespace TT_Lab.Assets
         public String Data { get; set; }
         public UInt32 ID { get; set; }
         public String Alias { get; set; }
+        public String Chunk { get; set; }
+        public Int32? LayoutID { get; set; }
+        public Boolean IsLoaded { get; protected set; }
 
-        public SerializableAsset() { }
+        public SerializableAsset()
+        {
+            IsLoaded = false;
+        }
 
         public SerializableAsset(UInt32 id, String name)
         {
@@ -26,7 +35,8 @@ namespace TT_Lab.Assets
             Name = name;
             Alias = Name;
             Raw = true;
-            Data = null; // Indicates that game's original data is preserved
+            Data = UUID.ToString() + ".data";
+            IsLoaded = true;
         }
 
         public virtual void Serialize()
@@ -38,6 +48,16 @@ namespace TT_Lab.Assets
             {
                 writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
             }
+            // Created data needs to be saved on disk but then disposed of since we are not gonna need it unless user wishes to edit the exact asset
+            if (assetData != null)
+            {
+                assetData.Save(Data);
+                assetData.Dispose();
+                if (!(this is Folder))
+                {
+                    assetData = null;
+                }
+            }
         }
 
         public virtual void Deserialize(String json)
@@ -47,5 +67,21 @@ namespace TT_Lab.Assets
 
         public abstract void ToRaw(Byte[] data);
         public abstract Byte[] ToFormat();
+
+        public T GetData()
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = new T();
+                assetData.Load(Data);
+                IsLoaded = true;
+            }
+            return assetData;
+        }
+
+        AbstractAssetData IAsset.GetData()
+        {
+            return GetData();
+        }
     }
 }

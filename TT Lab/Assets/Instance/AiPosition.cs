@@ -4,27 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class AiPosition : SerializableInstance
+    public class AiPosition : SerializableInstance<AiPositionData>
     {
-
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Coords { get; set; } = new Vector4();
-
         public AiPosition(UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPosition position) : base(id, name, chunk, layId)
         {
-            Coords = position.Position;
+            assetData = new AiPositionData(position);
         }
 
         public AiPosition()
         {
         }
-
-        protected override String SavePath => base.SavePath + "AiPosition";
 
         public override String Type => "AiPosition";
 

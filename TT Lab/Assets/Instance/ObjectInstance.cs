@@ -4,26 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class ObjectInstance : SerializableInstance
+    public class ObjectInstance : SerializableInstance<ObjectInstanceData>
     {
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Position { get; set; } = new Vector4();
-
         public ObjectInstance(UInt32 id, String name, String chunk, Int32 layId, PS2AnyInstance instance) : base(id, name, chunk, layId)
         {
-            Position = instance.Position;
+            assetData = new ObjectInstanceData(instance);
         }
 
         public ObjectInstance()
         {
         }
-
-        protected override String SavePath => base.SavePath + "ObjectInstance";
 
         public override String Type => "ObjectInstance";
 

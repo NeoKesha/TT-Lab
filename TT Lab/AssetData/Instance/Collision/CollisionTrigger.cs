@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
-namespace TT_Lab.Assets.Instance.Collision
+namespace TT_Lab.AssetData.Instance.Collision
 {
     public class CollisionTrigger
     {

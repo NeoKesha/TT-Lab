@@ -85,8 +85,8 @@ namespace TT_Lab.Project
                 { "Skin", typeof(Skin) },
                 { "Skydome", typeof(Skydome) },
                 { "Texture", typeof(Texture) },
-                { "CollisionData", typeof(CollisionData) },
-                { "ParticleData", typeof(ParticleData) },
+                { "CollisionData", typeof(Collision) },
+                { "ParticleData", typeof(Particles) },
                 { "Scenery", typeof(Scenery) },
                 { "DynamicScenery", typeof(DynamicScenery) },
                 { "ChunkLinks", typeof(ChunkLinks) },
@@ -323,7 +323,7 @@ namespace TT_Lab.Project
                                     asset.GetID(), asset.GetName(), asset);
                                 if (!isHeader)
                                 {
-                                    scriptsFolder.Children.Add(metaAsset.UUID);
+                                    scriptsFolder.GetData().Children.Add(metaAsset.UUID);
                                 }
                                 Assets.Add(metaAsset.UUID, metaAsset);
                             }
@@ -351,7 +351,7 @@ namespace TT_Lab.Project
                         // Create chunk folder hierarchy
                         for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            var existFolder = prevFolder.Children.FirstOrDefault(c => GetAsset<Folder>(c)?.Name == otherFolders[i]);
+                            var existFolder = prevFolder.GetData().Children.FirstOrDefault(c => GetAsset<Folder>(c)?.Name == otherFolders[i]);
                             if (existFolder != Guid.Empty)
                             {
                                 prevFolder = GetAsset<Folder>(existFolder);
@@ -369,15 +369,15 @@ namespace TT_Lab.Project
                             {
                                 // Extract collision data
                                 var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
-                                var colData = new CollisionData(collisionData.GetID(), collisionData.GetName(), pathLow, collisionData);
+                                var colData = new Collision(collisionData.GetID(), collisionData.GetName(), pathLow, collisionData);
                                 Assets.Add(colData.UUID, colData);
-                                chunkFolder.Children.Add(colData.UUID);
+                                chunkFolder.GetData().Children.Add(colData.UUID);
                             }
                             // Extract particle data
                             var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
-                            var partData = new ParticleData(particleData.GetID(), particleData.GetName(), pathLow, particleData);
+                            var partData = new Particles(particleData.GetID(), particleData.GetName(), pathLow, particleData);
                             Assets.Add(partData.UUID, partData);
-                            chunkFolder.Children.Add(partData.UUID);
+                            chunkFolder.GetData().Children.Add(partData.UUID);
                             // Instance layout
                             var instFolder = new Folder("Instances", chunkFolder);
                             var aiPathFolder = new Folder("AI Paths", chunkFolder);
@@ -433,8 +433,8 @@ namespace TT_Lab.Project
                             Assets.Add(sceneryAsset.UUID, sceneryAsset);
                             Assets.Add(dynamicSceneryAsset.UUID, dynamicSceneryAsset);
                             Assets.Add(chunkLinksAsset.UUID, chunkLinksAsset);
-                            chunkFolder.Children.Add(sceneryAsset.UUID);
-                            chunkFolder.Children.Add(dynamicSceneryAsset.UUID);
+                            chunkFolder.GetData().Children.Add(sceneryAsset.UUID);
+                            chunkFolder.GetData().Children.Add(dynamicSceneryAsset.UUID);
                             // Chunk links not added because they are very attached to the chunk and can located in a different UI place from Project Tree
                         }
                     }
@@ -461,7 +461,7 @@ namespace TT_Lab.Project
         /// <param name="globalCheck">Dictionary of global resources to check against</param>
         /// <param name="secId">Subsection ID where game asset is stored at</param>
         private void ReadSectionItems<T, S, I>(ITwinSection fromSection, Dictionary<uint, List<uint>> globalCheck, uint secId, Folder folder)
-            where T : SerializableAsset where S : ITwinSection where I : ITwinItem
+            where T : IAsset where S : ITwinSection where I : ITwinItem
         {
             var items = fromSection.GetItem<S>(secId);
             for (var i = 0; i < items.GetItemsAmount(); ++i)
@@ -470,7 +470,7 @@ namespace TT_Lab.Project
                 if (globalCheck[secId].Contains(asset.GetID())) continue;
                 globalCheck[secId].Add(asset.GetID());
                 var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), asset);
-                folder.Children.Add(metaAsset.UUID);
+                folder.GetData().Children.Add(metaAsset.UUID);
                 Assets.Add(metaAsset.UUID, metaAsset);
             }
         }
@@ -485,7 +485,7 @@ namespace TT_Lab.Project
         /// <param name="fromSection">Which section to read from</param>
         /// <param name="secId">Subsection ID where game asset is stored at</param>
         private void ReadSectionItems<T, S, I>(ITwinSection fromSection, uint secId, string chunkName, int layId, Folder folder)
-            where T : SerializableAsset where S : ITwinSection where I : ITwinItem
+            where T : IAsset where S : ITwinSection where I : ITwinItem
         {
             var items = fromSection.GetItem<S>(secId);
             if (items != null)
@@ -494,7 +494,7 @@ namespace TT_Lab.Project
                 {
                     var asset = items.GetItem<I>(items.GetItem(i).GetID());
                     var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), chunkName, layId, asset);
-                    folder.Children.Add(metaAsset.UUID);
+                    folder.GetData().Children.Add(metaAsset.UUID);
                     Assets.Add(metaAsset.UUID, metaAsset);
                 }
             }

@@ -4,25 +4,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Instance;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class ParticleData : SerializableInstance
+    public class Collision : SerializableInstance<CollisionData>
     {
+        public override String Type => "CollisionData";
 
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Version { get; set; }
-
-        public override String Type => "ParticleData";
-
-        public ParticleData()
+        public Collision()
         {
         }
 
-        public ParticleData(UInt32 id, String name, String chunk, PS2AnyParticleData particleData) : base(id, name, chunk, -1)
+        public Collision(UInt32 id, String name, String chunk, PS2AnyCollisionData collisionData) : base(id, name, chunk, null)
         {
-            Version = particleData.Version;
+            assetData = new CollisionData(collisionData);
         }
 
         public override Byte[] ToFormat()

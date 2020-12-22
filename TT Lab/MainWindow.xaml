@@ -366,15 +366,9 @@
                     <RowDefinition Height="25*"/>
                 </Grid.RowDefinitions>
                 <TabControl x:Name="CentralViewerTabs" Margin="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" UseLayoutRounding="False" Style="{DynamicResource MainCenterTabStyle}">
-                    <TabItem Header="3D Viewer" HorizontalContentAlignment="Stretch" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
+                    <TabItem Header="Resource Viewer" HorizontalContentAlignment="Stretch" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
                         <Grid Background="#FFE5E5E5">
-                            <TabControl x:Name="MainViewerTabs">
-                                <TabItem Header="Selected chunk">
-                                    <Grid Background="#FFE5E5E5">
-                                        <Viewport3D/>
-                                    </Grid>
-                                </TabItem>
-                            </TabControl>
+                            <TabControl x:Name="MainViewerTabs"/>
                         </Grid>
                     </TabItem>
                     <TabItem Header="AgentLab Editor" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">

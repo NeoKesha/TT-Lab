@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TT_Lab.Assets.Instance.Collision
+namespace TT_Lab.AssetData.Instance.Collision
 {
     [JsonObject]
     public class CollisionTriangle

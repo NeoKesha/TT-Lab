@@ -1,25 +1,17 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class LodModel : SerializableAsset
+    public class LodModel : SerializableAsset<LodModelData>
     {
-        [JsonProperty(Required = Required.Always)]
-        public Int32 LodType { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Int32 UnkInt1 { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Int32 UnkInt2 { get; set; }
-
         public override String Type => "LodModel";
 
         public LodModel(UInt32 id, String name, PS2AnyLOD lod) : base(id, name)
         {
-            LodType = lod.Type;
-            UnkInt1 = lod.UnkInt1;
-            UnkInt2 = lod.UnkInt2;
+            assetData = new LodModelData(lod);
         }
 
         public LodModel()

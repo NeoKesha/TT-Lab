@@ -4,29 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class InstanceTemplate : SerializableInstance
+    public class InstanceTemplate : SerializableInstance<InstanceTemplateData>
     {
-
-        [JsonProperty(Required = Required.Always)]
-        public String TemplateName { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt16 ObjectId { get; set; }
-
         public InstanceTemplate(UInt32 id, String name, String chunk, Int32 layId, PS2AnyTemplate template) : base(id, name, chunk, layId)
         {
-            TemplateName = template.Name;
-            ObjectId = template.ObjectId;
+            assetData = new InstanceTemplateData(template);
         }
 
         public InstanceTemplate()
         {
         }
-
-        protected override String SavePath => base.SavePath + "InstanceTemplate";
 
         public override String Type => "InstanceTemplate";
 

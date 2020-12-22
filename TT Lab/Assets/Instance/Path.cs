@@ -4,26 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class Path : SerializableInstance
+    public class Path : SerializableInstance<PathData>
     {
-        [JsonProperty(Required = Required.Always)]
-        public List<Vector4> Points { get; set; } = new List<Vector4>();
-
         public Path(UInt32 id, String name, String chunk, Int32 layId, PS2AnyPath path) : base(id, name, chunk, layId)
         {
-            Points = path.PointList;
+            assetData = new PathData(path);
         }
 
         public Path()
         {
         }
-
-        protected override String SavePath => base.SavePath + "Path";
 
         public override String Type => "Path";
 

@@ -1,19 +1,17 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class Skydome : SerializableAsset
+    public class Skydome : SerializableAsset<SkydomeData>
     {
-        [JsonProperty(Required = Required.Always)]
-        public Int32 Header { get; set; }
-
         public override String Type => "Skydome";
 
         public Skydome(UInt32 id, String name, PS2AnySkydome skydome) : base(id, name)
         {
-            Header = skydome.Header;
+            assetData = new SkydomeData(skydome);
         }
 
         public Skydome()
