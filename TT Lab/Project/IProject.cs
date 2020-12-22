@@ -28,12 +28,6 @@ namespace TT_Lab.Project
         Dictionary<Guid, IAsset> Assets { get; }
 
         /// <summary>
-        /// List of present chunks
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        List<string> ChunkPaths { get; }
-
-        /// <summary>
         /// Project's list of assets
         /// </summary>
         [JsonProperty(Required = Required.Always)]
