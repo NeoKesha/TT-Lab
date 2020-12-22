@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
@@ -34,8 +35,6 @@ namespace TT_Lab.Project
 
         public List<Guid> AssetIds { get; private set; }
 
-        public List<string> ChunkPaths { get; private set; }
-
         public Guid UUID { get; }
 
         public string Name { get; set; }
@@ -59,7 +58,6 @@ namespace TT_Lab.Project
             LastModified = DateTime.Now;
             UUID = Guid.NewGuid();
             Assets = new Dictionary<Guid, IAsset>();
-            ChunkPaths = new List<string>();
             StringToAsset = new Dictionary<string, Type>
             {
                 { "ObjectInstance", typeof(ObjectInstance) },
@@ -117,10 +115,24 @@ namespace TT_Lab.Project
             // Serialize all the assets
             System.IO.Directory.CreateDirectory("assets");
             System.IO.Directory.SetCurrentDirectory("assets");
-            foreach (var asset in Assets)
+            var query = from asset in Assets
+                        group asset by asset.Value.Type;
+            var tasks = new Task[query.Count()];
+            var index = 0;
+            DateTime startAsset = DateTime.Now;
+            foreach (var group in query)
             {
-                asset.Value.Serialize();
+                tasks[index++] = Task.Factory.StartNew(() =>
+                {
+                    Log.WriteLine($"Serializing {group.Key}...");
+                    foreach (var asset in group)
+                    {
+                        asset.Value.Serialize();
+                    }
+                });
             }
+            Task.WaitAll(tasks);
+            Log.WriteLine($"Serialized assets in {(startAsset - DateTime.Now)}");
             System.IO.Directory.SetCurrentDirectory(path);
         }
 
@@ -250,12 +262,10 @@ namespace TT_Lab.Project
                         if (isDefault)
                         {
                             chunk = new PS2Default();
-                            ChunkPaths.Add(pathLow.Remove(pathLow.Length - 4, 4));
                         }
                         else if (isRm2)
                         {
                             chunk = new PS2AnyTwinsanityRM2();
-                            ChunkPaths.Add(pathLow.Remove(pathLow.Length - 4, 4));
                         }
                         else if (isSm2)
                         {
@@ -429,8 +439,7 @@ namespace TT_Lab.Project
 
         public T GetAsset<T>(Guid id) where T : IAsset
         {
-            IAsset getAss;
-            if (Assets.TryGetValue(id, out getAss))
+            if (Assets.TryGetValue(id, out IAsset getAss))
             {
                 return (T)getAss;
             }
