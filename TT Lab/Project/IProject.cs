@@ -84,6 +84,11 @@ namespace TT_Lab.Project
         /// <summary>
         /// Dump on disk in JSON format
         /// </summary>
-        void Serialize(string path = "");
+        void Serialize();
+
+        /// <summary>
+        /// Initializes project directories
+        /// </summary>
+        void CreateProjectStructure();
     }
 }

@@ -101,11 +101,17 @@ namespace TT_Lab.Project
             DiscContentPath = discContentPath;
         }
 
-        public void Serialize(string path)
+        public void CreateProjectStructure()
         {
-            if (path == String.Empty) path = ProjectPath;
+            System.IO.Directory.CreateDirectory(ProjectPath);
+            System.IO.Directory.SetCurrentDirectory(ProjectPath);
+            System.IO.Directory.CreateDirectory("assets");
+        }
+
+        public void Serialize()
+        {
+            var path = ProjectPath;
             AssetIds = Assets.Keys.ToList();
-            System.IO.Directory.CreateDirectory(path);
             System.IO.Directory.SetCurrentDirectory(path);
             using (System.IO.FileStream fs = new System.IO.FileStream(Name + ".tson", System.IO.FileMode.Create, System.IO.FileAccess.Write))
             using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(fs))
@@ -113,7 +119,6 @@ namespace TT_Lab.Project
                 writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
             }
             // Serialize all the assets
-            System.IO.Directory.CreateDirectory("assets");
             System.IO.Directory.SetCurrentDirectory("assets");
             var query = from asset in Assets
                         group asset by asset.Value.Type;
@@ -132,7 +137,7 @@ namespace TT_Lab.Project
                 });
             }
             Task.WaitAll(tasks);
-            Log.WriteLine($"Serialized assets in {(startAsset - DateTime.Now)}");
+            Log.WriteLine($"Serialized assets in {(DateTime.Now - startAsset)}");
             System.IO.Directory.SetCurrentDirectory(path);
         }
 

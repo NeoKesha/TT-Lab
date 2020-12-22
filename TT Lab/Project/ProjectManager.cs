@@ -126,13 +126,13 @@ namespace TT_Lab.Project
             if (discFiles.Contains("System.cnf"))
             {
                 OpenedProject = new PS2Project(name, path, discContentPath);
-                OpenedProject.Serialize(); // Call to create initial project folder
             }
             else
             {
                 // TODO: XBox type project
                 throw new Exception("XBox project type not supported!");
             }
+            OpenedProject.CreateProjectStructure();
             // Unpack assets
             Directory.CreateDirectory("assets");
             Directory.SetCurrentDirectory("assets");
