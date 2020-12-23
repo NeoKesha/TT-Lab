@@ -12,6 +12,9 @@ namespace TT_Lab.Assets
     {
         public override String Type => "Folder";
 
+        private static UInt32 rootOrder = 0;
+        private UInt32 order = 0;
+
         public Folder()
         {
             IsLoaded = true;
@@ -27,8 +30,23 @@ namespace TT_Lab.Assets
             if (parent != null)
             {
                 assetData.Parent = parent.UUID;
-                parent.GetData().Children.Add(UUID);
+                parent.AddChild(this);
             }
+            else
+            {
+                Order = rootOrder++;
+            }
+        }
+
+        public void AddChild(IAsset asset)
+        {
+            GetData().Children.Add(asset.UUID);
+            asset.Order = GetOrder();
+        }
+
+        internal UInt32 GetOrder()
+        {
+            return order++;
         }
 
         private Folder(UInt32 id, String name) : base(id, name)

@@ -56,6 +56,12 @@ namespace TT_Lab.Assets
         string Chunk { get; }
 
         /// <summary>
+        /// Order in the Project Tree
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        UInt32 Order { get; set; }
+
+        /// <summary>
         /// For instances their Layout ID
         /// </summary>
         /// <remarks>Ranges from 0 to 7</remarks>

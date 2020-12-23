@@ -330,7 +330,7 @@ namespace TT_Lab.Project
                                     asset.GetID(), asset.GetName(), asset);
                                 if (!isHeader)
                                 {
-                                    scriptsFolder.GetData().Children.Add(metaAsset.UUID);
+                                    scriptsFolder.AddChild(metaAsset);
                                 }
                                 Assets.Add(metaAsset.UUID, metaAsset);
                             }
@@ -378,13 +378,13 @@ namespace TT_Lab.Project
                                 var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
                                 var colData = new Collision(collisionData.GetID(), collisionData.GetName(), pathLow, collisionData);
                                 Assets.Add(colData.UUID, colData);
-                                chunkFolder.GetData().Children.Add(colData.UUID);
+                                chunkFolder.AddChild(colData);
                             }
                             // Extract particle data
                             var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
                             var partData = new Particles(particleData.GetID(), particleData.GetName(), pathLow, particleData);
                             Assets.Add(partData.UUID, partData);
-                            chunkFolder.GetData().Children.Add(partData.UUID);
+                            chunkFolder.AddChild(partData);
                             // Instance layout
                             var instFolder = new Folder("Instances", chunkFolder);
                             var aiPathFolder = new Folder("AI Paths", chunkFolder);
@@ -440,8 +440,8 @@ namespace TT_Lab.Project
                             Assets.Add(sceneryAsset.UUID, sceneryAsset);
                             Assets.Add(dynamicSceneryAsset.UUID, dynamicSceneryAsset);
                             Assets.Add(chunkLinksAsset.UUID, chunkLinksAsset);
-                            chunkFolder.GetData().Children.Add(sceneryAsset.UUID);
-                            chunkFolder.GetData().Children.Add(dynamicSceneryAsset.UUID);
+                            chunkFolder.AddChild(sceneryAsset);
+                            chunkFolder.AddChild(dynamicSceneryAsset);
                             // Chunk links not added because they are very attached to the chunk and can located in a different UI place from Project Tree
                         }
                     }
@@ -477,7 +477,7 @@ namespace TT_Lab.Project
                 if (globalCheck[secId].Contains(asset.GetID())) continue;
                 globalCheck[secId].Add(asset.GetID());
                 var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), asset);
-                folder.GetData().Children.Add(metaAsset.UUID);
+                folder.AddChild(metaAsset);
                 Assets.Add(metaAsset.UUID, metaAsset);
             }
         }
@@ -501,7 +501,7 @@ namespace TT_Lab.Project
                 {
                     var asset = items.GetItem<I>(items.GetItem(i).GetID());
                     var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), chunkName, layId, asset);
-                    folder.GetData().Children.Add(metaAsset.UUID);
+                    folder.AddChild(metaAsset);
                     Assets.Add(metaAsset.UUID, metaAsset);
                 }
             }

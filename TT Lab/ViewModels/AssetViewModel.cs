@@ -29,7 +29,7 @@ namespace TT_Lab.ViewModels
                 // Build the tree
                 var myChildren = (_asset as Folder).GetData().Children;
                 _children = new ReadOnlyCollection<AssetViewModel>(
-                    (from child in myChildren select new AssetViewModel(child, this)).ToList());
+                    (from child in myChildren orderby _asset.Order select new AssetViewModel(child, this)).ToList());
             }
         }
 

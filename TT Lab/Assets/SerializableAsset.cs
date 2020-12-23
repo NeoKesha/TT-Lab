@@ -22,6 +22,7 @@ namespace TT_Lab.Assets
         public String Chunk { get; set; }
         public Int32? LayoutID { get; set; }
         public Boolean IsLoaded { get; protected set; }
+        public UInt32 Order { get; set; }
 
         public SerializableAsset()
         {
