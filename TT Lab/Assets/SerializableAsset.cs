@@ -53,10 +53,6 @@ namespace TT_Lab.Assets
             {
                 assetData.Save(System.IO.Path.Combine(path, Data));
                 assetData.Dispose();
-                if (!(this is Folder))
-                {
-                    assetData = null;
-                }
             }
         }
 

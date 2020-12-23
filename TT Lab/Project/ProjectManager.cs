@@ -116,6 +116,7 @@ namespace TT_Lab.Project
 
         public void CreateProject(string name, string path, string discContentPath)
         {
+            DateTime projCreateStart = DateTime.Now;
             var discFiles = Directory.GetFiles(discContentPath).Select(s => Path.GetFileName(s)).ToArray();
             // Check for either XBOX or PS2 required root disc files
             if (!discFiles.Contains("default.xbe") && !discFiles.Contains("System.cnf"))
@@ -147,6 +148,7 @@ namespace TT_Lab.Project
                 BuildProjectTree();
                 RaisePropertyChangedEvent("ProjectOpened");
                 RaisePropertyChangedEvent("ProjectTitle");
+                Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
             });
         }
 
