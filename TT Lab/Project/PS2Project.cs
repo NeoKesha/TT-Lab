@@ -130,9 +130,16 @@ namespace TT_Lab.Project
                 tasks[index++] = Task.Factory.StartNew(() =>
                 {
                     Log.WriteLine($"Serializing {group.Key}...");
-                    foreach (var asset in group)
+                    try
                     {
-                        asset.Value.Serialize();
+                        foreach (var asset in group)
+                        {
+                            asset.Value.Serialize();
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Log.WriteLine($"Error serializing: {ex.Message}");
                     }
                 });
             }

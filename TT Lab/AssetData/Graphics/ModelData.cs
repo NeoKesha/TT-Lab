@@ -15,7 +15,7 @@ namespace TT_Lab.AssetData.Graphics
 
         protected override void Dispose(Boolean disposing)
         {
-            throw new NotImplementedException();
+            return;
         }
     }
 }

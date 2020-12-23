@@ -51,7 +51,7 @@ namespace TT_Lab.Assets
             // Created data needs to be saved on disk but then disposed of since we are not gonna need it unless user wishes to edit the exact asset
             if (assetData != null)
             {
-                assetData.Save(Data);
+                assetData.Save(System.IO.Path.Combine(path, Data));
                 assetData.Dispose();
                 if (!(this is Folder))
                 {

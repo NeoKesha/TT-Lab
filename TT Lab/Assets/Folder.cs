@@ -20,8 +20,6 @@ namespace TT_Lab.Assets
 
         public Folder(String name) : this(name, null)
         {
-            IsLoaded = true;
-            assetData = new FolderData();
         }
 
         public Folder(String name, Folder parent) : this((UInt32)Guid.NewGuid().ToByteArray().Sum(b => b), name)
@@ -35,6 +33,8 @@ namespace TT_Lab.Assets
 
         private Folder(UInt32 id, String name) : base(id, name)
         {
+            IsLoaded = true;
+            assetData = new FolderData();
         }
 
         public override void Deserialize(String json)
