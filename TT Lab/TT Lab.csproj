@@ -140,12 +140,20 @@
     <Compile Include="Command\OpenProjectDialogueCommand.cs" />
     <Compile Include="Command\SaveProjectCommand.cs" />
     <Compile Include="Command\SelectFolderCommand.cs" />
+    <Compile Include="Editors\AnimationEditor.xaml.cs">
+      <DependentUpon>AnimationEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\BaseEditor.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Project\IProject.cs" />
     <Compile Include="ViewModels\AssetViewModel.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Editors\AnimationEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -38,7 +38,7 @@ namespace TT_Lab.Project
         private IProject _openedProject;
         private CommandManager _commandManager = new CommandManager();
         private MenuItem[] _recentMenus = new MenuItem[0];
-        private List<AssetViewModel> _projectTree = new List<AssetViewModel>();
+        private List<AssetViewModel<IAsset>> _projectTree = new List<AssetViewModel<IAsset>>();
 
         public IProject OpenedProject
         {
@@ -53,7 +53,7 @@ namespace TT_Lab.Project
             }
         }
 
-        public List<AssetViewModel> ProjectTree
+        public List<AssetViewModel<IAsset>> ProjectTree
         {
             get
             {
@@ -202,7 +202,7 @@ namespace TT_Lab.Project
                            let folder = asset as Folder
                            where folder.GetData().Parent == null
                            orderby folder.Order
-                           select new AssetViewModel(folder.UUID)).ToList();
+                           select new AssetViewModel<IAsset>(folder.UUID)).ToList();
             RaisePropertyChangedEvent("ProjectTree");
         }
 

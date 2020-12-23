@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -27,6 +28,11 @@ namespace TT_Lab.Assets.Code
         }
 
         public override void ToRaw(Byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override UserControl GetEditor()
         {
             throw new NotImplementedException();
         }

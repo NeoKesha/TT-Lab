@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Windows.Controls;
 using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
@@ -72,6 +73,12 @@ namespace TT_Lab.Assets
         /// Whether the data for this asset is currently in memory
         /// </summary>
         Boolean IsLoaded { get; }
+
+        /// <summary>
+        /// Adds asset's editor with a ViewModel bind to asset's data
+        /// </summary>
+        /// <returns>Asset's editor type</returns>
+        UserControl GetEditor();
 
         /// <summary>
         /// Loads in asset's data if it's not loaded

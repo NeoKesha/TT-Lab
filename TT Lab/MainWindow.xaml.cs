@@ -2,8 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Project;
+using TT_Lab.ViewModels;
 using WK.Libraries.BetterFolderBrowserNS;
 
 namespace TT_Lab
@@ -68,6 +70,28 @@ namespace TT_Lab
                 }
             }
             sv.Tag = AutoScrollToEnd;
+        }
+
+        private void TextBlock_MouseDown(Object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                try
+                {
+                    var asset = (AssetViewModel<IAsset>)ProjectTree.SelectedItem;
+                    if (asset.Children != null) return;
+
+                    if (!asset.EditorOpened)
+                    {
+                        MainViewerTabs.Items.Add(asset.Editor);
+                    }
+                    MainViewerTabs.SelectedItem = asset.Editor;
+                }
+                catch(Exception ex)
+                {
+                    Log.WriteLine($"Failed to create editor: {ex.Message}");
+                }
+            }
         }
     }
 }

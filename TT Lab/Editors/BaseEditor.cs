@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using TT_Lab.Assets;
+using TT_Lab.ViewModels;
+
+namespace TT_Lab.Editors
+{
+    public abstract class BaseEditor<T> : UserControl where T : IAsset
+    {
+        protected AssetViewModel<T> AssetViewModel;
+
+        public BaseEditor()
+        {
+            throw new Exception("Can't create BaseEditor with no asset view model bound!");
+        }
+
+        public BaseEditor(T asset)
+        {
+            AssetViewModel = new AssetViewModel<T>(asset.UUID);
+        }
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Windows.Controls;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
@@ -24,6 +25,11 @@ namespace TT_Lab.Assets.Graphics
         }
 
         public override Byte[] ToFormat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override UserControl GetEditor()
         {
             throw new NotImplementedException();
         }

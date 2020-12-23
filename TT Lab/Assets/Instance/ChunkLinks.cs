@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
@@ -21,6 +22,11 @@ namespace TT_Lab.Assets.Instance
         }
 
         public override String Type => "ChunkLinks";
+
+        public override UserControl GetEditor()
+        {
+            throw new NotImplementedException();
+        }
 
         public override Byte[] ToFormat()
         {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
@@ -67,6 +68,11 @@ namespace TT_Lab.Assets
         }
 
         public override void ToRaw(Byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override UserControl GetEditor()
         {
             throw new NotImplementedException();
         }

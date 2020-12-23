@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Windows.Controls;
 using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
@@ -62,9 +63,6 @@ namespace TT_Lab.Assets
             JsonConvert.PopulateObject(json, this);
         }
 
-        public abstract void ToRaw(Byte[] data);
-        public abstract Byte[] ToFormat();
-
         public T GetData()
         {
             if (!IsLoaded || assetData.Disposed)
@@ -80,5 +78,9 @@ namespace TT_Lab.Assets
         {
             return GetData();
         }
+
+        public abstract void ToRaw(Byte[] data);
+        public abstract Byte[] ToFormat();
+        public abstract UserControl GetEditor();
     }
 }
