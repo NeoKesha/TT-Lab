@@ -4,21 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
 {
-    public class Folder : SerializableAsset
+    public class Folder : SerializableAsset<FolderData>
     {
-
-        [JsonProperty(Required = Required.AllowNull)]
-        public Guid? Parent { get; set; }
-
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> Children { get; } = new List<Guid>();
-
         public override String Type => "Folder";
 
-        public Folder() { }
+        public Folder()
+        {
+            IsLoaded = true;
+            assetData = new FolderData();
+        }
 
         public Folder(String name) : this(name, null)
         {
@@ -26,15 +24,23 @@ namespace TT_Lab.Assets
 
         public Folder(String name, Folder parent) : this((UInt32)Guid.NewGuid().ToByteArray().Sum(b => b), name)
         {
-            Parent = parent?.UUID;
-            if (Parent != null)
+            if (parent != null)
             {
-                parent.Children.Add(UUID);
+                assetData.Parent = parent.UUID;
+                parent.GetData().Children.Add(UUID);
             }
         }
 
         private Folder(UInt32 id, String name) : base(id, name)
         {
+            IsLoaded = true;
+            assetData = new FolderData();
+        }
+
+        public override void Deserialize(String json)
+        {
+            base.Deserialize(json);
+            assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
         }
 
         public override Byte[] ToFormat()

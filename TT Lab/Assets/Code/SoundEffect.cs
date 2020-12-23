@@ -4,28 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
-    public class SoundEffect : SerializableAsset
+    public class SoundEffect : SerializableAsset<SoundEffectData>
     {
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Header { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Byte UnkFlag { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Byte FreqFac { get; set; }
-
         public override String Type => "SoundEffect";
 
         public SoundEffect() { }
 
         public SoundEffect(UInt32 id, String name, PS2AnySound sound) : base(id, name)
         {
-            Header = sound.Header;
-            UnkFlag = sound.UnkFlag;
-            FreqFac = sound.FreqFac;
+            assetData = new SoundEffectData(sound);
         }
 
         public override Byte[] ToFormat()

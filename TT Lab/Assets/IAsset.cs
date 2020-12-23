@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
 {
@@ -47,6 +48,30 @@ namespace TT_Lab.Assets
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
         string Alias { get; set; }
+
+        /// <summary>
+        /// Chunk path where this asset belongs to
+        /// </summary>
+        [JsonProperty(Required = Required.AllowNull)]
+        string Chunk { get; }
+
+        /// <summary>
+        /// For instances their Layout ID
+        /// </summary>
+        /// <remarks>Ranges from 0 to 7</remarks>
+        [JsonProperty(Required = Required.AllowNull)]
+        Int32? LayoutID { get; }
+
+        /// <summary>
+        /// Whether the data for this asset is currently in memory
+        /// </summary>
+        Boolean IsLoaded { get; }
+
+        /// <summary>
+        /// Loads in asset's data if it's not loaded
+        /// </summary>
+        /// <returns>Asset's data</returns>
+        AbstractAssetData GetData();
 
         /// <summary>
         /// Dump on disk in JSON format

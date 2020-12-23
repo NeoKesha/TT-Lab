@@ -4,22 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
-    public class Animation : SerializableAsset
+    public class Animation : SerializableAsset<AnimationData>
     {
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Bitfield { get; set; }
-
         public override String Type => "Animation";
 
         public Animation() { }
 
         public Animation(UInt32 id, String name, PS2AnyAnimation animation) : base(id, name)
         {
-            Bitfield = animation.Bitfield;
+            assetData = new AnimationData(animation);
         }
 
         public override Byte[] ToFormat()

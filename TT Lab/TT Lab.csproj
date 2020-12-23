@@ -62,6 +62,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AssetData\Code\AnimationData.cs" />
+    <Compile Include="AssetData\Code\CodeModelData.cs" />
+    <Compile Include="AssetData\Code\GameObjectData.cs" />
+    <Compile Include="AssetData\Code\HeaderScriptData.cs" />
+    <Compile Include="AssetData\Code\MainScriptData.cs" />
+    <Compile Include="AssetData\Code\OGIData.cs" />
+    <Compile Include="AssetData\Code\ScriptData.cs" />
+    <Compile Include="AssetData\Code\SoundEffectData.cs" />
+    <Compile Include="AssetData\FolderData.cs" />
+    <Compile Include="AssetData\AbstractAssetData.cs" />
+    <Compile Include="AssetData\Graphics\BlendSkinData.cs" />
+    <Compile Include="AssetData\Graphics\LodModelData.cs" />
+    <Compile Include="AssetData\Graphics\MaterialData.cs" />
+    <Compile Include="AssetData\Graphics\MeshData.cs" />
+    <Compile Include="AssetData\Graphics\ModelData.cs" />
+    <Compile Include="AssetData\Graphics\RigidModelData.cs" />
+    <Compile Include="AssetData\Graphics\SkinData.cs" />
+    <Compile Include="AssetData\Graphics\SkydomeData.cs" />
+    <Compile Include="AssetData\Graphics\TextureData.cs" />
+    <Compile Include="AssetData\Instance\AiPathData.cs" />
+    <Compile Include="AssetData\Instance\AiPositionData.cs" />
+    <Compile Include="AssetData\Instance\CameraData.cs" />
+    <Compile Include="AssetData\Instance\ChunkLink.cs" />
+    <Compile Include="AssetData\Instance\ChunkLinksData.cs" />
+    <Compile Include="AssetData\Instance\CollisionData.cs" />
+    <Compile Include="AssetData\Instance\CollisionSurfaceData.cs" />
+    <Compile Include="AssetData\Instance\Collision\CollisionTriangle.cs" />
+    <Compile Include="AssetData\Instance\Collision\CollisionTrigger.cs" />
+    <Compile Include="AssetData\Instance\Collision\GroupInformation.cs" />
+    <Compile Include="AssetData\Instance\DynamicSceneryData.cs" />
+    <Compile Include="AssetData\Instance\InstanceTemplateData.cs" />
+    <Compile Include="AssetData\Instance\ObjectInstanceData.cs" />
+    <Compile Include="AssetData\Instance\ParticlesData.cs" />
+    <Compile Include="AssetData\Instance\PathData.cs" />
+    <Compile Include="AssetData\Instance\PositionData.cs" />
+    <Compile Include="AssetData\Instance\SceneryData.cs" />
+    <Compile Include="AssetData\Instance\TriggerData.cs" />
     <Compile Include="Assets\AssetFactory.cs" />
     <Compile Include="Assets\Code\GameObject.cs" />
     <Compile Include="Assets\Code\HeaderScript.cs" />
@@ -83,13 +120,9 @@
     <Compile Include="Assets\Instance\AiPath.cs" />
     <Compile Include="Assets\Instance\AiPosition.cs" />
     <Compile Include="Assets\Instance\Camera.cs" />
-    <Compile Include="Assets\Instance\ChunkLink.cs" />
     <Compile Include="Assets\Instance\ChunkLinks.cs" />
-    <Compile Include="Assets\Instance\CollisionData.cs" />
+    <Compile Include="Assets\Instance\Collision.cs" />
     <Compile Include="Assets\Instance\CollisionSurface.cs" />
-    <Compile Include="Assets\Instance\Collision\CollisionTriangle.cs" />
-    <Compile Include="Assets\Instance\Collision\CollisionTrigger.cs" />
-    <Compile Include="Assets\Instance\Collision\GroupInformation.cs" />
     <Compile Include="Assets\Instance\DynamicScenery.cs" />
     <Compile Include="Assets\Instance\InstanceTemplate.cs" />
     <Compile Include="Assets\Instance\ObjectInstance.cs" />
@@ -98,7 +131,7 @@
     <Compile Include="Assets\Instance\Scenery.cs" />
     <Compile Include="Assets\Instance\SerializableInstance.cs" />
     <Compile Include="Assets\Instance\Trigger.cs" />
-    <Compile Include="Assets\Instance\ParticleData.cs" />
+    <Compile Include="Assets\Instance\Particles.cs" />
     <Compile Include="Assets\SerializableAsset.cs" />
     <Compile Include="Assets\Graphics\Skydome.cs" />
     <Compile Include="Assets\Graphics\Texture.cs" />

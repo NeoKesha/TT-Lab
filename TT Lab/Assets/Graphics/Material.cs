@@ -4,23 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class Material : SerializableAsset
+    public class Material : SerializableAsset<MaterialData>
     {
-        [JsonProperty(Required = Required.Always)]
-        public UInt64 Header { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkInt { get; set; }
-
         public override String Type => "Material";
 
         public Material(UInt32 id, String name, PS2AnyMaterial material) : base(id, name)
         {
-            Header = material.Header;
-            UnkInt = material.UnkInt;
+            assetData = new MaterialData(material);
         }
 
         public Material()

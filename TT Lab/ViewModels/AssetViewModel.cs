@@ -27,7 +27,7 @@ namespace TT_Lab.ViewModels
             if (_asset is Folder)
             {
                 // Build the tree
-                var myChildren = (_asset as Folder).Children;
+                var myChildren = (_asset as Folder).GetData().Children;
                 _children = new ReadOnlyCollection<AssetViewModel>(
                     (from child in myChildren select new AssetViewModel(child, this)).ToList());
             }
