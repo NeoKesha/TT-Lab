@@ -40,7 +40,7 @@ namespace TT_Lab.Assets
         public override void Deserialize(String json)
         {
             base.Deserialize(json);
-            assetData.Load(Data);
+            assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
         }
 
         public override Byte[] ToFormat()

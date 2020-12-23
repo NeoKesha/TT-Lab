@@ -73,7 +73,7 @@ namespace TT_Lab.Assets
             if (!IsLoaded || assetData.Disposed)
             {
                 assetData = new T();
-                assetData.Load(Data);
+                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
                 IsLoaded = true;
             }
             return assetData;
