@@ -78,7 +78,7 @@ namespace TT_Lab
             {
                 try
                 {
-                    var asset = (AssetViewModel<IAsset>)ProjectTree.SelectedItem;
+                    var asset = (AssetViewModel)ProjectTree.SelectedItem;
                     if (asset.Children != null) return;
 
                     if (!asset.EditorOpened)

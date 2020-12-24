@@ -359,10 +359,10 @@ namespace TT_Lab.Project
                         // Create chunk folder hierarchy
                         for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            var existFolder = prevFolder.GetData<FolderData>().Children.FirstOrDefault(c => GetAsset<Folder>(c)?.Name == otherFolders[i]);
+                            var existFolder = prevFolder.GetData<FolderData>().Children.FirstOrDefault(c => GetAsset(c)?.Name == otherFolders[i]);
                             if (existFolder != Guid.Empty)
                             {
-                                prevFolder = GetAsset<Folder>(existFolder);
+                                prevFolder = (Folder)GetAsset(existFolder);
                                 continue;
                             }
                             var nextFolder = new Folder(otherFolders[i], prevFolder);
@@ -450,11 +450,11 @@ namespace TT_Lab.Project
             }
         }
 
-        public T GetAsset<T>(Guid id) where T : IAsset
+        public IAsset GetAsset(Guid id)
         {
             if (Assets.TryGetValue(id, out IAsset getAss))
             {
-                return (T)getAss;
+                return getAss;
             }
             return default;
         }

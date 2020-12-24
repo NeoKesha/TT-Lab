@@ -21,11 +21,11 @@ namespace TT_Lab.Editors
     /// <summary>
     /// Interaction logic for AnimationEditor.xaml
     /// </summary>
-    public partial class AnimationEditor : BaseEditor<Animation>
+    public partial class AnimationEditor : BaseEditor
     {
         public AnimationEditor()
         {
-            InitializeComponent();
+           InitializeComponent();
         }
 
         public AnimationEditor(Animation animation) : base(animation)

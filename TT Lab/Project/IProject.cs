@@ -79,7 +79,7 @@ namespace TT_Lab.Project
         /// <typeparam name="T">Asset type</typeparam>
         /// <param name="id">Asset ID</param>
         /// <returns>Returns requested asset or null if not found</returns>
-        T GetAsset<T>(Guid id) where T : IAsset;
+        IAsset GetAsset(Guid id);
 
         /// <summary>
         /// Dump on disk in JSON format

@@ -11,30 +11,30 @@ using TT_Lab.Project;
 
 namespace TT_Lab.ViewModels
 {
-    public class AssetViewModel<T> : ObservableObject where T : IAsset
+    public class AssetViewModel : ObservableObject
     {
-        private T _asset;
-        private AssetViewModel<Folder> _parent;
-        private IReadOnlyCollection<AssetViewModel<IAsset>> _children;
+        private IAsset _asset;
+        private AssetViewModel _parent;
+        private IReadOnlyCollection<AssetViewModel> _children;
         private Boolean _isSelected;
         private Boolean _isExpanded;
         private TabItem _editor;
 
         public AssetViewModel(Guid asset) : this(asset, null) { }
 
-        public AssetViewModel(Guid asset, AssetViewModel<Folder> parent)
+        public AssetViewModel(Guid asset, AssetViewModel parent)
         {
-            _asset = ProjectManagerSingleton.PM.OpenedProject.GetAsset<T>(asset);
+            _asset = ProjectManagerSingleton.PM.OpenedProject.GetAsset(asset);
             _parent = parent;
             // Personally, I am against ever using type checks but in this situation it's acceptable
             if (_asset is Folder)
             {
                 // Build the tree
                 var myChildren = (_asset as Folder).GetData<FolderData>().Children;
-                _children = new ReadOnlyCollection<AssetViewModel<IAsset>>(
+                _children = new ReadOnlyCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order
-                     select new AssetViewModel<IAsset>(child, this as AssetViewModel<Folder>)).ToList());
+                     select new AssetViewModel(child, this as AssetViewModel)).ToList());
             }
         }
 
@@ -60,7 +60,7 @@ namespace TT_Lab.ViewModels
                 return _editor;
             }
         }
-        public IReadOnlyCollection<AssetViewModel<IAsset>> Children
+        public IReadOnlyCollection<AssetViewModel> Children
         {
             get
             {
@@ -108,7 +108,7 @@ namespace TT_Lab.ViewModels
                 }
             }
         }
-        public T Asset
+        public IAsset Asset
         {
             get
             {

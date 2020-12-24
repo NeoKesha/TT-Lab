@@ -9,18 +9,18 @@ using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors
 {
-    public abstract class BaseEditor<T> : UserControl where T : IAsset
+    public class BaseEditor : UserControl
     {
-        protected AssetViewModel<T> AssetViewModel;
+        protected AssetViewModel AssetViewModel;
 
         public BaseEditor()
         {
-            throw new Exception("Can't create BaseEditor with no asset view model bound!");
+            //throw new Exception("Can't create BaseEditor with no asset view model bound!");
         }
 
-        public BaseEditor(T asset)
+        public BaseEditor(IAsset asset)
         {
-            AssetViewModel = new AssetViewModel<T>(asset.UUID);
+            AssetViewModel = new AssetViewModel(asset.UUID);
         }
     }
 }
