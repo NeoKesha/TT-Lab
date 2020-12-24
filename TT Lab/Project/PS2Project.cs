@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
@@ -358,7 +359,7 @@ namespace TT_Lab.Project
                         // Create chunk folder hierarchy
                         for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            var existFolder = prevFolder.GetData().Children.FirstOrDefault(c => GetAsset<Folder>(c)?.Name == otherFolders[i]);
+                            var existFolder = prevFolder.GetData<FolderData>().Children.FirstOrDefault(c => GetAsset<Folder>(c)?.Name == otherFolders[i]);
                             if (existFolder != Guid.Empty)
                             {
                                 prevFolder = GetAsset<Folder>(existFolder);

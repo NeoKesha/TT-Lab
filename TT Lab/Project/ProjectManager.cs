@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.ViewModels;
@@ -200,7 +201,7 @@ namespace TT_Lab.Project
             ProjectTree = (from asset in OpenedProject.Assets.Values
                            where asset.Type == "Folder"
                            let folder = asset as Folder
-                           where folder.GetData().Parent == null
+                           where folder.GetData<FolderData>().Parent == null
                            orderby folder.Order
                            select new AssetViewModel<IAsset>(folder.UUID)).ToList();
             RaisePropertyChangedEvent("ProjectTree");

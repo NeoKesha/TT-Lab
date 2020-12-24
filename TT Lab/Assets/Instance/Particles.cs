@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class Particles : SerializableInstance<ParticlesData>
+    public class Particles : SerializableInstance
     {
         public override String Type => "ParticleData";
 

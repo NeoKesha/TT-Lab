@@ -8,7 +8,7 @@ using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets.Instance
 {
-    public abstract class SerializableInstance<T> : SerializableAsset<T> where T : AbstractAssetData, new()
+    public abstract class SerializableInstance : SerializableAsset
     {
         protected override String SavePath => $"Instance\\{Chunk}\\{Type}";
 

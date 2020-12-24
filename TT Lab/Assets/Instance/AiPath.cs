@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class AiPath : SerializableInstance<AiPathData>
+    public class AiPath : SerializableInstance
     {
         public AiPath(UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(id, name, chunk, layId)
         {

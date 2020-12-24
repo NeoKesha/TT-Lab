@@ -5,7 +5,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class Model : SerializableAsset<ModelData>
+    public class Model : SerializableAsset
     {
         public override String Type => "Model";
 

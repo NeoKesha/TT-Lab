@@ -6,7 +6,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class Texture : SerializableAsset<TextureData>
+    public class Texture : SerializableAsset
     {
         public override String Type => "Texture";
 

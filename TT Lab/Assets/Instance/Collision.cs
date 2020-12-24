@@ -11,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class Collision : SerializableInstance<CollisionData>
+    public class Collision : SerializableInstance
     {
         public override String Type => "CollisionData";
 

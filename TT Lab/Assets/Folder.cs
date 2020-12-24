@@ -9,7 +9,7 @@ using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
 {
-    public class Folder : SerializableAsset<FolderData>
+    public class Folder : SerializableAsset
     {
         public override String Type => "Folder";
 
@@ -30,7 +30,7 @@ namespace TT_Lab.Assets
         {
             if (parent != null)
             {
-                assetData.Parent = parent.UUID;
+                GetData<FolderData>().Parent = parent.UUID;
                 parent.AddChild(this);
             }
             else
@@ -41,7 +41,7 @@ namespace TT_Lab.Assets
 
         public void AddChild(IAsset asset)
         {
-            GetData().Children.Add(asset.UUID);
+            GetData<FolderData>().Children.Add(asset.UUID);
             asset.Order = GetOrder();
         }
 

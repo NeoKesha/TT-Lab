@@ -11,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class Trigger : SerializableInstance<TriggerData>
+    public class Trigger : SerializableInstance
     {
         public Trigger(UInt32 id, String name, String chunk, Int32 layId, PS2AnyTrigger trigger) : base(id, name, chunk, layId)
         {

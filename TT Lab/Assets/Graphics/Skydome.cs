@@ -6,7 +6,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class Skydome : SerializableAsset<SkydomeData>
+    public class Skydome : SerializableAsset
     {
         public override String Type => "Skydome";
 

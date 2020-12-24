@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class Material : SerializableAsset<MaterialData>
+    public class Material : SerializableAsset
     {
         public override String Type => "Material";
 

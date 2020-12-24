@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class CollisionSurface : SerializableInstance<CollisionSurfaceData>
+    public class CollisionSurface : SerializableInstance
     {
         public CollisionSurface(UInt32 id, String name, String chunk, Int32 layId, PS2AnyCollisionSurface surface) : base(id, name, chunk, layId)
         {

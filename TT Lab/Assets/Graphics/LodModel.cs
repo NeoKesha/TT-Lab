@@ -6,7 +6,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class LodModel : SerializableAsset<LodModelData>
+    public class LodModel : SerializableAsset
     {
         public override String Type => "LodModel";
 

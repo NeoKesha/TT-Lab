@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class Scenery : SerializableInstance<SceneryData>
+    public class Scenery : SerializableInstance
     {
         public Scenery()
         {

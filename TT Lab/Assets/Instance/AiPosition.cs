@@ -11,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class AiPosition : SerializableInstance<AiPositionData>
+    public class AiPosition : SerializableInstance
     {
         public AiPosition(UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPosition position) : base(id, name, chunk, layId)
         {

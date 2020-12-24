@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
-    public class SoundEffect : SerializableAsset<SoundEffectData>
+    public class SoundEffect : SerializableAsset
     {
         public override String Type => "SoundEffect";
 

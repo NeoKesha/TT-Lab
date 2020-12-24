@@ -11,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class Path : SerializableInstance<PathData>
+    public class Path : SerializableInstance
     {
         public Path(UInt32 id, String name, String chunk, Int32 layId, PS2AnyPath path) : base(id, name, chunk, layId)
         {

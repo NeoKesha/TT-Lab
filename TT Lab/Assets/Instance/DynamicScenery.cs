@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class DynamicScenery : SerializableInstance<DynamicSceneryData>
+    public class DynamicScenery : SerializableInstance
     {
         public DynamicScenery()
         {

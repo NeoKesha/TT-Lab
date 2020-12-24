@@ -6,7 +6,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class RigidModel : SerializableAsset<RigidModelData>
+    public class RigidModel : SerializableAsset
     {
         public override String Type => "RigidModel";
 

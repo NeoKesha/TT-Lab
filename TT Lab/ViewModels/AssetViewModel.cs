@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Project;
 
@@ -29,7 +30,7 @@ namespace TT_Lab.ViewModels
             if (_asset is Folder)
             {
                 // Build the tree
-                var myChildren = (_asset as Folder).GetData().Children;
+                var myChildren = (_asset as Folder).GetData<FolderData>().Children;
                 _children = new ReadOnlyCollection<AssetViewModel<IAsset>>(
                     (from child in myChildren
                      orderby _asset.Order

@@ -5,7 +5,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
-    public class BlendSkin : SerializableAsset<BlendSkinData>
+    public class BlendSkin : SerializableAsset
     {
         public override String Type => "BlendSkin";
 

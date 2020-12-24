@@ -11,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
-    public class Animation : SerializableAsset<AnimationData>
+    public class Animation : SerializableAsset
     {
         public override String Type => "Animation";
 

@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class InstanceTemplate : SerializableInstance<InstanceTemplateData>
+    public class InstanceTemplate : SerializableInstance
     {
         public InstanceTemplate(UInt32 id, String name, String chunk, Int32 layId, PS2AnyTemplate template) : base(id, name, chunk, layId)
         {

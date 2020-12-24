@@ -5,13 +5,13 @@ using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
 {
-    public abstract class SerializableAsset<T> : IAsset where T : AbstractAssetData, new()
+    public abstract class SerializableAsset : IAsset
     {
         public Guid UUID { get; private set; }
 
         protected virtual String SavePath => Type;
 
-        protected T assetData;
+        protected AbstractAssetData assetData;
 
         public virtual String Type => "Asset";
 
@@ -63,7 +63,7 @@ namespace TT_Lab.Assets
             JsonConvert.PopulateObject(json, this);
         }
 
-        public T GetData()
+        public T GetData<T>() where T : AbstractAssetData, new()
         {
             if (!IsLoaded || assetData.Disposed)
             {
@@ -71,12 +71,7 @@ namespace TT_Lab.Assets
                 assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
                 IsLoaded = true;
             }
-            return assetData;
-        }
-
-        AbstractAssetData IAsset.GetData()
-        {
-            return GetData();
+            return (T)assetData;
         }
 
         public abstract void ToRaw(Byte[] data);

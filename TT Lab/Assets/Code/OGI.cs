@@ -11,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
-    public class OGI : SerializableAsset<OGIData>
+    public class OGI : SerializableAsset
     {
         public override String Type => "OGI";
 

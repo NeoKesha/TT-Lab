@@ -11,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
-    public class MainScript : Script<MainScriptData>
+    public class MainScript : Script
     {
         public override String Type => "MainScript";
 
