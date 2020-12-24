@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TT_Lab.AssetData.Code;
 using TT_Lab.Assets.Code;
 using TT_Lab.ViewModels;
 
@@ -30,7 +31,7 @@ namespace TT_Lab.Editors
         public AnimationEditor(Animation animation) : base(animation)
         {
             InitializeComponent();
-            BitfieldBox.Text = "0x"+ animation.GetData().Bitfield.ToString("X");
+            BitfieldBox.Text = "0x"+ animation.GetData<AnimationData>().Bitfield.ToString("X");
         }
     }
 }
