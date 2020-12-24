@@ -33,8 +33,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Image Source="Images/AfroGod.png"/>
-            <Image Grid.Row="1" Source="Images/boat_guy.png"/>
+            <Image Source="Images/God_Messenger.png" Grid.RowSpan="2"/>
         </Grid>
 
     </Grid>
