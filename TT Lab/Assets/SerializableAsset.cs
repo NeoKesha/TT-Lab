@@ -63,19 +63,10 @@ namespace TT_Lab.Assets
             JsonConvert.PopulateObject(json, this);
         }
 
-        public T GetData<T>() where T : AbstractAssetData, new()
-        {
-            if (!IsLoaded || assetData.Disposed)
-            {
-                assetData = new T();
-                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
-                IsLoaded = true;
-            }
-            return (T)assetData;
-        }
-
         public abstract void ToRaw(Byte[] data);
         public abstract Byte[] ToFormat();
         public abstract UserControl GetEditor();
+
+        public abstract AbstractAssetData GetData();
     }
 }

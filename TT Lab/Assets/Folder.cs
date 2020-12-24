@@ -30,7 +30,7 @@ namespace TT_Lab.Assets
         {
             if (parent != null)
             {
-                GetData<FolderData>().Parent = parent.UUID;
+                ((FolderData)GetData()).Parent = parent.UUID;
                 parent.AddChild(this);
             }
             else
@@ -47,7 +47,7 @@ namespace TT_Lab.Assets
 
         public void AddChild(IAsset asset)
         {
-            GetData<FolderData>().Children.Add(asset.UUID);
+            ((FolderData)GetData()).Children.Add(asset.UUID);
             asset.Order = GetOrder();
         }
 
@@ -75,6 +75,16 @@ namespace TT_Lab.Assets
         internal UInt32 GetOrder()
         {
             return order++;
+        }
+        public override AbstractAssetData GetData()
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = new FolderData();
+                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                IsLoaded = true;
+            }
+            return assetData;
         }
     }
 }

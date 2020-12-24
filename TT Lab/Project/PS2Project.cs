@@ -359,7 +359,7 @@ namespace TT_Lab.Project
                         // Create chunk folder hierarchy
                         for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            var existFolder = prevFolder.GetData<FolderData>().Children.FirstOrDefault(c => GetAsset(c)?.Name == otherFolders[i]);
+                            var existFolder = ((FolderData)prevFolder.GetData()).Children.FirstOrDefault(c => GetAsset(c)?.Name == otherFolders[i]);
                             if (existFolder != Guid.Empty)
                             {
                                 prevFolder = (Folder)GetAsset(existFolder);
