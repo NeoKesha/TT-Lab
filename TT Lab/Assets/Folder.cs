@@ -39,21 +39,16 @@ namespace TT_Lab.Assets
             }
         }
 
-        public void AddChild(IAsset asset)
-        {
-            GetData<FolderData>().Children.Add(asset.UUID);
-            asset.Order = GetOrder();
-        }
-
-        internal UInt32 GetOrder()
-        {
-            return order++;
-        }
-
         private Folder(UInt32 id, String name) : base(id, name)
         {
             IsLoaded = true;
             assetData = new FolderData();
+        }
+
+        public void AddChild(IAsset asset)
+        {
+            GetData<FolderData>().Children.Add(asset.UUID);
+            asset.Order = GetOrder();
         }
 
         public override void Deserialize(String json)
@@ -75,6 +70,11 @@ namespace TT_Lab.Assets
         public override UserControl GetEditor()
         {
             throw new NotImplementedException();
+        }
+
+        internal UInt32 GetOrder()
+        {
+            return order++;
         }
     }
 }

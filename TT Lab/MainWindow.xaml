@@ -366,14 +366,14 @@
                     <RowDefinition Height="25*"/>
                 </Grid.RowDefinitions>
                 <TabControl x:Name="CentralViewerTabs" Margin="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" UseLayoutRounding="False" Style="{DynamicResource MainCenterTabStyle}">
-                    <TabItem Header="Resource Viewer" HorizontalContentAlignment="Stretch" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
+                    <TabItem x:Name="ScenesViewerTab" Header="Scenes Viewer" HorizontalContentAlignment="Stretch" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
                         <Grid Background="#FFE5E5E5">
-                            <TabControl x:Name="MainViewerTabs"/>
+                            <TabControl x:Name="ScenesViewerTabs"/>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="AgentLab Editor" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
+                    <TabItem x:Name="ResourcesEditorTab" Header="Resources Editor" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
                         <Grid Background="#FFE5E5E5">
-                            <Label Content="Coming soon!" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="64"/>
+                            <TabControl x:Name="ResourcesEditorTabs"/>
                         </Grid>
                     </TabItem>
                 </TabControl>

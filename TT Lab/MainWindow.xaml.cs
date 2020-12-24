@@ -83,9 +83,11 @@ namespace TT_Lab
 
                     if (!asset.EditorOpened)
                     {
-                        MainViewerTabs.Items.Add(asset.Editor);
+                        ResourcesEditorTabs.Items.Add(asset.Editor);
                     }
-                    MainViewerTabs.SelectedItem = asset.Editor;
+                    ResourcesEditorTabs.SelectedItem = asset.Editor;
+                    // Automatically switch to Resources Editor tab
+                    CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[1];
                 }
                 catch(Exception ex)
                 {
