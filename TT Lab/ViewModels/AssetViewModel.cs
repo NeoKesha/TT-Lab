@@ -30,7 +30,7 @@ namespace TT_Lab.ViewModels
             if (_asset is Folder)
             {
                 // Build the tree
-                var myChildren = (_asset as Folder).GetData<FolderData>().Children;
+                var myChildren = ((FolderData)(_asset as Folder).GetData()).Children;
                 _children = new ReadOnlyCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order

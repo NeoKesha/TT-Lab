@@ -201,7 +201,7 @@ namespace TT_Lab.Project
             ProjectTree = (from asset in OpenedProject.Assets.Values
                            where asset.Type == "Folder"
                            let folder = asset as Folder
-                           where folder.GetData<FolderData>().Parent == null
+                           where ((FolderData)folder.GetData()).Parent == null
                            orderby folder.Order
                            select new AssetViewModel(folder.UUID)).ToList();
             RaisePropertyChangedEvent("ProjectTree");

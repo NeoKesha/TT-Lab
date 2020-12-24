@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
+using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
@@ -29,6 +30,17 @@ namespace TT_Lab.Assets.Graphics
         public override UserControl GetEditor()
         {
             throw new NotImplementedException();
+        }
+
+        public override AbstractAssetData GetData()
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = new BlendSkinData();
+                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                IsLoaded = true;
+            }
+            return assetData;
         }
     }
 }

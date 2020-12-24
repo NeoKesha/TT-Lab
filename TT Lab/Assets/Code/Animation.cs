@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using TT_Lab.Editors;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -35,6 +36,17 @@ namespace TT_Lab.Assets.Code
         public override UserControl GetEditor()
         {
             return new AnimationEditor(this);
+        }
+
+        public override AbstractAssetData GetData()
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = new AnimationData();
+                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                IsLoaded = true;
+            }
+            return assetData;
         }
     }
 }

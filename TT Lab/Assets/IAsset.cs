@@ -85,7 +85,7 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <returns>Asset's data</returns>
         /// <typeparam name="T">Type of data</typeparam>
-        T GetData<T>() where T : AbstractAssetData, new();
+        AbstractAssetData GetData();
 
         /// <summary>
         /// Dump on disk in JSON format

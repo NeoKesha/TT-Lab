@@ -31,7 +31,7 @@ namespace TT_Lab.Editors
         public AnimationEditor(Animation animation) : base(animation)
         {
             InitializeComponent();
-            BitfieldBox.Text = "0x"+ animation.GetData<AnimationData>().Bitfield.ToString("X");
+            BitfieldBox.Text = "0x"+ ((AnimationData)animation.GetData()).Bitfield.ToString("X");
         }
     }
 }
