@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Twinsanity.Libraries;
+using System.Reflection;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
@@ -20,7 +21,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         {
             if (AgentLabDefs == null)
             {
-                using (FileStream stream = new FileStream(@"AgentLabDefs.json", FileMode.Open, FileAccess.Read))
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"AgentLabDefs.json"), FileMode.Open, FileAccess.Read))
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
