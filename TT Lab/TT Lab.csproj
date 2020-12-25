@@ -135,11 +135,15 @@
     <Compile Include="Assets\SerializableAsset.cs" />
     <Compile Include="Assets\Graphics\Skydome.cs" />
     <Compile Include="Assets\Graphics\Texture.cs" />
+    <Compile Include="Command\CloseTabCommand.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
     <Compile Include="Command\OpenProjectCommand.cs" />
     <Compile Include="Command\OpenProjectDialogueCommand.cs" />
     <Compile Include="Command\SaveProjectCommand.cs" />
     <Compile Include="Command\SelectFolderCommand.cs" />
+    <Compile Include="Controls\ClosableTab.xaml.cs">
+      <DependentUpon>ClosableTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Editors\AnimationEditor.xaml.cs">
       <DependentUpon>AnimationEditor.xaml</DependentUpon>
     </Compile>
@@ -150,6 +154,10 @@
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ClosableTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

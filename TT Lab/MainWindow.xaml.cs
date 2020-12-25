@@ -27,8 +27,12 @@ namespace TT_Lab
             CreateProject.Command = new OpenDialogueCommand(typeof(TT_Lab.ProjectCreationWizard));
             OpenProject.Command = new OpenProjectDialogueCommand();
             SaveProject.Command = new SaveProjectCommand();
+            // Main window binds
             AddKeybind(OpenProject.Command, Key.O, ModifierKeys.Control);
             AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control);
+            // Misc. binds
+            AddKeybind(ScenesViewerTabs, new CloseTabCommand(ScenesViewerTabs), Key.W, ModifierKeys.Control);
+            AddKeybind(ResourcesEditorTabs, new CloseTabCommand(ResourcesEditorTabs), Key.W, ModifierKeys.Control);
             DataContext = ProjectManagerSingleton.PM;
             Closed += MainWindow_Closed;
             Log.SetLogBox(LogText);
@@ -46,7 +50,12 @@ namespace TT_Lab
 
         private void AddKeybind(System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
         {
-            InputBindings.Add(new KeyBinding(command, key, modifierKeys));
+            AddKeybind(this, command, key, modifierKeys);
+        }
+
+        private void AddKeybind(Control control, System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
+        {
+            control.InputBindings.Add(new KeyBinding(command, key, modifierKeys));
         }
 
         // Props to https://stackoverflow.com/a/25765336
@@ -83,9 +92,9 @@ namespace TT_Lab
 
                     if (!asset.EditorOpened)
                     {
-                        ResourcesEditorTabs.Items.Add(asset.Editor);
+                        ResourcesEditorTabs.Items.Add(asset.GetEditor(ResourcesEditorTabs));
                     }
-                    ResourcesEditorTabs.SelectedItem = asset.Editor;
+                    ResourcesEditorTabs.SelectedItem = asset.GetEditor(ResourcesEditorTabs);
                     // Automatically switch to Resources Editor tab
                     CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[1];
                 }
