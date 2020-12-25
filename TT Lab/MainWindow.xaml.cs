@@ -88,7 +88,7 @@ namespace TT_Lab
                 try
                 {
                     var asset = (AssetViewModel)ProjectTree.SelectedItem;
-                    if (asset.Children != null) return;
+                    if (asset.Asset.Type == "Folder") return;
 
                     if (!asset.EditorOpened)
                     {

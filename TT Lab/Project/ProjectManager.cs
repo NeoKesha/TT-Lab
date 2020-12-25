@@ -117,6 +117,7 @@ namespace TT_Lab.Project
 
         public void CreateProject(string name, string path, string discContentPath)
         {
+            Log.Clear();
             DateTime projCreateStart = DateTime.Now;
             var discFiles = Directory.GetFiles(discContentPath).Select(s => Path.GetFileName(s)).ToArray();
             // Check for either XBOX or PS2 required root disc files
@@ -155,6 +156,7 @@ namespace TT_Lab.Project
 
         public void OpenProject(string path)
         {
+            Log.Clear();
             try
             {
                 // Check for PS2 and XBox project root files
@@ -194,6 +196,11 @@ namespace TT_Lab.Project
         public void CloseProject()
         {
             OpenedProject = null;
+            ProjectTree = null;
+            Log.Clear();
+            RaisePropertyChangedEvent("ProjectOpened");
+            RaisePropertyChangedEvent("ProjectTitle");
+            RaisePropertyChangedEvent("ProjectTree");
         }
 
         private void BuildProjectTree()

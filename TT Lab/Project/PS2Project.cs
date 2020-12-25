@@ -92,6 +92,7 @@ namespace TT_Lab.Project
                 { "DynamicScenery", typeof(DynamicScenery) },
                 { "ChunkLinks", typeof(ChunkLinks) },
                 { "Folder", typeof(Folder) },
+                { "ChunkFolder", typeof(ChunkFolder) }
             };
         }
 
@@ -365,7 +366,15 @@ namespace TT_Lab.Project
                                 prevFolder = (Folder)GetAsset(existFolder);
                                 continue;
                             }
-                            var nextFolder = new Folder(otherFolders[i], prevFolder);
+                            Folder nextFolder;
+                            if (i != otherFolders.Length - 1)
+                            {
+                                nextFolder = new Folder(otherFolders[i], prevFolder);
+                            }
+                            else
+                            {
+                                nextFolder = new ChunkFolder(otherFolders[i], prevFolder);
+                            }
                             Assets.Add(nextFolder.UUID, nextFolder);
                             prevFolder = nextFolder;
                         }
@@ -379,7 +388,7 @@ namespace TT_Lab.Project
                                 var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
                                 var colData = new Collision(collisionData.GetID(), collisionData.GetName(), pathLow, collisionData);
                                 Assets.Add(colData.UUID, colData);
-                                //chunkFolder.AddChild(colData);
+                                chunkFolder.AddChild(colData);
                             }
                             // Extract particle data
                             var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
@@ -387,7 +396,7 @@ namespace TT_Lab.Project
                             Assets.Add(partData.UUID, partData);
                             //chunkFolder.AddChild(partData);
                             // Instance layout
-                            /*var instFolder = new Folder("Instances", chunkFolder);
+                            var instFolder = new Folder("Instances", chunkFolder);
                             var aiPathFolder = new Folder("AI Paths", chunkFolder);
                             var aiPosFolder = new Folder("AI Positions", chunkFolder);
                             var cameraFolder = new Folder("Cameras", chunkFolder);
@@ -404,29 +413,29 @@ namespace TT_Lab.Project
                             Assets.Add(instTempFolder.UUID, instTempFolder);
                             Assets.Add(pathFolder.UUID, pathFolder);
                             Assets.Add(posFolder.UUID, posFolder);
-                            Assets.Add(trgFolder.UUID, trgFolder);*/
+                            Assets.Add(trgFolder.UUID, trgFolder);
                             for (var i = 0; i < 8; ++i)
                             {
                                 var layId = Constants.LEVEL_LAYOUT_1_SECTION + i;
                                 var layout = chunk.GetItem<PS2AnyLayoutSection>((UInt32)layId);
                                 ReadSectionItems<ObjectInstance, PS2AnyInstancesSection, PS2AnyInstance>
-                                    (layout, Constants.LAYOUT_INSTANCES_SECTION, pathLow, layId/*, instFolder*/);
+                                    (layout, Constants.LAYOUT_INSTANCES_SECTION, pathLow, layId, instFolder);
                                 ReadSectionItems<AiPath, PS2AnyAIPathsSection, PS2AnyAIPath>
-                                    (layout, Constants.LAYOUT_AI_PATHS_SECTION, pathLow, layId/*, aiPathFolder*/);
+                                    (layout, Constants.LAYOUT_AI_PATHS_SECTION, pathLow, layId, aiPathFolder);
                                 ReadSectionItems<AiPosition, PS2AnyAIPositionsSection, PS2AnyAIPosition>
-                                    (layout, Constants.LAYOUT_AI_POSITIONS_SECTION, pathLow, layId/*, aiPosFolder*/);
+                                    (layout, Constants.LAYOUT_AI_POSITIONS_SECTION, pathLow, layId, aiPosFolder);
                                 ReadSectionItems<Camera, PS2AnyCamerasSection, PS2AnyCamera>
-                                    (layout, Constants.LAYOUT_CAMERAS_SECTION, pathLow, layId/*, cameraFolder*/);
+                                    (layout, Constants.LAYOUT_CAMERAS_SECTION, pathLow, layId, cameraFolder);
                                 ReadSectionItems<CollisionSurface, PS2AnySurfacesSection, PS2AnyCollisionSurface>
-                                    (layout, Constants.LAYOUT_SURFACES_SECTION, pathLow, layId/*, colSurfaceFolder*/);
+                                    (layout, Constants.LAYOUT_SURFACES_SECTION, pathLow, layId, colSurfaceFolder);
                                 ReadSectionItems<InstanceTemplate, PS2AnyTemplatesSection, PS2AnyTemplate>
-                                    (layout, Constants.LAYOUT_TEMPLATES_SECTION, pathLow, layId/*, instTempFolder*/);
+                                    (layout, Constants.LAYOUT_TEMPLATES_SECTION, pathLow, layId, instTempFolder);
                                 ReadSectionItems<Path, PS2AnyPathsSection, PS2AnyPath>
-                                    (layout, Constants.LAYOUT_PATHS_SECTION, pathLow, layId/*, pathFolder*/);
+                                    (layout, Constants.LAYOUT_PATHS_SECTION, pathLow, layId, pathFolder);
                                 ReadSectionItems<Position, PS2AnyPositionsSection, PS2AnyPosition>
-                                    (layout, Constants.LAYOUT_POSITIONS_SECTION, pathLow, layId/*, posFolder*/);
+                                    (layout, Constants.LAYOUT_POSITIONS_SECTION, pathLow, layId, posFolder);
                                 ReadSectionItems<Trigger, PS2AnyTriggersSection, PS2AnyTrigger>
-                                    (layout, Constants.LAYOUT_TRIGGERS_SECTION, pathLow, layId/*, trgFolder*/);
+                                    (layout, Constants.LAYOUT_TRIGGERS_SECTION, pathLow, layId, trgFolder);
                             }
                         }
                         // SM2 per chunk instances
@@ -492,7 +501,7 @@ namespace TT_Lab.Project
         /// <typeparam name="I">Game asset type</typeparam>
         /// <param name="fromSection">Which section to read from</param>
         /// <param name="secId">Subsection ID where game asset is stored at</param>
-        private void ReadSectionItems<T, S, I>(ITwinSection fromSection, uint secId, string chunkName, int layId/*, Folder folder*/)
+        private void ReadSectionItems<T, S, I>(ITwinSection fromSection, uint secId, string chunkName, int layId, Folder folder)
             where T : IAsset where S : ITwinSection where I : ITwinItem
         {
             var items = fromSection.GetItem<S>(secId);
@@ -502,7 +511,7 @@ namespace TT_Lab.Project
                 {
                     var asset = items.GetItem<I>(items.GetItem(i).GetID());
                     var metaAsset = (T)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), chunkName, layId, asset);
-                    //folder.AddChild(metaAsset);
+                    folder.AddChild(metaAsset);
                     Assets.Add(metaAsset.UUID, metaAsset);
                 }
             }
