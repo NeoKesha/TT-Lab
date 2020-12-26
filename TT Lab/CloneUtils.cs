@@ -150,10 +150,10 @@ namespace TT_Lab
                 else
                 {
                     object val = typeof(CloneUtils)
-                        .GetMethod("CloneUnsafe")
-                        .MakeGenericMethod(field.FieldType)
-                        .Invoke(null, new Object[] { field.GetValue(original) });
-                    field.SetValue(newObj, Convert.ChangeType(val,field.FieldType));
+                    .GetMethod("CloneUnsafe")
+                    .MakeGenericMethod(field.FieldType)
+                    .Invoke(null, new Object[] { field.GetValue(original) });
+                    field.SetValue(newObj, Convert.ChangeType(val, field.FieldType));
                 }
             }
             return newObj;

@@ -11,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     public class CameraPoint : CameraSubBase
     {
-        public Vector4 UnkVector { get; private set; }
+        public Vector4 UnkVector { get; set; }
         public CameraPoint()
         {
             UnkVector = new Vector4();

@@ -11,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class OGIType3 : ITwinSerializable
     {
-        public Byte[] Data { get; private set; }
+        public Byte[] Data { get; set; }
         public Byte[] Blob { get; set; }
         public OGIType3()
         {

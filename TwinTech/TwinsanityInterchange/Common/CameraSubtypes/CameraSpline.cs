@@ -12,8 +12,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
     public class CameraSpline : CameraSubBase
     {
         public Single UnkFloat3 { get; set; }
-        public List<Vector4> UnkVectors { get; private set; }
-        public Byte[] UnkData { get; private set; }
+        public List<Vector4> UnkVectors { get; set; }
+        public Byte[] UnkData { get; set; }
         public UInt16 UnkShort { get; set; }
         public CameraSpline()
         {
