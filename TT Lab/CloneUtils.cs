@@ -133,7 +133,7 @@ namespace TT_Lab
             return newObj;
         }
         /**
-         * Unsafe deep clone. Use when cloning element has no loops or collections inside, but got references. IT IS UNSAFE!
+         * Unsafe deep clone. Use when cloning element has no loops or collections inside, but got references. IT IS UNSAFE! Better use DeepClone. Plz
          */
         static public T CloneUnsafe<T>(T original) where T : new()
         {

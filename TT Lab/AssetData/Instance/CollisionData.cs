@@ -37,11 +37,11 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 UnkInt { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTrigger> Triggers { get; set; }
+        public List<Collision.CollisionTrigger> Triggers { get; set; } = new List<Collision.CollisionTrigger>();
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.GroupInformation> Groups { get; set; }
+        public List<Collision.GroupInformation> Groups { get; set; } = new List<Collision.GroupInformation>();
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTriangle> Triangles { get; set; }
+        public List<Collision.CollisionTriangle> Triangles { get; set; } = new List<Collision.CollisionTriangle>();
         [JsonProperty(Required = Required.Always)]
         public List<Vector4> Vectors { get; set; }
 

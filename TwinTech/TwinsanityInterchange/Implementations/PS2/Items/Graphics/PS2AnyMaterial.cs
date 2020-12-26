@@ -17,10 +17,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public UInt64 Header { get; set; }
         public UInt32 UnkInt { get; set; }
         public String Name { get; set; }
-        public List<ITwinSerializable> Shaders { get; }
+        public List<TwinShader> Shaders { get; }
         public PS2AnyMaterial()
         {
-            Shaders = new List<ITwinSerializable>();
+            Shaders = new List<TwinShader>();
         }
 
         public override int GetLength()

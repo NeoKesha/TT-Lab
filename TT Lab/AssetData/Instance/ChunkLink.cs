@@ -31,9 +31,9 @@ namespace TT_Lab.AssetData.Instance
             Type = link.Type;
             Path = link.Path.Substring(0);
             Flags = link.Flags;
-            ObjectMatrix = CloneUtils.CloneUnsafe(link.ObjectMatrix);
-            ChunkMatrix = CloneUtils.CloneUnsafe(link.ChunkMatrix);
-            LoadingWall = CloneUtils.CloneUnsafe(link.LoadingWall);
+            ObjectMatrix = CloneUtils.DeepClone(link.ObjectMatrix);
+            ChunkMatrix = CloneUtils.DeepClone(link.ChunkMatrix);
+            LoadingWall = CloneUtils.DeepClone(link.LoadingWall);
         }
     }
 }
