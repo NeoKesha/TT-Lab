@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.AssetData.Graphics
@@ -15,6 +16,9 @@ namespace TT_Lab.AssetData.Graphics
             Type = lod.Type;
             UnkInt1 = lod.UnkInt1;
             UnkInt2 = lod.UnkInt2;
+            UnkInts = CloneUtils.CloneArray(lod.UnkInts);
+            UnkData = CloneUtils.CloneArray(lod.UnkData);
+            Meshes = CloneUtils.CloneList(lod.Meshes);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -23,6 +27,12 @@ namespace TT_Lab.AssetData.Graphics
         public Int32 UnkInt1 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Int32 UnkInt2 { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Int32[] UnkInts; 
+        [JsonProperty(Required = Required.Always)]
+        public Byte[] UnkData; 
+        [JsonProperty(Required = Required.Always)]
+        public List<UInt32> Meshes;
 
         protected override void Dispose(Boolean disposing)
         {
