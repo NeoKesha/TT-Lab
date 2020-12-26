@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Twinsanity.Libraries
 {
-    static class StringUtils
+    static public class StringUtils
     {
         static public string GetStringInBetween(String src, String str1, String str2)
         {
