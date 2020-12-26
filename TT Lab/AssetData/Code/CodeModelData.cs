@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +17,26 @@ namespace TT_Lab.AssetData.Code
 
         public CodeModelData(PS2AnyCodeModel codeModel) : this()
         {
+            Script = codeModel.ToString();
+        }
+        public String Script { get; set; }
+        public override void Save(string dataPath)
+        {
+            using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
+            using (BinaryWriter writer = new BinaryWriter(fs))
+            {
+                writer.Write(Script.ToCharArray());
+            }
         }
 
-        [JsonProperty(Required = Required.Always)]
-        public Int32 Header { get; set; }
-
+        public override void Load(String dataPath)
+        {
+            using (FileStream fs = new FileStream(dataPath, System.IO.FileMode.Open, FileAccess.Read))
+            using (StreamReader reader = new StreamReader(fs))
+            {
+                Script = reader.ReadToEnd();
+            }
+        }
         protected override void Dispose(Boolean disposing)
         {
             return;

@@ -16,6 +16,8 @@ namespace TT_Lab.Assets.Code
     {
         public override String Type => "MainScript";
 
+        protected override String DataExt => ".lab";
+
         public MainScript() { }
 
         public MainScript(UInt32 id, String name, PS2MainScript script) : base(id, name)

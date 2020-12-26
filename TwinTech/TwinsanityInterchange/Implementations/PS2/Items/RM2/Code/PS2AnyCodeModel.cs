@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
@@ -61,6 +62,78 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             {
                 com.hasNext = !(Commands.Last().Equals(com));
                 com.Write(writer);
+            }
+        }
+
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
+        {
+            StringUtils.WriteLineTabulated(writer, $"CodeModel({Header}) {"{"}", tabs);
+            foreach (var packPair in ScriptPacks)
+            {
+                StringUtils.WriteLineTabulated(writer, $"Pack({packPair.Key}) {"{"}", tabs + 1);
+                packPair.Value.WriteText(writer, tabs + 2);
+                StringUtils.WriteLineTabulated(writer, "}", tabs + 1);
+            }
+            foreach (ScriptCommand cmd in Commands)
+            {
+                cmd.WriteText(writer, tabs + 1);
+            }
+            StringUtils.WriteLineTabulated(writer, "}", tabs);
+        }
+        public void ReadText(StreamReader reader)
+        {
+            String line = "";
+            ScriptPacks.Clear();
+            Commands.Clear();
+            while (!line.StartsWith("CodeModel"))
+            {
+                line = reader.ReadLine().Trim();
+            }
+            Header = Int32.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+            while (!line.EndsWith("{"))
+            {
+                line = reader.ReadLine().Trim();
+            }
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                if (line.StartsWith("Pack"))
+                {
+                    UInt16 arg = UInt16.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                    ScriptPack pack = new ScriptPack();
+                    ScriptPacks.Add(new KeyValuePair<UInt16, ScriptPack>(arg, pack));
+                    while (!line.EndsWith("{"))
+                    {
+                        line = reader.ReadLine().Trim();
+                    }
+                    pack.ReadText(reader);
+                    while (!line.EndsWith("}"))
+                    {
+                        line = reader.ReadLine().Trim();
+                    }
+                } 
+                else
+                {
+                    ScriptCommand cmd = new ScriptCommand();
+                    Commands.Add(cmd);
+                    cmd.ReadText(line);
+                }
+            }
+        }
+        public override String ToString()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                StreamWriter writer = new StreamWriter(stream);
+                StreamReader reader = new StreamReader(stream);
+                WriteText(writer);
+                writer.Flush();
+                stream.Position = 0;
+                return reader.ReadToEnd();
             }
         }
 

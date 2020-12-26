@@ -47,14 +47,15 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         {
             foreach (ScriptCommand cmd in Commands)
             {
-                cmd.WriteText(writer);
+                cmd.WriteText(writer, tabs);
             }
         }
         public void ReadText(StreamReader reader)
         {
-            while (!reader.EndOfStream)
+            String line = "";
+            while (!line.EndsWith("}"))
             {
-                String line = reader.ReadLine().Trim();
+                line = reader.ReadLine().Trim();
                 if (String.IsNullOrWhiteSpace(line))
                 {
                     continue;
@@ -71,6 +72,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 StreamWriter writer = new StreamWriter(stream);
                 StreamReader reader = new StreamReader(stream);
                 WriteText(writer);
+                writer.Flush();
                 stream.Position = 0;
                 return reader.ReadToEnd();
             }

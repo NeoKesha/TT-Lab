@@ -174,6 +174,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 StreamWriter writer = new StreamWriter(stream);
                 StreamReader reader = new StreamReader(stream);
                 WriteText(writer);
+                writer.Flush();
                 stream.Position = 0;
                 return reader.ReadToEnd();
             }
