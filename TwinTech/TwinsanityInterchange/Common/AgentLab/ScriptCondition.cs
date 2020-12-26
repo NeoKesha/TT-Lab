@@ -51,14 +51,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(ConditionPowerMultiplier);
         }
 
-        public void WriteText(StreamWriter writer)
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
             AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
-            writer.WriteLine($"            Condition {MapIndex(ConditionIndex, defs)}({Parameter}) {"{"}");
-            writer.WriteLine($"                ({Modifier.ToString(CultureInfo.InvariantCulture)}, " +
+            StringUtils.WriteLineTabulated(writer, $"Condition {MapIndex(ConditionIndex, defs)}({Parameter}) {"{"}", tabs);
+            StringUtils.WriteLineTabulated(writer, $"({Modifier.ToString(CultureInfo.InvariantCulture)}, " +
                 $"{ReturnCheck.ToString(CultureInfo.InvariantCulture)}, " +
-                $"{ConditionPowerMultiplier.ToString(CultureInfo.InvariantCulture)}) == {(NotGate?"false":"true")}");
-            writer.WriteLine($"            {"}"}");
+                $"{ConditionPowerMultiplier.ToString(CultureInfo.InvariantCulture)}) == {(NotGate ? "false" : "true")}", tabs + 1);
+            StringUtils.WriteLineTabulated(writer, "}", tabs);
         }
 
         public void ReadText(StreamReader reader, String condName)

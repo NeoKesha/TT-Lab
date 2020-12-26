@@ -104,17 +104,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public void WriteText(StreamWriter writer)
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            writer.WriteLine($"Script({Name}) {"{"}");
-            writer.WriteLine($"    bitfield = {UnkInt}");
+            StringUtils.WriteLineTabulated(writer, $"Script({Name}) {"{"}", tabs);
+            StringUtils.WriteLineTabulated(writer, $"bitfield = {UnkInt}", tabs + 1);
             int i = 0;
             foreach(var state in ScriptStates)
             {
-                state.WriteText(writer, i);
+                state.WriteText(writer, i, tabs + 1);
                 ++i;
             }
-            writer.WriteLine("}");
+            StringUtils.WriteLineTabulated(writer, "}", tabs + 0);
             writer.Flush();
         }
 
@@ -165,6 +165,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                     state.ReadText(reader);
                     
                 }
+            }
+        }
+        public override String ToString()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                StreamWriter writer = new StreamWriter(stream);
+                StreamReader reader = new StreamReader(stream);
+                WriteText(writer);
+                stream.Position = 0;
+                return reader.ReadToEnd();
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,25 @@ namespace Twinsanity.Libraries
         {
             int pos = src.IndexOf(str) + str.Length - 1;
             return src.Substring(0, pos);
+        }
+        static public string GetTabulatedString(String src, Int32 tabs)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Clear();
+            for (int i = 0; i < tabs; ++i)
+            {
+                stringBuilder.Append("   ");
+            }
+            stringBuilder.Append(src);
+            return stringBuilder.ToString();
+        }
+        static public void WriteLineTabulated(StreamWriter writer, String src, Int32 tabs)
+        {
+            writer.WriteLine(GetTabulatedString(src, tabs));
+        }
+        static public void WriteTabulated(StreamWriter writer, String src, Int32 tabs)
+        {
+            writer.Write(GetTabulatedString(src, tabs));
         }
     }
 }

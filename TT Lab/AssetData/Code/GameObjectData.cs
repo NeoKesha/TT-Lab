@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
@@ -38,6 +41,7 @@ namespace TT_Lab.AssetData.Code
             RefScripts = new List<UInt16>(gameObject.RefScripts);
             RefUnknowns = new List<UInt16>(gameObject.RefUnknowns);
             RefSounds = new List<UInt16>(gameObject.RefSounds);
+            ScriptPack = gameObject.ScriptPack;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -82,13 +86,53 @@ namespace TT_Lab.AssetData.Code
         public List<UInt16> RefUnknowns { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<UInt16> RefSounds { get; set; }
-        //TODO
-        //[JsonProperty(Required = Required.Always)]
-        //public ScriptPack ScriptPack;
+        [JsonProperty(Required = Required.Always)]
+        [JsonConverter(typeof(ScriptPackConverter))]
+        public ScriptPack ScriptPack;
 
         protected override void Dispose(Boolean disposing)
         {
             return;
         }
     }
+    class ScriptPackConverter : JsonConverter<ScriptPack>
+    {
+        public override ScriptPack ReadJson(JsonReader reader, Type objectType, ScriptPack existingValue, Boolean hasExistingValue, JsonSerializer serializer)
+        {
+            if (existingValue == null)
+            {
+                existingValue = new ScriptPack();
+            }
+            String str = reader.ReadAsString();
+            using (MemoryStream stream = new MemoryStream())
+            using (StreamWriter _writer = new StreamWriter(stream))
+            using (StreamReader _reader = new StreamReader(stream))
+            {
+                _writer.Write(str);
+                stream.Position = 0;
+                existingValue.ReadText(_reader);
+            }
+            return existingValue;
+        }
+
+        public override void WriteJson(JsonWriter writer, ScriptPack value, JsonSerializer serializer) 
+        {
+            JToken t = JToken.FromObject(value.ToString());
+
+            if (t.Type != JTokenType.Object)
+            {
+                t.WriteTo(writer);
+            }
+            else
+            {
+                JObject o = (JObject)t;
+                IList<string> propertyNames = o.Properties().Select(p => p.Name).ToList();
+
+                o.AddFirst(new JProperty("Keys", new JArray(propertyNames)));
+
+                o.WriteTo(writer);
+            }
+        }
+    }
+
 }

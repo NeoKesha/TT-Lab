@@ -18,17 +18,9 @@ namespace TT_Lab.AssetData.Code
 
         public MainScriptData(PS2MainScript mainScript) : base(mainScript)
         {
-            using(MemoryStream stream = new MemoryStream())
-            using(StreamWriter writer = new StreamWriter(stream))
-            using(StreamReader reader = new StreamReader(stream))
-            {
-                mainScript.WriteText(writer);
-                stream.Position = 0;
-                Script = reader.ReadToEnd();
-            }
+            Script = mainScript.ToString();
         }
 
-        [JsonProperty(Required = Required.Always)]
         public String Script { get; set; }
 
         protected override void Dispose(Boolean disposing)
@@ -38,10 +30,19 @@ namespace TT_Lab.AssetData.Code
 
         public override void Save(string dataPath)
         {
-            using (System.IO.FileStream fs = new System.IO.FileStream(dataPath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-            using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(fs))
+            using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
+            using (BinaryWriter writer = new BinaryWriter(fs))
             {
-                writer.Write(Script);
+                writer.Write(Script.ToCharArray());
+            }
+        }
+
+        public override void Load(String dataPath)
+        {
+            using (System.IO.FileStream fs = new System.IO.FileStream(dataPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(fs))
+            {
+                Script = reader.ReadToEnd();
             }
         }
     }
