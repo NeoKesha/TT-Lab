@@ -14,9 +14,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Int32 UnkInt1;
         public List<OGIType3> OGIType3s;
         public Int32 UnkInt2;
-        public UInt32 UnkBlobSizePacked { get; private set; }
-        public UInt16 UnkBlobSizeHelper { get; private set; }
-        public Byte[] UnkBlob { get; private set; }
+        public UInt32 UnkBlobSizePacked { get; set; }
+        public UInt16 UnkBlobSizeHelper { get; set; }
+        public Byte[] UnkBlob { get; set; }
         public Byte UnkByte;
         public UInt32 ID;
         public Vector4 UnkVec1;

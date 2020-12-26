@@ -14,23 +14,23 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyInstance : BaseTwinItem, ITwinInstance
     {
-        public Vector4 Position { get; private set; }
-        public TwinIntegerRotation RotationX { get; private set; }
-        public TwinIntegerRotation RotationY { get; private set; }
-        public TwinIntegerRotation RotationZ { get; private set; }
+        public Vector4 Position { get; set; }
+        public TwinIntegerRotation RotationX { get; set; }
+        public TwinIntegerRotation RotationY { get; set; }
+        public TwinIntegerRotation RotationZ { get; set; }
         public UInt32 InstancesRelated { get; set; }
-        public List<UInt16> Instances { get; private set; }
+        public List<UInt16> Instances { get; set; }
         public UInt32 PositionsRelated { get; set; }
-        public List<UInt16> Positions { get; private set; }
+        public List<UInt16> Positions { get; set; }
         public UInt32 PathsRelated { get; set; }
-        public List<UInt16> Paths { get; private set; }
+        public List<UInt16> Paths { get; set; }
         public UInt16 ObjectId { get; set; }
         public UInt32 UnkInt1 { get; set; }
         public UInt32 UnkInt2 { get; set; }
         public UInt32 UnkInt3 { get; set; }
-        public List<UInt32> ParamList1 { get; private set; }
-        public List<Single> ParamList2 { get; private set; }
-        public List<UInt32> ParamList3 { get; private set; }
+        public List<UInt32> ParamList1 { get; set; }
+        public List<Single> ParamList2 { get; set; }
+        public List<UInt32> ParamList3 { get; set; }
 
         public PS2AnyInstance()
         {

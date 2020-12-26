@@ -21,11 +21,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public UInt32 Header2 { get; set; }
         public UInt32 Header3 { get; set; }
         public UInt16 UnkShort { get; set; }
-        public Byte[] UnkFlags { get; private set; }
+        public Byte[] UnkFlags { get; set; }
         public UInt32 Properties { get; set; }
-        public List<UInt32> Flags { get; private set; }
-        public List<Single> Floats { get; private set; }
-        public List<UInt32> Ints { get; private set; }
+        public List<UInt32> Flags { get; set; }
+        public List<Single> Floats { get; set; }
+        public List<UInt32> Ints { get; set; }
         public PS2AnyTemplate()
         {
             UnkFlags = new byte[6];

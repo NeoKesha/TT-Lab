@@ -12,8 +12,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
     public class SubModel : ITwinSerializable
     {
         public UInt32 Vertixes { get; set; }
-        public Byte[] VertexData { get; private set; }
-        public Byte[] UnusedBlob { get; private set; }
+        public Byte[] VertexData { get; set; }
+        public Byte[] UnusedBlob { get; set; }
         public SubModel()
         {
 

@@ -19,8 +19,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public UInt32 CameraHeader { get; set; }
         public UInt16 UnkShort { get; set; }
         public Single UnkFloat1 { get; set; } // 10
-        public Vector4 UnkVector1 { get; private set; }
-        public Vector4 UnkVector2 { get; private set; } // 42
+        public Vector4 UnkVector1 { get; set; }
+        public Vector4 UnkVector2 { get; set; } // 42
         public Single UnkFloat2 { get; set; } 
         public Single UnkFloat3 { get; set; } // 50
         public UInt32 UnkInt1 { get; set; }
@@ -40,8 +40,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public UInt32 TypeIndex1 { get; set; }
         public UInt32 TypeIndex2 { get; set; } // 114
         public Byte UnkByte { get; set; } // 115
-        public CameraSubBase MainCamera1 { get; private set; }
-        public CameraSubBase MainCamera2 { get; private set; }
+        public CameraSubBase MainCamera1 { get; set; }
+        public CameraSubBase MainCamera2 { get; set; }
         public PS2AnyCamera()
         {
             CamTrigger = new TwinTrigger();

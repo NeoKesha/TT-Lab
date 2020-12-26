@@ -13,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnySkin : BaseTwinItem, ITwinSkin
     {
-        public List<SubSkin> SubSkins { get; private set; }
+        public List<SubSkin> SubSkins { get; set; }
 
         public PS2AnySkin()
         {

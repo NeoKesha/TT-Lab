@@ -12,25 +12,25 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyTexture : BaseTwinItem, ITwinTexture
     {
-        public UInt32 HeaderSignature { get; private set; }
+        public UInt32 HeaderSignature { get; set; }
         public UInt16 ImageWidthPower { get; set; }
         public UInt16 ImageHeightPower { get; set; }
         public Byte MipLevels { get; set; }
-        public TexturePixelFormat TextureFormat { get; private set; }
-        public TexturePixelFormat DestinationTextureFormat { get; private set; }
+        public TexturePixelFormat TextureFormat { get; set; }
+        public TexturePixelFormat DestinationTextureFormat { get; set; }
         public TextureColorComponent ColorComponent;
         public Byte UnkByte;
         public TextureFunction TexFun;
         public Byte[] UnkBytes1;
-        public Int32 TextureBasePointer { get; private set; }
-        public Int32[] MipLevelsTBP { get; private set; }
-        public Int32 TextureBufferWidth { get; private set; }
-        public Int32[] MipLevelsTBW { get; private set; }
-        public Int32 ClutBufferBasePointer { get; private set; }
+        public Int32 TextureBasePointer { get; set; }
+        public Int32[] MipLevelsTBP { get; set; }
+        public Int32 TextureBufferWidth { get; set; }
+        public Int32[] MipLevelsTBW { get; set; }
+        public Int32 ClutBufferBasePointer { get; set; }
         public Byte[] UnkBytes2;
         public Byte[] UnkBytes3;
-        public Byte[] UnusedMetadata {get; private set; }
-        public Byte[] TextureData { get; private set; }
+        public Byte[] UnusedMetadata {get; set; }
+        public Byte[] TextureData { get; set; }
 
         public PS2AnyTexture()
         {
