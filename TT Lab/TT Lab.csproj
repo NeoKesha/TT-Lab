@@ -138,6 +138,7 @@
     <Compile Include="Assets\SerializableAsset.cs" />
     <Compile Include="Assets\Graphics\Skydome.cs" />
     <Compile Include="Assets\Graphics\Texture.cs" />
+    <Compile Include="CloneUtils.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
     <Compile Include="Command\OpenProjectCommand.cs" />
     <Compile Include="Command\OpenProjectDialogueCommand.cs" />

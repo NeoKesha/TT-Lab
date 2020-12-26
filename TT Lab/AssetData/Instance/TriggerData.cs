@@ -19,9 +19,9 @@ namespace TT_Lab.AssetData.Instance
         public TriggerData(PS2AnyTrigger trigger) : this()
         {
             Enabled = trigger.Trigger.Enabled > 0;
-            Position = CloneUtils.Clone(trigger.Trigger.Position);
-            Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);
-            Scale = CloneUtils.Clone(trigger.Trigger.Scale);
+            Position = CloneUtils.DeepClone(trigger.Trigger.Position);
+            Rotation = CloneUtils.DeepClone(trigger.Trigger.Rotation);
+            Scale = CloneUtils.DeepClone(trigger.Trigger.Scale);
             Instances = new List<UInt16>(trigger.Trigger.Instances);
             Header1 = trigger.Trigger.Header1;
             HeaderT = trigger.Trigger.HeaderT;
