@@ -41,6 +41,12 @@ namespace TT_Lab.Editors
             glcontrol.Paint += Glcontrol_Paint;
             glcontrol.Dock = System.Windows.Forms.DockStyle.Fill;
 
+            if (!isDefault)
+            {
+                var colData = (CollisionData)chunkTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
+                scene = new Scene(colData, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+            }
+
             GLHost.Child = glcontrol;
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -59,6 +65,11 @@ namespace TT_Lab.Editors
         {
             glcontrol.MakeCurrent();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+
+            if (scene != null)
+            {
+                scene.Render();
+            }
 
             glcontrol.SwapBuffers();
         }

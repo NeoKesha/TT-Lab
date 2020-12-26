@@ -1,10 +1,12 @@
 ﻿using GlmNet;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 
 namespace TT_Lab.Rendering
@@ -12,7 +14,7 @@ namespace TT_Lab.Rendering
     /// <summary>
     /// A 3D scene to render to
     /// </summary>
-    public class Scene
+    public class Scene : IRenderable
     {
         // Rendering matrices
         private mat4 projectionMat;
@@ -20,6 +22,7 @@ namespace TT_Lab.Rendering
         private mat4 modelMat;
 
         private CollisionData colData;
+        private ShaderProgram shader;
 
         public Scene(CollisionData collisionData, float width, float height)
         {
@@ -27,7 +30,10 @@ namespace TT_Lab.Rendering
 
             var passVerShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Pass.vert");
             var passFragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Pass.frag");
-
+            shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
+                { 0, "in_Position" },
+                { 1, "in_Color" }
+            });
 
             const float rads = (60.0f / 360.0f) * (float)Math.PI * 2.0f;
             projectionMat = glm.infinitePerspective(rads, width / height, 0.1f);
@@ -55,19 +61,41 @@ namespace TT_Lab.Rendering
 
         public void Render()
         {
+            Bind();
 
-            viewMat = glm.rotate(viewMat, glm.radians(5), new vec3(0, 1, 0));
-            /*shader.Bind(gl);
-            shader.SetUniformMatrix4(gl, "projectionMatrix", projectionMat.to_array());
-            shader.SetUniformMatrix4(gl, "viewMatrix", viewMat.to_array());
-            shader.SetUniformMatrix4(gl, "modelMatrix", modelMat.to_array());
-
-            collisionBuffer.Bind(gl);
+            /*collisionBuffer.Bind(gl);
 
             gl.DrawArrays(OpenGL.GL_TRIANGLES, 0, colData.Vectors.Count);
 
-            collisionBuffer.Unbind(gl);
-            shader.Unbind(gl);*/
+            collisionBuffer.Unbind(gl);*/
+            Unbind();
+        }
+
+        public void Bind()
+        {
+            shader.Bind();
+            shader.SetUniformMatrix4("projectionMatrix", projectionMat.to_array());
+            shader.SetUniformMatrix4("viewMatrix", viewMat.to_array());
+            shader.SetUniformMatrix4("modelMatrix", modelMat.to_array());
+        }
+
+        public void Unbind()
+        {
+            shader.Unbind();
+        }
+
+        public void Delete()
+        {
+            shader.Delete();
+        }
+
+        public void PreRender()
+        {
+            viewMat = glm.rotate(viewMat, glm.radians(5), new vec3(0, 1, 0));
+        }
+
+        public void PostRender()
+        {
         }
     }
 }
