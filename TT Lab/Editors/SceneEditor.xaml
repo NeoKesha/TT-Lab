@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors"
-             xmlns:WPF="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF" x:Class="TT_Lab.Editors.SceneEditor"
+             xmlns:integration="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+             x:Class="TT_Lab.Editors.SceneEditor"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -31,8 +32,6 @@
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-
-        <WPF:OpenGLControl Grid.Column="1" Margin="0"/>
-
+        <WindowsFormsHost x:Name="GLHost" Grid.Column="1" Margin="0"/>
     </Grid>
 </local:BaseEditor>
