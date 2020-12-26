@@ -18,13 +18,13 @@ namespace TT_Lab.AssetData.Instance
         public CameraData(PS2AnyCamera camera) : this()
         {
             Enabled = camera.CamTrigger.Enabled > 0;
-            Position = camera.CamTrigger.Position;
+            Position = CloneUtils.Clone(camera.CamTrigger.Position);
         }
 
         [JsonProperty(Required = Required.Always)]
         public Boolean Enabled { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Vector4 Position { get; set; } = new Vector4();
+        public Vector4 Position { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

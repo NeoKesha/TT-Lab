@@ -21,26 +21,26 @@ namespace TT_Lab.AssetData.Code
         public GameObjectData(PS2AnyObject gameObject) : this()
         {
             Bitfield = gameObject.Bitfield;
-            SlotsMap = (Byte[])gameObject.SlotsMap.Clone();
-            Name = gameObject.Name;
-            UInt32Slots = new List<UInt32>(gameObject.UInt32Slots);
-            OGISlots = new List<UInt16>(gameObject.OGISlots);
-            AnimationSlots = new List<UInt16>(gameObject.AnimationSlots);
-            ScriptSlots = new List<UInt16>(gameObject.ScriptSlots);
-            ObjectSlots = new List<UInt16>(gameObject.ObjectSlots);
-            SoundSlots = new List<UInt16>(gameObject.SoundSlots);
+            SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
+            Name = new String(gameObject.Name.ToCharArray());
+            UInt32Slots = CloneUtils.CloneList(gameObject.UInt32Slots);
+            OGISlots = CloneUtils.CloneList(gameObject.OGISlots);
+            AnimationSlots = CloneUtils.CloneList(gameObject.AnimationSlots);
+            ScriptSlots = CloneUtils.CloneList(gameObject.ScriptSlots);
+            ObjectSlots = CloneUtils.CloneList(gameObject.ObjectSlots);
+            SoundSlots = CloneUtils.CloneList(gameObject.SoundSlots);
             InstancePropsHeader = gameObject.InstancePropsHeader;
             UnkUInt = gameObject.UnkUInt;
-            InstFlags = new List<UInt32>(gameObject.InstFlags);
-            InstFloats = new List<Single>(gameObject.InstFloats);
-            InstIntegers = new List<UInt32>(gameObject.InstIntegers);
-            RefObjects = new List<UInt16>(gameObject.RefObjects);
-            RefOGIs = new List<UInt16>(gameObject.RefOGIs);
-            RefAnimations = new List<UInt16>(gameObject.RefAnimations);
-            RefCodeModels = new List<UInt16>(gameObject.RefCodeModels);
-            RefScripts = new List<UInt16>(gameObject.RefScripts);
-            RefUnknowns = new List<UInt16>(gameObject.RefUnknowns);
-            RefSounds = new List<UInt16>(gameObject.RefSounds);
+            InstFlags = CloneUtils.CloneList(gameObject.InstFlags);
+            InstFloats = CloneUtils.CloneList(gameObject.InstFloats);
+            InstIntegers = CloneUtils.CloneList(gameObject.InstIntegers);
+            RefObjects = CloneUtils.CloneList(gameObject.RefObjects);
+            RefOGIs = CloneUtils.CloneList(gameObject.RefOGIs);
+            RefAnimations = CloneUtils.CloneList(gameObject.RefAnimations);
+            RefCodeModels = CloneUtils.CloneList(gameObject.RefCodeModels);
+            RefScripts = CloneUtils.CloneList(gameObject.RefScripts);
+            RefUnknowns = CloneUtils.CloneList(gameObject.RefUnknowns);
+            RefSounds = CloneUtils.CloneList(gameObject.RefSounds);
             ScriptPack = gameObject.ScriptPack;
         }
 

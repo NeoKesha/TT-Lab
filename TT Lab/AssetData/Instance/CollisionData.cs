@@ -31,19 +31,19 @@ namespace TT_Lab.AssetData.Instance
                 Triangles.Add(new Collision.CollisionTriangle(triangle));
             }
             // Clone the vectors instead of reference copying
-            Vectors = collision.Vectors.Select(v => v).ToList();
+            Vectors = CloneUtils.CloneList(collision.Vectors);
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkInt;
+        public UInt32 UnkInt { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTrigger> Triggers { get; } = new List<Collision.CollisionTrigger>();
+        public List<Collision.CollisionTrigger> Triggers { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.GroupInformation> Groups { get; } = new List<Collision.GroupInformation>();
+        public List<Collision.GroupInformation> Groups { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTriangle> Triangles { get; } = new List<Collision.CollisionTriangle>();
+        public List<Collision.CollisionTriangle> Triangles { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Vector4> Vectors { get; } = new List<Vector4>();
+        public List<Vector4> Vectors { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

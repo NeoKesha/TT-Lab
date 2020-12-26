@@ -23,8 +23,8 @@ namespace TT_Lab.AssetData.Instance.Collision
 
         public CollisionTrigger(Twinsanity.TwinsanityInterchange.Common.Collision.CollisionTrigger trigger)
         {
-            V1 = trigger.V1;
-            V2 = trigger.V2;
+            V1 = CloneUtils.Clone(trigger.V1);
+            V2 = CloneUtils.Clone(trigger.V2);
             MinTriggerIndex = trigger.MinTriggerIndex;
             MaxTriggerIndex = trigger.MaxTriggerIndex;
         }

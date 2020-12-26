@@ -18,9 +18,9 @@ namespace TT_Lab.AssetData.Instance
         {
             SurfaceID = collisionSurface.SurfaceId;
             Flags = collisionSurface.Flags;
-            StepSoundIds = (UInt16[])collisionSurface.StepSoundIds.Clone();
-            Parameters = (Single[])collisionSurface.Parameters.Clone();
-            UnkShorts = (UInt16[])collisionSurface.UnkShorts.Clone();
+            StepSoundIds = CloneUtils.CloneArray(collisionSurface.StepSoundIds);
+            Parameters = CloneUtils.CloneArray(collisionSurface.Parameters);
+            UnkShorts = CloneUtils.CloneArray(collisionSurface.UnkShorts);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -28,11 +28,11 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 Flags { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16[] StepSoundIds { get; private set; }
+        public UInt16[] StepSoundIds { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Single[] Parameters { get; private set; }
+        public Single[] Parameters { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16[] UnkShorts { get; private set; }
+        public UInt16[] UnkShorts { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

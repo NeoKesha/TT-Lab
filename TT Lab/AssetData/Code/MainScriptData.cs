@@ -39,8 +39,8 @@ namespace TT_Lab.AssetData.Code
 
         public override void Load(String dataPath)
         {
-            using (System.IO.FileStream fs = new System.IO.FileStream(dataPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(fs))
+            using (FileStream fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read))
+            using (StreamReader reader = new StreamReader(fs))
             {
                 Script = reader.ReadToEnd();
             }

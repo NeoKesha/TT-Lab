@@ -19,10 +19,10 @@ namespace TT_Lab.AssetData.Instance
         public TriggerData(PS2AnyTrigger trigger) : this()
         {
             Enabled = trigger.Trigger.Enabled > 0;
-            Position = CloneUtils.DeepClone(trigger.Trigger.Position);
-            Rotation = CloneUtils.DeepClone(trigger.Trigger.Rotation);
-            Scale = CloneUtils.DeepClone(trigger.Trigger.Scale);
-            Instances = new List<UInt16>(trigger.Trigger.Instances);
+            Position = CloneUtils.Clone(trigger.Trigger.Position);
+            Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);
+            Scale = CloneUtils.Clone(trigger.Trigger.Scale);
+            Instances = CloneUtils.CloneList(trigger.Trigger.Instances);
             Header1 = trigger.Trigger.Header1;
             HeaderT = trigger.Trigger.HeaderT;
             HeaderH = trigger.Trigger.HeaderH;
@@ -31,11 +31,11 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Boolean Enabled { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Vector4 Position { get; set; } = new Vector4();
+        public Vector4 Position { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Vector4 Rotation { get; set; } = new Vector4();
+        public Vector4 Rotation { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Vector4 Scale { get; set; } = new Vector4();
+        public Vector4 Scale { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<UInt16> Instances { get; set; }
         [JsonProperty(Required = Required.Always)]

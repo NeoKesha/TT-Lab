@@ -31,11 +31,9 @@ namespace TT_Lab.AssetData.Instance
             Type = link.Type;
             Path = link.Path.Substring(0);
             Flags = link.Flags;
-            // TODO: Copy instead of reference copy
-            ObjectMatrix = link.ObjectMatrix;
-            ChunkMatrix = link.ChunkMatrix;
-            LoadingWall = link.LoadingWall;
-            // TODO: Rest of the fields
+            ObjectMatrix = CloneUtils.CloneUnsafe(link.ObjectMatrix);
+            ChunkMatrix = CloneUtils.CloneUnsafe(link.ChunkMatrix);
+            LoadingWall = CloneUtils.CloneUnsafe(link.LoadingWall);
         }
     }
 }

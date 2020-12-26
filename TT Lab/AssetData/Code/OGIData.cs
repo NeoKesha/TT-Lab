@@ -17,7 +17,7 @@ namespace TT_Lab.AssetData.Code
 
         public OGIData(PS2AnyOGI ogi) : this()
         {
-            BoundingBox = ogi.BoundingBox;
+            BoundingBox = CloneUtils.CloneArray(ogi.BoundingBox);
         }
 
         [JsonProperty(Required = Required.Always)]
