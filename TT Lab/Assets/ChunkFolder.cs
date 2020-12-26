@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
+using TT_Lab.Editors;
 
 namespace TT_Lab.Assets
 {
@@ -35,7 +36,7 @@ namespace TT_Lab.Assets
 
         public override UserControl GetEditor()
         {
-            return base.GetEditor();
+            return new SceneEditor(this);
         }
     }
 }

@@ -90,13 +90,28 @@ namespace TT_Lab
                     var asset = (AssetViewModel)ProjectTree.SelectedItem;
                     if (asset.Asset.Type == "Folder") return;
 
-                    if (!asset.EditorOpened)
+                    switch (asset.Asset.Type)
                     {
-                        ResourcesEditorTabs.Items.Add(asset.GetEditor(ResourcesEditorTabs));
+                        case "ChunkFolder":
+                            if (!asset.EditorOpened)
+                            {
+                                ScenesViewerTabs.Items.Add(asset.GetEditor(ScenesViewerTabs));
+                            }
+                            ScenesViewerTabs.SelectedItem = asset.GetEditor(ScenesViewerTabs);
+                            // Automatically switch to Scenes Viewer tab
+                            CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[0];
+                            break;
+                        default:
+                            if (!asset.EditorOpened)
+                            {
+                                ResourcesEditorTabs.Items.Add(asset.GetEditor(ResourcesEditorTabs));
+                            }
+                            ResourcesEditorTabs.SelectedItem = asset.GetEditor(ResourcesEditorTabs);
+                            // Automatically switch to Resources Editor tab
+                            CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[1];
+                            break;
                     }
-                    ResourcesEditorTabs.SelectedItem = asset.GetEditor(ResourcesEditorTabs);
-                    // Automatically switch to Resources Editor tab
-                    CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[1];
+                    
                 }
                 catch(Exception ex)
                 {

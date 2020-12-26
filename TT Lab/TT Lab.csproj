@@ -149,6 +149,9 @@
       <DependentUpon>AnimationEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Editors\BaseEditor.cs" />
+    <Compile Include="Editors\SceneEditor.xaml.cs">
+      <DependentUpon>SceneEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Log.cs" />
     <Compile Include="Project\IProject.cs" />
     <Compile Include="ViewModels\AssetViewModel.cs" />
@@ -163,6 +166,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Editors\AnimationEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Editors\SceneEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
