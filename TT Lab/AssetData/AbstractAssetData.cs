@@ -20,6 +20,7 @@ namespace TT_Lab.AssetData
             using (System.IO.StreamReader reader = new System.IO.StreamReader(fs))
             {
                 JsonConvert.PopulateObject(value: reader.ReadToEnd(), target: this);
+                disposedValue = false;
             }
         }
 
