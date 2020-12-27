@@ -2,7 +2,9 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
@@ -18,6 +20,7 @@ namespace TT_Lab.Editors
     public partial class SceneEditor : BaseEditor
     {
         private List<AssetViewModel> chunkTree = new List<AssetViewModel>();
+        private List<Keys> pressedKeys = new List<Keys>();
         private Scene scene;
         private bool isDefault;
         private GLControl glcontrol;
@@ -39,37 +42,78 @@ namespace TT_Lab.Editors
             glcontrol = new GLControl();
             glcontrol.Load += Glcontrol_Init;
             glcontrol.Paint += Glcontrol_Paint;
-            glcontrol.Dock = System.Windows.Forms.DockStyle.Fill;
+            glcontrol.MouseMove += Glcontrol_MouseMove;
+            glcontrol.KeyDown += Glcontrol_KeyDown;
+            glcontrol.KeyUp += Glcontrol_KeyUp;
+            glcontrol.Dock = DockStyle.Fill;
 
             if (!isDefault)
             {
-                var colData = (CollisionData)chunkTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
-                scene = new Scene(colData, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+                Task.Factory.StartNew(() =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        glcontrol.MakeCurrent();
+                        var colData = (CollisionData)chunkTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
+                        scene = new Scene(colData, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+                    });
+                });
             }
 
             GLHost.Child = glcontrol;
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1 / 60.0);
+            // Start render loop
+            Timer timer = new Timer
+            {
+                Interval = (int)TimeSpan.FromSeconds(1 / 60.0).TotalMilliseconds
+            };
             timer.Tick += OnRender;
             timer.Start();
+        }
+
+        private void Glcontrol_KeyUp(Object sender, KeyEventArgs e)
+        {
+            if (pressedKeys.Contains(e.KeyCode))
+            {
+                pressedKeys.Remove(e.KeyCode);
+            }
+        }
+
+        private void Glcontrol_KeyDown(Object sender, KeyEventArgs e)
+        {
+            if (!pressedKeys.Contains(e.KeyCode))
+            {
+                pressedKeys.Add(e.KeyCode);
+            }
+        }
+
+        private System.Drawing.Point mousePos;
+        private void Glcontrol_MouseMove(Object sender, MouseEventArgs e)
+        {
+            var curMousePos = e.Location;
+            if (e.Button == MouseButtons.Middle)
+            {
+                scene?.RotateView(new Vector3(mousePos.X - curMousePos.X, curMousePos.Y - mousePos.Y, 0));
+            }
+            mousePos = curMousePos;
         }
 
         private void Glcontrol_Init(Object sender, EventArgs e)
         {
             glcontrol.MakeCurrent();
-            GL.ClearColor(Color.LightGray);
+            GL.ClearColor(System.Drawing.Color.LightGray);
         }
 
         private void Glcontrol_Paint(Object sender, System.Windows.Forms.PaintEventArgs e)
         {
             glcontrol.MakeCurrent();
+            GL.Viewport(glcontrol.Location, glcontrol.Size);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            if (scene != null)
-            {
-                scene.Render();
-            }
+            scene?.PreRender();
+            scene?.Move(pressedKeys);
+            scene?.Render();
+            scene?.PostRender();
 
             glcontrol.SwapBuffers();
         }
@@ -81,10 +125,7 @@ namespace TT_Lab.Editors
 
         private void SceneEditor_SizeChanged(Object sender, System.Windows.SizeChangedEventArgs e)
         {
-            if (scene != null)
-            {
-                scene.SetResolution((float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
-            }
+            scene?.SetResolution((float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
         }
     }
 }

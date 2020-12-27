@@ -32,6 +32,8 @@
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-        <WindowsFormsHost x:Name="GLHost" Grid.Column="1" Margin="0"/>
+        <GroupBox Header="Chunk viewer" Grid.Column="1">
+            <WindowsFormsHost x:Name="GLHost" Margin="0"/>
+        </GroupBox>
     </Grid>
 </local:BaseEditor>

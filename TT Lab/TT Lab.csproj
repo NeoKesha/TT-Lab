@@ -168,6 +168,9 @@
     </Compile>
     <Compile Include="Log.cs" />
     <Compile Include="Project\IProject.cs" />
+    <Compile Include="Rendering\Buffers\IndexBuffer.cs" />
+    <Compile Include="Rendering\Buffers\VertexBuffer.cs" />
+    <Compile Include="Rendering\Buffers\VertexBufferArray.cs" />
     <Compile Include="Rendering\IGLObject.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\Scene.cs" />
@@ -175,6 +178,7 @@
     <Compile Include="Rendering\Shaders\ShaderCompilationException.cs" />
     <Compile Include="Rendering\Shaders\ShaderProgram.cs" />
     <Compile Include="Util\ManifestResourceLoader.cs" />
+    <Compile Include="Util\VectorExtension.cs" />
     <Compile Include="ViewModels\AssetViewModel.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
@@ -250,6 +254,12 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Shaders\Light.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Light.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\Pass.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
