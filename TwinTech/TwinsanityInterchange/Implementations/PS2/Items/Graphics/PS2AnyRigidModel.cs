@@ -13,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
     public class PS2AnyRigidModel : BaseTwinItem, ITwinRigidModel
     {
         public UInt32 Header { get; set; } // Unused by the game
-        public List<UInt32> Materials { get; private set; }
+        public List<UInt32> Materials { get; set; }
         public UInt32 Model { get; set; }
 
         public PS2AnyRigidModel()

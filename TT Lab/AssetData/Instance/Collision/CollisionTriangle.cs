@@ -11,13 +11,13 @@ namespace TT_Lab.AssetData.Instance.Collision
     public class CollisionTriangle
     {
         [JsonProperty(Required = Required.Always)]
-        public Int32 Vector1Index;
+        public Int32 Vector1Index { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Int32 Vector2Index;
+        public Int32 Vector2Index { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Int32 Vector3Index;
+        public Int32 Vector3Index { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Int32 SurfaceIndex;
+        public Int32 SurfaceIndex { get; set; }
 
         public CollisionTriangle() { }
 

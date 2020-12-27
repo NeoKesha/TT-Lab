@@ -23,7 +23,7 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public List<ChunkLink> Links = new List<ChunkLink>();
+        public List<ChunkLink> Links { get; set; } = new List<ChunkLink>();
 
         protected override void Dispose(Boolean disposing)
         {

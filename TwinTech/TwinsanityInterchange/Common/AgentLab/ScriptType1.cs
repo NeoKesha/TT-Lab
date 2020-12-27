@@ -61,10 +61,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 writer.Write(b);
             }
         }
-        public void WriteText(StreamWriter writer)
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            writer.WriteLine($"        Head {"{"}");
-            writer.Write    ($"            bytes = [");
+            StringUtils.WriteLineTabulated(writer, $"Head {"{"}", tabs);
+            StringUtils.WriteTabulated(writer, "bytes = [", tabs + 1);
             for (var i = 0; i < Bytes.Count; ++i)
             {
                 writer.Write($"{Bytes[i]}");
@@ -74,7 +74,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 }
             }
             writer.WriteLine($"]");
-            writer.Write    ($"            floats = [");
+            StringUtils.WriteTabulated(writer, "floats = [", tabs + 1);
             for (var i = 0; i < Floats.Count; ++i)
             {
                 writer.Write($"{Floats[i].ToString(CultureInfo.InvariantCulture)}");
@@ -84,7 +84,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 }
             }
             writer.WriteLine($"]");
-            writer.WriteLine($"        {"}"}");
+            StringUtils.WriteLineTabulated(writer, "}", tabs);
         }
 
         public void ReadText(StreamReader reader)

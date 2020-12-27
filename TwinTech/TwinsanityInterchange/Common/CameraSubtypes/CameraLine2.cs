@@ -11,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     public class CameraLine2 : CameraSubBase
     {
-        public Vector4[] BoundingBox { get; private set; }
+        public Vector4[] BoundingBox { get; set; }
         public Single UnkFloat3 { get; set; }
         public Single UnkFloat4 { get; set; }
         public CameraLine2()

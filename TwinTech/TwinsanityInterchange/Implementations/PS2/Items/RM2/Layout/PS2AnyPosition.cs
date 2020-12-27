@@ -14,7 +14,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyPosition : BaseTwinItem, ITwinPosition
     {
-        public Vector4 Position { get; private set; }
+        public Vector4 Position { get; set; }
         
         public PS2AnyPosition()
         {

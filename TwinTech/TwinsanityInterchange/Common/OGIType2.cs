@@ -13,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
     {
         public UInt32 UnkInt1 { get; set; }
         public UInt32 UnkInt2 { get; set; }
-        public Matrix4 Matrix { get; private set; }
+        public Matrix4 Matrix { get; set; }
         public OGIType2()
         {
             Matrix = new Matrix4();

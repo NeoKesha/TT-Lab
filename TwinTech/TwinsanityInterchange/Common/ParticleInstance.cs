@@ -30,12 +30,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Int16 UnkShort8;
 
         private Dictionary<UInt32, Int32> versionSizeMap = new Dictionary<UInt32, Int32>();
-
-        public ParticleInstance(UInt32 ver)
+        public ParticleInstance()
         {
-            Version = ver;
             Position = new Vector3();
             Name = new Char[16];
+            Version = 0x1D;
+        }
+        public ParticleInstance(UInt32 ver) : this()
+        {
+            Version = ver;
         }
 
         public Int32 GetLength()

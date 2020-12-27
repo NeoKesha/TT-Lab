@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,15 +18,32 @@ namespace TT_Lab.AssetData.Code
 
         public MainScriptData(PS2MainScript mainScript) : base(mainScript)
         {
-            UnkInt = mainScript.UnkInt;
+            Script = mainScript.ToString();
         }
 
-        [JsonProperty(Required = Required.Always)]
-        public Int32 UnkInt { get; set; }
+        public String Script { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Save(string dataPath)
+        {
+            using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
+            using (BinaryWriter writer = new BinaryWriter(fs))
+            {
+                writer.Write(Script.ToCharArray());
+            }
+        }
+
+        public override void Load(String dataPath)
+        {
+            using (FileStream fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read))
+            using (StreamReader reader = new StreamReader(fs))
+            {
+                Script = reader.ReadToEnd();
+            }
         }
     }
 }

@@ -83,10 +83,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Vector4 UnkVec3;
 
         private Dictionary<UInt32, Int32> versionSizeMap = new Dictionary<UInt32, Int32>();
-
-        public ParticleType(UInt32 ver)
+        public ParticleType()
         {
-            Version = ver;
             Name = new Char[16];
             UnkVec1 = new Vector3();
             UnkVec2 = new Vector3();
@@ -100,6 +98,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkLongs7 = new Int64[8];
             UnkShorts = new Int16[4];
             UnkVec3 = new Vector4();
+            Version = 0x1D;
+        }
+        public ParticleType(UInt32 ver) : this()
+        {
+            Version = ver;
         }
 
         public Int32 GetLength()

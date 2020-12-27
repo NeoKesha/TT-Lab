@@ -26,16 +26,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         }
 
         Byte[] headerData;
-        public List<OGIType1> Type1List { get; private set; }
-        public List<OGIType2> Type2List { get; private set; }
-        public Vector4[] BoundingBox { get; private set; }
-        public List<Byte> RigidRelatedList { get; private set; }
-        public List<UInt32> RigidModelIds { get; private set; }
-        public List<Matrix4> Type1RelatedMatrix { get; private set; }
+        public List<OGIType1> Type1List { get; set; }
+        public List<OGIType2> Type2List { get; set; }
+        public Vector4[] BoundingBox { get; set; }
+        public List<Byte> RigidRelatedList { get; set; }
+        public List<UInt32> RigidModelIds { get; set; }
+        public List<Matrix4> Type1RelatedMatrix { get; set; }
         public UInt32 SkinID { get; set; }
         public UInt32 BlendSkinID { get; set; }
-        public List<OGIType3> Type3List { get; private set; }
-        public List<Byte> Type3RelatedList { get; private set; }
+        public List<OGIType3> Type3List { get; set; }
+        public List<Byte> Type3RelatedList { get; set; }
 
         public PS2AnyOGI()
         {

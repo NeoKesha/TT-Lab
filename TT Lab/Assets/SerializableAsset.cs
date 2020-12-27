@@ -10,6 +10,7 @@ namespace TT_Lab.Assets
         public Guid UUID { get; private set; }
 
         protected virtual String SavePath => Type;
+        protected virtual String DataExt => ".data";
 
         protected AbstractAssetData assetData;
 
@@ -37,7 +38,7 @@ namespace TT_Lab.Assets
             Name = name;
             Alias = Name;
             Raw = true;
-            Data = UUID.ToString() + ".data";
+            Data = UUID.ToString() + DataExt;
             IsLoaded = true;
         }
 

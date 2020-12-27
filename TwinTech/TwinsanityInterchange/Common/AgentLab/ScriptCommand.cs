@@ -81,10 +81,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public void WriteText(StreamWriter writer)
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
             AgentLabDefs defs = PS2MainScript.GetAgentLabDefs();
-            writer.Write($"            {MapCommand(CommandIndex, defs)}(");
+            StringUtils.WriteTabulated(writer, $"{MapCommand(CommandIndex, defs)}(", tabs);
             for (Int32 i = 0; i < Arguments.Count; ++i)
             {
                 writer.Write($"{ToStringArgument(Arguments[i], i, CommandIndex, defs)}");

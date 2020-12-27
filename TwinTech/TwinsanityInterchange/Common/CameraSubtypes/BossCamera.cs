@@ -11,9 +11,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     public class BossCamera : CameraSubBase
     {
-        public Matrix4 UnkMatrix1 { get; private set; }
-        public Matrix4 UnkMatrix2 { get; private set; }
-        public Vector4 UnkVector { get; private set; }
+        public Matrix4 UnkMatrix1 { get; set; }
+        public Matrix4 UnkMatrix2 { get; set; }
+        public Vector4 UnkVector { get; set; }
         public Byte UnkByte1 { get; set; }
         public Single UnkFloat3 { get; set; }
         public Single UnkFloat4 { get; set; }

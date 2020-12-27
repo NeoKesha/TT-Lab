@@ -43,5 +43,39 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 com.Write(writer);
             }
         }
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
+        {
+            foreach (ScriptCommand cmd in Commands)
+            {
+                cmd.WriteText(writer, tabs);
+            }
+        }
+        public void ReadText(StreamReader reader)
+        {
+            String line = "";
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                ScriptCommand cmd = new ScriptCommand();
+                cmd.ReadText(line);
+                Commands.Add(cmd);
+            }
+        }
+        public override String ToString()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                StreamWriter writer = new StreamWriter(stream);
+                StreamReader reader = new StreamReader(stream);
+                WriteText(writer);
+                writer.Flush();
+                stream.Position = 0;
+                return reader.ReadToEnd();
+            }
+        }
     }
 }

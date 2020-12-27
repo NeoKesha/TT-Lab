@@ -17,11 +17,11 @@ namespace TT_Lab.AssetData.Instance
 
         public AiPositionData(PS2AnyAIPosition aiPosition) : this()
         {
-            Coords = aiPosition.Position;
+            Coords = CloneUtils.Clone(aiPosition.Position);
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Vector4 Coords { get; set; } = new Vector4();
+        public Vector4 Coords { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

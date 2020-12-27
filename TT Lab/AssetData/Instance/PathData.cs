@@ -17,11 +17,14 @@ namespace TT_Lab.AssetData.Instance
 
         public PathData(PS2AnyPath path) : this()
         {
-            Points.AddRange(path.PointList);
+            Points = CloneUtils.CloneList(path.PointList);
+            Parameters = CloneUtils.CloneList(path.ParameterList);
         }
 
         [JsonProperty(Required = Required.Always)]
-        public List<Vector4> Points { get; set; } = new List<Vector4>();
+        public List<Vector4> Points { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Vector2> Parameters { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

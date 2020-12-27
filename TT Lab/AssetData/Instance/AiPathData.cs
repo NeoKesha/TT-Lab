@@ -16,11 +16,11 @@ namespace TT_Lab.AssetData.Instance
 
         public AiPathData(PS2AnyAIPath aiPath) : this()
         {
-            Args = (UInt16[])aiPath.Args.Clone();
+            Args = CloneUtils.CloneArray(aiPath.Args);
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt16[] Args { get; } = new UInt16[5];
+        public UInt16[] Args { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

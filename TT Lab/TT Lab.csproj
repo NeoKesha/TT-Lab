@@ -52,6 +52,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll</HintPath>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Drawing.Common.4.7.0\lib\net461\System.Drawing.Common.dll</HintPath>
@@ -94,6 +96,8 @@
     <Compile Include="AssetData\Graphics\RigidModelData.cs" />
     <Compile Include="AssetData\Graphics\SkinData.cs" />
     <Compile Include="AssetData\Graphics\SkydomeData.cs" />
+    <Compile Include="AssetData\Graphics\SubModels\SubModelData.cs" />
+    <Compile Include="AssetData\Graphics\SubModels\SubSkinData.cs" />
     <Compile Include="AssetData\Graphics\TextureData.cs" />
     <Compile Include="AssetData\Instance\AiPathData.cs" />
     <Compile Include="AssetData\Instance\AiPositionData.cs" />
@@ -150,6 +154,7 @@
     <Compile Include="Assets\SerializableAsset.cs" />
     <Compile Include="Assets\Graphics\Skydome.cs" />
     <Compile Include="Assets\Graphics\Texture.cs" />
+    <Compile Include="CloneUtils.cs" />
     <Compile Include="Command\CloseTabCommand.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
     <Compile Include="Command\OpenProjectCommand.cs" />

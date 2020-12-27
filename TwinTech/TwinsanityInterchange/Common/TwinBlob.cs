@@ -13,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
     {
         UInt32 BlockSizePacked;
         UInt16 BlockSizeHelper;
-        public Byte[] Blob { get; private set; }
+        public Byte[] Blob { get; set; }
         public int GetLength()
         {
             return 6 + (Blob != null ? Blob.Length : 0);

@@ -11,8 +11,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class OGIType1 : ITwinSerializable
     {
-        public UInt32[] UnkInt { get; private set; }
-        public Vector4[] Vectors { get; private set; }
+        public UInt32[] UnkInt { get; set; }
+        public Vector4[] Vectors { get; set; }
         public OGIType1()
         {
             UnkInt = new UInt32[5];

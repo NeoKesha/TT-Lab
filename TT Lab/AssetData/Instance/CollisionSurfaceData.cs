@@ -17,10 +17,22 @@ namespace TT_Lab.AssetData.Instance
         public CollisionSurfaceData(PS2AnyCollisionSurface collisionSurface) : this()
         {
             SurfaceID = collisionSurface.SurfaceId;
+            Flags = collisionSurface.Flags;
+            StepSoundIds = CloneUtils.CloneArray(collisionSurface.StepSoundIds);
+            Parameters = CloneUtils.CloneArray(collisionSurface.Parameters);
+            UnkShorts = CloneUtils.CloneArray(collisionSurface.UnkShorts);
         }
 
         [JsonProperty(Required = Required.Always)]
         public UInt16 SurfaceID { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public UInt32 Flags { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public UInt16[] StepSoundIds { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Single[] Parameters { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public UInt16[] UnkShorts { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

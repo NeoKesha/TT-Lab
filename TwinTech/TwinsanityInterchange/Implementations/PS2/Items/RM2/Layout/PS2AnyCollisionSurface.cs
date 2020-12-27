@@ -16,9 +16,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
     {
         public UInt32 Flags { get; set; }
         public UInt16 SurfaceId { get; set; }
-        public UInt16[] StepSoundIds { get; private set; }
-        public Single[] Parameters { get; private set; }
-        public UInt16[] UnkShorts { get; private set; }
+        public UInt16[] StepSoundIds { get; set; }
+        public Single[] Parameters { get; set; }
+        public UInt16[] UnkShorts { get; set; }
         
         public PS2AnyCollisionSurface()
         {
