@@ -13,25 +13,33 @@ namespace TT_Lab.Command
 
         public Boolean CanExecute(Object parameter)
         {
-            return ProjectManagerSingleton.PM.ProjectOpened;
+            return true;
         }
 
         public void Execute(Object parameter = null)
         {
+            if (!ProjectManagerSingleton.PM.ProjectOpened) return;
+
             ProjectManagerSingleton.PM.WorkableProject = false;
-            try
+            Task.Factory.StartNew(() =>
             {
-                var pr = ProjectManagerSingleton.PM.OpenedProject;
-                pr.Serialize();
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine($"Error saving project: {ex.Message}");
-            }
-            finally
-            {
-                ProjectManagerSingleton.PM.WorkableProject = true;
-            }
+                try
+                {
+                    Log.WriteLine($"Saving project...");
+                    var now = DateTime.Now;
+                    var pr = ProjectManagerSingleton.PM.OpenedProject;
+                    pr.Serialize();
+                    Log.WriteLine($"Saved project in {DateTime.Now - now}");
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine($"Error saving project: {ex.Message}");
+                }
+                finally
+                {
+                    ProjectManagerSingleton.PM.WorkableProject = true;
+                }
+            });
         }
 
         public void Unexecute()
