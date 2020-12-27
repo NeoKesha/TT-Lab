@@ -30,6 +30,8 @@ namespace TT_Lab
             // Main window binds
             AddKeybind(OpenProject.Command, Key.O, ModifierKeys.Control);
             AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control);
+            AddKeybind(new UndoCommand(), Key.Z, ModifierKeys.Control);
+            AddKeybind(new RedoCommand(), Key.Y, ModifierKeys.Control);
             // Misc. binds
             AddKeybind(ScenesViewerTabs, new CloseTabCommand(ScenesViewerTabs), Key.W, ModifierKeys.Control);
             AddKeybind(ResourcesEditorTabs, new CloseTabCommand(ResourcesEditorTabs), Key.W, ModifierKeys.Control);

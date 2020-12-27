@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.Assets;
+using TT_Lab.Command;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors
@@ -12,6 +13,7 @@ namespace TT_Lab.Editors
     public class BaseEditor : UserControl
     {
         protected AssetViewModel AssetViewModel;
+        protected CommandManager CommandManager = new CommandManager();
 
         public BaseEditor()
         {

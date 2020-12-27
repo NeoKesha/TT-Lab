@@ -222,6 +222,21 @@ namespace TT_Lab.Project
             RaisePropertyChangedEvent("ProjectTree");
         }
 
+        public void ExecuteCommand(ICommand command)
+        {
+            _commandManager.Execute(command);
+        }
+
+        public void Undo()
+        {
+            _commandManager.Undo();
+        }
+
+        public void Redo()
+        {
+            _commandManager.Redo();
+        }
+
         private void BuildProjectTree()
         {
             ProjectTree = (from asset in OpenedProject.Assets.Values

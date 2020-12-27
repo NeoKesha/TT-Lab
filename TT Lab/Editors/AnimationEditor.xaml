@@ -16,7 +16,7 @@
             <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
         <Label x:Name="BitfieldLabel" Content="Bitfield" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        <TextBox x:Name="BitfieldBox" Grid.Column="1" Margin="0" TextWrapping="Wrap" Text="{Binding Bitfield, StringFormat={}{0:x}, Mode=TwoWay}" VerticalAlignment="Center" PreviewTextInput="BitfieldBox_PreviewTextInput"/>
+        <TextBox x:Name="BitfieldBox" Grid.Column="1" Margin="0" TextWrapping="Wrap" Text="{Binding Bitfield, StringFormat={}{0:x}, Mode=OneWay}" VerticalAlignment="Center" PreviewTextInput="BitfieldBox_PreviewTextInput" TextChanged="BitfieldBox_TextChanged"/>
 
     </Grid>
 </local:BaseEditor>

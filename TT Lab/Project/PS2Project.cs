@@ -114,6 +114,10 @@ namespace TT_Lab.Project
         {
             var path = ProjectPath;
             AssetIds = Assets.Keys.ToList();
+
+            // Update last modified date
+            LastModified = DateTime.Now;
+
             System.IO.Directory.SetCurrentDirectory(path);
             using (System.IO.FileStream fs = new System.IO.FileStream(Name + ".tson", System.IO.FileMode.Create, System.IO.FileAccess.Write))
             using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(fs))
