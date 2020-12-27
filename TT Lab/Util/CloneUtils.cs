@@ -11,9 +11,12 @@ namespace TT_Lab.Util
 {
     static public class CloneUtils
     {
-        /**
-         * Deep clone. Use ONLY when all other Cloning procedures do not apply.
-         */
+        /// <summary>
+        /// Deep clone. Use ONLY when all other Cloning procedures do not apply.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
         static public T DeepClone<T>(T original)
         {
             using (var stream = new MemoryStream())
@@ -26,9 +29,12 @@ namespace TT_Lab.Util
                 return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
             }
         }
-        /**
-         * List clone. Use when Clone is aplicable for T
-         */
+        /// <summary>
+        /// List clone. Use when Clone is aplicable for T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="originalList"></param>
+        /// <returns></returns>
         static public List<T> CloneList<T>(List<T> originalList) where T : new()
         {
             List<T> newList = new List<T>(originalList.Count);
@@ -49,9 +55,12 @@ namespace TT_Lab.Util
             }
             return newList;
         }
-        /**
-         * Array clone. Use when Clone is aplicable for T
-         */
+        /// <summary>
+        /// Array clone. Use when Clone is aplicable for T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="originalArray"></param>
+        /// <returns></returns>
         static public T[] CloneArray<T>(T[] originalArray) where T : new()
         {
             T[] newArray = new T[originalArray.Length];
@@ -72,9 +81,12 @@ namespace TT_Lab.Util
             }
             return newArray;
         }
-        /**
-         * Unsafe List clone. Use when Clone in not is aplicable for T, but CloneUnsafe is
-         */
+        /// <summary>
+        /// Unsafe List clone. Use when Clone in not is aplicable for T, but CloneUnsafe is
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="originalList"></param>
+        /// <returns></returns>
         static public List<T> CloneListUnsafe<T>(List<T> originalList) where T : new()
         {
             List<T> newList = new List<T>(originalList.Count);
@@ -95,9 +107,12 @@ namespace TT_Lab.Util
             }
             return newList;
         }
-        /**
-         * Unsafe Array clone. Use when Clone in not is aplicable for T, but CloneUnsafe is
-         */
+        /// <summary>
+        /// Unsafe Array clone. Use when Clone in not is aplicable for T, but CloneUnsafe is
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="originalArray"></param>
+        /// <returns></returns>
         static public T[] CloneArrayUnsafe<T>(T[] originalArray) where T : new()
         {
             T[] newArray = new T[originalArray.Length];
@@ -118,9 +133,12 @@ namespace TT_Lab.Util
             }
             return newArray;
         }
-        /**
-         * Surface clone. Use when cloned object contains only primitives
-         */
+        /// <summary>
+        /// Surface clone. Use when cloned object contains only primitives
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
         static public T Clone<T>(T original) where T : new()
         {
             T newObj = new T();
@@ -132,9 +150,12 @@ namespace TT_Lab.Util
             }
             return newObj;
         }
-        /**
-         * Unsafe deep clone. Use when cloning element has no loops or collections inside, but got references. IT IS UNSAFE! Better use DeepClone. Plz
-         */
+        /// <summary>
+        /// Unsafe deep clone. Use when cloning element has no loops or collections inside, but got references. IT IS UNSAFE! Better use DeepClone. Plz
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
         static public T CloneUnsafe<T>(T original) where T : new()
         {
             T newObj = new T();
