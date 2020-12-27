@@ -10,6 +10,7 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Rendering;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors
@@ -55,7 +56,14 @@ namespace TT_Lab.Editors
                     {
                         glcontrol.MakeCurrent();
                         var colData = (CollisionData)chunkTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
-                        scene = new Scene(colData, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+                        try
+                        {
+                            scene = new Scene(colData, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+                        }
+                        catch(ShaderCompilationException ex)
+                        {
+                            Log.WriteLine($"Error creating scene: {ex.Message}\n{ex.CompilerOutput}");
+                        }
                     });
                 });
             }

@@ -1,6 +1,7 @@
-﻿#version 130
+#version 130
 in vec3 EyespaceNormal;
 in vec3 Diffuse;
+in vec4 Color;
 out vec4 FragColor;
 
 uniform vec3 LightPosition;
@@ -20,5 +21,5 @@ void main()
     sf = pow(sf, Shininess);
 
     vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(color, 1.0) * Color;
 }

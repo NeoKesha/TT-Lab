@@ -165,9 +165,9 @@ namespace TT_Lab.Rendering
         {
             shader.Bind();
             // Fragment program uniforms
-            shader.SetUniform3("AmbientMaterial", 0.04f, 0.04f, 0.04f);
+            shader.SetUniform3("AmbientMaterial", 0.25f, 0.25f, 0.25f);
             shader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
-            shader.SetUniform3("LightPosition", 0.25f, 0.25f, 1f);
+            shader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
             shader.SetUniform1("Shininess", 50f);
 
             // Vertex program uniforms
@@ -187,7 +187,7 @@ namespace TT_Lab.Rendering
             mat4 rotMat = glm.rotate(new mat4(1.0f), glm.radians(rot.Y), cross);
             rotMat = glm.rotate(rotMat, glm.radians(rot.X), cameraUp);
             cameraDirection = glm.normalize(new vec3(rotMat * new vec4(cameraDirection, 0.0f)));
-            viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
+            UpdateMatrices();
         }
 
         public void Move(List<Keys> keysPressed)
@@ -210,7 +210,7 @@ namespace TT_Lab.Rendering
                         break;
                 }
             }
-            viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
+            UpdateMatrices();
         }
 
         public void Unbind()
@@ -238,6 +238,13 @@ namespace TT_Lab.Rendering
             {
                 @object.PostRender();
             }
+        }
+
+        private void UpdateMatrices()
+        {
+            viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
+            var modelView = viewMat * modelMat;
+            normalMat = modelView.to_mat3();
         }
     }
 }
