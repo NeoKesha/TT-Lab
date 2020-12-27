@@ -31,7 +31,6 @@ namespace TT_Lab.Editors
         public AnimationEditor(AssetViewModel animation) : base(animation)
         {
             InitializeComponent();
-            DataContext = animation.Asset.GetData();
         }
 
         private void BitfieldBox_PreviewTextInput(Object sender, TextCompositionEventArgs e)

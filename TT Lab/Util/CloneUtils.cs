@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TT_Lab
+namespace TT_Lab.Util
 {
     static public class CloneUtils
     {

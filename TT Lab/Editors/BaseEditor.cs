@@ -21,6 +21,7 @@ namespace TT_Lab.Editors
         public BaseEditor(AssetViewModel asset)
         {
             AssetViewModel = asset;
+            DataContext = asset.Asset.GetData();
         }
     }
 }
