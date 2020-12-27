@@ -28,11 +28,11 @@ namespace TT_Lab.AssetData.Graphics
         [JsonProperty(Required = Required.Always)]
         public Int32 UnkInt2 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Int32[] UnkInts; 
+        public Int32[] UnkInts { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Byte[] UnkData; 
+        public Byte[] UnkData { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt32> Meshes;
+        public List<UInt32> Meshes { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

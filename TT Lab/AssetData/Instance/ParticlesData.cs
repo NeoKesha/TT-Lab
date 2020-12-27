@@ -26,9 +26,9 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 Version { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<ParticleType> ParticleTypes;
+        public List<ParticleType> ParticleTypes { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<ParticleInstance> ParticleInstances;
+        public List<ParticleInstance> ParticleInstances { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

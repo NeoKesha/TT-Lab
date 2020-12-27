@@ -88,7 +88,7 @@ namespace TT_Lab.AssetData.Code
         public List<UInt16> RefSounds { get; set; }
         [JsonProperty(Required = Required.Always)]
         [JsonConverter(typeof(ScriptPackConverter))]
-        public ScriptPack ScriptPack;
+        public ScriptPack ScriptPack { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

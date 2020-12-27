@@ -20,7 +20,7 @@ namespace TT_Lab.AssetData.Graphics
         [JsonProperty(Required = Required.Always)]
         public Int32 Header { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt32> Meshes;
+        public List<UInt32> Meshes { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

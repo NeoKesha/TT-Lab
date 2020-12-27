@@ -30,7 +30,7 @@ namespace TT_Lab.AssetData.Graphics
         [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<TwinShader> Shaders { get; }
+        public List<TwinShader> Shaders { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

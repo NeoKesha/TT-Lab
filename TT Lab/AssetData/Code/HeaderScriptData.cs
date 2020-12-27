@@ -20,7 +20,7 @@ namespace TT_Lab.AssetData.Code
         }
 
         [JsonProperty(Required = Required.Always)]
-        public List<KeyValuePair<int, uint>> Pairs { get; private set; } = new List<KeyValuePair<int, uint>>();
+        public List<KeyValuePair<int, uint>> Pairs { get; set; } = new List<KeyValuePair<int, uint>>();
 
         protected override void Dispose(Boolean disposing)
         {

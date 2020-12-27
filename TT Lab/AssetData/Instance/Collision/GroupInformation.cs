@@ -10,9 +10,9 @@ namespace TT_Lab.AssetData.Instance.Collision
     public class GroupInformation
     {
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Size;
+        public UInt32 Size { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Offset;
+        public UInt32 Offset { get; set; }
 
         public GroupInformation() { }
 
