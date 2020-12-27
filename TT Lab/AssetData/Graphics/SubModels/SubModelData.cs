@@ -13,13 +13,13 @@ namespace TT_Lab.AssetData.Graphics.SubModels
     public class SubModelData
     {
         [JsonProperty(Required = Required.Always)]
-        List<Vector4> Vertexes { get; set; }
+        public List<Vector4> Vertexes { get; set; }
         [JsonProperty(Required = Required.Always)]
-        List<Vector4> UVW { get; set; }
+        public List<Vector4> UVW { get; set; }
         [JsonProperty(Required = Required.Always)]
-        List<Vector4> Normals { get; set; }
+        public List<Vector4> Normals { get; set; }
         [JsonProperty(Required = Required.Always)]
-        List<Vector4> Colors { get; set; }
+        public List<Vector4> Colors { get; set; }
 
         public SubModelData()
         {

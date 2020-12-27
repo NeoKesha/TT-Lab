@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
@@ -9,7 +10,7 @@ namespace TT_Lab.Assets.Graphics
     public class Model : SerializableAsset
     {
         public override String Type => "Model";
-
+        protected override String DataExt => ".ply";
         public Model(UInt32 id, String name, PS2AnyModel model) : base(id, name)
         {
             assetData = new ModelData(model);

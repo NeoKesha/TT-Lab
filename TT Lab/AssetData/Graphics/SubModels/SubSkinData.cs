@@ -15,7 +15,14 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         [JsonProperty(Required = Required.Always)]
         UInt32 Material { get; set; }
         [JsonProperty(Required = Required.Always)]
-        List<List<Vector4>> Data { get; set; }
+        public List<Vector4> Vertexes { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Vector4> UVW { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Vector4> Normals { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Vector4> Colors { get; set; }
+
 
         public SubSkinData()
         {
@@ -23,7 +30,10 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         }
         public SubSkinData(SubSkin twinSubSkin)
         {
-            Data = CloneUtils.DeepClone(twinSubSkin.Data);
+            Vertexes = CloneUtils.CloneList(twinSubSkin.Vertexes);
+            UVW = CloneUtils.CloneList(twinSubSkin.UVW);
+            Normals = CloneUtils.CloneList(twinSubSkin.Normals);
+            Colors = CloneUtils.CloneList(twinSubSkin.Colors);
             Material = twinSubSkin.Material;
         }
     }

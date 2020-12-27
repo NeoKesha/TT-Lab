@@ -41,33 +41,46 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             var interpreter = VIFInterpreter.InterpretCode(VertexData);
             var data = interpreter.GetMem();
-            Vertexes = new List<Vector4>(data[2]);
-            if (data.Count > 3)
+            Vertexes = new List<Vector4>();
+            UVW = new List<Vector4>();
+            Normals = new List<Vector4>();
+            Colors = new List<Vector4>();
+            for (var i = 0; i < data.Count; )
             {
-                UVW = new List<Vector4>(data[3]);
+                var verts = (data[i][0].GetBinaryX() & 0xFF);
+                var fields = 0;
+                while (data[i+2+fields].Count == verts)
+                {
+                    ++fields;
+                    if (i + fields + 2 >= data.Count)
+                    {
+                        break;
+                    }
+                }
+                Vertexes.AddRange(data[i + 2]);
+                if (fields > 1)
+                {
+                    UVW.AddRange(data[i + 3]);
+                }
+                if (fields > 2)
+                {
+                    Normals.AddRange(data[i + 4]);
+                }
+                if (fields > 3)
+                {
+                    Colors.AddRange(data[i + 5]);
+                }
+                i += fields + 2;
+                TrimList(UVW, Vertexes.Count);
+                TrimList(Normals, Vertexes.Count);
+                TrimList(Colors, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 0.0f));
             }
-            else
+            foreach (var c in Colors)
             {
-                UVW = new List<Vector4>();
-                TrimList(UVW, (Int32)VertexesCount);
-            }
-            if (data.Count > 4)
-            {
-                Normals = new List<Vector4>(data[4]);
-            }
-            else
-            {
-                Normals = new List<Vector4>();
-                TrimList(Normals, (Int32)VertexesCount);
-            }
-            if (data.Count > 5)
-            {
-                Colors = new List<Vector4>(data[5]);
-            }
-            else
-            {
-                Colors = new List<Vector4>();
-                TrimList(Colors, (Int32)VertexesCount);
+                c.X = c.GetBinaryX() / 255.0f;
+                c.Y = c.GetBinaryY() / 255.0f;
+                c.Z = c.GetBinaryZ() / 255.0f;
+                c.W = c.GetBinaryW() / 255.0f;
             }
         }
         public void Write(BinaryWriter writer)
@@ -77,7 +90,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var unkVec2 = new Vector4();
             TrimList(UVW, (Int32)VertexesCount);
             TrimList(Normals, (Int32)VertexesCount);
-            TrimList(Colors, (Int32)VertexesCount);
+            TrimList(Colors, (Int32)VertexesCount, new Vector4(0.5f, 0.5f, 0.5f, 0.5f));
             var data = new List<List<Vector4>>();
             data.Add(new List<Vector4>() { unkVec1 });
             data.Add(new List<Vector4>() { unkVec2 });
@@ -93,7 +106,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(UnusedBlob);
         }
 
-        private void TrimList(List<Vector4> list, Int32 desiredLength)
+        private void TrimList(List<Vector4> list, Int32 desiredLength, Vector4 defaultValue = null)
         {
             if (list != null)
             {
@@ -101,9 +114,16 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 {
                     list.RemoveRange(desiredLength, list.Count - desiredLength);
                 }
-                while (UVW.Count < desiredLength)
+                while (list.Count < desiredLength)
                 {
-                    list.Add(new Vector4());
+                    if (defaultValue != null)
+                    {
+                        list.Add(new Vector4(defaultValue));
+                    } 
+                    else
+                    {
+                        list.Add(new Vector4());
+                    }
                 }
             }
         }
