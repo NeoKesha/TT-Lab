@@ -40,6 +40,7 @@ namespace TT_Lab.Project
         private CommandManager _commandManager = new CommandManager();
         private MenuItem[] _recentMenus = new MenuItem[0];
         private List<AssetViewModel> _projectTree = new List<AssetViewModel>();
+        private bool _workableProject = false;
 
         public IProject OpenedProject
         {
@@ -51,6 +52,22 @@ namespace TT_Lab.Project
             {
                 _openedProject = value;
                 RaisePropertyChangedEvent("OpenedProject");
+            }
+        }
+
+        public bool WorkableProject
+        {
+            get
+            {
+                return _workableProject;
+            }
+            set
+            {
+                if (value != _workableProject)
+                {
+                    _workableProject = value;
+                    RaisePropertyChangedEvent("WorkableProject");
+                }
             }
         }
 
@@ -148,6 +165,7 @@ namespace TT_Lab.Project
                 AddRecentlyOpened(OpenedProject.ProjectPath);
                 Log.WriteLine("Building project tree...");
                 BuildProjectTree();
+                WorkableProject = true;
                 RaisePropertyChangedEvent("ProjectOpened");
                 RaisePropertyChangedEvent("ProjectTitle");
                 Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
@@ -175,6 +193,7 @@ namespace TT_Lab.Project
                             OpenedProject = PS2Project.Deserialize(prFile);
                             Log.WriteLine($"Building project tree...");
                             BuildProjectTree();
+                            WorkableProject = true;
                             RaisePropertyChangedEvent("ProjectOpened");
                             RaisePropertyChangedEvent("ProjectTitle");
                         }

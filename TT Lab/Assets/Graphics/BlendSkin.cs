@@ -27,7 +27,7 @@ namespace TT_Lab.Assets.Graphics
             throw new NotImplementedException();
         }
 
-        public override UserControl GetEditor()
+        public override Type GetEditorType()
         {
             throw new NotImplementedException();
         }

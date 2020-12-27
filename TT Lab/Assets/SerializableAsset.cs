@@ -50,7 +50,7 @@ namespace TT_Lab.Assets
             {
                 writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
             }
-            // Created data needs to be saved on disk but then disposed of since we are not gonna need it unless user wishes to edit the exact asset
+            // Created or loaded data needs to be saved on disk but then disposed of since we are not gonna need it unless user wishes to edit the exact asset
             if (assetData != null)
             {
                 assetData.Save(System.IO.Path.Combine(path, Data));
@@ -65,7 +65,7 @@ namespace TT_Lab.Assets
 
         public abstract void ToRaw(Byte[] data);
         public abstract Byte[] ToFormat();
-        public abstract UserControl GetEditor();
+        public abstract Type GetEditorType();
 
         public abstract AbstractAssetData GetData();
     }

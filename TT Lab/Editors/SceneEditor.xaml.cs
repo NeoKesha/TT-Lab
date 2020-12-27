@@ -30,8 +30,9 @@ namespace TT_Lab.Editors
         {
         }
 
-        public SceneEditor(ChunkFolder chunk)
+        public SceneEditor(AssetViewModel chunkAss)
         {
+            var chunk = (ChunkFolder)chunkAss.Asset;
             foreach (var item in ((FolderData)chunk.GetData()).Children)
             {
                 chunkTree.Add(new AssetViewModel(item));

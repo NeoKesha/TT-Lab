@@ -18,7 +18,20 @@ namespace TT_Lab.Command
 
         public void Execute(Object parameter = null)
         {
-            throw new NotImplementedException();
+            ProjectManagerSingleton.PM.WorkableProject = false;
+            try
+            {
+                var pr = ProjectManagerSingleton.PM.OpenedProject;
+                pr.Serialize();
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine($"Error saving project: {ex.Message}");
+            }
+            finally
+            {
+                ProjectManagerSingleton.PM.WorkableProject = true;
+            }
         }
 
         public void Unexecute()

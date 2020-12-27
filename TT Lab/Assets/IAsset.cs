@@ -75,10 +75,10 @@ namespace TT_Lab.Assets
         Boolean IsLoaded { get; }
 
         /// <summary>
-        /// Adds asset's editor with a ViewModel bind to asset's data
+        /// 
         /// </summary>
         /// <returns>Asset's editor type</returns>
-        UserControl GetEditor();
+        Type GetEditorType();
 
         /// <summary>
         /// Loads in asset's data if it's not loaded

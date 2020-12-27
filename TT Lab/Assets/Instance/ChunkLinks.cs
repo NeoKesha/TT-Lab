@@ -24,7 +24,7 @@ namespace TT_Lab.Assets.Instance
 
         public override String Type => "ChunkLinks";
 
-        public override UserControl GetEditor()
+        public override Type GetEditorType()
         {
             throw new NotImplementedException();
         }

@@ -28,10 +28,15 @@ namespace TT_Lab.Editors
            InitializeComponent();
         }
 
-        public AnimationEditor(Animation animation) : base(animation)
+        public AnimationEditor(AssetViewModel animation) : base(animation)
         {
             InitializeComponent();
-            BitfieldBox.Text = "0x"+ ((AnimationData)animation.GetData()).Bitfield.ToString("X");
+            DataContext = animation.Asset.GetData();
+        }
+
+        private void BitfieldBox_PreviewTextInput(Object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !uint.TryParse(e.Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out uint _);
         }
     }
 }

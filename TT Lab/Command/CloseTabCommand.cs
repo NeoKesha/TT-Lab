@@ -14,16 +14,14 @@ namespace TT_Lab.Command
 
         private TabControl _tabsContainer;
         private object _tabToClose;
-        private AssetViewModel _viewModel;
 
         public CloseTabCommand(TabControl tabs)
         {
             _tabsContainer = tabs;
         }
 
-        public CloseTabCommand(TabControl tabs, object tabToClose, AssetViewModel viewModel) : this(tabs)
+        public CloseTabCommand(TabControl tabs, object tabToClose) : this(tabs)
         {
-            _viewModel = viewModel;
             _tabToClose = tabToClose;
         }
 

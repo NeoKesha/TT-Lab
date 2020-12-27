@@ -34,9 +34,9 @@ namespace TT_Lab.Assets
             return base.GetData();
         }
 
-        public override UserControl GetEditor()
+        public override Type GetEditorType()
         {
-            return new SceneEditor(this);
+            return typeof(SceneEditor);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace TT_Lab.Assets.Instance
             throw new NotImplementedException();
         }
 
-        public override UserControl GetEditor()
+        public override Type GetEditorType()
         {
             throw new NotImplementedException();
         }

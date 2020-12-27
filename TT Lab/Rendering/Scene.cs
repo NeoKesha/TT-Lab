@@ -32,7 +32,7 @@ namespace TT_Lab.Rendering
         // Scene rendering
         private CollisionData colData;
         private VertexBufferArray collisionBuffer;
-        private ushort[] indices;
+        private uint[] indices;
         private ShaderProgram shader;
         private List<IRenderable> objects = new List<IRenderable>();
 
@@ -58,16 +58,42 @@ namespace TT_Lab.Rendering
             var vertices = new List<float>();
             var vert3s = new List<Vector3>();
             var colors = new List<float>();
-            var indices = new List<ushort>();
-            
-            /*foreach (var v in collisionData.Vectors)
+            var indices = new List<uint>();
+
+            var surfaceColors = new System.Drawing.Color[]
             {
-                var vec = new vec3(-v.X, v.Y, v.Z);
-                var nor = glm.normalize(vec);
-                var col = new vec4(nor.x, nor.y, nor.z, 1.0f);
-                vertices.AddRange(vec.to_array());
-                colors.AddRange(col.to_array());
-            }*/
+                System.Drawing.Color.White,
+                System.Drawing.Color.Red,
+                System.Drawing.Color.Brown,
+                System.Drawing.Color.Cyan,
+                System.Drawing.Color.Blue,
+                System.Drawing.Color.Pink,
+                System.Drawing.Color.Yellow,
+                System.Drawing.Color.Gray,
+                System.Drawing.Color.DarkGray,
+                System.Drawing.Color.Green,
+                System.Drawing.Color.Gold,
+                System.Drawing.Color.Aqua,
+                System.Drawing.Color.SkyBlue,
+                System.Drawing.Color.AntiqueWhite,
+                System.Drawing.Color.Bisque,
+                System.Drawing.Color.Chocolate,
+                System.Drawing.Color.DarkSeaGreen,
+                System.Drawing.Color.Azure,
+                System.Drawing.Color.HotPink,
+                System.Drawing.Color.Honeydew,
+                System.Drawing.Color.Lime,
+                System.Drawing.Color.Magenta,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+                System.Drawing.Color.White,
+            };
             foreach (var tri in collisionData.Triangles)
             {
                 var v1 = collisionData.Vectors[tri.Vector1Index];
@@ -79,30 +105,26 @@ namespace TT_Lab.Rendering
                 vert3s.Add(vec1);
                 vert3s.Add(vec2);
                 vert3s.Add(vec3);
-                indices.Add((ushort)(vert3s.Count - 3));
-                indices.Add((ushort)(vert3s.Count - 2));
-                indices.Add((ushort)(vert3s.Count - 1));
+                indices.Add((uint)(vert3s.Count - 1));
+                indices.Add((uint)(vert3s.Count - 2));
+                indices.Add((uint)(vert3s.Count - 3));
                 vertices.AddRange(vec1.ToArray());
                 vertices.AddRange(vec2.ToArray());
                 vertices.AddRange(vec3.ToArray());
-                
-                vec1.Normalize();
-                vec2.Normalize();
-                vec3.Normalize();
-                var col = new vec4(vec1.X, vec1.Y, vec1.Z, 1.0f);
+
+                var vecCol = surfaceColors[tri.SurfaceIndex];
+                var col = new vec4(vecCol.R / 255f, vecCol.G / 255f, vecCol.B / 255f, 1.0f);
                 colors.AddRange(col.to_array());
-                col = new vec4(vec2.X, vec2.Y, vec2.Z, 1.0f);
                 colors.AddRange(col.to_array());
-                col = new vec4(vec3.X, vec3.Y, vec3.Z, 1.0f);
                 colors.AddRange(col.to_array());
             }
 
             var normals = new Vector3[colData.Triangles.Count * 3];
             for (var i = 0; i < indices.Count; i += 3)
             {
-                var vec1 = vert3s[indices[i]];
-                var vec2 = vert3s[indices[i + 1]];
-                var vec3 = vert3s[indices[i + 2]];
+                var vec1 = vert3s[(int)indices[i]];
+                var vec2 = vert3s[(int)indices[i + 1]];
+                var vec3 = vert3s[(int)indices[i + 2]];
 
                 normals[indices[i]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
                 normals[indices[i + 1]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
@@ -155,7 +177,7 @@ namespace TT_Lab.Rendering
 
             // Draw collision
             collisionBuffer.Bind();
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedShort, IntPtr.Zero);
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             collisionBuffer.Unbind();
 
             Unbind();
@@ -165,17 +187,17 @@ namespace TT_Lab.Rendering
         {
             shader.Bind();
             // Fragment program uniforms
-            shader.SetUniform3("AmbientMaterial", 0.25f, 0.25f, 0.25f);
+            shader.SetUniform3("AmbientMaterial", 0.15f, 0.15f, 0.15f);
             shader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
             shader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-            shader.SetUniform1("Shininess", 50f);
+            shader.SetUniform3("LightDirection", cameraDirection.x, cameraDirection.y, cameraDirection.z);
 
             // Vertex program uniforms
             shader.SetUniformMatrix4("Projection", projectionMat.to_array());
             shader.SetUniformMatrix4("View", viewMat.to_array());
             shader.SetUniformMatrix4("Model", modelMat.to_array());
             shader.SetUniformMatrix3("NormalMatrix", normalMat.to_array());
-            shader.SetUniform3("DiffuseMaterial", 0f, 0.75f, 0.75f);
+            shader.SetUniform3("DiffuseMaterial", 0.75f, 0.75f, 0.75f);
 
             collisionBuffer.Bind();
         }

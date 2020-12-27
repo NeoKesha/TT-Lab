@@ -18,9 +18,9 @@ namespace TT_Lab.Editors
             //throw new Exception("Can't create BaseEditor with no asset view model bound!");
         }
 
-        public BaseEditor(IAsset asset)
+        public BaseEditor(AssetViewModel asset)
         {
-            AssetViewModel = new AssetViewModel(asset.UUID);
+            AssetViewModel = asset;
         }
     }
 }

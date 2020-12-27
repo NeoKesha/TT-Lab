@@ -17,9 +17,9 @@ namespace TT_Lab.Rendering.Buffers
             bufferObject = ids[0];
         }
 
-        public void SetData(ushort[] rawData)
+        public void SetData(uint[] rawData)
         {
-            GL.BufferData(BufferTarget.ElementArrayBuffer, rawData.Length * sizeof(ushort), rawData, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, rawData.Length * sizeof(uint), rawData, BufferUsageHint.StaticDraw);
         }
 
         public void Bind()

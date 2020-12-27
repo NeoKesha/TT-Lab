@@ -33,7 +33,7 @@ namespace TT_Lab.Assets.Code
             throw new NotImplementedException();
         }
 
-        public override UserControl GetEditor()
+        public override Type GetEditorType()
         {
             throw new NotImplementedException();
         }

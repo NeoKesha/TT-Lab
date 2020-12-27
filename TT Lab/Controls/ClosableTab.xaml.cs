@@ -28,10 +28,10 @@ namespace TT_Lab.Controls
             InitializeComponent();
         }
 
-        public ClosableTab(string name, TabControl container, object tabParent, AssetViewModel viewModel) : this()
+        public ClosableTab(string name, TabControl container, object tabParent) : this()
         {
             TabName.Content = name;
-            CloseButton.Command = new CloseTabCommand(container, tabParent, viewModel);
+            CloseButton.Command = new CloseTabCommand(container, tabParent);
         }
     }
 }
