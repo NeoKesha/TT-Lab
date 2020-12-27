@@ -118,9 +118,9 @@ namespace TT_Lab.AssetData.Instance
         public UInt32 TypeIndex2 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty(Required = Required.AllowNull)]
         public CameraSubBase MainCamera1 { get; set; }
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty(Required = Required.AllowNull)]
         public CameraSubBase MainCamera2 { get; set; }
 
         protected override void Dispose(Boolean disposing)
