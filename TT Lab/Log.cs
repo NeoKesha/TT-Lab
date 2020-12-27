@@ -20,7 +20,7 @@ namespace TT_Lab
         public static void WriteLine(string text)
         {
             if (logBox == null) throw new ArgumentNullException("logBox was not set to write the logs in!");
-            logBox.Dispatcher.BeginInvoke((Action)(() => logBox.AppendText(text + '\n')));
+            logBox.Dispatcher.BeginInvoke((Action)(() => logBox.AppendText(DateTime.Now + ": " + text + '\n')));
         }
 
         public static void Clear()

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
+using TT_Lab.Controls;
 using TT_Lab.Project;
 
 namespace TT_Lab.ViewModels
@@ -18,7 +19,7 @@ namespace TT_Lab.ViewModels
         private IReadOnlyCollection<AssetViewModel> _children;
         private Boolean _isSelected;
         private Boolean _isExpanded;
-        private TabItem _editor;
+        private Control _editor;
 
         public AssetViewModel(Guid asset) : this(asset, null) { }
 
@@ -45,25 +46,31 @@ namespace TT_Lab.ViewModels
                 return _editor != null;
             }
         }
-        public TabItem Editor
+        public Control GetEditor(TabControl tabContainer)
         {
-            get
+            if (_editor == null)
             {
-                if (_editor == null)
+                _editor = new TabItem
                 {
-                    _editor = new TabItem
-                    {
-                        Header = Alias,
-                        Content = Asset.GetEditor()
-                    };
-                }
-                return _editor;
+                    Header = new ClosableTab(Alias, tabContainer, _editor, this),
+                    Content = Asset.GetEditor()
+                };
+                _editor.Unloaded += (sender, e) =>
+                {
+                    CloseEditor();
+                };
             }
+            return _editor;
+        }
+        public void CloseEditor()
+        {
+            _editor = null;
         }
         public IReadOnlyCollection<AssetViewModel> Children
         {
             get
             {
+                if (_asset.Type == "ChunkFolder") return null;
                 return _children;
             }
         }

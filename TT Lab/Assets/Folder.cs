@@ -39,7 +39,7 @@ namespace TT_Lab.Assets
             }
         }
 
-        private Folder(UInt32 id, String name) : base(id, name)
+        protected Folder(UInt32 id, String name) : base(id, name)
         {
             IsLoaded = true;
             assetData = new FolderData();
