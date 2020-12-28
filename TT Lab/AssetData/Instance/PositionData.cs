@@ -13,6 +13,8 @@ namespace TT_Lab.AssetData.Instance
 {
     public class PositionData : AbstractAssetData
     {
+        private Vector4 coords;
+
         public PositionData()
         {
         }
@@ -23,7 +25,17 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Vector4 Coords { get; set; }
+        public Vector4 Coords {
+            get => coords;
+            set
+            {
+                if (coords.X != value.X || coords.Y != value.Y || coords.Z != value.Z || coords.W != value.W)
+                {
+                    coords = value;
+                    NotifyChange("Coords");
+                }
+            }
+        }
 
         protected override void Dispose(Boolean disposing)
         {

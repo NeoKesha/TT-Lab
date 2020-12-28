@@ -161,6 +161,12 @@
     <Compile Include="Controls\BaseTextBox.xaml.cs">
       <DependentUpon>BaseTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LabeledTextBox.xaml.cs">
+      <DependentUpon>LabeledTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\Instance\Position.xaml.cs">
+      <DependentUpon>Position.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\CloneUtils.cs" />
     <Compile Include="Command\CloseTabCommand.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
@@ -206,7 +212,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\LabeledTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Editors\AnimationEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Editors\Instance\Position.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -9,9 +9,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="217*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="228*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40*"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="119*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Header="Chunk tree">
             <TreeView x:Name="ChunkTree" Margin="0"
@@ -32,8 +38,11 @@
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-        <GroupBox Header="Chunk viewer" Grid.Column="1">
+        <GroupBox Header="Chunk viewer" Grid.Column="2" Grid.RowSpan="3">
             <WindowsFormsHost x:Name="GLHost" Margin="0"/>
         </GroupBox>
+        <GridSplitter Background="#FFCBE082" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Top" Height="5" ResizeBehavior="PreviousAndNext"/>
+        <GroupBox x:Name="ItemEditorContainer" Header="Item editor" Margin="0" Grid.Row="2" Background="White"/>
+        <GridSplitter Background="#FFCBE082" HorizontalAlignment="Center" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="1" Grid.RowSpan="3" Width="5"/>
     </Grid>
 </local:BaseEditor>
