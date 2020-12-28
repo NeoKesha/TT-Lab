@@ -175,10 +175,12 @@ namespace TT_Lab.Rendering
 
             Bind();
 
+            GL.CullFace(CullFaceMode.FrontAndBack);
+            GL.Enable(EnableCap.DepthTest);
             // Draw collision
-            collisionBuffer.Bind();
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-            collisionBuffer.Unbind();
+            GL.CullFace(CullFaceMode.Back);
+            GL.Disable(EnableCap.DepthTest);
 
             Unbind();
         }
