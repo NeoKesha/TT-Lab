@@ -1,10 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Twinsanity.Libraries
 {
     public static class RIFF
     {
-        public static void SaveRiff(BinaryWriter writer, byte[] pcm, short channels, int samplerate)
+        public static void SaveRiff(BinaryWriter writer, byte[] pcm, ref short channels, ref UInt32 samplerate)
         {
             writer.Write("RIFF".ToCharArray());
             writer.Write(36 + pcm.Length);
@@ -20,6 +21,15 @@ namespace Twinsanity.Libraries
             writer.Write("data".ToCharArray());
             writer.Write(pcm.Length);
             writer.Write(pcm);
+        }
+        public static byte[] LoadRiff(BinaryReader reader,ref short channels, ref UInt32 samplerate)
+        {
+            reader.BaseStream.Position = 22;
+            channels = reader.ReadInt16();
+            samplerate = reader.ReadUInt32();
+            reader.BaseStream.Position += 16;
+            var len = reader.ReadInt32();
+            return reader.ReadBytes(len);
         }
     }
 }

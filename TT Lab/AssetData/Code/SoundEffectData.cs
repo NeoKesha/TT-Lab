@@ -19,6 +19,7 @@ namespace TT_Lab.AssetData.Code
         public SoundEffectData(PS2AnySound sound) : this()
         {
             Frequency = sound.GetFreq();
+            Channels = 1;
             ADPCM adpcm = new ADPCM();
             using (MemoryStream input = new MemoryStream(sound.Sound))
             using (MemoryStream output = new MemoryStream())
@@ -30,7 +31,8 @@ namespace TT_Lab.AssetData.Code
             }
         }
         Byte[] PCM;
-        UInt16 Frequency;
+        UInt32 Frequency;
+        Int16 Channels;
 
         protected override void Dispose(Boolean disposing)
         {
@@ -41,16 +43,16 @@ namespace TT_Lab.AssetData.Code
             using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
             using (BinaryWriter writer = new BinaryWriter(fs))
             {
-                RIFF.SaveRiff(writer, PCM, 1, Frequency);
+                RIFF.SaveRiff(writer, PCM, ref Channels, ref Frequency);
             }
         }
 
         public override void Load(String dataPath)
         {
             using (FileStream fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read))
-            using (StreamReader reader = new StreamReader(fs))
+            using (BinaryReader reader = new BinaryReader(fs))
             {
-                
+                PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
             }
         }
     }
