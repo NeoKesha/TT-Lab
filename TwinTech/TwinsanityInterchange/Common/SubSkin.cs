@@ -17,8 +17,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
         private Byte[] VifCode;
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
-        public List<Vector4> Normals { get; set; }
+        public List<Vector4> Shite { get; set; }
         public List<Vector4> Colors { get; set; }
+        public List<bool> Connection { get; set; }
 
         public int GetLength()
         {
@@ -39,8 +40,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var data = interpreter.GetMem();
             Vertexes = new List<Vector4>();
             UVW = new List<Vector4>();
-            Normals = new List<Vector4>();
+            Shite = new List<Vector4>();
             Colors = new List<Vector4>();
+            Connection = new List<bool>();
             for (var i = 0; i < data.Count;)
             {
                 var verts = (data[i][0].GetBinaryX() & 0xFF);
@@ -56,20 +58,29 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 Vertexes.AddRange(data[i + 3]);
                 if (fields > 1)
                 {
+                    var colors_conn = data[i + 4];
+                    foreach (var e in colors_conn)
+                    {
+                        var conn = (e.GetBinaryW() & 0xFF00) >> 8;
+                        Connection.Add(conn == 128 ? false : true);
+                        var r = (e.GetBinaryX() & 0xFF) / 255.0f;
+                        var g = (e.GetBinaryX() & 0xFF) / 255.0f;
+                        var b = (e.GetBinaryX() & 0xFF) / 255.0f;
+                        Colors.Add(new Vector4(r, g, b, 1.0f));
+                    }
+                }
+                if (fields > 5)
+                {
                     UVW.AddRange(data[i + 4]);
                 }
-                if (fields > 2)
+                if (fields > 6)
                 {
-                    Normals.AddRange(data[i + 5]);
-                }
-                if (fields > 3)
-                {
-                    Colors.AddRange(data[i + 6]);
+                    Shite.AddRange(data[i + 5]);
                 }
                 i += fields + 3;
                 TrimList(UVW, Vertexes.Count);
-                TrimList(Normals, Vertexes.Count);
-                TrimList(Colors, Vertexes.Count, new Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+                TrimList(Shite, Vertexes.Count);
+                TrimList(Colors, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
         public void Write(BinaryWriter writer)

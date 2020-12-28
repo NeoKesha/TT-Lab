@@ -97,8 +97,8 @@
     <Compile Include="AssetData\Graphics\RigidModelData.cs" />
     <Compile Include="AssetData\Graphics\SkinData.cs" />
     <Compile Include="AssetData\Graphics\SkydomeData.cs" />
-    <Compile Include="AssetData\Graphics\SubModels\SubModelData.cs" />
-    <Compile Include="AssetData\Graphics\SubModels\SubSkinData.cs" />
+    <Compile Include="AssetData\Graphics\SubModels\IndexedFace.cs" />
+    <Compile Include="AssetData\Graphics\SubModels\Vertex.cs" />
     <Compile Include="AssetData\Graphics\TextureData.cs" />
     <Compile Include="AssetData\Instance\AiPathData.cs" />
     <Compile Include="AssetData\Instance\AiPositionData.cs" />
