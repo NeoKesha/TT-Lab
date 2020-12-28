@@ -4,10 +4,8 @@ namespace Twinsanity.Libraries
 {
     public static class RIFF
     {
-        public static byte[] SaveRiff(byte[] pcm, short channels, int samplerate)
+        public static void SaveRiff(BinaryWriter writer, byte[] pcm, short channels, int samplerate)
         {
-            byte[] data = new byte[pcm.Length + 44];
-            BinaryWriter writer = new BinaryWriter(new MemoryStream(data));
             writer.Write("RIFF".ToCharArray());
             writer.Write(36 + pcm.Length);
             writer.Write("WAVE".ToCharArray());
@@ -22,8 +20,6 @@ namespace Twinsanity.Libraries
             writer.Write("data".ToCharArray());
             writer.Write(pcm.Length);
             writer.Write(pcm);
-            writer.Close();
-            return data;
         }
     }
 }

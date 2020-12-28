@@ -14,6 +14,7 @@ namespace TT_Lab.Assets.Graphics
         public Model(UInt32 id, String name, PS2AnyModel model) : base(id, name)
         {
             assetData = new ModelData(model);
+            Raw = false;
         }
 
         public Model()

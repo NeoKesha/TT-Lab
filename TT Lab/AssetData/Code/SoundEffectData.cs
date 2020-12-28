@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.AssetData.Code
@@ -16,21 +18,40 @@ namespace TT_Lab.AssetData.Code
 
         public SoundEffectData(PS2AnySound sound) : this()
         {
-            Header = sound.Header;
-            UnkFlag = sound.UnkFlag;
-            FreqFac = sound.FreqFac;
+            Frequency = sound.GetFreq();
+            ADPCM adpcm = new ADPCM();
+            using (MemoryStream input = new MemoryStream(sound.Sound))
+            using (MemoryStream output = new MemoryStream())
+            {
+                BinaryReader reader = new BinaryReader(input);
+                BinaryWriter writer = new BinaryWriter(output);
+                adpcm.ToPCMMono(reader, writer);
+                PCM = output.ToArray();
+            }
         }
-
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Header { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Byte UnkFlag { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Byte FreqFac { get; set; }
+        Byte[] PCM;
+        UInt16 Frequency;
 
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+        public override void Save(string dataPath)
+        {
+            using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
+            using (BinaryWriter writer = new BinaryWriter(fs))
+            {
+                RIFF.SaveRiff(writer, PCM, 1, Frequency);
+            }
+        }
+
+        public override void Load(String dataPath)
+        {
+            using (FileStream fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read))
+            using (StreamReader reader = new StreamReader(fs))
+            {
+                
+            }
         }
     }
 }

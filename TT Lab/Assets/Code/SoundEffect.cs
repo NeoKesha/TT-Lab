@@ -14,12 +14,14 @@ namespace TT_Lab.Assets.Code
     public class SoundEffect : SerializableAsset
     {
         public override String Type => "SoundEffect";
+        protected override String DataExt => ".wav";
 
         public SoundEffect() { }
 
         public SoundEffect(UInt32 id, String name, PS2AnySound sound) : base(id, name)
         {
             assetData = new SoundEffectData(sound);
+            Raw = false;
         }
 
         public override Byte[] ToFormat()
