@@ -17,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         private Byte[] VifCode;
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
-        public List<Vector4> Shite { get; set; }
+        public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Colors { get; set; }
         public List<bool> Connection { get; set; }
 
@@ -40,7 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var data = interpreter.GetMem();
             Vertexes = new List<Vector4>();
             UVW = new List<Vector4>();
-            Shite = new List<Vector4>();
+            EmitColor = new List<Vector4>();
             Colors = new List<Vector4>();
             Connection = new List<bool>();
             for (var i = 0; i < data.Count;)
@@ -71,15 +71,23 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 }
                 if (fields > 5)
                 {
-                    UVW.AddRange(data[i + 4]);
+                    UVW.AddRange(data[i + 5]);
                 }
                 if (fields > 6)
                 {
-                    Shite.AddRange(data[i + 5]);
+                    foreach (var e in data[i + 6])
+                    {
+                        Vector4 emit = new Vector4(e);
+                        emit.X = (emit.X + 126.0f) / 256.0f;
+                        emit.Y = (emit.Y + 126.0f) / 256.0f;
+                        emit.Z = (emit.Z + 126.0f) / 256.0f;
+                        emit.W = (emit.W + 126.0f) / 256.0f;
+                        EmitColor.Add(emit);
+                    }
                 }
                 i += fields + 3;
                 TrimList(UVW, Vertexes.Count);
-                TrimList(Shite, Vertexes.Count);
+                TrimList(EmitColor, Vertexes.Count);
                 TrimList(Colors, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }

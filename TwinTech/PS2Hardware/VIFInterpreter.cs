@@ -336,15 +336,18 @@ namespace Twinsanity.PS2Hardware
                             shift[0] = 16;
                             shift[1] = 24;
                         }
-                        UInt32 w1 = (src[srcIdx] & mask[0]) >> shift[0];
-                        UInt32 w2 = (src[srcIdx] & mask[1]) >> shift[1];
-                        if (unsigned == 0)
+                        Byte w1 = (Byte)((src[srcIdx] & mask[0]) >> shift[0]);
+                        Byte w2 = (Byte)((src[srcIdx] & mask[1]) >> shift[1]);
+                        SByte s1 = (SByte)w1;
+                        SByte s2 = (SByte)w2;
+                        /*if (unsigned == 0)
                         {
                             SEXT8(ref w1);
                             SEXT8(ref w2);
-                        }
-                        v1.SetBinaryX(w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
-                        v1.SetBinaryY(w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
+                        }*/
+
+                        v1.X = (s1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
+                        v1.Y = (s2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         dst.Add(v1);
                         if (i % 2 != 0)
                         {
@@ -440,21 +443,24 @@ namespace Twinsanity.PS2Hardware
                                 incIdx[2] = true;
                                 break;
                         }
-                        UInt32 w1 = (src[srcIdx] & mask[0]) >> shift[0];
+                        Byte w1 = (Byte)((src[srcIdx] & mask[0]) >> shift[0]);
                         if (incIdx[0]) srcIdx++;
-                        UInt32 w2 = (src[srcIdx] & mask[1]) >> shift[1];
+                        Byte w2 = (Byte)((src[srcIdx] & mask[1]) >> shift[1]);
                         if (incIdx[1]) srcIdx++;
-                        UInt32 w3 = (src[srcIdx] & mask[2]) >> shift[2];
+                        Byte w3 = (Byte)((src[srcIdx] & mask[2]) >> shift[2]);
                         if (incIdx[2]) srcIdx++;
-                        if (unsigned == 0)
+                        /*if (unsigned == 0)
                         {
                             SEXT8(ref w1);
                             SEXT8(ref w2);
                             SEXT8(ref w3);
-                        }
-                        v1.SetBinaryX(w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
-                        v1.SetBinaryY(w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
-                        v1.SetBinaryZ(w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
+                        }*/
+                        SByte s1 = (SByte)w1;
+                        SByte s2 = (SByte)w2;
+                        SByte s3 = (SByte)w3;
+                        v1.X = (s1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
+                        v1.Y = (s2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
+                        v1.Z = (s3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
                         dst.Add(v1);
                     }
                     break;
@@ -495,21 +501,25 @@ namespace Twinsanity.PS2Hardware
                     for (int i = 0; i < src.Count; ++i)
                     {
                         Vector4 v = new Vector4();
-                        UInt32 w1 = src[i] & 0x000000FF;
-                        UInt32 w2 = (src[i] & 0x0000FF00) >> 8;
-                        UInt32 w3 = (src[i] & 0x00FF0000) >> 16;
-                        UInt32 w4 = (src[i] & 0xFF000000) >> 24;
-                        if (unsigned == 0)
+                        Byte w1 = (Byte)(src[i] & 0x000000FF);
+                        Byte w2 = (Byte)((src[i] & 0x0000FF00) >> 8);
+                        Byte w3 = (Byte)((src[i] & 0x00FF0000) >> 16);
+                        Byte w4 = (Byte)((src[i] & 0xFF000000) >> 24);
+                        /*if (unsigned == 0)
                         {
                             SEXT8(ref w1);
                             SEXT8(ref w2);
                             SEXT8(ref w3);
                             SEXT8(ref w4);
-                        }
-                        v.SetBinaryX(w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
-                        v.SetBinaryY(w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
-                        v.SetBinaryZ(w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
-                        v.SetBinaryW(w4 + (IsInOffsetMode() ? VIFn_R[3] : 0));
+                        }*/
+                        SByte s1 = (SByte)w1;
+                        SByte s2 = (SByte)w2;
+                        SByte s3 = (SByte)w3;
+                        SByte s4 = (SByte)w4;
+                        v.X = (w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
+                        v.Y = (w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
+                        v.Z = (w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
+                        v.W = (w4 + (IsInOffsetMode() ? VIFn_R[3] : 0));
                         dst.Add(v);
                     }
                     break;

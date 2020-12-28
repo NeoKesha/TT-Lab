@@ -42,7 +42,7 @@ namespace TT_Lab.AssetData.Graphics
                     }
                     offset += e.Vertexes.Count;
                     refIndex += 2;
-                    Vertexes.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j]));
+                    Vertexes.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j]));
                 }
             }
         }

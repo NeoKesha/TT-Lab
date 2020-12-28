@@ -41,7 +41,7 @@ namespace TT_Lab.AssetData.Graphics
                         }
                         ++refIndex;
                     }
-                    Vertexes.Add(new Vertex(e.Vertexes[j],e.Colors[j], e.UVW[j]));
+                    Vertexes.Add(new Vertex(e.Vertexes[j],e.Colors[j], e.UVW[j], e.EmitColor[j]));
                 }
                 offset += e.Vertexes.Count;
                 refIndex += 2;
@@ -76,6 +76,10 @@ namespace TT_Lab.AssetData.Graphics
                 writer.WriteLine("property uchar green");
                 writer.WriteLine("property uchar blue");
                 writer.WriteLine("property uchar alpha");
+                writer.WriteLine("property float ered");
+                writer.WriteLine("property float egreen");
+                writer.WriteLine("property float eblue");
+                writer.WriteLine("property float ealpha");
                 writer.WriteLine($"element face {Faces.Count}");
                 writer.WriteLine("property list uchar uint vertex_indices");
                 writer.WriteLine("end_header");

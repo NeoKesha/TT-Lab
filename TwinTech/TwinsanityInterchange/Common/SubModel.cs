@@ -17,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Byte[] UnusedBlob { get; set; }
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
-        public List<Vector4> Shite { get; set; }
+        public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Colors { get; set; }
         public List<bool> Connection { get; set; }
         public SubModel()
@@ -44,7 +44,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var data = interpreter.GetMem();
             Vertexes = new List<Vector4>();
             UVW = new List<Vector4>();
-            Shite = new List<Vector4>();
+            EmitColor = new List<Vector4>();
             Colors = new List<Vector4>();
             Connection = new List<bool>();
             for (var i = 0; i < data.Count; )
@@ -87,12 +87,17 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 {
                     foreach (var e in data[i + 5])
                     {
-                        Shite.Add(new Vector4(e));
+                        Vector4 emit = new Vector4(e);
+                        emit.X = (emit.X + 126.0f) / 256.0f;
+                        emit.Y = (emit.Y + 126.0f) / 256.0f;
+                        emit.Z = (emit.Z + 126.0f) / 256.0f;
+                        emit.W = (emit.W + 126.0f) / 256.0f;
+                        EmitColor.Add(emit);
                     }
                 }
                 i += fields + 2;
                 TrimList(UVW, Vertexes.Count);
-                TrimList(Shite, Vertexes.Count);
+                TrimList(EmitColor, Vertexes.Count);
                 TrimList(Colors, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
@@ -102,14 +107,14 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var unkVec1 = new Vector4();
             var unkVec2 = new Vector4();
             TrimList(UVW, (Int32)VertexesCount);
-            TrimList(Shite, (Int32)VertexesCount);
+            TrimList(EmitColor, (Int32)VertexesCount);
             TrimList(Colors, (Int32)VertexesCount, new Vector4(0.5f, 0.5f, 0.5f, 0.5f));
             var data = new List<List<Vector4>>();
             data.Add(new List<Vector4>() { unkVec1 });
             data.Add(new List<Vector4>() { unkVec2 });
             data.Add(Vertexes);
             data.Add(UVW);
-            data.Add(Shite);
+            data.Add(EmitColor);
             data.Add(Colors);
             //TODO: Pack data to VIF
             writer.Write(VertexesCount);
