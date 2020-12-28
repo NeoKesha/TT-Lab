@@ -77,7 +77,10 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 {
                     foreach (var e in data[i + 4])
                     {
-                        UVW.Add(new Vector4(e));
+                        Vector4 uv = new Vector4(e);
+                        uv.X = (uv.X + 1.0f) / 2.0f;
+                        uv.Y = (uv.Y + 1.0f) / 2.0f;
+                        UVW.Add(uv);
                     }  
                 }
                 if (fields > 3)
