@@ -82,7 +82,7 @@ namespace TT_Lab.ViewModels
                 if (value != _isSelected)
                 {
                     _isSelected = value;
-                    RaisePropertyChangedEvent("IsSelected");
+                    NotifyChange("IsSelected");
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace TT_Lab.ViewModels
                 if (value != _isExpanded)
                 {
                     _isExpanded = value;
-                    RaisePropertyChangedEvent("IsExpanded");
+                    NotifyChange("IsExpanded");
                 }
 
                 if (_isExpanded && _parent != null)
@@ -111,7 +111,7 @@ namespace TT_Lab.ViewModels
                 if (value != _asset.Alias)
                 {
                     _asset.Alias = value;
-                    RaisePropertyChangedEvent("Alias");
+                    NotifyChange("Alias");
                 }
             }
         }

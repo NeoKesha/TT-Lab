@@ -51,7 +51,7 @@ namespace TT_Lab.Project
             set
             {
                 _openedProject = value;
-                RaisePropertyChangedEvent("OpenedProject");
+                NotifyChange("OpenedProject");
             }
         }
 
@@ -66,7 +66,7 @@ namespace TT_Lab.Project
                 if (value != _workableProject)
                 {
                     _workableProject = value;
-                    RaisePropertyChangedEvent("WorkableProject");
+                    NotifyChange("WorkableProject");
                 }
             }
         }
@@ -166,8 +166,8 @@ namespace TT_Lab.Project
                 Log.WriteLine("Building project tree...");
                 BuildProjectTree();
                 WorkableProject = true;
-                RaisePropertyChangedEvent("ProjectOpened");
-                RaisePropertyChangedEvent("ProjectTitle");
+                NotifyChange("ProjectOpened");
+                NotifyChange("ProjectTitle");
                 Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
             });
         }
@@ -194,8 +194,8 @@ namespace TT_Lab.Project
                             Log.WriteLine($"Building project tree...");
                             BuildProjectTree();
                             WorkableProject = true;
-                            RaisePropertyChangedEvent("ProjectOpened");
-                            RaisePropertyChangedEvent("ProjectTitle");
+                            NotifyChange("ProjectOpened");
+                            NotifyChange("ProjectTitle");
                         }
                         catch (Exception ex)
                         {
@@ -217,9 +217,9 @@ namespace TT_Lab.Project
             OpenedProject = null;
             ProjectTree = null;
             Log.Clear();
-            RaisePropertyChangedEvent("ProjectOpened");
-            RaisePropertyChangedEvent("ProjectTitle");
-            RaisePropertyChangedEvent("ProjectTree");
+            NotifyChange("ProjectOpened");
+            NotifyChange("ProjectTitle");
+            NotifyChange("ProjectTree");
         }
 
         public void ExecuteCommand(ICommand command)
@@ -245,7 +245,7 @@ namespace TT_Lab.Project
                            where ((FolderData)folder.GetData()).Parent == null
                            orderby folder.Order
                            select new AssetViewModel(folder.UUID)).ToList();
-            RaisePropertyChangedEvent("ProjectTree");
+            NotifyChange("ProjectTree");
         }
 
         private void AddRecentlyOpened(string path)
@@ -262,8 +262,8 @@ namespace TT_Lab.Project
                 {
                     Properties.Settings.Default.RecentProjects.RemoveAt(10);
                 }
-                RaisePropertyChangedEvent("RecentlyOpened");
-                RaisePropertyChangedEvent("HasRecents");
+                NotifyChange("RecentlyOpened");
+                NotifyChange("HasRecents");
             }
         }
 
@@ -273,8 +273,8 @@ namespace TT_Lab.Project
 
             var recents = Properties.Settings.Default.RecentProjects;
             recents.Remove(path);
-            RaisePropertyChangedEvent("RecentlyOpened");
-            RaisePropertyChangedEvent("HasRecents");
+            NotifyChange("RecentlyOpened");
+            NotifyChange("HasRecents");
         }
     }
 }

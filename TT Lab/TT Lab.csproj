@@ -155,6 +155,12 @@
     <Compile Include="Assets\SerializableAsset.cs" />
     <Compile Include="Assets\Graphics\Skydome.cs" />
     <Compile Include="Assets\Graphics\Texture.cs" />
+    <Compile Include="Command\RedoCommand.cs" />
+    <Compile Include="Command\SetDataCommand.cs" />
+    <Compile Include="Command\UndoCommand.cs" />
+    <Compile Include="Controls\BaseTextBox.xaml.cs">
+      <DependentUpon>BaseTextBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\CloneUtils.cs" />
     <Compile Include="Command\CloseTabCommand.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
@@ -189,6 +195,10 @@
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\BaseTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

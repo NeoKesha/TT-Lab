@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.ViewModels;
 
 namespace TT_Lab.AssetData
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public abstract class AbstractAssetData : IDisposable
+    public abstract class AbstractAssetData : ObservableObject, IDisposable
     {
         protected Boolean disposedValue;
 

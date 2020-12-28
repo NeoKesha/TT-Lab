@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
+using TT_Lab.AssetData.Code;
+using TT_Lab.Command;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors
@@ -26,7 +28,24 @@ namespace TT_Lab.Editors
 
         private void BitfieldBox_TextChanged(Object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (!uint.TryParse(BitfieldBox.Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out uint test))
+            {
+                return;
+            }
+            var animData = (AnimationData)DataContext;
+            if (test == animData.Bitfield) return;
+            CommandManager.Execute(new SetDataCommand(animData, "Bitfield",
+                uint.Parse(BitfieldBox.Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture)));
+        }
 
+        private void BitfieldBox_UndoPerformed(Object sender, EventArgs e)
+        {
+            CommandManager.Undo();
+        }
+
+        private void BitfieldBox_RedoPerformed(Object sender, EventArgs e)
+        {
+            CommandManager.Redo();
         }
     }
 }

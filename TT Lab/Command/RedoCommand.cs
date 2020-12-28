@@ -11,14 +11,21 @@ namespace TT_Lab.Command
     {
         public event EventHandler CanExecuteChanged;
 
+        private CommandManager _comManager;
+
+        public RedoCommand(CommandManager comManager)
+        {
+            _comManager = comManager;
+        }
+
         public Boolean CanExecute(Object parameter)
         {
-            return ProjectManagerSingleton.PM.ProjectOpened;
+            return _comManager.CanRedo;
         }
 
         public void Execute(Object parameter = null)
         {
-            ProjectManagerSingleton.PM.Redo();
+            _comManager.Redo();
         }
 
         public void Unexecute()

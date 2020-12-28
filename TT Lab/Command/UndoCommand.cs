@@ -11,14 +11,21 @@ namespace TT_Lab.Command
     {
         public event EventHandler CanExecuteChanged;
 
+        private CommandManager _comManager;
+
+        public UndoCommand(CommandManager comManager)
+        {
+            _comManager = comManager;
+        }
+
         public Boolean CanExecute(Object parameter)
         {
-            return ProjectManagerSingleton.PM.ProjectOpened;
+            return _comManager.CanUndo;
         }
 
         public void Execute(Object parameter = null)
         {
-            ProjectManagerSingleton.PM.Undo();
+            _comManager.Undo();
         }
 
         public void Unexecute()

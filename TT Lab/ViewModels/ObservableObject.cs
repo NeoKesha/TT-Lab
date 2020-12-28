@@ -6,7 +6,7 @@ namespace TT_Lab.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaisePropertyChangedEvent(string propName)
+        protected void NotifyChange(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }

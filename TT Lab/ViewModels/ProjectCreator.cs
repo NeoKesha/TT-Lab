@@ -43,8 +43,8 @@ namespace TT_Lab.ViewModels
             set
             {
                 _projectName = value;
-                RaisePropertyChangedEvent("CanCreate");
-                RaisePropertyChangedEvent("ProjectName");
+                NotifyChange("CanCreate");
+                NotifyChange("ProjectName");
             }
         }
         public string ProjectPath
@@ -57,8 +57,8 @@ namespace TT_Lab.ViewModels
             {
                 _projectPath = value;
                 Settings.Default.ProjectPath = _projectPath;
-                RaisePropertyChangedEvent("CanCreate");
-                RaisePropertyChangedEvent("ProjectPath");
+                NotifyChange("CanCreate");
+                NotifyChange("ProjectPath");
             }
         }
         public string DiscContentPath
@@ -71,8 +71,8 @@ namespace TT_Lab.ViewModels
             {
                 _discContentPath = value;
                 Settings.Default.DiscContentPath = _discContentPath;
-                RaisePropertyChangedEvent("CanCreate");
-                RaisePropertyChangedEvent("DiscContentPath");
+                NotifyChange("CanCreate");
+                NotifyChange("DiscContentPath");
             }
         }
     }
