@@ -1,0 +1,23 @@
+﻿<base:BaseEditor x:Name="PositionEditorControl" x:Class="TT_Lab.Editors.Instance.Position"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
+             xmlns:base="clr-namespace:TT_Lab.Editors"
+             xmlns:controls="clr-namespace:TT_Lab.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:LabeledTextBox x:Name="XCoord" TextBoxName="X" HorizontalAlignment="Stretch" VerticalAlignment="Center" PreviewTextInput="Coord_PreviewTextInput" TextChanged="XCoord_TextChanged"/>
+        <controls:LabeledTextBox x:Name="YCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Y" PreviewTextInput="Coord_PreviewTextInput" TextChanged="YCoord_TextChanged"/>
+        <controls:LabeledTextBox x:Name="ZCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="2" VerticalAlignment="Center" TextBoxName="Z" PreviewTextInput="Coord_PreviewTextInput" TextChanged="ZCoord_TextChanged"/>
+        <controls:LabeledTextBox x:Name="WCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="3" VerticalAlignment="Center" TextBoxName="W" PreviewTextInput="Coord_PreviewTextInput" TextChanged="WCoord_TextChanged"/>
+    </Grid>
+</base:BaseEditor>

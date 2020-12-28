@@ -336,30 +336,11 @@
 
         <Grid x:Name="MainControlsGrid" Margin="0" Grid.Row="1" IsEnabled="{Binding WorkableProject}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="70*"/>
-                <ColumnDefinition/>
                 <ColumnDefinition Width="200*"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="50*"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="MainLeftGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="25*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="50*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Rows" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Center" Height="5"/>
-                <ScrollViewer x:Name="ChunkInformationViewer" VerticalScrollBarVisibility="Auto">
-                    <TextBox TextWrapping="Wrap" IsReadOnly="True" AllowDrop="False"/>
-                </ScrollViewer>
-                <GroupBox Header="Instance properties" Grid.Row="2">
-                    <ScrollViewer x:Name="InstancePropertiesViewer" Margin="0"/>
-                </GroupBox>
-            </Grid>
-            <Grid x:Name="MainCenterGrid" Grid.Column="2">
+            <Grid x:Name="MainCenterGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100*"/>
                     <RowDefinition/>
@@ -388,7 +369,7 @@
                     </TabItem>
                 </TabControl>
             </Grid>
-            <GroupBox Header="Project tree" Grid.Column="4">
+            <GroupBox Header="Project tree" Grid.Column="2">
                 <TreeView 
                     x:Name="ProjectTree" 
                     ItemsSource="{Binding ProjectTree}" 
@@ -410,7 +391,6 @@
                 </TreeView>
             </GroupBox>
             <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Columns" HorizontalAlignment="Stretch" Grid.Column="1"/>
-            <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Columns" HorizontalAlignment="Stretch" Grid.Column="3"/>
         </Grid>
 
     </Grid>

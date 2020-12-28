@@ -32,5 +32,15 @@ namespace TT_Lab.Editors
         {
             InputBindings.Add(new System.Windows.Input.KeyBinding(command, key, modifierKeys));
         }
+
+        protected void Control_UndoPerformed(Object sender, EventArgs e)
+        {
+            CommandManager.Undo();
+        }
+
+        protected void Control_RedoPerformed(Object sender, EventArgs e)
+        {
+            CommandManager.Redo();
+        }
     }
 }
