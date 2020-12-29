@@ -44,5 +44,18 @@ namespace Twinsanity.TwinsanityInterchange.Common
             vec.W = A / 255.0f;
             return vec;
         }
+
+        public UInt32 ToARGB()
+        {
+            return (UInt32)((A << 24) | (R << 16) | (G << 8) | (B));
+        }
+        public void FromABGR(UInt32 val)
+        {
+            A = (Byte)(((val >> 24) & 0xFF) << 1);
+            B = (Byte)(((val >> 16) & 0xFF) << 1);
+            G = (Byte)(((val >> 8) & 0xFF) << 1);
+            R = (Byte)(((val >> 0) & 0xFF) << 1);
+        }
+
     }
 }

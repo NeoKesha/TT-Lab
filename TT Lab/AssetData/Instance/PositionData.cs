@@ -19,9 +19,9 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public PositionData(PS2AnyPosition position) : this()
+        public PositionData(PS2AnyPosition position)
         {
-            Coords = CloneUtils.Clone(position.Position);
+            coords = CloneUtils.Clone(position.Position);
         }
 
         [JsonProperty(Required = Required.Always)]

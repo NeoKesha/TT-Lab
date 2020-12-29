@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.PS2Hardware;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
@@ -110,6 +112,38 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             writer.Write(TextureData);
         }
 
+        public void CalculateData()
+        {
+            var interpreter = VIFInterpreter.InterpretCode(TextureData);
+            var data = interpreter.GetGifMem();
+            Colors.Clear();
+            switch (TextureFormat)
+            {
+                case TexturePixelFormat.PSMCT32:
+                    for (var i = data[1].Data.Count - 2; i >= 0; i -= 2)
+                    {
+                        UInt64 output1 = data[1].Data[i].Output;
+                        Color c1 = new Color();
+                        c1.FromABGR((UInt32)((output1 >> 0) & 0xFFFFFFFF));
+                        Color c2 = new Color();
+                        c2.FromABGR((UInt32)((output1 >> 32) & 0xFFFFFFFF));
+                        Colors.Add(c2);
+                        Colors.Add(c1);
+                        UInt64 output2 = data[1].Data[i + 1].Output;
+                        Color c3 = new Color();
+                        c3.FromABGR((UInt32)((output2 >> 0) & 0xFFFFFFFF));
+                        Color c4 = new Color();
+                        c4.FromABGR((UInt32)((output2 >> 32) & 0xFFFFFFFF));
+                        Colors.Add(c4);
+                        Colors.Add(c3);
+                    }
+                    break;
+                case TexturePixelFormat.PSMT8:
+
+                    break;
+            }
+        }
+        public List<Color> Colors { get; set; } = new List<Color>();
         public override String GetName()
         {
             return $"Texture {id:X}";

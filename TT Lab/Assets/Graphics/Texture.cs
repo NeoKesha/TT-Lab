@@ -10,10 +10,12 @@ namespace TT_Lab.Assets.Graphics
     public class Texture : SerializableAsset
     {
         public override String Type => "Texture";
+        protected override String DataExt => ".png";
 
         public Texture(UInt32 id, String name, PS2AnyTexture texture) : base(id, name)
         {
             assetData = new TextureData(texture);
+            Raw = false;
         }
 
         public Texture()
