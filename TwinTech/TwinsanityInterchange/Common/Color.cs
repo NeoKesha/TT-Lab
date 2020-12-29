@@ -56,6 +56,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
             G = (Byte)(((val >> 8) & 0xFF) << 1);
             R = (Byte)(((val >> 0) & 0xFF) << 1);
         }
-
+        public override String ToString()
+        {
+            return $"{A} {R} {G} {B}";
+        }
     }
 }

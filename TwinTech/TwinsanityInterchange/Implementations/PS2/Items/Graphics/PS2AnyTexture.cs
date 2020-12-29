@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -120,26 +121,32 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             switch (TextureFormat)
             {
                 case TexturePixelFormat.PSMCT32:
-                    for (var i = data[1].Data.Count - 2; i >= 0; i -= 2)
-                    {
-                        UInt64 output1 = data[1].Data[i].Output;
-                        Color c1 = new Color();
-                        c1.FromABGR((UInt32)((output1 >> 0) & 0xFFFFFFFF));
-                        Color c2 = new Color();
-                        c2.FromABGR((UInt32)((output1 >> 32) & 0xFFFFFFFF));
-                        Colors.Add(c2);
-                        Colors.Add(c1);
-                        UInt64 output2 = data[1].Data[i + 1].Output;
-                        Color c3 = new Color();
-                        c3.FromABGR((UInt32)((output2 >> 0) & 0xFFFFFFFF));
-                        Color c4 = new Color();
-                        c4.FromABGR((UInt32)((output2 >> 32) & 0xFFFFFFFF));
-                        Colors.Add(c4);
-                        Colors.Add(c3);
-                    }
+                    EzSwizzle.TagToColors(data[1], Colors);
                     break;
                 case TexturePixelFormat.PSMT8:
-
+                    byte[] gifData = EzSwizzle.TagToBytes(data[1]);
+                    int RRW = (int)((data[0].Data[1].Output >> 0) & 0xFFFFFFFF);
+                    int RRH = (int)((data[0].Data[1].Output >> 32) & 0xFFFFFFFF);
+                    int Width = (int)(Math.Pow(2, ImageWidthPower));
+                    int Height = (int)(Math.Pow(2, ImageHeightPower));
+                    byte[] rawTextureData = EzSwizzle.writeTexPSMCT32(0, 1, 0, 0, RRW, RRH, gifData);
+                    byte[] texData = EzSwizzle.readTexPSMT8(0, TextureBufferWidth, 0, 0, Width, Height, rawTextureData, false);
+                    byte[] paletteData = EzSwizzle.readTexPSMCT32(ClutBufferBasePointer, 1, 0, 0, 16, 16, rawTextureData, false);
+                    List<Color> palette = EzSwizzle.BytesToColors(paletteData);
+                    for (int i = 0; i < 8; i++)
+                    {
+                        for (int j = 8; j < 16; j++)
+                        {
+                            Color tmp = palette[j + i * 32];
+                            palette[j + i * 32] = palette[j + i * 32 + 8];
+                            palette[j + i * 32 + 8] = tmp;
+                        }
+                    }
+                    int Pixels = Width * Height;
+                    for (var i = 0; i < Pixels; ++i)
+                    {
+                        Colors.Add(palette[texData[i]]);
+                    }
                     break;
             }
         }
