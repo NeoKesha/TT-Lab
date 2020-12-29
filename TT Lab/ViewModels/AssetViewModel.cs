@@ -76,9 +76,9 @@ namespace TT_Lab.ViewModels
             {
                 _editor = new TabItem
                 {
-                    Header = new ClosableTab(Alias, tabContainer, _editor),
                     Content = Activator.CreateInstance(Asset.GetEditorType(), this)
                 };
+                ((TabItem)_editor).Header = new ClosableTab(Alias, tabContainer, _editor);
                 _editor.Unloaded += (sender, e) =>
                 {
                     CloseEditor();

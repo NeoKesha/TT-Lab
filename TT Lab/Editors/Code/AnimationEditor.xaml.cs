@@ -4,7 +4,7 @@ using TT_Lab.AssetData.Code;
 using TT_Lab.Command;
 using TT_Lab.ViewModels;
 
-namespace TT_Lab.Editors
+namespace TT_Lab.Editors.Code
 {
     /// <summary>
     /// Interaction logic for AnimationEditor.xaml

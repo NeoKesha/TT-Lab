@@ -177,7 +177,7 @@
     <Compile Include="Controls\ClosableTab.xaml.cs">
       <DependentUpon>ClosableTab.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Editors\AnimationEditor.xaml.cs">
+    <Compile Include="Editors\Code\AnimationEditor.xaml.cs">
       <DependentUpon>AnimationEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Editors\BaseEditor.cs" />
@@ -216,7 +216,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Editors\AnimationEditor.xaml">
+    <Page Include="Editors\Code\AnimationEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -35,7 +35,7 @@ namespace TT_Lab.Assets.Code
 
         public override Type GetEditorType()
         {
-            return typeof(AnimationEditor);
+            return typeof(Editors.Code.AnimationEditor);
         }
 
         public override AbstractAssetData GetData()
