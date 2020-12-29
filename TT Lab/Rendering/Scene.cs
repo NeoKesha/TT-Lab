@@ -11,6 +11,7 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
+using TT_Lab.ViewModels;
 
 namespace TT_Lab.Rendering
 {
@@ -36,10 +37,15 @@ namespace TT_Lab.Rendering
         private ShaderProgram shader;
         private List<IRenderable> objects = new List<IRenderable>();
 
-        public Scene(CollisionData collisionData, float width, float height)
+        public Scene(List<AssetViewModel> sceneTree, float width, float height)
         {
-            colData = collisionData;
-
+            colData = (CollisionData)sceneTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
+            var positions = sceneTree.Find(avm => avm.Alias == "Positions");
+            foreach (var pos in positions.Children)
+            {
+                var pRend = new Objects.Position((Assets.Instance.Position)pos.Asset);
+                objects.Add(pRend);
+            }
             var passVerShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.vert");
             var passFragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.frag");
             shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
@@ -94,11 +100,11 @@ namespace TT_Lab.Rendering
                 System.Drawing.Color.White,
                 System.Drawing.Color.White,
             };
-            foreach (var tri in collisionData.Triangles)
+            foreach (var tri in colData.Triangles)
             {
-                var v1 = collisionData.Vectors[tri.Vector1Index];
-                var v2 = collisionData.Vectors[tri.Vector2Index];
-                var v3 = collisionData.Vectors[tri.Vector3Index];
+                var v1 = colData.Vectors[tri.Vector1Index];
+                var v2 = colData.Vectors[tri.Vector2Index];
+                var v3 = colData.Vectors[tri.Vector3Index];
                 var vec1 = new Vector3(-v1.X, v1.Y, v1.Z);
                 var vec2 = new Vector3(-v2.X, v2.Y, v2.Z);
                 var vec3 = new Vector3(-v3.X, v3.Y, v3.Z);
@@ -168,15 +174,14 @@ namespace TT_Lab.Rendering
 
         public void Render()
         {
+            
+            Bind();
+            GL.CullFace(CullFaceMode.FrontAndBack);
+            GL.Enable(EnableCap.DepthTest);
             foreach (var @object in objects)
             {
                 @object.Render();
             }
-
-            Bind();
-
-            GL.CullFace(CullFaceMode.FrontAndBack);
-            GL.Enable(EnableCap.DepthTest);
             // Draw collision
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             GL.CullFace(CullFaceMode.Back);

@@ -56,10 +56,9 @@ namespace TT_Lab.Editors
                     Dispatcher.Invoke(() =>
                     {
                         glcontrol.MakeCurrent();
-                        var colData = (CollisionData)chunkTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
                         try
                         {
-                            scene = new Scene(colData, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+                            scene = new Scene(chunkTree, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
                         }
                         catch(ShaderCompilationException ex)
                         {

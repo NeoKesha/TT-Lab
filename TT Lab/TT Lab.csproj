@@ -167,6 +167,7 @@
     <Compile Include="Editors\Instance\PositionEditor.xaml.cs">
       <DependentUpon>PositionEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Rendering\Objects\Position.cs" />
     <Compile Include="Util\CloneUtils.cs" />
     <Compile Include="Command\CloseTabCommand.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
