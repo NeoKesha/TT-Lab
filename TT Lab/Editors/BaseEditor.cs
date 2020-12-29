@@ -28,6 +28,11 @@ namespace TT_Lab.Editors
             AddKeybind(new UndoCommand(CommandManager), System.Windows.Input.Key.Z, System.Windows.Input.ModifierKeys.Control);
         }
 
+        public BaseEditor(AssetViewModel asset, CommandManager commandManager) : this(asset)
+        {
+            CommandManager = commandManager;
+        }
+
         protected void AddKeybind(System.Windows.Input.ICommand command, System.Windows.Input.Key key, System.Windows.Input.ModifierKeys modifierKeys)
         {
             InputBindings.Add(new System.Windows.Input.KeyBinding(command, key, modifierKeys));

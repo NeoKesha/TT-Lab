@@ -13,7 +13,7 @@ namespace TT_Lab.AssetData.Instance
 {
     public class PositionData : AbstractAssetData
     {
-        private Vector4 coords;
+        private Vector4 coords = new Vector4();
 
         public PositionData()
         {
@@ -37,6 +37,8 @@ namespace TT_Lab.AssetData.Instance
                 }
             }
         }
+
+
 
         protected override void Dispose(Boolean disposing)
         {

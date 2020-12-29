@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TT_Lab.Controls
 {
@@ -24,27 +14,36 @@ namespace TT_Lab.Controls
         public event EventHandler RedoPerformed;
         public event EventHandler TextChanged;
 
+        [Description("Name of the textbox displayed above."), Category("Common Properties")]
         public string TextBoxName
         {
             get { return (string)GetValue(TextBoxNameProperty); }
             set { SetValue(TextBoxNameProperty, value); }
         }
 
+
+        [Description("Input text."), Category("Common Properties")]
         public string Text
         {
-            get { return TextContainer.Text; }
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
         }
+
+        // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(LabeledTextBox),
+                new FrameworkPropertyMetadata("This is labeled textbox", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnTextChanged)));
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextBoxNameProperty =
-            DependencyProperty.Register("TextBoxName", typeof(string), typeof(LabeledTextBox), new PropertyMetadata(""));
+            DependencyProperty.Register("TextBoxName", typeof(string), typeof(LabeledTextBox),
+                new FrameworkPropertyMetadata("LabeledTextBox", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnNameChanged)));
 
 
 
         public LabeledTextBox()
         {
             InitializeComponent();
-            TextBoxLabel.Content = TextBoxName;
         }
 
         private void BaseTextBox_UndoPerformed(Object sender, EventArgs e)
@@ -63,6 +62,18 @@ namespace TT_Lab.Controls
         {
             var handler = TextChanged;
             handler?.Invoke(this, e);
+        }
+
+        private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            LabeledTextBox control = d as LabeledTextBox;
+            control.TextBoxLabel.Content = e.NewValue;
+        }
+
+        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            LabeledTextBox control = d as LabeledTextBox;
+            control.TextContainer.Text = (string)e.NewValue;
         }
     }
 }

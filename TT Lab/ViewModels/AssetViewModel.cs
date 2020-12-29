@@ -46,6 +46,30 @@ namespace TT_Lab.ViewModels
                 return _editor != null;
             }
         }
+        public Control GetEditor()
+        {
+            if (_editor == null)
+            {
+                _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this);
+                _editor.Unloaded += (sender, e) =>
+                {
+                    CloseEditor();
+                };
+            }
+            return _editor;
+        }
+        public Control GetEditor(Command.CommandManager commandManager)
+        {
+            if (_editor == null)
+            {
+                _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this, commandManager);
+                _editor.Unloaded += (sender, e) =>
+                {
+                    CloseEditor();
+                };
+            }
+            return _editor;
+        }
         public Control GetEditor(TabControl tabContainer)
         {
             if (_editor == null)

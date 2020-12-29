@@ -136,5 +136,26 @@ namespace TT_Lab.Editors
         {
             scene?.SetResolution((float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
         }
+
+        private void ChunkTree_SelectedItemChanged(Object sender, RoutedPropertyChangedEventArgs<Object> e)
+        {
+            var asset = (AssetViewModel)e.NewValue;
+            if (asset.Asset.Type == "Folder") return;
+
+            try
+            {
+                var editor = asset.GetEditor(CommandManager);
+                if (ItemEditorContainer.Content != null)
+                {
+                    ItemEditorContainer.Content = null;
+                    GC.Collect();
+                }
+                ItemEditorContainer.Content = editor;
+            }
+            catch(Exception ex)
+            {
+                Log.WriteLine($"Failed to create editor: {ex.Message}");
+            }
+        }
     }
 }
