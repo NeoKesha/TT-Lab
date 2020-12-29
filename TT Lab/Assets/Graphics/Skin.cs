@@ -13,6 +13,7 @@ namespace TT_Lab.Assets.Graphics
         public Skin(UInt32 id, String name, PS2AnySkin skin) : base(id, name)
         {
             assetData = new SkinData(skin);
+            Raw = false;
         }
 
         public Skin()
