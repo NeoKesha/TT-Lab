@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.Assets.Code;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -25,23 +26,67 @@ namespace TT_Lab.AssetData.Code
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
             UInt32Slots = CloneUtils.CloneList(gameObject.UInt32Slots);
-            OGISlots = CloneUtils.CloneList(gameObject.OGISlots);
-            AnimationSlots = CloneUtils.CloneList(gameObject.AnimationSlots);
-            ScriptSlots = CloneUtils.CloneList(gameObject.ScriptSlots);
-            ObjectSlots = CloneUtils.CloneList(gameObject.ObjectSlots);
-            SoundSlots = CloneUtils.CloneList(gameObject.SoundSlots);
+            OGISlots = new List<Guid>();
+            foreach (var e in gameObject.OGISlots)
+            {
+                OGISlots.Add(GuidManager.GetGuidByTwinId(e, typeof(OGI)));
+            }
+            AnimationSlots = new List<Guid>();
+            foreach (var e in gameObject.AnimationSlots)
+            {
+                AnimationSlots.Add(GuidManager.GetGuidByTwinId(e, typeof(Animation)));
+            }
+            ScriptSlots = new List<Guid>();
+            foreach (var e in gameObject.ScriptSlots)
+            {
+                ScriptSlots.Add(GuidManager.GetGuidByTwinId(e, typeof(HeaderScript)));
+            }
+            ObjectSlots = new List<Guid>();
+            foreach (var e in gameObject.ObjectSlots)
+            {
+                ObjectSlots.Add(GuidManager.GetGuidByTwinId(e, typeof(GameObject)));
+            }
+            SoundSlots = new List<Guid>();
+            foreach (var e in gameObject.SoundSlots)
+            {
+                SoundSlots.Add(GuidManager.GetGuidByTwinId(e, typeof(SoundEffect)));
+            }
             InstancePropsHeader = gameObject.InstancePropsHeader;
             UnkUInt = gameObject.UnkUInt;
             InstFlags = CloneUtils.CloneList(gameObject.InstFlags);
             InstFloats = CloneUtils.CloneList(gameObject.InstFloats);
             InstIntegers = CloneUtils.CloneList(gameObject.InstIntegers);
-            RefObjects = CloneUtils.CloneList(gameObject.RefObjects);
-            RefOGIs = CloneUtils.CloneList(gameObject.RefOGIs);
-            RefAnimations = CloneUtils.CloneList(gameObject.RefAnimations);
-            RefCodeModels = CloneUtils.CloneList(gameObject.RefCodeModels);
-            RefScripts = CloneUtils.CloneList(gameObject.RefScripts);
+            RefObjects = new List<Guid>();
+            foreach (var e in gameObject.RefObjects)
+            {
+                RefObjects.Add(GuidManager.GetGuidByTwinId(e, typeof(GameObject)));
+            }
+            RefOGIs = new List<Guid>();
+            foreach (var e in gameObject.RefOGIs)
+            {
+                RefOGIs.Add(GuidManager.GetGuidByTwinId(e, typeof(OGI)));
+            }
+            RefAnimations = new List<Guid>();
+            foreach (var e in gameObject.RefAnimations)
+            {
+                RefAnimations.Add(GuidManager.GetGuidByTwinId(e, typeof(Animation)));
+            }
+            RefCodeModels = new List<Guid>();
+            foreach (var e in gameObject.RefCodeModels)
+            {
+                RefCodeModels.Add(GuidManager.GetGuidByTwinId(e, typeof(CodeModel)));
+            }
+            RefScripts = new List<Guid>();
+            foreach (var e in gameObject.RefScripts)
+            {
+                RefScripts.Add(GuidManager.GetGuidByTwinId(e, typeof(HeaderScript)));
+            }
             RefUnknowns = CloneUtils.CloneList(gameObject.RefUnknowns);
-            RefSounds = CloneUtils.CloneList(gameObject.RefSounds);
+            RefSounds = new List<Guid>();
+            foreach (var e in gameObject.RefSounds)
+            {
+                RefSounds.Add(GuidManager.GetGuidByTwinId(e, typeof(SoundEffect)));
+            }
             ScriptPack = gameObject.ScriptPack;
         }
 
@@ -54,15 +99,15 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> UInt32Slots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> OGISlots { get; set; }
+        public List<Guid> OGISlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> AnimationSlots { get; set; }
+        public List<Guid> AnimationSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> ScriptSlots { get; set; }
+        public List<Guid> ScriptSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> ObjectSlots { get; set; }
+        public List<Guid> ObjectSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> SoundSlots { get; set; }
+        public List<Guid> SoundSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 InstancePropsHeader { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -74,19 +119,19 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> InstIntegers { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefObjects { get; set; }
+        public List<Guid> RefObjects { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefOGIs { get; set; }
+        public List<Guid> RefOGIs { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefAnimations { get; set; }
+        public List<Guid> RefAnimations { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefCodeModels { get; set; }
+        public List<Guid> RefCodeModels { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefScripts { get; set; }
+        public List<Guid> RefScripts { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<UInt16> RefUnknowns { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefSounds { get; set; }
+        public List<Guid> RefSounds { get; set; }
         [JsonProperty(Required = Required.Always)]
         [JsonConverter(typeof(ScriptPackConverter))]
         public ScriptPack ScriptPack { get; set; }

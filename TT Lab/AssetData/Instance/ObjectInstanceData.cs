@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.Assets.Code;
 using TT_Lab.Util;
 using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -29,7 +30,7 @@ namespace TT_Lab.AssetData.Instance
             Positions = CloneUtils.CloneList(instance.Positions);
             PathsRelated = instance.PathsRelated;
             Paths = CloneUtils.CloneList(instance.Paths);
-            ObjectId = instance.ObjectId;
+            ObjectId = GuidManager.GetGuidByTwinId(instance.ObjectId, typeof(GameObject));
             UnkInt1 = instance.UnkInt1;
             UnkInt2 = instance.UnkInt2;
             UnkInt3 = instance.UnkInt3;
@@ -59,7 +60,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public List<UInt16> Paths { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 ObjectId { get; set; }
+        public Guid ObjectId { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 UnkInt1 { get; set; }
         [JsonProperty(Required = Required.Always)]

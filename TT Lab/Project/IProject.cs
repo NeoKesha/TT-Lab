@@ -31,7 +31,7 @@ namespace TT_Lab.Project
         /// Project's list of assets
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        List<Guid> AssetIds { get; }
+        Dictionary<Guid, UInt32> GuidToTwinId { get; }
 
         /// <summary>
         /// Project's UUID

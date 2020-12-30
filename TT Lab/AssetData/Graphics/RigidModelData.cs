@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
@@ -16,7 +17,7 @@ namespace TT_Lab.AssetData.Graphics
         {
             Header = rigidModel.Header;
             Materials = CloneUtils.CloneList(rigidModel.Materials);
-            Model = rigidModel.Model;
+            Model = GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(RigidModel));
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -24,7 +25,7 @@ namespace TT_Lab.AssetData.Graphics
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> Materials { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Model { get; set; }
+        public Guid Model { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

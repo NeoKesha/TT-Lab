@@ -9,9 +9,10 @@ namespace TT_Lab.Util
 {
     public static class GuidManager
     {
-        private static Dictionary<Guid, IAsset> GuidToAsset { get; set; }
-        private static Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
-        private static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; }
+        public static Guid NullGuid = new Guid("00000000-0000-0000-0000-000000000000");
+        public static Dictionary<Guid, IAsset> GuidToAsset { get; set; } = new Dictionary<Guid, IAsset>();
+        public static Dictionary<Guid, UInt32> GuidToTwinId { get; set; } = new Dictionary<Guid, UInt32>();
+        public static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; } = new Dictionary<KeyValuePair<Type, UInt32>, Guid>();
 
         public static void InitMappers(Dictionary<Guid, IAsset> Assets)
         {
@@ -51,7 +52,15 @@ namespace TT_Lab.Util
         }
         public static Guid GetGuidByTwinId(KeyValuePair<Type, UInt32> key)
         {
-            return TwinIdToGuid[key];
+            if (TwinIdToGuid.ContainsKey(key))
+            {
+                return TwinIdToGuid[key];
+            } 
+            else
+            {
+                return NullGuid;
+            }
+            
         }
 
         public static void UpdateTwinId(String guid, Type type, UInt32 newTwinId)
@@ -68,9 +77,17 @@ namespace TT_Lab.Util
         }
         public static void UpdateTwinId(KeyValuePair<Type, UInt32> key, UInt32 newTwinId)
         {
-            Guid guid = TwinIdToGuid[key];
-            TwinIdToGuid.Remove(key);
-            TwinIdToGuid.Add(new KeyValuePair<Type, uint>(key.Key, newTwinId), guid);
+            if (TwinIdToGuid.ContainsKey(key))
+            {
+                Guid guid = TwinIdToGuid[key];
+                TwinIdToGuid.Remove(key);
+                TwinIdToGuid.Add(new KeyValuePair<Type, uint>(key.Key, newTwinId), guid);
+                GuidToTwinId[guid] = newTwinId;
+            }
+            else
+            {
+                throw new KeyNotFoundException();
+            }
         }
     }
 }
