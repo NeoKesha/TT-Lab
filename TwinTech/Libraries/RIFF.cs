@@ -15,7 +15,7 @@ namespace Twinsanity.Libraries
             writer.Write((ushort)1);
             writer.Write(channels);
             writer.Write(samplerate);
-            writer.Write(samplerate * channels * 2);
+            writer.Write((uint)(samplerate * channels * 2));
             writer.Write((short)(channels * 2));
             writer.Write((ushort)16);
             writer.Write("data".ToCharArray());
