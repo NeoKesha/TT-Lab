@@ -110,12 +110,6 @@ namespace TT_Lab.Assets
         Byte[] ToFormat();
 
         /// <summary>
-        /// Gets GUID
-        /// </summary>
-        /// <returns>GUID</returns>
-        Guid GetGuid();
-
-        /// <summary>
         /// Finishes import on Project Creation stage
         /// </summary>
         void Import();

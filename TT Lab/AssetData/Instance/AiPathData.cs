@@ -17,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
 
         public AiPathData(PS2AnyAIPath aiPath) : this()
         {
-            Args = CloneUtils.CloneArray(aiPath.Args);
+            twinRef = aiPath;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -26,6 +26,12 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyAIPath aiPath = (PS2AnyAIPath)twinRef;
+            Args = CloneUtils.CloneArray(aiPath.Args);
         }
     }
 }

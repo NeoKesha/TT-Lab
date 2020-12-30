@@ -20,23 +20,7 @@ namespace TT_Lab.AssetData.Instance
 
         public ObjectInstanceData(PS2AnyInstance instance) : this()
         {
-            Position = CloneUtils.Clone(instance.Position);
-            RotationX = CloneUtils.Clone(instance.RotationX);
-            RotationY = CloneUtils.Clone(instance.RotationY);
-            RotationZ = CloneUtils.Clone(instance.RotationZ);
-            InstancesRelated = instance.InstancesRelated;
-            Instances = CloneUtils.CloneList(instance.Instances);
-            PositionsRelated = instance.PositionsRelated;
-            Positions = CloneUtils.CloneList(instance.Positions);
-            PathsRelated = instance.PathsRelated;
-            Paths = CloneUtils.CloneList(instance.Paths);
-            ObjectId = GuidManager.GetGuidByTwinId(instance.ObjectId, typeof(GameObject));
-            UnkInt1 = instance.UnkInt1;
-            UnkInt2 = instance.UnkInt2;
-            UnkInt3 = instance.UnkInt3;
-            ParamList1 = CloneUtils.CloneList(instance.ParamList1);
-            ParamList2 = CloneUtils.CloneList(instance.ParamList2);
-            ParamList3 = CloneUtils.CloneList(instance.ParamList3);
+            twinRef = instance;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -77,6 +61,28 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyInstance instance = (PS2AnyInstance)twinRef;
+            Position = CloneUtils.Clone(instance.Position);
+            RotationX = CloneUtils.Clone(instance.RotationX);
+            RotationY = CloneUtils.Clone(instance.RotationY);
+            RotationZ = CloneUtils.Clone(instance.RotationZ);
+            InstancesRelated = instance.InstancesRelated;
+            Instances = CloneUtils.CloneList(instance.Instances);
+            PositionsRelated = instance.PositionsRelated;
+            Positions = CloneUtils.CloneList(instance.Positions);
+            PathsRelated = instance.PathsRelated;
+            Paths = CloneUtils.CloneList(instance.Paths);
+            ObjectId = GuidManager.GetGuidByTwinId(instance.ObjectId, typeof(GameObject));
+            UnkInt1 = instance.UnkInt1;
+            UnkInt2 = instance.UnkInt2;
+            UnkInt3 = instance.UnkInt3;
+            ParamList1 = CloneUtils.CloneList(instance.ParamList1);
+            ParamList2 = CloneUtils.CloneList(instance.ParamList2);
+            ParamList3 = CloneUtils.CloneList(instance.ParamList3);
         }
     }
 }

@@ -18,10 +18,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public MaterialData(PS2AnyMaterial material) : this()
         {
-            Header = material.Header;
-            UnkInt = material.UnkInt;
-            Name = new string(material.Name.ToCharArray());
-            Shaders = CloneUtils.DeepClone(material.Shaders);
+            twinRef = material;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -36,6 +33,15 @@ namespace TT_Lab.AssetData.Graphics
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyMaterial material = (PS2AnyMaterial)twinRef;
+            Header = material.Header;
+            UnkInt = material.UnkInt;
+            Name = new string(material.Name.ToCharArray());
+            Shaders = CloneUtils.DeepClone(material.Shaders);
         }
     }
 }

@@ -19,14 +19,7 @@ namespace TT_Lab.AssetData.Instance
 
         public TriggerData(PS2AnyTrigger trigger) : this()
         {
-            Enabled = trigger.Trigger.Enabled > 0;
-            Position = CloneUtils.Clone(trigger.Trigger.Position);
-            Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);
-            Scale = CloneUtils.Clone(trigger.Trigger.Scale);
-            Instances = CloneUtils.CloneList(trigger.Trigger.Instances);
-            Header1 = trigger.Trigger.Header1;
-            HeaderT = trigger.Trigger.HeaderT;
-            HeaderH = trigger.Trigger.HeaderH;
+            twinRef = trigger;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -49,6 +42,19 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyTrigger trigger = (PS2AnyTrigger)twinRef;
+            Enabled = trigger.Trigger.Enabled > 0;
+            Position = CloneUtils.Clone(trigger.Trigger.Position);
+            Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);
+            Scale = CloneUtils.Clone(trigger.Trigger.Scale);
+            Instances = CloneUtils.CloneList(trigger.Trigger.Instances);
+            Header1 = trigger.Trigger.Header1;
+            HeaderT = trigger.Trigger.HeaderT;
+            HeaderH = trigger.Trigger.HeaderH;
         }
     }
 }

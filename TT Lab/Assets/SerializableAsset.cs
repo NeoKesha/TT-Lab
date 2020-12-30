@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
@@ -69,7 +70,10 @@ namespace TT_Lab.Assets
         public abstract Type GetEditorType();
 
         public abstract AbstractAssetData GetData();
-
+        public virtual void Import()
+        {
+            assetData.Import();
+        }
         public Guid GetGuid()
         {
             return UUID;

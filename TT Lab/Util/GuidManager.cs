@@ -4,27 +4,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Instance;
 
 namespace TT_Lab.Util
 {
     public static class GuidManager
     {
-        public static Guid NullGuid = new Guid("00000000-0000-0000-0000-000000000000");
-        public static Dictionary<Guid, IAsset> GuidToAsset { get; set; } = new Dictionary<Guid, IAsset>();
-        public static Dictionary<Guid, UInt32> GuidToTwinId { get; set; } = new Dictionary<Guid, UInt32>();
-        public static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; } = new Dictionary<KeyValuePair<Type, UInt32>, Guid>();
+        private static HashSet<Type> excludeTypes = new HashSet<Type>()
+        {
+            typeof(Folder),
+            typeof(ChunkFolder),
+            typeof(Trigger),
+            typeof(Position),
+            typeof(Path),
+            typeof(Particles),
+            typeof(ObjectInstance),
+            typeof(Scenery),
+            typeof(DynamicScenery),
+            typeof(Collision),
+            typeof(ChunkLinks),
+            typeof(Camera),
+            typeof(AiPosition),
+            typeof(AiPath)
+        };
+        public static Dictionary<Guid, IAsset> GuidToAsset { get; set; }
+        public static Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
+        public static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; }
 
         public static void InitMappers(Dictionary<Guid, IAsset> Assets)
         {
-            GuidToAsset.Clear();
-            GuidToTwinId.Clear();
-            TwinIdToGuid.Clear();
+            GuidToAsset = new Dictionary<Guid, IAsset>(Assets.Count);
+            GuidToTwinId = new Dictionary<Guid, UInt32>(Assets.Count);
+            TwinIdToGuid = new Dictionary<KeyValuePair<Type, UInt32>, Guid>(Assets.Count);
             foreach (var key in Assets.Keys)
             {
                 IAsset asset = Assets[key];
-                GuidToAsset.Add(asset.GetGuid(), asset);
-                GuidToTwinId.Add(asset.GetGuid(), asset.ID);
-                TwinIdToGuid.Add(new KeyValuePair<Type, uint>(asset.GetType(), asset.ID), asset.GetGuid());
+                GuidToAsset.Add(asset.UUID, asset);
+                if (!excludeTypes.Contains(asset.GetType()))
+                {
+                    GuidToTwinId.Add(asset.UUID, asset.ID);
+                    TwinIdToGuid.Add(new KeyValuePair<Type, uint>(asset.GetType(), asset.ID), asset.UUID);
+                }
             }
         }
 
@@ -48,7 +68,7 @@ namespace TT_Lab.Util
 
         public static Guid GetGuidByTwinId(UInt32 twinId, Type type)
         {
-            return TwinIdToGuid[new KeyValuePair<Type, UInt32>(type, twinId)];
+            return GetGuidByTwinId(new KeyValuePair<Type, UInt32>(type, twinId));
         }
         public static Guid GetGuidByTwinId(KeyValuePair<Type, UInt32> key)
         {
@@ -58,9 +78,8 @@ namespace TT_Lab.Util
             } 
             else
             {
-                return NullGuid;
+                return Guid.Empty;
             }
-            
         }
 
         public static void UpdateTwinId(String guid, Type type, UInt32 newTwinId)

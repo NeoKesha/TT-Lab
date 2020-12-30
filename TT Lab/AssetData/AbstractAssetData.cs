@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.ViewModels;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData
 {
@@ -14,6 +15,8 @@ namespace TT_Lab.AssetData
         protected Boolean disposedValue;
 
         public virtual Boolean Disposed => disposedValue;
+
+        protected ITwinItem twinRef = null;
 
         public virtual void Load(string dataPath)
         {
@@ -43,5 +46,7 @@ namespace TT_Lab.AssetData
             disposedValue = true;
             GC.SuppressFinalize(this);
         }
+
+        public abstract void Import();
     }
 }

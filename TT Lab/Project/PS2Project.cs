@@ -467,7 +467,13 @@ namespace TT_Lab.Project
                     }
                 }
             }
+            Log.WriteLine($"Creating GUID Mapper...");
             GuidManager.InitMappers(Assets);
+            Log.WriteLine($"Converting assets...");
+            foreach (var asset in Assets)
+            {
+                asset.Value.Import();
+            }
         }
 
         public IAsset GetAsset(Guid id)

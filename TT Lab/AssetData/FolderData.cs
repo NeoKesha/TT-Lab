@@ -21,5 +21,9 @@ namespace TT_Lab.AssetData
         {
             return;
         }
+
+        public override void Import()
+        {
+        }
     }
 }

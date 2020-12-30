@@ -15,12 +15,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public SkydomeData(PS2AnySkydome skydome) : this()
         {
-            Header = skydome.Header;
-            Meshes = new List<Guid>();
-            foreach (var mesh in skydome.Meshes)
-            {
-                Meshes.Add(GuidManager.GetGuidByTwinId(mesh, typeof(Mesh)));
-            }
+            twinRef = skydome;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -31,6 +26,17 @@ namespace TT_Lab.AssetData.Graphics
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnySkydome skydome = (PS2AnySkydome)twinRef;
+            Header = skydome.Header;
+            Meshes = new List<Guid>();
+            foreach (var mesh in skydome.Meshes)
+            {
+                Meshes.Add(GuidManager.GetGuidByTwinId(mesh, typeof(Mesh)));
+            }
         }
     }
 }

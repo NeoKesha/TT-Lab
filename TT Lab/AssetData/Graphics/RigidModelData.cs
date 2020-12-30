@@ -15,9 +15,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public RigidModelData(PS2AnyRigidModel rigidModel) : this()
         {
-            Header = rigidModel.Header;
-            Materials = CloneUtils.CloneList(rigidModel.Materials);
-            Model = GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(RigidModel));
+            twinRef = rigidModel;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -30,6 +28,14 @@ namespace TT_Lab.AssetData.Graphics
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyRigidModel rigidModel = (PS2AnyRigidModel)twinRef;
+            Header = rigidModel.Header;
+            Materials = CloneUtils.CloneList(rigidModel.Materials);
+            Model = GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(Model));
         }
     }
 }

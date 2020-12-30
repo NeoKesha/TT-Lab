@@ -22,7 +22,7 @@ namespace TT_Lab.AssetData.Instance
 
         public PositionData(PS2AnyPosition position)
         {
-            coords = CloneUtils.Clone(position.Position);
+            twinRef = position;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -43,6 +43,12 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyPosition position = (PS2AnyPosition)twinRef;
+            coords = CloneUtils.Clone(position.Position);
         }
     }
 }

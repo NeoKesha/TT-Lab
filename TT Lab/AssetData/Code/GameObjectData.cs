@@ -22,6 +22,63 @@ namespace TT_Lab.AssetData.Code
 
         public GameObjectData(PS2AnyObject gameObject) : this()
         {
+            twinRef = gameObject;
+        }
+
+        [JsonProperty(Required = Required.Always)]
+        public UInt32 Bitfield { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Byte[] SlotsMap { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public String Name { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<UInt32> UInt32Slots { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> OGISlots { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> AnimationSlots { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> ScriptSlots { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> ObjectSlots { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> SoundSlots { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public UInt32 InstancePropsHeader { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public UInt32 UnkUInt { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<UInt32> InstFlags { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Single> InstFloats { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<UInt32> InstIntegers { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> RefObjects { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> RefOGIs { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> RefAnimations { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> RefCodeModels { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> RefScripts { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<UInt16> RefUnknowns { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> RefSounds { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        [JsonConverter(typeof(ScriptPackConverter))]
+        public ScriptPack ScriptPack { get; set; }
+
+        protected override void Dispose(Boolean disposing)
+        {
+            return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyObject gameObject = (PS2AnyObject)twinRef;
             Bitfield = gameObject.Bitfield;
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
@@ -88,57 +145,6 @@ namespace TT_Lab.AssetData.Code
                 RefSounds.Add(GuidManager.GetGuidByTwinId(e, typeof(SoundEffect)));
             }
             ScriptPack = gameObject.ScriptPack;
-        }
-
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Bitfield { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Byte[] SlotsMap { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public String Name { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<UInt32> UInt32Slots { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> OGISlots { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> AnimationSlots { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> ScriptSlots { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> ObjectSlots { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> SoundSlots { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 InstancePropsHeader { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkUInt { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<UInt32> InstFlags { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Single> InstFloats { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<UInt32> InstIntegers { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefObjects { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefOGIs { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefAnimations { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefCodeModels { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefScripts { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefUnknowns { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefSounds { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        [JsonConverter(typeof(ScriptPackConverter))]
-        public ScriptPack ScriptPack { get; set; }
-
-        protected override void Dispose(Boolean disposing)
-        {
-            return;
         }
     }
     class ScriptPackConverter : JsonConverter<ScriptPack>

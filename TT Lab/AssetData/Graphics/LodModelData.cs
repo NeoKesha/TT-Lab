@@ -15,16 +15,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public LodModelData(PS2AnyLOD lod) : this()
         {
-            Type = lod.Type;
-            UnkInt1 = lod.UnkInt1;
-            UnkInt2 = lod.UnkInt2;
-            UnkInts = CloneUtils.CloneArray(lod.UnkInts);
-            UnkData = CloneUtils.CloneArray(lod.UnkData);
-            Meshes = new List<Guid>();
-            foreach (var mesh in lod.Meshes)
-            {
-                Meshes.Add(GuidManager.GetGuidByTwinId(mesh, typeof(Mesh)));
-            }
+            twinRef = lod;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -43,6 +34,21 @@ namespace TT_Lab.AssetData.Graphics
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyLOD lod = (PS2AnyLOD)twinRef;
+            Type = lod.Type;
+            UnkInt1 = lod.UnkInt1;
+            UnkInt2 = lod.UnkInt2;
+            UnkInts = CloneUtils.CloneArray(lod.UnkInts);
+            UnkData = CloneUtils.CloneArray(lod.UnkData);
+            Meshes = new List<Guid>();
+            foreach (var mesh in lod.Meshes)
+            {
+                Meshes.Add(GuidManager.GetGuidByTwinId(mesh, typeof(Mesh)));
+            }
         }
     }
 }
