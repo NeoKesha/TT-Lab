@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using static Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics.PS2AnyTexture;
 
@@ -13,36 +16,51 @@ namespace TT_Lab.AssetData.Graphics
 
         public TextureData(PS2AnyTexture texture) : this()
         {
-            Header = texture.HeaderSignature;
-            ImageWidthPower = texture.ImageWidthPower;
-            ImageHeightPower = texture.ImageHeightPower;
-            MipLevels = texture.MipLevels;
-            TextureFormat = texture.TextureFormat;
-            DestinationTextureFormat = texture.DestinationTextureFormat;
-            ColorComponent = texture.ColorComponent;
-            TexFun = texture.TexFun;
+            if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
+            {
+                Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
+                Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
+                texture.CalculateData();
+
+                var Bits = new UInt32[width * height];
+                var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+                var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+
+                for (var x = 0; x < width; ++x)
+                {
+                    for (var y = 0; y < height; ++y)
+                    {
+                        var dstx = x;
+                        var dsty = height - 1 - y;
+                        Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
+                    }
+                }
+
+                bitmap = new Bitmap(tmpBmp);
+                tmpBmp.Dispose();
+                BitsHandle.Free();
+            }
         }
-
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Header { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt16 ImageWidthPower { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt16 ImageHeightPower { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Byte MipLevels { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public TexturePixelFormat TextureFormat { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public TexturePixelFormat DestinationTextureFormat { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public TextureColorComponent ColorComponent { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public TextureFunction TexFun { get; set; }
-
+        public Bitmap bitmap;
         protected override void Dispose(Boolean disposing)
         {
+            if (!Disposed && bitmap != null)
+            {
+                bitmap.Dispose();
+            }
             return;
+        }
+        public override void Save(string dataPath)
+        {
+            if (bitmap != null)
+            {
+                bitmap.Save(dataPath, ImageFormat.Png);
+            }
+        }
+
+        public override void Load(String dataPath)
+        {
+            bitmap = new Bitmap(Bitmap.FromFile(dataPath));
         }
     }
 }
