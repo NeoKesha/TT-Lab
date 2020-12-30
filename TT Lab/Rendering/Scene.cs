@@ -25,7 +25,7 @@ namespace TT_Lab.Rendering
         private mat4 viewMat;
         private mat4 modelMat;
         private mat3 normalMat;
-        private vec3 cameraPosition = new vec3(0.0f, 15.0f, 0.0f);
+        private vec3 cameraPosition = new vec3(0.0f, 0.0f, 0.0f);
         private vec3 cameraDirection = new vec3(0, 0, -1);
         private vec3 cameraUp = new vec3(0, 1, 0);
         private const float cameraSpeed = 1.0f;
@@ -45,8 +45,7 @@ namespace TT_Lab.Rendering
             var passFragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.frag");
             shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
                 { 0, "in_Position" },
-                { 1, "in_Color" },
-                { 2, "in_Normal" }
+                { 1, "in_Normal" }
             });
 
             projectionMat = glm.infinitePerspective(glm.radians(90.0f), width / height, 0.1f);
@@ -66,7 +65,7 @@ namespace TT_Lab.Rendering
         {
             // Collision renderer
             var colData = (CollisionData)sceneTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
-            var colRender = new Objects.CollisionData(colData);
+            var colRender = new Objects.Collision(colData);
             objects.Add(colRender);
 
             // Positions renderer
@@ -76,6 +75,11 @@ namespace TT_Lab.Rendering
                 var pRend = new Objects.Position((Assets.Instance.Position)pos.Asset);
                 objects.Add(pRend);
             }
+        }
+
+        public void AddRender(IRenderable renderObj)
+        {
+            objects.Add(renderObj);
         }
 
         public void SetResolution(float width, float height)

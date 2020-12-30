@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Graphics.SubModels;
 
 namespace TT_Lab.AssetData.Instance.Collision
 {
@@ -11,11 +12,7 @@ namespace TT_Lab.AssetData.Instance.Collision
     public class CollisionTriangle
     {
         [JsonProperty(Required = Required.Always)]
-        public Int32 Vector1Index { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Int32 Vector2Index { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Int32 Vector3Index { get; set; }
+        public IndexedFace Face { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Int32 SurfaceIndex { get; set; }
 
@@ -23,9 +20,7 @@ namespace TT_Lab.AssetData.Instance.Collision
 
         public CollisionTriangle(Twinsanity.TwinsanityInterchange.Common.Collision.CollisionTriangle triangle)
         {
-            Vector1Index = triangle.Vector1Index;
-            Vector2Index = triangle.Vector2Index;
-            Vector3Index = triangle.Vector3Index;
+            Face = new IndexedFace(new int[] { triangle.Vector1Index, triangle.Vector2Index, triangle.Vector3Index });
             SurfaceIndex = triangle.SurfaceIndex;
         }
     }

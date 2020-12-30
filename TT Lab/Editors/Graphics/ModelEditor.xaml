@@ -12,9 +12,7 @@
             <RowDefinition Height="419*"/>
             <RowDefinition Height="31*"/>
         </Grid.RowDefinitions>
-        <GroupBox Header="Model viewer">
-            <WindowsFormsHost x:Name="GLHost" Margin="0"/>
-        </GroupBox>
+        <base:SceneEditor x:Name="SceneRenderer"/>
         <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="1"/>
     </Grid>
 </base:BaseEditor>

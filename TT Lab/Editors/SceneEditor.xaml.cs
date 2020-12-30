@@ -18,57 +18,28 @@ namespace TT_Lab.Editors
     /// <summary>
     /// Interaction logic for SceneEditor.xaml
     /// </summary>
-    public partial class SceneEditor : BaseEditor
+    public partial class SceneEditor : System.Windows.Controls.UserControl
     {
-        private List<AssetViewModel> chunkTree = new List<AssetViewModel>();
         private List<Keys> pressedKeys = new List<Keys>();
-        private Scene scene;
-        private bool isDefault;
-        private GLControl glcontrol;
 
-        public SceneEditor() : this(null)
-        {
-        }
+        public Scene Scene;
+        public GLControl Glcontrol;
 
-        public SceneEditor(AssetViewModel chunkAss) : base(chunkAss)
+        public SceneEditor()
         {
-            var chunk = (ChunkFolder)chunkAss.Asset;
-            foreach (var item in ((FolderData)chunk.GetData()).Children)
-            {
-                chunkTree.Add(new AssetViewModel(item));
-            }
-            DataContext = new { Items = chunkTree };
-            isDefault = chunk.Name.ToLower() == "default";
             InitializeComponent();
             SizeChanged += SceneEditor_SizeChanged;
-            glcontrol = new GLControl();
-            glcontrol.Load += Glcontrol_Init;
-            glcontrol.Paint += Glcontrol_Paint;
-            glcontrol.MouseMove += Glcontrol_MouseMove;
-            glcontrol.KeyDown += Glcontrol_KeyDown;
-            glcontrol.KeyUp += Glcontrol_KeyUp;
-            glcontrol.Dock = DockStyle.Fill;
 
-            if (!isDefault)
-            {
-                Task.Factory.StartNew(() =>
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        glcontrol.MakeCurrent();
-                        try
-                        {
-                            scene = new Scene(chunkTree, (float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
-                        }
-                        catch(ShaderCompilationException ex)
-                        {
-                            Log.WriteLine($"Error creating scene: {ex.Message}\n{ex.CompilerOutput}");
-                        }
-                    });
-                });
-            }
+            Glcontrol = new GLControl();
+            Glcontrol.Load += Glcontrol_Init;
+            Glcontrol.Paint += Glcontrol_Paint;
+            Glcontrol.MouseMove += Glcontrol_MouseMove;
+            Glcontrol.KeyDown += Glcontrol_KeyDown;
+            Glcontrol.KeyUp += Glcontrol_KeyUp;
+            Glcontrol.Dock = DockStyle.Fill;
 
-            GLHost.Child = glcontrol;
+            GLHost.Child = Glcontrol;
+            Glcontrol.MakeCurrent();
 
             // Start render loop
             Timer timer = new Timer
@@ -101,60 +72,39 @@ namespace TT_Lab.Editors
             var curMousePos = e.Location;
             if (e.Button == MouseButtons.Middle)
             {
-                scene?.RotateView(new Vector3(mousePos.X - curMousePos.X, curMousePos.Y - mousePos.Y, 0));
+                Scene?.RotateView(new Vector3(mousePos.X - curMousePos.X, curMousePos.Y - mousePos.Y, 0));
             }
             mousePos = curMousePos;
         }
 
         private void Glcontrol_Init(Object sender, EventArgs e)
         {
-            glcontrol.MakeCurrent();
+            Glcontrol.MakeCurrent();
             GL.ClearColor(System.Drawing.Color.LightGray);
         }
 
         private void Glcontrol_Paint(Object sender, System.Windows.Forms.PaintEventArgs e)
         {
-            glcontrol.MakeCurrent();
-            GL.Viewport(glcontrol.Location, glcontrol.Size);
+            Glcontrol.MakeCurrent();
+            GL.Viewport(Glcontrol.Location, Glcontrol.Size);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            scene?.PreRender();
-            scene?.Move(pressedKeys);
-            scene?.Render();
-            scene?.PostRender();
+            Scene?.PreRender();
+            Scene?.Move(pressedKeys);
+            Scene?.Render();
+            Scene?.PostRender();
 
-            glcontrol.SwapBuffers();
+            Glcontrol.SwapBuffers();
         }
 
         private void OnRender(Object sender, EventArgs e)
         {
-            glcontrol.Invalidate();
+            Glcontrol.Invalidate();
         }
 
         private void SceneEditor_SizeChanged(Object sender, System.Windows.SizeChangedEventArgs e)
         {
-            scene?.SetResolution((float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
-        }
-
-        private void ChunkTree_SelectedItemChanged(Object sender, RoutedPropertyChangedEventArgs<Object> e)
-        {
-            var asset = (AssetViewModel)e.NewValue;
-            if (asset.Asset.Type == "Folder") return;
-
-            try
-            {
-                var editor = asset.GetEditor(CommandManager);
-                if (ItemEditorContainer.Content != null)
-                {
-                    ItemEditorContainer.Content = null;
-                    GC.Collect();
-                }
-                ItemEditorContainer.Content = editor;
-            }
-            catch(Exception ex)
-            {
-                Log.WriteLine($"Failed to create editor: {ex.Message}");
-            }
+            Scene?.SetResolution((float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
         }
     }
 }

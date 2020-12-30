@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TT_Lab.Rendering
 {
-    interface IGLObject
+    public interface IGLObject
     {
         void Bind();
         void Unbind();

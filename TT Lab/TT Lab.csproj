@@ -164,14 +164,20 @@
     <Compile Include="Controls\LabeledTextBox.xaml.cs">
       <DependentUpon>LabeledTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Editors\ChunkEditor.xaml.cs">
+      <DependentUpon>ChunkEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Editors\Graphics\ModelEditor.xaml.cs">
       <DependentUpon>ModelEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Editors\Instance\PositionEditor.xaml.cs">
       <DependentUpon>PositionEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Rendering\Objects\CollisionData.cs" />
+    <Compile Include="Rendering\Buffers\IndexedBufferArray.cs" />
+    <Compile Include="Rendering\Objects\Collision.cs" />
+    <Compile Include="Rendering\Objects\Model.cs" />
     <Compile Include="Rendering\Objects\Position.cs" />
+    <Compile Include="Util\BufferGeneration.cs" />
     <Compile Include="Util\CloneUtils.cs" />
     <Compile Include="Command\CloseTabCommand.cs" />
     <Compile Include="Command\OpenDialogueCommand.cs" />
@@ -218,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\LabeledTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Editors\ChunkEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

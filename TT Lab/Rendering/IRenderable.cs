@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TT_Lab.Rendering
 {
-    interface IRenderable : IGLObject
+    public interface IRenderable : IGLObject
     {
         void PreRender();
         void Render();

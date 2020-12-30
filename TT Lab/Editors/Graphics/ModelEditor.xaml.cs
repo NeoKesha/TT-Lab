@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TT_Lab.Rendering;
+using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors.Graphics
@@ -22,8 +23,6 @@ namespace TT_Lab.Editors.Graphics
     /// </summary>
     public partial class ModelEditor : BaseEditor
     {
-        public Scene modelScene;
-
         public ModelEditor()
         {
             InitializeComponent();
@@ -32,7 +31,9 @@ namespace TT_Lab.Editors.Graphics
         public ModelEditor(AssetViewModel model) : base(model)
         {
             InitializeComponent();
-
+            SceneRenderer.Scene = new Scene((float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight);
+            Model m = new Model((AssetData.Graphics.ModelData)DataContext);
+            SceneRenderer.Scene.AddRender(m);
         }
     }
 }

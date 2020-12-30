@@ -8,20 +8,20 @@ namespace TT_Lab.AssetData.Graphics.SubModels
 {
     public class IndexedFace
     {
-        public Int32[] indexes { get; set; } 
+        public Int32[] Indexes { get; set; } 
         public IndexedFace()
         {
-            indexes = null;
+            Indexes = null;
         }
         public IndexedFace(Int32[] indexes)
         {
-            this.indexes = indexes;
+            Indexes = indexes;
         }
         public override String ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append(indexes.Length.ToString());
-            foreach (var index in indexes)
+            builder.Append(Indexes.Length.ToString());
+            foreach (var index in Indexes)
             {
                 builder.Append($" {index}");
             }

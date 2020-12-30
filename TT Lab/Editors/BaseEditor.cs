@@ -23,7 +23,10 @@ namespace TT_Lab.Editors
         public BaseEditor(AssetViewModel asset)
         {
             AssetViewModel = asset;
-            DataContext = asset.Asset.GetData();
+            if (asset != null)
+            {
+                DataContext = asset.Asset.GetData();
+            }
             AddKeybind(new RedoCommand(CommandManager), System.Windows.Input.Key.Y, System.Windows.Input.ModifierKeys.Control);
             AddKeybind(new UndoCommand(CommandManager), System.Windows.Input.Key.Z, System.Windows.Input.ModifierKeys.Control);
         }

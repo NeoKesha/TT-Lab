@@ -19,5 +19,25 @@ namespace TT_Lab.Util
         {
             return new float[] { v.X, v.Y, v.Z };
         }
+
+        /// <summary>
+        /// Transforms Twinsanity Vector into an OpenGL compatible one
+        /// </summary>
+        /// <param name="v">Twinsanity Vector</param>
+        /// <returns>OpenGL vector</returns>
+        public static Vector3 ToGL(this Twinsanity.TwinsanityInterchange.Common.Vector3 v)
+        {
+            return new Vector3(v.X, v.Y, v.Z);
+        }
+
+        /// <summary>
+        /// Transforms Twinsanity Vector into an OpenGL compatible one
+        /// </summary>
+        /// <param name="v">Twinsanity Vector</param>
+        /// <returns>OpenGL vector</returns>
+        public static Vector4 ToGL(this Twinsanity.TwinsanityInterchange.Common.Vector4 v)
+        {
+            return new Vector4(v.X, v.Y, v.Z, v.W);
+        }
     }
 }

@@ -1,7 +1,6 @@
 #version 130
 in vec3 EyespaceNormal;
 in vec3 Diffuse;
-in vec4 Color;
 out vec4 FragColor;
 
 uniform vec3 LightPosition;
@@ -19,6 +18,6 @@ void main()
     float df = max(0.0, dot(N, L));
     float sf = max(0.0, dot(N, H));
 
-    vec3 color = Color.rgb * AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
+    vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
     FragColor = vec4(color, 1.0);
 }

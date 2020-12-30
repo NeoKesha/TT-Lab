@@ -36,7 +36,7 @@ namespace TT_Lab.Assets
 
         public override Type GetEditorType()
         {
-            return typeof(SceneEditor);
+            return typeof(ChunkEditor);
         }
     }
 }

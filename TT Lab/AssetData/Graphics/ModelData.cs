@@ -14,12 +14,12 @@ namespace TT_Lab.AssetData.Graphics
     {
         public ModelData()
         {
+            Vertexes = new List<Vertex>();
+            Faces = new List<IndexedFace>();
         }
 
         public ModelData(PS2AnyModel model) : this()
         {
-            Vertexes = new List<Vertex>();
-            Faces = new List<IndexedFace>();
             var refIndex = 0;
             var offset = 0;
             foreach (var e in model.SubModels)
@@ -48,8 +48,8 @@ namespace TT_Lab.AssetData.Graphics
                 refIndex += 2;
             }
         }
-        List<Vertex> Vertexes { get; set; }
-        List<IndexedFace> Faces { get; set; }
+        public List<Vertex> Vertexes { get; set; }
+        public List<IndexedFace> Faces { get; set; }
         protected override void Dispose(Boolean disposing)
         {
             return;
