@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
@@ -136,6 +137,7 @@ namespace TT_Lab.Project
                 tasks[index++] = Task.Factory.StartNew(() =>
                 {
                     Log.WriteLine($"Serializing {group.Key}...");
+                    var now = DateTime.Now;
                     try
                     {
                         foreach (var asset in group)
@@ -147,6 +149,8 @@ namespace TT_Lab.Project
                     {
                         Log.WriteLine($"Error serializing: {ex.Message}");
                     }
+                    var span = DateTime.Now - now;
+                    Log.WriteLine($"Finished serializing {group.Key} in {span}");
                 });
             }
             Task.WaitAll(tasks);

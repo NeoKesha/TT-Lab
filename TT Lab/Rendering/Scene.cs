@@ -31,21 +31,16 @@ namespace TT_Lab.Rendering
         private const float cameraSpeed = 1.0f;
 
         // Scene rendering
-        private CollisionData colData;
-        private VertexBufferArray collisionBuffer;
-        private uint[] indices;
         private ShaderProgram shader;
         private List<IRenderable> objects = new List<IRenderable>();
 
-        public Scene(List<AssetViewModel> sceneTree, float width, float height)
+        /// <summary>
+        /// Constructor to setup a simple rendering scene
+        /// </summary>
+        /// <param name="width">Viewport render width</param>
+        /// <param name="height">Viewport render height</param>
+        public Scene(float width, float height)
         {
-            colData = (CollisionData)sceneTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
-            var positions = sceneTree.Find(avm => avm.Alias == "Positions");
-            foreach (var pos in positions.Children)
-            {
-                var pRend = new Objects.Position((Assets.Instance.Position)pos.Asset);
-                objects.Add(pRend);
-            }
             var passVerShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.vert");
             var passFragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.frag");
             shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
@@ -59,112 +54,28 @@ namespace TT_Lab.Rendering
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();
+        }
 
-            // Init collision buffer
-            var vertices = new List<float>();
-            var vert3s = new List<Vector3>();
-            var colors = new List<float>();
-            var indices = new List<uint>();
+        /// <summary>
+        /// Constructor to perform a full chunk render
+        /// </summary>
+        /// <param name="sceneTree">Tree of chunk resources collision data, positions, cameras, etc.</param>
+        /// <param name="width">Viewport render width</param>
+        /// <param name="height">Viewport render height</param>
+        public Scene(List<AssetViewModel> sceneTree, float width, float height) : this(width, height)
+        {
+            // Collision renderer
+            var colData = (CollisionData)sceneTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
+            var colRender = new Objects.CollisionData(colData);
+            objects.Add(colRender);
 
-            var surfaceColors = new System.Drawing.Color[]
+            // Positions renderer
+            var positions = sceneTree.Find(avm => avm.Alias == "Positions");
+            foreach (var pos in positions.Children)
             {
-                System.Drawing.Color.White,
-                System.Drawing.Color.Red,
-                System.Drawing.Color.Brown,
-                System.Drawing.Color.Cyan,
-                System.Drawing.Color.Blue,
-                System.Drawing.Color.Pink,
-                System.Drawing.Color.Yellow,
-                System.Drawing.Color.Gray,
-                System.Drawing.Color.DarkGray,
-                System.Drawing.Color.Green,
-                System.Drawing.Color.Gold,
-                System.Drawing.Color.Aqua,
-                System.Drawing.Color.SkyBlue,
-                System.Drawing.Color.AntiqueWhite,
-                System.Drawing.Color.Bisque,
-                System.Drawing.Color.Chocolate,
-                System.Drawing.Color.DarkSeaGreen,
-                System.Drawing.Color.Azure,
-                System.Drawing.Color.HotPink,
-                System.Drawing.Color.Honeydew,
-                System.Drawing.Color.Lime,
-                System.Drawing.Color.Magenta,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-                System.Drawing.Color.White,
-            };
-            foreach (var tri in colData.Triangles)
-            {
-                var v1 = colData.Vectors[tri.Vector1Index];
-                var v2 = colData.Vectors[tri.Vector2Index];
-                var v3 = colData.Vectors[tri.Vector3Index];
-                var vec1 = new Vector3(-v1.X, v1.Y, v1.Z);
-                var vec2 = new Vector3(-v2.X, v2.Y, v2.Z);
-                var vec3 = new Vector3(-v3.X, v3.Y, v3.Z);
-                vert3s.Add(vec1);
-                vert3s.Add(vec2);
-                vert3s.Add(vec3);
-                indices.Add((uint)(vert3s.Count - 1));
-                indices.Add((uint)(vert3s.Count - 2));
-                indices.Add((uint)(vert3s.Count - 3));
-                vertices.AddRange(vec1.ToArray());
-                vertices.AddRange(vec2.ToArray());
-                vertices.AddRange(vec3.ToArray());
-
-                var vecCol = surfaceColors[tri.SurfaceIndex];
-                var col = new vec4(vecCol.R / 255f, vecCol.G / 255f, vecCol.B / 255f, 1.0f);
-                colors.AddRange(col.to_array());
-                colors.AddRange(col.to_array());
-                colors.AddRange(col.to_array());
+                var pRend = new Objects.Position((Assets.Instance.Position)pos.Asset);
+                objects.Add(pRend);
             }
-
-            var normals = new Vector3[colData.Triangles.Count * 3];
-            for (var i = 0; i < indices.Count; i += 3)
-            {
-                var vec1 = vert3s[(int)indices[i]];
-                var vec2 = vert3s[(int)indices[i + 1]];
-                var vec3 = vert3s[(int)indices[i + 2]];
-
-                normals[indices[i]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
-                normals[indices[i + 1]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
-                normals[indices[i + 2]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
-            }
-
-            for (var i = 0; i < normals.Length; ++i)
-            {
-                var n = normals[i];
-                n.Normalize();
-                normals[i] = n;
-            }
-
-            collisionBuffer = new VertexBufferArray();
-            collisionBuffer.Bind();
-
-            var indexBuffer = new IndexBuffer();
-            indexBuffer.Bind();
-            indexBuffer.SetData(indices.ToArray());
-            this.indices = indices.ToArray();
-
-            var vertexBuffer = new VertexBuffer();
-            vertexBuffer.Bind();
-            vertexBuffer.SetData(0, vertices.ToArray(), false, 3);
-
-            var colorBuffer = new VertexBuffer();
-            colorBuffer.Bind();
-            colorBuffer.SetData(1, colors.ToArray(), false, 4);
-
-            var normalBuffer = new VertexBuffer();
-            normalBuffer.Bind();
-            normalBuffer.SetData(2, normals.SelectMany(v => v.ToArray()).ToArray(), false, 3);
-
-            collisionBuffer.Unbind();
         }
 
         public void SetResolution(float width, float height)
@@ -174,7 +85,6 @@ namespace TT_Lab.Rendering
 
         public void Render()
         {
-            
             Bind();
             GL.CullFace(CullFaceMode.FrontAndBack);
             GL.Enable(EnableCap.DepthTest);
@@ -182,11 +92,8 @@ namespace TT_Lab.Rendering
             {
                 @object.Render();
             }
-            // Draw collision
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.DepthTest);
-
             Unbind();
         }
 
@@ -205,8 +112,6 @@ namespace TT_Lab.Rendering
             shader.SetUniformMatrix4("Model", modelMat.to_array());
             shader.SetUniformMatrix3("NormalMatrix", normalMat.to_array());
             shader.SetUniform3("DiffuseMaterial", 0.75f, 0.75f, 0.75f);
-
-            collisionBuffer.Bind();
         }
 
         public void RotateView(Vector3 rot)
@@ -244,13 +149,16 @@ namespace TT_Lab.Rendering
 
         public void Unbind()
         {
-            collisionBuffer.Unbind();
             shader.Unbind();
         }
 
         public void Delete()
         {
             shader.Delete();
+            foreach (var @object in objects)
+            {
+                @object.Delete();
+            }
         }
 
         public void PreRender()
