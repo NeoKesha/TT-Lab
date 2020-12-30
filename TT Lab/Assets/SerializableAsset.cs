@@ -69,5 +69,10 @@ namespace TT_Lab.Assets
         public abstract Type GetEditorType();
 
         public abstract AbstractAssetData GetData();
+
+        public Guid GetGuid()
+        {
+            return UUID;
+        }
     }
 }

@@ -108,5 +108,11 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <returns>Data in the format</returns>
         Byte[] ToFormat();
+
+        /// <summary>
+        /// Converts raw data to a general format
+        /// </summary>
+        /// <returns>Data in the format</returns>
+        Guid GetGuid();
     }
 }
