@@ -14,11 +14,15 @@ namespace TT_Lab.Assets.Code
     public class CodeModel : SerializableAsset
     {
         protected override String DataExt => ".lab";
+        public Dictionary<UInt32, Guid> SubScriptGuids = new Dictionary<uint, Guid>();
         public CodeModel() {}
 
         public CodeModel(UInt32 id, String name, PS2AnyCodeModel codeModel) : base(id, name)
         {
             assetData = new CodeModelData(codeModel);
+            assetData.Import();
+            parameters.Add("sub_script_guids", SubScriptGuids);
+            GetIds();
         }
 
         public override Byte[] ToFormat()
@@ -42,9 +46,20 @@ namespace TT_Lab.Assets.Code
             {
                 assetData = new CodeModelData();
                 assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                SubScriptGuids = (Dictionary<UInt32, Guid>)parameters["sub_script_guids"];
                 IsLoaded = true;
             }
             return assetData;
+        }
+
+        private void GetIds()
+        {
+            SubScriptGuids.Clear();
+            var cm = (CodeModelData)assetData;
+            foreach (var e in cm.ScriptIds)
+            {
+                SubScriptGuids.Add(e, Guid.NewGuid());
+            }
         }
     }
 }

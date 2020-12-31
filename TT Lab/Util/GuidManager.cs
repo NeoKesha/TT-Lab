@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Instance;
 
 namespace TT_Lab.Util
@@ -27,6 +28,8 @@ namespace TT_Lab.Util
             typeof(AiPosition),
             typeof(AiPath)
         };
+        private static Type cmSpecial = typeof(CodeModel);
+        private static Type hsSpecial = typeof(HeaderScript);
         public static Dictionary<Guid, IAsset> GuidToAsset { get; set; }
         public static Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
         public static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; }
@@ -42,10 +45,21 @@ namespace TT_Lab.Util
                 try
                 {
                     GuidToAsset.Add(asset.UUID, asset);
-                    if (!excludeTypes.Contains(asset.GetType()))
+                    var assetType = asset.GetType();
+                    if (!excludeTypes.Contains(assetType))
                     {
                         GuidToTwinId.Add(asset.UUID, asset.ID);
                         TwinIdToGuid.Add(new KeyValuePair<Type, uint>(asset.GetType(), asset.ID), asset.UUID);
+                    }
+                    if (assetType == cmSpecial)
+                    {
+                        var cm = (CodeModel)asset;
+                        foreach (var e in cm.SubScriptGuids)
+                        {
+                            GuidToAsset.Add(e.Value, asset);
+                            GuidToTwinId.Add(e.Value, e.Key);
+                            TwinIdToGuid.Add(new KeyValuePair<Type, uint>(hsSpecial, e.Key), e.Value);
+                        }
                     }
                 }
                 catch(Exception ex)
@@ -80,14 +94,7 @@ namespace TT_Lab.Util
         }
         public static Guid GetGuidByTwinId(KeyValuePair<Type, UInt32> key)
         {
-            if (TwinIdToGuid.ContainsKey(key))
-            {
-                return TwinIdToGuid[key];
-            } 
-            else
-            {
-                return Guid.Empty;
-            }
+            return TwinIdToGuid[key];
         }
 
         public static void UpdateTwinId(String guid, Type type, UInt32 newTwinId)
