@@ -128,6 +128,12 @@
     <Compile Include="Assets\Code\SoundEffect.cs" />
     <Compile Include="Assets\Code\CodeModel.cs" />
     <Compile Include="Assets\Code\Animation.cs" />
+    <Compile Include="Assets\Code\SoundEffectIT.cs" />
+    <Compile Include="Assets\Code\SoundEffectGR.cs" />
+    <Compile Include="Assets\Code\SoundEffectSP.cs" />
+    <Compile Include="Assets\Code\SoundEffectJP.cs" />
+    <Compile Include="Assets\Code\SoundEffectFR.cs" />
+    <Compile Include="Assets\Code\SoundEffectEN.cs" />
     <Compile Include="Assets\Folder.cs" />
     <Compile Include="Assets\Graphics\BlendSkin.cs" />
     <Compile Include="Assets\Graphics\LodModel.cs" />

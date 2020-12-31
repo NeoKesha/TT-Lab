@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
+using TT_Lab.Util;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Project
@@ -162,6 +163,13 @@ namespace TT_Lab.Project
                 {
                     Log.WriteLine("Unpacking assets...");
                     OpenedProject.UnpackAssets();
+                    Log.WriteLine($"Creating GUID Mapper...");
+                    GuidManager.InitMappers(OpenedProject.Assets);
+                    Log.WriteLine($"Converting assets...");
+                    foreach (var asset in OpenedProject.Assets)
+                    {
+                        asset.Value.Import();
+                    }
                     Log.WriteLine("Serializing assets...");
                     OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
                     AddRecentlyOpened(OpenedProject.ProjectPath);

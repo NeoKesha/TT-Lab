@@ -348,17 +348,17 @@ namespace TT_Lab.Project
                             }
                             ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_SOUND_EFFECTS_SECTION, sfxFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectSP, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_SPA_SECTION, spaFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectJP, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_JPN_SECTION, jpnFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectIT, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_ITA_SECTION, itaFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectGR, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_GER_SECTION, grFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectFR, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_FRE_SECTION, frFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectEN, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_ENG_SECTION, enFolder);
                         }
 
@@ -466,13 +466,6 @@ namespace TT_Lab.Project
                         }
                     }
                 }
-            }
-            Log.WriteLine($"Creating GUID Mapper...");
-            GuidManager.InitMappers(Assets);
-            Log.WriteLine($"Converting assets...");
-            foreach (var asset in Assets)
-            {
-                asset.Value.Import();
             }
         }
 
