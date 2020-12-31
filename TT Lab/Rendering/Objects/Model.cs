@@ -12,21 +12,31 @@ namespace TT_Lab.Rendering.Objects
 {
     public class Model : IRenderable
     {
-        IndexedBufferArray modelBuffer;
+        List<IndexedBufferArray> modelBuffers;
 
         public Model(ModelData model)
         {
-            modelBuffer = BufferGeneration.GetModelBuffer(model.Vertexes.Select(v => v.Position).ToList(), model.Faces);
+            modelBuffers = new List<IndexedBufferArray>();
+            for (var i = 0; i < model.Vertexes.Count; ++i) {
+                modelBuffers.Add(BufferGeneration.GetModelBuffer(model.Vertexes[i].Select(v => v.Position).ToList(), model.Faces[i]));
+            }
         }
 
         public void Bind()
         {
-            modelBuffer.Bind();
+            foreach (var modelBuffer in modelBuffers)
+            {
+                modelBuffer.Bind();
+            }
+            
         }
 
         public void Delete()
         {
-            modelBuffer.Delete();
+            foreach (var modelBuffer in modelBuffers)
+            {
+                modelBuffer.Delete();
+            }
         }
 
         public void PostRender()
@@ -40,13 +50,19 @@ namespace TT_Lab.Rendering.Objects
         public void Render()
         {
             Bind();
-            GL.DrawElements(PrimitiveType.Triangles, modelBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            foreach (var modelBuffer in modelBuffers)
+            {
+                GL.DrawElements(PrimitiveType.Triangles, modelBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            }
             Unbind();
         }
 
         public void Unbind()
         {
-            modelBuffer.Unbind();
+            foreach (var modelBuffer in modelBuffers)
+            {
+                modelBuffer.Unbind();
+            }
         }
     }
 }

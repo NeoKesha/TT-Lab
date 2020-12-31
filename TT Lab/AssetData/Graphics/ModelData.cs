@@ -14,21 +14,21 @@ namespace TT_Lab.AssetData.Graphics
     {
         public ModelData()
         {
-            Vertexes = new List<Vertex>();
-            Faces = new List<IndexedFace>();
+            Vertexes = new List<List<Vertex>>();
+            Faces = new List<List<IndexedFace>>();
         }
 
         public ModelData(PS2AnyModel model) : this()
         {
             twinRef = model;
         }
-        public List<Vertex> Vertexes { get; set; }
-        public List<IndexedFace> Faces { get; set; }
+        public List<List<Vertex>> Vertexes { get; set; }
+        public List<List<IndexedFace>> Faces { get; set; }
         protected override void Dispose(Boolean disposing)
         {
             return;
         }
-        public override void Save(string dataPath)
+        /*public override void Save(string dataPath)
         {
             using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
             using (StreamWriter writer = new StreamWriter(fs))
@@ -183,7 +183,7 @@ namespace TT_Lab.AssetData.Graphics
                     }
                 }
             }
-        }
+        }*/
         private float ConvertTypeFloat(String value, String type) //idk i am not smart :((((
         {
             return Single.Parse(value, CultureInfo.InvariantCulture);
@@ -192,12 +192,15 @@ namespace TT_Lab.AssetData.Graphics
         public override void Import()
         {
             PS2AnyModel model = (PS2AnyModel)twinRef;
-            Vertexes = new List<Vertex>();
-            Faces = new List<IndexedFace>();
+            Vertexes = new List<List<Vertex>>();
+            Faces = new List<List<IndexedFace>>();
             var refIndex = 0;
             var offset = 0;
             foreach (var e in model.SubModels)
             {
+                var vertList = new List<Vertex>();
+                var faceList = new List<IndexedFace>();
+                refIndex = 0;
                 e.CalculateData();
                 for (var j = 0; j < e.Vertexes.Count; ++j)
                 {
@@ -207,16 +210,16 @@ namespace TT_Lab.AssetData.Graphics
                         {
                             if ((offset + j) % 2 == 0)
                             {
-                                Faces.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
+                                faceList.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
                             }
                             else
                             {
-                                Faces.Add(new IndexedFace(new int[] { refIndex + 1, refIndex, refIndex + 2 }));
+                                faceList.Add(new IndexedFace(new int[] { refIndex + 1, refIndex, refIndex + 2 }));
                             }
                         }
                         ++refIndex;
                     }
-                    Vertexes.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j]));
+                    vertList.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j]));
                 }
                 offset += e.Vertexes.Count;
                 refIndex += 2;
