@@ -39,11 +39,19 @@ namespace TT_Lab.Util
             foreach (var key in Assets.Keys)
             {
                 IAsset asset = Assets[key];
-                GuidToAsset.Add(asset.UUID, asset);
-                if (!excludeTypes.Contains(asset.GetType()))
+                try
                 {
-                    GuidToTwinId.Add(asset.UUID, asset.ID);
-                    TwinIdToGuid.Add(new KeyValuePair<Type, uint>(asset.GetType(), asset.ID), asset.UUID);
+                    GuidToAsset.Add(asset.UUID, asset);
+                    if (!excludeTypes.Contains(asset.GetType()))
+                    {
+                        GuidToTwinId.Add(asset.UUID, asset.ID);
+                        TwinIdToGuid.Add(new KeyValuePair<Type, uint>(asset.GetType(), asset.ID), asset.UUID);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Log.WriteLine($"Error initializing mapper: {ex.Message} for {asset.Type} ID {asset.ID}");
+                    throw ex;
                 }
             }
         }

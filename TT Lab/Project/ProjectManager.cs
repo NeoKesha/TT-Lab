@@ -158,17 +158,24 @@ namespace TT_Lab.Project
             Directory.SetCurrentDirectory("assets");
             Task.Factory.StartNew(() =>
             {
-                Log.WriteLine("Unpacking assets...");
-                OpenedProject.UnpackAssets();
-                Log.WriteLine("Serializing assets...");
-                OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
-                AddRecentlyOpened(OpenedProject.ProjectPath);
-                Log.WriteLine("Building project tree...");
-                BuildProjectTree();
-                WorkableProject = true;
-                NotifyChange("ProjectOpened");
-                NotifyChange("ProjectTitle");
-                Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
+                try
+                {
+                    Log.WriteLine("Unpacking assets...");
+                    OpenedProject.UnpackAssets();
+                    Log.WriteLine("Serializing assets...");
+                    OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
+                    AddRecentlyOpened(OpenedProject.ProjectPath);
+                    Log.WriteLine("Building project tree...");
+                    BuildProjectTree();
+                    WorkableProject = true;
+                    NotifyChange("ProjectOpened");
+                    NotifyChange("ProjectTitle");
+                    Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
+                }
+                catch(Exception ex)
+                {
+                    Log.WriteLine($"Error when working with assets: {ex.Message}");
+                }
             });
         }
 
