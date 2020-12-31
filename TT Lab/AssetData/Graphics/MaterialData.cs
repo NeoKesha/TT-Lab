@@ -29,7 +29,7 @@ namespace TT_Lab.AssetData.Graphics
         [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<TTLabShader> Shaders { get; set; }
+        public List<LabShader> Shaders { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -42,10 +42,10 @@ namespace TT_Lab.AssetData.Graphics
             Header = material.Header;
             UnkInt = material.UnkInt;
             Name = new string(material.Name.ToCharArray());
-            Shaders = new List<TTLabShader>();
+            Shaders = new List<LabShader>();
             foreach (var shader in material.Shaders)
             {
-                Shaders.Add(new TTLabShader(shader));
+                Shaders.Add(new LabShader(shader));
             }
         }
     }

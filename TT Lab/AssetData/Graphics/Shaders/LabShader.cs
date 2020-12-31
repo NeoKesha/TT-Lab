@@ -10,7 +10,7 @@ using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.AssetData.Graphics.Shaders
 {
-    public class TTLabShader
+    public class LabShader
     {
         public UInt32 ShaderType { get; set; }
         public UInt32 IntParam { get; set; }
@@ -50,7 +50,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public Vector4 UnkVector2 { get; set; }
         public Vector4 UnkVector3 { get; set; }
         public TwinBlob Blob { get; set; }
-        public TTLabShader(TwinShader twinShader)
+        public LabShader(TwinShader twinShader)
         {
             ShaderType = twinShader.ShaderType;
             IntParam = twinShader.IntParam;
