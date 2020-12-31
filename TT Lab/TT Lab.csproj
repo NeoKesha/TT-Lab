@@ -95,6 +95,7 @@
     <Compile Include="AssetData\Graphics\MeshData.cs" />
     <Compile Include="AssetData\Graphics\ModelData.cs" />
     <Compile Include="AssetData\Graphics\RigidModelData.cs" />
+    <Compile Include="AssetData\Graphics\Shaders\TTLabShader.cs" />
     <Compile Include="AssetData\Graphics\SkinData.cs" />
     <Compile Include="AssetData\Graphics\SkydomeData.cs" />
     <Compile Include="AssetData\Graphics\SubModels\IndexedFace.cs" />
