@@ -255,7 +255,7 @@ namespace TT_Lab.Project
         private void BuildProjectTree()
         {
             ProjectTree = (from asset in OpenedProject.Assets.Values
-                           where asset.Type == "Folder"
+                           where asset.Type == typeof(Folder)
                            let folder = asset as Folder
                            where ((FolderData)folder.GetData()).Parent == null
                            orderby folder.Order

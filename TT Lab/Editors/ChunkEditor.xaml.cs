@@ -66,7 +66,7 @@ namespace TT_Lab.Editors
         private void ChunkTree_SelectedItemChanged(Object sender, RoutedPropertyChangedEventArgs<Object> e)
         {
             var asset = (AssetViewModel)e.NewValue;
-            if (asset.Asset.Type == "Folder") return;
+            if (asset.Asset.Type == typeof(Folder)) return;
 
             try
             {

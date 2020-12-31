@@ -23,7 +23,6 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public override String Type => "AiPosition";
 
         public override Byte[] ToFormat()
         {

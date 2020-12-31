@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,12 +11,13 @@ namespace TT_Lab.Assets
 {
     public static class AssetFactory
     {
-        public static Dictionary<Guid, IAsset> GetAssets(Dictionary<string, Type> strToT, string[] jsonAssets)
+        public static Dictionary<Guid, IAsset> GetAssets(string[] jsonAssets)
         {
             var assets = new Dictionary<Guid, IAsset>();
             var assetMut = new Mutex();
             var tasks = new Task[jsonAssets.Length];
             var index = 0;
+            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
             foreach (var str in jsonAssets)
             {
                 tasks[index++] = Task.Factory.StartNew(() =>
@@ -26,7 +28,7 @@ namespace TT_Lab.Assets
                     {
                         var json = reader.ReadToEnd();
                         var baseAss = JsonConvert.DeserializeObject<BaseAsset>(json);
-                        newAsset = (IAsset)Activator.CreateInstance(strToT[baseAss.Type]);
+                        newAsset = (IAsset)Activator.CreateInstance(baseAss.Type);
                         newAsset.Deserialize(json);
                     }
                     assetMut.WaitOne();
@@ -41,7 +43,7 @@ namespace TT_Lab.Assets
         [JsonObject]
         private class BaseAsset
         {
-            public string Type { get; set; }
+            public Type Type { get; set; }
         }
     }
     

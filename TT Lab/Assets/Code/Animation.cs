@@ -14,8 +14,6 @@ namespace TT_Lab.Assets.Code
 {
     public class Animation : SerializableAsset
     {
-        public override String Type => "Animation";
-
         public Animation() { }
 
         public Animation(UInt32 id, String name, PS2AnyAnimation animation) : base(id, name)

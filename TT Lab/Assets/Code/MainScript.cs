@@ -14,7 +14,6 @@ namespace TT_Lab.Assets.Code
 {
     public class MainScript : Script
     {
-        public override String Type => "MainScript";
 
         protected override String DataExt => ".lab";
 

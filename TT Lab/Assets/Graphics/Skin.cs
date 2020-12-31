@@ -8,7 +8,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Skin : SerializableAsset
     {
-        public override String Type => "Skin";
         protected override String DataExt => ".ply";
         public Skin(UInt32 id, String name, PS2AnySkin skin) : base(id, name)
         {

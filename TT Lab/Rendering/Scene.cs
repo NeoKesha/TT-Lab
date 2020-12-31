@@ -64,7 +64,7 @@ namespace TT_Lab.Rendering
         public Scene(List<AssetViewModel> sceneTree, float width, float height) : this(width, height)
         {
             // Collision renderer
-            var colData = (CollisionData)sceneTree.Find(avm => avm.Asset.Type == "CollisionData").Asset.GetData();
+            var colData = (CollisionData)sceneTree.Find(avm => avm.Asset.Type == typeof(CollisionData)).Asset.GetData();
             var colRender = new Objects.Collision(colData);
             objects.Add(colRender);
 

@@ -21,7 +21,7 @@ namespace TT_Lab.AssetData.Graphics
         [JsonProperty(Required = Required.Always)]
         public UInt32 Header { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt32> Materials { get; set; }
+        public List<Guid> Materials { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Guid Model { get; set; }
 
@@ -34,7 +34,11 @@ namespace TT_Lab.AssetData.Graphics
         {
             PS2AnyRigidModel rigidModel = (PS2AnyRigidModel)twinRef;
             Header = rigidModel.Header;
-            Materials = CloneUtils.CloneList(rigidModel.Materials);
+            Materials = new List<Guid>();
+            foreach (var mat in rigidModel.Materials)
+            {
+                Materials.Add(GuidManager.GetGuidByTwinId(mat, typeof(Material)));
+            }
             Model = GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(Model));
         }
     }

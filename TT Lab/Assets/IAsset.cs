@@ -19,7 +19,7 @@ namespace TT_Lab.Assets
         /// Asset's string type
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        string Type { get; }
+        Type Type { get; }
 
         /// <summary>
         /// In-Game's ID number

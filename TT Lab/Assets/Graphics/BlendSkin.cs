@@ -8,8 +8,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class BlendSkin : SerializableAsset
     {
-        public override String Type => "BlendSkin";
-
         public BlendSkin() { }
 
         public BlendSkin(UInt32 id, String name, PS2AnyBlendSkin blendSkin) : base(id, name)

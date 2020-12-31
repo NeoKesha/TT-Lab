@@ -14,7 +14,6 @@ namespace TT_Lab.Assets.Code
 {
     public class HeaderScript : Script
     {
-        public override String Type => "HeaderScript";
         protected override String DataExt => ".lab";
         public HeaderScript() { }
 

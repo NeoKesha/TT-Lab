@@ -9,7 +9,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class LodModel : SerializableAsset
     {
-        public override String Type => "LodModel";
 
         public LodModel(UInt32 id, String name, PS2AnyLOD lod) : base(id, name)
         {

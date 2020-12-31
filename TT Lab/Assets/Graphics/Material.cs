@@ -13,7 +13,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Material : SerializableAsset
     {
-        public override String Type => "Material";
 
         public Material(UInt32 id, String name, PS2AnyMaterial material) : base(id, name)
         {

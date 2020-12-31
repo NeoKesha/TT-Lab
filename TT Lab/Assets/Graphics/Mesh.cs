@@ -6,7 +6,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Mesh : RigidModel
     {
-        public override String Type => "Mesh";
 
         public Mesh() { }
 

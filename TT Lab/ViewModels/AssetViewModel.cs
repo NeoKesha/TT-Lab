@@ -94,7 +94,7 @@ namespace TT_Lab.ViewModels
         {
             get
             {
-                if (_asset.Type == "ChunkFolder") return null;
+                if (_asset.Type == typeof(ChunkFolder)) return null;
                 return _children;
             }
         }

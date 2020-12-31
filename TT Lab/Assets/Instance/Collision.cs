@@ -14,7 +14,6 @@ namespace TT_Lab.Assets.Instance
 {
     public class Collision : SerializableInstance
     {
-        public override String Type => "CollisionData";
 
         public Collision()
         {

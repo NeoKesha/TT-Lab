@@ -9,7 +9,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class RigidModel : SerializableAsset
     {
-        public override String Type => "RigidModel";
 
         public RigidModel(UInt32 id, String name, PS2AnyRigidModel rigidModel) : base(id, name)
         {

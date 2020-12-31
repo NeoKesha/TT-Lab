@@ -32,8 +32,6 @@ namespace TT_Lab.Project
     /// </summary>
     public class PS2Project : IProject
     {
-        public Dictionary<string, Type> StringToAsset { get; }
-
         public Dictionary<Guid, IAsset> Assets { get; private set; }
 
         public Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
@@ -61,41 +59,6 @@ namespace TT_Lab.Project
             LastModified = DateTime.Now;
             UUID = Guid.NewGuid();
             Assets = new Dictionary<Guid, IAsset>();
-            StringToAsset = new Dictionary<string, Type>
-            {
-                { "ObjectInstance", typeof(ObjectInstance) },
-                { "AiPath", typeof(AiPath) },
-                { "AiPosition", typeof(AiPosition) },
-                { "Camera", typeof(Camera) },
-                { "CollisionSurface", typeof(CollisionSurface) },
-                { "InstanceTemplate", typeof(InstanceTemplate) },
-                { "Path", typeof(Path) },
-                { "Position", typeof(Position) },
-                { "Trigger", typeof(Trigger) },
-                { "Animation", typeof(Animation) },
-                { "CodeModel", typeof(CodeModel) },
-                { "GameObject", typeof(GameObject) },
-                { "HeaderScript", typeof(HeaderScript) },
-                { "MainScript", typeof(MainScript) },
-                { "OGI", typeof(OGI) },
-                { "SoundEffect", typeof(SoundEffect) },
-                { "BlendSkin", typeof(BlendSkin) },
-                { "LodModel", typeof(LodModel) },
-                { "Material", typeof(Material) },
-                { "Mesh", typeof(Mesh) },
-                { "Model", typeof(Model) },
-                { "RigidModel", typeof(RigidModel) },
-                { "Skin", typeof(Skin) },
-                { "Skydome", typeof(Skydome) },
-                { "Texture", typeof(Texture) },
-                { "CollisionData", typeof(Collision) },
-                { "ParticleData", typeof(Particles) },
-                { "Scenery", typeof(Scenery) },
-                { "DynamicScenery", typeof(DynamicScenery) },
-                { "ChunkLinks", typeof(ChunkLinks) },
-                { "Folder", typeof(Folder) },
-                { "ChunkFolder", typeof(ChunkFolder) }
-            };
         }
 
         public PS2Project(string name, string path, string discContentPath) : this()
@@ -172,7 +135,7 @@ namespace TT_Lab.Project
             System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(projectPath));
             // Deserialize assets
             var assetFiles = System.IO.Directory.GetFiles("assets", "*.json", System.IO.SearchOption.AllDirectories);
-            pr.Assets = AssetFactory.GetAssets(pr.StringToAsset, assetFiles);
+            pr.Assets = AssetFactory.GetAssets(assetFiles);
             return pr;
         }
 

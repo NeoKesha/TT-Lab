@@ -11,12 +11,12 @@ namespace TT_Lab.Assets
     {
         public Guid UUID { get; private set; }
 
-        protected virtual String SavePath => Type;
+        protected virtual String SavePath => Type.Name;
         protected virtual String DataExt => ".data";
 
         protected AbstractAssetData assetData;
 
-        public virtual String Type => "Asset";
+        public Type Type { get; set; }
 
         public String Name { get; set; }
         public Boolean Raw { get; set; }
@@ -45,6 +45,7 @@ namespace TT_Lab.Assets
             Data = UUID.ToString() + DataExt;
             IsLoaded = true;
             parameters = new Dictionary<string, object>();
+            Type = this.GetType();
         }
 
         public virtual void Serialize()

@@ -11,7 +11,6 @@ namespace TT_Lab.Assets.Code
 {
     public abstract class Script : SerializableAsset
     {
-        public override String Type => "Script";
 
         public Script() { }
 

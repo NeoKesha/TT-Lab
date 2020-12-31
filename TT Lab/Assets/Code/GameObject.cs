@@ -13,8 +13,6 @@ namespace TT_Lab.Assets.Code
 {
     public class GameObject : SerializableAsset
     {
-        public override String Type => "GameObject";
-
         public GameObject() { }
 
         public GameObject(UInt32 id, String name, PS2AnyObject @object) : base(id, name)

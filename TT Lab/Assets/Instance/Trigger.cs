@@ -23,8 +23,6 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public override String Type => "Trigger";
-
         public override Byte[] ToFormat()
         {
             throw new NotImplementedException();

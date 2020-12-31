@@ -88,30 +88,29 @@ namespace TT_Lab
                 try
                 {
                     var asset = (AssetViewModel)ProjectTree.SelectedItem;
-                    if (asset.Asset.Type == "Folder") return;
+                    if (asset.Asset.Type == typeof(Folder)) return;
 
-                    switch (asset.Asset.Type)
+                    if (asset.Asset.Type == typeof(ChunkFolder))
                     {
-                        case "ChunkFolder":
-                            if (!asset.EditorOpened)
-                            {
-                                ScenesViewerTabs.Items.Add(asset.GetEditor(ScenesViewerTabs));
-                            }
-                            ScenesViewerTabs.SelectedItem = asset.GetEditor(ScenesViewerTabs);
-                            // Automatically switch to Scenes Viewer tab
-                            CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[0];
-                            break;
-                        default:
-                            if (!asset.EditorOpened)
-                            {
-                                ResourcesEditorTabs.Items.Add(asset.GetEditor(ResourcesEditorTabs));
-                            }
-                            ResourcesEditorTabs.SelectedItem = asset.GetEditor(ResourcesEditorTabs);
-                            // Automatically switch to Resources Editor tab
-                            CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[1];
-                            break;
+                        if (!asset.EditorOpened)
+                        {
+                            ScenesViewerTabs.Items.Add(asset.GetEditor(ScenesViewerTabs));
+                        }
+                        ScenesViewerTabs.SelectedItem = asset.GetEditor(ScenesViewerTabs);
+                        // Automatically switch to Scenes Viewer tab
+                        CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[0];
                     }
-                    
+                    else
+                    {
+                        if (!asset.EditorOpened)
+                        {
+                            ResourcesEditorTabs.Items.Add(asset.GetEditor(ResourcesEditorTabs));
+                        }
+                        ResourcesEditorTabs.SelectedItem = asset.GetEditor(ResourcesEditorTabs);
+                        // Automatically switch to Resources Editor tab
+                        CentralViewerTabs.SelectedItem = CentralViewerTabs.Items[1];
+                    }
+
                 }
                 catch(Exception ex)
                 {

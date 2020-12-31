@@ -22,8 +22,6 @@ namespace TT_Lab.Assets.Instance
             assetData = new DynamicSceneryData(dynamicScenery);
         }
 
-        public override String Type => "DynamicScenery";
-
         public override Type GetEditorType()
         {
             throw new NotImplementedException();

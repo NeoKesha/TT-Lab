@@ -11,7 +11,6 @@ namespace TT_Lab.Assets
 {
     public class ChunkFolder : Folder
     {
-        public override String Type => "ChunkFolder";
 
         public ChunkFolder() : base()
         {

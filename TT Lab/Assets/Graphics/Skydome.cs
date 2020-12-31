@@ -9,7 +9,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Skydome : SerializableAsset
     {
-        public override String Type => "Skydome";
 
         public Skydome(UInt32 id, String name, PS2AnySkydome skydome) : base(id, name)
         {

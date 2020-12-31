@@ -13,7 +13,6 @@ namespace TT_Lab.Assets.Code
 {
     public class CodeModel : SerializableAsset
     {
-        public override String Type => "CodeModel";
         protected override String DataExt => ".lab";
         public CodeModel() {}
 

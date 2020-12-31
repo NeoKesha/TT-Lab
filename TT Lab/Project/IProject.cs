@@ -15,14 +15,6 @@ namespace TT_Lab.Project
     public interface IProject
     {
         /// <summary>
-        /// Maps a string to an asset Type
-        /// </summary>
-        /// <example>
-        /// IAsset newTex = (IAsset)Activator.CreateInstance(StringToAsset["Texture"]);
-        /// </example>
-        Dictionary<string, Type> StringToAsset { get; }
-
-        /// <summary>
         /// Project's collection of assets
         /// </summary>
         Dictionary<Guid, IAsset> Assets { get; }

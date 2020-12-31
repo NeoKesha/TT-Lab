@@ -13,8 +13,6 @@ namespace TT_Lab.Assets.Instance
 {
     public class Particles : SerializableInstance
     {
-        public override String Type => "ParticleData";
-
         public Particles()
         {
         }

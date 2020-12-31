@@ -9,10 +9,9 @@ namespace TT_Lab.Assets.Code
 {
     public class SoundEffectJP : SoundEffect
     {
+        public SoundEffectJP() : base() { }
         public SoundEffectJP(UInt32 id, String name, PS2AnySound sound) : base(id, name, sound)
         {
         }
-
-        public override String Type => "SoundEffectJP";
     }
 }

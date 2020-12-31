@@ -11,7 +11,6 @@ namespace TT_Lab.Assets
 {
     public class Folder : SerializableAsset
     {
-        public override String Type => "Folder";
 
         private static UInt32 rootOrder = 0;
         private UInt32 order = 0;

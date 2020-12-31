@@ -22,8 +22,6 @@ namespace TT_Lab.Assets.Instance
             assetData = new ChunkLinksData(links);
         }
 
-        public override String Type => "ChunkLinks";
-
         public override Type GetEditorType()
         {
             throw new NotImplementedException();

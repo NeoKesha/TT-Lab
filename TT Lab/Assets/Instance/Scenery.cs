@@ -22,8 +22,6 @@ namespace TT_Lab.Assets.Instance
             assetData = new SceneryData(scenery);
         }
 
-        public override String Type => "Scenery";
-
         public override Type GetEditorType()
         {
             throw new NotImplementedException();
