@@ -28,7 +28,7 @@ namespace TT_Lab.Rendering
         private vec3 cameraPosition = new vec3(0.0f, 0.0f, 0.0f);
         private vec3 cameraDirection = new vec3(0, 0, -1);
         private vec3 cameraUp = new vec3(0, 1, 0);
-        private const float cameraSpeed = 1.0f;
+        private float cameraSpeed = 1.0f;
 
         // Scene rendering
         private ShaderProgram shader;
@@ -45,9 +45,32 @@ namespace TT_Lab.Rendering
             var passFragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.frag");
             shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
                 { 0, "in_Position" },
-                { 1, "in_Normal" }
+                { 1, "in_Color" },
+                { 2, "in_Normal" }
+            });
+            shader.SetUniforms(() =>
+            {
+                DefaultShaderUniforms();
             });
 
+            projectionMat = glm.infinitePerspective(glm.radians(90.0f), width / height, 0.1f);
+            viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
+            modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
+            var modelView = viewMat * modelMat;
+            normalMat = modelView.to_mat3();
+        }
+
+        /// <summary>
+        /// Constructor to setup a simple rendering scene
+        /// </summary>
+        /// <param name="width">Viewport render width</param>
+        /// <param name="height">Viewport render height</param>
+        public Scene(float width, float height, string shaderName, Action<ShaderProgram, Scene> shdSetUni, Dictionary<uint, string> attribPositions)
+        {
+            var passVerShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.vert");
+            var passFragShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.frag");
+            shader = new ShaderProgram(passVerShader, passFragShader, attribPositions);
+            shader.SetUniforms(() => shdSetUni(shader, this));
             projectionMat = glm.infinitePerspective(glm.radians(90.0f), width / height, 0.1f);
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
@@ -82,6 +105,22 @@ namespace TT_Lab.Rendering
             objects.Add(renderObj);
         }
 
+        public void DefaultShaderUniforms()
+        {
+            // Fragment program uniforms
+            shader.SetUniform3("AmbientMaterial", 0.15f, 0.15f, 0.15f);
+            shader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
+            shader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+            shader.SetUniform3("LightDirection", cameraDirection.x, cameraDirection.y, cameraDirection.z);
+
+            // Vertex program uniforms
+            shader.SetUniformMatrix4("Projection", projectionMat.to_array());
+            shader.SetUniformMatrix4("View", viewMat.to_array());
+            shader.SetUniformMatrix4("Model", modelMat.to_array());
+            shader.SetUniformMatrix3("NormalMatrix", normalMat.to_array());
+            shader.SetUniform3("DiffuseMaterial", 0.75f, 0.75f, 0.75f);
+        }
+
         public void SetResolution(float width, float height)
         {
             projectionMat = glm.infinitePerspective(glm.radians(90.0f), width / height, 0.1f);
@@ -104,18 +143,12 @@ namespace TT_Lab.Rendering
         public void Bind()
         {
             shader.Bind();
-            // Fragment program uniforms
-            shader.SetUniform3("AmbientMaterial", 0.15f, 0.15f, 0.15f);
-            shader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
-            shader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-            shader.SetUniform3("LightDirection", cameraDirection.x, cameraDirection.y, cameraDirection.z);
+            shader.SetUniforms();
+        }
 
-            // Vertex program uniforms
-            shader.SetUniformMatrix4("Projection", projectionMat.to_array());
-            shader.SetUniformMatrix4("View", viewMat.to_array());
-            shader.SetUniformMatrix4("Model", modelMat.to_array());
-            shader.SetUniformMatrix3("NormalMatrix", normalMat.to_array());
-            shader.SetUniform3("DiffuseMaterial", 0.75f, 0.75f, 0.75f);
+        public void SetCameraSpeed(float s)
+        {
+            cameraSpeed = s;
         }
 
         public void RotateView(Vector3 rot)

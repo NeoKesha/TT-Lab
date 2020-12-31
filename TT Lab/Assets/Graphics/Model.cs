@@ -10,7 +10,6 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Model : SerializableAsset
     {
-        protected override String DataExt => ".ply";
         public Model(UInt32 id, String name, PS2AnyModel model) : base(id, name)
         {
             assetData = new ModelData(model);

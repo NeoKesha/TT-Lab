@@ -22,7 +22,9 @@ namespace TT_Lab.AssetData.Graphics
         {
             twinRef = model;
         }
+        [JsonProperty(Required = Required.Always)]
         public List<List<Vertex>> Vertexes { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public List<List<IndexedFace>> Faces { get; set; }
         protected override void Dispose(Boolean disposing)
         {
@@ -208,7 +210,7 @@ namespace TT_Lab.AssetData.Graphics
                     {
                         if (e.Connection[j + 2])
                         {
-                            if ((offset + j) % 2 == 0)
+                            if ((/*offset +*/ j) % 2 == 0)
                             {
                                 faceList.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
                             }
@@ -221,7 +223,9 @@ namespace TT_Lab.AssetData.Graphics
                     }
                     vertList.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j]));
                 }
-                offset += e.Vertexes.Count;
+                Vertexes.Add(vertList);
+                Faces.Add(faceList);
+                //offset += e.Vertexes.Count;
                 refIndex += 2;
             }
         }

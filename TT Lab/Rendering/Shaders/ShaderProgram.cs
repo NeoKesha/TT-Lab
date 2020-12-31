@@ -14,6 +14,7 @@ namespace TT_Lab.Rendering.Shaders
     {
         private readonly Shader vertexShader;
         private readonly Shader fragmentShader;
+        private Action uniformSetAction;
 
         /// <summary>
         /// Creates the shader program.
@@ -50,6 +51,16 @@ namespace TT_Lab.Rendering.Shaders
             {
                 throw new ShaderCompilationException(string.Format("Failed to link shader program with ID {0}.", shaderProgramObject), GetInfoLog());
             }
+        }
+
+        public void SetUniforms()
+        {
+            uniformSetAction?.Invoke();
+        }
+
+        public void SetUniforms(Action uniformSetAction)
+        {
+            this.uniformSetAction = uniformSetAction;
         }
 
         public void Delete()

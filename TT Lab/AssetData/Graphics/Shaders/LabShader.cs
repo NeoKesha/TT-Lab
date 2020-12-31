@@ -50,6 +50,9 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public Vector4 UnkVector2 { get; set; }
         public Vector4 UnkVector3 { get; set; }
         public TwinBlob Blob { get; set; }
+
+        public LabShader() { }
+
         public LabShader(TwinShader twinShader)
         {
             ShaderType = twinShader.ShaderType;

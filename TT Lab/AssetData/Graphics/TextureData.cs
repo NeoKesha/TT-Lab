@@ -18,26 +18,26 @@ namespace TT_Lab.AssetData.Graphics
         {
             twinRef = texture;
         }
-        public Bitmap bitmap;
+        public Bitmap Bitmap;
         protected override void Dispose(Boolean disposing)
         {
-            if (!Disposed && bitmap != null)
+            if (!Disposed && Bitmap != null)
             {
-                bitmap.Dispose();
+                Bitmap.Dispose();
             }
             return;
         }
         public override void Save(string dataPath)
         {
-            if (bitmap != null)
+            if (Bitmap != null)
             {
-                bitmap.Save(dataPath, ImageFormat.Png);
+                Bitmap.Save(dataPath, ImageFormat.Png);
             }
         }
 
         public override void Load(String dataPath)
         {
-            bitmap = new Bitmap(Bitmap.FromFile(dataPath));
+            Bitmap = new Bitmap(Bitmap.FromFile(dataPath));
         }
 
         public override void Import()
@@ -63,7 +63,7 @@ namespace TT_Lab.AssetData.Graphics
                     }
                 }
 
-                bitmap = new Bitmap(tmpBmp);
+                Bitmap = new Bitmap(tmpBmp);
                 tmpBmp.Dispose();
                 BitsHandle.Free();
             }

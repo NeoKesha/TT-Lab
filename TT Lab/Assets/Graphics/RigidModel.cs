@@ -3,6 +3,7 @@ using System;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
@@ -31,7 +32,7 @@ namespace TT_Lab.Assets.Graphics
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
+            return typeof(RigidModelEditor);
         }
 
         public override AbstractAssetData GetData()

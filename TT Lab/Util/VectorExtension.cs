@@ -2,6 +2,7 @@
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +16,19 @@ namespace TT_Lab.Util
             return Vector3.Cross(v2 - v1, v3 - v1);
         }
 
+        public static float[] ToArray(this Vector2 v)
+        {
+            return new float[] { v.X, v.Y };
+        }
+
         public static float[] ToArray(this Vector3 v)
         {
             return new float[] { v.X, v.Y, v.Z };
+        }
+
+        public static Vector2 ToGL(this Twinsanity.TwinsanityInterchange.Common.Vector2 v)
+        {
+            return new Vector2(v.X, v.Y);
         }
 
         /// <summary>
@@ -39,5 +50,12 @@ namespace TT_Lab.Util
         {
             return new Vector4(v.X, v.Y, v.Z, v.W);
         }
+
+        public static float[] ToArray(this Color color)
+        {
+            return new float[] { color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f };
+        }
+
+        
     }
 }

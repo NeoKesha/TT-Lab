@@ -17,8 +17,14 @@ namespace TT_Lab.Rendering.Objects
         public Model(ModelData model)
         {
             modelBuffers = new List<IndexedBufferArray>();
-            for (var i = 0; i < model.Vertexes.Count; ++i) {
-                modelBuffers.Add(BufferGeneration.GetModelBuffer(model.Vertexes[i].Select(v => v.Position).ToList(), model.Faces[i]));
+            for (var i = 0; i < model.Vertexes.Count; ++i)
+            {
+                modelBuffers.Add(BufferGeneration.GetModelBuffer(model.Vertexes[i].Select(v => v.Position).ToList(), model.Faces[i],
+                    model.Vertexes[i].Select((v) =>
+                    {
+                        var col = v.Color.GetColor();
+                        return System.Drawing.Color.FromArgb((int)col.ToARGB());
+                    }).ToList()));
             }
         }
 

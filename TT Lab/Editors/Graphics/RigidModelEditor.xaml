@@ -8,6 +8,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        <base:SceneEditor x:Name="SceneRenderer" Margin="0" Grid.Row="1"/>
+
     </Grid>
 </base:BaseEditor>

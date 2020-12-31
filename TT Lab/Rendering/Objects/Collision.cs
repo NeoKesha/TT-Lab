@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Util;
 
@@ -21,7 +22,8 @@ namespace TT_Lab.Rendering.Objects
         {
             collisionBuffer = BufferGeneration.GetModelBuffer(
                 colData.Vectors.Select(v => new Twinsanity.TwinsanityInterchange.Common.Vector3(v.X, v.Y, v.Z)).ToList(),
-                colData.Triangles.Select(t => t.Face).ToList());
+                colData.Triangles.Select(t => t.Face).ToList(),
+                CollisionSurface.DefaultColors.ToList().Select(c => System.Drawing.Color.FromArgb((int)c.ToARGB())).ToList());
         }
 
         public void Bind()
