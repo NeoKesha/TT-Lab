@@ -16,6 +16,33 @@ namespace TT_Lab.AssetData.Graphics
 
         public TextureData(PS2AnyTexture texture) : this()
         {
+            twinRef = texture;
+        }
+        public Bitmap bitmap;
+        protected override void Dispose(Boolean disposing)
+        {
+            if (!Disposed && bitmap != null)
+            {
+                bitmap.Dispose();
+            }
+            return;
+        }
+        public override void Save(string dataPath)
+        {
+            if (bitmap != null)
+            {
+                bitmap.Save(dataPath, ImageFormat.Png);
+            }
+        }
+
+        public override void Load(String dataPath)
+        {
+            bitmap = new Bitmap(Bitmap.FromFile(dataPath));
+        }
+
+        public override void Import()
+        {
+            PS2AnyTexture texture = (PS2AnyTexture)twinRef;
             if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
             {
                 Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
@@ -40,27 +67,6 @@ namespace TT_Lab.AssetData.Graphics
                 tmpBmp.Dispose();
                 BitsHandle.Free();
             }
-        }
-        public Bitmap bitmap;
-        protected override void Dispose(Boolean disposing)
-        {
-            if (!Disposed && bitmap != null)
-            {
-                bitmap.Dispose();
-            }
-            return;
-        }
-        public override void Save(string dataPath)
-        {
-            if (bitmap != null)
-            {
-                bitmap.Save(dataPath, ImageFormat.Png);
-            }
-        }
-
-        public override void Load(String dataPath)
-        {
-            bitmap = new Bitmap(Bitmap.FromFile(dataPath));
         }
     }
 }

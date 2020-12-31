@@ -19,40 +19,7 @@ namespace TT_Lab.AssetData.Instance
 
         public CameraData(PS2AnyCamera camera) : this()
         {
-            Enabled = camera.CamTrigger.Enabled > 0;
-            Position = CloneUtils.Clone(camera.CamTrigger.Position);
-            Rotation = CloneUtils.Clone(camera.CamTrigger.Rotation);
-            Scale = CloneUtils.Clone(camera.CamTrigger.Scale);
-            Instances = CloneUtils.CloneList(camera.CamTrigger.Instances);
-            Header1 = camera.CamTrigger.Header1;
-            HeaderT = camera.CamTrigger.HeaderT;
-            HeaderH = camera.CamTrigger.HeaderH;
-            CameraHeader = camera.CameraHeader;
-            UnkShort = camera.UnkShort;
-            UnkFloat1 = camera.UnkFloat1;
-            UnkVector1 = CloneUtils.Clone(camera.UnkVector1);
-            UnkVector2 = CloneUtils.Clone(camera.UnkVector2);
-            UnkFloat2 = camera.UnkFloat2;
-            UnkFloat3 = camera.UnkFloat3;
-            UnkInt1 = camera.UnkInt1;
-            UnkInt2 = camera.UnkInt2;
-            UnkInt3 = camera.UnkInt3;
-            UnkInt4 = camera.UnkInt4;
-            UnkInt5 = camera.UnkInt5;
-            UnkInt6 = camera.UnkInt6;
-            UnkFloat4 = camera.UnkFloat4;
-            UnkFloat5 = camera.UnkFloat5;
-            UnkFloat6 = camera.UnkFloat6;
-            UnkFloat7 = camera.UnkFloat7;
-            UnkInt7 = camera.UnkInt7;
-            UnkInt8 = camera.UnkInt8;
-            UnkInt9 = camera.UnkInt9;
-            UnkFloat8 = camera.UnkFloat8;
-            TypeIndex1 = camera.TypeIndex1;
-            TypeIndex2 = camera.TypeIndex2;
-            UnkByte = camera.UnkByte;
-            MainCamera1 = CloneUtils.DeepClone(camera.MainCamera1);
-            MainCamera2 = CloneUtils.DeepClone(camera.MainCamera2);
+            twinRef = camera;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -127,6 +94,44 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+        public override void Import()
+        {
+            PS2AnyCamera camera = (PS2AnyCamera)twinRef;
+            Enabled = camera.CamTrigger.Enabled > 0;
+            Position = CloneUtils.Clone(camera.CamTrigger.Position);
+            Rotation = CloneUtils.Clone(camera.CamTrigger.Rotation);
+            Scale = CloneUtils.Clone(camera.CamTrigger.Scale);
+            Instances = CloneUtils.CloneList(camera.CamTrigger.Instances);
+            Header1 = camera.CamTrigger.Header1;
+            HeaderT = camera.CamTrigger.HeaderT;
+            HeaderH = camera.CamTrigger.HeaderH;
+            CameraHeader = camera.CameraHeader;
+            UnkShort = camera.UnkShort;
+            UnkFloat1 = camera.UnkFloat1;
+            UnkVector1 = CloneUtils.Clone(camera.UnkVector1);
+            UnkVector2 = CloneUtils.Clone(camera.UnkVector2);
+            UnkFloat2 = camera.UnkFloat2;
+            UnkFloat3 = camera.UnkFloat3;
+            UnkInt1 = camera.UnkInt1;
+            UnkInt2 = camera.UnkInt2;
+            UnkInt3 = camera.UnkInt3;
+            UnkInt4 = camera.UnkInt4;
+            UnkInt5 = camera.UnkInt5;
+            UnkInt6 = camera.UnkInt6;
+            UnkFloat4 = camera.UnkFloat4;
+            UnkFloat5 = camera.UnkFloat5;
+            UnkFloat6 = camera.UnkFloat6;
+            UnkFloat7 = camera.UnkFloat7;
+            UnkInt7 = camera.UnkInt7;
+            UnkInt8 = camera.UnkInt8;
+            UnkInt9 = camera.UnkInt9;
+            UnkFloat8 = camera.UnkFloat8;
+            TypeIndex1 = camera.TypeIndex1;
+            TypeIndex2 = camera.TypeIndex2;
+            UnkByte = camera.UnkByte;
+            MainCamera1 = CloneUtils.DeepClone(camera.MainCamera1);
+            MainCamera2 = CloneUtils.DeepClone(camera.MainCamera2);
         }
     }
 }

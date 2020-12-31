@@ -17,18 +17,7 @@ namespace TT_Lab.AssetData.Instance
 
         public InstanceTemplateData(PS2AnyTemplate template) : this()
         {
-            TemplateName = new String(template.Name.ToCharArray());
-            ObjectId = template.ObjectId;
-            Bitfield = template.Bitfield;
-            Header1 = template.Header1;
-            Header2 = template.Header2;
-            Header3 = template.Header3;
-            UnkShort = template.UnkShort;
-            UnkFlags = CloneUtils.CloneArray(template.UnkFlags);
-            Properties = template.Properties;
-            Flags = CloneUtils.CloneList(template.Flags);
-            Floats = CloneUtils.CloneList(template.Floats);
-            Ints = CloneUtils.CloneList(template.Ints);
+            twinRef = template;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -58,6 +47,23 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyTemplate template = (PS2AnyTemplate)twinRef;
+            TemplateName = new String(template.Name.ToCharArray());
+            ObjectId = template.ObjectId;
+            Bitfield = template.Bitfield;
+            Header1 = template.Header1;
+            Header2 = template.Header2;
+            Header3 = template.Header3;
+            UnkShort = template.UnkShort;
+            UnkFlags = CloneUtils.CloneArray(template.UnkFlags);
+            Properties = template.Properties;
+            Flags = CloneUtils.CloneList(template.Flags);
+            Floats = CloneUtils.CloneList(template.Floats);
+            Ints = CloneUtils.CloneList(template.Ints);
         }
     }
 }

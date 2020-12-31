@@ -20,33 +20,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public ModelData(PS2AnyModel model) : this()
         {
-            var refIndex = 0;
-            var offset = 0;
-            foreach (var e in model.SubModels)
-            {
-                e.CalculateData();
-                for (var j = 0; j < e.Vertexes.Count; ++j)
-                {
-                    if (j < e.Vertexes.Count - 2)
-                    {
-                        if (e.Connection[j + 2])
-                        {
-                            if ((offset + j) % 2 == 0)
-                            {
-                                Faces.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
-                            }
-                            else
-                            {
-                                Faces.Add(new IndexedFace(new int[] { refIndex + 1, refIndex, refIndex + 2 }));
-                            }
-                        }
-                        ++refIndex;
-                    }
-                    Vertexes.Add(new Vertex(e.Vertexes[j],e.Colors[j], e.UVW[j], e.EmitColor[j]));
-                }
-                offset += e.Vertexes.Count;
-                refIndex += 2;
-            }
+            twinRef = model;
         }
         public List<Vertex> Vertexes { get; set; }
         public List<IndexedFace> Faces { get; set; }
@@ -213,6 +187,40 @@ namespace TT_Lab.AssetData.Graphics
         private float ConvertTypeFloat(String value, String type) //idk i am not smart :((((
         {
             return Single.Parse(value, CultureInfo.InvariantCulture);
+        }
+
+        public override void Import()
+        {
+            PS2AnyModel model = (PS2AnyModel)twinRef;
+            Vertexes = new List<Vertex>();
+            Faces = new List<IndexedFace>();
+            var refIndex = 0;
+            var offset = 0;
+            foreach (var e in model.SubModels)
+            {
+                e.CalculateData();
+                for (var j = 0; j < e.Vertexes.Count; ++j)
+                {
+                    if (j < e.Vertexes.Count - 2)
+                    {
+                        if (e.Connection[j + 2])
+                        {
+                            if ((offset + j) % 2 == 0)
+                            {
+                                Faces.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
+                            }
+                            else
+                            {
+                                Faces.Add(new IndexedFace(new int[] { refIndex + 1, refIndex, refIndex + 2 }));
+                            }
+                        }
+                        ++refIndex;
+                    }
+                    Vertexes.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j]));
+                }
+                offset += e.Vertexes.Count;
+                refIndex += 2;
+            }
         }
     }
 }

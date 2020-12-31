@@ -17,11 +17,7 @@ namespace TT_Lab.AssetData.Instance
 
         public CollisionSurfaceData(PS2AnyCollisionSurface collisionSurface) : this()
         {
-            SurfaceID = collisionSurface.SurfaceId;
-            Flags = collisionSurface.Flags;
-            StepSoundIds = CloneUtils.CloneArray(collisionSurface.StepSoundIds);
-            Parameters = CloneUtils.CloneArray(collisionSurface.Parameters);
-            UnkShorts = CloneUtils.CloneArray(collisionSurface.UnkShorts);
+            twinRef = collisionSurface;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -38,6 +34,16 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyCollisionSurface collisionSurface = (PS2AnyCollisionSurface)twinRef;
+            SurfaceID = collisionSurface.SurfaceId;
+            Flags = collisionSurface.Flags;
+            StepSoundIds = CloneUtils.CloneArray(collisionSurface.StepSoundIds);
+            Parameters = CloneUtils.CloneArray(collisionSurface.Parameters);
+            UnkShorts = CloneUtils.CloneArray(collisionSurface.UnkShorts);
         }
     }
 }

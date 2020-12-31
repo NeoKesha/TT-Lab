@@ -19,16 +19,7 @@ namespace TT_Lab.AssetData.Instance
 
         public SceneryData(PS2AnyScenery scenery) : this()
         {
-            Flags = scenery.Flags;
-            SceneryName = scenery.Name.Substring(0);
-            UnkUInt = scenery.UnkUInt;
-            UnkByte = scenery.UnkByte;
-            SkydomeID = scenery.SkydomeID;
-            AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
-            DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
-            PointLights = CloneUtils.DeepClone(scenery.PointLights);
-            NegativeLights = CloneUtils.DeepClone(scenery.NegativeLights);
-            Sceneries = CloneUtils.DeepClone(scenery.Sceneries);
+            twinRef = scenery;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -55,6 +46,21 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyScenery scenery = (PS2AnyScenery)twinRef;
+            Flags = scenery.Flags;
+            SceneryName = scenery.Name.Substring(0);
+            UnkUInt = scenery.UnkUInt;
+            UnkByte = scenery.UnkByte;
+            SkydomeID = scenery.SkydomeID;
+            AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
+            DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
+            PointLights = CloneUtils.DeepClone(scenery.PointLights);
+            NegativeLights = CloneUtils.DeepClone(scenery.NegativeLights);
+            Sceneries = CloneUtils.DeepClone(scenery.Sceneries);
         }
     }
 }

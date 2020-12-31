@@ -18,21 +18,7 @@ namespace TT_Lab.AssetData.Instance
 
         public CollisionData(PS2AnyCollisionData collision) : this()
         {
-            UnkInt = collision.UnkInt;
-            foreach (var trigger in collision.Triggers)
-            {
-                Triggers.Add(new Collision.CollisionTrigger(trigger));
-            }
-            foreach (var group in collision.Groups)
-            {
-                Groups.Add(new Collision.GroupInformation(group));
-            }
-            foreach (var triangle in collision.Triangles)
-            {
-                Triangles.Add(new Collision.CollisionTriangle(triangle));
-            }
-            // Clone the vectors instead of reference copying
-            Vectors = CloneUtils.CloneList(collision.Vectors);
+            twinRef = collision;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -52,6 +38,26 @@ namespace TT_Lab.AssetData.Instance
             Groups.Clear();
             Triangles.Clear();
             Vectors.Clear();
+        }
+
+        public override void Import()
+        {
+            PS2AnyCollisionData collision = (PS2AnyCollisionData)twinRef;
+            UnkInt = collision.UnkInt;
+            foreach (var trigger in collision.Triggers)
+            {
+                Triggers.Add(new Collision.CollisionTrigger(trigger));
+            }
+            foreach (var group in collision.Groups)
+            {
+                Groups.Add(new Collision.GroupInformation(group));
+            }
+            foreach (var triangle in collision.Triangles)
+            {
+                Triangles.Add(new Collision.CollisionTriangle(triangle));
+            }
+            // Clone the vectors instead of reference copying
+            Vectors = CloneUtils.CloneList(collision.Vectors);
         }
     }
 }

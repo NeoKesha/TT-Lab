@@ -9,6 +9,7 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Assets.Instance;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
@@ -35,7 +36,7 @@ namespace TT_Lab.Project
 
         public Dictionary<Guid, IAsset> Assets { get; private set; }
 
-        public List<Guid> AssetIds { get; private set; }
+        public Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
 
         public Guid UUID { get; }
 
@@ -114,7 +115,8 @@ namespace TT_Lab.Project
         public void Serialize()
         {
             var path = ProjectPath;
-            AssetIds = Assets.Keys.ToList();
+
+            GuidToTwinId = GuidManager.GuidToTwinId;
 
             // Update last modified date
             LastModified = DateTime.Now;
@@ -464,6 +466,13 @@ namespace TT_Lab.Project
                         }
                     }
                 }
+            }
+            Log.WriteLine($"Creating GUID Mapper...");
+            GuidManager.InitMappers(Assets);
+            Log.WriteLine($"Converting assets...");
+            foreach (var asset in Assets)
+            {
+                asset.Value.Import();
             }
         }
 

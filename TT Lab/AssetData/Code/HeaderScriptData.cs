@@ -17,6 +17,7 @@ namespace TT_Lab.AssetData.Code
 
         public HeaderScriptData(PS2HeaderScript headerScript) : base(headerScript)
         {
+            twinRef = headerScript;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -25,6 +26,12 @@ namespace TT_Lab.AssetData.Code
         protected override void Dispose(Boolean disposing)
         {
             Pairs.Clear();
+        }
+
+        public override void Import()
+        {
+            PS2HeaderScript headerScript = (PS2HeaderScript)twinRef;
+
         }
     }
 }

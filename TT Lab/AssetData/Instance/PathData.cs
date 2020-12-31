@@ -18,8 +18,7 @@ namespace TT_Lab.AssetData.Instance
 
         public PathData(PS2AnyPath path) : this()
         {
-            Points = CloneUtils.CloneList(path.PointList);
-            Parameters = CloneUtils.CloneList(path.ParameterList);
+            twinRef = path;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -30,6 +29,13 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             Points.Clear();
+        }
+
+        public override void Import()
+        {
+            PS2AnyPath path = (PS2AnyPath)twinRef;
+            Points = CloneUtils.CloneList(path.PointList);
+            Parameters = CloneUtils.CloneList(path.ParameterList);
         }
     }
 }

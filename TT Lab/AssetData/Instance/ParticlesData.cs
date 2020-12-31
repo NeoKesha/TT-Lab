@@ -19,9 +19,7 @@ namespace TT_Lab.AssetData.Instance
 
         public ParticlesData(PS2AnyParticleData particleData) : this()
         {
-            Version = particleData.Version;
-            ParticleTypes = CloneUtils.DeepClone(particleData.ParticleTypes);
-            ParticleInstances = CloneUtils.DeepClone(particleData.ParticleInstances);
+            twinRef = particleData;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -34,6 +32,14 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyParticleData particleData = (PS2AnyParticleData)twinRef;
+            Version = particleData.Version;
+            ParticleTypes = CloneUtils.DeepClone(particleData.ParticleTypes);
+            ParticleInstances = CloneUtils.DeepClone(particleData.ParticleInstances);
         }
     }
 }

@@ -16,6 +16,7 @@ namespace TT_Lab.Assets.Graphics
         {
             assetData = new TextureData(texture);
             Raw = false;
+            parameters.Add("texture_function", texture.TexFun);
         }
 
         public Texture()

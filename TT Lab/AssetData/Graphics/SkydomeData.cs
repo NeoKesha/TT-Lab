@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
@@ -14,18 +15,28 @@ namespace TT_Lab.AssetData.Graphics
 
         public SkydomeData(PS2AnySkydome skydome) : this()
         {
-            Header = skydome.Header;
-            Meshes = CloneUtils.CloneList(skydome.Meshes);
+            twinRef = skydome;
         }
 
         [JsonProperty(Required = Required.Always)]
         public Int32 Header { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt32> Meshes { get; set; }
+        public List<Guid> Meshes { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnySkydome skydome = (PS2AnySkydome)twinRef;
+            Header = skydome.Header;
+            Meshes = new List<Guid>();
+            foreach (var mesh in skydome.Meshes)
+            {
+                Meshes.Add(GuidManager.GetGuidByTwinId(mesh, typeof(Mesh)));
+            }
         }
     }
 }

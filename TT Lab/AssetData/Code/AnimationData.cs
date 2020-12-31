@@ -18,7 +18,7 @@ namespace TT_Lab.AssetData.Code
 
         public AnimationData(PS2AnyAnimation animation) : this()
         {
-            Bitfield = animation.Bitfield;
+            twinRef = animation;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -41,6 +41,12 @@ namespace TT_Lab.AssetData.Code
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyAnimation animation = (PS2AnyAnimation)twinRef;
+            Bitfield = animation.Bitfield;
         }
     }
 }

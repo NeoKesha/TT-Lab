@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
@@ -26,6 +28,8 @@ namespace TT_Lab.Assets
         public Boolean IsLoaded { get; protected set; }
         public UInt32 Order { get; set; }
 
+        public Dictionary<String, Object> parameters { get; set; }
+
         public SerializableAsset()
         {
             IsLoaded = false;
@@ -40,6 +44,7 @@ namespace TT_Lab.Assets
             Raw = true;
             Data = UUID.ToString() + DataExt;
             IsLoaded = true;
+            parameters = new Dictionary<string, object>();
         }
 
         public virtual void Serialize()
@@ -69,5 +74,13 @@ namespace TT_Lab.Assets
         public abstract Type GetEditorType();
 
         public abstract AbstractAssetData GetData();
+        public virtual void Import()
+        {
+            assetData.Import();
+        }
+        public Guid GetGuid()
+        {
+            return UUID;
+        }
     }
 }

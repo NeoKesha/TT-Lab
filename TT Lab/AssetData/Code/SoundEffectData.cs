@@ -18,17 +18,7 @@ namespace TT_Lab.AssetData.Code
 
         public SoundEffectData(PS2AnySound sound) : this()
         {
-            Frequency = sound.GetFreq();
-            Channels = 1;
-            ADPCM adpcm = new ADPCM();
-            using (MemoryStream input = new MemoryStream(sound.Sound))
-            using (MemoryStream output = new MemoryStream())
-            {
-                BinaryReader reader = new BinaryReader(input);
-                BinaryWriter writer = new BinaryWriter(output);
-                adpcm.ToPCMMono(reader, writer);
-                PCM = output.ToArray();
-            }
+            twinRef = sound;
         }
         Byte[] PCM;
         UInt32 Frequency;
@@ -53,6 +43,22 @@ namespace TT_Lab.AssetData.Code
             using (BinaryReader reader = new BinaryReader(fs))
             {
                 PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
+            }
+        }
+
+        public override void Import()
+        {
+            PS2AnySound sound = (PS2AnySound)twinRef;
+            Frequency = sound.GetFreq();
+            Channels = 1;
+            ADPCM adpcm = new ADPCM();
+            using (MemoryStream input = new MemoryStream(sound.Sound))
+            using (MemoryStream output = new MemoryStream())
+            {
+                BinaryReader reader = new BinaryReader(input);
+                BinaryWriter writer = new BinaryWriter(output);
+                adpcm.ToPCMMono(reader, writer);
+                PCM = output.ToArray();
             }
         }
     }

@@ -18,7 +18,7 @@ namespace TT_Lab.AssetData.Code
 
         public MainScriptData(PS2MainScript mainScript) : base(mainScript)
         {
-            Script = mainScript.ToString();
+            twinRef = mainScript;
         }
 
         public String Script { get; set; }
@@ -44,6 +44,12 @@ namespace TT_Lab.AssetData.Code
             {
                 Script = reader.ReadToEnd();
             }
+        }
+
+        public override void Import()
+        {
+            PS2MainScript mainScript = (PS2MainScript)twinRef;
+            Script = mainScript.ToString();
         }
     }
 }

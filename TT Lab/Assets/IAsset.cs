@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 
@@ -57,6 +58,12 @@ namespace TT_Lab.Assets
         string Chunk { get; }
 
         /// <summary>
+        /// TT Lab specific data
+        /// </summary>
+        [JsonProperty(Required = Required.AllowNull)]
+        Dictionary<String, Object> parameters { get; }
+
+        /// <summary>
         /// Order in the Project Tree
         /// </summary>
         [JsonProperty(Required = Required.Always)]
@@ -108,5 +115,10 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <returns>Data in the format</returns>
         Byte[] ToFormat();
+
+        /// <summary>
+        /// Finishes import on Project Creation stage
+        /// </summary>
+        void Import();
     }
 }

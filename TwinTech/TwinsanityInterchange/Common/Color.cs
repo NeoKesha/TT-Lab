@@ -11,6 +11,27 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class Color : ITwinSerializable
     {
+        public Color()
+        {
+            A = 255;
+            R = 255;
+            G = 255;
+            B = 255;
+        }
+        public Color(Byte R, Byte G, Byte B)
+        {
+            A = 255;
+            this.R = R;
+            this.G = G;
+            this.B = B;
+        }
+        public Color(Byte R, Byte G, Byte B, Byte A)
+        {
+            this.A = A;
+            this.R = R;
+            this.G = G;
+            this.B = B;
+        }
         public Byte A { get; set; }
         public Byte R { get; set; }
         public Byte G { get; set; }

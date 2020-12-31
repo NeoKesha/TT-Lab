@@ -17,7 +17,7 @@ namespace TT_Lab.AssetData.Code
 
         public CodeModelData(PS2AnyCodeModel codeModel) : this()
         {
-            Script = codeModel.ToString();
+            twinRef = codeModel;
         }
         public String Script { get; set; }
         public override void Save(string dataPath)
@@ -40,6 +40,12 @@ namespace TT_Lab.AssetData.Code
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyCodeModel codeModel = (PS2AnyCodeModel)twinRef;
+            Script = codeModel.ToString();
         }
     }
 }

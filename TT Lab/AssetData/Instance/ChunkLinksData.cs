@@ -16,10 +16,7 @@ namespace TT_Lab.AssetData.Instance
 
         public ChunkLinksData(PS2AnyLink link) : this()
         {
-            foreach (var l in link.LinksList)
-            {
-                Links.Add(new ChunkLink(l));
-            }
+            twinRef = link;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -28,6 +25,15 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             Links.Clear();
+        }
+
+        public override void Import()
+        {
+            PS2AnyLink link = (PS2AnyLink)twinRef;
+            foreach (var l in link.LinksList)
+            {
+                Links.Add(new ChunkLink(l));
+            }
         }
     }
 }
