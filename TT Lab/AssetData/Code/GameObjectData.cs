@@ -54,20 +54,6 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> InstIntegers { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefObjects { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefOGIs { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefAnimations { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefCodeModels { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefScripts { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<UInt16> RefUnknowns { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefSounds { get; set; }
-        [JsonProperty(Required = Required.Always)]
         [JsonConverter(typeof(ScriptPackConverter))]
         public ScriptPack ScriptPack { get; set; }
 
@@ -121,44 +107,21 @@ namespace TT_Lab.AssetData.Code
             SoundSlots = new List<Guid>();
             foreach (var e in gameObject.SoundSlots)
             {
-                SoundSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(SoundEffect)));
+                var list = GuidManager.GetGuidListOfMulti5(e);
+                if (list != null)
+                {
+                    SoundSlots.AddRange(list);
+                }
+                else
+                {
+                    SoundSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(SoundEffect)));
+                }
             }
             InstancePropsHeader = gameObject.InstancePropsHeader;
             UnkUInt = gameObject.UnkUInt;
             InstFlags = CloneUtils.CloneList(gameObject.InstFlags);
             InstFloats = CloneUtils.CloneList(gameObject.InstFloats);
             InstIntegers = CloneUtils.CloneList(gameObject.InstIntegers);
-            RefObjects = new List<Guid>();
-            foreach (var e in gameObject.RefObjects)
-            {
-                RefObjects.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(GameObject)));
-            }
-            RefOGIs = new List<Guid>();
-            foreach (var e in gameObject.RefOGIs)
-            {
-                RefOGIs.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(OGI)));
-            }
-            RefAnimations = new List<Guid>();
-            foreach (var e in gameObject.RefAnimations)
-            {
-                RefAnimations.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(Animation)));
-            }
-            RefCodeModels = new List<Guid>();
-            foreach (var e in gameObject.RefCodeModels)
-            {
-                RefCodeModels.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(CodeModel)));
-            }
-            RefScripts = new List<Guid>();
-            foreach (var e in gameObject.RefScripts)
-            {
-                RefScripts.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(HeaderScript)));
-            }
-            RefUnknowns = CloneUtils.CloneList(gameObject.RefUnknowns);
-            RefSounds = new List<Guid>();
-            foreach (var e in gameObject.RefSounds)
-            {
-                RefSounds.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(SoundEffect)));
-            }
             ScriptPack = gameObject.ScriptPack;
         }
     }

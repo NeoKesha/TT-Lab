@@ -29,17 +29,20 @@ namespace TT_Lab.Util
             typeof(AiPath)
         };
         private static Type cmSpecial = typeof(CodeModel);
-        private static Type hsSpecial = typeof(HeaderScript);
+        private static Type sfxSpecial = typeof(SoundEffect);
         public static Dictionary<Guid, IAsset> GuidToAsset { get; set; }
         public static Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
         public static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; }
-        public static Dictionary<KeyValuePair<Guid,UInt32>,Guid> CmSubScriptIdToGuid { get; set; }
+        public static Dictionary<KeyValuePair<Guid, UInt32>, Guid> CmSubScriptIdToGuid { get; set; }
+        public static Dictionary<UInt32, List<Guid>> SfxMulti5List {get;set;}
 
         public static void InitMappers(Dictionary<Guid, IAsset> Assets)
         {
-            GuidToAsset = new Dictionary<Guid, IAsset>(Assets.Count);
-            GuidToTwinId = new Dictionary<Guid, UInt32>(Assets.Count);
-            TwinIdToGuid = new Dictionary<KeyValuePair<Type, UInt32>, Guid>(Assets.Count);
+            GuidToAsset = new Dictionary<Guid, IAsset>();
+            GuidToTwinId = new Dictionary<Guid, UInt32>();
+            TwinIdToGuid = new Dictionary<KeyValuePair<Type, UInt32>, Guid>();
+            CmSubScriptIdToGuid = new Dictionary<KeyValuePair<Guid, uint>, Guid>();
+            SfxMulti5List = new Dictionary<uint, List<Guid>>();
             foreach (var key in Assets.Keys)
             {
                 IAsset asset = Assets[key];
@@ -61,6 +64,15 @@ namespace TT_Lab.Util
                             GuidToTwinId.Add(e.Value, e.Key);
                             CmSubScriptIdToGuid.Add(new KeyValuePair<Guid, uint>(asset.UUID, e.Key), e.Value);
                         }
+                    } 
+                    else if (sfxSpecial.IsAssignableFrom(assetType) && sfxSpecial != assetType)
+                    {
+                        if (!SfxMulti5List.ContainsKey(asset.ID))
+                        {
+                            SfxMulti5List.Add(asset.ID, new List<Guid>());
+                        }
+                        var list = SfxMulti5List[asset.ID];
+                        list.Add(asset.UUID);
                     }
                 }
                 catch(Exception ex)
@@ -69,6 +81,17 @@ namespace TT_Lab.Util
                     throw ex;
                 }
             }
+        }
+        public static List<Guid> GetGuidListOfMulti5(UInt32 id)
+        {
+            if (SfxMulti5List.ContainsKey(id))
+            {
+                return SfxMulti5List[id];
+            }
+            else
+            {
+                return null;
+            } 
         }
         public static Guid GetGuidByCmSubScriptId(Guid guid, UInt32 id)
         {
