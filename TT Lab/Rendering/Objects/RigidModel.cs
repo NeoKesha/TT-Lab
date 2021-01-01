@@ -33,10 +33,7 @@ namespace TT_Lab.Rendering.Objects
                         }).ToList(),
                         model.Vertexes[i].Select(v => v.UV).ToList()));
                     var tex = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(matData.Shaders[0].TextureId).GetData();
-                    var bitmapBits = tex.Bitmap.LockBits(new System.Drawing.Rectangle(0, 0, tex.Bitmap.Width, tex.Bitmap.Height),
-                        System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                    textureBuffers.Add(new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, bitmapBits.Scan0));
-                    tex.Bitmap.UnlockBits(bitmapBits);
+                    textureBuffers.Add(new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
                 }
                 else
                 {

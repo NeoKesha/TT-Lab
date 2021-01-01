@@ -187,6 +187,7 @@
     <Compile Include="Rendering\Buffers\TextureBuffer.cs" />
     <Compile Include="Rendering\Objects\Collision.cs" />
     <Compile Include="Rendering\Objects\Model.cs" />
+    <Compile Include="Rendering\Objects\Plane.cs" />
     <Compile Include="Rendering\Objects\Position.cs" />
     <Compile Include="Rendering\Objects\RigidModel.cs" />
     <Compile Include="Util\BufferGeneration.cs" />

@@ -21,6 +21,9 @@ namespace TT_Lab.Editors
     public partial class SceneEditor : System.Windows.Controls.UserControl
     {
         private List<Keys> pressedKeys = new List<Keys>();
+        private System.Drawing.Point mousePos;
+
+        public event EventHandler RendererInit;
 
         public Scene Scene;
         public GLControl Glcontrol;
@@ -39,7 +42,6 @@ namespace TT_Lab.Editors
             Glcontrol.Dock = DockStyle.Fill;
 
             GLHost.Child = Glcontrol;
-            Glcontrol.MakeCurrent();
 
             // Start render loop
             Timer timer = new Timer
@@ -66,7 +68,7 @@ namespace TT_Lab.Editors
             }
         }
 
-        private System.Drawing.Point mousePos;
+        
         private void Glcontrol_MouseMove(Object sender, MouseEventArgs e)
         {
             var curMousePos = e.Location;
@@ -81,6 +83,7 @@ namespace TT_Lab.Editors
         {
             Glcontrol.MakeCurrent();
             GL.ClearColor(System.Drawing.Color.LightGray);
+            RendererInit?.Invoke(sender, e);
         }
 
         private void Glcontrol_Paint(Object sender, System.Windows.Forms.PaintEventArgs e)

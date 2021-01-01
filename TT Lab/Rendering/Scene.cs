@@ -26,7 +26,7 @@ namespace TT_Lab.Rendering
         private mat4 modelMat;
         private mat3 normalMat;
         private vec3 cameraPosition = new vec3(0.0f, 0.0f, 0.0f);
-        private vec3 cameraDirection = new vec3(0, 0, -1);
+        private vec3 cameraDirection = new vec3(0, 0, 1);
         private vec3 cameraUp = new vec3(0, 1, 0);
         private float cameraSpeed = 1.0f;
 
@@ -196,6 +196,7 @@ namespace TT_Lab.Rendering
             {
                 @object.Delete();
             }
+            objects.Clear();
         }
 
         public void PreRender()

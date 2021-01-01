@@ -108,6 +108,9 @@ namespace TT_Lab.Util
                 var vec1 = v1.ToGL();
                 var vec2 = v2.ToGL();
                 var vec3 = v3.ToGL();
+                //vec1.X = -vec1.X;
+                //vec2.X = -vec2.X;
+                //vec3.X = -vec3.X;
                 uvVecs.AddRange(vec1.ToArray());
                 uvVecs.AddRange(vec2.ToArray());
                 uvVecs.AddRange(vec3.ToArray());

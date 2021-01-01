@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Project;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
 
@@ -23,6 +24,9 @@ namespace TT_Lab.Editors.Graphics
     /// </summary>
     public partial class RigidModelEditor : BaseEditor
     {
+
+        private int selectedMaterial = 0;
+
         public RigidModelEditor()
         {
             InitializeComponent();
@@ -31,6 +35,19 @@ namespace TT_Lab.Editors.Graphics
         public RigidModelEditor(AssetViewModel asset) : base(asset)
         {
             InitializeComponent();
+
+            MaterialViewer.RendererInit += MaterialViewer_RendererInit;
+            SceneRenderer.RendererInit += SceneRenderer_RendererInit;
+        }
+
+        private void MaterialViewer_RendererInit(Object sender, EventArgs e)
+        {
+            ResetMaterialViewer();
+        }
+
+        private void SceneRenderer_RendererInit(Object sender, EventArgs e)
+        {
+            SceneRenderer.Glcontrol.MakeCurrent();
             SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight,
                 "LightTexture",
                 (shd, s) =>
@@ -45,9 +62,59 @@ namespace TT_Lab.Editors.Graphics
                     { 3, "in_Texpos" }
                 });
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
-            var rm = (RigidModelData)asset.Asset.GetData();
+
+            var rm = (RigidModelData)DataContext;
             RigidModel model = new RigidModel(rm);
             SceneRenderer.Scene.AddRender(model);
+        }
+
+        private void ResetMaterialViewer()
+        {
+            MaterialViewer.Glcontrol.MakeCurrent();
+            MaterialViewer.Scene?.Delete();
+
+            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GLHost.ActualWidth, (float)MaterialViewer.GLHost.ActualHeight,
+                "LightTexture",
+                (shd, s) =>
+                {
+                    s.DefaultShaderUniforms();
+                },
+                new Dictionary<uint, string>
+                {
+                    { 0, "in_Position" },
+                    { 1, "in_Color" },
+                    { 2, "in_Normal" },
+                    { 3, "in_Texpos" }
+                });
+            MaterialViewer.Scene.SetCameraSpeed(0);
+
+            var rm = (RigidModelData)DataContext;
+            var matData = (MaterialData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(rm.Materials[selectedMaterial]).GetData();
+            MaterialName.Text = matData.Name;
+            var texPlane = new Plane(matData);
+            MaterialViewer.Scene.AddRender(texPlane);
+        }
+
+        private void PrevMatButton_MouseDown(Object sender, MouseButtonEventArgs e)
+        {
+            selectedMaterial--;
+            var rm = (RigidModelData)DataContext;
+            if (selectedMaterial < 0)
+            {
+                selectedMaterial = rm.Materials.Count - 1;
+            }
+            ResetMaterialViewer();
+        }
+
+        private void NextMatButton_MouseDown(Object sender, MouseButtonEventArgs e)
+        {
+            selectedMaterial++;
+            var rm = (RigidModelData)DataContext;
+            if (selectedMaterial >= rm.Materials.Count)
+            {
+                selectedMaterial = 0;
+            }
+            ResetMaterialViewer();
         }
     }
 }

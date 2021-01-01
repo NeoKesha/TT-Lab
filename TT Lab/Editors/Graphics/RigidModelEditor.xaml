@@ -8,11 +8,30 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="549*"/>
+            <ColumnDefinition Width="251*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="97*"/>
+            <RowDefinition Height="128*"/>
         </Grid.RowDefinitions>
-        <base:SceneEditor x:Name="SceneRenderer" Margin="0" Grid.Row="1"/>
+        <base:SceneEditor x:Name="SceneRenderer" Margin="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <base:SceneEditor x:Name="MaterialViewer" Margin="0" Grid.Column="1"/>
+        <Grid Margin="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="PrevMatButton" Content="Previous material" Grid.Column="1" Margin="0" MouseDown="PrevMatButton_MouseDown"/>
+            <Button x:Name="NextMatButton" Content="Next material" Grid.Column="1" Margin="0" Grid.Row="2" MouseDown="NextMatButton_MouseDown"/>
+            <TextBlock x:Name="MaterialName" Grid.Column="1" HorizontalAlignment="Center" Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="Material Name" VerticalAlignment="Center"/>
+        </Grid>
 
     </Grid>
 </base:BaseEditor>
