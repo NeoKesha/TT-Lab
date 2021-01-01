@@ -33,6 +33,7 @@ namespace TT_Lab.Util
         public static Dictionary<Guid, IAsset> GuidToAsset { get; set; }
         public static Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
         public static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; }
+        public static Dictionary<KeyValuePair<Guid,UInt32>,Guid> CmSubScriptIdToGuid { get; set; }
 
         public static void InitMappers(Dictionary<Guid, IAsset> Assets)
         {
@@ -58,7 +59,7 @@ namespace TT_Lab.Util
                         {
                             GuidToAsset.Add(e.Value, asset);
                             GuidToTwinId.Add(e.Value, e.Key);
-                            TwinIdToGuid.Add(new KeyValuePair<Type, uint>(hsSpecial, e.Key), e.Value);
+                            CmSubScriptIdToGuid.Add(new KeyValuePair<Guid, uint>(asset.UUID, e.Key), e.Value);
                         }
                     }
                 }
@@ -69,7 +70,22 @@ namespace TT_Lab.Util
                 }
             }
         }
-
+        public static Guid GetGuidByCmSubScriptId(Guid guid, UInt32 id)
+        {
+            var key = new KeyValuePair<Guid, UInt32>(guid, id);
+            return GetGuidByCmSubScriptId(key);
+        }
+        public static Guid GetGuidByCmSubScriptId(KeyValuePair<Guid, UInt32> key)
+        {
+            if (CmSubScriptIdToGuid.ContainsKey(key))
+            {
+                return CmSubScriptIdToGuid[key];
+            }
+            else
+            {
+                return Guid.Empty;
+            }
+        }
         public static IAsset GetAssetByGuid(Guid guid)
         {
             return GuidToAsset[guid];

@@ -96,8 +96,22 @@ namespace TT_Lab.AssetData.Code
             ScriptSlots = new List<Guid>();
             foreach (var e in gameObject.ScriptSlots)
             {
-                
-                ScriptSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(HeaderScript)));
+                var found = false;
+                foreach (var cm in gameObject.RefCodeModels)
+                {
+                    Guid cmGuid = GuidManager.GetGuidByTwinId(cm, typeof(CodeModel));
+                    Guid subGuid = GuidManager.GetGuidByCmSubScriptId(cmGuid, e);
+                    if (!subGuid.Equals(Guid.Empty))
+                    {
+                        ScriptSlots.Add(subGuid);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    ScriptSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(HeaderScript)));
+                }
             }
             ObjectSlots = new List<Guid>();
             foreach (var e in gameObject.ObjectSlots)
