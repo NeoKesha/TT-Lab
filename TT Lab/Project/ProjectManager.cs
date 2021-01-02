@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
@@ -84,12 +85,52 @@ namespace TT_Lab.Project
                 if (value != _searchAsset)
                 {
                     _searchAsset = value;
+                    Boolean foundFirst = false;
                     foreach (var e in ProjectTree)
                     {
-                        e.Filter = _searchAsset;
+                        var asset = FilterAsset(e, _searchAsset);
+                        if (asset != null && !foundFirst)
+                        {
+                            foundFirst = true;
+                            asset.IsExpanded = true;
+                            asset.IsSelected = true;
+                        } else
+                        {
+                            e.IsExpanded = false;
+                        }
                     }
                     NotifyChange("SearchAsset");
                 }
+            }
+        }
+
+        private AssetViewModel FilterAsset(AssetViewModel asset, String filter)
+        {
+            if (asset.Children == null)
+            {
+                if (!string.IsNullOrWhiteSpace(filter) && !asset.Alias.ToUpper().Contains(filter.ToUpper()))
+                {
+                    asset.IsVisible = Visibility.Collapsed;
+                    return null;
+                }
+                else
+                {
+                    asset.IsVisible = Visibility.Visible;
+                    return asset;
+                }
+            }
+            else
+            {
+                AssetViewModel first = null;
+                foreach (var c in asset.Children)
+                {
+                    var childFirst = FilterAsset(c, filter);
+                    if (first == null)
+                    {
+                        first = childFirst;
+                    }
+                }
+                return first;
             }
         }
 
