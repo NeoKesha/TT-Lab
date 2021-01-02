@@ -38,7 +38,7 @@ namespace TT_Lab.AssetData.Code
                 var cm = new PS2AnyCodeModel();
                 cm.ReadText(reader);
                 Script = cm.ToString();
-                GetIds(cm);
+                GenerateSubScriptIdList(cm);
                 twinRef = cm;
             }
         }
@@ -51,10 +51,10 @@ namespace TT_Lab.AssetData.Code
         {
             PS2AnyCodeModel codeModel = (PS2AnyCodeModel)twinRef;
             Script = codeModel.ToString();
-            GetIds(codeModel);
+            GenerateSubScriptIdList(codeModel);
         }
 
-        private void GetIds(PS2AnyCodeModel cm)
+        private void GenerateSubScriptIdList(PS2AnyCodeModel cm)
         {
             ScriptIds = new List<uint>();
             foreach (var e in cm.ScriptPacks)

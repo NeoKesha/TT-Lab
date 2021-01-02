@@ -22,7 +22,7 @@ namespace TT_Lab.Assets.Code
             assetData = new CodeModelData(codeModel);
             assetData.Import();
             parameters.Add("sub_script_guids", SubScriptGuids);
-            GetIds();
+            GenerateSubScriptGuidList();
         }
 
         public override Byte[] ToFormat()
@@ -52,7 +52,7 @@ namespace TT_Lab.Assets.Code
             return assetData;
         }
 
-        private void GetIds()
+        private void GenerateSubScriptGuidList()
         {
             SubScriptGuids.Clear();
             var cm = (CodeModelData)assetData;
