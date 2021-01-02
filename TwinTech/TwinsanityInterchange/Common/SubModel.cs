@@ -67,20 +67,24 @@ namespace Twinsanity.TwinsanityInterchange.Common
                     {
                         var conn = (e.GetBinaryW() & 0xFF00) >> 8;
                         Connection.Add(conn == 128 ? false : true);
-                        var r = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        var g = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        var b = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        Colors.Add(new Vector4(r, g, b, 1.0f));
+                        Vector4 uv = new Vector4(e);
+                        uv.X /= uv.Z;
+                        uv.Y /= uv.Z;
+                        uv.X -= (float)Math.Truncate(uv.X);
+                        uv.Y -= (float)Math.Truncate(uv.Y);
+                        uv.X = Math.Abs(uv.X);
+                        uv.Y = Math.Abs(uv.Y);
+                        UVW.Add(uv);
                     }
                 }
                 if (fields > 2)
                 {
                     foreach (var e in data[i + 4])
                     {
-                        Vector4 uv = new Vector4(e);
-                        uv.X = (uv.X + 1.0f) / 2.0f;
-                        uv.Y = (uv.Y + 1.0f) / 2.0f;
-                        UVW.Add(uv);
+                        var r = (e.GetBinaryX() & 0xFF) / 255.0f;
+                        var g = (e.GetBinaryX() & 0xFF) / 255.0f;
+                        var b = (e.GetBinaryX() & 0xFF) / 255.0f;
+                        Colors.Add(new Vector4(r, g, b, 1.0f));
                     }  
                 }
                 if (fields > 3)

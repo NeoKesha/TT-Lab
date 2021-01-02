@@ -35,7 +35,7 @@ namespace TT_Lab.ViewModels
                 _children = new ReadOnlyCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order
-                     select new AssetViewModel(child, this as AssetViewModel)).ToList());
+                     select new AssetViewModel(child, this)).ToList());
             }
         }
 

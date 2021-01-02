@@ -7,7 +7,7 @@
         xmlns:Settings="clr-namespace:TT_Lab.Properties"
         xmlns:Project="clr-namespace:TT_Lab.Project" x:Class="TT_Lab.MainWindow"
         mc:Ignorable="d"
-        Title="{Binding ProjectTitle}" Height="720" Width="1280" MinWidth="854" MinHeight="480">
+        Title="{Binding ProjectTitle}" Height="720" Width="1280" MinWidth="854" MinHeight="480" Icon="Images/tt_lab_logo_v6_2k.ico">
     <Window.Resources>
         <SolidColorBrush x:Key="TabItem.Selected.Background" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="TabItem.Selected.Border" Color="#ACACAC"/>
