@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TT_Lab"
-        xmlns:misc="clr-namespace:TT_Lab.Misc"
         xmlns:Settings="clr-namespace:TT_Lab.Properties"
         xmlns:Project="clr-namespace:TT_Lab.Project" x:Class="TT_Lab.MainWindow"
         mc:Ignorable="d"
@@ -377,14 +376,14 @@
                         <RowDefinition Height="100*"/>
                     </Grid.RowDefinitions>
                     <TextBox 
-                        x:Name="textBox" 
+                        x:Name="SearchBar" 
                         TextWrapping="NoWrap" 
                         Text="{Binding SearchAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Margin="0,0,0,2"/>
+                        Margin="0,0,0,2" VerticalAlignment="Center" MaxLines="1"/>
                     <TreeView 
                     Grid.Row="1"
                     x:Name="ProjectTree" 
-                    ItemsSource="{Binding ProjectTree}" 
+                    ItemsSource="{Binding ProjectTree, Mode=OneWay}" 
                     Margin="0" 
                     Style="{DynamicResource ProjectTreeStyle}" 
                     VirtualizingStackPanel.IsVirtualizing="True"
@@ -394,20 +393,15 @@
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                                 <Setter Property="Visibility" Value="{Binding IsVisible, Mode=TwoWay}"/>
-                                <Setter Property="ItemsPanel">
+                                <Setter Property="ItemsControl.ItemsPanel">
                                     <Setter.Value>
                                         <ItemsPanelTemplate>
-                                            <misc:TTLabVirtualizingStackPanel/>
+                                            <VirtualizingStackPanel IsItemsHost="True"/>
                                         </ItemsPanelTemplate>
                                     </Setter.Value>
                                 </Setter>
                             </Style>
                         </TreeView.ItemContainerStyle>
-                        <TreeView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <misc:TTLabVirtualizingStackPanel/>
-                            </ItemsPanelTemplate>
-                        </TreeView.ItemsPanel>
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                                 <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown"/>

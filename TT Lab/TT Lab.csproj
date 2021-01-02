@@ -183,7 +183,6 @@
     <Compile Include="Editors\Instance\PositionEditor.xaml.cs">
       <DependentUpon>PositionEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Misc\TTLabVirtualizingStackPanel.cs" />
     <Compile Include="Rendering\Buffers\IndexedBufferArray.cs" />
     <Compile Include="Rendering\Buffers\TextureBuffer.cs" />
     <Compile Include="Rendering\Objects\Collision.cs" />

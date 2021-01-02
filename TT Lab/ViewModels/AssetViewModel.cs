@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Controls;
@@ -17,13 +18,16 @@ namespace TT_Lab.ViewModels
     {
         private IAsset _asset;
         private AssetViewModel _parent;
-        private IReadOnlyCollection<AssetViewModel> _children;
+        private ObservableCollection<AssetViewModel> _children;
+        private List<AssetViewModel> _internalChildren;
         private Boolean _isSelected;
         private Boolean _isExpanded;
         private Visibility _isVisible;
         private Control _editor;
 
-        public AssetViewModel(Guid asset) : this(asset, null) { }
+        public AssetViewModel(Guid asset) : this(asset, null)
+        {
+        }
 
         public AssetViewModel(Guid asset, AssetViewModel parent)
         {
@@ -34,10 +38,11 @@ namespace TT_Lab.ViewModels
             {
                 // Build the tree
                 var myChildren = ((FolderData)(_asset as Folder).GetData()).Children;
-                _children = new ReadOnlyCollection<AssetViewModel>(
+                _children = new ObservableCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order
-                     select new AssetViewModel(child, this as AssetViewModel)).ToList());
+                     select new AssetViewModel(child, this)).ToList());
+                _internalChildren = new List<AssetViewModel>(_children);
             }
         }
 
@@ -48,6 +53,7 @@ namespace TT_Lab.ViewModels
                 return _editor != null;
             }
         }
+
         public Control GetEditor()
         {
             if (_editor == null)
@@ -60,6 +66,7 @@ namespace TT_Lab.ViewModels
             }
             return _editor;
         }
+
         public Control GetEditor(Command.CommandManager commandManager)
         {
             if (_editor == null)
@@ -72,6 +79,7 @@ namespace TT_Lab.ViewModels
             }
             return _editor;
         }
+
         public Control GetEditor(TabControl tabContainer)
         {
             if (_editor == null)
@@ -88,11 +96,13 @@ namespace TT_Lab.ViewModels
             }
             return _editor;
         }
+
         public void CloseEditor()
         {
             _editor = null;
         }
-        public IReadOnlyCollection<AssetViewModel> Children
+
+        public ObservableCollection<AssetViewModel> Children
         {
             get
             {
@@ -100,6 +110,46 @@ namespace TT_Lab.ViewModels
                 return _children;
             }
         }
+
+        public void ClearChildren()
+        {
+            // Only folders should be capable of this
+            if (Children != null)
+            {
+                _children = new ObservableCollection<AssetViewModel>();
+                _internalChildren.ForEach(a => a.ClearChildren());
+            }
+        }
+
+        public void LoadChildrenBack()
+        {
+            if (Children != null)
+            {
+                _children = new ObservableCollection<AssetViewModel>(_internalChildren);
+                _internalChildren.ForEach(a => a.LoadChildrenBack());
+            }
+        }
+
+        public void AddChild(AssetViewModel a)
+        {
+            if (Children != null)
+            {
+                if (_internalChildren.Contains(a))
+                {
+                    _children.Add(a);
+                }
+            }
+        }
+
+        public List<AssetViewModel> GetInternalChildren()
+        {
+            if (Children != null)
+            {
+                return _internalChildren;
+            }
+            return null;
+        }
+
         public Boolean IsSelected
         {
             get { return _isSelected; }
@@ -112,6 +162,7 @@ namespace TT_Lab.ViewModels
                 }
             }
         }
+
         public Boolean IsExpanded
         {
             get { return _isExpanded; }
@@ -147,6 +198,7 @@ namespace TT_Lab.ViewModels
                 }
             }
         }
+
         public String Alias
         {
             get { return _asset.Alias; }
@@ -159,6 +211,7 @@ namespace TT_Lab.ViewModels
                 }
             }
         }
+
         public IAsset Asset
         {
             get
