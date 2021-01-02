@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
@@ -41,7 +43,15 @@ namespace TT_Lab.Project
         private CommandManager _commandManager = new CommandManager();
         private MenuItem[] _recentMenus = new MenuItem[0];
         private List<AssetViewModel> _projectTree = new List<AssetViewModel>();
+        private List<AssetViewModel> _internalTree = new List<AssetViewModel>();
         private bool _workableProject = false;
+        private string _searchAsset = "";
+        private object _treeLock = new object();
+
+        public ProjectManager()
+        {
+            BindingOperations.EnableCollectionSynchronization(_projectTree, _treeLock);
+        }
 
         public IProject OpenedProject
         {
@@ -70,6 +80,94 @@ namespace TT_Lab.Project
                     NotifyChange("WorkableProject");
                 }
             }
+        }
+
+        public String SearchAsset
+        {
+            get
+            {
+                return _searchAsset;
+            }
+            set
+            {
+                if (value != _searchAsset)
+                {
+                    _searchAsset = value;
+                    DoSearch();
+                    NotifyChange("SearchAsset");
+                }
+            }
+        }
+
+        private void DoSearch()
+        {
+            lock (_treeLock)
+            {
+                ProjectTree = new List<AssetViewModel>();
+            }
+            _internalTree.ForEach((a) =>
+            {
+                a.ClearChildren();
+            });
+            if (_searchAsset == string.Empty)
+            {
+                _internalTree.ForEach((a) =>
+                {
+                    a.IsExpanded = false;
+                    a.LoadChildrenBack();
+                });
+                lock (_treeLock)
+                {
+                    ProjectTree.AddRange(_internalTree);
+                }
+            }
+            else
+            {
+                foreach (var e in _internalTree)
+                {
+                    if (e.Asset.Type == typeof(Folder))
+                    {
+                        lock (_treeLock)
+                        {
+                            ProjectTree.Add(e);
+                        }
+                    }
+                    var asset = FilterAsset(e, _searchAsset);
+                    if (asset != null)
+                    {
+                        asset.IsExpanded = true;
+                    }
+                }
+            }
+            NotifyChange("ProjectTree");
+        }
+
+        private AssetViewModel FilterAsset(AssetViewModel asset, String filter)
+        {
+            if (asset.GetInternalChildren() == null)
+            {
+                if (!asset.Alias.ToUpper().Contains(filter.ToUpper()))
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                var foundChild = false;
+                foreach (var c in asset.GetInternalChildren())
+                {
+                    var child = FilterAsset(c, filter);
+                    if (child != null)
+                    {
+                        foundChild = true;
+                        asset.IsExpanded = true;
+                        asset.AddChild(child);
+                    }
+                }
+                // If subsequent folders don't contain the search we don't need that hierarchy
+                if (!foundChild) return null;
+            }
+            return asset;
         }
 
         public List<AssetViewModel> ProjectTree
@@ -260,6 +358,7 @@ namespace TT_Lab.Project
                            where ((FolderData)folder.GetData()).Parent == null
                            orderby folder.Order
                            select new AssetViewModel(folder.UUID)).ToList();
+            _internalTree.AddRange(ProjectTree);
             NotifyChange("ProjectTree");
         }
 
