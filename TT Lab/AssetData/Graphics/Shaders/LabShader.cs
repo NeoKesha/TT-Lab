@@ -82,7 +82,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             ZValueDrawingMask = twinShader.ZValueDrawingMask;
             LodParamK = twinShader.LodParamK;
             LodParamL = twinShader.LodParamL;
-            TextureId = GuidManager.GetGuidByTwinId(twinShader.TextureId, typeof(Texture));
+            TextureId = (twinShader.TextureId == 0)?Guid.Empty:GuidManager.GetGuidByTwinId(twinShader.TextureId, typeof(Texture));
             UnkVal1 = twinShader.UnkVal1;
             UnkVal2 = twinShader.UnkVal2;
             UnkVal3 = twinShader.UnkVal3;

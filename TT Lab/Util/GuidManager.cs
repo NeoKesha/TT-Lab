@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Instance;
 
 namespace TT_Lab.Util
@@ -27,25 +28,51 @@ namespace TT_Lab.Util
             typeof(AiPosition),
             typeof(AiPath)
         };
+        private static Type cmSpecial = typeof(CodeModel);
+        private static Type sfxSpecial = typeof(SoundEffect);
         public static Dictionary<Guid, IAsset> GuidToAsset { get; set; }
         public static Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
         public static Dictionary<KeyValuePair<Type, UInt32>, Guid> TwinIdToGuid { get; set; }
+        public static Dictionary<KeyValuePair<Guid, UInt32>, Guid> CmSubScriptIdToGuid { get; set; }
+        public static Dictionary<UInt32, List<Guid>> SfxMulti5List {get;set;}
 
         public static void InitMappers(Dictionary<Guid, IAsset> Assets)
         {
-            GuidToAsset = new Dictionary<Guid, IAsset>(Assets.Count);
-            GuidToTwinId = new Dictionary<Guid, UInt32>(Assets.Count);
-            TwinIdToGuid = new Dictionary<KeyValuePair<Type, UInt32>, Guid>(Assets.Count);
+            GuidToAsset = new Dictionary<Guid, IAsset>();
+            GuidToTwinId = new Dictionary<Guid, UInt32>();
+            TwinIdToGuid = new Dictionary<KeyValuePair<Type, UInt32>, Guid>();
+            CmSubScriptIdToGuid = new Dictionary<KeyValuePair<Guid, uint>, Guid>();
+            SfxMulti5List = new Dictionary<uint, List<Guid>>();
             foreach (var key in Assets.Keys)
             {
                 IAsset asset = Assets[key];
                 try
                 {
                     GuidToAsset.Add(asset.UUID, asset);
-                    if (!excludeTypes.Contains(asset.GetType()))
+                    var assetType = asset.GetType();
+                    if (!excludeTypes.Contains(assetType))
                     {
                         GuidToTwinId.Add(asset.UUID, asset.ID);
                         TwinIdToGuid.Add(new KeyValuePair<Type, uint>(asset.GetType(), asset.ID), asset.UUID);
+                    }
+                    if (assetType == cmSpecial)
+                    {
+                        var cm = (CodeModel)asset;
+                        foreach (var e in cm.SubScriptGuids)
+                        {
+                            GuidToAsset.Add(e.Value, asset);
+                            GuidToTwinId.Add(e.Value, e.Key);
+                            CmSubScriptIdToGuid.Add(new KeyValuePair<Guid, uint>(asset.UUID, e.Key), e.Value);
+                        }
+                    } 
+                    else if (sfxSpecial.IsAssignableFrom(assetType) && sfxSpecial != assetType)
+                    {
+                        if (!SfxMulti5List.ContainsKey(asset.ID))
+                        {
+                            SfxMulti5List.Add(asset.ID, new List<Guid>());
+                        }
+                        var list = SfxMulti5List[asset.ID];
+                        list.Add(asset.UUID);
                     }
                 }
                 catch(Exception ex)
@@ -55,7 +82,33 @@ namespace TT_Lab.Util
                 }
             }
         }
-
+        public static List<Guid> GetGuidListOfMulti5(UInt32 id)
+        {
+            if (SfxMulti5List.ContainsKey(id))
+            {
+                return SfxMulti5List[id];
+            }
+            else
+            {
+                return null;
+            } 
+        }
+        public static Guid GetGuidByCmSubScriptId(Guid guid, UInt32 id)
+        {
+            var key = new KeyValuePair<Guid, UInt32>(guid, id);
+            return GetGuidByCmSubScriptId(key);
+        }
+        public static Guid GetGuidByCmSubScriptId(KeyValuePair<Guid, UInt32> key)
+        {
+            if (CmSubScriptIdToGuid.ContainsKey(key))
+            {
+                return CmSubScriptIdToGuid[key];
+            }
+            else
+            {
+                return Guid.Empty;
+            }
+        }
         public static IAsset GetAssetByGuid(Guid guid)
         {
             return GuidToAsset[guid];
@@ -80,14 +133,7 @@ namespace TT_Lab.Util
         }
         public static Guid GetGuidByTwinId(KeyValuePair<Type, UInt32> key)
         {
-            if (TwinIdToGuid.ContainsKey(key))
-            {
-                return TwinIdToGuid[key];
-            } 
-            else
-            {
-                return Guid.Empty;
-            }
+            return TwinIdToGuid[key];
         }
 
         public static void UpdateTwinId(String guid, Type type, UInt32 newTwinId)
