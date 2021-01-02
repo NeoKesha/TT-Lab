@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
@@ -15,10 +16,12 @@ namespace TT_Lab.ViewModels
     public class AssetViewModel : ObservableObject
     {
         private IAsset _asset;
+        private String _filter;
         private AssetViewModel _parent;
         private IReadOnlyCollection<AssetViewModel> _children;
         private Boolean _isSelected;
         private Boolean _isExpanded;
+        private Visibility _isVisible;
         private Control _editor;
 
         public AssetViewModel(Guid asset) : this(asset, null) { }
@@ -124,6 +127,53 @@ namespace TT_Lab.ViewModels
                 if (_isExpanded && _parent != null)
                 {
                     _parent.IsExpanded = true;
+                }
+            }
+        }
+
+        public Visibility IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                if (value != _isVisible)
+                {
+                    _isVisible = value;
+                    NotifyChange("IsVisible");
+                }
+
+                if (_isVisible == Visibility.Visible && _parent != null)
+                {
+                    _parent._isVisible = Visibility.Visible;
+                }
+            }
+        }
+        public String Filter
+        {
+            get { return _filter; }
+            set
+            {
+                if (value != _filter)
+                {
+                    _filter = value;
+                    if (_children == null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(_filter) && !Alias.ToUpper().Contains(_filter.ToUpper()))
+                        {
+                            IsVisible = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            IsVisible = Visibility.Visible;
+                        }
+                    } 
+                    else
+                    {
+                        foreach (var c in _children)
+                        {
+                            c.Filter = _filter;
+                        }
+                    }
                 }
             }
         }

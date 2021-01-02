@@ -370,25 +370,38 @@
                 </TabControl>
             </Grid>
             <GroupBox Header="Project tree" Grid.Column="2">
-                <TreeView 
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="100*"/>
+                    </Grid.RowDefinitions>
+                    <TextBox 
+                        x:Name="textBox" 
+                        TextWrapping="NoWrap" 
+                        Text="{Binding SearchAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                        Margin="0,0,0,2"/>
+                    <TreeView 
+                    Grid.Row="1"
                     x:Name="ProjectTree" 
                     ItemsSource="{Binding ProjectTree}" 
                     Margin="0" 
                     Style="{DynamicResource ProjectTreeStyle}" 
                     VirtualizingStackPanel.IsVirtualizing="True"
                     VirtualizingStackPanel.VirtualizationMode="Recycling">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown"/>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                <Setter Property="Visibility" Value="{Binding IsVisible, Mode=TwoWay}"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown"/>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </Grid>
             </GroupBox>
             <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Columns" HorizontalAlignment="Stretch" Grid.Column="1"/>
         </Grid>

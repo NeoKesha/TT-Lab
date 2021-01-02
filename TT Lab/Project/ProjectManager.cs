@@ -42,6 +42,7 @@ namespace TT_Lab.Project
         private MenuItem[] _recentMenus = new MenuItem[0];
         private List<AssetViewModel> _projectTree = new List<AssetViewModel>();
         private bool _workableProject = false;
+        private string _searchAsset = "";
 
         public IProject OpenedProject
         {
@@ -68,6 +69,26 @@ namespace TT_Lab.Project
                 {
                     _workableProject = value;
                     NotifyChange("WorkableProject");
+                }
+            }
+        }
+
+        public String SearchAsset
+        {
+            get
+            {
+                return _searchAsset;
+            }
+            set
+            {
+                if (value != _searchAsset)
+                {
+                    _searchAsset = value;
+                    foreach (var e in ProjectTree)
+                    {
+                        e.Filter = _searchAsset;
+                    }
+                    NotifyChange("SearchAsset");
                 }
             }
         }
