@@ -372,14 +372,38 @@
             <GroupBox Header="Project tree" Grid.Column="2">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="3*"/>
-                        <RowDefinition Height="100*"/>
+                        <RowDefinition Height="19*"/>
+                        <RowDefinition Height="132*"/>
+                        <RowDefinition Height="490*"/>
                     </Grid.RowDefinitions>
                     <TextBox 
                         x:Name="SearchBar" 
                         TextWrapping="NoWrap" 
                         Text="{Binding SearchAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Margin="0,0,0,2" VerticalAlignment="Center" MaxLines="1"/>
+                        Margin="0,0,0,1.999" VerticalAlignment="Center" MaxLines="1" ToolTip="">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                        <VisualBrush.Visual>
+                                            <Label Content="Search" Foreground="LightGray" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <TreeView 
                     Grid.Row="1"
                     x:Name="ProjectTree" 
@@ -387,7 +411,7 @@
                     Margin="0" 
                     Style="{DynamicResource ProjectTreeStyle}" 
                     VirtualizingStackPanel.IsVirtualizing="True"
-                    VirtualizingStackPanel.VirtualizationMode="Recycling">
+                    VirtualizingStackPanel.VirtualizationMode="Recycling" Grid.RowSpan="2">
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
