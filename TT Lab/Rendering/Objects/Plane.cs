@@ -16,7 +16,7 @@ namespace TT_Lab.Rendering.Objects
         IndexedBufferArray planeBuffer;
         TextureBuffer texture;
 
-        public Plane(MaterialData material)
+        public Plane()
         {
             planeBuffer = BufferGeneration.GetModelBuffer(
                 new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
@@ -39,12 +39,21 @@ namespace TT_Lab.Rendering.Objects
                     new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 1, 0),
                     new Twinsanity.TwinsanityInterchange.Common.Vector3(0, 1, 0)
                 });
+        }
+
+        public Plane(MaterialData material) : this()
+        {
             if (material.Shaders[0].TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON)
             {
                 var tex = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(material.Shaders[0].TextureId).GetData();
                 //tex.Bitmap.RotateFlip(System.Drawing.RotateFlipType.Rotate180FlipNone);
                 texture = new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap);
             }
+        }
+
+        public Plane(TextureData tex) : this()
+        {
+            texture = new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap);
         }
 
         public void Bind()

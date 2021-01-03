@@ -9,31 +9,34 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="7*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid Margin="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="78*"/>
-                <RowDefinition Height="97*"/>
-                <RowDefinition Height="275*"/>
-            </Grid.RowDefinitions>
-            <Controls:LabeledDropList x:Name="TextureFunctionList" Margin="0" TextBoxName="Texture function">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Controls:LabeledDropList x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1">
                 <Controls:LabeledDropList.Items>
                     <System:String>MODULATE</System:String>
-                    <System:String>HIGHLIGHT</System:String>
                     <System:String>DECAL</System:String>
+                    <System:String>HIGHLIGHT</System:String>
+                    <System:String>HIGHLIGHT2</System:String>
                 </Controls:LabeledDropList.Items>
             </Controls:LabeledDropList>
-            <Controls:LabeledDropList x:Name="PSMList" Margin="0" Grid.Row="1" TextBoxName="Pixel storage format">
+            <Controls:LabeledDropList x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1">
                 <Controls:LabeledDropList.Items>
                     <System:String>PSMT8</System:String>
                     <System:String>PSMTC32</System:String>
                 </Controls:LabeledDropList.Items>
             </Controls:LabeledDropList>
         </Grid>
-        <base:SceneEditor x:Name="TextureViewer" Grid.Column="1" Margin="0" Header="Texture viewer"/>
+        <base:SceneEditor x:Name="TextureViewer" Margin="0" Header="Texture viewer" Grid.Row="1"/>
 
     </Grid>
 </base:BaseEditor>

@@ -22,15 +22,12 @@ namespace TT_Lab.Controls
     /// </summary>
     public partial class LabeledDropList : UserControl
     {
-        public event EventHandler UndoPerformed;
-        public event EventHandler RedoPerformed;
-        public event EventHandler TextChanged;
 
-        [Description("Name of the textbox displayed above."), Category("Common Properties")]
-        public string TextBoxName
+        [Description("Name of the droplist displayed above."), Category("Common Properties")]
+        public string DropListName
         {
-            get { return (string)GetValue(TextBoxNameProperty); }
-            set { SetValue(TextBoxNameProperty, value); }
+            get { return (string)GetValue(DropListNameProperty); }
+            set { SetValue(DropListNameProperty, value); }
         }
 
 
@@ -48,14 +45,15 @@ namespace TT_Lab.Controls
 
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TextBoxNameProperty =
-            DependencyProperty.Register("TextBoxName", typeof(string), typeof(LabeledDropList),
+        public static readonly DependencyProperty DropListNameProperty =
+            DependencyProperty.Register("DropListName", typeof(string), typeof(LabeledDropList),
                 new FrameworkPropertyMetadata("LabeledTextBox", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnNameChanged)));
 
 
         public LabeledDropList()
         {
             InitializeComponent();
+            SetValue(ItemsProperty, new ObservableCollection<string>());
             DataContext = this;
         }
 

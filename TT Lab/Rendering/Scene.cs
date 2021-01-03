@@ -29,6 +29,7 @@ namespace TT_Lab.Rendering
         private vec3 cameraDirection = new vec3(0, 0, 1);
         private vec3 cameraUp = new vec3(0, 1, 0);
         private float cameraSpeed = 1.0f;
+        private bool canRotateCam = true;
 
         // Scene rendering
         private ShaderProgram shader;
@@ -154,8 +155,15 @@ namespace TT_Lab.Rendering
             cameraSpeed = s;
         }
 
+        public void DisableCameraRotation()
+        {
+            canRotateCam = false;
+        }
+
         public void RotateView(Vector3 rot)
         {
+            if (!canRotateCam) return;
+
             rot.Normalize();
             vec3 cross = glm.normalize(glm.cross(cameraUp, cameraDirection));
             mat4 rotMat = glm.rotate(new mat4(1.0f), glm.radians(rot.Y), cross);
