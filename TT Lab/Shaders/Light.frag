@@ -19,6 +19,6 @@ void main()
     float df = max(0.0, dot(N, L));
     float sf = max(0.0, dot(N, H));
 
-    vec3 color = Color.rgb * AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
-    FragColor = vec4(color, 1.0);
+    vec4 color = Color * vec4(AmbientMaterial, 1.0) + df * vec4(Diffuse, 1.0);// + sf * vec4(SpecularMaterial, 1.0);
+    FragColor = color;
 }

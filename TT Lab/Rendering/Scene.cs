@@ -119,7 +119,7 @@ namespace TT_Lab.Rendering
         public void DefaultShaderUniforms()
         {
             // Fragment program uniforms
-            shader.SetUniform3("AmbientMaterial", 0.15f, 0.15f, 0.15f);
+            shader.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
             shader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
             shader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
             shader.SetUniform3("LightDirection", cameraDirection.x, cameraDirection.y, cameraDirection.z);
@@ -144,12 +144,17 @@ namespace TT_Lab.Rendering
             Bind();
             GL.CullFace(CullFaceMode.FrontAndBack);
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.AlphaTest);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.Enable(EnableCap.Blend);
             foreach (var @object in objects)
             {
                 @object.Render();
             }
             GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.AlphaTest);
+            GL.Disable(EnableCap.Blend);
             Unbind();
         }
 
@@ -169,15 +174,30 @@ namespace TT_Lab.Rendering
             canManipulateCamera = false;
         }
 
-        public void RotateView(Vector3 rot)
+        private vec2 yaw_pitch;
+        public void RotateView(Vector2 rot)
         {
             if (!canManipulateCamera) return;
 
             rot.Normalize();
-            vec3 cross = glm.normalize(glm.cross(cameraUp, cameraDirection));
-            mat4 rotMat = glm.rotate(new mat4(1.0f), glm.radians(rot.Y), cross);
-            rotMat = glm.rotate(rotMat, glm.radians(rot.X), cameraUp);
-            cameraDirection = glm.normalize(new vec3(rotMat * new vec4(cameraDirection, 0.0f)));
+            yaw_pitch.x += rot.X;
+            yaw_pitch.y += rot.Y;
+
+            if (yaw_pitch.y > 89f)
+            {
+                yaw_pitch.y = 89f;
+            }
+            if (yaw_pitch.y < -89f)
+            {
+                yaw_pitch.y = -89f;
+            }
+
+            vec3 direction;
+            direction.x = (float)Math.Cos(glm.radians(yaw_pitch.x)) * (float)Math.Cos(glm.radians(yaw_pitch.y));
+            direction.y = (float)Math.Sin(glm.radians(yaw_pitch.y));
+            direction.z = (float)Math.Sin(glm.radians(yaw_pitch.x)) * (float)Math.Cos(glm.radians(yaw_pitch.y));
+
+            cameraDirection = glm.normalize(direction);
             UpdateMatrices();
         }
 

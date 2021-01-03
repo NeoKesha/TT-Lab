@@ -98,7 +98,7 @@ namespace TT_Lab.Editors
             var curMousePos = e.Location;
             if (e.Button == MouseButtons.Middle)
             {
-                Scene?.RotateView(new Vector3(mousePos.X - curMousePos.X, curMousePos.Y - mousePos.Y, 0));
+                Scene?.RotateView(new Vector2(curMousePos.X - mousePos.X, mousePos.Y - curMousePos.Y));
             }
             mousePos = curMousePos;
         }

@@ -12,13 +12,14 @@ namespace TT_Lab.Util
 {
     public static class BufferGeneration
     {
-        public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors)
+        public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors,
+            Func<List<Color>, int, float[]> colorSelector = null)
         {
             var vertices = new List<float>();
             var vert3s = new List<Vector3>();
             var vertColors = new List<float>();
             var indices = new List<uint>();
-
+            var index = 0;
             foreach (var face in faces)
             {
                 var i1 = face.Indexes[0];
@@ -42,9 +43,10 @@ namespace TT_Lab.Util
                 vertices.AddRange(vec1.ToArray());
                 vertices.AddRange(vec2.ToArray());
                 vertices.AddRange(vec3.ToArray());
-                vertColors.AddRange(colors[i1 % colors.Count].ToArray());
-                vertColors.AddRange(colors[i2 % colors.Count].ToArray());
-                vertColors.AddRange(colors[i3 % colors.Count].ToArray());
+                vertColors.AddRange(colorSelector == null ? colors[i1 % colors.Count].ToArray() : colorSelector.Invoke(colors, index));
+                vertColors.AddRange(colorSelector == null ? colors[i2 % colors.Count].ToArray() : colorSelector.Invoke(colors, index));
+                vertColors.AddRange(colorSelector == null ? colors[i3 % colors.Count].ToArray() : colorSelector.Invoke(colors, index));
+                index++;
             }
 
             var normals = new Vector3[faces.Count * 3];
@@ -92,9 +94,6 @@ namespace TT_Lab.Util
         }
         public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors, List<Twinsanity.TwinsanityInterchange.Common.Vector3> uvs)
         {
-            var bufferArray = GetModelBuffer(vectors, faces, colors);
-            bufferArray.Bind();
-
             var uvVecs = new List<float>();
 
             foreach (var face in faces)
@@ -108,14 +107,14 @@ namespace TT_Lab.Util
                 var vec1 = v1.ToGL();
                 var vec2 = v2.ToGL();
                 var vec3 = v3.ToGL();
-                //vec1.X = -vec1.X;
-                //vec2.X = -vec2.X;
-                //vec3.X = -vec3.X;
                 uvVecs.AddRange(vec1.ToArray());
                 uvVecs.AddRange(vec2.ToArray());
                 uvVecs.AddRange(vec3.ToArray());
             }
-            
+
+            var bufferArray = GetModelBuffer(vectors, faces, colors);
+            bufferArray.Bind();
+
             var uvBuffer = new VertexBuffer();
             uvBuffer.Bind();
             uvBuffer.SetData(3, uvVecs.ToArray(), true, 3);

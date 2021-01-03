@@ -16,7 +16,7 @@ out vec3 Diffuse;
 void main()
 {
     EyespaceNormal = NormalMatrix * in_Normal;
-    gl_Position = Projection * Model * View * vec4(in_Position, 1.0);
+    gl_Position = Projection * View * Model * vec4(in_Position, 1.0);
     Color = in_Color;
     Diffuse = DiffuseMaterial;
 }
