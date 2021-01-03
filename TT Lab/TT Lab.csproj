@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,6 +42,9 @@
     </Reference>
     <Reference Include="GlmNet, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlmNet.0.7.0\lib\net40\GlmNet.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.3.1.9, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.3.1\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -219,6 +224,23 @@
     <Compile Include="Rendering\Shaders\Shader.cs" />
     <Compile Include="Rendering\Shaders\ShaderCompilationException.cs" />
     <Compile Include="Rendering\Shaders\ShaderProgram.cs" />
+    <Compile Include="Util\FBX\FbxHeader.cs" />
+    <Compile Include="Util\FBX\FbxModel.cs" />
+    <Compile Include="Util\FBX\FbxNode.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxProperty.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayBool.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayDouble.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayInt.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayLong.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArraySingle.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyBlob.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyBool.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyDouble.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyInt.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyLong.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyShort.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertySingle.cs" />
+    <Compile Include="Util\FBX\FbxProperties\FbxPropertyString.cs" />
     <Compile Include="Util\ManifestResourceLoader.cs" />
     <Compile Include="Util\GuidManager.cs" />
     <Compile Include="Util\VectorExtension.cs" />
@@ -364,5 +386,6 @@
   <ItemGroup>
     <Resource Include="Images\tt_lab_logo_v6_2k.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
