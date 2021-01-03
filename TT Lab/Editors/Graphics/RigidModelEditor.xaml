@@ -28,8 +28,8 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="PrevMatButton" Content="Previous material" Grid.Column="1" Margin="0" MouseDown="PrevMatButton_MouseDown"/>
-            <Button x:Name="NextMatButton" Content="Next material" Grid.Column="1" Margin="0" Grid.Row="2" MouseDown="NextMatButton_MouseDown"/>
+            <Button x:Name="PrevMatButton" Content="Previous material" Grid.Column="1" Margin="0" Click="NextMatButton_Click"/>
+            <Button x:Name="NextMatButton" Content="Next material" Grid.Column="1" Margin="0" Grid.Row="2" Click="NextMatButton_Click"/>
             <TextBlock x:Name="MaterialName" Grid.Column="1" HorizontalAlignment="Center" Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="Material Name" VerticalAlignment="Center"/>
         </Grid>
 

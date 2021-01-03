@@ -96,7 +96,7 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Scene.AddRender(texPlane);
         }
 
-        private void PrevMatButton_MouseDown(Object sender, MouseButtonEventArgs e)
+        private void PrevMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial--;
             var rm = (RigidModelData)DataContext;
@@ -107,7 +107,7 @@ namespace TT_Lab.Editors.Graphics
             ResetMaterialViewer();
         }
 
-        private void NextMatButton_MouseDown(Object sender, MouseButtonEventArgs e)
+        private void NextMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial++;
             var rm = (RigidModelData)DataContext;
