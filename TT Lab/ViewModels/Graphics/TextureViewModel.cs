@@ -17,6 +17,8 @@ namespace TT_Lab.ViewModels.Graphics
         {
         }
 
+
+
         public int TextureFunction
         {
             get
@@ -28,7 +30,7 @@ namespace TT_Lab.ViewModels.Graphics
                 if (value != (int)_asset.Parameters["texture_function"])
                 {
                     _asset.Parameters["texture_function"] = value;
-                    NotifyChange("TextureFunction");
+                    NotifyChange();
                 }
             }
         }
@@ -44,7 +46,7 @@ namespace TT_Lab.ViewModels.Graphics
                 if (value != (int)_asset.Parameters["pixel_storage_format"])
                 {
                     _asset.Parameters["pixel_storage_format"] = value;
-                    NotifyChange("PixelStorageFormat");
+                    NotifyChange();
                 }
             }
         }

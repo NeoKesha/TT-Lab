@@ -13,8 +13,6 @@ namespace TT_Lab.AssetData.Instance
 {
     public class PositionData : AbstractAssetData
     {
-        private Vector4 coords = new Vector4();
-
         public PositionData()
         {
             
@@ -26,19 +24,7 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Vector4 Coords {
-            get => coords;
-            set
-            {
-                if (coords.X != value.X || coords.Y != value.Y || coords.Z != value.Z || coords.W != value.W)
-                {
-                    coords = value;
-                    NotifyChange("Coords");
-                }
-            }
-        }
-
-
+        public Vector4 Coords;
 
         protected override void Dispose(Boolean disposing)
         {
@@ -48,7 +34,7 @@ namespace TT_Lab.AssetData.Instance
         public override void Import()
         {
             PS2AnyPosition position = (PS2AnyPosition)twinRef;
-            coords = CloneUtils.Clone(position.Position);
+            Coords = CloneUtils.Clone(position.Position);
         }
     }
 }

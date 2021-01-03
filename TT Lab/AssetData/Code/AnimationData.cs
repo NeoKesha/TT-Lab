@@ -10,8 +10,6 @@ namespace TT_Lab.AssetData.Code
 {
     public class AnimationData : AbstractAssetData
     {
-        private UInt32 bitfield;
-
         public AnimationData()
         {
         }
@@ -22,21 +20,7 @@ namespace TT_Lab.AssetData.Code
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Bitfield
-        {
-            get => bitfield;
-
-            set
-            {
-                if (bitfield != value)
-                {
-                    bitfield = value;
-                    NotifyChange("Bitfield");
-                }
-            }
-        }
-
-
+        public UInt32 Bitfield;
 
         protected override void Dispose(Boolean disposing)
         {

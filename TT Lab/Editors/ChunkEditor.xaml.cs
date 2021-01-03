@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
+using TT_Lab.Project;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels;
@@ -36,9 +37,9 @@ namespace TT_Lab.Editors
         public ChunkEditor(AssetViewModel chunkAss) : base(chunkAss)
         {
             var chunk = (ChunkFolder)chunkAss.Asset;
-            foreach (var item in chunkAss.GetInternalChildren())
+            foreach (var item in ((FolderData)chunk.GetData()).Children)
             {
-                chunkTree.Add(item.Asset.GetViewModel());
+                chunkTree.Add(ProjectManagerSingleton.PM.OpenedProject.GetAsset(item).GetViewModel());
             }
             DataContext = new { Items = chunkTree };
             isDefault = chunk.Name.ToLower() == "default";

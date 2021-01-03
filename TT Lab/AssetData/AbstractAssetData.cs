@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 namespace TT_Lab.AssetData
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public abstract class AbstractAssetData : ObservableObject, IDisposable
+    public abstract class AbstractAssetData : IDisposable
     {
         protected Boolean disposedValue;
 
