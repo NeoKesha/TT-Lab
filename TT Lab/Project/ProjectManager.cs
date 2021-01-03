@@ -357,7 +357,7 @@ namespace TT_Lab.Project
                            let folder = asset as Folder
                            where ((FolderData)folder.GetData()).Parent == null
                            orderby folder.Order
-                           select new AssetViewModel(folder.UUID)).ToList();
+                           select folder.GetViewModel()).ToList();
             _internalTree.AddRange(ProjectTree);
             NotifyChange("ProjectTree");
         }

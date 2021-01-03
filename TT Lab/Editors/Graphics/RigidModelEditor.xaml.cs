@@ -63,7 +63,7 @@ namespace TT_Lab.Editors.Graphics
                 });
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
-            var rm = (RigidModelData)DataContext;
+            var rm = (RigidModelData)GetAssetData();
             RigidModel model = new RigidModel(rm);
             SceneRenderer.Scene.AddRender(model);
         }
@@ -89,7 +89,7 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
 
-            var rm = (RigidModelData)DataContext;
+            var rm = (RigidModelData)GetAssetData();
             var matData = (MaterialData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(rm.Materials[selectedMaterial]).GetData();
             MaterialName.Text = matData.Name;
             var texPlane = new Plane(matData);

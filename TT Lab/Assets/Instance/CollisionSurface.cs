@@ -51,11 +51,11 @@ namespace TT_Lab.Assets.Instance
             assetData = new CollisionSurfaceData(surface);
             if (id < DefaultColors.Length)
             {
-                parameters.Add("editor_surface_color", DefaultColors[id]);
+                Parameters.Add("editor_surface_color", DefaultColors[id]);
             }
             else
             {
-                parameters.Add("editor_surface_color", DefaultColors);
+                Parameters.Add("editor_surface_color", DefaultColors);
             }
         }
 

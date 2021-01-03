@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.ViewModels;
@@ -12,7 +13,7 @@ namespace TT_Lab.Editors
 {
     public class BaseEditor : UserControl
     {
-        protected AssetViewModel AssetViewModel;
+        protected AssetViewModel viewModel;
         protected CommandManager CommandManager = new CommandManager();
 
         public BaseEditor()
@@ -22,11 +23,8 @@ namespace TT_Lab.Editors
 
         public BaseEditor(AssetViewModel asset)
         {
-            AssetViewModel = asset;
-            if (asset != null)
-            {
-                DataContext = asset.Asset.GetData();
-            }
+            viewModel = asset; // This is used as reference in order to avoid constant type casting
+            DataContext = asset;
             AddKeybind(new RedoCommand(CommandManager), System.Windows.Input.Key.Y, System.Windows.Input.ModifierKeys.Control);
             AddKeybind(new UndoCommand(CommandManager), System.Windows.Input.Key.Z, System.Windows.Input.ModifierKeys.Control);
         }
@@ -34,6 +32,11 @@ namespace TT_Lab.Editors
         public BaseEditor(AssetViewModel asset, CommandManager commandManager) : this(asset)
         {
             CommandManager = commandManager;
+        }
+
+        protected AbstractAssetData GetAssetData()
+        {
+            return viewModel.Asset.GetData();
         }
 
         protected void AddKeybind(System.Windows.Input.ICommand command, System.Windows.Input.Key key, System.Windows.Input.ModifierKeys modifierKeys)

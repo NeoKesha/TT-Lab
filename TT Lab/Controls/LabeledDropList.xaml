@@ -12,7 +12,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Label x:Name="ComboBoxName" Content="Label" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-        <ComboBox x:Name="DropList" Margin="0" Grid.Row="1" VerticalAlignment="Top" ItemsSource="{Binding Items, Mode=OneTime}"/>
+        <ComboBox x:Name="DropList" Margin="0" Grid.Row="1" VerticalAlignment="Top" ItemsSource="{Binding Items, Mode=OneTime}" SelectedIndex="{Binding SelectedIndex, Mode=OneWay}" IsReadOnly="True" IsEnabled="False"/>
 
     </Grid>
 </UserControl>

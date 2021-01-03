@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
+using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
@@ -16,7 +18,8 @@ namespace TT_Lab.Assets.Graphics
         {
             assetData = new TextureData(texture);
             Raw = false;
-            parameters.Add("texture_function", texture.TexFun);
+            Parameters.Add("texture_function", texture.TexFun);
+            Parameters.Add("pixel_storage_format", texture.TextureFormat);
         }
 
         public Texture()
@@ -47,6 +50,15 @@ namespace TT_Lab.Assets.Graphics
                 IsLoaded = true;
             }
             return assetData;
+        }
+
+        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        {
+            if (viewModel == null)
+            {
+                viewModel = new TextureViewModel(UUID, parent);
+            }
+            return viewModel;
         }
     }
 }

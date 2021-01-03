@@ -38,6 +38,19 @@ namespace TT_Lab.Controls
             set { SetValue(ItemsProperty, value); }
         }
 
+
+        [Description("Index of the selected item from the dropdown."), Category("Common Properties")]
+        public int SelectedIndex
+        {
+            get { return (int)GetValue(SelectedIndexProperty); }
+            set { SetValue(SelectedIndexProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedIndex.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedIndexProperty =
+            DependencyProperty.Register("SelectedIndex", typeof(int), typeof(LabeledDropList),
+                new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnIndexChanged)));
+
         // Using a DependencyProperty as the backing store for Items.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items", typeof(ObservableCollection<string>), typeof(LabeledDropList),
@@ -67,6 +80,12 @@ namespace TT_Lab.Controls
         {
             LabeledDropList control = d as LabeledDropList;
             control.DropList.ItemsSource = (ObservableCollection<string>)e.NewValue;
+        }
+
+        private static void OnIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            LabeledDropList control = d as LabeledDropList;
+            control.DropList.SelectedIndex = (int)e.NewValue;
         }
     }
 }

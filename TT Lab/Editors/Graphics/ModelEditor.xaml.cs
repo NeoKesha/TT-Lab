@@ -38,7 +38,7 @@ namespace TT_Lab.Editors.Graphics
         {
             SceneRenderer.Scene = new Scene((float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight);
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
-            Model m = new Model((AssetData.Graphics.ModelData)DataContext);
+            Model m = new Model((AssetData.Graphics.ModelData)GetAssetData());
             SceneRenderer.Scene.AddRender(m);
         }
     }

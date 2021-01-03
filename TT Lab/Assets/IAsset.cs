@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
+using TT_Lab.ViewModels;
 
 namespace TT_Lab.Assets
 {
@@ -61,7 +62,7 @@ namespace TT_Lab.Assets
         /// TT Lab specific data
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        Dictionary<String, Object> parameters { get; }
+        Dictionary<String, Object> Parameters { get; }
 
         /// <summary>
         /// Order in the Project Tree
@@ -93,6 +94,11 @@ namespace TT_Lab.Assets
         /// <returns>Asset's data</returns>
         /// <typeparam name="T">Type of data</typeparam>
         AbstractAssetData GetData();
+
+        /// <summary>
+        /// Returns asset's viewmodel for editing
+        /// </summary>
+        AssetViewModel GetViewModel(AssetViewModel parent = null);
 
         /// <summary>
         /// Dump on disk in JSON format

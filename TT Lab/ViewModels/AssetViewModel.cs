@@ -16,7 +16,8 @@ namespace TT_Lab.ViewModels
 {
     public class AssetViewModel : ObservableObject
     {
-        private IAsset _asset;
+        protected IAsset _asset;
+
         private AssetViewModel _parent;
         private ObservableCollection<AssetViewModel> _children;
         private List<AssetViewModel> _internalChildren;
@@ -41,7 +42,8 @@ namespace TT_Lab.ViewModels
                 _children = new ObservableCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order
-                     select new AssetViewModel(child, this)).ToList());
+                     let c = ProjectManagerSingleton.PM.OpenedProject.GetAsset(child)
+                     select c.GetViewModel(this)).ToList());
                 _internalChildren = new List<AssetViewModel>(_children);
             }
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
+using TT_Lab.ViewModels;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
@@ -15,6 +16,7 @@ namespace TT_Lab.Assets
         protected virtual String DataExt => ".data";
 
         protected AbstractAssetData assetData;
+        protected AssetViewModel viewModel;
 
         public Type Type { get; set; }
 
@@ -28,7 +30,7 @@ namespace TT_Lab.Assets
         public Boolean IsLoaded { get; protected set; }
         public UInt32 Order { get; set; }
 
-        public Dictionary<String, Object> parameters { get; set; }
+        public Dictionary<String, Object> Parameters { get; set; }
 
         public SerializableAsset()
         {
@@ -44,7 +46,7 @@ namespace TT_Lab.Assets
             Raw = true;
             Data = UUID.ToString() + DataExt;
             IsLoaded = true;
-            parameters = new Dictionary<string, object>();
+            Parameters = new Dictionary<string, object>();
             Type = this.GetType();
         }
 
@@ -79,9 +81,14 @@ namespace TT_Lab.Assets
         {
             assetData.Import();
         }
-        public Guid GetGuid()
+
+        public virtual AssetViewModel GetViewModel(AssetViewModel parent = null)
         {
-            return UUID;
+            if (viewModel == null)
+            {
+                viewModel = new AssetViewModel(UUID, parent);
+            }
+            return viewModel;
         }
     }
 }

@@ -42,37 +42,37 @@ namespace TT_Lab.Editors.Instance
         private void XCoord_TextChanged(Object sender, EventArgs e)
         {
             var x = float.Parse(XCoord.Text, System.Globalization.CultureInfo.InvariantCulture);
-            var posData = (PositionData)DataContext;
+            var posData = (PositionData)GetAssetData();
             UpdateVector(new Vector4(x, posData.Coords.Y, posData.Coords.Z, posData.Coords.W));
         }
 
         private void YCoord_TextChanged(Object sender, EventArgs e)
         {
             var y = float.Parse(YCoord.Text, System.Globalization.CultureInfo.InvariantCulture);
-            var posData = (PositionData)DataContext;
+            var posData = (PositionData)GetAssetData();
             UpdateVector(new Vector4(posData.Coords.X, y, posData.Coords.Z, posData.Coords.W));
         }
 
         private void ZCoord_TextChanged(Object sender, EventArgs e)
         {
             var z = float.Parse(ZCoord.Text, System.Globalization.CultureInfo.InvariantCulture);
-            var posData = (PositionData)DataContext;
+            var posData = (PositionData)GetAssetData();
             UpdateVector(new Vector4(posData.Coords.X, posData.Coords.Y, z, posData.Coords.W));
         }
 
         private void WCoord_TextChanged(Object sender, EventArgs e)
         {
             var w = float.Parse(WCoord.Text, System.Globalization.CultureInfo.InvariantCulture);
-            var posData = (PositionData)DataContext;
+            var posData = (PositionData)GetAssetData();
             UpdateVector(new Vector4(posData.Coords.X, posData.Coords.Y, posData.Coords.Z, w));
         }
 
         private void UpdateVector(Vector4 newPos)
         {
-            var posData = (PositionData)DataContext;
+            var posData = (PositionData)GetAssetData();
             if (posData.Coords.X != newPos.X || posData.Coords.Y != newPos.Y || posData.Coords.Z != newPos.Z || posData.Coords.W != newPos.W)
             {
-                CommandManager.Execute(new SetDataCommand(DataContext, "Coords", newPos));
+                CommandManager.Execute(new SetDataCommand(GetAssetData(), "Coords", newPos));
             }
         }
     }

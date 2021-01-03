@@ -230,6 +230,7 @@
     <Compile Include="Util\MathExtension.cs" />
     <Compile Include="Util\VectorExtension.cs" />
     <Compile Include="ViewModels\AssetViewModel.cs" />
+    <Compile Include="ViewModels\Graphics\TextureViewModel.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\ProjectCreator.cs" />
     <Page Include="About.xaml">

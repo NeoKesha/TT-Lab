@@ -32,7 +32,7 @@ namespace TT_Lab.Editors.Code
             {
                 return;
             }
-            var animData = (AnimationData)DataContext;
+            var animData = (AnimationData)GetAssetData();
             if (test == animData.Bitfield) return;
             CommandManager.Execute(new SetDataCommand(animData, "Bitfield",
                 uint.Parse(BitfieldBox.Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture)));

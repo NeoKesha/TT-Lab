@@ -21,7 +21,7 @@ namespace TT_Lab.Assets.Code
         {
             assetData = new CodeModelData(codeModel);
             assetData.Import();
-            parameters.Add("sub_script_guids", SubScriptGuids);
+            Parameters.Add("sub_script_guids", SubScriptGuids);
             GenerateSubScriptGuidList();
         }
 
@@ -46,7 +46,7 @@ namespace TT_Lab.Assets.Code
             {
                 assetData = new CodeModelData();
                 assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
-                SubScriptGuids = (Dictionary<UInt32, Guid>)parameters["sub_script_guids"];
+                SubScriptGuids = (Dictionary<UInt32, Guid>)Parameters["sub_script_guids"];
                 IsLoaded = true;
             }
             return assetData;

@@ -36,9 +36,9 @@ namespace TT_Lab.Editors
         public ChunkEditor(AssetViewModel chunkAss) : base(chunkAss)
         {
             var chunk = (ChunkFolder)chunkAss.Asset;
-            foreach (var item in ((FolderData)chunk.GetData()).Children)
+            foreach (var item in chunkAss.GetInternalChildren())
             {
-                chunkTree.Add(new AssetViewModel(item));
+                chunkTree.Add(item.Asset.GetViewModel());
             }
             DataContext = new { Items = chunkTree };
             isDefault = chunk.Name.ToLower() == "default";

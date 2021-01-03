@@ -13,8 +13,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Assets.Graphics;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Graphics;
 
 namespace TT_Lab.Editors.Graphics
 {
@@ -31,12 +33,12 @@ namespace TT_Lab.Editors.Graphics
         public TextureEditor(AssetViewModel texture) : base(texture)
         {
             InitializeComponent();
-
             TextureViewer.RendererInit += TextureViewer_RendererInit;
         }
 
         private void TextureViewer_RendererInit(Object sender, EventArgs e)
         {
+            TextureViewer.Glcontrol.MakeCurrent();
             TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
                 "LightTexture",
                 (shd, s) =>
@@ -52,8 +54,7 @@ namespace TT_Lab.Editors.Graphics
                 });
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
-
-            var texData = (TextureData)DataContext;
+            var texData = (TextureData)GetAssetData();
             var texPlane = new Plane(texData);
             TextureViewer.Scene.AddRender(texPlane);
         }
