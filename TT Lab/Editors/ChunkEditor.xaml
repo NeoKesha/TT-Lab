@@ -36,7 +36,7 @@
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-        <local:SceneEditor x:Name="SceneRenderer" Grid.Column="2" Grid.RowSpan="3"/>
+        <local:SceneEditor x:Name="SceneRenderer" Grid.Column="2" Grid.RowSpan="3" Header="Chunk viewer"/>
         <GridSplitter Background="#FFCBE082" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Top" Height="5" ResizeBehavior="PreviousAndNext"/>
         <GroupBox x:Name="ItemEditorContainer" Header="Item editor" Margin="0" Grid.Row="2" Background="White"/>
         <GridSplitter Background="#FFCBE082" HorizontalAlignment="Center" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="1" Grid.RowSpan="3" Width="5"/>

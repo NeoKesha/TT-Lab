@@ -16,8 +16,8 @@
             <RowDefinition Height="97*"/>
             <RowDefinition Height="128*"/>
         </Grid.RowDefinitions>
-        <base:SceneEditor x:Name="SceneRenderer" Margin="0" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <base:SceneEditor x:Name="MaterialViewer" Margin="0" Grid.Column="1"/>
+        <base:SceneEditor x:Name="SceneRenderer" Margin="0" Grid.Row="1" Grid.ColumnSpan="2" Header="Rigid model viewer"/>
+        <base:SceneEditor x:Name="MaterialViewer" Margin="0" Grid.Column="1" Header="Material viewer"/>
         <Grid Margin="0">
             <Grid.RowDefinitions>
                 <RowDefinition/>

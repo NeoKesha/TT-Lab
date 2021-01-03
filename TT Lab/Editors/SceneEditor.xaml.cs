@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -25,12 +26,29 @@ namespace TT_Lab.Editors
 
         public event EventHandler RendererInit;
 
+        [Description("Scene viewer's header"), Category("Common Properties")]
+        public object Header
+        {
+            get { return GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Header.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(object), typeof(SceneEditor),
+                new FrameworkPropertyMetadata("Scene viewer", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnHeaderChanged)));
+
         public Scene Scene;
         public GLControl Glcontrol;
 
         public SceneEditor()
         {
             InitializeComponent();
+
+            // Design viewer crashes if it attempts to use GLControl so prevent that :)
+#if DEBUG
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+#endif
             SizeChanged += SceneEditor_SizeChanged;
 
             Glcontrol = new GLControl();
@@ -108,6 +126,12 @@ namespace TT_Lab.Editors
         private void SceneEditor_SizeChanged(Object sender, System.Windows.SizeChangedEventArgs e)
         {
             Scene?.SetResolution((float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+        }
+
+        private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            SceneEditor control = d as SceneEditor;
+            control.SceneHeader.Header = e.NewValue;
         }
     }
 }

@@ -168,6 +168,9 @@
     <Compile Include="Controls\BaseTextBox.xaml.cs">
       <DependentUpon>BaseTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LabeledDropList.xaml.cs">
+      <DependentUpon>LabeledDropList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LabeledTextBox.xaml.cs">
       <DependentUpon>LabeledTextBox.xaml</DependentUpon>
     </Compile>
@@ -179,6 +182,9 @@
     </Compile>
     <Compile Include="Editors\Graphics\RigidModelEditor.xaml.cs">
       <DependentUpon>RigidModelEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\Graphics\TextureEditor.xaml.cs">
+      <DependentUpon>TextureEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Editors\Instance\PositionEditor.xaml.cs">
       <DependentUpon>PositionEditor.xaml</DependentUpon>
@@ -237,6 +243,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\LabeledDropList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\LabeledTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -254,6 +264,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Editors\Graphics\RigidModelEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Editors\Graphics\TextureEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
