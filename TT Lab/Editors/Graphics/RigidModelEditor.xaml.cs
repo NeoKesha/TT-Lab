@@ -87,7 +87,7 @@ namespace TT_Lab.Editors.Graphics
                     { 3, "in_Texpos" }
                 });
             MaterialViewer.Scene.SetCameraSpeed(0);
-            MaterialViewer.Scene.DisableCameraRotation();
+            MaterialViewer.Scene.DisableCameraManipulation();
 
             var rm = (RigidModelData)DataContext;
             var matData = (MaterialData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(rm.Materials[selectedMaterial]).GetData();

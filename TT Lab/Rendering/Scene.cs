@@ -28,33 +28,25 @@ namespace TT_Lab.Rendering
         private vec3 cameraPosition = new vec3(0.0f, 0.0f, 0.0f);
         private vec3 cameraDirection = new vec3(0, 0, 1);
         private vec3 cameraUp = new vec3(0, 1, 0);
+        private vec2 resolution = new vec2(0, 0);
         private float cameraSpeed = 1.0f;
-        private bool canRotateCam = true;
+        private float cameraZoom = 90.0f;
+        private bool canManipulateCamera = true;
 
         // Scene rendering
         private ShaderProgram shader;
         private List<IRenderable> objects = new List<IRenderable>();
 
         /// <summary>
-        /// Constructor to setup a simple rendering scene
+        /// Constructor to setup the matrices
         /// </summary>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(float width, float height)
+        private Scene(float width, float height)
         {
-            var passVerShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.vert");
-            var passFragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\Light.frag");
-            shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
-                { 0, "in_Position" },
-                { 1, "in_Color" },
-                { 2, "in_Normal" }
-            });
-            shader.SetUniforms(() =>
-            {
-                DefaultShaderUniforms();
-            });
-
-            projectionMat = glm.infinitePerspective(glm.radians(90.0f), width / height, 0.1f);
+            resolution.x = width;
+            resolution.y = height;
+            projectionMat = glm.infinitePerspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f);
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
             var modelView = viewMat * modelMat;
@@ -62,21 +54,36 @@ namespace TT_Lab.Rendering
         }
 
         /// <summary>
-        /// Constructor to setup a simple rendering scene
+        /// Constructor to setup a simple rendering scene with a custom shader
         /// </summary>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(float width, float height, string shaderName, Action<ShaderProgram, Scene> shdSetUni, Dictionary<uint, string> attribPositions)
+        /// <param name="shaderName">Shader file name for both .vert and .frag programs</param>
+        /// <param name="shdSetUni">Callback when setting shader's uniforms</param>
+        /// <param name="attribPositions">Attribute positions in shader for the Vertex program</param>
+        public Scene(float width, float height, string shaderName = "Light",
+            Action<ShaderProgram, Scene> shdSetUni = null, Dictionary<uint, string> attribPositions = null)
+            : this(width, height)
         {
             var passVerShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.vert");
             var passFragShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.frag");
-            shader = new ShaderProgram(passVerShader, passFragShader, attribPositions);
-            shader.SetUniforms(() => shdSetUni(shader, this));
-            projectionMat = glm.infinitePerspective(glm.radians(90.0f), width / height, 0.1f);
-            viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-            modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
-            var modelView = viewMat * modelMat;
-            normalMat = modelView.to_mat3();
+            if (shdSetUni == null && attribPositions == null)
+            {
+                shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
+                    { 0, "in_Position" },
+                    { 1, "in_Color" },
+                    { 2, "in_Normal" }
+                });
+                shader.SetUniforms(() =>
+                {
+                    DefaultShaderUniforms();
+                });
+            }
+            else
+            {
+                shader = new ShaderProgram(passVerShader, passFragShader, attribPositions);
+                shader.SetUniforms(() => shdSetUni(shader, this));
+            }
         }
 
         /// <summary>
@@ -85,7 +92,7 @@ namespace TT_Lab.Rendering
         /// <param name="sceneTree">Tree of chunk resources collision data, positions, cameras, etc.</param>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(List<AssetViewModel> sceneTree, float width, float height) : this(width, height)
+        public Scene(List<AssetViewModel> sceneTree, float width, float height) : this(width, height, "Light")
         {
             // Collision renderer
             var colData = (CollisionData)sceneTree.Find((avm) =>
@@ -127,7 +134,9 @@ namespace TT_Lab.Rendering
 
         public void SetResolution(float width, float height)
         {
-            projectionMat = glm.infinitePerspective(glm.radians(90.0f), width / height, 0.1f);
+            resolution.x = width;
+            resolution.y = height;
+            UpdateMatrices();
         }
 
         public void Render()
@@ -155,14 +164,14 @@ namespace TT_Lab.Rendering
             cameraSpeed = s;
         }
 
-        public void DisableCameraRotation()
+        public void DisableCameraManipulation()
         {
-            canRotateCam = false;
+            canManipulateCamera = false;
         }
 
         public void RotateView(Vector3 rot)
         {
-            if (!canRotateCam) return;
+            if (!canManipulateCamera) return;
 
             rot.Normalize();
             vec3 cross = glm.normalize(glm.cross(cameraUp, cameraDirection));
@@ -172,8 +181,19 @@ namespace TT_Lab.Rendering
             UpdateMatrices();
         }
 
+        public void ZoomView(float z)
+        {
+            if (!canManipulateCamera) return;
+
+            z *= -0.01f;
+            cameraZoom = (z + cameraZoom).Clamp(10.0f, 100.0f);
+            UpdateMatrices();
+        }
+
         public void Move(List<Keys> keysPressed)
         {
+            if (!canManipulateCamera) return;
+
             foreach (var keyPressed in keysPressed)
             {
                 switch (keyPressed)
@@ -228,6 +248,7 @@ namespace TT_Lab.Rendering
 
         private void UpdateMatrices()
         {
+            projectionMat = glm.infinitePerspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f);
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();

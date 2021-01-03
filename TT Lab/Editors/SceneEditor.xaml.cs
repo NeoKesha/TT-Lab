@@ -57,6 +57,7 @@ namespace TT_Lab.Editors
             Glcontrol.MouseMove += Glcontrol_MouseMove;
             Glcontrol.KeyDown += Glcontrol_KeyDown;
             Glcontrol.KeyUp += Glcontrol_KeyUp;
+            Glcontrol.MouseWheel += Glcontrol_MouseWheel;
             Glcontrol.Dock = DockStyle.Fill;
 
             GLHost.Child = Glcontrol;
@@ -68,6 +69,11 @@ namespace TT_Lab.Editors
             };
             timer.Tick += OnRender;
             timer.Start();
+        }
+
+        private void Glcontrol_MouseWheel(Object sender, MouseEventArgs e)
+        {
+            Scene?.ZoomView(e.Delta);
         }
 
         private void Glcontrol_KeyUp(Object sender, KeyEventArgs e)

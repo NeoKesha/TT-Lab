@@ -51,7 +51,7 @@ namespace TT_Lab.Editors.Graphics
                     { 3, "in_Texpos" }
                 });
             TextureViewer.Scene.SetCameraSpeed(0);
-            TextureViewer.Scene.DisableCameraRotation();
+            TextureViewer.Scene.DisableCameraManipulation();
 
             var texData = (TextureData)DataContext;
             var texPlane = new Plane(texData);
