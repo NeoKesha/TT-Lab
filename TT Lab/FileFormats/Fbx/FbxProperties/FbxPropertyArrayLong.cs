@@ -5,26 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TT_Lab.Util.FBX.FbxProperties
+namespace TT_Lab.FileFormats.Fbx.FbxProperties
 {
-    public class FbxPropertyArrayDouble : FbxProperty
+    class FbxPropertyArrayLong : FbxProperty
     {
+        public FbxPropertyArrayLong()
+        {
+        }
+
+        public FbxPropertyArrayLong(List<Int64> val)
+        {
+            Value = val;
+        }
         public override UInt32 GetLength()
         {
-            return (UInt32)(1 + 12 + 8 * ((List<Double>)Value).Count);
+            return (UInt32)(1 + 12 + 8 * ((List<Int64>)Value).Count);
         }
         public override void ReadBinary(BinaryReader reader)
         {
             var cnt = reader.ReadInt32();
             var encoding = reader.ReadInt32();
             var compressed = reader.ReadInt32();
-            Value = new List<Double>();
-            List<Double> list = (List<Double>)Value;
+            Value = new List<Int64>();
+            List<Int64> list = (List<Int64>)Value;
             if (encoding == 0)
             {
                 for (var i = 0; i < cnt; ++i)
                 {
-                    list.Add(reader.ReadDouble());
+                    list.Add(reader.ReadInt64());
                 }
             }
             else
@@ -34,23 +42,23 @@ namespace TT_Lab.Util.FBX.FbxProperties
                     BinaryReader streamReader = new BinaryReader(stream);
                     for (var i = 0; i < cnt; ++i)
                     {
-                        list.Add(streamReader.ReadDouble());
+                        list.Add(streamReader.ReadInt64());
                     }
                 }
             }
         }
         public override void SaveBinary(BinaryWriter writer)
         {
-            writer.Write('d');
-            List<Double> list = (List<Double>)Value;
+            writer.Write('l');
+            List<Int64> list = (List<Int64>)Value;
             writer.Write(list.Count);
             writer.Write(0);
             writer.Write(GetLength() - 1 - 12);
             foreach (var e in list)
             {
-                writer.Write((Double)e);
+                writer.Write((Int64)e);
             }
         }
-        public override String ToString() { return "Property: Array Double"; }
+        public override String ToString() { return "Property: Array Long"; }
     }
 }

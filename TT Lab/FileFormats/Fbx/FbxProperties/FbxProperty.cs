@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace TT_Lab.Util.FBX.FbxProperties
+namespace TT_Lab.FileFormats.Fbx.FbxProperties
 {
     public abstract class FbxProperty
     {

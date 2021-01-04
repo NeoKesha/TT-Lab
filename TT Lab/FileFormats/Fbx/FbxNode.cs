@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TT_Lab.Util.FBX.FbxProperties;
+using TT_Lab.FileFormats.Fbx.FbxProperties;
 
-namespace TT_Lab.Util.FBX
+namespace TT_Lab.FileFormats.Fbx
 {
     public class FbxNode
     {
@@ -20,6 +20,19 @@ namespace TT_Lab.Util.FBX
         {
             Properties = new List<FbxProperty>();
             Nodes = new List<FbxNode>();
+            Name = null;
+        }
+        public FbxNode(String name) : this()
+        {
+            Name = name;
+        }
+        public FbxNode(String name, FbxProperty prop) : this(name)
+        {
+            Properties.Add(prop);
+        }
+        public FbxNode(String name, FbxProperty[] props) : this(name)
+        {
+            Properties.AddRange(props);
         }
         public void SaveBinary(BinaryWriter writer)
         {

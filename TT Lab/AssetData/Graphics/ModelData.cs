@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using TT_Lab.AssetData.Graphics.SubModels;
-using TT_Lab.Util.FBX;
+using TT_Lab.FileFormats.Fbx;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.AssetData.Graphics
@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Graphics
             using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
             using (BinaryWriter writer = new BinaryWriter(fs))
             {
-                FbxModel model = new FbxModel(Vertexes, Faces);
+                FbxModel model = new FbxModel();
                 model.SaveBinary(writer);
             }
         }

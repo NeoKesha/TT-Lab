@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TT_Lab.Util.FBX
+namespace TT_Lab.FileFormats.Fbx
 {
     public class FbxHeader
     {
         public static char[] FBXHeaderString = "Kaydara FBX Binary  \0".ToCharArray();
         public static UInt16 MagicalBytes = 0x001A;
-        public UInt32 Version { get; set; } = 7300;
+        public UInt32 Version { get; set; } = 7400;
         public FbxHeader()
         {
 

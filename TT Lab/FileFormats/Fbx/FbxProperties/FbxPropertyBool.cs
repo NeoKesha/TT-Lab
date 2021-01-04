@@ -5,10 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TT_Lab.Util.FBX.FbxProperties
+namespace TT_Lab.FileFormats.Fbx.FbxProperties
 {
     public class FbxPropertyBool : FbxProperty
     {
+        public FbxPropertyBool()
+        {
+        }
+
+        public FbxPropertyBool(Boolean val)
+        {
+            Value = val;
+        }
         public override UInt32 GetLength()
         {
             return 2;

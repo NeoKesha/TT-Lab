@@ -224,23 +224,23 @@
     <Compile Include="Rendering\Shaders\Shader.cs" />
     <Compile Include="Rendering\Shaders\ShaderCompilationException.cs" />
     <Compile Include="Rendering\Shaders\ShaderProgram.cs" />
-    <Compile Include="Util\FBX\FbxHeader.cs" />
-    <Compile Include="Util\FBX\FbxModel.cs" />
-    <Compile Include="Util\FBX\FbxNode.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxProperty.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayBool.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayDouble.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayInt.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArrayLong.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyArraySingle.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyBlob.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyBool.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyDouble.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyInt.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyLong.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyShort.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertySingle.cs" />
-    <Compile Include="Util\FBX\FbxProperties\FbxPropertyString.cs" />
+    <Compile Include="FileFormats\Fbx\FbxHeader.cs" />
+    <Compile Include="FileFormats\Fbx\FbxModel.cs" />
+    <Compile Include="FileFormats\Fbx\FbxNode.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxProperty.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyArrayBool.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyArrayDouble.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyArrayInt.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyArrayLong.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyArraySingle.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyBlob.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyBool.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyDouble.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyInt.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyLong.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyShort.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertySingle.cs" />
+    <Compile Include="FileFormats\Fbx\FbxProperties\FbxPropertyString.cs" />
     <Compile Include="Util\ManifestResourceLoader.cs" />
     <Compile Include="Util\GuidManager.cs" />
     <Compile Include="Util\VectorExtension.cs" />
@@ -336,6 +336,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="FileFormats\Fbx\FbxTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="OpenTK.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

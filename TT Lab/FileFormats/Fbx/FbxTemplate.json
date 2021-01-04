@@ -1,0 +1,960 @@
+﻿{
+  "FBXHeaderExtension": {
+    "FBXHeaderVersion": {
+      "int_1": "1003"
+    },
+    "FBXVersion": {
+      "int_1": "7400"
+    },
+    "EncryptionType": {
+      "int_1": "0"
+    },
+    "Creator": {
+      "string_1": "Created with TT Lab"
+    }
+  },
+  "FileId": {
+
+  },
+  "CreationTime": {
+
+  },
+  "Creator": {
+    "string_1": "Created with TT Lab"
+  },
+  "GlobalSettings": {
+    "Version": {
+      "int_1": "1000"
+    },
+    "Properties70": {
+      "P_1": {
+        "string_1": "UpAxis",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "1"
+      },
+      "P_2": {
+        "string_1": "UpAxisSign",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "1"
+      },
+      "P_3": {
+        "string_1": "FrontAxis",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "2"
+      },
+      "P_4": {
+        "string_1": "FrontAxisSign",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "1"
+      },
+      "P_5": {
+        "string_1": "CoordAxis",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "0"
+      },
+      "P_6": {
+        "string_1": "CoordAxisSign",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "1"
+      },
+      "P_7": {
+        "string_1": "OriginalUpAxis",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "-1"
+      },
+      "P_8": {
+        "string_1": "OriginalUpAxisSign",
+        "string_2": "int",
+        "string_3": "Integer",
+        "string_4": "",
+        "int_5": "1"
+      },
+      "P_9": {
+        "string_1": "UnitScaleFactor",
+        "string_2": "double",
+        "string_3": "Number",
+        "string_4": "",
+        "double_5": "1"
+      },
+      "P_10": {
+        "string_1": "OriginalUnitScaleFactor",
+        "string_2": "double",
+        "string_3": "Number",
+        "string_4": "",
+        "double_5": "1"
+      },
+      "P_11": {
+        "string_1": "AmbientColor",
+        "string_2": "ColorRGB",
+        "string_3": "Color",
+        "string_4": "",
+        "double_5": "0",
+        "double_6": "0",
+        "double_7": "0"
+      }
+    }
+  },
+  "Documents": {
+    "Count": {
+      "int_1": "1"
+    },
+    "Document": {
+      "long_1": "649526729",
+      "string_2": "Scene",
+      "string_3": "Scene",
+      "Properties70": {
+        "P_1": {
+          "string_1": "SourceObject",
+          "string_2": "object",
+          "string_3": "",
+          "string_4": ""
+        },
+        "P_2": {
+          "string_1": "ActiveAnimStackName",
+          "string_2": "KString",
+          "string_3": "",
+          "string_4": "",
+          "string_5": ""
+        }
+      },
+      "RootNode": {
+        "long_1": "0"
+      }
+    }
+  },
+  "References": {
+
+  },
+  "Definitions": {
+    "Version": {
+      "int_1": "100"
+    },
+    "Count": {
+      "int_1": "7"
+    },
+    "ObjectType_1": {
+      "string_1": "GlobalSettings",
+      "Count": {
+        "int_1": "1"
+      }
+    },
+    "ObjectType_2": {
+      "string_1": "Geometry",
+      "Count": {
+        "int_1": "2"
+      },
+      "PropertyTemplate": {
+        "string": "FbxMesh",
+        "Properties70": {
+          "P_1": {
+            "string_1": "Color",
+            "string_2": "ColorRGB",
+            "string_3": "Color",
+            "string_4": "",
+            "double_5": "0.8",
+            "double_6": "0.8",
+            "double_7": "0.8"
+          },
+          "P_2": {
+            "string_1": "BBoxMin",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_3": {
+            "string_1": "BBoxMax",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_4": {
+            "string_1": "Primary Visibility",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "1"
+          },
+          "P_5": {
+            "string_1": "Casts Shadows",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "1"
+          },
+          "P_6": {
+            "string_1": "Receive Shadows",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "1"
+          }
+        }
+      }
+    },
+    "ObjectType_3": {
+      "string_1": "Model",
+      "Count": {
+        "int_1": "2"
+      },
+      "PropertyTemplate": {
+        "string_1": "FbxNode",
+        "Properties70": {
+          "P_1": {
+            "string_1": "QuaternionInterpolate",
+            "string_2": "enum",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_2": {
+            "string_1": "RotationOffset",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_3": {
+            "string_1": "RotationPivot",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_4": {
+            "string_1": "ScalingOffset",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_5": {
+            "string_1": "ScalingPivot",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_6": {
+            "string_1": "TranslationActive",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_7": {
+            "string_1": "TranslationMin",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_8": {
+            "string_1": "TranslationMax",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_9": {
+            "string_1": "TranslationMinX",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_10": {
+            "string_1": "TranslationMaxX",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_11": {
+            "string_1": "TranslationMinY",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_12": {
+            "string_1": "TranslationMaxY",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_13": {
+            "string_1": "TranslationMinZ",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_14": {
+            "string_1": "TranslationMaxZ",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_15": {
+            "string_1": "RotationOrder",
+            "string_2": "enum",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_16": {
+            "string_1": "RotationSpaceForLimitOnly",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_17": {
+            "string_1": "RotationStiffnessX",
+            "string_2": "double",
+            "string_3": "Number",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_18": {
+            "string_1": "RotationStiffnessY",
+            "string_2": "double",
+            "string_3": "Number",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_19": {
+            "string_1": "RotationStiffnessZ",
+            "string_2": "double",
+            "string_3": "Number",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_20": {
+            "string_1": "AxisLen",
+            "string_2": "double",
+            "string_3": "Number",
+            "string_4": "",
+            "double_5": "10"
+          },
+          "P_21": {
+            "string_1": "PreRotation",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_22": {
+            "string_1": "PostRotation",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_23": {
+            "string_1": "RotationActive",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_24": {
+            "string_1": "RotationMin",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_25": {
+            "string_1": "RotationMax",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_26": {
+            "string_1": "RotationMinX",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_27": {
+            "string_1": "RotationMinY",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_28": {
+            "string_1": "RotationMinZ",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_29": {
+            "string_1": "RotationMaxX",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_30": {
+            "string_1": "RotationMaxY",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_31": {
+            "string_1": "RotationMaxZ",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_32": {
+            "string_1": "InheritType",
+            "string_2": "enum",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_33": {
+            "string_1": "ScalingMin",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_34": {
+            "string_1": "ScalingMax",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "1",
+            "double_6": "1",
+            "double_7": "1"
+          },
+          "P_35": {
+            "string_1": "ScalingMinX",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_36": {
+            "string_1": "ScalingMinY",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_37": {
+            "string_1": "ScalingMinZ",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_38": {
+            "string_1": "ScalingMaxX",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_39": {
+            "string_1": "ScalingMaxY",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_40": {
+            "string_1": "ScalingMaxZ",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_41": {
+            "string_1": "GeometricTranslation",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_42": {
+            "string_1": "GeometricRotation",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_43": {
+            "string_1": "GeometricScaling",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "1",
+            "double_6": "1",
+            "double_7": "1"
+          },
+          "P_44": {
+            "string_1": "MinDampRangeX",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_45": {
+            "string_1": "MinDampRangeY",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_46": {
+            "string_1": "MinDampRangeZ",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_47": {
+            "string_1": "MaxDampRangeX",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_48": {
+            "string_1": "MaxDampRangeY",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_49": {
+            "string_1": "MaxDampRangeZ",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_50": {
+            "string_1": "MinDampStrengthX",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_51": {
+            "string_1": "MinDampStrengthY",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_52": {
+            "string_1": "MinDampStrengthZ",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_53": {
+            "string_1": "MaxDampStrengthX",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_54": {
+            "string_1": "MaxDampStrengthY",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_55": {
+            "string_1": "MaxDampStrengthZ",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_56": {
+            "string_1": "PreferedAngleX",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_57": {
+            "string_1": "PreferedAngleY",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_58": {
+            "string_1": "PreferedAngleZ",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0"
+          },
+          "P_59": {
+            "string_1": "LookAtProperty",
+            "string_2": "object",
+            "string_3": "",
+            "string_4": ""
+          },
+          "P_60": {
+            "string_1": "UpVectorProperty",
+            "string_2": "object",
+            "string_3": "",
+            "string_4": ""
+          },
+          "P_61": {
+            "string_1": "Show",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "1"
+          },
+          "P_62": {
+            "string_1": "NegativePercentShapeSupport",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "1"
+          },
+          "P_63": {
+            "string_1": "DefaultAttributeIndex",
+            "string_2": "int",
+            "string_3": "Integer",
+            "string_4": "",
+            "int_5": "-1"
+          },
+          "P_64": {
+            "string_1": "Freeze",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_65": {
+            "string_1": "LODBox",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_66": {
+            "string_1": "Lcl Translation",
+            "string_2": "Lcl Translation",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_67": {
+            "string_1": "Lcl Rotation",
+            "string_2": "Lcl Rotation",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_68": {
+            "string_1": "Lcl Scale",
+            "string_2": "Lcl Scale",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1",
+            "double_6": "1",
+            "double_7": "1"
+          },
+          "P_69": {
+            "string_1": "Visibility",
+            "string_2": "Visibility",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1"
+          },
+          "P_70": {
+            "string_1": "Visibility Inheritance",
+            "string_2": "Visibility Inheritance",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "1"
+          }
+        }
+      }
+    },
+    "ObjectType_4": {
+      "string_1": "Material",
+      "Count": {
+        "int_1": "2"
+      },
+      "PropertyTemplate": {
+        "string_1": "FbxSurfacePhong",
+        "Properties70": {
+          "P_1": {
+            "string_1": "ShadingModel",
+            "string_2": "KString",
+            "string_3": "",
+            "string_4": "",
+            "string_5": "Phong"
+          },
+          "P_2": {
+            "string_1": "MultiLayer",
+            "string_2": "bool",
+            "string_3": "",
+            "string_4": "",
+            "int_5": "0"
+          },
+          "P_3": {
+            "string_1": "EmissiveColor",
+            "string_2": "Color",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_4": {
+            "string_1": "EmissiveFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1"
+          },
+          "P_5": {
+            "string_1": "AmbientColor",
+            "string_2": "Color",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0.2",
+            "double_6": "0.2",
+            "double_7": "0.2"
+          },
+          "P_6": {
+            "string_1": "AmbientFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1"
+          },
+          "P_7": {
+            "string_1": "DiffuseColor",
+            "string_2": "Color",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0.8",
+            "double_6": "0.8",
+            "double_7": "0.8"
+          },
+          "P_8": {
+            "string_1": "DiffuseFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1"
+          },
+          "P_9": {
+            "string_1": "TransparentColor",
+            "string_2": "Color",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_10": {
+            "string_1": "TransparencyFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0"
+          },
+          "P_11": {
+            "string_1": "Opacity",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1"
+          },
+          "P_12": {
+            "string_1": "NormalMap",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_13": {
+            "string_1": "Bump",
+            "string_2": "Vector3D",
+            "string_3": "Vector",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_14": {
+            "string_1": "BumpFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "",
+            "double_5": "1"
+          },
+          "P_15": {
+            "string_1": "DisplacementColor",
+            "string_2": "ColorRGB",
+            "string_3": "Color",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_16": {
+            "string_1": "DisplacementFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "",
+            "double_5": "1"
+          },
+          "P_17": {
+            "string_1": "VectorDisplacementColor",
+            "string_2": "ColorRGB",
+            "string_3": "Color",
+            "string_4": "",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_18": {
+            "string_1": "VectorDisplacementFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "",
+            "double_5": "1"
+          },
+          "P_19": {
+            "string_1": "SpecularColor",
+            "string_2": "Color",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0.2",
+            "double_6": "0.2",
+            "double_7": "0.2"
+          },
+          "P_20": {
+            "string_1": "SpecularFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1"
+          },
+          "P_21": {
+            "string_1": "Shininess",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "20"
+          },
+          "P_22": {
+            "string_1": "ShininessExponent",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "20"
+          },
+          "P_23": {
+            "string_1": "ReflectionColor",
+            "string_2": "Color",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "0",
+            "double_6": "0",
+            "double_7": "0"
+          },
+          "P_24": {
+            "string_1": "ReflectionFactor",
+            "string_2": "Number",
+            "string_3": "",
+            "string_4": "A",
+            "double_5": "1"
+          }
+        }
+      }
+    }
+  },
+  "Objects": {
+
+  },
+  "Connections": {
+
+  },
+  "Takes": {
+    "Current": {
+      "string_1": ""
+    }
+  }
+}

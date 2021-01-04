@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TT_Lab.Assets;
 using TT_Lab.Command;
+using TT_Lab.FileFormats.Fbx;
 using TT_Lab.Project;
 using TT_Lab.ViewModels;
 using WK.Libraries.BetterFolderBrowserNS;
@@ -36,6 +38,24 @@ namespace TT_Lab
             DataContext = ProjectManagerSingleton.PM;
             Closed += MainWindow_Closed;
             Log.SetLogBox(LogText);
+            FbxModel refer = new FbxModel();
+            using (FileStream fs = new FileStream(@"D:\untitled.fbx", FileMode.Open, FileAccess.Read))
+            using (BinaryReader reader = new BinaryReader(fs))
+            {
+                refer.ReadBinary(reader);
+            }
+            using (FileStream fs = new FileStream(@"D:\mdl.fbx", FileMode.Create, FileAccess.Write))
+            using (BinaryWriter writer = new BinaryWriter(fs))
+            {
+                FbxModel model = new FbxModel();
+                model.SaveBinary(writer);
+            }
+            using (FileStream fs = new FileStream(@"D:\mdl.fbx", FileMode.Open, FileAccess.Read))
+            using (BinaryReader reader = new BinaryReader(fs))
+            {
+                FbxModel model = new FbxModel();
+                model.ReadBinary(reader);
+            }
         }
 
         private void MainWindow_Closed(Object sender, EventArgs e)
