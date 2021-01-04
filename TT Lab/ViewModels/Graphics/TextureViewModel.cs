@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.Assets.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.ViewModels.Graphics
 {
@@ -17,17 +18,20 @@ namespace TT_Lab.ViewModels.Graphics
         {
         }
 
+        private T ConvertEnum<T>(object o)
+        {
+            return (T)Enum.Parse(typeof(T), o.ToString());
+        }
 
-
-        public int TextureFunction
+        public PS2AnyTexture.TextureFunction TextureFunction
         {
             get
             {
-                return Convert.ToInt32(_asset.Parameters["texture_function"]);
+                return ConvertEnum<PS2AnyTexture.TextureFunction>(_asset.Parameters["texture_function"]);
             }
             set
             {
-                if (value != (int)_asset.Parameters["texture_function"])
+                if (value != ConvertEnum<PS2AnyTexture.TextureFunction>(_asset.Parameters["texture_function"]))
                 {
                     _asset.Parameters["texture_function"] = value;
                     NotifyChange();
@@ -35,15 +39,15 @@ namespace TT_Lab.ViewModels.Graphics
             }
         }
 
-        public int PixelStorageFormat
+        public PS2AnyTexture.TexturePixelFormat PixelStorageFormat
         {
             get
             {
-                return Convert.ToInt32(_asset.Parameters["pixel_storage_format"]);
+                return ConvertEnum<PS2AnyTexture.TexturePixelFormat>(_asset.Parameters["pixel_storage_format"]);
             }
             set
             {
-                if (value != (int)_asset.Parameters["pixel_storage_format"])
+                if (value != ConvertEnum<PS2AnyTexture.TexturePixelFormat>(_asset.Parameters["pixel_storage_format"]))
                 {
                     _asset.Parameters["pixel_storage_format"] = value;
                     NotifyChange();

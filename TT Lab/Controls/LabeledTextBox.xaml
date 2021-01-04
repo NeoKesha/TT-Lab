@@ -11,8 +11,8 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Label x:Name="TextBoxLabel" Content="Label" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
-        <local:BaseTextBox x:Name="TextContainer" Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="BaseTextBox" VerticalAlignment="Top" UndoPerformed="BaseTextBox_UndoPerformed" RedoPerformed="BaseTextBox_RedoPerformed" TextChanged="BaseTextBox_TextChanged"/>
+        <Label x:Name="TextBoxLabel" Content="{Binding TextBoxName}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
+        <local:BaseTextBox x:Name="TextContainer" Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Text, RelativeSource={RelativeSource Self}}" VerticalAlignment="Top" UndoPerformed="BaseTextBox_UndoPerformed" RedoPerformed="BaseTextBox_RedoPerformed" TextChanged="BaseTextBox_TextChanged"/>
 
     </Grid>
 </UserControl>

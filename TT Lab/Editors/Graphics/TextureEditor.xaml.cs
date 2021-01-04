@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using TT_Lab.Assets.Graphics;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Editors.Graphics
 {
@@ -32,6 +34,12 @@ namespace TT_Lab.Editors.Graphics
 
         public TextureEditor(AssetViewModel texture) : base(texture)
         {
+            DataContext = new
+            {
+                ViewModel = viewModel,
+                TexFuns = new ObservableCollection<object>(Enum.GetValues(typeof(PS2AnyTexture.TextureFunction)).Cast<object>()),
+                PixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(PS2AnyTexture.TexturePixelFormat)).Cast<object>())
+            };
             InitializeComponent();
             TextureViewer.RendererInit += TextureViewer_RendererInit;
         }

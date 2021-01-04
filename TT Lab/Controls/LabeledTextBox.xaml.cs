@@ -39,8 +39,6 @@ namespace TT_Lab.Controls
             DependencyProperty.Register("TextBoxName", typeof(string), typeof(LabeledTextBox),
                 new FrameworkPropertyMetadata("LabeledTextBox", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnNameChanged)));
 
-
-
         public LabeledTextBox()
         {
             InitializeComponent();

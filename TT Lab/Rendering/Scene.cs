@@ -214,21 +214,28 @@ namespace TT_Lab.Rendering
         {
             if (!canManipulateCamera) return;
 
+            var camSp = cameraSpeed;
+
+            if (keysPressed.Contains(Keys.ShiftKey))
+            {
+                camSp *= 5;
+            }
+
             foreach (var keyPressed in keysPressed)
             {
                 switch (keyPressed)
                 {
                     case Keys.W:
-                        cameraPosition += cameraSpeed * cameraDirection;
+                        cameraPosition += camSp * cameraDirection;
                         break;
                     case Keys.S:
-                        cameraPosition -= cameraSpeed * cameraDirection;
+                        cameraPosition -= camSp * cameraDirection;
                         break;
                     case Keys.A:
-                        cameraPosition -= cameraSpeed * glm.cross(cameraDirection, cameraUp);
+                        cameraPosition -= camSp * glm.cross(cameraDirection, cameraUp);
                         break;
                     case Keys.D:
-                        cameraPosition += cameraSpeed * glm.cross(cameraDirection, cameraUp);
+                        cameraPosition += camSp * glm.cross(cameraDirection, cameraUp);
                         break;
                 }
             }

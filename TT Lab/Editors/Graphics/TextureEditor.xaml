@@ -5,14 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors.Graphics"
              xmlns:base="clr-namespace:TT_Lab.Editors"
-             xmlns:Controls="clr-namespace:TT_Lab.Controls" xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="TT_Lab.Editors.Graphics.TextureEditor"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Class="TT_Lab.Editors.Graphics.TextureEditor"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="7*"/>
-            <RowDefinition/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="187*"/>
+            <RowDefinition Height="13*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -22,22 +22,10 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Controls:LabeledDropList SelectedIndex="{Binding TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1">
-                <Controls:LabeledDropList.Items>
-                    <System:String>MODULATE</System:String>
-                    <System:String>DECAL</System:String>
-                    <System:String>HIGHLIGHT</System:String>
-                    <System:String>HIGHLIGHT2</System:String>
-                </Controls:LabeledDropList.Items>
-            </Controls:LabeledDropList>
-            <Controls:LabeledDropList SelectedIndex="{Binding PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1">
-                <Controls:LabeledDropList.Items>
-                    <System:String>PSMT8</System:String>
-                    <System:String>PSMTC32</System:String>
-                </Controls:LabeledDropList.Items>
-            </Controls:LabeledDropList>
+            <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding ViewModel.TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1"/>
+            <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding ViewModel.PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1"/>
         </Grid>
-        <base:SceneEditor x:Name="TextureViewer" Margin="0" Header="Texture viewer" Grid.Row="1" AllowDrop="True"/>
+        <base:SceneEditor x:Name="TextureViewer" Margin="0" Header="Texture viewer" Grid.Row="1" AllowDrop="True" Padding="1"/>
         <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="2"/>
 
     </Grid>

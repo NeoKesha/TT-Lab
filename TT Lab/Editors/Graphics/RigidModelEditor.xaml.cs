@@ -99,7 +99,7 @@ namespace TT_Lab.Editors.Graphics
         private void PrevMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial--;
-            var rm = (RigidModelData)DataContext;
+            var rm = (RigidModelData)GetAssetData();
             if (selectedMaterial < 0)
             {
                 selectedMaterial = rm.Materials.Count - 1;
@@ -110,7 +110,7 @@ namespace TT_Lab.Editors.Graphics
         private void NextMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial++;
-            var rm = (RigidModelData)DataContext;
+            var rm = (RigidModelData)GetAssetData();
             if (selectedMaterial >= rm.Materials.Count)
             {
                 selectedMaterial = 0;
