@@ -29,7 +29,7 @@ namespace TT_Lab
             SaveProject.Command = new SaveProjectCommand();
             // Main window binds
             AddKeybind(OpenProject.Command, Key.O, ModifierKeys.Control);
-            AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control);
+            AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control | ModifierKeys.Shift);
             // Misc. binds
             AddKeybind(ScenesViewerTabs, new CloseTabCommand(ScenesViewerTabs), Key.W, ModifierKeys.Control);
             AddKeybind(ResourcesEditorTabs, new CloseTabCommand(ResourcesEditorTabs), Key.W, ModifierKeys.Control);

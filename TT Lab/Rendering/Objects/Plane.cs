@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,9 +52,13 @@ namespace TT_Lab.Rendering.Objects
             }
         }
 
-        public Plane(TextureData tex) : this()
+        public Plane(TextureData tex) : this(tex.Bitmap)
         {
-            texture = new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap);
+        }
+
+        public Plane(Bitmap texImage) : this()
+        {
+            texture = new TextureBuffer(texImage.Width, texImage.Height, texImage);
         }
 
         public void Bind()

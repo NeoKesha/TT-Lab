@@ -22,6 +22,11 @@ namespace TT_Lab.Controls
     /// </summary>
     public partial class ClosableTab : UserControl
     {
+        public TabControl Container;
+        public object TabParent;
+        public event EventHandler CloseTab;
+
+        private static RoutedCommand closeCommand = new RoutedCommand();
 
         public ClosableTab()
         {
@@ -30,8 +35,17 @@ namespace TT_Lab.Controls
 
         public ClosableTab(string name, TabControl container, object tabParent) : this()
         {
+            Container = container;
+            TabParent = tabParent;
             TabName.Content = name;
-            CloseButton.Command = new CloseTabCommand(container, tabParent);
+            var closeBinding = new CommandBinding(closeCommand, CloseExecuted);
+            CommandBindings.Add(closeBinding);
+            CloseButton.Command = closeBinding.Command;
+        }
+
+        private void CloseExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            CloseTab?.Invoke(this, e);
         }
     }
 }

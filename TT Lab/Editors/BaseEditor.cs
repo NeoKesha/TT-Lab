@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Input;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
@@ -14,7 +15,11 @@ namespace TT_Lab.Editors
     public class BaseEditor : UserControl
     {
         protected AssetViewModel viewModel;
-        protected CommandManager CommandManager = new CommandManager();
+        protected Command.CommandManager CommandManager = new Command.CommandManager();
+
+        protected static RoutedCommand UndoCommand = new RoutedCommand();
+        protected static RoutedCommand RedoCommand = new RoutedCommand();
+        protected static RoutedCommand SaveCommand = new RoutedCommand();
 
         public BaseEditor()
         {
@@ -23,13 +28,21 @@ namespace TT_Lab.Editors
 
         public BaseEditor(AssetViewModel asset)
         {
-            viewModel = asset; // This is used as reference in order to avoid constant type casting
+            // This is used as reference because DataContext may not always be our viewmodel depending on specific editor needs
+            viewModel = asset;
             DataContext = asset;
-            AddKeybind(new RedoCommand(CommandManager), System.Windows.Input.Key.Y, System.Windows.Input.ModifierKeys.Control);
-            AddKeybind(new UndoCommand(CommandManager), System.Windows.Input.Key.Z, System.Windows.Input.ModifierKeys.Control);
+            var undoBinding = new CommandBinding(UndoCommand, UndoExecuted);
+            var redoBinding = new CommandBinding(RedoCommand, RedoExecuted);
+            var saveBinding = new CommandBinding(SaveCommand, SaveExecuted, CanSave);
+            CommandBindings.Add(undoBinding);
+            CommandBindings.Add(redoBinding);
+            CommandBindings.Add(saveBinding);
+            AddKeybind(RedoCommand, Key.Y, ModifierKeys.Control);
+            AddKeybind(UndoCommand, Key.Z, ModifierKeys.Control);
+            AddKeybind(SaveCommand, Key.S, ModifierKeys.Control);
         }
 
-        public BaseEditor(AssetViewModel asset, CommandManager commandManager) : this(asset)
+        public BaseEditor(AssetViewModel asset, TT_Lab.Command.CommandManager commandManager) : this(asset)
         {
             CommandManager = commandManager;
         }
@@ -39,17 +52,37 @@ namespace TT_Lab.Editors
             return viewModel.Asset.GetData();
         }
 
-        protected void AddKeybind(System.Windows.Input.ICommand command, System.Windows.Input.Key key, System.Windows.Input.ModifierKeys modifierKeys)
+        protected void AddKeybind(System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
         {
-            InputBindings.Add(new System.Windows.Input.KeyBinding(command, key, modifierKeys));
+            InputBindings.Add(new KeyBinding(command, key, modifierKeys));
         }
 
-        protected void Control_UndoPerformed(Object sender, EventArgs e)
+        protected void UndoExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            Control_UndoPerformed(sender, e);
+        }
+
+        protected void RedoExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            Control_RedoPerformed(sender, e);
+        }
+
+        protected void SaveExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            viewModel.Save();
+        }
+
+        protected virtual void CanSave(Object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = viewModel.IsDirty;
+        }
+
+        protected virtual void Control_UndoPerformed(Object sender, EventArgs e)
         {
             CommandManager.Undo();
         }
 
-        protected void Control_RedoPerformed(Object sender, EventArgs e)
+        protected virtual void Control_RedoPerformed(Object sender, EventArgs e)
         {
             CommandManager.Redo();
         }

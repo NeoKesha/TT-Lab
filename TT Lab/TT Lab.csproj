@@ -175,6 +175,9 @@
     <Compile Include="Controls\LabeledTextBox.xaml.cs">
       <DependentUpon>LabeledTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UnsavedChangesDialogue.xaml.cs">
+      <DependentUpon>UnsavedChangesDialogue.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Editors\ChunkEditor.xaml.cs">
       <DependentUpon>ChunkEditor.xaml</DependentUpon>
     </Compile>
@@ -229,6 +232,7 @@
     <Compile Include="Util\ManifestResourceLoader.cs" />
     <Compile Include="Util\GuidManager.cs" />
     <Compile Include="Util\MathExtension.cs" />
+    <Compile Include="Util\MiscUtils.cs" />
     <Compile Include="Util\VectorExtension.cs" />
     <Compile Include="ViewModels\AssetViewModel.cs" />
     <Compile Include="ViewModels\Graphics\TextureViewModel.cs" />
@@ -252,6 +256,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\LabeledTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\UnsavedChangesDialogue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -48,6 +48,11 @@ namespace TT_Lab.Editors.Graphics
 
         private void TextureViewer_RendererInit(Object sender, EventArgs e)
         {
+            ResetViewer();
+        }
+
+        private void ResetViewer()
+        {
             TextureViewer.Glcontrol.MakeCurrent();
             TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
                 "LightTexture",
@@ -61,11 +66,11 @@ namespace TT_Lab.Editors.Graphics
                     { 1, "in_Color" },
                     { 2, "in_Normal" },
                     { 3, "in_Texpos" }
-                });
+                }
+            );
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
-            var texData = (TextureData)GetAssetData();
-            var texPlane = new Plane(texData);
+            var texPlane = new Plane(((TextureViewModel)viewModel).Texture);
             TextureViewer.Scene.AddRender(texPlane);
         }
 
@@ -86,13 +91,27 @@ namespace TT_Lab.Editors.Graphics
         private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
         {
             Bitmap image = new Bitmap(e.File);
-            Log.WriteLine($"Attempted to convert image: {image.RawFormat}");
             if (image.Width > 256 || image.Height > 256 || !IsPowerOfTwo(image.Width) || !IsPowerOfTwo(image.Height))
             {
-                Log.WriteLine($"Image is not compatible. Width and height can't exceed 256 and both have to be a power of 2.");
+                Log.WriteLine($"Image is not compatible. Width and height can't exceed 256 pixels and both have to be a power of 2.");
                 image.Dispose();
                 return;
             }
+            image.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            SetData("Texture", image);
+            ResetViewer();
+        }
+
+        protected override void Control_UndoPerformed(Object sender, EventArgs e)
+        {
+            base.Control_UndoPerformed(sender, e);
+            ResetViewer();
+        }
+
+        protected override void Control_RedoPerformed(Object sender, EventArgs e)
+        {
+            base.Control_RedoPerformed(sender, e);
+            ResetViewer();
         }
     }
 }

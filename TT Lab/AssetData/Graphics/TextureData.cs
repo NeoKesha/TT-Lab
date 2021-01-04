@@ -25,11 +25,10 @@ namespace TT_Lab.AssetData.Graphics
             {
                 Bitmap.Dispose();
             }
-            return;
         }
         public override void Save(string dataPath)
         {
-            if (Bitmap != null)
+            if (Bitmap != null && !Disposed)
             {
                 Bitmap.Save(dataPath, ImageFormat.Png);
             }

@@ -22,8 +22,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding ViewModel.TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1"/>
-            <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding ViewModel.PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1"/>
+            <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding ViewModel.TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1" IsEnabled="False"/>
+            <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding ViewModel.PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1" IsEnabled="False"/>
         </Grid>
         <base:SceneEditor x:Name="TextureViewer" Margin="0" Header="Texture viewer" Grid.Row="1" Padding="1"/>
         <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="2"/>

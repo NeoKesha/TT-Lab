@@ -1,39 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.ViewModels.Graphics
 {
     public class TextureViewModel : AssetViewModel
     {
+        private Bitmap _texture;
+        private PS2AnyTexture.TextureFunction _texFun;
+        private PS2AnyTexture.TexturePixelFormat _pixelFormat;
+
         public TextureViewModel(Guid asset) : base(asset)
         {
         }
 
         public TextureViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
+            _pixelFormat = MiscUtils.ConvertEnum<PS2AnyTexture.TexturePixelFormat>(_asset.Parameters["pixel_storage_format"]);
+            _texFun = MiscUtils.ConvertEnum<PS2AnyTexture.TextureFunction>(_asset.Parameters["texture_function"]);
         }
 
-        private T ConvertEnum<T>(object o)
+        protected override void UnloadData()
         {
-            return (T)Enum.Parse(typeof(T), o.ToString());
+            _texture.Dispose();
+            _texture = null;
+            base.UnloadData();
+        }
+
+        public Bitmap Texture
+        {
+            get
+            {
+                if (_texture == null)
+                {
+                    _texture = (Bitmap)((TextureData)_asset.GetData()).Bitmap.Clone();
+                }
+                return _texture;
+            }
+            set
+            {
+                //_texture?.Dispose();
+                _texture = value;
+                IsDirty = true;
+            }
         }
 
         public PS2AnyTexture.TextureFunction TextureFunction
         {
             get
             {
-                return ConvertEnum<PS2AnyTexture.TextureFunction>(_asset.Parameters["texture_function"]);
+                return _texFun;
             }
             set
             {
-                if (value != ConvertEnum<PS2AnyTexture.TextureFunction>(_asset.Parameters["texture_function"]))
+                if (value != _texFun)
                 {
-                    _asset.Parameters["texture_function"] = value;
+                    _texFun = value;
+                    IsDirty = true;
                     NotifyChange();
                 }
             }
@@ -43,13 +73,14 @@ namespace TT_Lab.ViewModels.Graphics
         {
             get
             {
-                return ConvertEnum<PS2AnyTexture.TexturePixelFormat>(_asset.Parameters["pixel_storage_format"]);
+                return _pixelFormat;
             }
             set
             {
-                if (value != ConvertEnum<PS2AnyTexture.TexturePixelFormat>(_asset.Parameters["pixel_storage_format"]))
+                if (value != _pixelFormat)
                 {
-                    _asset.Parameters["pixel_storage_format"] = value;
+                    _pixelFormat = value;
+                    IsDirty = true;
                     NotifyChange();
                 }
             }

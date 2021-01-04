@@ -327,7 +327,7 @@
                 <MenuItem x:Name="CreateProject" Header="Create Project..."/>
                 <MenuItem x:Name="OpenProject" Header="Open Project..." InputGestureText="Ctrl+O"/>
                 <MenuItem x:Name="OpenRecentSubMenu" Header="Open Recent" ItemsSource="{Binding RecentlyOpened}" IsEnabled="{Binding HasRecents}"/>
-                <MenuItem x:Name="SaveProject" Header="Save Project" InputGestureText="Ctrl+S" IsEnabled="{Binding ProjectOpened}"/>
+                <MenuItem x:Name="SaveProject" Header="Save all" InputGestureText="Ctrl+Shift+S" IsEnabled="{Binding ProjectOpened}"/>
                 <MenuItem x:Name="CloseProject" Header="Close Project" Click="CloseProject_Click" IsEnabled="{Binding ProjectOpened}"/>
             </MenuItem>
             <MenuItem x:Name="ToolsSubmenu" Header="Tools" HorizontalAlignment="Center" IsEnabled="False"/>

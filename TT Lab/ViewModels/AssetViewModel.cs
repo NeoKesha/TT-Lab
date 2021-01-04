@@ -9,8 +9,10 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
+using TT_Lab.Command;
 using TT_Lab.Controls;
 using TT_Lab.Project;
+using TT_Lab.Util;
 
 namespace TT_Lab.ViewModels
 {
@@ -25,12 +27,20 @@ namespace TT_Lab.ViewModels
         private Boolean _isExpanded;
         private Visibility _isVisible;
         private Control _editor;
+        private bool _dirty;
+        private OpenDialogueCommand.DialogueResult _dialogueResult = new OpenDialogueCommand.DialogueResult();
+        private ICommand _unsavedChangesCommand;
+
+        private AssetViewModel()
+        {
+            _unsavedChangesCommand = new OpenDialogueCommand(typeof(UnsavedChangesDialogue), _dialogueResult);
+        }
 
         public AssetViewModel(Guid asset) : this(asset, null)
         {
         }
 
-        public AssetViewModel(Guid asset, AssetViewModel parent)
+        public AssetViewModel(Guid asset, AssetViewModel parent) : this()
         {
             _asset = ProjectManagerSingleton.PM.OpenedProject.GetAsset(asset);
             _parent = parent;
@@ -56,15 +66,18 @@ namespace TT_Lab.ViewModels
             }
         }
 
+        public virtual void Save()
+        {
+            _asset.Serialize();
+            IsDirty = false;
+        }
+
         public Control GetEditor()
         {
             if (_editor == null)
             {
                 _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this);
-                _editor.Unloaded += (sender, e) =>
-                {
-                    CloseEditor();
-                };
+                _editor.Unloaded += EditorUnload;
             }
             return _editor;
         }
@@ -74,10 +87,7 @@ namespace TT_Lab.ViewModels
             if (_editor == null)
             {
                 _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this, commandManager);
-                _editor.Unloaded += (sender, e) =>
-                {
-                    CloseEditor();
-                };
+                _editor.Unloaded += EditorUnload;
             }
             return _editor;
         }
@@ -90,17 +100,42 @@ namespace TT_Lab.ViewModels
                 {
                     Content = Activator.CreateInstance(Asset.GetEditorType(), this)
                 };
-                ((TabItem)_editor).Header = new ClosableTab(Alias, tabContainer, _editor);
-                _editor.Unloaded += (sender, e) =>
-                {
-                    CloseEditor();
-                };
+                var closableTab = new ClosableTab(Alias, tabContainer, _editor);
+                closableTab.CloseTab += EditorUnload;
+                ((TabItem)_editor).Header = closableTab;
             }
             return _editor;
         }
 
-        public void CloseEditor()
+        private void EditorUnload(Object sender, EventArgs e)
         {
+            var closeTab = (ClosableTab)sender;
+            if (IsDirty)
+            {
+                _unsavedChangesCommand.Execute();
+                if (_dialogueResult.Result == null) return;
+
+                var result = MiscUtils.ConvertEnum<UnsavedChangesDialogue.AnswerResult>(_dialogueResult.Result);
+                switch (result)
+                {
+                    case UnsavedChangesDialogue.AnswerResult.YES:
+                        Save();
+                        break;
+                    case UnsavedChangesDialogue.AnswerResult.DISCARD:
+                        break;
+                    case UnsavedChangesDialogue.AnswerResult.CANCEL:
+                    default:
+                        return;
+                }
+            }
+            var close = new CloseTabCommand(closeTab.Container, closeTab.TabParent);
+            close.Execute();
+            UnloadData();
+        }
+
+        protected virtual void UnloadData()
+        {
+            _asset.GetData().Dispose();
             _editor = null;
         }
 
@@ -160,7 +195,7 @@ namespace TT_Lab.ViewModels
                 if (value != _isSelected)
                 {
                     _isSelected = value;
-                    NotifyChange("IsSelected");
+                    NotifyChange();
                 }
             }
         }
@@ -173,7 +208,7 @@ namespace TT_Lab.ViewModels
                 if (value != _isExpanded)
                 {
                     _isExpanded = value;
-                    NotifyChange("IsExpanded");
+                    NotifyChange();
                 }
 
                 if (_isExpanded && _parent != null)
@@ -191,7 +226,7 @@ namespace TT_Lab.ViewModels
                 if (value != _isVisible)
                 {
                     _isVisible = value;
-                    NotifyChange("IsVisible");
+                    NotifyChange();
                 }
 
                 if (_isVisible == Visibility.Visible && _parent != null)
@@ -209,7 +244,20 @@ namespace TT_Lab.ViewModels
                 if (value != _asset.Alias)
                 {
                     _asset.Alias = value;
-                    NotifyChange("Alias");
+                    NotifyChange();
+                }
+            }
+        }
+
+        public bool IsDirty
+        {
+            get { return _dirty; }
+            set
+            {
+                if (value != _dirty)
+                {
+                    _dirty = value;
+                    NotifyChange();
                 }
             }
         }

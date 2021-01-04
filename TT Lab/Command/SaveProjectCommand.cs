@@ -27,8 +27,12 @@ namespace TT_Lab.Command
                 {
                     Log.WriteLine($"Saving project...");
                     var now = DateTime.Now;
-                    var pr = ProjectManagerSingleton.PM.OpenedProject;
-                    pr.Serialize();
+                    var pr = ProjectManagerSingleton.PM.ProjectTree;
+                    foreach (var viewModel in pr)
+                    {
+                        if (viewModel.EditorOpened && viewModel.IsDirty)
+                            viewModel.Save();
+                    }
                     Log.WriteLine($"Saved project in {DateTime.Now - now}");
                 }
                 catch (Exception ex)

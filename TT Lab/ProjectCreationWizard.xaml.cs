@@ -25,7 +25,7 @@ namespace TT_Lab
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Failed to create project: {ex.Message}", "Error creating project!", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.WriteLine($"Error creating project: {ex.Message}");
             }
         }
     }

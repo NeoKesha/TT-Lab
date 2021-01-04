@@ -35,11 +35,13 @@ namespace TT_Lab.Command
             if (_tabToClose != null)
             {
                 _tabsContainer.Items.Remove(_tabToClose);
+                _tabsContainer.Focus();
                 return;
             }
             if (_tabsContainer.SelectedIndex != -1)
             {
                 _tabsContainer.Items.RemoveAt(_tabsContainer.SelectedIndex);
+                _tabsContainer.Focus();
             }
         }
 
