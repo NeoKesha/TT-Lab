@@ -38,24 +38,6 @@ namespace TT_Lab
             DataContext = ProjectManagerSingleton.PM;
             Closed += MainWindow_Closed;
             Log.SetLogBox(LogText);
-            FbxModel refer = new FbxModel();
-            using (FileStream fs = new FileStream(@"D:\untitled.fbx", FileMode.Open, FileAccess.Read))
-            using (BinaryReader reader = new BinaryReader(fs))
-            {
-                refer.ReadBinary(reader);
-            }
-            using (FileStream fs = new FileStream(@"D:\mdl.fbx", FileMode.Create, FileAccess.Write))
-            using (BinaryWriter writer = new BinaryWriter(fs))
-            {
-                FbxModel model = new FbxModel();
-                model.SaveBinary(writer);
-            }
-            using (FileStream fs = new FileStream(@"D:\mdl.fbx", FileMode.Open, FileAccess.Read))
-            using (BinaryReader reader = new BinaryReader(fs))
-            {
-                FbxModel model = new FbxModel();
-                model.ReadBinary(reader);
-            }
         }
 
         private void MainWindow_Closed(Object sender, EventArgs e)

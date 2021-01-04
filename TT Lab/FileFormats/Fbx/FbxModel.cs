@@ -111,43 +111,106 @@ namespace TT_Lab.FileFormats.Fbx
         }
         public void AddGeometry(String name, List<Vertex> verts, List<IndexedFace> faces)
         {
-            // In node Objects [8] create sub node Geometry
-            // Properties UnkLong, String = Name + \0 + \u0001 + Geometry, String = Mesh
-            // Nodes: 
-            // Empty Properties70
-            // GeometryVersion: Int = 124
-            // Vertices : Array Double (3 * 8)
-            // Polygon Vertex Index: Array Int (24)
-            // Edges: Array Int
-            // LayerElementNormal: 0
-                //Version: 101
-                //Name: String = ""
-                //MappingInformationType: ByPolygonVertex
-                //ReferenceInformationType: Direct
-                //Normals: Array Double (24 * 3)
-            // LayerElementUV: 0
-                //Version: 101
-                //Name: UVMap
-                //MappingInformationType: ByPolygonVertex
-                //ReferenceInformationType: Direct 
-                //UV: 2 * verts
-            // LayerElementColor: 0
-                //Version: 101
-                //Name: Col
-                //MappingInformationType: ByPolygonVertex
-                //ReferenceInformationType: Direct 
-                //Colors: 4 * verts
-            // Layer: Int 0
-                // Version: 100
-                // LayerElement: 
-                    // Type: LayerElementNormal
-                    // TypedIndex: 0 
-                // LayerElement: 
-                    // Type: LayerElementColor
-                    // TypedIndex: 0 
-                // LayerElement: 
-                    // Type: LayerElementUV
-                    // TypedIndex: 0 
+            FbxNode objectNode = Nodes[0];
+
+            FbxNode geometryNode = new FbxNode("Geometry");
+            geometryNode.Properties.Add(new FbxPropertyLong(0));
+            geometryNode.Properties.Add(new FbxPropertyString($"{name}\0\u0001Geometry"));
+            geometryNode.Properties.Add(new FbxPropertyString("Mesh"));
+
+            FbxNode properties70 = new FbxNode("Properties70");
+            geometryNode.Nodes.Add(properties70);
+
+            FbxNode geometryVersion = new FbxNode("GeometryVersion", new FbxPropertyInt(124));
+            geometryNode.Nodes.Add(geometryVersion);
+
+            FbxNode vertices = new FbxNode("Vertices");
+            var vertList = new List<double>(verts.Count * 3);
+            foreach (var v in verts)
+            {
+                vertList.Add(v.Position.X);
+                vertList.Add(v.Position.Y);
+                vertList.Add(v.Position.Z);
+            }
+            vertices.Properties.Add(new FbxPropertyArrayDouble(vertList));
+            geometryNode.Nodes.Add(vertices);
+
+            FbxNode polygons = new FbxNode("PolygonVertexIndex");
+            var polygonList = new List<int>(verts.Count * 3);
+            foreach (var f in faces)
+            {
+                polygonList.AddRange(f.Indexes);
+            }
+            polygons.Properties.Add(new FbxPropertyArrayInt(polygonList));
+            geometryNode.Nodes.Add(polygons);
+
+            FbxNode elementUV = new FbxNode("LayerElementUV", new FbxPropertyInt(0));
+            {
+                FbxNode version = new FbxNode("Version", new FbxPropertyInt(101));
+                elementUV.Nodes.Add(version);
+
+                FbxNode nodeName = new FbxNode("Name", new FbxPropertyString("UVMap"));
+                elementUV.Nodes.Add(nodeName);
+
+                FbxNode mapping = new FbxNode("MappingInformationType", new FbxPropertyString("ByPolygonVertex"));
+                elementUV.Nodes.Add(mapping);
+
+                FbxNode reference = new FbxNode("ReferenceInformationType", new FbxPropertyString("Direct"));
+                elementUV.Nodes.Add(reference);
+
+                FbxNode uv = new FbxNode("UV");
+                var uvList = new List<double>(verts.Count * 2);
+                foreach (var v in verts)
+                {
+                    uvList.Add(v.UV.X);
+                    uvList.Add(v.UV.Y);
+                }
+                uv.Properties.Add(new FbxPropertyArrayDouble(uvList));
+                elementUV.Nodes.Add(uv);
+
+                CreateNullNode(elementUV.Nodes);
+            }
+            geometryNode.Nodes.Add(elementUV);
+
+            FbxNode elementColor = new FbxNode("LayerElementColor", new FbxPropertyInt(0));
+            {
+                FbxNode version = new FbxNode("Version", new FbxPropertyInt(101));
+                elementColor.Nodes.Add(version);
+
+                FbxNode nodeName = new FbxNode("Name", new FbxPropertyString("Col"));
+                elementColor.Nodes.Add(nodeName);
+
+                FbxNode mapping = new FbxNode("MappingInformationType", new FbxPropertyString("ByPolygonVertex"));
+                elementColor.Nodes.Add(mapping);
+
+                FbxNode reference = new FbxNode("ReferenceInformationType", new FbxPropertyString("Direct"));
+                elementColor.Nodes.Add(reference);
+
+                FbxNode colors = new FbxNode("Colors");
+                var colorList = new List<double>(verts.Count * 4);
+                foreach (var v in verts)
+                {
+                    colorList.Add(v.Color.X);
+                    colorList.Add(v.Color.Y);
+                    colorList.Add(v.Color.Z);
+                    colorList.Add(v.Color.W);
+                }
+                colors.Properties.Add(new FbxPropertyArrayDouble(colorList));
+                elementColor.Nodes.Add(colors);
+
+                CreateNullNode(elementColor.Nodes);
+            }
+            geometryNode.Nodes.Add(elementColor);
+
+            CreateNullNode(geometryNode.Nodes);
+
+            objectNode.Nodes.Add(geometryNode);
+        }
+
+        public void FinalizeObjects()
+        {
+            FbxNode objectNode = Nodes[0];
+            CreateNullNode(objectNode.Nodes);
         }
         public void CreateNullNode(List<FbxNode> root)
         {
