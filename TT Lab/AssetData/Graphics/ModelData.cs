@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Assimp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,52 +31,48 @@ namespace TT_Lab.AssetData.Graphics
         {
             return;
         }
-        /*public override void Save(string dataPath)
+        public override void Save(string dataPath)
         {
-            using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
-            using (StreamWriter writer = new StreamWriter(fs))
+            //Create a very simple scene a single node with a mesh that has a single face, a triangle and a default material 
+            Scene scene = new Scene();
+            scene.RootNode = new Node("Root");
+
+            for(var i = 0; i < Vertexes.Count; ++i)
             {
-                //Fuck everything
-                var back = Thread.CurrentThread.CurrentCulture;
-                Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-                //Fuck everything
-                writer.WriteLine("ply");
-                writer.WriteLine("format ascii 1.0");
-                writer.WriteLine("comment made using TT Lab");
-                writer.WriteLine($"element vertex {Vertexes.Count}");
-                writer.WriteLine("property float x");
-                writer.WriteLine("property float y");
-                writer.WriteLine("property float z");
-                writer.WriteLine("property float s");
-                writer.WriteLine("property float t");
-                writer.WriteLine("property float q");
-                writer.WriteLine("property uchar red");
-                writer.WriteLine("property uchar green");
-                writer.WriteLine("property uchar blue");
-                writer.WriteLine("property uchar alpha");
-                writer.WriteLine("property float ered");
-                writer.WriteLine("property float egreen");
-                writer.WriteLine("property float eblue");
-                writer.WriteLine("property float ealpha");
-                writer.WriteLine($"element face {Faces.Count}");
-                writer.WriteLine("property list uchar uint vertex_indices");
-                writer.WriteLine("end_header");
-                foreach (var vertex in Vertexes)
+                var submodel = Vertexes[i];
+                var faces = Faces[i];
+                Mesh mesh = new Mesh(PrimitiveType.Triangle);
+                foreach (var ver in submodel)
                 {
-                    writer.WriteLine(vertex.ToString());
+                    mesh.Vertices.Add(new Vector3D(ver.Position.X, ver.Position.Y, ver.Position.Z));
                 }
-                foreach (var face in Faces)
+                foreach (var face in faces)
                 {
-                    writer.WriteLine(face.ToString());
+                    mesh.Faces.Add(new Face(new int[] { face.Indexes[0], face.Indexes[1], face.Indexes[2] }));
                 }
-                writer.Flush();
-                //Fuck everything
-                Thread.CurrentThread.CurrentCulture = back;
-                //Fuck everything
+                mesh.MaterialIndex = 0;
+                scene.Meshes.Add(mesh);
+                scene.RootNode.MeshIndices.Add(i);
             }
+            /*Mesh triangle = new Mesh("", PrimitiveType.Triangle);
+            triangle.Vertices.Add(new Vector3D(1, 0, 0));
+            triangle.Vertices.Add(new Vector3D(5, 5, 0));
+            triangle.Vertices.Add(new Vector3D(10, 0, 0));
+            triangle.Faces.Add(new Face(new int[] { 0, 1, 2 }));
+            triangle.MaterialIndex = 0;
+
+            scene.Meshes.Add(triangle);
+            scene.RootNode.MeshIndices.Add(0);*/
+
+            Material mat = new Material();
+            mat.Name = "MyMaterial";
+            scene.Materials.Add(mat);
+
+            AssimpContext context = new AssimpContext();
+            context.ExportFile(scene, dataPath, "collada");
         }
 
-        public override void Load(String dataPath)
+        /*public override void Load(String dataPath)
         {
             Vertexes.Clear();
             Faces.Clear();
