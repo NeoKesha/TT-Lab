@@ -111,7 +111,7 @@ namespace TT_Lab.FileFormats.Fbx
         }
         public void AddGeometry(String name, List<Vertex> verts, List<IndexedFace> faces)
         {
-            FbxNode objectNode = Nodes[0];
+            FbxNode objectNode = Nodes[8];
 
             FbxNode geometryNode = new FbxNode("Geometry");
             geometryNode.Properties.Add(new FbxPropertyLong(0));
@@ -205,11 +205,77 @@ namespace TT_Lab.FileFormats.Fbx
             CreateNullNode(geometryNode.Nodes);
 
             objectNode.Nodes.Add(geometryNode);
+
+            FbxNode modelNode = new FbxNode("Model");
+            modelNode.Properties.Add(new FbxPropertyLong(0));
+            modelNode.Properties.Add(new FbxPropertyString($"{name}\0\u0001Model"));
+            modelNode.Properties.Add(new FbxPropertyString("Mesh"));
+
+            FbxNode version_ = new FbxNode("Version", new FbxPropertyInt(232));
+            modelNode.Nodes.Add(version_);
+
+            FbxNode properties70_2 = new FbxNode("Properties70");
+            {
+                properties70_2.Nodes.Add(new FbxNode("P", new FbxProperty[]
+                {
+                    new FbxPropertyString("Lcl Rotation"),
+                    new FbxPropertyString("Lcl Rotation"),
+                    new FbxPropertyString(""),
+                    new FbxPropertyString("A"),
+                    new FbxPropertyDouble(0),
+                    new FbxPropertyDouble(0),
+                    new FbxPropertyDouble(0),
+                })) ;
+                properties70_2.Nodes.Add(new FbxNode("P", new FbxProperty[]
+                {
+                    new FbxPropertyString("Lcl Scaling"),
+                    new FbxPropertyString("Lcl Scaling"),
+                    new FbxPropertyString(""),
+                    new FbxPropertyString("A"),
+                    new FbxPropertyDouble(100),
+                    new FbxPropertyDouble(100),
+                    new FbxPropertyDouble(100),
+                }));
+                properties70_2.Nodes.Add(new FbxNode("P", new FbxProperty[]
+                {
+                    new FbxPropertyString("DefaultAttributeIndex"),
+                    new FbxPropertyString("int"),
+                    new FbxPropertyString("Integer"),
+                    new FbxPropertyString(""),
+                    new FbxPropertyInt(0),
+                }));
+                properties70_2.Nodes.Add(new FbxNode("P", new FbxProperty[]
+                {
+                    new FbxPropertyString("InheritType"),
+                    new FbxPropertyString("enum"),
+                    new FbxPropertyString(""),
+                    new FbxPropertyString(""),
+                    new FbxPropertyInt(1),
+                }));
+                CreateNullNode(properties70_2.Nodes);
+            }
+            modelNode.Nodes.Add(properties70_2);
+
+            FbxNode multilayer = new FbxNode("MultiLayer", new FbxPropertyInt(0));
+            modelNode.Nodes.Add(multilayer);
+
+            FbxNode multitake = new FbxNode("MultiTake", new FbxPropertyInt(0));
+            modelNode.Nodes.Add(multitake);
+
+            FbxNode shading = new FbxNode("Shading", new FbxPropertyBool(true));
+            modelNode.Nodes.Add(shading);
+
+            FbxNode culling = new FbxNode("Culling", new FbxPropertyString("CullingOff"));
+            modelNode.Nodes.Add(culling);
+
+            CreateNullNode(modelNode.Nodes);
+
+            objectNode.Nodes.Add(modelNode);
         }
 
         public void FinalizeObjects()
         {
-            FbxNode objectNode = Nodes[0];
+            FbxNode objectNode = Nodes[8];
             CreateNullNode(objectNode.Nodes);
         }
         public void CreateNullNode(List<FbxNode> root)

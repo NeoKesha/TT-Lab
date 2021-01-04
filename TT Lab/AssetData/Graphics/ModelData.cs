@@ -38,6 +38,12 @@ namespace TT_Lab.AssetData.Graphics
             using (BinaryWriter writer = new BinaryWriter(fs))
             {
                 FbxModel model = new FbxModel();
+                model.Init();
+                for (var i = 0; i < Vertexes.Count; ++i)
+                {
+                    model.AddGeometry($"SubModel_{i}", Vertexes[i], Faces[i]);
+                }
+                model.FinalizeObjects();
                 model.SaveBinary(writer);
             }
         }
