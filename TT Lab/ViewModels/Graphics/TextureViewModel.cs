@@ -29,7 +29,7 @@ namespace TT_Lab.ViewModels.Graphics
 
         protected override void UnloadData()
         {
-            _texture.Dispose();
+            _texture?.Dispose();
             _texture = null;
             base.UnloadData();
         }
