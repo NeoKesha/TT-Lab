@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,7 @@ namespace TT_Lab.Editors.Graphics
             };
             InitializeComponent();
             TextureViewer.RendererInit += TextureViewer_RendererInit;
+            TextureViewer.FileDrop += TextureViewer_FileDrop;
         }
 
         private void TextureViewer_RendererInit(Object sender, EventArgs e)
@@ -65,6 +67,32 @@ namespace TT_Lab.Editors.Graphics
             var texData = (TextureData)GetAssetData();
             var texPlane = new Plane(texData);
             TextureViewer.Scene.AddRender(texPlane);
+        }
+
+        private bool IsPowerOfTwo(long x)
+        {
+            return (x != 0) && ((x & (x - 1)) == 0);
+        }
+
+        private void TextureViewer_Drop(Object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var file = (string[])e.Data.GetData(DataFormats.FileDrop);
+                TextureViewer_FileDrop(sender, new Controls.FileDropEventArgs { File = file[0] });
+            }
+        }
+
+        private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
+        {
+            Bitmap image = new Bitmap(e.File);
+            Log.WriteLine($"Attempted to convert image: {image.RawFormat}");
+            if (image.Width > 256 || image.Height > 256 || !IsPowerOfTwo(image.Width) || !IsPowerOfTwo(image.Height))
+            {
+                Log.WriteLine($"Image is not compatible. Width and height can't exceed 256 and both have to be a power of 2.");
+                image.Dispose();
+                return;
+            }
         }
     }
 }

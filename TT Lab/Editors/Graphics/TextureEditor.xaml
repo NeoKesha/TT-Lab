@@ -7,7 +7,7 @@
              xmlns:base="clr-namespace:TT_Lab.Editors"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Class="TT_Lab.Editors.Graphics.TextureEditor"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" AllowDrop="True" Drop="TextureViewer_Drop">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25*"/>
@@ -25,8 +25,9 @@
             <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding ViewModel.TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1"/>
             <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding ViewModel.PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1"/>
         </Grid>
-        <base:SceneEditor x:Name="TextureViewer" Margin="0" Header="Texture viewer" Grid.Row="1" AllowDrop="True" Padding="1"/>
+        <base:SceneEditor x:Name="TextureViewer" Margin="0" Header="Texture viewer" Grid.Row="1" Padding="1"/>
         <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="2"/>
+        <Rectangle Grid.RowSpan="3" Stroke="Black" Panel.ZIndex="-100" Fill="#00000000"/>
 
     </Grid>
 </base:BaseEditor>

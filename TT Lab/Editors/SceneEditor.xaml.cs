@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Controls;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels;
@@ -25,6 +26,7 @@ namespace TT_Lab.Editors
         private System.Drawing.Point mousePos;
 
         public event EventHandler RendererInit;
+        public event EventHandler<FileDropEventArgs> FileDrop;
 
         [Description("Scene viewer's header"), Category("Common Properties")]
         public object Header
@@ -51,7 +53,15 @@ namespace TT_Lab.Editors
 #endif
             SizeChanged += SceneEditor_SizeChanged;
 
-            Glcontrol = new GLControl();
+            Glcontrol = new GLControl
+            {
+                Enabled = true,
+                AllowDrop = true,
+                Visible = true,
+                VSync = true
+            };
+            Glcontrol.DragEnter += Glcontrol_DragEnter;
+            Glcontrol.DragDrop += Glcontrol_DragDrop;
             Glcontrol.Load += Glcontrol_Init;
             Glcontrol.Paint += Glcontrol_Paint;
             Glcontrol.MouseMove += Glcontrol_MouseMove;
@@ -71,7 +81,18 @@ namespace TT_Lab.Editors
             timer.Start();
         }
 
-        private void Glcontrol_MouseWheel(Object sender, MouseEventArgs e)
+        private void Glcontrol_DragDrop(Object sender, System.Windows.Forms.DragEventArgs e)
+        {
+            var files = (string[])e.Data.GetData(System.Windows.Forms.DataFormats.FileDrop);
+            FileDrop?.Invoke(sender, new FileDropEventArgs { File = files[0]});
+        }
+
+        private void Glcontrol_DragEnter(Object sender, System.Windows.Forms.DragEventArgs e)
+        {
+            e.Effect = System.Windows.Forms.DragDropEffects.All;
+        }
+
+        private void Glcontrol_MouseWheel(Object sender, System.Windows.Forms.MouseEventArgs e)
         {
             Scene?.ZoomView(e.Delta);
         }
@@ -93,7 +114,7 @@ namespace TT_Lab.Editors
         }
 
         
-        private void Glcontrol_MouseMove(Object sender, MouseEventArgs e)
+        private void Glcontrol_MouseMove(Object sender, System.Windows.Forms.MouseEventArgs e)
         {
             var curMousePos = e.Location;
             if (e.Button == MouseButtons.Middle)
