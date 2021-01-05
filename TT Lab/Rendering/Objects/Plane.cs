@@ -22,10 +22,10 @@ namespace TT_Lab.Rendering.Objects
             planeBuffer = BufferGeneration.GetModelBuffer(
                 new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
                 {
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, -1, 1),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, -1, 1),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 1, 1),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, 1, 1)
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 1, -1),
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, 1, -1),
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, -1, -1),
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, -1, -1)
                 },
                 new List<AssetData.Graphics.SubModels.IndexedFace>
                 {
