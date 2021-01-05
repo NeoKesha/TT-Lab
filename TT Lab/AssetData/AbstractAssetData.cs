@@ -16,7 +16,7 @@ namespace TT_Lab.AssetData
 
         public virtual Boolean Disposed => disposedValue;
 
-        public ITwinItem twinRef = null;
+        protected ITwinItem twinRef = null;
 
         public virtual void Load(string dataPath)
         {
@@ -48,5 +48,10 @@ namespace TT_Lab.AssetData
         }
 
         public abstract void Import();
+
+        public void NullifyReference()
+        {
+            twinRef = null;
+        }
     }
 }
