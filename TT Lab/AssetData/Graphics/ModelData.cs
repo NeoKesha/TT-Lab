@@ -99,7 +99,7 @@ namespace TT_Lab.AssetData.Graphics
                 var faces = new List<IndexedFace>();
                 for (var i = 0; i < mesh.FaceCount; ++i)
                 {
-                    faces.Add(new IndexedFace(mesh.Faces[0].Indices.ToArray()));
+                    faces.Add(new IndexedFace(mesh.Faces[i].Indices.ToArray()));
                 }
                 Vertexes.Add(submodel);
                 Faces.Add(faces);
