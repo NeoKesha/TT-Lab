@@ -89,8 +89,8 @@ namespace Twinsanity.PS2Hardware
                     UInt16 addr = (UInt16)(vif.Immediate & 0b111111111);
                     Byte usn = (Byte)(vif.Immediate & 0b010000000000000);
                     Byte flg = (Byte)(vif.Immediate & 0b100000000000000);
-                    Byte WL = (Byte)((VIFn_CYCLE & 0xFF) >> 8);
-                    Byte CL = (Byte)((VIFn_CYCLE & 0xFF) >> 0);
+                    Byte WL = (Byte)((VIFn_CYCLE >> 7) & 0xFF);
+                    Byte CL = (Byte)((VIFn_CYCLE >> 0) & 0xFF);
                     UInt32 dimensions = (UInt32)(vn + 1);
                     UInt32 packet_length = 0;
                     if (WL <= CL)
