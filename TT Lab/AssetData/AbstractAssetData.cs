@@ -48,5 +48,10 @@ namespace TT_Lab.AssetData
         }
 
         public abstract void Import();
+
+        public void NullifyReference()
+        {
+            twinRef = null;
+        }
     }
 }
