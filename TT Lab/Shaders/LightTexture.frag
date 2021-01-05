@@ -22,6 +22,6 @@ void main()
     float df = max(0.0, dot(N, L));
     float sf = max(0.0, dot(N, H));
     //vec2 tp = vec2(Texpos.s, 1.0 - Texpos.t);
-    vec4 color = texture(tex, Texpos.st) + vec4(0.1);
+    vec4 color = texture(tex, Texpos.st);
     FragColor = color;
 }

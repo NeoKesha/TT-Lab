@@ -128,9 +128,9 @@ namespace TT_Lab.ViewModels
                         return;
                 }
             }
+            UnloadData();
             var close = new CloseTabCommand(closeTab.Container, closeTab.TabParent);
             close.Execute();
-            UnloadData();
         }
 
         protected virtual void UnloadData()

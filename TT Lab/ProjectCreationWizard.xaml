@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TT_Lab"
         xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels"
         mc:Ignorable="d"
-        Title="Create Project..." Height="205.83" Width="800" ResizeMode="CanMinimize">
+        Title="Create Project..." Height="205.83" Width="800" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <viewmodels:ProjectCreator/>
     </Window.DataContext>
