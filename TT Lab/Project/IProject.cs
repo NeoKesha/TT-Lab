@@ -56,6 +56,12 @@ namespace TT_Lab.Project
         DateTime LastModified { get; set; }
 
         /// <summary>
+        /// Project's version
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        string Version { get; }
+
+        /// <summary>
         /// Project's root file path
         /// </summary>
         string ProjectPath { get; }

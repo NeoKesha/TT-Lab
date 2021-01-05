@@ -32,6 +32,10 @@ namespace TT_Lab.Project
     /// </summary>
     public class PS2Project : IProject
     {
+        private const string CURRENT_VERSION = "0.1.0";
+
+        private string _version = CURRENT_VERSION;
+
         public Dictionary<Guid, IAsset> Assets { get; private set; }
 
         public Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
@@ -45,6 +49,8 @@ namespace TT_Lab.Project
         public string DiscContentPath { get; set; }
 
         public DateTime LastModified { get; set; }
+
+        public string Version { get => _version; private set => _version = value; }
 
         public string ProjectPath
         {
@@ -131,6 +137,10 @@ namespace TT_Lab.Project
             {
                 var prText = new string(reader.ReadChars((Int32)fs.Length));
                 pr = JsonConvert.DeserializeObject<PS2Project>(prText);
+            }
+            if (pr.Version != CURRENT_VERSION)
+            {
+                throw new ProjectException("The provided version of the project is not supported!");
             }
             System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(projectPath));
             // Deserialize assets
