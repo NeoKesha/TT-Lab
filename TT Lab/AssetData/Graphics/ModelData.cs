@@ -31,161 +31,86 @@ namespace TT_Lab.AssetData.Graphics
         {
             return;
         }
+
         public override void Save(string dataPath)
         {
-            //Create a very simple scene a single node with a mesh that has a single face, a triangle and a default material 
-            Scene scene = new Scene();
-            scene.RootNode = new Node("Root");
-
-            for(var i = 0; i < Vertexes.Count; ++i)
+            try
             {
-                var submodel = Vertexes[i];
-                var faces = Faces[i];
-                Mesh mesh = new Mesh(PrimitiveType.Triangle);
-                foreach (var ver in submodel)
+                Scene scene = new Scene
                 {
-                    mesh.Vertices.Add(new Vector3D(ver.Position.X, ver.Position.Y, ver.Position.Z));
-                }
-                foreach (var face in faces)
+                    RootNode = new Node("Root")
+                };
+
+                for (var i = 0; i < Vertexes.Count; ++i)
                 {
-                    mesh.Faces.Add(new Face(new int[] { face.Indexes[0], face.Indexes[1], face.Indexes[2] }));
+                    var submodel = Vertexes[i];
+                    var faces = Faces[i];
+                    Mesh mesh = new Mesh(PrimitiveType.Triangle);
+                    foreach (var ver in submodel)
+                    {
+                        var pos = ver.Position;
+                        var col = ver.Color;
+                        var emCol = ver.EmitColor;
+                        var uv = ver.UV;
+                        mesh.Vertices.Add(new Vector3D(pos.X, pos.Y, pos.Z));
+                        mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, uv.Z));
+                        mesh.VertexColorChannels[0].Add(new Color4D(col.X, col.Y, col.Z, col.W));
+                        mesh.VertexColorChannels[1].Add(new Color4D(emCol.X, emCol.Y, emCol.Z, emCol.W));
+                    }
+                    foreach (var face in faces)
+                    {
+                        mesh.Faces.Add(new Face(new int[] { face.Indexes[0], face.Indexes[1], face.Indexes[2] }));
+                    }
+                    mesh.MaterialIndex = 0;
+                    scene.Meshes.Add(mesh);
+                    scene.RootNode.MeshIndices.Add(i);
                 }
-                mesh.MaterialIndex = 0;
-                scene.Meshes.Add(mesh);
-                scene.RootNode.MeshIndices.Add(i);
+
+                Material mat = new Material
+                {
+                    Name = "EmptyMaterial"
+                };
+                scene.Materials.Add(mat);
+
+                AssimpContext context = new AssimpContext();
+                context.ExportFile(scene, dataPath, "collada");
             }
-            /*Mesh triangle = new Mesh("", PrimitiveType.Triangle);
-            triangle.Vertices.Add(new Vector3D(1, 0, 0));
-            triangle.Vertices.Add(new Vector3D(5, 5, 0));
-            triangle.Vertices.Add(new Vector3D(10, 0, 0));
-            triangle.Faces.Add(new Face(new int[] { 0, 1, 2 }));
-            triangle.MaterialIndex = 0;
-
-            scene.Meshes.Add(triangle);
-            scene.RootNode.MeshIndices.Add(0);*/
-
-            Material mat = new Material();
-            mat.Name = "MyMaterial";
-            scene.Materials.Add(mat);
-
-            AssimpContext context = new AssimpContext();
-            context.ExportFile(scene, dataPath, "collada");
+            catch (Exception ex)
+            {
+                Log.WriteLine($"Error exporting for Model {twinRef.GetID()}: {ex.Message} Stack: \n{ex.StackTrace}");
+            }
         }
 
-        /*public override void Load(String dataPath)
+        public override void Load(String dataPath)
         {
             Vertexes.Clear();
             Faces.Clear();
-            using (FileStream fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read))
-            using (StreamReader reader = new StreamReader(fs))
+            AssimpContext cxt = new AssimpContext();
+            var scene = cxt.ImportFile(dataPath);
+            foreach (var mesh in scene.Meshes)
             {
-                bool Header = true;
-                Int32 Items = 0;
-                String CurrentElement = "";
-                Int32 ElementIndex = 0;
-                List<KeyValuePair<String,Int32>> elements = new List<KeyValuePair<String, Int32>>();
-                Dictionary<String, List<KeyValuePair<String,String>>> properties = new Dictionary<string, List<KeyValuePair<String, String>>>();
-                while (!reader.EndOfStream)
+                var submodel = new List<Vertex>();
+                var faces = new List<IndexedFace>();
+                for (var i = 0; i < mesh.VertexCount; ++i)
                 {
-                    String line = reader.ReadLine().Trim().ToLower();
-                    if (string.IsNullOrWhiteSpace(line))
-                    {
-                        continue;
-                    }
-                    String[] tokens = line.Split(' ');
-                    if (Header)
-                    {
-                        switch (tokens[0])
-                        {
-                            case "end_header":
-                                Header = false;
-                                ElementIndex = 0;
-                                Items = elements[0].Value;
-                                CurrentElement = elements[0].Key;
-                                break;
-                            case "element":
-                                CurrentElement = tokens[1];
-                                properties.Add(CurrentElement, new List<KeyValuePair<string, string>>());
-                                elements.Add(new KeyValuePair<string, int>(CurrentElement, Int32.Parse(tokens[2])));
-                                break;
-                            case "property":
-                                if (tokens[1] != "list")
-                                {
-                                    properties[CurrentElement].Add(new KeyValuePair<string, string>(tokens[2], tokens[1]));
-                                }
-                                else
-                                {
-                                    properties[CurrentElement].Add(new KeyValuePair<string, string>(tokens[4], tokens[1]));
-                                }
-                                break;
-                        }
-                    } 
-                    else
-                    {
-                        var props = properties[CurrentElement];
-                        switch (CurrentElement)
-                        {
-                            case "vertex":
-                                Vertex vert = new Vertex();
-                                for (var i = 0; i < props.Count; ++i)
-                                {
-                                    var name = props[i].Key;
-                                    var type = props[i].Value;
-                                    var value = ConvertTypeFloat(tokens[i], type);
-                                    switch (name)
-                                    {
-                                        case "x": vert.Position.X = value; break;
-                                        case "y": vert.Position.Y = value; break;
-                                        case "z": vert.Position.Z = value; break;
-                                        case "s": vert.UV.X = value; break;
-                                        case "t": vert.UV.Y = value; break;
-                                        case "q": vert.UV.Z = value; break;
-                                        case "red": vert.Color.X = value / 255.0f; break;
-                                        case "green": vert.Color.Y = value / 255.0f; break;
-                                        case "blue": vert.Color.Z = value / 255.0f; break;
-                                        case "ered": vert.EmitColor.X = value; break;
-                                        case "egreen": vert.EmitColor.Y = value; break;
-                                        case "eblue": vert.EmitColor.Z = value; break;
-                                    }
-                                }
-                                Vertexes.Add(vert);
-                                break;
-                            case "face":
-                                for (var i = 0; i < props.Count; ++i)
-                                {
-                                    var name = props[i].Key;
-                                    var type = props[i].Value;
-                                    if (name == "vertex_indices" && type == "list")
-                                    {
-                                        var indexes = new int[Int32.Parse(tokens[0])];
-                                        for (var j = 1; j < tokens.Length; ++j)
-                                        {
-                                            indexes[j - 1] = Int32.Parse(tokens[j]);
-                                        }
-                                        IndexedFace face = new IndexedFace(indexes);
-                                        Faces.Add(face);
-                                    }
-                                }
-                                break;
-                        }
-                        --Items;
-                        if (Items <= 0)
-                        {
-                            ++ElementIndex;
-                            if (ElementIndex >= elements.Count)
-                            {
-                                break;
-                            }
-                            Items = elements[ElementIndex].Value;
-                            CurrentElement = elements[ElementIndex].Key;
-                        }
-                    }
+                    Twinsanity.TwinsanityInterchange.Common.Vector4 pos =
+                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z, 1.0f);
+                    Twinsanity.TwinsanityInterchange.Common.Vector4 col =
+                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.VertexColorChannels[0][i].R, mesh.VertexColorChannels[0][i].G, mesh.VertexColorChannels[0][i].B, mesh.VertexColorChannels[0][i].A);
+                    Twinsanity.TwinsanityInterchange.Common.Vector4 emCol =
+                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.VertexColorChannels[1][i].R, mesh.VertexColorChannels[1][i].G, mesh.VertexColorChannels[1][i].B, mesh.VertexColorChannels[1][i].A);
+                    Twinsanity.TwinsanityInterchange.Common.Vector4 uv =
+                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, mesh.TextureCoordinateChannels[0][i].Z, 1.0f);
+                    submodel.Add(new Vertex(pos, col, uv, emCol));
                 }
+                for (var i = 0; i < mesh.FaceCount; ++i)
+                {
+                    var face = new IndexedFace(new int[] { mesh.Faces[i].Indices[0], mesh.Faces[i].Indices[1], mesh.Faces[i].Indices[2] });
+                    faces.Add(face);
+                }
+                Vertexes.Add(submodel);
+                Faces.Add(faces);
             }
-        }*/
-        private float ConvertTypeFloat(String value, String type) //idk i am not smart :((((
-        {
-            return Single.Parse(value, CultureInfo.InvariantCulture);
         }
 
         public override void Import()
