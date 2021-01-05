@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using TT_Lab.AssetData.Graphics.SubModels;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -48,14 +49,9 @@ namespace TT_Lab.AssetData.Graphics
                     Mesh mesh = new Mesh(PrimitiveType.Triangle);
                     foreach (var ver in submodel)
                     {
-                        var pos = ver.Position;
-                        var col = ver.Color;
-                        var emCol = ver.EmitColor;
-                        var uv = ver.UV;
-                        mesh.Vertices.Add(new Vector3D(pos.X, pos.Y, pos.Z));
-                        mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, uv.Z));
-                        mesh.VertexColorChannels[0].Add(new Color4D(col.X, col.Y, col.Z, col.W));
-                        mesh.VertexColorChannels[1].Add(new Color4D(emCol.X, emCol.Y, emCol.Z, emCol.W));
+                        mesh.Vertices.Add(new Vector3D(ver.Position.X, ver.Position.Y, ver.Position.Z));
+                        mesh.TextureCoordinateChannels[0].Add(new Vector3D(ver.UV.X, ver.UV.Y, 1.0f));
+                        mesh.VertexColorChannels[0].Add(new Color4D(ver.Color.X, ver.Color.Y, ver.Color.Z, ver.Color.W));
                     }
                     foreach (var face in faces)
                     {
@@ -68,12 +64,13 @@ namespace TT_Lab.AssetData.Graphics
 
                 Material mat = new Material
                 {
-                    Name = "EmptyMaterial"
+                    Name = "Default"
                 };
                 scene.Materials.Add(mat);
 
                 AssimpContext context = new AssimpContext();
                 context.ExportFile(scene, dataPath, "collada");
+                context.Dispose();
             }
             catch (Exception ex)
             {
@@ -85,32 +82,29 @@ namespace TT_Lab.AssetData.Graphics
         {
             Vertexes.Clear();
             Faces.Clear();
-            AssimpContext cxt = new AssimpContext();
-            var scene = cxt.ImportFile(dataPath);
+            AssimpContext context = new AssimpContext();
+            var scene = context.ImportFile(dataPath);
             foreach (var mesh in scene.Meshes)
             {
                 var submodel = new List<Vertex>();
-                var faces = new List<IndexedFace>();
                 for (var i = 0; i < mesh.VertexCount; ++i)
                 {
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 pos =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z, 1.0f);
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 col =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.VertexColorChannels[0][i].R, mesh.VertexColorChannels[0][i].G, mesh.VertexColorChannels[0][i].B, mesh.VertexColorChannels[0][i].A);
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 emCol =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.VertexColorChannels[1][i].R, mesh.VertexColorChannels[1][i].G, mesh.VertexColorChannels[1][i].B, mesh.VertexColorChannels[1][i].A);
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 uv =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, mesh.TextureCoordinateChannels[0][i].Z, 1.0f);
-                    submodel.Add(new Vertex(pos, col, uv, emCol));
+                    submodel.Add(new Vertex(
+                        new Vector4(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z, 0.0f),
+                        new Vector4(mesh.VertexColorChannels[0][i].R, mesh.VertexColorChannels[0][i].G, mesh.VertexColorChannels[0][i].B, mesh.VertexColorChannels[0][i].A),
+                        new Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, 1.0f, 0.0f)
+                        ));
                 }
+
+                var faces = new List<IndexedFace>();
                 for (var i = 0; i < mesh.FaceCount; ++i)
                 {
-                    var face = new IndexedFace(new int[] { mesh.Faces[i].Indices[0], mesh.Faces[i].Indices[1], mesh.Faces[i].Indices[2] });
-                    faces.Add(face);
+                    faces.Add(new IndexedFace(mesh.Faces[0].Indices.ToArray()));
                 }
                 Vertexes.Add(submodel);
                 Faces.Add(faces);
             }
+            context.Dispose();
         }
 
         public override void Import()
