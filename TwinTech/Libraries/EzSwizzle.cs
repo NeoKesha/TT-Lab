@@ -251,9 +251,9 @@ namespace Twinsanity.Libraries
 		{
 			Color color = new Color();
 			color.A = (Byte)(array[index + 3] << 1);
-			color.B = array[index + 2];
-			color.G = array[index + 1];
-			color.R = array[index + 0];
+			color.B = (Byte)(array[index + 2] << 1);
+			color.G = (Byte)(array[index + 1] << 1);
+			color.R = (Byte)(array[index + 0] << 1);
 			return color;
 		}
 
