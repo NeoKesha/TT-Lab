@@ -80,6 +80,7 @@ namespace TT_Lab.Assets
         public virtual void Import()
         {
             assetData.Import();
+            assetData.twinRef = null;
         }
 
         public virtual AssetViewModel GetViewModel(AssetViewModel parent = null)
