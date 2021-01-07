@@ -30,7 +30,10 @@ namespace TT_Lab.AssetData.Graphics
         public List<List<IndexedFace>> Faces { get; set; }
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Vertexes.ForEach(vl => vl.Clear());
+            Vertexes.Clear();
+            Faces.ForEach(fl => fl.Clear());
+            Faces.Clear();
         }
 
         public override void Save(string dataPath)

@@ -1,5 +1,6 @@
 ﻿using Assimp;
 using Newtonsoft.Json;
+using Twinsanity.TwinsanityInterchange.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,7 +25,10 @@ namespace TT_Lab.AssetData.Graphics
         List<List<IndexedFace>> Faces { get; set; }
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Vertexes.ForEach(v => v.Clear());
+            Vertexes.Clear();
+            Faces.ForEach(f => f.Clear());
+            Faces.Clear();
         }
         /*public override void Save(string dataPath)
         {
@@ -40,7 +44,7 @@ namespace TT_Lab.AssetData.Graphics
                 Mesh mesh = new Mesh(PrimitiveType.Triangle);
                 foreach (var ver in submodel)
                 {
-                    var pos = new Twinsanity.TwinsanityInterchange.Common.Vector4(ver.Position.X, ver.Position.Y, ver.Position.Z, 1.0f);
+                    var pos = new Vector4(ver.Position.X, ver.Position.Y, ver.Position.Z, 1.0f);
                     var col = ver.Color;
                     var emCol = ver.EmitColor;
                     var uv = ver.UV;
@@ -60,7 +64,7 @@ namespace TT_Lab.AssetData.Graphics
 
             Material mat = new Material
             {
-                Name = "EmptyMaterial"
+                Name = "Default"
             };
             scene.Materials.Add(mat);
 
@@ -71,24 +75,29 @@ namespace TT_Lab.AssetData.Graphics
         {
             Vertexes.Clear();
             Faces.Clear();
-            AssimpContext cxt = new AssimpContext();
-            var scene = cxt.ImportFile(dataPath);
+            AssimpContext context = new AssimpContext();
+            var scene = context.ImportFile(dataPath);
             foreach (var mesh in scene.Meshes)
             {
                 var submodel = new List<Vertex>();
                 for (var i = 0; i < mesh.VertexCount; ++i)
                 {
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 pos =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.Vertices[0].X, mesh.Vertices[0].Y, mesh.Vertices[0].Z, 1.0f);
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 col =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.VertexColorChannels[0][i].R, mesh.VertexColorChannels[0][i].G, mesh.VertexColorChannels[0][i].B, mesh.VertexColorChannels[0][i].A);
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 emCol =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.VertexColorChannels[1][i].R, mesh.VertexColorChannels[1][i].G, mesh.VertexColorChannels[1][i].B, mesh.VertexColorChannels[1][i].A);
-                    Twinsanity.TwinsanityInterchange.Common.Vector4 uv =
-                        new Twinsanity.TwinsanityInterchange.Common.Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, mesh.TextureCoordinateChannels[0][i].Z, 1.0f);
-                    submodel.Add(new Vertex(pos, col, uv, emCol));
+                    submodel.Add(new Vertex(
+                        new Vector4(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z, 0.0f),
+                        new Vector4(mesh.VertexColorChannels[0][i].R, mesh.VertexColorChannels[0][i].G, mesh.VertexColorChannels[0][i].B, mesh.VertexColorChannels[0][i].A),
+                        new Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, 1.0f, 0.0f)
+                        ));
                 }
+
+                var faces = new List<IndexedFace>();
+                for (var i = 0; i < mesh.FaceCount; ++i)
+                {
+                    faces.Add(new IndexedFace(mesh.Faces[i].Indices.ToArray()));
+                }
+                Vertexes.Add(submodel);
+                Faces.Add(faces);
             }
+            context.Dispose();
         }*/
 
         public override void Import()

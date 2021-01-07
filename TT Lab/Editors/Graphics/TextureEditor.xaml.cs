@@ -91,13 +91,16 @@ namespace TT_Lab.Editors.Graphics
         private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
         {
             Bitmap image = new Bitmap(e.File);
-            if (image.Width > 256 || image.Height > 256 || !IsPowerOfTwo(image.Width) || !IsPowerOfTwo(image.Height))
+            if (image.Width > 256 || image.Height > 256 || !IsPowerOfTwo(image.Width) || !IsPowerOfTwo(image.Height)
+                || image.Width < 8 || image.Height < 8)
             {
-                Log.WriteLine($"Image is not compatible. Width and height can't exceed 256 pixels and both have to be a power of 2.");
+                Log.WriteLine(@"Image is not compatible.
+                * Width and height can't exceed 256 pixels
+                * Width and height have to be a power of 2
+                * Width and height can't be less than 8 pixels");
                 image.Dispose();
                 return;
             }
-            image.RotateFlip(RotateFlipType.RotateNoneFlipY);
             SetData("Texture", image);
             ResetViewer();
         }

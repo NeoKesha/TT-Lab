@@ -109,7 +109,6 @@ namespace TT_Lab.ViewModels
 
         private void EditorUnload(Object sender, EventArgs e)
         {
-            var closeTab = (ClosableTab)sender;
             if (IsDirty)
             {
                 _unsavedChangesCommand.Execute();
@@ -129,8 +128,11 @@ namespace TT_Lab.ViewModels
                 }
             }
             UnloadData();
-            var close = new CloseTabCommand(closeTab.Container, closeTab.TabParent);
-            close.Execute();
+            if (sender is ClosableTab closeTab)
+            {
+                var close = new CloseTabCommand(closeTab.Container, closeTab.TabParent);
+                close.Execute();
+            }
         }
 
         protected virtual void UnloadData()

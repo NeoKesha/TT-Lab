@@ -32,7 +32,7 @@ namespace TT_Lab.Command
 
         public void Undo()
         {
-            if (UndoStack.Count == 0) return;
+            if (!CanUndo) return;
 
             var undo = UndoStack.Pop();
             undo.Unexecute();
@@ -41,7 +41,7 @@ namespace TT_Lab.Command
 
         public void Redo()
         {
-            if (RedoStack.Count == 0) return;
+            if (!CanRedo) return;
 
             var redo = RedoStack.Pop();
             redo.Execute();

@@ -26,7 +26,7 @@ namespace TT_Lab.Controls
         public object TabParent;
         public event EventHandler CloseTab;
 
-        private static RoutedCommand closeCommand = new RoutedCommand();
+        public static readonly RoutedCommand CloseCommand = new RoutedCommand();
 
         public ClosableTab()
         {
@@ -38,9 +38,14 @@ namespace TT_Lab.Controls
             Container = container;
             TabParent = tabParent;
             TabName.Content = name;
-            var closeBinding = new CommandBinding(closeCommand, CloseExecuted);
+            var closeBinding = new CommandBinding(CloseCommand, CloseExecuted);
             CommandBindings.Add(closeBinding);
             CloseButton.Command = closeBinding.Command;
+        }
+
+        public void Close()
+        {
+            CloseTab?.Invoke(this, new EventArgs());
         }
 
         private void CloseExecuted(Object sender, ExecutedRoutedEventArgs e)

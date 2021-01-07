@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TT_Lab.Assets;
 using TT_Lab.Command;
+using TT_Lab.Controls;
 using TT_Lab.Project;
 using TT_Lab.ViewModels;
 using WK.Libraries.BetterFolderBrowserNS;
@@ -16,6 +17,8 @@ namespace TT_Lab
     public partial class MainWindow : Window
     {
 
+        private static RoutedCommand CloseTabCommand = new RoutedCommand();
+
         public MainWindow()
         {
             // Suppress Binding errors for dynamically changing item collection within UIs: ListBox, MenuItem, etc.
@@ -23,6 +26,8 @@ namespace TT_Lab
             System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Critical;
 #endif
             InitializeComponent();
+            Log.SetLogBox(LogText);
+
             About.Command = new OpenDialogueCommand(typeof(TT_Lab.About));
             CreateProject.Command = new OpenDialogueCommand(typeof(TT_Lab.ProjectCreationWizard));
             OpenProject.Command = new OpenProjectDialogueCommand();
@@ -30,12 +35,33 @@ namespace TT_Lab
             // Main window binds
             AddKeybind(OpenProject.Command, Key.O, ModifierKeys.Control);
             AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control | ModifierKeys.Shift);
-            // Misc. binds
-            AddKeybind(ScenesViewerTabs, new CloseTabCommand(ScenesViewerTabs), Key.W, ModifierKeys.Control);
-            AddKeybind(ResourcesEditorTabs, new CloseTabCommand(ResourcesEditorTabs), Key.W, ModifierKeys.Control);
+            var closeTabCom = new CommandBinding(CloseTabCommand, CloseTabExecuted);
+            CommandBindings.Add(closeTabCom);
+            AddKeybind(closeTabCom.Command, Key.W, ModifierKeys.Control);
+
             DataContext = ProjectManagerSingleton.PM;
             Closed += MainWindow_Closed;
-            Log.SetLogBox(LogText);
+        }
+
+        private void CloseTabExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            switch(CentralViewerTabs.SelectedIndex)
+            {
+                // Scenes viewer
+                case 0:
+                    {
+                        var tab = (TabItem)ScenesViewerTabs.SelectedItem;
+                        ((ClosableTab)tab?.Header)?.Close();
+                    }
+                    break;
+                // Resources editor
+                case 1:
+                    {
+                        var tab = (TabItem)ResourcesEditorTabs.SelectedItem;
+                        ((ClosableTab)tab?.Header)?.Close();
+                    }
+                    break;
+            }
         }
 
         private void MainWindow_Closed(Object sender, EventArgs e)
@@ -53,7 +79,7 @@ namespace TT_Lab
             AddKeybind(this, command, key, modifierKeys);
         }
 
-        private void AddKeybind(Control control, System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
+        public static void AddKeybind(Control control, System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
         {
             control.InputBindings.Add(new KeyBinding(command, key, modifierKeys));
         }
