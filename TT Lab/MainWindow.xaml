@@ -428,7 +428,7 @@
                         </TreeView.ItemContainerStyle>
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown"/>
+                                <TextBlock x:Name="AssetBlock" Text="{Binding Alias}" MouseDown="AssetBlock_MouseDown" MouseMove="AssetBlock_MouseMove"/>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>

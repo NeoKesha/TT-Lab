@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Controls;
+using TT_Lab.Editors;
 using TT_Lab.Project;
 using TT_Lab.Util;
 
@@ -68,8 +70,10 @@ namespace TT_Lab.ViewModels
 
         public virtual void Save()
         {
+            Directory.SetCurrentDirectory("assets");
             _asset.Serialize();
             IsDirty = false;
+            Directory.SetCurrentDirectory(ProjectManagerSingleton.PM.OpenedProject.ProjectPath);
         }
 
         public Control GetEditor()
@@ -96,12 +100,16 @@ namespace TT_Lab.ViewModels
         {
             if (_editor == null)
             {
+                var baseEdit = (BaseEditor)Activator.CreateInstance(Asset.GetEditorType(), this);
                 _editor = new TabItem
                 {
-                    Content = Activator.CreateInstance(Asset.GetEditorType(), this)
+                    Content = baseEdit
                 };
                 var closableTab = new ClosableTab(Alias, tabContainer, _editor);
                 closableTab.CloseTab += EditorUnload;
+                closableTab.UndoTab += baseEdit.UndoExecuted;
+                closableTab.RedoTab += baseEdit.RedoExecuted;
+                closableTab.SaveTab += baseEdit.SaveExecuted;
                 ((TabItem)_editor).Header = closableTab;
             }
             return _editor;
@@ -128,6 +136,7 @@ namespace TT_Lab.ViewModels
                 }
             }
             UnloadData();
+            // Unload tab
             if (sender is ClosableTab closeTab)
             {
                 var close = new CloseTabCommand(closeTab.Container, closeTab.TabParent);

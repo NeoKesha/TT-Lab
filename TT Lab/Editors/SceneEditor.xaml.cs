@@ -13,6 +13,7 @@ using TT_Lab.Assets;
 using TT_Lab.Controls;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Shaders;
+using TT_Lab.Util;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors
@@ -83,8 +84,16 @@ namespace TT_Lab.Editors
 
         private void Glcontrol_DragDrop(Object sender, System.Windows.Forms.DragEventArgs e)
         {
-            var files = (string[])e.Data.GetData(System.Windows.Forms.DataFormats.FileDrop);
-            FileDrop?.Invoke(sender, new FileDropEventArgs { File = files[0]});
+            if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(System.Windows.Forms.DataFormats.FileDrop);
+                FileDrop?.Invoke(this, new FileDropEventArgs { File = files[0] });
+            }
+            else if (e.Data.GetDataPresent(typeof(DraggedData)))
+            {
+                var data = e.Data.GetDragDropData() as DraggedData;
+                FileDrop?.Invoke(this, new FileDropEventArgs { Data = data });
+            }
         }
 
         private void Glcontrol_DragEnter(Object sender, System.Windows.Forms.DragEventArgs e)

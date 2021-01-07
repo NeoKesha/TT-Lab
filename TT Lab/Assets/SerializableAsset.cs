@@ -47,7 +47,7 @@ namespace TT_Lab.Assets
             Data = UUID.ToString() + DataExt;
             IsLoaded = true;
             Parameters = new Dictionary<string, object>();
-            Type = this.GetType();
+            Type = GetType();
         }
 
         public virtual void Serialize()

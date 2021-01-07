@@ -214,7 +214,6 @@ namespace TT_Lab.Project
                             Command = new OpenProjectCommand(recents[i]),
                             HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                             VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                            
                         };
                     }
                     _recentMenus = menus;
@@ -253,7 +252,6 @@ namespace TT_Lab.Project
             }
             OpenedProject.CreateProjectStructure();
             // Unpack assets
-            Directory.CreateDirectory("assets");
             Directory.SetCurrentDirectory("assets");
             Task.Factory.StartNew(() =>
             {
@@ -376,9 +374,15 @@ namespace TT_Lab.Project
                 {
                     Properties.Settings.Default.RecentProjects.RemoveAt(10);
                 }
-                NotifyChange("RecentlyOpened");
-                NotifyChange("HasRecents");
             }
+            else
+            {
+                var index = Properties.Settings.Default.RecentProjects.IndexOf(path);
+                Properties.Settings.Default.RecentProjects.RemoveAt(index);
+                Properties.Settings.Default.RecentProjects.Insert(0, path);
+            }
+            NotifyChange("RecentlyOpened");
+            NotifyChange("HasRecents");
         }
 
         private void RemoveRecentlyOpened(string path)

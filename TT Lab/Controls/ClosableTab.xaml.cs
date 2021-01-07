@@ -25,6 +25,9 @@ namespace TT_Lab.Controls
         public TabControl Container;
         public object TabParent;
         public event EventHandler CloseTab;
+        public event EventHandler UndoTab;
+        public event EventHandler RedoTab;
+        public event EventHandler SaveTab;
 
         public static readonly RoutedCommand CloseCommand = new RoutedCommand();
 
@@ -41,6 +44,21 @@ namespace TT_Lab.Controls
             var closeBinding = new CommandBinding(CloseCommand, CloseExecuted);
             CommandBindings.Add(closeBinding);
             CloseButton.Command = closeBinding.Command;
+        }
+
+        public void Undo()
+        {
+            UndoTab?.Invoke(this, new EventArgs());
+        }
+
+        public void Redo()
+        {
+            RedoTab?.Invoke(this, new EventArgs());
+        }
+
+        public void Save()
+        {
+            SaveTab?.Invoke(this, new EventArgs());
         }
 
         public void Close()

@@ -70,7 +70,7 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-	<AllowedReferenceRelatedFileExtensions>
+    <AllowedReferenceRelatedFileExtensions>
 		.notasingleone
 	</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
@@ -214,6 +214,7 @@
     <Compile Include="Controls\BaseTextBox.xaml.cs">
       <DependentUpon>BaseTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DraggedData.cs" />
     <Compile Include="Controls\FileDropEventArgs.cs" />
     <Compile Include="Controls\LabeledDropList.xaml.cs">
       <DependentUpon>LabeledDropList.xaml</DependentUpon>

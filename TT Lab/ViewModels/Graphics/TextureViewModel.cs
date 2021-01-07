@@ -23,8 +23,17 @@ namespace TT_Lab.ViewModels.Graphics
 
         public TextureViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
-            _pixelFormat = MiscUtils.ConvertEnum<PS2AnyTexture.TexturePixelFormat>(_asset.Parameters["pixel_storage_format"]);
-            _texFun = MiscUtils.ConvertEnum<PS2AnyTexture.TextureFunction>(_asset.Parameters["texture_function"]);
+            _pixelFormat = MiscUtils.ConvertEnum<PS2AnyTexture.TexturePixelFormat>(Asset.Parameters["pixel_storage_format"]);
+            _texFun = MiscUtils.ConvertEnum<PS2AnyTexture.TextureFunction>(Asset.Parameters["texture_function"]);
+        }
+
+        public override void Save()
+        {
+            var data = (TextureData)Asset.GetData();
+            data.Bitmap = Texture;
+            Asset.Parameters["pixel_storage_format"] = PixelStorageFormat;
+            Asset.Parameters["texture_function"] = TextureFunction;
+            base.Save();
         }
 
         protected override void UnloadData()
@@ -47,7 +56,7 @@ namespace TT_Lab.ViewModels.Graphics
             set
             {
                 //_texture?.Dispose();
-                _texture = value;
+                _texture = (Bitmap)value.Clone();
                 IsDirty = true;
             }
         }

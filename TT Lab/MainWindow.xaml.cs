@@ -18,6 +18,9 @@ namespace TT_Lab
     {
 
         private static RoutedCommand CloseTabCommand = new RoutedCommand();
+        private static RoutedCommand UndoCommand = new RoutedCommand();
+        private static RoutedCommand RedoCommand = new RoutedCommand();
+        private static RoutedCommand SaveCommand = new RoutedCommand();
 
         public MainWindow()
         {
@@ -35,33 +38,63 @@ namespace TT_Lab
             // Main window binds
             AddKeybind(OpenProject.Command, Key.O, ModifierKeys.Control);
             AddKeybind(SaveProject.Command, Key.S, ModifierKeys.Control | ModifierKeys.Shift);
+            // Due to the fact that focus is required on elements to use key bindings
+            // all kinda global keybinds are bound to MainWindow, instead of elements that would make sense
+            // Close tab command
             var closeTabCom = new CommandBinding(CloseTabCommand, CloseTabExecuted);
             CommandBindings.Add(closeTabCom);
             AddKeybind(closeTabCom.Command, Key.W, ModifierKeys.Control);
+            // Undo/Redo commands
+            var redoCom = new CommandBinding(RedoCommand, RedoExecuted);
+            var undoCom = new CommandBinding(UndoCommand, UndoExecuted);
+            CommandBindings.Add(redoCom);
+            CommandBindings.Add(undoCom);
+            AddKeybind(redoCom.Command, Key.Y, ModifierKeys.Control);
+            AddKeybind(undoCom.Command, Key.Z, ModifierKeys.Control);
+            // Save command
+            var saveTabCom = new CommandBinding(SaveCommand, SaveExecuted);
+            CommandBindings.Add(saveTabCom);
+            AddKeybind(saveTabCom.Command, Key.S, ModifierKeys.Control);
 
             DataContext = ProjectManagerSingleton.PM;
             Closed += MainWindow_Closed;
         }
 
+        private void SaveExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            GetActiveTab()?.Save();
+        }
+
+        private void UndoExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            GetActiveTab()?.Undo();
+        }
+
+        private void RedoExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            GetActiveTab()?.Redo();
+        }
+
         private void CloseTabExecuted(Object sender, ExecutedRoutedEventArgs e)
         {
-            switch(CentralViewerTabs.SelectedIndex)
+            GetActiveTab()?.Close();
+        }
+
+        private ClosableTab GetActiveTab()
+        {
+            TabItem tab = null;
+            switch (CentralViewerTabs.SelectedIndex)
             {
                 // Scenes viewer
                 case 0:
-                    {
-                        var tab = (TabItem)ScenesViewerTabs.SelectedItem;
-                        ((ClosableTab)tab?.Header)?.Close();
-                    }
+                    tab = (TabItem)ScenesViewerTabs.SelectedItem;
                     break;
                 // Resources editor
                 case 1:
-                    {
-                        var tab = (TabItem)ResourcesEditorTabs.SelectedItem;
-                        ((ClosableTab)tab?.Header)?.Close();
-                    }
+                    tab = (TabItem)ResourcesEditorTabs.SelectedItem;
                     break;
             }
+            return (ClosableTab)tab?.Header;
         }
 
         private void MainWindow_Closed(Object sender, EventArgs e)
@@ -107,7 +140,7 @@ namespace TT_Lab
             sv.Tag = AutoScrollToEnd;
         }
 
-        private void TextBlock_MouseDown(Object sender, MouseButtonEventArgs e)
+        private void AssetBlock_MouseDown(Object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
             {
@@ -138,10 +171,23 @@ namespace TT_Lab
                     }
 
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Log.WriteLine($"Failed to create editor: {ex.Message}");
                 }
+            }
+        }
+
+        private void AssetBlock_MouseMove(Object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var asset = (AssetViewModel)ProjectTree.SelectedItem;
+                var data = new DraggedData
+                {
+                    Data = asset
+                };
+                DragDrop.DoDragDrop(ProjectTree, data, DragDropEffects.Copy);
             }
         }
     }

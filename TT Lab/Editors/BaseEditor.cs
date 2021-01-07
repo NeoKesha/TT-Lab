@@ -17,10 +17,6 @@ namespace TT_Lab.Editors
         protected AssetViewModel viewModel;
         protected Command.CommandManager CommandManager = new Command.CommandManager();
 
-        protected static RoutedCommand UndoCommand = new RoutedCommand();
-        protected static RoutedCommand RedoCommand = new RoutedCommand();
-        protected static RoutedCommand SaveCommand = new RoutedCommand();
-
         public BaseEditor()
         {
             //throw new Exception("Can't create BaseEditor with no asset view model bound!");
@@ -31,15 +27,6 @@ namespace TT_Lab.Editors
             // This is used as reference because DataContext may not always be our viewmodel depending on specific editor needs
             viewModel = asset;
             DataContext = asset;
-            var undoBinding = new CommandBinding(UndoCommand, UndoExecuted);
-            var redoBinding = new CommandBinding(RedoCommand, RedoExecuted);
-            var saveBinding = new CommandBinding(SaveCommand, SaveExecuted, CanSave);
-            CommandBindings.Add(undoBinding);
-            CommandBindings.Add(redoBinding);
-            CommandBindings.Add(saveBinding);
-            AddKeybind(RedoCommand, Key.Y, ModifierKeys.Control);
-            AddKeybind(UndoCommand, Key.Z, ModifierKeys.Control);
-            AddKeybind(SaveCommand, Key.S, ModifierKeys.Control);
         }
 
         public BaseEditor(AssetViewModel asset, TT_Lab.Command.CommandManager commandManager) : this(asset)
@@ -52,29 +39,27 @@ namespace TT_Lab.Editors
             return viewModel.Asset.GetData();
         }
 
-        protected void AddKeybind(System.Windows.Input.ICommand command, Key key, ModifierKeys modifierKeys)
-        {
-            InputBindings.Add(new KeyBinding(command, key, modifierKeys));
-        }
-
-        protected void UndoExecuted(Object sender, ExecutedRoutedEventArgs e)
+        public void UndoExecuted(Object sender, EventArgs e)
         {
             Control_UndoPerformed(sender, e);
         }
 
-        protected void RedoExecuted(Object sender, ExecutedRoutedEventArgs e)
+        public void RedoExecuted(Object sender, EventArgs e)
         {
             Control_RedoPerformed(sender, e);
         }
 
-        protected void SaveExecuted(Object sender, ExecutedRoutedEventArgs e)
+        public void SaveExecuted(Object sender, EventArgs e)
         {
-            viewModel.Save();
+            Control_SavePerformed(sender, e);
         }
 
-        protected virtual void CanSave(Object sender, CanExecuteRoutedEventArgs e)
+        protected virtual void Control_SavePerformed(Object sender, EventArgs e)
         {
-            e.CanExecute = viewModel.IsDirty;
+            if (viewModel.IsDirty)
+            {
+                viewModel.Save();
+            }
         }
 
         protected virtual void Control_UndoPerformed(Object sender, EventArgs e)

@@ -3,20 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using TT_Lab.AssetData.Graphics;
-using TT_Lab.Assets.Graphics;
 using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
@@ -28,6 +18,9 @@ namespace TT_Lab.Editors.Graphics
     /// </summary>
     public partial class TextureEditor : BaseEditor
     {
+
+        private static RoutedCommand ReplaceCommand = new RoutedCommand();
+
         public TextureEditor()
         {
             InitializeComponent();
@@ -44,6 +37,15 @@ namespace TT_Lab.Editors.Graphics
             InitializeComponent();
             TextureViewer.RendererInit += TextureViewer_RendererInit;
             TextureViewer.FileDrop += TextureViewer_FileDrop;
+            var repBinding = new CommandBinding(ReplaceCommand, ReplaceExecuted);
+            CommandBindings.Add(repBinding);
+            ReplaceButton.Command = repBinding.Command;
+        }
+
+        private void ReplaceExecuted(Object sender, ExecutedRoutedEventArgs e)
+        {
+            var file = MiscUtils.GetFileFromDialogue("Image file|*.jpg;*.png;*.bmp");
+            TextureViewer_FileDrop(this, new Controls.FileDropEventArgs { File = file });
         }
 
         private void TextureViewer_RendererInit(Object sender, EventArgs e)
@@ -86,22 +88,48 @@ namespace TT_Lab.Editors.Graphics
                 var file = (string[])e.Data.GetData(DataFormats.FileDrop);
                 TextureViewer_FileDrop(sender, new Controls.FileDropEventArgs { File = file[0] });
             }
+            else if (e.Data.GetDataPresent(typeof(Controls.DraggedData)))
+            {
+                var data = (Controls.DraggedData)e.Data.GetData(typeof(Controls.DraggedData));
+                TextureViewer_FileDrop(sender, new Controls.FileDropEventArgs { Data = data });
+            }
+            else
+            {
+                Log.WriteLine("Format not compatible!");
+                e.Effects = DragDropEffects.None;
+            }
         }
 
         private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
         {
-            Bitmap image = new Bitmap(e.File);
-            if (image.Width > 256 || image.Height > 256 || !IsPowerOfTwo(image.Width) || !IsPowerOfTwo(image.Height)
-                || image.Width < 8 || image.Height < 8)
+            if (e.File != null)
             {
-                Log.WriteLine(@"Image is not compatible.
+                Bitmap image = new Bitmap(e.File);
+                if (image.Width > 256 || image.Height > 256 || !IsPowerOfTwo(image.Width) || !IsPowerOfTwo(image.Height)
+                    || image.Width < 8 || image.Height < 8)
+                {
+                    Log.WriteLine(@"Image is not compatible.
                 * Width and height can't exceed 256 pixels
                 * Width and height have to be a power of 2
                 * Width and height can't be less than 8 pixels");
-                image.Dispose();
-                return;
+                    image.Dispose();
+                    return;
+                }
+                SetData("Texture", image);
             }
-            SetData("Texture", image);
+            else
+            {
+                try
+                {
+                    var texViewModel = (TextureViewModel)e.Data.Data;
+                    SetData("Texture", texViewModel.Texture);
+                    Log.WriteLine($"Replacing with texture: {texViewModel.Alias}");
+                }
+                catch (Exception)
+                {
+                    Log.WriteLine($"Unsupported texture");
+                }
+            }
             ResetViewer();
         }
 
