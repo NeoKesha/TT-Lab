@@ -78,6 +78,7 @@ namespace TT_Lab
         private void CloseTabExecuted(Object sender, ExecutedRoutedEventArgs e)
         {
             GetActiveTab()?.Close();
+            Focus();
         }
 
         private ClosableTab GetActiveTab()
