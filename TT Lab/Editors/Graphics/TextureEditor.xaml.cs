@@ -102,7 +102,7 @@ namespace TT_Lab.Editors.Graphics
 
         private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
         {
-            if (e.File != null)
+            if (!string.IsNullOrEmpty(e.File))
             {
                 Bitmap image = new Bitmap(e.File);
                 if (image.Width > 256 || image.Height > 256 || !IsPowerOfTwo(image.Width) || !IsPowerOfTwo(image.Height)
@@ -117,7 +117,7 @@ namespace TT_Lab.Editors.Graphics
                 }
                 SetData("Texture", image);
             }
-            else
+            else if (e.Data != null)
             {
                 try
                 {

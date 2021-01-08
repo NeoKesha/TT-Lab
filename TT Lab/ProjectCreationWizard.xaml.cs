@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using TT_Lab.Project;
-using WK.Libraries.BetterFolderBrowserNS;
+using TT_Lab.ViewModels;
 
 namespace TT_Lab
 {
@@ -13,6 +13,7 @@ namespace TT_Lab
     {
         public ProjectCreationWizard()
         {
+            DataContext = new ProjectCreator(this);
             InitializeComponent();
         }
 

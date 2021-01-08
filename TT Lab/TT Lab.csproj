@@ -1,461 +1,83 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{640EEAEC-CB84-4499-B5A9-E084CAB68D91}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>TT_Lab</RootNamespace>
-    <AssemblyName>TT Lab</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>none</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowedReferenceRelatedFileExtensions>
-		.notasingleone
-	</AllowedReferenceRelatedFileExtensions>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWpf>true</UseWpf>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>Images\tt_lab_logo_v6_2k.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="AssimpNet, Version=5.0.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
-      <HintPath>..\packages\AssimpNet.5.0.0-beta1\lib\net40\AssimpNet.dll</HintPath>
-    </Reference>
-    <Reference Include="BetterFolderBrowser, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BetterFolderBrowser.1.2.0\lib\BetterFolderBrowser.dll</HintPath>
-    </Reference>
-    <Reference Include="GlmNet, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GlmNet.0.7.0\lib\net40\GlmNet.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK, Version=3.3.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.3.1\lib\net20\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.GLControl.3.1.0\lib\net20\OpenTK.GLControl.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.4.7.0\lib\net461\System.Drawing.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsFormsIntegration" />
+    <None Remove="Images\AfroGod.png" />
+    <None Remove="Images\boat_guy.png" />
+    <None Remove="Images\God_Messenger.png" />
   </ItemGroup>
+
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="AssetData\Code\AnimationData.cs" />
-    <Compile Include="AssetData\Code\CodeModelData.cs" />
-    <Compile Include="AssetData\Code\GameObjectData.cs" />
-    <Compile Include="AssetData\Code\HeaderScriptData.cs" />
-    <Compile Include="AssetData\Code\MainScriptData.cs" />
-    <Compile Include="AssetData\Code\OGIData.cs" />
-    <Compile Include="AssetData\Code\ScriptData.cs" />
-    <Compile Include="AssetData\Code\SoundEffectData.cs" />
-    <Compile Include="AssetData\FolderData.cs" />
-    <Compile Include="AssetData\AbstractAssetData.cs" />
-    <Compile Include="AssetData\Graphics\BlendSkinData.cs" />
-    <Compile Include="AssetData\Graphics\LodModelData.cs" />
-    <Compile Include="AssetData\Graphics\MaterialData.cs" />
-    <Compile Include="AssetData\Graphics\MeshData.cs" />
-    <Compile Include="AssetData\Graphics\ModelData.cs" />
-    <Compile Include="AssetData\Graphics\RigidModelData.cs" />
-    <Compile Include="AssetData\Graphics\Shaders\LabShader.cs" />
-    <Compile Include="AssetData\Graphics\SkinData.cs" />
-    <Compile Include="AssetData\Graphics\SkydomeData.cs" />
-    <Compile Include="AssetData\Graphics\SubModels\IndexedFace.cs" />
-    <Compile Include="AssetData\Graphics\SubModels\Vertex.cs" />
-    <Compile Include="AssetData\Graphics\TextureData.cs" />
-    <Compile Include="AssetData\Instance\AiPathData.cs" />
-    <Compile Include="AssetData\Instance\AiPositionData.cs" />
-    <Compile Include="AssetData\Instance\CameraData.cs" />
-    <Compile Include="AssetData\Instance\ChunkLink.cs" />
-    <Compile Include="AssetData\Instance\ChunkLinksData.cs" />
-    <Compile Include="AssetData\Instance\CollisionData.cs" />
-    <Compile Include="AssetData\Instance\CollisionSurfaceData.cs" />
-    <Compile Include="AssetData\Instance\Collision\CollisionTriangle.cs" />
-    <Compile Include="AssetData\Instance\Collision\CollisionTrigger.cs" />
-    <Compile Include="AssetData\Instance\Collision\GroupInformation.cs" />
-    <Compile Include="AssetData\Instance\DynamicSceneryData.cs" />
-    <Compile Include="AssetData\Instance\InstanceTemplateData.cs" />
-    <Compile Include="AssetData\Instance\ObjectInstanceData.cs" />
-    <Compile Include="AssetData\Instance\ParticlesData.cs" />
-    <Compile Include="AssetData\Instance\PathData.cs" />
-    <Compile Include="AssetData\Instance\PositionData.cs" />
-    <Compile Include="AssetData\Instance\SceneryData.cs" />
-    <Compile Include="AssetData\Instance\TriggerData.cs" />
-    <Compile Include="Assets\AssetFactory.cs" />
-    <Compile Include="Assets\ChunkFolder.cs" />
-    <Compile Include="Assets\Code\GameObject.cs" />
-    <Compile Include="Assets\Code\HeaderScript.cs" />
-    <Compile Include="Assets\Code\MainScript.cs" />
-    <Compile Include="Assets\Code\OGI.cs" />
-    <Compile Include="Assets\Code\Script.cs" />
-    <Compile Include="Assets\Code\SoundEffect.cs" />
-    <Compile Include="Assets\Code\CodeModel.cs" />
-    <Compile Include="Assets\Code\Animation.cs" />
-    <Compile Include="Assets\Code\SoundEffectIT.cs" />
-    <Compile Include="Assets\Code\SoundEffectGR.cs" />
-    <Compile Include="Assets\Code\SoundEffectSP.cs" />
-    <Compile Include="Assets\Code\SoundEffectJP.cs" />
-    <Compile Include="Assets\Code\SoundEffectFR.cs" />
-    <Compile Include="Assets\Code\SoundEffectEN.cs" />
-    <Compile Include="Assets\Folder.cs" />
-    <Compile Include="Assets\Graphics\BlendSkin.cs" />
-    <Compile Include="Assets\Graphics\LodModel.cs" />
-    <Compile Include="Assets\Graphics\RigidModel.cs" />
-    <Compile Include="Assets\Graphics\Mesh.cs" />
-    <Compile Include="Assets\Graphics\Skin.cs" />
-    <Compile Include="Assets\Graphics\Model.cs" />
-    <Compile Include="Assets\IAsset.cs" />
-    <Compile Include="Assets\Graphics\Material.cs" />
-    <Compile Include="Assets\Instance\AiPath.cs" />
-    <Compile Include="Assets\Instance\AiPosition.cs" />
-    <Compile Include="Assets\Instance\Camera.cs" />
-    <Compile Include="Assets\Instance\ChunkLinks.cs" />
-    <Compile Include="Assets\Instance\Collision.cs" />
-    <Compile Include="Assets\Instance\CollisionSurface.cs" />
-    <Compile Include="Assets\Instance\DynamicScenery.cs" />
-    <Compile Include="Assets\Instance\InstanceTemplate.cs" />
-    <Compile Include="Assets\Instance\ObjectInstance.cs" />
-    <Compile Include="Assets\Instance\Path.cs" />
-    <Compile Include="Assets\Instance\Position.cs" />
-    <Compile Include="Assets\Instance\Scenery.cs" />
-    <Compile Include="Assets\Instance\SerializableInstance.cs" />
-    <Compile Include="Assets\Instance\Trigger.cs" />
-    <Compile Include="Assets\Instance\Particles.cs" />
-    <Compile Include="Assets\SerializableAsset.cs" />
-    <Compile Include="Assets\Graphics\Skydome.cs" />
-    <Compile Include="Assets\Graphics\Texture.cs" />
-    <Compile Include="Command\RedoCommand.cs" />
-    <Compile Include="Command\SetDataCommand.cs" />
-    <Compile Include="Command\UndoCommand.cs" />
-    <Compile Include="Controls\BaseTextBox.xaml.cs">
-      <DependentUpon>BaseTextBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DraggedData.cs" />
-    <Compile Include="Controls\FileDropEventArgs.cs" />
-    <Compile Include="Controls\LabeledDropList.xaml.cs">
-      <DependentUpon>LabeledDropList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\LabeledTextBox.xaml.cs">
-      <DependentUpon>LabeledTextBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\UnsavedChangesDialogue.xaml.cs">
-      <DependentUpon>UnsavedChangesDialogue.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\ChunkEditor.xaml.cs">
-      <DependentUpon>ChunkEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\Graphics\ModelEditor.xaml.cs">
-      <DependentUpon>ModelEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\Graphics\RigidModelEditor.xaml.cs">
-      <DependentUpon>RigidModelEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\Graphics\TextureEditor.xaml.cs">
-      <DependentUpon>TextureEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\Instance\PositionEditor.xaml.cs">
-      <DependentUpon>PositionEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Project\ProjectException.cs" />
-    <Compile Include="Rendering\Buffers\IndexedBufferArray.cs" />
-    <Compile Include="Rendering\Buffers\TextureBuffer.cs" />
-    <Compile Include="Rendering\Objects\Collision.cs" />
-    <Compile Include="Rendering\Objects\Model.cs" />
-    <Compile Include="Rendering\Objects\Plane.cs" />
-    <Compile Include="Rendering\Objects\Position.cs" />
-    <Compile Include="Rendering\Objects\RigidModel.cs" />
-    <Compile Include="Util\BufferGeneration.cs" />
-    <Compile Include="Util\CloneUtils.cs" />
-    <Compile Include="Command\CloseTabCommand.cs" />
-    <Compile Include="Command\OpenDialogueCommand.cs" />
-    <Compile Include="Command\OpenProjectCommand.cs" />
-    <Compile Include="Command\OpenProjectDialogueCommand.cs" />
-    <Compile Include="Command\SaveProjectCommand.cs" />
-    <Compile Include="Command\SelectFolderCommand.cs" />
-    <Compile Include="Controls\ClosableTab.xaml.cs">
-      <DependentUpon>ClosableTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\Code\AnimationEditor.xaml.cs">
-      <DependentUpon>AnimationEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\BaseEditor.cs" />
-    <Compile Include="Editors\SceneEditor.xaml.cs">
-      <DependentUpon>SceneEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Log.cs" />
-    <Compile Include="Project\IProject.cs" />
-    <Compile Include="Rendering\Buffers\IndexBuffer.cs" />
-    <Compile Include="Rendering\Buffers\VertexBuffer.cs" />
-    <Compile Include="Rendering\Buffers\VertexBufferArray.cs" />
-    <Compile Include="Rendering\IGLObject.cs" />
-    <Compile Include="Rendering\IRenderable.cs" />
-    <Compile Include="Rendering\Scene.cs" />
-    <Compile Include="Rendering\Shaders\Shader.cs" />
-    <Compile Include="Rendering\Shaders\ShaderCompilationException.cs" />
-    <Compile Include="Rendering\Shaders\ShaderProgram.cs" />
-    <Compile Include="Util\ManifestResourceLoader.cs" />
-    <Compile Include="Util\GuidManager.cs" />
-    <Compile Include="Util\MathExtension.cs" />
-    <Compile Include="Util\MiscUtils.cs" />
-    <Compile Include="Util\VectorExtension.cs" />
-    <Compile Include="ViewModels\AssetViewModel.cs" />
-    <Compile Include="ViewModels\Graphics\TextureViewModel.cs" />
-    <Compile Include="ViewModels\Instance\PositionViewModel.cs" />
-    <Compile Include="ViewModels\ObservableObject.cs" />
-    <Compile Include="ViewModels\ProjectCreator.cs" />
-    <Page Include="About.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\BaseTextBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ClosableTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\LabeledDropList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\LabeledTextBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\UnsavedChangesDialogue.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Editors\ChunkEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Editors\Code\AnimationEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Editors\Graphics\ModelEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Editors\Graphics\RigidModelEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Editors\Graphics\TextureEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Editors\Instance\PositionEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Editors\SceneEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Command\CommandManager.cs" />
-    <Compile Include="Command\ICommand.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="ProjectCreationWizard.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Simple Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Content Include="Images\AfroGod.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="ProjectCreationWizard.xaml.cs">
-      <DependentUpon>ProjectCreationWizard.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Project\PS2Project.cs" />
-    <Compile Include="Project\ProjectManager.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="OpenTK.dll.config">
+    <Content Include="Images\God_Messenger.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
+    <PackageReference Include="GlmNet" Version="0.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="OpenTK" Version="3.3.1" />
+    <PackageReference Include="OpenTK.GLControl" Version="3.1.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TwinTech\TwinTech.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WindowsFormsIntegration">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.0\WindowsFormsIntegration.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\boat_guy.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Shaders\Light.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\Light.frag">
+    <None Update="Shaders\Light.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Light.vert">
+    <None Update="Shaders\LightTexture.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\LightTexture.frag">
+    <None Update="Shaders\LightTexture.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\LightTexture.vert">
+    <None Update="Shaders\Pass.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Pass.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Pass.vert">
+    <None Update="Shaders\Pass.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\AfroGod.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\boat_guy.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TwinTech\TwinTech.csproj">
-      <Project>{14348117-4503-49cd-94f9-1852069543e3}</Project>
-      <Name>TwinTech</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\God_Messenger.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\tt_lab_logo_v6_2k.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\AssimpNet.5.0.0-beta1\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.5.0.0-beta1\build\AssimpNet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\AssimpNet.5.0.0-beta1\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNet.5.0.0-beta1\build\AssimpNet.targets'))" />
-  </Target>
+
 </Project>
