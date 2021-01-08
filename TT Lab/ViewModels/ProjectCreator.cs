@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using TT_Lab.Command;
 using TT_Lab.Properties;
 
@@ -9,12 +10,18 @@ namespace TT_Lab.ViewModels
         private string _projectName = "New project";
         private string _projectPath = Settings.Default.ProjectPath;
         private string _discContentPath = Settings.Default.DiscContentPath;
+        private Window _owner = null;
+
+        public ProjectCreator(Window owner)
+        {
+            _owner = owner;
+        }
 
         public ICommand SetProjectPathCommand
         {
             get
             {
-                return new SelectFolderCommand(this, "ProjectPath");
+                return new SelectFolderCommand(_owner, this, "ProjectPath");
             }
         }
 
@@ -22,7 +29,7 @@ namespace TT_Lab.ViewModels
         {
             get
             {
-                return new SelectFolderCommand(this, "DiscContentPath");
+                return new SelectFolderCommand(_owner, this, "DiscContentPath");
             }
         }
 

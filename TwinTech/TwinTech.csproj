@@ -13,4 +13,10 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="AgentLabDefs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

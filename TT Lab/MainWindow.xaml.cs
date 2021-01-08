@@ -7,7 +7,6 @@ using TT_Lab.Command;
 using TT_Lab.Controls;
 using TT_Lab.Project;
 using TT_Lab.ViewModels;
-using WK.Libraries.BetterFolderBrowserNS;
 
 namespace TT_Lab
 {
