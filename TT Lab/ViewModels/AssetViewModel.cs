@@ -129,6 +129,7 @@ namespace TT_Lab.ViewModels
                         Save();
                         break;
                     case UnsavedChangesDialogue.AnswerResult.DISCARD:
+                        IsDirty = false;
                         break;
                     case UnsavedChangesDialogue.AnswerResult.CANCEL:
                     default:
