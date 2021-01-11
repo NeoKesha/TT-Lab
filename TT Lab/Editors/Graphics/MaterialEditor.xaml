@@ -21,7 +21,7 @@
         <base:SceneEditor HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Header="Material viewer"/>
         <GroupBox Header="Shaders" Grid.Row="1">
             <TreeView x:Name="ShaderList" Margin="0,0,0,0"
-                      ItemsSource="{Binding Shaders}">
+                      ItemsSource="{Binding Shaders}" SelectedItemChanged="ShaderList_SelectedItemChanged">
                 <TreeView.ItemTemplate>
                     <DataTemplate DataType="{x:Type viewmodel:LabShaderViewModel}">
                         <TextBlock Text="{Binding Name}"/>
@@ -41,6 +41,6 @@
                 <Controls:LabeledTextBox Text="{Binding DmaChainIndex, UpdateSourceTrigger=PropertyChanged}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index" TextChanged="MaterialDmaIndexBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
             </Grid>
         </GroupBox>
-        <GroupBox Grid.Column="1" Header="Shader settings" Grid.Row="1"/>
+        <GroupBox x:Name="ShaderSettingsBox" Grid.Column="1" Header="Shader settings" Grid.Row="1"/>
     </Grid>
 </base:BaseEditor>

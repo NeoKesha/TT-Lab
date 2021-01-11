@@ -1,0 +1,51 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TT_Lab.Editors.Graphics"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Class="TT_Lab.Editors.Graphics.ShaderEditor"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="71*"/>
+            <ColumnDefinition Width="329*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="59*"/>
+            <RowDefinition Height="166*"/>
+        </Grid.RowDefinitions>
+        <Controls:LabeledDropList x:Name="ShaderTypeList" Margin="0,0,0,0" DropListName="Type" Width="Auto" Height="Auto"/>
+
+        <UniformGrid x:Name="CheckboxUniGrid" Grid.Column="1" Rows="1">
+            <Controls:LabeledCheckBox x:Name="AlphaBlendingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Alpha blending"/>
+            <Controls:LabeledCheckBox x:Name="AlphaTestCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Alpha test"/>
+            <Controls:LabeledCheckBox x:Name="DestinationAlphaTestCheckbox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CheckBoxName="Destination alpha test"/>
+            <Controls:LabeledCheckBox x:Name="TextureMappingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Texture mapping"/>
+            <Controls:LabeledCheckBox x:Name="FoggingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Fogging"/>
+        </UniformGrid>
+        <UniformGrid x:Name="ShaderParamsUniGrid" Grid.Row="1" Columns="1">
+            <Controls:LabeledTextBox x:Name="IntegerParamBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBoxName="Integer param"/>
+            <Controls:LabeledTextBox x:Name="FloatParam1Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 1"/>
+            <Controls:LabeledTextBox x:Name="FloatParam2Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 2"/>
+            <Controls:LabeledTextBox x:Name="FloatParam3Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 3"/>
+            <Controls:LabeledTextBox x:Name="FloatParam4Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 4"/>
+        </UniformGrid>
+        <UniformGrid x:Name="ShaderSettingsUniGrid" Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FirstColumn="1" Rows="3">
+            <Controls:LabeledDropList x:Name="AlphaTestList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Alpha test method"/>
+            <Controls:LabeledDropList x:Name="ProcessAfterFailedList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="If alpha test failed"/>
+            <Controls:LabeledDropList x:Name="DestinationAlphaTestList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Destination alpha test mode"/>
+            <Controls:LabeledDropList x:Name="DepthTestMethodList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Depth test method"/>
+            <Controls:LabeledDropList x:Name="ShadingMethodList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Shading method"/>
+            <Controls:LabeledDropList x:Name="TextureCoordinateSpecList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Texture coordinates"/>
+            <Controls:LabeledDropList x:Name="TextureFilterList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Texture filter"/>
+            <Controls:LabeledDropList x:Name="ZvalueDrawMaskList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Z-Value draw mask"/>
+            <Controls:LabeledDropList x:Name="ColorSpecAList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec A"/>
+            <Controls:LabeledDropList x:Name="ColorSpecBList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec B"/>
+            <Controls:LabeledDropList x:Name="AlphaSpecCList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Alpha spec C"/>
+            <Controls:LabeledDropList x:Name="ColorSpecDList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec D"/>
+        </UniformGrid>
+
+    </Grid>
+</UserControl>

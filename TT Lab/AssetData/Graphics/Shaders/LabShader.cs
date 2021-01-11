@@ -12,7 +12,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
 {
     public class LabShader
     {
-        public UInt32 ShaderType { get; set; }
+        public Type ShaderType { get; set; }
         public UInt32 IntParam { get; set; }
         public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending { get; set; }
@@ -55,7 +55,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
 
         public LabShader(TwinShader twinShader)
         {
-            ShaderType = twinShader.ShaderType;
+            ShaderType = (Type)twinShader.ShaderType;
             IntParam = twinShader.IntParam;
             FloatParam = twinShader.FloatParam;
             ABlending = twinShader.ABlending;
@@ -95,5 +95,30 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             Blob = CloneUtils.DeepClone(twinShader.Blob);
         }
 
+        public enum Type
+        {
+            SHADER_1,
+            SHADER_2,
+            SHADER_4,
+            SHADER_10,
+            SHADER_11,
+            SHADER_12,
+            SHADER_13,
+            SHADER_15,
+            SHADER_16,
+            SHADER_17,
+            SHADER_18,
+            SHADER_19,
+            SHADER_20,
+            SHADER_21,
+            SHADER_22,
+            SHADER_23,
+            SHADER_25,
+            SHADER_26,
+            SHADER_27,
+            SHADER_30,
+            SHADER_31,
+            SHADER_32,
+        }
     }
 }

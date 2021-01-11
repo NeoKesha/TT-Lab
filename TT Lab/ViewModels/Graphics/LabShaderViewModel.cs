@@ -11,7 +11,7 @@ namespace TT_Lab.ViewModels.Graphics
     public class LabShaderViewModel : ObservableObject
     {
         private String _name = "Shader";
-        private UInt32 _type;
+        private LabShader.Type _type;
         private UInt32 _intParam;
         private Single[] _floatParam;
         private AlphaBlending _alphaBlending;
@@ -92,7 +92,7 @@ namespace TT_Lab.ViewModels.Graphics
             _unkVec1 = new Vector4ViewModel(shader.UnkVector1);
             _unkVec2 = new Vector4ViewModel(shader.UnkVector2);
             _unkVec3 = new Vector4ViewModel(shader.UnkVector3);
-            Name = $"Shader {_type}";
+            Name = $"{_type}";
         }
         public String Name
         {
@@ -106,7 +106,7 @@ namespace TT_Lab.ViewModels.Graphics
                 }
             }
         }
-        public UInt32 Type
+        public LabShader.Type Type
         {
             get => _type;
             set

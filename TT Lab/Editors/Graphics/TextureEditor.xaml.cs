@@ -76,11 +76,6 @@ namespace TT_Lab.Editors.Graphics
             TextureViewer.Scene.AddRender(texPlane);
         }
 
-        private bool IsPowerOfTwo(long x)
-        {
-            return (x != 0) && ((x & (x - 1)) == 0);
-        }
-
         private void TextureViewer_Drop(Object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -98,6 +93,11 @@ namespace TT_Lab.Editors.Graphics
                 Log.WriteLine("Format not compatible!");
                 e.Effects = DragDropEffects.None;
             }
+        }
+
+        private static bool IsPowerOfTwo(long x)
+        {
+            return (x != 0) && ((x & (x - 1)) == 0);
         }
 
         private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
