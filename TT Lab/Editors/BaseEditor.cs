@@ -72,9 +72,9 @@ namespace TT_Lab.Editors
             CommandManager.Redo();
         }
 
-        protected void SetData(string propName, object data)
+        protected void SetData<T>(string propName, T data)
         {
-            CommandManager.Execute(new SetDataCommand(viewModel, propName, data));
+            CommandManager.Execute(new SetDataCommand<T>(viewModel, propName, data));
         }
     }
 }

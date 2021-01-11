@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Editors.Graphics;
+using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
@@ -35,7 +38,7 @@ namespace TT_Lab.Assets.Graphics
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
+            return typeof(MaterialEditor);
         }
 
         public override AbstractAssetData GetData()
@@ -47,6 +50,15 @@ namespace TT_Lab.Assets.Graphics
                 IsLoaded = true;
             }
             return assetData;
+        }
+
+        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        {
+            if (viewModel == null)
+            {
+                viewModel = new MaterialViewModel(UUID, parent);
+            }
+            return viewModel;
         }
     }
 }

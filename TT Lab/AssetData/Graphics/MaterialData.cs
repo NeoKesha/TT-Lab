@@ -25,7 +25,7 @@ namespace TT_Lab.AssetData.Graphics
         [JsonProperty(Required = Required.Always)]
         public UInt64 Header { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkInt { get; set; }
+        public UInt32 DmaChainIndex { get; set; }
         [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -40,7 +40,7 @@ namespace TT_Lab.AssetData.Graphics
         {
             PS2AnyMaterial material = (PS2AnyMaterial)twinRef;
             Header = material.Header;
-            UnkInt = material.UnkInt;
+            DmaChainIndex = material.DmaChainIndex;
             Name = new string(material.Name.ToCharArray());
             Shaders = new List<LabShader>();
             foreach (var shader in material.Shaders)

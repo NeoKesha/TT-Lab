@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.Util;
 
 namespace TT_Lab.Command
 {
-    public class SetDataCommand : ICommand
+    public class SetDataCommand<T> : ICommand
     {
         public event EventHandler CanExecuteChanged;
 
-        private object _prevValue;
-        private object _value;
+        private T _prevValue;
+        private T _value;
         private string _propName;
         private object _target;
 
-        public SetDataCommand(object target, string propName, object value)
+        public SetDataCommand(object target, string propName, T value)
         {
             _target = target;
             _propName = propName;
@@ -31,7 +32,7 @@ namespace TT_Lab.Command
         {
             Type t = _target.GetType();
             var field = t.GetProperty(_propName);
-            _prevValue = field.GetValue(_target);
+            _prevValue = CloneUtils.DeepClone((T)field.GetValue(_target));
             field.SetValue(_target, _value);
         }
 

@@ -1,0 +1,46 @@
+﻿<base:BaseEditor
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TT_Lab.Editors.Graphics"
+             xmlns:viewmodel="clr-namespace:TT_Lab.ViewModels.Graphics"
+             xmlns:base="clr-namespace:TT_Lab.Editors"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="MaterialEditorControl" x:Class="TT_Lab.Editors.Graphics.MaterialEditor"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="62*"/>
+            <RowDefinition Height="163*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="123*"/>
+            <ColumnDefinition Width="677*"/>
+        </Grid.ColumnDefinitions>
+        <base:SceneEditor HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Header="Material viewer"/>
+        <GroupBox Header="Shaders" Grid.Row="1">
+            <TreeView x:Name="ShaderList" Margin="0,0,0,0"
+                      ItemsSource="{Binding Shaders}">
+                <TreeView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type viewmodel:LabShaderViewModel}">
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Header="Material settings">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="164*"/>
+                    <ColumnDefinition Width="315*"/>
+                    <ColumnDefinition Width="186*"/>
+                </Grid.ColumnDefinitions>
+                <Controls:LabeledTextBox Text="{Binding Header, UpdateSourceTrigger=PropertyChanged}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Header" Padding="2,0,0,0" TextChanged="MaterialHeaderBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
+                <Controls:LabeledTextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" x:Name="MaterialNameBox" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name" TextChanged="MaterialNameBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
+                <Controls:LabeledTextBox Text="{Binding DmaChainIndex, UpdateSourceTrigger=PropertyChanged}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index" TextChanged="MaterialDmaIndexBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Header="Shader settings" Grid.Row="1"/>
+    </Grid>
+</base:BaseEditor>

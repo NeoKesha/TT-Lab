@@ -15,7 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
     public class PS2AnyMaterial : BaseTwinItem, ITwinMaterial
     {
         public UInt64 Header { get; set; }
-        public UInt32 UnkInt { get; set; }
+        public UInt32 DmaChainIndex { get; set; }
         public String Name { get; set; }
         public List<TwinShader> Shaders { get; }
         public PS2AnyMaterial()
@@ -36,7 +36,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public override void Read(BinaryReader reader, int length)
         {
             Header = reader.ReadUInt64();
-            UnkInt = reader.ReadUInt32();
+            DmaChainIndex = reader.ReadUInt32();
             Int32 nameLen = reader.ReadInt32();
             Name = new string(reader.ReadChars(nameLen));
             Int32 shaderCount = reader.ReadInt32();
@@ -52,7 +52,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public override void Write(BinaryWriter writer)
         {
             writer.Write(Header);
-            writer.Write(UnkInt);
+            writer.Write(DmaChainIndex);
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
             writer.Write(Shaders.Count);

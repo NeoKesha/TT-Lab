@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using TT_Lab.Editors;
 
 namespace TT_Lab.Controls
 {
@@ -12,7 +13,7 @@ namespace TT_Lab.Controls
     {
         public event EventHandler UndoPerformed;
         public event EventHandler RedoPerformed;
-        public event EventHandler TextChanged;
+        public event EventHandler<TextChangedEventArgs> TextChanged;
 
         [Description("Name of the textbox displayed above."), Category("Common Properties")]
         public string TextBoxName
@@ -29,6 +30,18 @@ namespace TT_Lab.Controls
             set { SetValue(TextProperty, value); }
         }
 
+        [Description("Editor owning this textbox"), Category("Common Properties")]
+        public BaseEditor Editor
+        {
+            get { return (BaseEditor)GetValue(EditorProperty); }
+            set { SetValue(EditorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Editor.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EditorProperty =
+            DependencyProperty.Register("Editor", typeof(BaseEditor), typeof(LabeledTextBox),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnEditorChanged)));
+
         // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(LabeledTextBox),
@@ -37,7 +50,7 @@ namespace TT_Lab.Controls
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextBoxNameProperty =
             DependencyProperty.Register("TextBoxName", typeof(string), typeof(LabeledTextBox),
-                new FrameworkPropertyMetadata("LabeledTextBox", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnNameChanged)));
+                new FrameworkPropertyMetadata("Label", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnNameChanged)));
 
         public LabeledTextBox()
         {
@@ -58,6 +71,7 @@ namespace TT_Lab.Controls
 
         private void BaseTextBox_TextChanged(Object sender, TextChangedEventArgs e)
         {
+            e.Source = TextContainer;
             var handler = TextChanged;
             handler?.Invoke(this, e);
         }
@@ -72,6 +86,13 @@ namespace TT_Lab.Controls
         {
             LabeledTextBox control = d as LabeledTextBox;
             control.TextContainer.Text = (string)e.NewValue;
+        }
+
+        private static void OnEditorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            LabeledTextBox control = d as LabeledTextBox;
+            control.UndoPerformed += control.Editor.UndoExecuted;
+            control.RedoPerformed += control.Editor.RedoExecuted;
         }
     }
 }
