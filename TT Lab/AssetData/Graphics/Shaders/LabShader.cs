@@ -16,6 +16,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public UInt32 IntParam { get; set; }
         public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending { get; set; }
+        public Byte AlphaRegSettingsIndex { get; set; }
         public AlphaTest ATest { get; set; }
         public AlphaTestMethod ATestMethod { get; set; }
         public byte AlphaValueToBeComparedTo { get; set; }
@@ -59,6 +60,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             IntParam = twinShader.IntParam;
             FloatParam = twinShader.FloatParam;
             ABlending = twinShader.ABlending;
+            AlphaRegSettingsIndex = twinShader.AlphaRegSettingsIndex;
             ATest = twinShader.ATest;
             ATestMethod = twinShader.ATestMethod;
             AlphaValueToBeComparedTo = twinShader.AlphaValueToBeComparedTo;
@@ -97,28 +99,28 @@ namespace TT_Lab.AssetData.Graphics.Shaders
 
         public enum Type
         {
-            SHADER_1,
-            SHADER_2,
-            SHADER_4,
-            SHADER_10,
-            SHADER_11,
-            SHADER_12,
-            SHADER_13,
-            SHADER_15,
-            SHADER_16,
-            SHADER_17,
-            SHADER_18,
-            SHADER_19,
-            SHADER_20,
-            SHADER_21,
-            SHADER_22,
-            SHADER_23,
-            SHADER_25,
-            SHADER_26,
-            SHADER_27,
-            SHADER_30,
-            SHADER_31,
-            SHADER_32,
+            SHADER_1 = 1,
+            SHADER_2 = 2,
+            SHADER_4 = 4,
+            SHADER_10 = 10,
+            SHADER_11 = 11,
+            SHADER_12 = 12,
+            SHADER_13 = 13,
+            SHADER_15 = 15,
+            SHADER_16 = 16,
+            SHADER_17 = 17,
+            SHADER_18 = 18,
+            SHADER_19 = 19,
+            SHADER_20 = 20,
+            SHADER_21 = 21,
+            SHADER_22 = 22,
+            SHADER_23 = 23,
+            SHADER_25 = 25,
+            SHADER_26 = 26,
+            SHADER_27 = 27,
+            SHADER_30 = 30,
+            SHADER_31 = 31,
+            SHADER_32 = 32,
         }
     }
 }

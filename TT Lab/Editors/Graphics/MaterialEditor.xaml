@@ -29,18 +29,24 @@
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-        <GroupBox Grid.Column="1" Header="Material settings">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="164*"/>
-                    <ColumnDefinition Width="315*"/>
-                    <ColumnDefinition Width="186*"/>
-                </Grid.ColumnDefinitions>
-                <Controls:LabeledTextBox Text="{Binding Header, UpdateSourceTrigger=PropertyChanged}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Header" Padding="2,0,0,0" TextChanged="MaterialHeaderBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
-                <Controls:LabeledTextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" x:Name="MaterialNameBox" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name" TextChanged="MaterialNameBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
-                <Controls:LabeledTextBox Text="{Binding DmaChainIndex, UpdateSourceTrigger=PropertyChanged}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index" TextChanged="MaterialDmaIndexBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
-            </Grid>
-        </GroupBox>
-        <GroupBox x:Name="ShaderSettingsBox" Grid.Column="1" Header="Shader settings" Grid.Row="1"/>
+        <Grid Grid.Column="1" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+            <GroupBox Header="Material settings" Margin="0,0,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="164*"/>
+                        <ColumnDefinition Width="315*"/>
+                        <ColumnDefinition Width="186*"/>
+                    </Grid.ColumnDefinitions>
+                    <Controls:LabeledTextBox Text="{Binding Header, Mode=OneWay}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Header" Padding="2,0,0,0" TextChanged="MaterialHeaderBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
+                    <Controls:LabeledTextBox Text="{Binding Name, Mode=OneWay}" x:Name="MaterialNameBox" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name" TextChanged="MaterialNameBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
+                    <Controls:LabeledTextBox Text="{Binding DmaChainIndex, Mode=OneWay}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index" TextChanged="MaterialDmaIndexBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox x:Name="ShaderSettingsBox" Header="Shader settings" Grid.Row="1" Margin="0,0,0,0"/>
+        </Grid>
     </Grid>
 </base:BaseEditor>

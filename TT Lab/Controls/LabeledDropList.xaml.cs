@@ -30,14 +30,12 @@ namespace TT_Lab.Controls
             set { SetValue(DropListNameProperty, value); }
         }
 
-
         [Description("List of dropdown items."), Category("Common Properties")]
         public ObservableCollection<object> Items
         {
             get { return (ObservableCollection<object>)GetValue(ItemsProperty); }
             set { SetValue(ItemsProperty, value); }
         }
-
 
         [Description("Index of the selected item from the dropdown."), Category("Common Properties")]
         public int SelectedIndex
@@ -56,7 +54,7 @@ namespace TT_Lab.Controls
         // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register("SelectedItem", typeof(object), typeof(LabeledDropList),
-                new FrameworkPropertyMetadata(-1, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnItemChanged)));
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnItemChanged)));
 
         // Using a DependencyProperty as the backing store for SelectedIndex.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedIndexProperty =
@@ -67,7 +65,6 @@ namespace TT_Lab.Controls
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items", typeof(ObservableCollection<object>), typeof(LabeledDropList),
                 new FrameworkPropertyMetadata(new ObservableCollection<object>(), FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnCollectionChanged)));
-
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DropListNameProperty =

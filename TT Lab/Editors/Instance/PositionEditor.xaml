@@ -16,9 +16,9 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:LabeledTextBox Text="{Binding X}" x:Name="XCoord" HorizontalAlignment="Stretch" VerticalAlignment="Center" PreviewTextInput="Coord_PreviewTextInput" TextChanged="XCoord_TextChanged" TextBoxName="X" UndoPerformed="Control_UndoPerformed" RedoPerformed="Control_RedoPerformed"/>
-        <controls:LabeledTextBox Text="{Binding Y}" x:Name="YCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Y" PreviewTextInput="Coord_PreviewTextInput" TextChanged="YCoord_TextChanged" UndoPerformed="Control_UndoPerformed" RedoPerformed="Control_RedoPerformed"/>
-        <controls:LabeledTextBox Text="{Binding Z}" x:Name="ZCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="2" VerticalAlignment="Center" TextBoxName="Z" PreviewTextInput="Coord_PreviewTextInput" TextChanged="ZCoord_TextChanged" UndoPerformed="Control_UndoPerformed" RedoPerformed="Control_RedoPerformed"/>
-        <controls:LabeledTextBox Text="{Binding W}" x:Name="WCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="3" VerticalAlignment="Center" TextBoxName="W" PreviewTextInput="Coord_PreviewTextInput" TextChanged="WCoord_TextChanged" UndoPerformed="Control_UndoPerformed" RedoPerformed="Control_RedoPerformed"/>
+        <controls:LabeledTextBox Text="{Binding X}" x:Name="XCoord" HorizontalAlignment="Stretch" VerticalAlignment="Center" PreviewTextInput="Coord_PreviewTextInput" TextChanged="XCoord_TextChanged" TextBoxName="X"/>
+        <controls:LabeledTextBox Text="{Binding Y}" x:Name="YCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Y" PreviewTextInput="Coord_PreviewTextInput" TextChanged="YCoord_TextChanged"/>
+        <controls:LabeledTextBox Text="{Binding Z}" x:Name="ZCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="2" VerticalAlignment="Center" TextBoxName="Z" PreviewTextInput="Coord_PreviewTextInput" TextChanged="ZCoord_TextChanged"/>
+        <controls:LabeledTextBox Text="{Binding W}" x:Name="WCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="3" VerticalAlignment="Center" TextBoxName="W" PreviewTextInput="Coord_PreviewTextInput" TextChanged="WCoord_TextChanged"/>
     </Grid>
 </base:BaseEditor>

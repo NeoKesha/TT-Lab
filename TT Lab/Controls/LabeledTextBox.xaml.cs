@@ -11,9 +11,10 @@ namespace TT_Lab.Controls
     /// </summary>
     public partial class LabeledTextBox : UserControl
     {
-        public event EventHandler UndoPerformed;
-        public event EventHandler RedoPerformed;
-        public event EventHandler<TextChangedEventArgs> TextChanged;
+        private event EventHandler UndoPerformed;
+        private event EventHandler RedoPerformed;
+
+        public event EventHandler TextChanged;
 
         [Description("Name of the textbox displayed above."), Category("Common Properties")]
         public string TextBoxName
@@ -21,7 +22,6 @@ namespace TT_Lab.Controls
             get { return (string)GetValue(TextBoxNameProperty); }
             set { SetValue(TextBoxNameProperty, value); }
         }
-
 
         [Description("Input text."), Category("Common Properties")]
         public string Text
@@ -36,6 +36,17 @@ namespace TT_Lab.Controls
             get { return (BaseEditor)GetValue(EditorProperty); }
             set { SetValue(EditorProperty, value); }
         }
+
+        public string DisplayText
+        {
+            get { return (string)GetValue(DisplayTextProperty); }
+            set { SetValue(DisplayTextProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DisplayText.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DisplayTextProperty =
+            DependencyProperty.Register("DisplayText", typeof(string), typeof(LabeledTextBox),
+                new FrameworkPropertyMetadata("This is labeled textbox", FrameworkPropertyMetadataOptions.AffectsRender));
 
         // Using a DependencyProperty as the backing store for Editor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty EditorProperty =
@@ -69,13 +80,6 @@ namespace TT_Lab.Controls
             handler?.Invoke(this, e);
         }
 
-        private void BaseTextBox_TextChanged(Object sender, TextChangedEventArgs e)
-        {
-            e.Source = TextContainer;
-            var handler = TextChanged;
-            handler?.Invoke(this, e);
-        }
-
         private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LabeledTextBox control = d as LabeledTextBox;
@@ -85,7 +89,8 @@ namespace TT_Lab.Controls
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LabeledTextBox control = d as LabeledTextBox;
-            control.TextContainer.Text = (string)e.NewValue;
+            control.DisplayText = control.Text;
+            Log.WriteLine($"Changed text in {control.Name} to {(string)e.NewValue}");
         }
 
         private static void OnEditorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -93,6 +98,11 @@ namespace TT_Lab.Controls
             LabeledTextBox control = d as LabeledTextBox;
             control.UndoPerformed += control.Editor.UndoExecuted;
             control.RedoPerformed += control.Editor.RedoExecuted;
+        }
+
+        private void TextContainer_TextChanged(Object sender, TextChangedEventArgs e)
+        {
+            TextChanged?.Invoke(sender, new EventArgs());
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics.Shaders;
+using Twinsanity.TwinsanityInterchange.Common;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.ViewModels.Graphics
@@ -15,6 +16,7 @@ namespace TT_Lab.ViewModels.Graphics
         private UInt32 _intParam;
         private Single[] _floatParam;
         private AlphaBlending _alphaBlending;
+        private Byte _alphaRegSettingsIndex;
         private AlphaTest _alphaTest;
         private AlphaTestMethod _alphaTestMethod;
         private Byte _alphaValueToCompareTo;
@@ -53,12 +55,13 @@ namespace TT_Lab.ViewModels.Graphics
         {
             _type = shader.ShaderType;
             _intParam = shader.IntParam;
-            _floatParam = new Single[shader.FloatParam.Length];
+            _floatParam = new Single[4];
             for (var i = 0; i < _floatParam.Length; ++i)
             {
                 _floatParam[i] = shader.FloatParam[i];
             }
             _alphaBlending = shader.ABlending;
+            _alphaRegSettingsIndex = shader.AlphaRegSettingsIndex;
             _alphaTest = shader.ATest;
             _alphaTestMethod = shader.ATestMethod;
             _alphaValueToCompareTo = shader.AlphaValueToBeComparedTo;
@@ -106,6 +109,58 @@ namespace TT_Lab.ViewModels.Graphics
                 }
             }
         }
+        public Boolean HasIntParam
+        {
+            get => _type == LabShader.Type.SHADER_23 || _type == LabShader.Type.SHADER_26;
+        }
+        public Boolean HasFloatParam1
+        {
+            get
+            {
+                return _type switch
+                {
+                    LabShader.Type.SHADER_16 or LabShader.Type.SHADER_17 or LabShader.Type.SHADER_23 or LabShader.Type.SHADER_26 => true,
+                    _ => false,
+                };
+            }
+        }
+        public Boolean HasFloatParam2
+        {
+            get
+            {
+                return _type switch
+                {
+                    LabShader.Type.SHADER_23 or LabShader.Type.SHADER_26 => true,
+                    _ => false,
+                };
+            }
+        }
+        public Boolean HasFloatParam3
+        {
+            get
+            {
+                return _type switch
+                {
+                    LabShader.Type.SHADER_26 => true,
+                    _ => false,
+                };
+            }
+        }
+        public Boolean HasFloatParam4
+        {
+            get
+            {
+                return _type switch
+                {
+                    LabShader.Type.SHADER_26 => true,
+                    _ => false,
+                };
+            }
+        }
+        public Boolean CanColorSpec
+        {
+            get => !UsePresetAlphaRegSettings;
+        }
         public LabShader.Type Type
         {
             get => _type;
@@ -115,6 +170,11 @@ namespace TT_Lab.ViewModels.Graphics
                 {
                     _type = value;
                     NotifyChange();
+                    NotifyChange("HasIntParam");
+                    NotifyChange("HasFloatParam1");
+                    NotifyChange("HasFloatParam2");
+                    NotifyChange("HasFloatParam3");
+                    NotifyChange("HasFloatParam4");
                 }
             }
         }
@@ -131,26 +191,38 @@ namespace TT_Lab.ViewModels.Graphics
             }
         }
         public Single[] FloatParam { get => _floatParam; private set => _floatParam = value; }
-        public AlphaBlending AlphaBlending
+        public Boolean AlphaBlending
         {
-            get => _alphaBlending;
+            get => _alphaBlending == TwinShader.AlphaBlending.ON;
             set
             {
-                if (_alphaBlending != value)
+                if (AlphaBlending != value)
                 {
-                    _alphaBlending = value;
+                    _alphaBlending = value ? TwinShader.AlphaBlending.ON : TwinShader.AlphaBlending.OFF;
                     NotifyChange();
                 }
             }
         }
-        public AlphaTest AlphaTest
+        public Byte AlphaRegSettingsIndex
         {
-            get => _alphaTest;
+            get => _alphaRegSettingsIndex;
             set
             {
-                if (_alphaTest != value)
+                if (_alphaRegSettingsIndex != value)
                 {
-                    _alphaTest = value;
+                    _alphaRegSettingsIndex = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Boolean AlphaTest
+        {
+            get => _alphaTest == TwinShader.AlphaTest.ON;
+            set
+            {
+                if (AlphaTest != value)
+                {
+                    _alphaTest = value ? TwinShader.AlphaTest.ON : TwinShader.AlphaTest.OFF;
                     NotifyChange();
                 }
             }
@@ -191,14 +263,14 @@ namespace TT_Lab.ViewModels.Graphics
                 }
             }
         }
-        public DestinationAlphaTest DAlphaTest
+        public Boolean DAlphaTest
         {
-            get => _dAlphaTest;
+            get => _dAlphaTest == DestinationAlphaTest.ON;
             set
             {
-                if (_dAlphaTest != value)
+                if (DAlphaTest != value)
                 {
-                    _dAlphaTest = value;
+                    _dAlphaTest = value ? DestinationAlphaTest.ON : DestinationAlphaTest.OFF;
                     NotifyChange();
                 }
             }
@@ -239,14 +311,14 @@ namespace TT_Lab.ViewModels.Graphics
                 }
             }
         }
-        public TextureMapping TxtMapping
+        public Boolean TxtMapping
         {
-            get => _txtMapping;
+            get => _txtMapping == TextureMapping.ON;
             set
             {
-                if (_txtMapping != value)
+                if (TxtMapping != value)
                 {
-                    _txtMapping = value;
+                    _txtMapping = value ? TextureMapping.ON : TextureMapping.OFF;
                     NotifyChange();
                 }
             }
@@ -263,14 +335,14 @@ namespace TT_Lab.ViewModels.Graphics
                 }
             }
         }
-        public Fogging Fog
+        public Boolean Fog
         {
-            get => _fog;
+            get => _fog == Fogging.ON;
             set
             {
-                if (_fog != value)
+                if (Fog != value)
                 {
-                    _fog = value;
+                    _fog = value ? Fogging.ON : Fogging.OFF;
                     NotifyChange();
                 }
             }
@@ -296,6 +368,7 @@ namespace TT_Lab.ViewModels.Graphics
                 {
                     _usePresetAlphaRegSettings = value;
                     NotifyChange();
+                    NotifyChange("CanColorSpec");
                 }
             }
         }

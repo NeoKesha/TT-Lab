@@ -24,7 +24,6 @@ namespace TT_Lab.Editors.Graphics
     public partial class MaterialEditor : BaseEditor
     {
         private MaterialViewModel MaterialView { get => (MaterialViewModel)viewModel; }
-        private ShaderEditor ShaderEditor;
 
         public MaterialEditor()
         {
@@ -36,9 +35,9 @@ namespace TT_Lab.Editors.Graphics
             InitializeComponent();
         }
 
-        private void MaterialHeaderBox_TextChanged(Object sender, TextChangedEventArgs e)
+        private void MaterialHeaderBox_TextChanged(Object sender, EventArgs e)
         {
-            var tb = (BaseTextBox)e.Source;
+            var tb = (BaseTextBox)sender;
             if (string.IsNullOrEmpty(tb.Text))
             {
                 SetData("Header", 0UL);
@@ -48,17 +47,17 @@ namespace TT_Lab.Editors.Graphics
             SetData("Header", result);
         }
 
-        private void MaterialNameBox_TextChanged(Object sender, TextChangedEventArgs e)
+        private void MaterialNameBox_TextChanged(Object sender, EventArgs e)
         {
-            var tb = (BaseTextBox)e.Source;
+            var tb = (BaseTextBox)sender;
             if (tb.Text.Length > UInt16.MaxValue || MaterialView.Name == tb.Text) return;
 
             SetData("Name", tb.Text);
         }
 
-        private void MaterialDmaIndexBox_TextChanged(Object sender, TextChangedEventArgs e)
+        private void MaterialDmaIndexBox_TextChanged(Object sender, EventArgs e)
         {
-            var tb = (BaseTextBox)e.Source;
+            var tb = (BaseTextBox)sender;
             if (string.IsNullOrEmpty(tb.Text))
             {
                 SetData("DmaChainIndex", 0U);
@@ -75,7 +74,7 @@ namespace TT_Lab.Editors.Graphics
             {
                 ShaderSettingsBox.Content = null;
             }
-            ShaderSettingsBox.Content = new ShaderEditor();
+            ShaderSettingsBox.Content = new ShaderEditor((LabShaderViewModel)ShaderList.SelectedItem, this);
         }
     }
 }

@@ -61,17 +61,10 @@ namespace TT_Lab.Controls
         private static void OnCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LabeledCheckBox control = d as LabeledCheckBox;
-            control.CheckBox.IsChecked = (bool)e.NewValue;
-        }
-
-        private void CheckBox_Checked(Object sender, RoutedEventArgs e)
-        {
-            CheckboxCheckedChanged?.Invoke(sender, e);
-        }
-
-        private void CheckBox_Unchecked(Object sender, RoutedEventArgs e)
-        {
-            CheckboxCheckedChanged?.Invoke(sender, e);
+            if ((bool)e.NewValue != (bool)e.OldValue)
+            {
+                control.CheckboxCheckedChanged?.Invoke(control, new EventArgs());
+            }
         }
     }
 }

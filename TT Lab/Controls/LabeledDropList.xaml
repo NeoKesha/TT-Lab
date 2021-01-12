@@ -4,15 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Controls"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Label x:Name="ComboBoxName" Content="Label" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-        <ComboBox x:Name="DropList" Margin="0" Grid.Row="1" VerticalAlignment="Top" ItemsSource="{Binding Items, Mode=OneTime}" SelectedIndex="{Binding SelectedIndex, Mode=OneWay}" IsReadOnly="True"/>
+        <ComboBox x:Name="DropList" Margin="0" Grid.Row="1" VerticalAlignment="Top" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex, Mode=OneWayToSource, ElementName=DropListControl}" IsReadOnly="True"/>
 
     </Grid>
 </UserControl>
