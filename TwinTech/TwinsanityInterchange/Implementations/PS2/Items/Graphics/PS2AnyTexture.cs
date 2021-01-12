@@ -38,6 +38,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public PS2AnyTexture()
         {
             UnusedMetadata = new byte[32];
+            HeaderSignature = 0xbbcccdcd;
+            DestinationTextureFormat = TexturePixelFormat.PSMCT32;
+            ColorComponent = TextureColorComponent.RGBA;
+            UnkByte = 0;
+            TextureBasePointer = 0;
+            MipLevelsTBP = new int[6];
+            TextureBufferWidth = 4;
+            MipLevelsTBW = new int[6];
+            ClutBufferBasePointer = 0;
+            UnkBytes1 = new byte[2];
+            UnkBytes2 = new byte[8] { 0, 0, 0, 0, 224, 0, 2, 0 };
+            UnkBytes3 = new byte[2] { 0, 2}; 
+            UnusedMetadata = new byte[32];
+            UnusedMetadata[0] = 31;
+            UnusedMetadata[16] = 64;
+            UnusedMetadata[17] = 246;
+            UnusedMetadata[18] = 89;
+            UnusedMetadata[19] = 32;
         }
 
         public override Int32 GetLength()
@@ -148,6 +166,53 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                         Colors.Add(palette[texData[i]]);
                     }
                     break;
+            }
+        }
+
+        public void FromBitmap(List<Color> image, Int32 width, byte mips, TextureFunction fun, TexturePixelFormat format)
+        {
+            int widthWithMips = (mips == 1) ? width : width * 2;
+            int height = image.Count / widthWithMips;
+            TexFun = fun;
+            TextureFormat = format;
+            MipLevels = mips;
+            TextureBufferWidth = (int)Math.Ceiling(width / 64.0f);
+            ImageWidthPower = (ushort)Math.Log2(width);
+            ImageHeightPower = (ushort)Math.Log2(height);
+            ClutBufferBasePointer = (format == TexturePixelFormat.PSMCT32) ? 0 : (int)Math.Ceiling(widthWithMips * height / 64.0f);
+            //this is probably not bytes but whatever
+            UnkBytes2[5] = UnkBytes3[0] = (width == 256) ? 0 : (byte)Math.Min(width, height);
+            UnkBytes2[6] = UnkBytes3[1] = (width == 256) ? 2 : 0;
+            var textureBlocks = (int)Math.Ceiling(width * height / 64.0f);
+            var textureWithMipsBlocks = (int)Math.Ceiling(widthWithMips * height / 64.0f);
+            if (MipLevels > 1)
+            {
+                var mipWidth = width;
+                var mipHeight = height;
+                var basePointer = 0;
+                for (var i = 0; i < MipLevels - 1; ++i)
+                {
+                    mipWidth /= 2;
+                    mipHeight /= 2;
+                    basePointer += (int)Math.Ceiling(mipWidth * mipHeight / 64.0f);
+                    MipLevelsTBP[i] = basePointer;
+                    MipLevelsTBW[i] = (Byte)Math.Ceiling(mipWidth / 64.0f);
+                }
+            }
+            GIFTag tag;
+            if (format == TexturePixelFormat.PSMCT32)
+            {
+                tag = EzSwizzle.ColorsToTag(Colors);
+            } 
+            else
+            {
+                tag = null;
+            }
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(stream);
+                tag.Write(writer);
+                TextureData = stream.ToArray();
             }
         }
         public List<Color> Colors { get; set; } = new List<Color>();

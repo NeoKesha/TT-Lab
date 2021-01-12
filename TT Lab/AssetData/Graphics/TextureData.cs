@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using static Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics.PS2AnyTexture;
 
 namespace TT_Lab.AssetData.Graphics
@@ -65,6 +67,32 @@ namespace TT_Lab.AssetData.Graphics
                 Bitmap = new Bitmap(tmpBmp);
                 tmpBmp.Dispose();
                 BitsHandle.Free();
+            }
+        }
+
+        public override ITwinItem Export()
+        {
+            Bitmap bmpWithMips = GenerateMipsForBitmap(Bitmap);
+            PS2AnyTexture texture = new PS2AnyTexture();
+            var fun = TextureFunction.MODULATE;
+            var format = (Bitmap.Width == 256) ? TexturePixelFormat.PSMCT32 : TexturePixelFormat.PSMT8;
+            var tex = new List<Twinsanity.TwinsanityInterchange.Common.Color>();
+            byte mips = (Bitmap.Width == 256 || Bitmap.Width <= 16) ? 1 : (byte)((int)Math.Log2(Bitmap.Width) - 3);
+            texture.FromBitmap(tex, Bitmap.Width, mips, fun, format);
+            return texture;
+        }
+
+        private Bitmap GenerateMipsForBitmap(Bitmap source)
+        {
+            if (source.Width == 256)
+            {
+                return new Bitmap(source);
+            } 
+            else
+            {
+                Bitmap mips = new Bitmap(Bitmap.Width * 2, Bitmap.Height);
+
+                return mips;
             }
         }
     }

@@ -77,6 +77,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
             G = (Byte)(((val >> 8) & 0xFF) << 1);
             R = (Byte)(((val >> 0) & 0xFF) << 1);
         }
+        public UInt32 ToABGR()
+        {
+            var a = A >> 1;
+            var b = B >> 1;
+            var g = G >> 1;
+            var r = R >> 1;
+            return (UInt32)((a << 24) | (b << 16) | (g << 8) | (r << 0));
+        }
+
         public override String ToString()
         {
             return $"{A} {R} {G} {B}";
