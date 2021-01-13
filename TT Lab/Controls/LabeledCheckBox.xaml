@@ -1,4 +1,4 @@
-﻿<UserControl x:Name="LabeledCheckboxControl" x:Class="TT_Lab.Controls.LabeledCheckBox"
+﻿<local:BoundUserControl x:Name="LabeledCheckboxControl" x:Class="TT_Lab.Controls.LabeledCheckBox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,7 +11,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label x:Name="CheckboxLabel" Content="Label" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
-        <CheckBox x:Name="CheckBox" IsChecked="{Binding Checked, ElementName=LabeledCheckboxControl, Mode=OneWayToSource}" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <CheckBox x:Name="CheckBox" IsChecked="{Binding DisplayChecked, ElementName=LabeledCheckboxControl, Mode=TwoWay}" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
 
     </Grid>
-</UserControl>
+</local:BoundUserControl>

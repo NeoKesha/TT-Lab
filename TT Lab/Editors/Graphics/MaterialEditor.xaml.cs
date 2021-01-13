@@ -23,49 +23,46 @@ namespace TT_Lab.Editors.Graphics
     /// </summary>
     public partial class MaterialEditor : BaseEditor
     {
-        private MaterialViewModel MaterialView { get => (MaterialViewModel)viewModel; }
-
         public MaterialEditor()
         {
             InitializeComponent();
         }
 
-        public MaterialEditor(AssetViewModel matViewModel) : base(matViewModel)
+        public MaterialEditor(MaterialViewModel matViewModel) : base(matViewModel)
         {
             InitializeComponent();
-        }
-
-        private void MaterialHeaderBox_TextChanged(Object sender, EventArgs e)
-        {
-            var tb = (BaseTextBox)sender;
-            if (string.IsNullOrEmpty(tb.Text))
+            AcceptNewPropValuePredicate["Header"] = (n, o) =>
             {
-                SetData("Header", 0UL);
-                return;
-            }
-            if (!UInt64.TryParse(tb.Text, out UInt64 result) || MaterialView.Header == result) return;
-            SetData("Header", result);
-        }
-
-        private void MaterialNameBox_TextChanged(Object sender, EventArgs e)
-        {
-            var tb = (BaseTextBox)sender;
-            if (tb.Text.Length > UInt16.MaxValue || MaterialView.Name == tb.Text) return;
-
-            SetData("Name", tb.Text);
-        }
-
-        private void MaterialDmaIndexBox_TextChanged(Object sender, EventArgs e)
-        {
-            var tb = (BaseTextBox)sender;
-            if (string.IsNullOrEmpty(tb.Text))
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (nStr == oStr) return null;
+                if (string.IsNullOrEmpty(nStr))
+                {
+                    return 0UL;
+                }
+                if (!UInt64.TryParse(nStr, out UInt64 result)) return null;
+                return result;
+            };
+            AcceptNewPropValuePredicate["Name"] = (n, o) =>
             {
-                SetData("DmaChainIndex", 0U);
-                return;
-            }
-            if (!UInt32.TryParse(tb.Text, out UInt32 result) || MaterialView.DmaChainIndex == result) return;
-            if (result > 27) return;
-            SetData("DmaChainIndex", result);
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (nStr.Length > UInt16.MaxValue || nStr == oStr) return null;
+                return nStr;
+            };
+            AcceptNewPropValuePredicate["DmaChainIndex"] = (n, o) =>
+            {
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (nStr == oStr) return null;
+                if (string.IsNullOrEmpty(nStr))
+                {
+                    return 0U;
+                }
+                if (!UInt32.TryParse(nStr, out UInt32 result)) return null;
+                if (result > 27) return null;
+                return result;
+            };
         }
 
         private void ShaderList_SelectedItemChanged(Object sender, RoutedPropertyChangedEventArgs<Object> e)

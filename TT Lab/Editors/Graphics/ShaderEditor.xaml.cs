@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,15 +23,17 @@ namespace TT_Lab.Editors.Graphics
     /// <summary>
     /// Interaction logic for ShaderEditor.xaml
     /// </summary>
-    public partial class ShaderEditor : UserControl
+    public partial class ShaderEditor : BaseEditor
     {
+
         public ShaderEditor()
         {
             InitializeComponent();
         }
 
-        public ShaderEditor(LabShaderViewModel shaderViewModel, MaterialEditor materialEditor) : this()
+        public ShaderEditor(LabShaderViewModel shaderViewModel, MaterialEditor materialEditor) : base(shaderViewModel, materialEditor.CommandManager)
         {
+            InitializeComponent();
             DataContext = new
             {
                 ViewModel = shaderViewModel,
@@ -47,6 +50,65 @@ namespace TT_Lab.Editors.Graphics
                 ColorSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(ColorSpecMethod)).Cast<object>()),
                 AlphaSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaSpecMethod)).Cast<object>())
             };
+            InitValidators();
+        }
+
+        private void InitValidators()
+        {
+            AcceptNewPropValuePredicate["IntParam"] = (n, o) =>
+            {
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (oStr == nStr) return null;
+                if (string.IsNullOrEmpty(nStr)) return 0U;
+                if (!UInt32.TryParse(nStr, out UInt32 result)) return null;
+                return result;
+            };
+            AcceptNewPropValuePredicate["AlphaRegSettingsIndex"] = (n, o) =>
+            {
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (oStr == nStr) return null;
+                if (string.IsNullOrEmpty(nStr)) return (Byte)0;
+                if (!Byte.TryParse(nStr, out Byte result)) return null;
+                if (result > 9) return null;
+                return result;
+            };
+            AcceptNewPropValuePredicate["AlphaValueToCompareTo"] = (n, o) =>
+            {
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (oStr == nStr) return null;
+                if (string.IsNullOrEmpty(nStr)) return (Byte)0;
+                if (!Byte.TryParse(nStr, out Byte result)) return null;
+                return result;
+            };
+            AcceptNewPropValuePredicate["FixedAlphaValue"] = AcceptNewPropValuePredicate["AlphaValueToCompareTo"];
+            AcceptNewPropValuePredicate["LodParamK"] = (n, o) =>
+            {
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (oStr == nStr) return null;
+                if (string.IsNullOrEmpty(nStr)) return (UInt16)0;
+                if (!UInt16.TryParse(nStr, out UInt16 result)) return null;
+                return result;
+            };
+            AcceptNewPropValuePredicate["LodParamL"] = AcceptNewPropValuePredicate["LodParamK"];
+            AcceptNewPropValuePredicate["UnkVal1"] = AcceptNewPropValuePredicate["AlphaValueToCompareTo"];
+            AcceptNewPropValuePredicate["UnkVal2"] = AcceptNewPropValuePredicate["AlphaValueToCompareTo"];
+            AcceptNewPropValuePredicate["UnkVal3"] = AcceptNewPropValuePredicate["AlphaValueToCompareTo"];
+            AcceptNewPropValuePredicate["X"] = (n, o) =>
+            {
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (oStr == nStr) return null;
+                if (string.IsNullOrEmpty(nStr)) return 0f;
+                if (!Single.TryParse(nStr, NumberStyles.Float, CultureInfo.InvariantCulture, out Single result)) return null;
+                return result;
+            };
+            AcceptNewPropValuePredicate["Y"] = AcceptNewPropValuePredicate["X"];
+            AcceptNewPropValuePredicate["Z"] = AcceptNewPropValuePredicate["X"];
+            AcceptNewPropValuePredicate["W"] = AcceptNewPropValuePredicate["X"];
         }
     }
 }

@@ -9,9 +9,14 @@ namespace TT_Lab.Util
 {
     public static class MiscUtils
     {
+        public static object ConvertEnum(Type t, object o)
+        {
+            return Enum.Parse(t, o.ToString());
+        }
+
         public static T ConvertEnum<T>(object o)
         {
-            return (T)Enum.Parse(typeof(T), o.ToString());
+            return (T)ConvertEnum(typeof(T), o);
         }
 
         // Ah yes, WinForms being garbage as usual

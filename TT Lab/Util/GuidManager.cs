@@ -78,7 +78,6 @@ namespace TT_Lab.Util
                 catch(Exception ex)
                 {
                     Log.WriteLine($"Error initializing mapper: {ex.Message} for {asset.Type} ID {asset.ID}");
-                    throw ex;
                 }
             }
         }

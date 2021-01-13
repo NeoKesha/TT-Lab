@@ -169,12 +169,14 @@ namespace TT_Lab.ViewModels.Graphics
                 if (value != _type)
                 {
                     _type = value;
+                    _name = $"{_type}";
                     NotifyChange();
                     NotifyChange("HasIntParam");
                     NotifyChange("HasFloatParam1");
                     NotifyChange("HasFloatParam2");
                     NotifyChange("HasFloatParam3");
                     NotifyChange("HasFloatParam4");
+                    NotifyChange("Name");
                 }
             }
         }

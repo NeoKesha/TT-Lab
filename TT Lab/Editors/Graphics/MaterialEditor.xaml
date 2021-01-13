@@ -41,9 +41,9 @@
                         <ColumnDefinition Width="315*"/>
                         <ColumnDefinition Width="186*"/>
                     </Grid.ColumnDefinitions>
-                    <Controls:LabeledTextBox Text="{Binding Header, Mode=OneWay}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Header" Padding="2,0,0,0" TextChanged="MaterialHeaderBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
-                    <Controls:LabeledTextBox Text="{Binding Name, Mode=OneWay}" x:Name="MaterialNameBox" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name" TextChanged="MaterialNameBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
-                    <Controls:LabeledTextBox Text="{Binding DmaChainIndex, Mode=OneWay}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index" TextChanged="MaterialDmaIndexBox_TextChanged" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}"/>
+                    <Controls:LabeledTextBox Text="{Binding Header, Mode=OneWay}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Header" Padding="2,0,0,0" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}" BoundProperty="Header"/>
+                    <Controls:LabeledTextBox Text="{Binding Name, Mode=OneWay}" x:Name="MaterialNameBox" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}" BoundProperty="Name"/>
+                    <Controls:LabeledTextBox Text="{Binding DmaChainIndex, Mode=OneWay}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}" BoundProperty="DmaChainIndex"/>
                 </Grid>
             </GroupBox>
             <GroupBox x:Name="ShaderSettingsBox" Header="Shader settings" Grid.Row="1" Margin="0,0,0,0"/>

@@ -26,7 +26,7 @@ namespace TT_Lab.Editors.Graphics
             InitializeComponent();
         }
 
-        public TextureEditor(AssetViewModel texture) : base(texture)
+        public TextureEditor(TextureViewModel texture) : base(texture)
         {
             DataContext = new
             {

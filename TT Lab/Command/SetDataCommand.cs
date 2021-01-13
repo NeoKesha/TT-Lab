@@ -40,7 +40,14 @@ namespace TT_Lab.Command
         {
             Type t = _target.GetType();
             var field = t.GetProperty(_propName);
-            field.SetValue(_target, _prevValue);
+            if (field.PropertyType.IsEnum)
+            {
+                field.SetValue(_target, MiscUtils.ConvertEnum(field.PropertyType, _prevValue));
+            }
+            else
+            {
+                field.SetValue(_target, Convert.ChangeType(_prevValue, field.PropertyType));
+            }
         }
     }
 }
