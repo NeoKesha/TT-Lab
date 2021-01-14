@@ -51,11 +51,16 @@ namespace TT_Lab.ViewModels.Graphics
         private Vector4ViewModel _unkVec2;
         private Vector4ViewModel _unkVec3;
 
-        public LabShaderViewModel(LabShader shader)
+        public LabShaderViewModel()
         {
-            _type = shader.ShaderType;
-            _intParam = shader.IntParam;
+            Type = LabShader.Type.SHADER_1;
             _floatParam = new Single[4];
+        }
+
+        public LabShaderViewModel(LabShader shader) : this()
+        {
+            Type = shader.ShaderType;
+            _intParam = shader.IntParam;
             for (var i = 0; i < _floatParam.Length; ++i)
             {
                 _floatParam[i] = shader.FloatParam[i];
@@ -95,7 +100,6 @@ namespace TT_Lab.ViewModels.Graphics
             _unkVec1 = new Vector4ViewModel(shader.UnkVector1);
             _unkVec2 = new Vector4ViewModel(shader.UnkVector2);
             _unkVec3 = new Vector4ViewModel(shader.UnkVector3);
-            Name = $"{_type}";
         }
         public String Name
         {

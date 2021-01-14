@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TT_Lab.Command;
 using TT_Lab.Controls;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
@@ -31,6 +32,26 @@ namespace TT_Lab.Editors.Graphics
         public MaterialEditor(MaterialViewModel matViewModel) : base(matViewModel)
         {
             InitializeComponent();
+            TreeContextMenu.Items.Add(new MenuItem
+            {
+                Header = "Add",
+                Command = new RelayCommand(matViewModel.AddShaderCommand, CommandManager)
+            });
+            TreeContextMenu.Items.Add(new MenuItem
+            {
+                Header = "Duplicate",
+                Command = new RelayCommand(matViewModel.CloneShaderCommand, CommandManager)
+            });
+            TreeContextMenu.Items.Add(new MenuItem
+            {
+                Header = "Delete",
+                Command = new RelayCommand(matViewModel.DeleteShaderCommand, CommandManager)
+            });
+            InitPredicates();
+        }
+
+        void InitPredicates()
+        {
             AcceptNewPropValuePredicate["Header"] = (n, o) =>
             {
                 var nStr = (string)n;
@@ -71,6 +92,9 @@ namespace TT_Lab.Editors.Graphics
             {
                 ShaderSettingsBox.Content = null;
             }
+            var viewModel = (MaterialViewModel)AssetViewModel;
+            viewModel.DeleteShaderCommand.Item = ShaderList.SelectedItem;
+            viewModel.CloneShaderCommand.Item = ShaderList.SelectedItem;
             ShaderSettingsBox.Content = new ShaderEditor((LabShaderViewModel)ShaderList.SelectedItem, this);
         }
     }

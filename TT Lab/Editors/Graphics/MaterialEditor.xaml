@@ -22,6 +22,9 @@
         <GroupBox Header="Shaders" Grid.Row="1">
             <TreeView x:Name="ShaderList" Margin="0,0,0,0"
                       ItemsSource="{Binding Shaders}" SelectedItemChanged="ShaderList_SelectedItemChanged">
+                <TreeView.ContextMenu>
+                    <ContextMenu x:Name="TreeContextMenu"/>
+                </TreeView.ContextMenu>
                 <TreeView.ItemTemplate>
                     <DataTemplate DataType="{x:Type viewmodel:LabShaderViewModel}">
                         <TextBlock Text="{Binding Name}"/>

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Command;
 
 namespace TT_Lab.ViewModels.Graphics
 {
@@ -32,8 +36,14 @@ namespace TT_Lab.ViewModels.Graphics
                 _shaders.Add(shaderViewModel);
                 shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged;
             }
+            AddShaderCommand = new AddItemToListCommand(Shaders, typeof(LabShaderViewModel));
+            DeleteShaderCommand = new DeleteItemFromListCommand(Shaders);
+            CloneShaderCommand = new CloneItemIntoCollectionCommand<LabShaderViewModel>(Shaders);
         }
 
+        public AddItemToListCommand AddShaderCommand { private set; get; }
+        public DeleteItemFromListCommand DeleteShaderCommand { private set; get; }
+        public CloneItemIntoCollectionCommand<LabShaderViewModel> CloneShaderCommand { private set; get; }
         public UInt64 Header
         {
             get => _header;
@@ -86,6 +96,8 @@ namespace TT_Lab.ViewModels.Graphics
                 NotifyChange();
             }
         }
+
+        public static ObservableCollection<MenuItem> TreeContextMenu { get; private set; }
 
         private void ShaderViewModel_PropertyChanged(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
