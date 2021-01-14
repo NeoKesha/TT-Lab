@@ -55,6 +55,9 @@ namespace TT_Lab.ViewModels.Graphics
         {
             Type = LabShader.Type.SHADER_1;
             _floatParam = new Single[4];
+            _unkVec1 = new Vector4ViewModel();
+            _unkVec2 = new Vector4ViewModel();
+            _unkVec3 = new Vector4ViewModel();
         }
 
         public LabShaderViewModel(LabShader shader) : this()

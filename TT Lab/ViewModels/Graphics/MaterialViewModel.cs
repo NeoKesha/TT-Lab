@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Command;
+using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.ViewModels.Graphics
 {
@@ -34,11 +36,27 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 var shaderViewModel = new LabShaderViewModel(shader);
                 _shaders.Add(shaderViewModel);
-                shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged;
+                shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged1;
             }
             AddShaderCommand = new AddItemToListCommand(Shaders, typeof(LabShaderViewModel));
             DeleteShaderCommand = new DeleteItemFromListCommand(Shaders);
             CloneShaderCommand = new CloneItemIntoCollectionCommand<LabShaderViewModel>(Shaders);
+            Shaders.CollectionChanged += ShaderViewModel_PropertyChanged;
+        }
+
+        public override void Save()
+        {
+            var data = (MaterialData)Asset.GetData();
+            data.Header = Header;
+            data.DmaChainIndex = DmaChainIndex;
+            data.Name = Name;
+            data.Shaders.Clear();
+            for (var i = 0; i < Shaders.Count; ++i)
+            {
+                var shader = new LabShader(Shaders[i]);
+                data.Shaders.Add(shader);
+            }
+            base.Save();
         }
 
         public AddItemToListCommand AddShaderCommand { private set; get; }
@@ -99,9 +117,14 @@ namespace TT_Lab.ViewModels.Graphics
 
         public static ObservableCollection<MenuItem> TreeContextMenu { get; private set; }
 
-        private void ShaderViewModel_PropertyChanged(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ShaderViewModel_PropertyChanged(Object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            NotifyChange("Shaders");
+            IsDirty = true;
+        }
+
+        private void ShaderViewModel_PropertyChanged1(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            NotifyChange(e.PropertyName);
             IsDirty = true;
         }
     }
