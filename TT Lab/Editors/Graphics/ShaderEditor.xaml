@@ -85,7 +85,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
-            <Editors:SceneEditor HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Header="Bound texture"/>
+            <Editors:SceneEditor x:Name="TextureViewer" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Header="Bound texture" AllowDrop="True"/>
             <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <UniformGrid x:Name="CheckboxUniGrid" Rows="2">
                     <Controls:LabeledCheckBox Checked="{Binding ViewModel.AlphaBlending}" x:Name="AlphaBlendingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Alpha blending" Editor="{Binding ElementName=baseEditor, Mode=OneWay}" BoundProperty="AlphaBlending"/>

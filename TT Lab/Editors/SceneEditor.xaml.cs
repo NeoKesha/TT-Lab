@@ -69,9 +69,12 @@ namespace TT_Lab.Editors
             Glcontrol.KeyDown += Glcontrol_KeyDown;
             Glcontrol.KeyUp += Glcontrol_KeyUp;
             Glcontrol.MouseWheel += Glcontrol_MouseWheel;
+            Glcontrol.MouseClick += Glcontrol_MouseClick;
             Glcontrol.Dock = DockStyle.Fill;
 
             GLHost.Child = Glcontrol;
+
+            ContextMenu = new System.Windows.Controls.ContextMenu();
 
             // Start render loop
             Timer timer = new Timer
@@ -98,7 +101,10 @@ namespace TT_Lab.Editors
 
         private void Glcontrol_DragEnter(Object sender, System.Windows.Forms.DragEventArgs e)
         {
-            e.Effect = System.Windows.Forms.DragDropEffects.All;
+            if (AllowDrop)
+            {
+                e.Effect = System.Windows.Forms.DragDropEffects.All;
+            }
         }
 
         private void Glcontrol_MouseWheel(Object sender, System.Windows.Forms.MouseEventArgs e)
@@ -122,7 +128,14 @@ namespace TT_Lab.Editors
             }
         }
 
-        
+        private void Glcontrol_MouseClick(Object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && ContextMenu.Items.Count != 0)
+            {
+                ContextMenu.IsOpen = true;
+            }
+        }
+
         private void Glcontrol_MouseMove(Object sender, System.Windows.Forms.MouseEventArgs e)
         {
             var curMousePos = e.Location;

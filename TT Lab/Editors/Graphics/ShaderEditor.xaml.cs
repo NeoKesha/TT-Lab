@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
+using TT_Lab.Command;
+using TT_Lab.Project;
+using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 using TT_Lab.ViewModels.Graphics;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
@@ -51,6 +47,76 @@ namespace TT_Lab.Editors.Graphics
                 AlphaSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaSpecMethod)).Cast<object>())
             };
             InitValidators();
+            TextureViewer.FileDrop += TextureViewer_FileDrop;
+            TextureViewer.RendererInit += TextureViewer_RendererInit;
+            TextureViewer.ContextMenu.Items.Add(new MenuItem
+            {
+                Header = "Clear",
+                Command = new GenerateCommand(() =>
+                {
+                    CommandManager.Execute(new SetDataCommand<Guid>(shaderViewModel, "TexID", Guid.Empty));
+                })
+            });
+            shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged;
+        }
+
+        private void ShaderViewModel_PropertyChanged(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "TexID")
+            {
+                ResetViewer();
+            }
+        }
+
+        private void TextureViewer_RendererInit(Object sender, EventArgs e)
+        {
+            ResetViewer();
+        }
+
+        private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.File))
+            {
+                var data = e.Data.Data as ViewModels.AssetViewModel;
+                if (data.Asset.Type.Name == "Texture")
+                {
+                    SetData("TexID", data.Asset.UUID, viewModel);
+                }
+            }
+        }
+
+        private void ResetViewer()
+        {
+            TextureViewer.Glcontrol.MakeCurrent();
+            var texId = ((LabShaderViewModel)viewModel).TexID;
+            Bitmap bitmap;
+            if (texId == Guid.Empty)
+            {
+                bitmap = MiscUtils.GetBoatGuy();
+            }
+            else
+            {
+                var texData = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(texId).GetData();
+                bitmap = texData.Bitmap;
+            }
+            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
+                "LightTexture",
+                (shd, s) =>
+                {
+                    s.DefaultShaderUniforms();
+                },
+                new Dictionary<uint, string>
+                {
+                    { 0, "in_Position" },
+                    { 1, "in_Color" },
+                    { 2, "in_Normal" },
+                    { 3, "in_Texpos" }
+                }
+            );
+            TextureViewer.Scene.SetCameraSpeed(0);
+            TextureViewer.Scene.DisableCameraManipulation();
+            var texPlane = new Plane(bitmap);
+            TextureViewer.Scene.AddRender(texPlane);
         }
 
         private void InitValidators()

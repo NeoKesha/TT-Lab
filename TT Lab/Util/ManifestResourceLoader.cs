@@ -12,17 +12,18 @@ namespace TT_Lab.Util
     {
         public static string LoadTextFile(string textFileName)
         {
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            UriBuilder uri = new UriBuilder(codeBase);
+            using FileStream stream = new FileStream(GetPathInExe(textFileName), FileMode.Open, FileAccess.Read);
+            using var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
+        }
+
+        public static string GetPathInExe(string pathToFile)
+        {
+            string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            UriBuilder uri = new UriBuilder(assemblyLocation);
             string path = Uri.UnescapeDataString(uri.Path);
 
-            using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), textFileName), FileMode.Open, FileAccess.Read))
-            {
-                using (var reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
+            return Path.Combine(Path.GetDirectoryName(path), pathToFile);
         }
     }
 }
