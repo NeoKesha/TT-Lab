@@ -48,19 +48,7 @@ namespace TT_Lab.Editors.Graphics
         private void SceneRenderer_RendererInit(Object sender, EventArgs e)
         {
             SceneRenderer.Glcontrol.MakeCurrent();
-            SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight,
-                "LightTexture",
-                (shd, s) =>
-                {
-                    s.DefaultShaderUniforms();
-                },
-                new Dictionary<uint, string>
-                {
-                    { 0, "in_Position" },
-                    { 1, "in_Color" },
-                    { 2, "in_Normal" },
-                    { 3, "in_Texpos" }
-                });
+            SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight);
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var rm = (RigidModelData)GetAssetData();
@@ -78,13 +66,6 @@ namespace TT_Lab.Editors.Graphics
                 (shd, s) =>
                 {
                     s.DefaultShaderUniforms();
-                },
-                new Dictionary<uint, string>
-                {
-                    { 0, "in_Position" },
-                    { 1, "in_Color" },
-                    { 2, "in_Normal" },
-                    { 3, "in_Texpos" }
                 });
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();

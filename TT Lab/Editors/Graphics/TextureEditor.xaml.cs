@@ -56,20 +56,7 @@ namespace TT_Lab.Editors.Graphics
         private void ResetViewer()
         {
             TextureViewer.Glcontrol.MakeCurrent();
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
-                "LightTexture",
-                (shd, s) =>
-                {
-                    s.DefaultShaderUniforms();
-                },
-                new Dictionary<uint, string>
-                {
-                    { 0, "in_Position" },
-                    { 1, "in_Color" },
-                    { 2, "in_Normal" },
-                    { 3, "in_Texpos" }
-                }
-            );
+            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight);
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
             var texPlane = new Plane(((TextureViewModel)viewModel).Texture);

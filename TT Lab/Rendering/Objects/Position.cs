@@ -11,6 +11,8 @@ namespace TT_Lab.Rendering.Objects
 {
     public class Position : IRenderable
     {
+        public Scene? Parent { get; set; }
+
         private uint id;
         private int layid;
         private Vector4 pos;
@@ -18,7 +20,7 @@ namespace TT_Lab.Rendering.Objects
         public Position(Assets.Instance.Position pos)
         {
             id = pos.ID;
-            layid = (int)pos.LayoutID;
+            layid = (int)pos.LayoutID!;
             var posData = (PositionData)pos.GetData();
             this.pos = new Vector4(posData.Coords.X, posData.Coords.Y, posData.Coords.Z, posData.Coords.W);
         }

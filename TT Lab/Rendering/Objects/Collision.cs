@@ -15,6 +15,7 @@ namespace TT_Lab.Rendering.Objects
 {
     public class Collision : IRenderable
     {
+        public Scene? Parent { get; set; }
 
         IndexedBufferArray collisionBuffer;
 

@@ -12,29 +12,44 @@ namespace TT_Lab.Rendering.Buffers
     {
 
         private uint textureBuffer;
+        private TextureTarget textureTarget;
 
-        public TextureBuffer(int width, int height, Bitmap data)
+        public TextureBuffer(TextureTarget target, int width, int height, Bitmap data)
         {
-            var bitmapBits = data.LockBits(new System.Drawing.Rectangle(0, 0, data.Width, data.Height),
+            textureTarget = target;
+
+            var bitmapBits = data.LockBits(new Rectangle(0, 0, data.Width, data.Height),
                     System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-            uint[] ids = new uint[1];
-            GL.GenTextures(1, ids);
-            textureBuffer = ids[0];
+            textureBuffer = (uint)GL.GenTexture();
             Bind();
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bitmapBits.Scan0);
+            GL.TexParameter(textureTarget, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(textureTarget, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexImage2D(textureTarget, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bitmapBits.Scan0);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             data.UnlockBits(bitmapBits);
             Unbind();
         }
 
+        public TextureBuffer(int width, int height, Bitmap data) : this (TextureTarget.Texture2D, width, height, data)
+        {
+        }
+
+        public TextureBuffer(TextureTarget target)
+        {
+            textureTarget = target;
+            textureBuffer = (uint)GL.GenTexture();
+        }
+
+        public TextureBuffer() : this (TextureTarget.Texture2D)
+        {
+        }
+
         public void Bind()
         {
-            GL.BindTexture(TextureTarget.Texture2D, textureBuffer);
+            GL.BindTexture(textureTarget, textureBuffer);
         }
 
         public void Delete()
@@ -44,7 +59,12 @@ namespace TT_Lab.Rendering.Buffers
 
         public void Unbind()
         {
-            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.BindTexture(textureTarget, 0);
+        }
+
+        public uint Buffer
+        {
+            get => textureBuffer;
         }
     }
 }

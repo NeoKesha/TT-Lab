@@ -20,6 +20,10 @@ namespace TT_Lab.Rendering
     /// </summary>
     public class Scene : IRenderable
     {
+        private Scene? parent = null;
+
+        public Scene? Parent { get => parent; set => parent = value; }
+
         // Rendering matrices
         private mat4 projectionMat;
         private mat4 viewMat;
@@ -34,8 +38,16 @@ namespace TT_Lab.Rendering
         private bool canManipulateCamera = true;
 
         // Scene rendering
-        private ShaderProgram shader;
-        private List<IRenderable> objects = new List<IRenderable>();
+        private readonly ShaderProgram? viewModelShader;
+        private readonly ShaderProgram resultImageShader;
+        private readonly List<IRenderable> objects = new List<IRenderable>();
+        private readonly TextureBuffer colorTextureNT = new TextureBuffer(TextureTarget.Texture2DMultisample);
+        private readonly TextureBuffer colorTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
+        private readonly TextureBuffer alphaTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
+        private readonly FrameBuffer framebufferNT = new FrameBuffer();
+        private readonly RenderBuffer depthRenderbuffer = new RenderBuffer();
+        private readonly FrameBuffer framebuffer = new FrameBuffer();
+
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -51,6 +63,18 @@ namespace TT_Lab.Rendering
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();
+            resultImageShader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.frag"));
+            // Transparent objects rendering setup
+            ReallocateFramebuffer((int)width, (int)height);
+            framebufferNT.Bind();
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
+            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
+            framebuffer.Bind();
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTexture.Buffer, 0);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment1, TextureTarget.Texture2DMultisample, alphaTexture.Buffer, 0);
+            DrawBuffersEnum[] attachments = new DrawBuffersEnum[2] { DrawBuffersEnum.ColorAttachment0, DrawBuffersEnum.ColorAttachment1 };
+            GL.DrawBuffers(2, attachments);
+            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
         }
 
         /// <summary>
@@ -60,29 +84,23 @@ namespace TT_Lab.Rendering
         /// <param name="height">Viewport render height</param>
         /// <param name="shaderName">Shader file name for both .vert and .frag programs</param>
         /// <param name="shdSetUni">Callback when setting shader's uniforms</param>
-        /// <param name="attribPositions">Attribute positions in shader for the Vertex program</param>
         public Scene(float width, float height, string shaderName = "Light",
-            Action<ShaderProgram, Scene> shdSetUni = null, Dictionary<uint, string> attribPositions = null)
+            Action<ShaderProgram, Scene> shdSetUni = null)
             : this(width, height)
         {
             var passVerShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.vert");
             var passFragShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.frag");
-            if (shdSetUni == null && attribPositions == null)
+            viewModelShader = new ShaderProgram(passVerShader, passFragShader);
+            if (shdSetUni == null)
             {
-                shader = new ShaderProgram(passVerShader, passFragShader, new Dictionary<uint, string> {
-                    { 0, "in_Position" },
-                    { 1, "in_Color" },
-                    { 2, "in_Normal" }
-                });
-                shader.SetUniforms(() =>
+                viewModelShader.SetUniformsAction(() =>
                 {
                     DefaultShaderUniforms();
                 });
             }
             else
             {
-                shader = new ShaderProgram(passVerShader, passFragShader, attribPositions);
-                shader.SetUniforms(() => shdSetUni(shader, this));
+                viewModelShader.SetUniformsAction(() => shdSetUni(viewModelShader, this));
             }
         }
 
@@ -98,15 +116,17 @@ namespace TT_Lab.Rendering
             var colData = (CollisionData)sceneTree.Find((avm) =>
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
-            }).Asset.GetData();
+            })!.Asset.GetData();
             var colRender = new Objects.Collision(colData);
+            colRender.Parent = this;
             objects.Add(colRender);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
-            foreach (var pos in positions.Children)
+            foreach (var pos in positions!.Children)
             {
                 var pRend = new Objects.Position((Assets.Instance.Position)pos.Asset);
+                pRend.Parent = this;
                 objects.Add(pRend);
             }
         }
@@ -114,22 +134,35 @@ namespace TT_Lab.Rendering
         public void AddRender(IRenderable renderObj)
         {
             objects.Add(renderObj);
+            renderObj.Parent = this;
         }
 
         public void DefaultShaderUniforms()
         {
-            // Fragment program uniforms
-            shader.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
-            shader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
-            shader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-            shader.SetUniform3("LightDirection", cameraDirection.x, cameraDirection.y, cameraDirection.z);
+            if (viewModelShader != null)
+            {
+                // Fragment program uniforms
+                viewModelShader.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
+                viewModelShader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
+                viewModelShader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+                viewModelShader.SetUniform3("LightDirection", cameraDirection.x, cameraDirection.y, cameraDirection.z);
 
-            // Vertex program uniforms
-            shader.SetUniformMatrix4("Projection", projectionMat.to_array());
-            shader.SetUniformMatrix4("View", viewMat.to_array());
-            shader.SetUniformMatrix4("Model", modelMat.to_array());
-            shader.SetUniformMatrix3("NormalMatrix", normalMat.to_array());
-            shader.SetUniform3("DiffuseMaterial", 0.75f, 0.75f, 0.75f);
+                // Vertex program uniforms
+                SetPVMNShaderUniforms(viewModelShader);
+                viewModelShader.SetUniform3("DiffuseMaterial", 0.75f, 0.75f, 0.75f);
+            }
+        }
+
+        /// <summary>
+        /// Sets the matrix uniforms for object's rendering in 3D scene
+        /// </summary>
+        /// <param name="program"></param>
+        public void SetPVMNShaderUniforms(ShaderProgram program)
+        {
+            program.SetUniformMatrix4("Projection", projectionMat.to_array());
+            program.SetUniformMatrix4("View", viewMat.to_array());
+            program.SetUniformMatrix4("Model", modelMat.to_array());
+            program.SetUniformMatrix3("NormalMatrix", normalMat.to_array());
         }
 
         public void SetResolution(float width, float height)
@@ -137,6 +170,7 @@ namespace TT_Lab.Rendering
             resolution.x = width;
             resolution.y = height;
             UpdateMatrices();
+            ReallocateFramebuffer((int)width, (int)height);
         }
 
         public void Render()
@@ -144,24 +178,68 @@ namespace TT_Lab.Rendering
             Bind();
             GL.CullFace(CullFaceMode.FrontAndBack);
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.AlphaTest);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
+            // Render all opaque objects
+            framebufferNT.Bind();
+            Bind();
+            float[] clearColorNT = System.Drawing.Color.DarkGray.ToArray();
+            float clearDepth = 1f;
+            GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
+            GL.ClearBuffer(ClearBuffer.Depth, 0, ref clearDepth);
             foreach (var @object in objects)
             {
                 @object.Render();
             }
+            // Transparency setup
+            framebuffer.Bind();
+            float[] clearColor = { 0f, 0f, 0f, 0f };
+            float clearAlpha = 1f;
+            GL.ClearBuffer(ClearBuffer.Color, 0, clearColor);
+            GL.ClearBuffer(ClearBuffer.Color, 1, ref clearAlpha);
+            GL.MemoryBarrier(MemoryBarrierFlags.FramebufferBarrierBit);
+            GL.DepthMask(false);
+            GL.DepthFunc(DepthFunction.Lequal);
+            GL.Disable(EnableCap.CullFace);
+            GL.Enable(EnableCap.Multisample);
+            GL.BlendFunc(0, BlendingFactorSrc.One, BlendingFactorDest.One);
+            GL.BlendEquation(0, BlendEquationMode.FuncAdd);
+            GL.BlendFunc(1, BlendingFactorSrc.Zero, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendEquation(1, BlendEquationMode.FuncAdd);
+            // Render objects with transparency
+            foreach (var @object in objects)
+            {
+                Bind();
+                @object.RenderTransparent();
+            }
+            GL.DepthMask(true);
+            GL.Disable(EnableCap.Blend);
+            // Render result image
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.MemoryBarrier(MemoryBarrierFlags.TextureFetchBarrierBit);
+            resultImageShader.Bind();
+            GL.BindTextureUnit(0, colorTextureNT.Buffer);
+            GL.Uniform1(0, 0);
+            GL.BindTextureUnit(1, colorTexture.Buffer);
+            GL.Uniform1(1, 1);
+            GL.BindTextureUnit(2, alphaTexture.Buffer);
+            GL.Uniform1(2, 2);
+            GL.Enable(EnableCap.Multisample);
+            GL.Disable(EnableCap.DepthTest);
+            GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
+
+            // Reset modes
             GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.DepthTest);
             GL.Disable(EnableCap.AlphaTest);
-            GL.Disable(EnableCap.Blend);
+            GL.Disable(EnableCap.Multisample);
             Unbind();
         }
 
         public void Bind()
         {
-            shader.Bind();
-            shader.SetUniforms();
+            viewModelShader?.Bind();
+            viewModelShader?.SetUniforms();
         }
 
         public void SetCameraSpeed(float s)
@@ -244,12 +322,19 @@ namespace TT_Lab.Rendering
 
         public void Unbind()
         {
-            shader.Unbind();
+            viewModelShader?.Unbind();
         }
 
         public void Delete()
         {
-            shader.Delete();
+            resultImageShader.Delete();
+            viewModelShader?.Delete();
+            colorTextureNT.Delete();
+            colorTexture.Delete();
+            alphaTexture.Delete();
+            framebufferNT.Delete();
+            framebuffer.Delete();
+            depthRenderbuffer.Delete();
             foreach (var @object in objects)
             {
                 @object.Delete();
@@ -279,6 +364,19 @@ namespace TT_Lab.Rendering
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();
+        }
+
+        private void ReallocateFramebuffer(int width, int height)
+        {
+            int numOfSamples = 8;
+            colorTextureNT.Bind();
+            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgb16f, width, height, true);
+            depthRenderbuffer.Bind();
+            GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, numOfSamples, RenderbufferStorage.DepthComponent, width, height);
+            colorTexture.Bind();
+            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgba16f, width, height, true);
+            alphaTexture.Bind();
+            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.R16f, width, height, true);
         }
     }
 }

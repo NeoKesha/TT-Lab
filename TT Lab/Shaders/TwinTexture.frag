@@ -1,5 +1,6 @@
 #version 450 core
 in vec4 pass_Color;
+
 out vec4 out_Color;
 
 void main(void) {

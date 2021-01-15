@@ -1,7 +1,8 @@
-#version 130
+#version 450 core
 in vec3 EyespaceNormal;
 in vec4 Color;
 in vec3 Diffuse;
+
 out vec4 FragColor;
 
 uniform vec3 LightPosition;

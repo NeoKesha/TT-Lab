@@ -13,6 +13,8 @@ namespace TT_Lab.Rendering.Objects
 {
     public class RigidModel : IRenderable
     {
+        public Scene? Parent { get; set; }
+
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         List<TextureBuffer> textureBuffers = new List<TextureBuffer>();
 

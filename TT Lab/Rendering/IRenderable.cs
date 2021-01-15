@@ -8,8 +8,10 @@ namespace TT_Lab.Rendering
 {
     public interface IRenderable : IGLObject
     {
-        void PreRender();
+        Scene? Parent { get; set; }
+        void PreRender() { }
         void Render();
-        void PostRender();
+        void RenderTransparent() { }
+        void PostRender() { }
     }
 }

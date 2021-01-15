@@ -21,10 +21,8 @@ namespace TT_Lab.Rendering.Shaders
         /// </summary>
         /// <param name="vertexShaderSource">The vertex shader source.</param>
         /// <param name="fragmentShaderSource">The fragment shader source.</param>
-        /// <param name="attributeLocations">The attribute locations.</param>
         /// <exception cref="ShaderCompilationException"></exception>
-        public ShaderProgram(string vertexShaderSource, string fragmentShaderSource,
-            Dictionary<uint, string> attributeLocations = null)
+        public ShaderProgram(string vertexShaderSource, string fragmentShaderSource)
         {
             //  Create the shaders.
             vertexShader = new Shader(ShaderType.VertexShader, vertexShaderSource);
@@ -34,13 +32,6 @@ namespace TT_Lab.Rendering.Shaders
             shaderProgramObject = (uint)GL.CreateProgram();
             GL.AttachShader((int)shaderProgramObject, vertexShader.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
-
-            //  Before we link, bind any vertex attribute locations.
-            if (attributeLocations != null)
-            {
-                foreach (var vertexAttributeLocation in attributeLocations)
-                    GL.BindAttribLocation(shaderProgramObject, vertexAttributeLocation.Key, vertexAttributeLocation.Value);
-            }
 
             //  Now we can link the program.
             GL.LinkProgram(shaderProgramObject);
@@ -58,7 +49,7 @@ namespace TT_Lab.Rendering.Shaders
             uniformSetAction?.Invoke();
         }
 
-        public void SetUniforms(Action uniformSetAction)
+        public void SetUniformsAction(Action uniformSetAction)
         {
             this.uniformSetAction = uniformSetAction;
         }
@@ -76,11 +67,6 @@ namespace TT_Lab.Rendering.Shaders
         public int GetAttributeLocation(string attributeName)
         {
             return GL.GetAttribLocation(shaderProgramObject, attributeName);
-        }
-
-        public void BindAttributeLocation(uint location, string attribute)
-        {
-            GL.BindAttribLocation(shaderProgramObject, location, attribute);
         }
 
         public void Bind()

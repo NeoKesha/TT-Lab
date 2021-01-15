@@ -62,7 +62,7 @@ namespace TT_Lab.Editors.Graphics
 
         private void ShaderViewModel_PropertyChanged(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "TexID")
+            if (e.PropertyName == "TexID" || e.PropertyName == "TxtMapping")
             {
                 ResetViewer();
             }
@@ -89,8 +89,9 @@ namespace TT_Lab.Editors.Graphics
         {
             TextureViewer.Glcontrol.MakeCurrent();
             var texId = ((LabShaderViewModel)viewModel).TexID;
+            var hasMapping = ((LabShaderViewModel)viewModel).TxtMapping;
             Bitmap bitmap;
-            if (texId == Guid.Empty)
+            if (texId == Guid.Empty || !hasMapping)
             {
                 bitmap = MiscUtils.GetBoatGuy();
             }
@@ -99,20 +100,7 @@ namespace TT_Lab.Editors.Graphics
                 var texData = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(texId).GetData();
                 bitmap = texData.Bitmap;
             }
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
-                "LightTexture",
-                (shd, s) =>
-                {
-                    s.DefaultShaderUniforms();
-                },
-                new Dictionary<uint, string>
-                {
-                    { 0, "in_Position" },
-                    { 1, "in_Color" },
-                    { 2, "in_Normal" },
-                    { 3, "in_Texpos" }
-                }
-            );
+            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight);
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
             var texPlane = new Plane(bitmap);

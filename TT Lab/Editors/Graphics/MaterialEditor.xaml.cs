@@ -48,6 +48,39 @@ namespace TT_Lab.Editors.Graphics
                 Command = new RelayCommand(matViewModel.DeleteShaderCommand, CommandManager)
             });
             InitPredicates();
+            MaterialViewer.RendererInit += MaterialViewer_RendererInit;
+            matViewModel.PropertyChanged += MatViewModel_PropertyChanged;
+        }
+
+        private void MatViewModel_PropertyChanged(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            ResetViewer();
+        }
+
+        private void MaterialViewer_RendererInit(Object sender, EventArgs e)
+        {
+            ResetViewer();
+        }
+
+        void ResetViewer()
+        {
+            /*MaterialViewer.Glcontrol.MakeCurrent();
+            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GLHost.ActualWidth, (float)MaterialViewer.GLHost.ActualWidth,
+                "LightTexture",
+                (shd, s) =>
+                {
+                    s.DefaultShaderUniforms();
+                },
+                new Dictionary<uint, string>
+                {
+                    { 0, "in_Position" },
+                    { 1, "in_Color" },
+                    { 2, "in_Normal" },
+                    { 3, "in_Texpos" }
+                }
+            );
+            MaterialViewer.Scene.SetCameraSpeed(0);
+            MaterialViewer.Scene.DisableCameraManipulation();*/
         }
 
         void InitPredicates()

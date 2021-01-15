@@ -12,6 +12,8 @@ namespace TT_Lab.Rendering.Objects
 {
     public class Model : IRenderable
     {
+        public Scene? Parent { get; set; }
+
         List<IndexedBufferArray> modelBuffers;
 
         public Model(ModelData model)

@@ -18,7 +18,7 @@
             <ColumnDefinition Width="123*"/>
             <ColumnDefinition Width="677*"/>
         </Grid.ColumnDefinitions>
-        <base:SceneEditor HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Header="Material viewer"/>
+        <base:SceneEditor x:Name="MaterialViewer" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Header="Material viewer"/>
         <GroupBox Header="Shaders" Grid.Row="1">
             <TreeView x:Name="ShaderList" Margin="0,0,0,0"
                       ItemsSource="{Binding Shaders}" SelectedItemChanged="ShaderList_SelectedItemChanged">
