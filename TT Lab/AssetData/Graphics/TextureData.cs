@@ -78,7 +78,17 @@ namespace TT_Lab.AssetData.Graphics
             var format = (Bitmap.Width == 256) ? TexturePixelFormat.PSMCT32 : TexturePixelFormat.PSMT8;
             var tex = new List<Twinsanity.TwinsanityInterchange.Common.Color>();
             byte mips = (Bitmap.Width == 256 || Bitmap.Width <= 16) ? 1 : (byte)((int)Math.Log2(Bitmap.Width) - 3);
+            if (format == TexturePixelFormat.PSMCT32)
+            {
+                //TODO: fill tex from bmpWithMips
+            }
+            else
+            {
+                Bitmap IndexedBitmap = bmpWithMips.Clone(new Rectangle(0, 0, bmpWithMips.Width, bmpWithMips.Height), PixelFormat.Format8bppIndexed);
+                //TODO: fill tex from IndexedBitmap
+            }
             texture.FromBitmap(tex, Bitmap.Width, mips, fun, format);
+
             return texture;
         }
 
