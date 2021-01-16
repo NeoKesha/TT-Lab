@@ -206,7 +206,29 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             } 
             else
             {
-                tag = null;
+                byte[] textureData = new byte[widthWithMips * height];
+                byte[] paletteData = new byte[256 * 4];
+                Dictionary<Color, Byte> palette = new Dictionary<Color, Byte>();
+                var index = 0;
+                foreach (var c in Colors)
+                {
+                    if (!palette.ContainsKey(c))
+                    {
+                        EzSwizzle.ColorsToByte(c, paletteData, palette.Count);
+                        palette.Add(c, (Byte)palette.Count);
+                    }
+                    textureData[index] = palette[c];
+                    ++index;
+                }
+
+                byte[] rawTextureData1 = EzSwizzle.writeTexPSMT8(0, TextureBufferWidth, 0, 0, width, height, textureData);
+                byte[] rawTextureData2 = EzSwizzle.writeTexPSMT8(0, 1, 0, 0, 16, 16, paletteData);
+                int clutSize = (int)Math.Ceiling(rawTextureData2.Length / 64.0f);
+                byte[] rawTextureData = new byte[ClutBufferBasePointer * 64 + clutSize * 64];
+                Array.Copy(rawTextureData1, 0, rawTextureData, 0, rawTextureData1.Length);
+                Array.Copy(rawTextureData2, 0, rawTextureData, ClutBufferBasePointer * 64, rawTextureData2.Length);
+                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, width, height, rawTextureData); // what's difference between RRW and width
+                tag = EzSwizzle.ColorsToTag(EzSwizzle.BytesToColors(gifData));
             }
             using (MemoryStream stream = new MemoryStream())
             {
