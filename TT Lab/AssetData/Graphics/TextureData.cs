@@ -68,6 +68,7 @@ namespace TT_Lab.AssetData.Graphics
                 tmpBmp.Dispose();
                 BitsHandle.Free();
             }
+            Export();
         }
 
         public override ITwinItem Export()
@@ -80,12 +81,47 @@ namespace TT_Lab.AssetData.Graphics
             byte mips = (Bitmap.Width == 256 || Bitmap.Width <= 16) ? 1 : (byte)((int)Math.Log2(Bitmap.Width) - 3);
             if (format == TexturePixelFormat.PSMCT32)
             {
-                //TODO: fill tex from bmpWithMips
+                var bits = bmpWithMips.LockBits(new Rectangle(0, 0, bmpWithMips.Width, bmpWithMips.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                unsafe
+                {
+                    byte* source = (byte*)bits.Scan0;
+                    for (int i = 0; i < bits.Height; i++)
+                    {
+                        var scan = source;
+                        for (int j = 0; j < bits.Width; j++)
+                        {
+                            var b = source[0];
+                            var g = source[1];
+                            var r = source[2];
+                            var a = source[3];
+                            tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(r,g,b,a));
+                            source += 4;
+                        }
+                        source = scan + bits.Stride;
+                    }
+                }
+                
             }
             else
             {
                 Bitmap IndexedBitmap = bmpWithMips.Clone(new Rectangle(0, 0, bmpWithMips.Width, bmpWithMips.Height), PixelFormat.Format8bppIndexed);
-                //TODO: fill tex from IndexedBitmap
+                var bits = IndexedBitmap.LockBits(new Rectangle(0, 0, IndexedBitmap.Width, IndexedBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+                unsafe
+                {
+                    byte* source = (byte*)bits.Scan0;
+                    for (int i = 0; i < bits.Height; i++)
+                    {
+                        var scan = source;
+                        for (int j = 0; j < bits.Width; j++)
+                        {
+                            var index = source[0];
+                            var color = IndexedBitmap.Palette.Entries[index];
+                            tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(color.R, color.G, color.B, color.A));
+                            source += 4;
+                        }
+                        source = scan + bits.Stride;
+                    }
+                }
             }
             texture.FromBitmap(tex, Bitmap.Width, mips, fun, format);
 
@@ -101,7 +137,19 @@ namespace TT_Lab.AssetData.Graphics
             else
             {
                 Bitmap mips = new Bitmap(Bitmap.Width * 2, Bitmap.Height);
-
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(mips);
+                var shift = 0;
+                var mipLevels = (int)Math.Log2(source.Width) - 3;
+                var w = source.Width;
+                var h = source.Height;
+                for (var i = 0; i < mipLevels; ++i)
+                {
+                    g.DrawImage(source, shift, 0,w,h);
+                    shift += w;
+                    w /= 2;
+                    h /= 2;
+                }
+                g.Dispose();
                 return mips;
             }
         }
