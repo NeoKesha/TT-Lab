@@ -8,6 +8,7 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Project;
 using TT_Lab.Util;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -17,6 +18,7 @@ namespace TT_Lab.Rendering.Objects
 
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         List<TextureBuffer> textureBuffers = new List<TextureBuffer>();
+        ShaderProgram shader;
 
         public RigidModel(RigidModelData rigid)
         {
@@ -47,10 +49,13 @@ namespace TT_Lab.Rendering.Objects
                         }).ToList()));
                 }
             }
+            shader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.vert"),
+                ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));
         }
 
         public void Bind()
         {
+            shader.Bind();
         }
 
         public void Delete()
@@ -75,6 +80,8 @@ namespace TT_Lab.Rendering.Objects
 
         public void Render()
         {
+            Bind();
+            Parent?.SetPVMNShaderUniforms(shader);
             for (var i = 0; i < modelBuffers.Count; ++i)
             {
                 if (textureBuffers.Count != 0)
@@ -89,10 +96,12 @@ namespace TT_Lab.Rendering.Objects
                 }
                 modelBuffers[i].Unbind();
             }
+            Unbind();
         }
 
         public void Unbind()
         {
+            shader.Unbind();
         }
     }
 }

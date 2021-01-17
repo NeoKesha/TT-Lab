@@ -169,29 +169,29 @@ namespace TT_Lab.Rendering
         {
             resolution.x = width;
             resolution.y = height;
-            UpdateMatrices();
             ReallocateFramebuffer((int)width, (int)height);
         }
 
         public void Render()
         {
+            UpdateMatrices();
             Bind();
             GL.CullFace(CullFaceMode.FrontAndBack);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            // Render all opaque objects
+            GL.Enable(EnableCap.Multisample);
+            GL.DepthMask(true);
+            GL.DepthFunc(DepthFunction.Lequal);
+            // Clear color
             framebufferNT.Bind();
             Bind();
-            float[] clearColorNT = System.Drawing.Color.DarkGray.ToArray();
+            float[] clearColorNT = System.Drawing.Color.LightGray.ToArray();
             float clearDepth = 1f;
             GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
             GL.ClearBuffer(ClearBuffer.Depth, 0, ref clearDepth);
-            foreach (var @object in objects)
-            {
-                @object.Render();
-            }
             // Transparency setup
             framebuffer.Bind();
+            Bind();
             float[] clearColor = { 0f, 0f, 0f, 0f };
             float clearAlpha = 1f;
             GL.ClearBuffer(ClearBuffer.Color, 0, clearColor);
@@ -200,38 +200,31 @@ namespace TT_Lab.Rendering
             GL.DepthMask(false);
             GL.DepthFunc(DepthFunction.Lequal);
             GL.Disable(EnableCap.CullFace);
-            GL.Enable(EnableCap.Multisample);
             GL.BlendFunc(0, BlendingFactorSrc.One, BlendingFactorDest.One);
-            GL.BlendEquation(0, BlendEquationMode.FuncAdd);
             GL.BlendFunc(1, BlendingFactorSrc.Zero, BlendingFactorDest.OneMinusSrcAlpha);
-            GL.BlendEquation(1, BlendEquationMode.FuncAdd);
             // Render objects with transparency
             foreach (var @object in objects)
             {
-                Bind();
-                @object.RenderTransparent();
+                @object.Render();
             }
-            GL.DepthMask(true);
-            GL.Disable(EnableCap.Blend);
             // Render result image
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.BlendFunc(BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha);
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.MemoryBarrier(MemoryBarrierFlags.TextureFetchBarrierBit);
             resultImageShader.Bind();
-            GL.BindTextureUnit(0, colorTextureNT.Buffer);
+            GL.BindTextureUnit(0, colorTexture.Buffer);
             GL.Uniform1(0, 0);
-            GL.BindTextureUnit(1, colorTexture.Buffer);
+            GL.BindTextureUnit(1, alphaTexture.Buffer);
             GL.Uniform1(1, 1);
-            GL.BindTextureUnit(2, alphaTexture.Buffer);
-            GL.Uniform1(2, 2);
             GL.Enable(EnableCap.Multisample);
             GL.Disable(EnableCap.DepthTest);
             GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
 
             // Reset modes
             GL.CullFace(CullFaceMode.Back);
+            GL.Disable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
-            GL.Disable(EnableCap.AlphaTest);
             GL.Disable(EnableCap.Multisample);
             Unbind();
         }
@@ -276,7 +269,6 @@ namespace TT_Lab.Rendering
             direction.z = (float)Math.Sin(glm.radians(yaw_pitch.x)) * (float)Math.Cos(glm.radians(yaw_pitch.y));
 
             cameraDirection = glm.normalize(direction);
-            UpdateMatrices();
         }
 
         public void ZoomView(float z)
@@ -285,7 +277,6 @@ namespace TT_Lab.Rendering
 
             z *= -0.01f;
             cameraZoom = (z + cameraZoom).Clamp(10.0f, 100.0f);
-            UpdateMatrices();
         }
 
         public void Move(List<Keys> keysPressed)
@@ -317,7 +308,6 @@ namespace TT_Lab.Rendering
                         break;
                 }
             }
-            UpdateMatrices();
         }
 
         public void Unbind()
@@ -376,7 +366,7 @@ namespace TT_Lab.Rendering
             colorTexture.Bind();
             GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgba16f, width, height, true);
             alphaTexture.Bind();
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.R16f, width, height, true);
+            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgba16f, width, height, true);
         }
     }
 }

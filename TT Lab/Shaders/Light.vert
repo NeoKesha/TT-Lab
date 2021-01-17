@@ -12,6 +12,7 @@ uniform vec3 DiffuseMaterial;
 out vec3 EyespaceNormal;
 out vec4 Color;
 out vec3 Diffuse;
+out float Depth;
 
 void main()
 {
@@ -19,4 +20,5 @@ void main()
     gl_Position = Projection * View * Model * vec4(in_Position, 1.0);
     Color = in_Color;
     Diffuse = DiffuseMaterial;
+    Depth = gl_Position.z;
 }

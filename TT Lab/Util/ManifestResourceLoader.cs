@@ -23,7 +23,7 @@ namespace TT_Lab.Util
             UriBuilder uri = new UriBuilder(assemblyLocation);
             string path = Uri.UnescapeDataString(uri.Path);
 
-            return Path.Combine(Path.GetDirectoryName(path), pathToFile);
+            return Path.Combine(Path.GetDirectoryName(path)!, pathToFile);
         }
     }
 }

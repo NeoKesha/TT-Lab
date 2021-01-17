@@ -61,12 +61,7 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Glcontrol.MakeCurrent();
             MaterialViewer.Scene?.Delete();
 
-            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GLHost.ActualWidth, (float)MaterialViewer.GLHost.ActualHeight,
-                "LightTexture",
-                (shd, s) =>
-                {
-                    s.DefaultShaderUniforms();
-                });
+            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GLHost.ActualWidth, (float)MaterialViewer.GLHost.ActualHeight);
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
 

@@ -14,7 +14,8 @@ namespace TT_Lab.Rendering.Shaders
     {
         private readonly Shader vertexShader;
         private readonly Shader fragmentShader;
-        private Action uniformSetAction;
+        private static readonly Shader weightLibShader;
+        private Action? uniformSetAction;
 
         /// <summary>
         /// Creates the shader program.
@@ -32,6 +33,7 @@ namespace TT_Lab.Rendering.Shaders
             shaderProgramObject = (uint)GL.CreateProgram();
             GL.AttachShader((int)shaderProgramObject, vertexShader.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
+            GL.AttachShader((int)shaderProgramObject, weightLibShader.ShaderObject);
 
             //  Now we can link the program.
             GL.LinkProgram(shaderProgramObject);
@@ -42,6 +44,11 @@ namespace TT_Lab.Rendering.Shaders
             {
                 throw new ShaderCompilationException(string.Format("Failed to link shader program with ID {0}.", shaderProgramObject), GetInfoLog());
             }
+        }
+
+        static ShaderProgram()
+        {
+            weightLibShader = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\WeightCalc.frag"));
         }
 
         public void SetUniforms()

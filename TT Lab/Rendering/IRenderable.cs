@@ -11,7 +11,6 @@ namespace TT_Lab.Rendering
         Scene? Parent { get; set; }
         void PreRender() { }
         void Render();
-        void RenderTransparent() { }
         void PostRender() { }
     }
 }

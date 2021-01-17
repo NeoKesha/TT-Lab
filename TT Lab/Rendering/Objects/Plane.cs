@@ -88,10 +88,6 @@ namespace TT_Lab.Rendering.Objects
 
         public void Render()
         {
-        }
-
-        public void RenderTransparent()
-        {
             Bind();
             Parent?.SetPVMNShaderUniforms(shader);
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

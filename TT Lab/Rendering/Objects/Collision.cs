@@ -41,14 +41,6 @@ namespace TT_Lab.Rendering.Objects
             collisionBuffer.Delete();
         }
 
-        public void PostRender()
-        {
-        }
-
-        public void PreRender()
-        {
-        }
-
         public void Render()
         {
             Bind();

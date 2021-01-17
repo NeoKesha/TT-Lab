@@ -1,8 +1,15 @@
 #version 450 core
-in vec4 pass_Color;
+in vec4 passColor;
+in float Depth;
 
-out vec4 out_Color;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out float alpha;
+
+float GetWeight(float z, vec4 color);
 
 void main(void) {
-	out_Color = pass_Color;
+	float weight = GetWeight(Depth, passColor);
+
+	FragColor = vec4(passColor.rgb * passColor.a, passColor.a) * weight;
+    alpha = weight;
 }

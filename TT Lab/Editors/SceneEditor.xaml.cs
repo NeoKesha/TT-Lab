@@ -44,7 +44,9 @@ namespace TT_Lab.Editors
         public Scene Scene;
         public GLControl Glcontrol;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public SceneEditor()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             InitializeComponent();
 
@@ -107,12 +109,12 @@ namespace TT_Lab.Editors
             }
         }
 
-        private void Glcontrol_MouseWheel(Object sender, System.Windows.Forms.MouseEventArgs e)
+        private void Glcontrol_MouseWheel(Object? sender, System.Windows.Forms.MouseEventArgs e)
         {
             Scene?.ZoomView(e.Delta);
         }
 
-        private void Glcontrol_KeyUp(Object sender, KeyEventArgs e)
+        private void Glcontrol_KeyUp(Object? sender, KeyEventArgs e)
         {
             if (pressedKeys.Contains(e.KeyCode))
             {
@@ -120,7 +122,7 @@ namespace TT_Lab.Editors
             }
         }
 
-        private void Glcontrol_KeyDown(Object sender, KeyEventArgs e)
+        private void Glcontrol_KeyDown(Object? sender, KeyEventArgs e)
         {
             if (!pressedKeys.Contains(e.KeyCode))
             {
@@ -128,7 +130,7 @@ namespace TT_Lab.Editors
             }
         }
 
-        private void Glcontrol_MouseClick(Object sender, MouseEventArgs e)
+        private void Glcontrol_MouseClick(Object? sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && ContextMenu.Items.Count != 0)
             {
@@ -136,7 +138,7 @@ namespace TT_Lab.Editors
             }
         }
 
-        private void Glcontrol_MouseMove(Object sender, System.Windows.Forms.MouseEventArgs e)
+        private void Glcontrol_MouseMove(Object? sender, System.Windows.Forms.MouseEventArgs e)
         {
             var curMousePos = e.Location;
             if (e.Button == MouseButtons.Middle)
@@ -146,7 +148,7 @@ namespace TT_Lab.Editors
             mousePos = curMousePos;
         }
 
-        private void Glcontrol_Init(Object sender, EventArgs e)
+        private void Glcontrol_Init(Object? sender, EventArgs e)
         {
             Glcontrol.MakeCurrent();
             GL.ClearColor(System.Drawing.Color.LightGray);
@@ -167,7 +169,7 @@ namespace TT_Lab.Editors
             Glcontrol.SwapBuffers();
         }
 
-        private void OnRender(Object sender, EventArgs e)
+        private void OnRender(Object? sender, EventArgs e)
         {
             Glcontrol.Invalidate();
         }
@@ -179,8 +181,10 @@ namespace TT_Lab.Editors
 
         private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            SceneEditor control = d as SceneEditor;
-            control.SceneHeader.Header = e.NewValue;
+            if (d is SceneEditor control)
+            {
+                control.SceneHeader.Header = e.NewValue;
+            }
         }
     }
 }

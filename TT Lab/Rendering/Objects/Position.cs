@@ -43,14 +43,14 @@ namespace TT_Lab.Rendering.Objects
 
         public void Render()
         {
-            GL.Begin(PrimitiveType.LineLoop);
+            /*GL.Begin(PrimitiveType.LineLoop);
             GL.LineWidth(20.0f);
             GL.Color3(255, 0, 0);
             GL.Vertex4(pos.X, pos.Y, pos.Z - 1, pos.W);
             GL.Vertex4(pos.X + 1, pos.Y, pos.Z, pos.W);
             GL.Vertex4(pos.X, pos.Y + 1, pos.Z, pos.W);
             GL.Vertex4(pos.X - 1, pos.Y, pos.Z + 1, pos.W);
-            GL.End();
+            GL.End();*/
         }
 
         public void Unbind()
