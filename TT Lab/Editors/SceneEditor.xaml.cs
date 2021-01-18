@@ -151,7 +151,6 @@ namespace TT_Lab.Editors
         private void Glcontrol_Init(Object? sender, EventArgs e)
         {
             Glcontrol.MakeCurrent();
-            GL.ClearColor(System.Drawing.Color.LightGray);
             RendererInit?.Invoke(sender, e);
         }
 
@@ -159,6 +158,7 @@ namespace TT_Lab.Editors
         {
             Glcontrol.MakeCurrent();
             GL.Viewport(Glcontrol.Location, Glcontrol.Size);
+            GL.ClearColor(System.Drawing.Color.LightGray);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Scene?.PreRender();

@@ -12,6 +12,7 @@ namespace TT_Lab.Rendering.Objects
     public class Position : IRenderable
     {
         public Scene? Parent { get; set; }
+        public float Opacity { get; set; } = 1.0f;
 
         private uint id;
         private int layid;

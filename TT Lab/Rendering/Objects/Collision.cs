@@ -16,6 +16,7 @@ namespace TT_Lab.Rendering.Objects
     public class Collision : IRenderable
     {
         public Scene? Parent { get; set; }
+        public float Opacity { get; set; } = 1.0f;
 
         IndexedBufferArray collisionBuffer;
 

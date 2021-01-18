@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
@@ -23,6 +24,8 @@ namespace TT_Lab.Rendering
         private Scene? parent = null;
 
         public Scene? Parent { get => parent; set => parent = value; }
+        public float Opacity { get; set; } = 1.0f;
+        public IRenderer Renderer { get; private set; }
 
         // Rendering matrices
         private mat4 projectionMat;
@@ -39,15 +42,11 @@ namespace TT_Lab.Rendering
 
         // Scene rendering
         private readonly ShaderProgram? viewModelShader;
-        private readonly ShaderProgram resultImageShader;
         private readonly List<IRenderable> objects = new List<IRenderable>();
         private readonly TextureBuffer colorTextureNT = new TextureBuffer(TextureTarget.Texture2DMultisample);
-        private readonly TextureBuffer colorTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
-        private readonly TextureBuffer alphaTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebufferNT = new FrameBuffer();
         private readonly RenderBuffer depthRenderbuffer = new RenderBuffer();
-        private readonly FrameBuffer framebuffer = new FrameBuffer();
-
+        
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -56,25 +55,19 @@ namespace TT_Lab.Rendering
         /// <param name="height">Viewport render height</param>
         private Scene(float width, float height)
         {
+            Preferences.PreferenceChanged += Preferences_PreferenceChanged;
             resolution.x = width;
             resolution.y = height;
-            projectionMat = glm.infinitePerspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f);
+            projectionMat = glm.perspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();
-            resultImageShader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.frag"));
-            // Transparent objects rendering setup
-            ReallocateFramebuffer((int)width, (int)height);
+            ReallocateFramebuffer(1, 1);
             framebufferNT.Bind();
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
-            framebuffer.Bind();
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTexture.Buffer, 0);
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment1, TextureTarget.Texture2DMultisample, alphaTexture.Buffer, 0);
-            DrawBuffersEnum[] attachments = new DrawBuffersEnum[2] { DrawBuffersEnum.ColorAttachment0, DrawBuffersEnum.ColorAttachment1 };
-            GL.DrawBuffers(2, attachments);
-            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
+            SetupTransparencyRender();
         }
 
         /// <summary>
@@ -182,44 +175,15 @@ namespace TT_Lab.Rendering
             GL.Enable(EnableCap.Multisample);
             GL.DepthMask(true);
             GL.DepthFunc(DepthFunction.Lequal);
-            // Clear color
+            // Opaque rendering color
             framebufferNT.Bind();
             Bind();
             float[] clearColorNT = System.Drawing.Color.LightGray.ToArray();
             float clearDepth = 1f;
             GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
             GL.ClearBuffer(ClearBuffer.Depth, 0, ref clearDepth);
-            // Transparency setup
-            framebuffer.Bind();
-            Bind();
-            float[] clearColor = { 0f, 0f, 0f, 0f };
-            float clearAlpha = 1f;
-            GL.ClearBuffer(ClearBuffer.Color, 0, clearColor);
-            GL.ClearBuffer(ClearBuffer.Color, 1, ref clearAlpha);
-            GL.MemoryBarrier(MemoryBarrierFlags.FramebufferBarrierBit);
-            GL.DepthMask(false);
-            GL.DepthFunc(DepthFunction.Lequal);
-            GL.Disable(EnableCap.CullFace);
-            GL.BlendFunc(0, BlendingFactorSrc.One, BlendingFactorDest.One);
-            GL.BlendFunc(1, BlendingFactorSrc.Zero, BlendingFactorDest.OneMinusSrcAlpha);
-            // Render objects with transparency
-            foreach (var @object in objects)
-            {
-                @object.Render();
-            }
-            // Render result image
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            GL.BlendFunc(BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.MemoryBarrier(MemoryBarrierFlags.TextureFetchBarrierBit);
-            resultImageShader.Bind();
-            GL.BindTextureUnit(0, colorTexture.Buffer);
-            GL.Uniform1(0, 0);
-            GL.BindTextureUnit(1, alphaTexture.Buffer);
-            GL.Uniform1(1, 1);
-            GL.Enable(EnableCap.Multisample);
-            GL.Disable(EnableCap.DepthTest);
-            GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
+            // Transparency rendering
+            Renderer.Render(objects);
 
             // Reset modes
             GL.CullFace(CullFaceMode.Back);
@@ -306,6 +270,24 @@ namespace TT_Lab.Rendering
                     case Keys.D:
                         cameraPosition += camSp * glm.cross(cameraDirection, cameraUp);
                         break;
+                    case Keys.D1:
+                        Preferences.SetPreference(Preferences.TranslucencyMethod, RenderSwitches.TranslucencyMethod.WBOIT);
+                        break;
+                    case Keys.D2:
+                        Preferences.SetPreference(Preferences.TranslucencyMethod, RenderSwitches.TranslucencyMethod.DDP);
+                        break;
+                    case Keys.Add:
+                        foreach (var obj in objects)
+                        {
+                            obj.Opacity = Math.Clamp(obj.Opacity + 0.1f, 0f, 1f);
+                        }
+                        break;
+                    case Keys.Subtract:
+                        foreach (var obj in objects)
+                        {
+                            obj.Opacity = Math.Clamp(obj.Opacity - 0.1f, 0f, 1f);
+                        }
+                        break;
                 }
             }
         }
@@ -317,19 +299,17 @@ namespace TT_Lab.Rendering
 
         public void Delete()
         {
-            resultImageShader.Delete();
             viewModelShader?.Delete();
             colorTextureNT.Delete();
-            colorTexture.Delete();
-            alphaTexture.Delete();
             framebufferNT.Delete();
-            framebuffer.Delete();
             depthRenderbuffer.Delete();
+            Renderer.Delete();
             foreach (var @object in objects)
             {
                 @object.Delete();
             }
             objects.Clear();
+            Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
         }
 
         public void PreRender()
@@ -350,7 +330,7 @@ namespace TT_Lab.Rendering
 
         private void UpdateMatrices()
         {
-            projectionMat = glm.infinitePerspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f);
+            projectionMat = glm.perspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();
@@ -358,15 +338,37 @@ namespace TT_Lab.Rendering
 
         private void ReallocateFramebuffer(int width, int height)
         {
-            int numOfSamples = 8;
             colorTextureNT.Bind();
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgb16f, width, height, true);
+            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, 4, PixelInternalFormat.Rgb10A2, width, height, true);
             depthRenderbuffer.Bind();
-            GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, numOfSamples, RenderbufferStorage.DepthComponent, width, height);
-            colorTexture.Bind();
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgba16f, width, height, true);
-            alphaTexture.Bind();
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgba16f, width, height, true);
+            GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, 4, RenderbufferStorage.DepthComponent, width, height);
+            Renderer?.ReallocateFramebuffer(width, height);
+        }
+
+        private void Preferences_PreferenceChanged(Object? sender, Preferences.PreferenceChangedArgs e)
+        {
+            if (e.PreferenceName == Preferences.TranslucencyMethod)
+            {
+                SetupTransparencyRender();
+            }
+        }
+
+        private void SetupTransparencyRender()
+        {
+            var method = Preferences.GetPreference<RenderSwitches.TranslucencyMethod>(Preferences.TranslucencyMethod);
+            Renderer?.Delete();
+            switch (method)
+            {
+                case RenderSwitches.TranslucencyMethod.WBOIT:
+                    Renderer = new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y);
+                    break;
+                case RenderSwitches.TranslucencyMethod.DDP:
+                default:
+                    Renderer = new DDPRenderer(resolution.x, resolution.y);
+                    break;
+            }
+            Renderer.Scene = this;
+            GL.BindFramebuffer(FramebufferTarget.FramebufferExt, 0);
         }
     }
 }

@@ -15,6 +15,8 @@ namespace TT_Lab.Rendering.Shaders
         private readonly Shader vertexShader;
         private readonly Shader fragmentShader;
         private static readonly Shader weightLibShader;
+        private static readonly Shader shadeLibShaderVert;
+        private static readonly Shader shadeLibShaderFrag;
         private Action? uniformSetAction;
 
         /// <summary>
@@ -33,7 +35,10 @@ namespace TT_Lab.Rendering.Shaders
             shaderProgramObject = (uint)GL.CreateProgram();
             GL.AttachShader((int)shaderProgramObject, vertexShader.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
+            // Library shaders
             GL.AttachShader((int)shaderProgramObject, weightLibShader.ShaderObject);
+            GL.AttachShader((int)shaderProgramObject, shadeLibShaderVert.ShaderObject);
+            GL.AttachShader((int)shaderProgramObject, shadeLibShaderFrag.ShaderObject);
 
             //  Now we can link the program.
             GL.LinkProgram(shaderProgramObject);
@@ -49,6 +54,8 @@ namespace TT_Lab.Rendering.Shaders
         static ShaderProgram()
         {
             weightLibShader = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\WeightCalc.frag"));
+            shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.vert"));
+            shadeLibShaderFrag = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));
         }
 
         public void SetUniforms()
@@ -136,6 +143,14 @@ namespace TT_Lab.Rendering.Shaders
             GL.UniformMatrix4(GetUniformLocation(uniformName), 1, false, m);
         }
 
+        public void SetTextureUniform(string uniformName, TextureTarget target, uint texId, uint texUnit)
+        {
+            GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + texUnit));
+            GL.BindTexture(target, texId);
+            GL.Uniform1(GetUniformLocation(uniformName), (int)texUnit);
+            GL.ActiveTexture(TextureUnit.Texture0);
+        }
+
         public int GetUniformLocation(string uniformName)
         {
             //  If we don't have the uniform name in the dictionary, get it's 
@@ -143,7 +158,6 @@ namespace TT_Lab.Rendering.Shaders
             if (uniformNamesToLocations.ContainsKey(uniformName) == false)
             {
                 uniformNamesToLocations[uniformName] = GL.GetUniformLocation(shaderProgramObject, uniformName);
-                //  TODO: if it's not found, we should probably throw an exception.
             }
 
             //  Return the uniform location.

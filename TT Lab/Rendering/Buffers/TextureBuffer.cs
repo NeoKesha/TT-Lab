@@ -11,7 +11,7 @@ namespace TT_Lab.Rendering.Buffers
     public class TextureBuffer : IGLObject
     {
 
-        private uint textureBuffer;
+        private uint textureBuffer = 0;
         private TextureTarget textureTarget;
 
         public TextureBuffer(TextureTarget target, int width, int height, Bitmap data)
@@ -54,7 +54,11 @@ namespace TT_Lab.Rendering.Buffers
 
         public void Delete()
         {
-            GL.DeleteTexture(textureBuffer);
+            if (textureBuffer != 0)
+            {
+                GL.DeleteTexture(textureBuffer);
+                textureBuffer = 0;
+            }
         }
 
         public void Unbind()

@@ -17,10 +17,11 @@ namespace TT_Lab.Rendering.Objects
     public class Plane : IRenderable
     {
         public Scene? Parent { get; set; }
+        public float Opacity { get; set; } = 1.0f;
 
         IndexedBufferArray planeBuffer;
         TextureBuffer? texture;
-        ShaderProgram shader;
+        //ShaderProgram shader;
 
         public Plane() : this(new vec3())
         {
@@ -50,8 +51,8 @@ namespace TT_Lab.Rendering.Objects
                     new Twinsanity.TwinsanityInterchange.Common.Vector3(0, 1, 0)
                 });
 
-            shader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.vert"),
-                ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));
+            /*shader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.vert"),
+                ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));*/
         }
 
         public Plane(MaterialData material) : this()
@@ -74,14 +75,18 @@ namespace TT_Lab.Rendering.Objects
 
         public void Bind()
         {
-            texture?.Bind();
+            //texture?.Bind();
+            if (texture != null)
+            {
+                Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 3);
+            }
             planeBuffer.Bind();
-            shader.Bind();
+            //shader.Bind();
         }
 
         public void Delete()
         {
-            shader.Delete();
+            //shader.Delete();
             texture?.Delete();
             planeBuffer.Delete();
         }
@@ -89,14 +94,14 @@ namespace TT_Lab.Rendering.Objects
         public void Render()
         {
             Bind();
-            Parent?.SetPVMNShaderUniforms(shader);
+            //Parent?.SetPVMNShaderUniforms(shader);
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Unbind();
         }
 
         public void Unbind()
         {
-            shader.Unbind();
+            //shader.Unbind();
             texture?.Unbind();
             planeBuffer.Unbind();
         }

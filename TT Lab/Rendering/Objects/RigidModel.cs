@@ -15,10 +15,11 @@ namespace TT_Lab.Rendering.Objects
     public class RigidModel : IRenderable
     {
         public Scene? Parent { get; set; }
+        public float Opacity { get; set; } = 1.0f;
 
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         List<TextureBuffer> textureBuffers = new List<TextureBuffer>();
-        ShaderProgram shader;
+        //ShaderProgram shader;
 
         public RigidModel(RigidModelData rigid)
         {
@@ -49,13 +50,13 @@ namespace TT_Lab.Rendering.Objects
                         }).ToList()));
                 }
             }
-            shader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.vert"),
-                ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));
+            /*shader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.vert"),
+                ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));*/
         }
 
         public void Bind()
         {
-            shader.Bind();
+            //shader.Bind();
         }
 
         public void Delete()
@@ -81,27 +82,27 @@ namespace TT_Lab.Rendering.Objects
         public void Render()
         {
             Bind();
-            Parent?.SetPVMNShaderUniforms(shader);
+            //Parent?.SetPVMNShaderUniforms(shader);
             for (var i = 0; i < modelBuffers.Count; ++i)
             {
                 if (textureBuffers.Count != 0)
                 {
-                    textureBuffers[i].Bind();
+                    Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, textureBuffers[i].Buffer, 3);
                 }
                 modelBuffers[i].Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffers[i].Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-                if (textureBuffers.Count != 0)
+                /*if (textureBuffers.Count != 0)
                 {
                     textureBuffers[i].Unbind();
-                }
+                }*/
                 modelBuffers[i].Unbind();
             }
             Unbind();
         }
-
+        
         public void Unbind()
         {
-            shader.Unbind();
+            //shader.Unbind();
         }
     }
 }

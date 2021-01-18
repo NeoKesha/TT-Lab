@@ -29,6 +29,7 @@ namespace TT_Lab
 #endif
             InitializeComponent();
             Log.SetLogBox(LogText);
+            Preferences.Load();
 
             About.Command = new OpenDialogueCommand(typeof(TT_Lab.About));
             CreateProject.Command = new OpenDialogueCommand(typeof(TT_Lab.ProjectCreationWizard));
@@ -100,6 +101,7 @@ namespace TT_Lab
         private void MainWindow_Closed(Object sender, EventArgs e)
         {
             Properties.Settings.Default.Save();
+            Preferences.Save();
         }
 
         private void CloseProject_Click(object sender, RoutedEventArgs e)

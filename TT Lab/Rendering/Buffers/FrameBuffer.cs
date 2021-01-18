@@ -9,7 +9,7 @@ namespace TT_Lab.Rendering.Buffers
 {
     public class FrameBuffer : IGLObject
     {
-        private uint frameBuffer;
+        private uint frameBuffer = 0;
 
         public FrameBuffer()
         {
@@ -23,7 +23,11 @@ namespace TT_Lab.Rendering.Buffers
 
         public void Delete()
         {
-            GL.DeleteFramebuffer(frameBuffer);
+            if (frameBuffer != 0)
+            {
+                GL.DeleteFramebuffer(frameBuffer);
+                frameBuffer = 0;
+            }
         }
 
         public void Unbind()
