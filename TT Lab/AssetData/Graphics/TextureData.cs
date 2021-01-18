@@ -68,7 +68,6 @@ namespace TT_Lab.AssetData.Graphics
                 tmpBmp.Dispose();
                 BitsHandle.Free();
             }
-            Export();
         }
 
         public override ITwinItem Export()
