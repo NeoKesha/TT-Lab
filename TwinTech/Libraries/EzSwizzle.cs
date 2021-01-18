@@ -248,14 +248,20 @@ namespace Twinsanity.Libraries
 		public static GIFTag ColorsToTag(List<Color> colors)
 		{
 			GIFTag tag = new GIFTag();
+			tag.NREG = 16;
+			tag.NLOOP = (ushort)(colors.Count / 4);
+			tag.REGS = new REGSEnum[16];
+			tag.FLG = GIFModeEnum.IMAGE;
 			tag.Data = new List<RegOutput>();
 			for (var i = 0; i < colors.Count - 3; i += 4)
 			{
 				UInt64 long1 = colors[i + 1].ToABGR() << 32 | colors[i + 0].ToABGR();
 				UInt64 long2 = colors[i + 3].ToABGR() << 32 | colors[i + 2].ToABGR();
 				RegOutput reg1 = new RegOutput();
+				reg1.REG = REGSEnum.HWREG;
 				reg1.Output = long1;
 				RegOutput reg2 = new RegOutput();
+				reg2.REG = REGSEnum.HWREG;
 				reg2.Output = long2;
 				tag.Data.Add(reg2);
 				tag.Data.Add(reg1);

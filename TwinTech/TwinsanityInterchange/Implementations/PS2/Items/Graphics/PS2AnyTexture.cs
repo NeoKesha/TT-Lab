@@ -210,6 +210,25 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     basePointer += (int)Math.Ceiling(mipWidth * mipHeight / 64.0f);
                 }
             }
+            GIFTag headerTag = new GIFTag();
+            headerTag.REGS = new REGSEnum[16];
+            headerTag.REGS[0] = REGSEnum.ApD;
+            headerTag.NLOOP = 3;
+            headerTag.NREG = 1;
+            headerTag.FLG = GIFModeEnum.PACKED;
+            headerTag.Data = new List<RegOutput>();
+            RegOutput head1 = new RegOutput();
+            head1.REG = REGSEnum.ApD;
+            head1.Address = 81;
+            RegOutput head2 = new RegOutput();
+            head2.REG = REGSEnum.ApD;
+            head2.Address = 82;
+            RegOutput head3 = new RegOutput();
+            head3.REG = REGSEnum.ApD;
+            head3.Address = 83;
+            headerTag.Data.Add(head1);
+            headerTag.Data.Add(head2);
+            headerTag.Data.Add(head3);
             GIFTag tag;
             if (format == TexturePixelFormat.PSMCT32)
             {
@@ -232,6 +251,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     ++index;
                 }
                 var rr = ResolutionMapper[$"[{width}, {height}]"];
+                ulong high = (ulong)rr.Value;
+                ulong low = (ulong)rr.Key;
+                head2.Output = (high << 32) | (low);
                 byte[] rawTextureData = new byte[rr.Value * 256];
                 EzSwizzle.writeTexPSMT8To(MipLevelsTBP[0], TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
                 if (MipLevels > 1)
@@ -262,7 +284,21 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             using (MemoryStream stream = new MemoryStream())
             {
                 BinaryWriter writer = new BinaryWriter(stream);
+                writer.Write((UInt64)1152921504606846979); //DMA tag say hi
+                VIFCode code1 = new VIFCode();
+                code1.OP = VIFCodeEnum.NOP;
+                code1.Write(writer);
+                VIFCode code2 = new VIFCode();
+                code2.OP = VIFCodeEnum.DIRECT;
+                code2.Immediate = (ushort)((headerTag.GetLength() + tag.GetLength()) / 16);
+                code2.Write(writer);
+                var pos1 = stream.Position;
+                headerTag.Write(writer);
+                var pos2 = stream.Position;
+                var len1 = pos2 - pos1;
                 tag.Write(writer);
+                var pos3 = stream.Position;
+                var len2 = pos3 - pos2;
                 TextureData = stream.ToArray();
             }
         }

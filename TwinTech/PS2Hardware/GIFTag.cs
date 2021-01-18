@@ -200,7 +200,7 @@ namespace Twinsanity.PS2Hardware
             UInt64 high = 0;
             for (int i = 0; i < 16; ++i)
             {
-                high |= (UInt64)REGS[REGS.Length - i] & 0b1111;
+                high |= (UInt64)REGS[REGS.Length - i - 1] & 0b1111;
                 high <<= 4;
             }
             writer.Write(high);
