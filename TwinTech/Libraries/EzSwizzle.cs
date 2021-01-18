@@ -116,6 +116,24 @@ namespace Twinsanity.Libraries
 			}
 			return destination;
 		}
+		public static byte[] writeTexPSMT8To(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, byte[] destination)
+		{
+			dbw >>= 1;
+			int src = 0;
+			int startBlockPos = dbp * 64;
+
+			for (int y = dsay; y < dsay + rrh; y++)
+			{
+				for (int x = dsax; x < dsax + rrw; x++)
+				{
+					int cb = 0;
+					int dst = startBlockPos + MapCoords8(x, y, dbw, ref cb);
+					destination[4 * dst + cb] = source[src];
+					src++;
+				}
+			}
+			return destination;
+		}
 
 		public static byte[] writeTexPSMCT16(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
@@ -230,10 +248,9 @@ namespace Twinsanity.Libraries
 		public static GIFTag ColorsToTag(List<Color> colors)
 		{
 			GIFTag tag = new GIFTag();
-			List<UInt64> data = tag.Data.Select(d => d.Output).ToList();
-			for (var i = 0; i < data.Count - 3; i += 4)
+			tag.Data = new List<RegOutput>();
+			for (var i = 0; i < colors.Count - 3; i += 4)
 			{
-
 				UInt64 long1 = colors[i + 1].ToABGR() << 32 | colors[i + 0].ToABGR();
 				UInt64 long2 = colors[i + 3].ToABGR() << 32 | colors[i + 2].ToABGR();
 				RegOutput reg1 = new RegOutput();

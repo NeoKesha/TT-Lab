@@ -1,7 +1,9 @@
-﻿using System;
+﻿using System.Text.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.Libraries;
@@ -15,6 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyTexture : BaseTwinItem, ITwinTexture
     {
+        static Dictionary<string, KeyValuePair<Int32, Int32>> ResolutionMapper;
         public UInt32 HeaderSignature { get; set; }
         public UInt16 ImageWidthPower { get; set; }
         public UInt16 ImageHeightPower { get; set; }
@@ -37,6 +40,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public PS2AnyTexture()
         {
+            if (ResolutionMapper == null)
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"TextureResolutionMapper.json"), FileMode.Open, FileAccess.Read))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    ResolutionMapper = JsonSerializer.Deserialize<Dictionary<string, KeyValuePair<Int32, Int32>>>(reader.ReadToEnd());
+                }
+            }
             UnusedMetadata = new byte[32];
             HeaderSignature = 0xbbcccdcd;
             DestinationTextureFormat = TexturePixelFormat.PSMCT32;
@@ -171,46 +185,43 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public void FromBitmap(List<Color> image, Int32 width, byte mips, TextureFunction fun, TexturePixelFormat format)
         {
-            int widthWithMips = (mips == 1) ? width : width * 2;
-            int height = image.Count / widthWithMips;
+            int height = image.Count / width;
             TexFun = fun;
             TextureFormat = format;
             MipLevels = mips;
             TextureBufferWidth = (int)Math.Ceiling(width / 64.0f);
             ImageWidthPower = (ushort)Math.Log2(width);
             ImageHeightPower = (ushort)Math.Log2(height);
-            ClutBufferBasePointer = (format == TexturePixelFormat.PSMCT32) ? 0 : (int)Math.Ceiling(widthWithMips * height / 64.0f);
+            ClutBufferBasePointer = 0;
             //this is probably not bytes but whatever
             UnkBytes2[5] = UnkBytes3[0] = (width == 256) ? 0 : (byte)Math.Min(width, height);
             UnkBytes2[6] = UnkBytes3[1] = (width == 256) ? 2 : 0;
-            var textureBlocks = (int)Math.Ceiling(width * height / 64.0f);
-            var textureWithMipsBlocks = (int)Math.Ceiling(widthWithMips * height / 64.0f);
-            if (MipLevels > 1)
             {
                 var mipWidth = width;
                 var mipHeight = height;
                 var basePointer = 0;
-                for (var i = 0; i < MipLevels - 1; ++i)
+                for (var i = 0; i < MipLevels; ++i)
                 {
-                    mipWidth /= 2;
-                    mipHeight /= 2;
-                    basePointer += (int)Math.Ceiling(mipWidth * mipHeight / 64.0f);
                     MipLevelsTBP[i] = basePointer;
                     MipLevelsTBW[i] = (Byte)Math.Ceiling(mipWidth / 64.0f);
+                    mipWidth /= 2;
+                    mipHeight /= 2;
+                    ClutBufferBasePointer = basePointer + 4;
+                    basePointer += (int)Math.Ceiling(mipWidth * mipHeight / 64.0f);
                 }
             }
             GIFTag tag;
             if (format == TexturePixelFormat.PSMCT32)
             {
-                tag = EzSwizzle.ColorsToTag(Colors);
+                tag = EzSwizzle.ColorsToTag(image);
             } 
             else
             {
-                byte[] textureData = new byte[widthWithMips * height];
+                byte[] textureData = new byte[width * height];
                 byte[] paletteData = new byte[256 * 4];
                 Dictionary<Color, Byte> palette = new Dictionary<Color, Byte>();
                 var index = 0;
-                foreach (var c in Colors)
+                foreach (var c in image)
                 {
                     if (!palette.ContainsKey(c))
                     {
@@ -220,14 +231,32 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     textureData[index] = palette[c];
                     ++index;
                 }
-
-                byte[] rawTextureData1 = EzSwizzle.writeTexPSMT8(0, TextureBufferWidth, 0, 0, width, height, textureData);
-                byte[] rawTextureData2 = EzSwizzle.writeTexPSMT8(0, 1, 0, 0, 16, 16, paletteData);
-                int clutSize = (int)Math.Ceiling(rawTextureData2.Length / 64.0f);
-                byte[] rawTextureData = new byte[ClutBufferBasePointer * 64 + clutSize * 64];
-                Array.Copy(rawTextureData1, 0, rawTextureData, 0, rawTextureData1.Length);
-                Array.Copy(rawTextureData2, 0, rawTextureData, ClutBufferBasePointer * 64, rawTextureData2.Length);
-                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, width, height, rawTextureData); // what's difference between RRW and width
+                var rr = ResolutionMapper[$"[{width}, {height}]"];
+                byte[] rawTextureData = new byte[rr.Value * 256];
+                EzSwizzle.writeTexPSMT8To(MipLevelsTBP[0], TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
+                if (MipLevels > 1)
+                {
+                    var mipWidth = width;
+                    var mipHeight = height;
+                    var prevLevel = textureData;
+                    for (var i = 1; i < MipLevels; ++i)
+                    {
+                        mipWidth /= 2;
+                        mipHeight /= 2;
+                        byte[] mipData = new byte[mipWidth * mipHeight];
+                        for (var x = 0; x < mipWidth; ++x)
+                        {
+                            for (var y = 0; y < mipHeight; ++y)
+                            {
+                                mipData[x + y * mipWidth] = prevLevel[x * 2 + y * 2 * (mipWidth * 2)];
+                            }
+                        }
+                        EzSwizzle.writeTexPSMT8To(MipLevelsTBP[i], MipLevelsTBW[i], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
+                        prevLevel = mipData;
+                    }
+                }
+                EzSwizzle.writeTexPSMT8To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);
+                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, rr.Key, rr.Value, rawTextureData); // what's difference between RRW and width
                 tag = EzSwizzle.ColorsToTag(EzSwizzle.BytesToColors(gifData));
             }
             using (MemoryStream stream = new MemoryStream())

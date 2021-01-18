@@ -73,7 +73,6 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export()
         {
-            Bitmap bmpWithMips = GenerateMipsForBitmap(Bitmap);
             PS2AnyTexture texture = new PS2AnyTexture();
             var fun = TextureFunction.MODULATE;
             var format = (Bitmap.Width == 256) ? TexturePixelFormat.PSMCT32 : TexturePixelFormat.PSMT8;
@@ -81,7 +80,7 @@ namespace TT_Lab.AssetData.Graphics
             byte mips = (Bitmap.Width == 256 || Bitmap.Width <= 16) ? 1 : (byte)((int)Math.Log2(Bitmap.Width) - 3);
             if (format == TexturePixelFormat.PSMCT32)
             {
-                var bits = bmpWithMips.LockBits(new Rectangle(0, 0, bmpWithMips.Width, bmpWithMips.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 unsafe
                 {
                     byte* source = (byte*)bits.Scan0;
@@ -104,7 +103,7 @@ namespace TT_Lab.AssetData.Graphics
             }
             else
             {
-                Bitmap IndexedBitmap = bmpWithMips.Clone(new Rectangle(0, 0, bmpWithMips.Width, bmpWithMips.Height), PixelFormat.Format8bppIndexed);
+                Bitmap IndexedBitmap = Bitmap.Clone(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), PixelFormat.Format8bppIndexed);
                 var bits = IndexedBitmap.LockBits(new Rectangle(0, 0, IndexedBitmap.Width, IndexedBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
                 unsafe
                 {
@@ -117,7 +116,7 @@ namespace TT_Lab.AssetData.Graphics
                             var index = source[0];
                             var color = IndexedBitmap.Palette.Entries[index];
                             tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(color.R, color.G, color.B, color.A));
-                            source += 4;
+                            source += 1;
                         }
                         source = scan + bits.Stride;
                     }
@@ -126,32 +125,6 @@ namespace TT_Lab.AssetData.Graphics
             texture.FromBitmap(tex, Bitmap.Width, mips, fun, format);
 
             return texture;
-        }
-
-        private Bitmap GenerateMipsForBitmap(Bitmap source)
-        {
-            if (source.Width == 256)
-            {
-                return new Bitmap(source);
-            } 
-            else
-            {
-                Bitmap mips = new Bitmap(Bitmap.Width * 2, Bitmap.Height);
-                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(mips);
-                var shift = 0;
-                var mipLevels = (int)Math.Log2(source.Width) - 3;
-                var w = source.Width;
-                var h = source.Height;
-                for (var i = 0; i < mipLevels; ++i)
-                {
-                    g.DrawImage(source, shift, 0,w,h);
-                    shift += w;
-                    w /= 2;
-                    h /= 2;
-                }
-                g.Dispose();
-                return mips;
-            }
         }
     }
 }

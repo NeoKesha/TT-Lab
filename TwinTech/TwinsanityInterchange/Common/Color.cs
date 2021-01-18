@@ -90,5 +90,29 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             return $"{A} {R} {G} {B}";
         }
+
+        public override Boolean Equals(Object obj)
+        {
+            if (obj is Color)
+            {
+                if (obj == this)
+                {
+                    return true;
+                } 
+                else
+                {
+                    Color other = (Color)obj;
+                    return (other.A == A) && (other.B == B) && (other.G == G) && (other.B == B);
+                }
+            } 
+            else
+            {
+                return false;
+            }
+        }
+        public override Int32 GetHashCode()
+        {
+            return (Int32)ToABGR();
+        }
     }
 }
