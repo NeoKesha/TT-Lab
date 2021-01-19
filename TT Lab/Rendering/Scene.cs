@@ -66,7 +66,7 @@ namespace TT_Lab.Rendering
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();
-            ReallocateFramebuffer(1, 1);
+            ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
             framebufferNT.Bind();
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
@@ -277,24 +277,6 @@ namespace TT_Lab.Rendering
                         break;
                     case Keys.D:
                         cameraPosition += camSp * glm.cross(cameraDirection, cameraUp);
-                        break;
-                    case Keys.D1:
-                        Preferences.SetPreference(Preferences.TranslucencyMethod, RenderSwitches.TranslucencyMethod.WBOIT);
-                        break;
-                    case Keys.D2:
-                        Preferences.SetPreference(Preferences.TranslucencyMethod, RenderSwitches.TranslucencyMethod.DDP);
-                        break;
-                    case Keys.Add:
-                        foreach (var obj in objects)
-                        {
-                            obj.Opacity = Math.Clamp(obj.Opacity + 0.1f, 0f, 1f);
-                        }
-                        break;
-                    case Keys.Subtract:
-                        foreach (var obj in objects)
-                        {
-                            obj.Opacity = Math.Clamp(obj.Opacity - 0.1f, 0f, 1f);
-                        }
                         break;
                 }
             }
