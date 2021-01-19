@@ -26,7 +26,7 @@ namespace TT_Lab.Editors.Graphics
             InitializeComponent();
         }
 
-        public TextureEditor(AssetViewModel texture) : base(texture)
+        public TextureEditor(TextureViewModel texture) : base(texture)
         {
             DataContext = new
             {
@@ -57,28 +57,11 @@ namespace TT_Lab.Editors.Graphics
         {
             TextureViewer.Glcontrol.MakeCurrent();
             TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
-                "LightTexture",
-                (shd, s) =>
-                {
-                    s.DefaultShaderUniforms();
-                },
-                new Dictionary<uint, string>
-                {
-                    { 0, "in_Position" },
-                    { 1, "in_Color" },
-                    { 2, "in_Normal" },
-                    { 3, "in_Texpos" }
-                }
-            );
+                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
             var texPlane = new Plane(((TextureViewModel)viewModel).Texture);
             TextureViewer.Scene.AddRender(texPlane);
-        }
-
-        private bool IsPowerOfTwo(long x)
-        {
-            return (x != 0) && ((x & (x - 1)) == 0);
         }
 
         private void TextureViewer_Drop(Object sender, DragEventArgs e)
@@ -98,6 +81,11 @@ namespace TT_Lab.Editors.Graphics
                 Log.WriteLine("Format not compatible!");
                 e.Effects = DragDropEffects.None;
             }
+        }
+
+        private static bool IsPowerOfTwo(long x)
+        {
+            return (x != 0) && ((x & (x - 1)) == 0);
         }
 
         private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)

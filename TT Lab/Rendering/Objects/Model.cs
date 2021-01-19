@@ -12,6 +12,9 @@ namespace TT_Lab.Rendering.Objects
 {
     public class Model : IRenderable
     {
+        public Scene? Parent { get; set; }
+        public float Opacity { get; set; } = 1.0f;
+
         List<IndexedBufferArray> modelBuffers;
 
         public Model(ModelData model)

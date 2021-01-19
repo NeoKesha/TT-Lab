@@ -20,7 +20,7 @@ namespace TT_Lab.Controls
     /// <summary>
     /// Interaction logic for LabeledDropList.xaml
     /// </summary>
-    public partial class LabeledDropList : UserControl
+    public partial class LabeledDropList : BoundUserControl
     {
 
         [Description("Name of the droplist displayed above."), Category("Common Properties")]
@@ -30,14 +30,12 @@ namespace TT_Lab.Controls
             set { SetValue(DropListNameProperty, value); }
         }
 
-
         [Description("List of dropdown items."), Category("Common Properties")]
         public ObservableCollection<object> Items
         {
             get { return (ObservableCollection<object>)GetValue(ItemsProperty); }
             set { SetValue(ItemsProperty, value); }
         }
-
 
         [Description("Index of the selected item from the dropdown."), Category("Common Properties")]
         public int SelectedIndex
@@ -53,10 +51,32 @@ namespace TT_Lab.Controls
             set { SetValue(SelectedItemProperty, value); }
         }
 
+        public int DisplaySelectedIndex
+        {
+            get { return (int)GetValue(DisplaySelectedIndexProperty); }
+            set { SetValue(DisplaySelectedIndexProperty, value); }
+        }
+
+        public object DisplaySelectedItem
+        {
+            get { return GetValue(DisplaySelectedItemProperty); }
+            set { SetValue(DisplaySelectedItemProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DisplaySelectedItem.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DisplaySelectedItemProperty =
+            DependencyProperty.Register("DisplaySelectedItem", typeof(object), typeof(LabeledDropList),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        // Using a DependencyProperty as the backing store for DisplaySelectedIndex.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DisplaySelectedIndexProperty =
+            DependencyProperty.Register("DisplaySelectedIndex", typeof(int), typeof(LabeledDropList),
+                new FrameworkPropertyMetadata(-1, FrameworkPropertyMetadataOptions.AffectsRender));
+
         // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register("SelectedItem", typeof(object), typeof(LabeledDropList),
-                new FrameworkPropertyMetadata(-1, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnItemChanged)));
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnItemChanged)));
 
         // Using a DependencyProperty as the backing store for SelectedIndex.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedIndexProperty =
@@ -67,7 +87,6 @@ namespace TT_Lab.Controls
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items", typeof(ObservableCollection<object>), typeof(LabeledDropList),
                 new FrameworkPropertyMetadata(new ObservableCollection<object>(), FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnCollectionChanged)));
-
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DropListNameProperty =
@@ -96,21 +115,19 @@ namespace TT_Lab.Controls
         private static void OnIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LabeledDropList control = d as LabeledDropList;
-            control.DropList.SelectedIndex = (int)e.NewValue;
-            if (control.DropList.SelectedIndex != -1)
-            {
-                control.DropList.SelectedItem = control.DropList.Items[control.DropList.SelectedIndex];
-            }
+            control.DisplaySelectedIndex = (int)e.NewValue;
         }
 
         private static void OnItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LabeledDropList control = d as LabeledDropList;
-            control.DropList.SelectedItem = e.NewValue;
-            if (e.NewValue != null)
-            {
-                control.DropList.SelectedIndex = control.DropList.Items.IndexOf(e.NewValue);
-            }
+            control.DisplaySelectedItem = e.NewValue;
+        }
+
+        private void DropList_SelectionChanged(Object sender, SelectionChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(BoundProperty)) return;
+            InvokePropChange(DropList.SelectedItem, SelectedItem);
         }
     }
 }

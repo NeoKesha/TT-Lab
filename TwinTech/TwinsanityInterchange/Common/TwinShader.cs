@@ -15,7 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt32 IntParam { get; set; }
         public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending;
-        private byte AlphaRegSettingsIndex;
+        public byte AlphaRegSettingsIndex;
         public AlphaTest ATest;
         public AlphaTestMethod ATestMethod;
         public byte AlphaValueToBeComparedTo;

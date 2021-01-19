@@ -9,7 +9,7 @@ namespace TT_Lab.Rendering.Shaders
     [Serializable]
     public class ShaderCompilationException : Exception
     {
-        private readonly string compilerOutput;
+        private readonly string? compilerOutput;
 
         public ShaderCompilationException(string compilerOutput)
         {
@@ -30,6 +30,6 @@ namespace TT_Lab.Rendering.Shaders
           System.Runtime.Serialization.StreamingContext context)
             : base(info, context) { }
 
-        public string CompilerOutput { get { return compilerOutput; } }
+        public string? CompilerOutput { get { return compilerOutput; } }
     }
 }

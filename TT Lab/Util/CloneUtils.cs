@@ -19,15 +19,13 @@ namespace TT_Lab.Util
         /// <returns></returns>
         static public T DeepClone<T>(T original)
         {
-            using (var stream = new MemoryStream())
-            {
-                StreamWriter writer = new StreamWriter(stream);
-                StreamReader reader = new StreamReader(stream);
-                writer.Write(JsonConvert.SerializeObject(original));
-                writer.Flush();
-                stream.Position = 0;
-                return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
-            }
+            using var stream = new MemoryStream();
+            using StreamWriter writer = new StreamWriter(stream);
+            using StreamReader reader = new StreamReader(stream);
+            writer.Write(JsonConvert.SerializeObject(original));
+            writer.Flush();
+            stream.Position = 0;
+            return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
         }
         /// <summary>
         /// List clone. Use when Clone is aplicable for T

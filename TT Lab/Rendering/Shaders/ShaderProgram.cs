@@ -14,17 +14,25 @@ namespace TT_Lab.Rendering.Shaders
     {
         private readonly Shader vertexShader;
         private readonly Shader fragmentShader;
-        private Action uniformSetAction;
+        private readonly Shader shadeLibShaderVert;
+        private readonly Shader shadeLibShaderFrag;
+        private Action? uniformSetAction;
+
+        private static readonly Shader weightLibShader;
+
+        public struct LibShader
+        {
+            public string Path;
+            public ShaderType Type;
+        }
 
         /// <summary>
         /// Creates the shader program.
         /// </summary>
         /// <param name="vertexShaderSource">The vertex shader source.</param>
         /// <param name="fragmentShaderSource">The fragment shader source.</param>
-        /// <param name="attributeLocations">The attribute locations.</param>
         /// <exception cref="ShaderCompilationException"></exception>
-        public ShaderProgram(string vertexShaderSource, string fragmentShaderSource,
-            Dictionary<uint, string> attributeLocations = null)
+        public ShaderProgram(string vertexShaderSource, string fragmentShaderSource, LibShader? fragShader = null, LibShader? vertShader = null)
         {
             //  Create the shaders.
             vertexShader = new Shader(ShaderType.VertexShader, vertexShaderSource);
@@ -34,13 +42,27 @@ namespace TT_Lab.Rendering.Shaders
             shaderProgramObject = (uint)GL.CreateProgram();
             GL.AttachShader((int)shaderProgramObject, vertexShader.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
+            // Library shaders
+            GL.AttachShader((int)shaderProgramObject, weightLibShader.ShaderObject);
 
-            //  Before we link, bind any vertex attribute locations.
-            if (attributeLocations != null)
+            if (!vertShader.HasValue)
             {
-                foreach (var vertexAttributeLocation in attributeLocations)
-                    GL.BindAttribLocation(shaderProgramObject, vertexAttributeLocation.Key, vertexAttributeLocation.Value);
+                shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.vert"));
             }
+            else
+            {
+                shadeLibShaderVert = new Shader(vertShader.Value.Type, Util.ManifestResourceLoader.LoadTextFile(vertShader.Value.Path));
+            }
+            if (!fragShader.HasValue)
+            {
+                shadeLibShaderFrag = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.frag"));
+            }
+            else
+            {
+                shadeLibShaderFrag = new Shader(fragShader.Value.Type, Util.ManifestResourceLoader.LoadTextFile(fragShader.Value.Path));
+            }
+            GL.AttachShader((int)shaderProgramObject, shadeLibShaderVert.ShaderObject);
+            GL.AttachShader((int)shaderProgramObject, shadeLibShaderFrag.ShaderObject);
 
             //  Now we can link the program.
             GL.LinkProgram(shaderProgramObject);
@@ -53,12 +75,17 @@ namespace TT_Lab.Rendering.Shaders
             }
         }
 
+        static ShaderProgram()
+        {
+            weightLibShader = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\WeightCalc.frag"));
+        }
+
         public void SetUniforms()
         {
             uniformSetAction?.Invoke();
         }
 
-        public void SetUniforms(Action uniformSetAction)
+        public void SetUniformsAction(Action uniformSetAction)
         {
             this.uniformSetAction = uniformSetAction;
         }
@@ -76,11 +103,6 @@ namespace TT_Lab.Rendering.Shaders
         public int GetAttributeLocation(string attributeName)
         {
             return GL.GetAttribLocation(shaderProgramObject, attributeName);
-        }
-
-        public void BindAttributeLocation(uint location, string attribute)
-        {
-            GL.BindAttribLocation(shaderProgramObject, location, attribute);
         }
 
         public void Bind()
@@ -128,6 +150,11 @@ namespace TT_Lab.Rendering.Shaders
             GL.Uniform1(GetUniformLocation(uniformName), v1);
         }
 
+        public void SetUniform1(string uniformName, int v1)
+        {
+            GL.Uniform1(GetUniformLocation(uniformName), v1);
+        }
+
         public void SetUniform3(string uniformName, float v1, float v2, float v3)
         {
             GL.Uniform3(GetUniformLocation(uniformName), v1, v2, v3);
@@ -143,6 +170,14 @@ namespace TT_Lab.Rendering.Shaders
             GL.UniformMatrix4(GetUniformLocation(uniformName), 1, false, m);
         }
 
+        public void SetTextureUniform(string uniformName, TextureTarget target, uint texId, uint texUnit)
+        {
+            GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + texUnit));
+            GL.BindTexture(target, texId);
+            GL.Uniform1(GetUniformLocation(uniformName), (int)texUnit);
+            GL.ActiveTexture(TextureUnit.Texture0);
+        }
+
         public int GetUniformLocation(string uniformName)
         {
             //  If we don't have the uniform name in the dictionary, get it's 
@@ -150,7 +185,6 @@ namespace TT_Lab.Rendering.Shaders
             if (uniformNamesToLocations.ContainsKey(uniformName) == false)
             {
                 uniformNamesToLocations[uniformName] = GL.GetUniformLocation(shaderProgramObject, uniformName);
-                //  TODO: if it's not found, we should probably throw an exception.
             }
 
             //  Return the uniform location.

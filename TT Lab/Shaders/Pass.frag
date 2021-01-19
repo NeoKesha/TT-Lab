@@ -1,7 +1,6 @@
-#version 150 core
-in vec4 pass_Color;
-out vec4 out_Color;
+#version 450 core
 
-void main(void) {
-	out_Color = pass_Color;
+vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
+{
+	return col;
 }

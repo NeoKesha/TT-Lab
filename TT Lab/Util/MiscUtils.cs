@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,9 +10,25 @@ namespace TT_Lab.Util
 {
     public static class MiscUtils
     {
+        private static Bitmap _boatguy;
+
+        public static object ConvertEnum(Type t, object o)
+        {
+            return Enum.Parse(t, o.ToString());
+        }
+
         public static T ConvertEnum<T>(object o)
         {
-            return (T)Enum.Parse(typeof(T), o.ToString());
+            return (T)ConvertEnum(typeof(T), o);
+        }
+
+        public static Bitmap GetBoatGuy()
+        {
+            if (_boatguy == null)
+            {
+                _boatguy = new Bitmap(ManifestResourceLoader.GetPathInExe("Images\\boat_guy.png"));
+            }
+            return _boatguy;
         }
 
         // Ah yes, WinForms being garbage as usual

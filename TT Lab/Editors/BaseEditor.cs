@@ -8,35 +8,42 @@ using System.Windows.Input;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
+using TT_Lab.Controls.Events;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors
 {
     public class BaseEditor : UserControl
     {
-        protected AssetViewModel viewModel;
-        protected Command.CommandManager CommandManager = new Command.CommandManager();
+        protected object viewModel;
+        internal Command.CommandManager CommandManager = new Command.CommandManager();
+        protected Dictionary<string, Func<object, object, object?>> AcceptNewPropValuePredicate = new Dictionary<string, Func<object, object, object?>>();
 
         public BaseEditor()
         {
             //throw new Exception("Can't create BaseEditor with no asset view model bound!");
         }
 
-        public BaseEditor(AssetViewModel asset)
+        public BaseEditor(object asset)
         {
             // This is used as reference because DataContext may not always be our viewmodel depending on specific editor needs
             viewModel = asset;
             DataContext = asset;
         }
 
-        public BaseEditor(AssetViewModel asset, TT_Lab.Command.CommandManager commandManager) : this(asset)
+        protected AssetViewModel AssetViewModel
+        {
+            get => (AssetViewModel)viewModel;
+        }
+
+        public BaseEditor(object asset, Command.CommandManager commandManager) : this(asset)
         {
             CommandManager = commandManager;
         }
 
         protected AbstractAssetData GetAssetData()
         {
-            return viewModel.Asset.GetData();
+            return AssetViewModel.Asset.GetData();
         }
 
         public void UndoExecuted(Object sender, EventArgs e)
@@ -54,11 +61,25 @@ namespace TT_Lab.Editors
             Control_SavePerformed(sender, e);
         }
 
+        public void BoundPropertyChanged(Object sender, BoundPropertyChangedEventArgs e)
+        {
+            if (AcceptNewPropValuePredicate.ContainsKey(e.PropName))
+            {
+                var data = AcceptNewPropValuePredicate[e.PropName].Invoke(e.NewValue, e.OldValue);
+                if (data == null) return;
+                SetData(e.PropName, data, e.Target);
+            }
+            else if (e.NewValue != e.OldValue)
+            {
+                SetData(e.PropName, e.NewValue, e.Target);
+            }
+        }
+
         protected virtual void Control_SavePerformed(Object sender, EventArgs e)
         {
-            if (viewModel.IsDirty)
+            if (AssetViewModel.IsDirty)
             {
-                viewModel.Save();
+                AssetViewModel.Save();
             }
         }
 
@@ -72,9 +93,10 @@ namespace TT_Lab.Editors
             CommandManager.Redo();
         }
 
-        protected void SetData(string propName, object data)
+        protected void SetData<T>(string propName, T data, object target = null)
         {
-            CommandManager.Execute(new SetDataCommand(viewModel, propName, data));
+            if (target == null) target = viewModel;
+            CommandManager.Execute(new SetDataCommand<T>(target, propName, data));
         }
     }
 }
