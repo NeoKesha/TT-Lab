@@ -185,7 +185,6 @@ namespace TT_Lab.Rendering.Renderers
                 Scene.SetPVMNShaderUniforms(ddpPeelShader);
                 foreach (var @object in objects)
                 {
-                    ddpPeelShader.SetUniform1("Alpha", @object.Opacity);
                     @object.Render();
                 }
                 ddpPeelShader.Unbind();

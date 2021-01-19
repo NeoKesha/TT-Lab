@@ -18,6 +18,6 @@ vec3 ShadeVertex(mat3 normalMat, vec3 vertex, vec3 normal);
 void main(void)
 {
 	gl_Position = Projection * View * Model * vec4(in_Position, 1.0);
-	Texpos = ShadeVertex(NormalMatrix, in_Position, in_Normal);
+	Texpos = in_Texpos;//ShadeVertex(NormalMatrix, in_Position, in_Normal);
 	Color = in_Color;
 }

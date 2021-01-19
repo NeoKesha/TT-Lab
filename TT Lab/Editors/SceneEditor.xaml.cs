@@ -151,6 +151,7 @@ namespace TT_Lab.Editors
         private void Glcontrol_Init(Object? sender, EventArgs e)
         {
             Glcontrol.MakeCurrent();
+            //GL.ClearColor(System.Drawing.Color.LightGray);
             RendererInit?.Invoke(sender, e);
         }
 

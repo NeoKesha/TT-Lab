@@ -13,13 +13,15 @@ namespace TT_Lab.Rendering.Renderers
     public class WBOITRenderer : IRenderer
     {
         public Scene Scene { get; set; }
-        public ShaderProgram RenderProgram { get; }
+        public ShaderProgram RenderProgram { get => wboitShader; }
 
         private readonly TextureBuffer colorTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly TextureBuffer alphaTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebuffer = new FrameBuffer();
         private readonly ShaderProgram resultImageShader =
             new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.frag"));
+        private readonly ShaderProgram wboitShader =
+            new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.frag"));
 
         public WBOITRenderer(RenderBuffer depthBuffer, float width, float height)
         {
@@ -35,6 +37,7 @@ namespace TT_Lab.Rendering.Renderers
         public void Delete()
         {
             resultImageShader.Delete();
+            wboitShader.Delete();
             framebuffer.Delete();
             colorTexture.Delete();
             alphaTexture.Delete();
@@ -64,20 +67,21 @@ namespace TT_Lab.Rendering.Renderers
             GL.Disable(EnableCap.CullFace);
             GL.BlendFunc(0, BlendingFactorSrc.One, BlendingFactorDest.One);
             GL.BlendFunc(1, BlendingFactorSrc.Zero, BlendingFactorDest.OneMinusSrcAlpha);
+            wboitShader.Bind();
+            Scene.SetPVMNShaderUniforms(wboitShader);
             foreach (var @object in objects)
             {
                 @object.Render();
             }
+            wboitShader.Unbind();
             // Render result image
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.BlendFunc(BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha);
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.MemoryBarrier(MemoryBarrierFlags.TextureFetchBarrierBit);
             resultImageShader.Bind();
-            GL.BindTextureUnit(0, colorTexture!.Buffer);
-            GL.Uniform1(0, 0);
-            GL.BindTextureUnit(1, alphaTexture!.Buffer);
-            GL.Uniform1(1, 1);
+            resultImageShader.SetTextureUniform("colorTexture", TextureTarget.Texture2DMultisample, colorTexture.Buffer, 0);
+            resultImageShader.SetTextureUniform("alphaTexture", TextureTarget.Texture2DMultisample, alphaTexture.Buffer, 1);
             GL.Enable(EnableCap.Multisample);
             GL.Disable(EnableCap.DepthTest);
             GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);

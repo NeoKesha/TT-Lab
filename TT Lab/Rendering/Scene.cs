@@ -46,6 +46,9 @@ namespace TT_Lab.Rendering
         private readonly TextureBuffer colorTextureNT = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebufferNT = new FrameBuffer();
         private readonly RenderBuffer depthRenderbuffer = new RenderBuffer();
+
+        // Misc helper stuff
+        private readonly Queue<Action> queuedRenderActions = new Queue<Action>();
         
 
         /// <summary>
@@ -167,6 +170,11 @@ namespace TT_Lab.Rendering
 
         public void Render()
         {
+            foreach (var a in queuedRenderActions)
+            {
+                a.Invoke();
+            }
+            queuedRenderActions.Clear();
             UpdateMatrices();
             Bind();
             GL.CullFace(CullFaceMode.FrontAndBack);
@@ -349,7 +357,10 @@ namespace TT_Lab.Rendering
         {
             if (e.PreferenceName == Preferences.TranslucencyMethod)
             {
-                SetupTransparencyRender();
+                queuedRenderActions.Enqueue(() =>
+                {
+                    SetupTransparencyRender();
+                });
             }
         }
 

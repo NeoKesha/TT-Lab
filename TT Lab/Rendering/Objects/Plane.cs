@@ -80,6 +80,7 @@ namespace TT_Lab.Rendering.Objects
             {
                 Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 3);
             }
+            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
             planeBuffer.Bind();
             //shader.Bind();
         }

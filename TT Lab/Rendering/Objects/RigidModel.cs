@@ -89,6 +89,7 @@ namespace TT_Lab.Rendering.Objects
                 {
                     Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, textureBuffers[i].Buffer, 3);
                 }
+                Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
                 modelBuffers[i].Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffers[i].Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
                 /*if (textureBuffers.Count != 0)

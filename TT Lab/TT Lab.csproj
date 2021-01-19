@@ -148,6 +148,12 @@
     <None Update="Shaders\TwinTexture.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Shaders\WBOIT_blend.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\WBOIT_blend.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Shaders\WeightCalc.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
