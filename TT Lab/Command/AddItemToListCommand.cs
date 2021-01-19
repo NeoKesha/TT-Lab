@@ -1,41 +1,50 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TT_Lab.Command
 {
-    public class AddItemToListCommand : ICommand
+    public class AddItemToListCommand<T> : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-        private IList _list;
+        private ObservableCollection<T> _list;
         private Stack _items = new Stack();
         private Type _item;
+        private int _maxItems;
 
-        public AddItemToListCommand(IList list, Type item)
+        public AddItemToListCommand(ObservableCollection<T> list, Type item, int maxItems = -1)
         {
             _list = list;
+            _list.CollectionChanged += _list_CollectionChanged;
             _item = item;
+            _maxItems = maxItems;
         }
 
-        public Boolean CanExecute(Object parameter)
+        private void _list_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            return true;
+            CanExecuteChanged?.Invoke(this, new EventArgs());
         }
 
-        public void Execute(Object parameter = null)
+        public Boolean CanExecute(Object? parameter)
+        {
+            return _maxItems == -1 || _maxItems > _list.Count;
+        }
+
+        public void Execute(Object? parameter = null)
         {
             var item = Activator.CreateInstance(_item);
             _items.Push(item);
-            _list.Add(item);
+            _list.Add((T)item!);
         }
 
         public void Unexecute()
         {
-            _list.Remove(_items.Pop());
+            _list.Remove((T)_items.Pop()!);
         }
     }
 }

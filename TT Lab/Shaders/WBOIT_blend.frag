@@ -1,14 +1,17 @@
 #version 450 core
 
 in vec3 Texpos;
-in vec4 passColor;
+in vec3 Diffuse;
+in vec4 Color;
+in vec3 EyespaceNormal;
 in float Depth;
 
-vec4 ShadeFragment(vec3 texCoord);
+vec4 ShadeFragment(vec3 texCoord, vec4 color, vec3 diffuse, vec3 eyespaceNormal);
 float GetWeight(float z, vec4 color);
 
-void main() {
-    vec4 color = ShadeFragment(Texpos);
+void main()
+{
+    vec4 color = ShadeFragment(Texpos, Color, Diffuse, EyespaceNormal);
     float weight = GetWeight(Depth, color);
 
     gl_FragData[0] = vec4(color.rgb, color.a) * weight;

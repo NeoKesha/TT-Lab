@@ -20,11 +20,11 @@ namespace TT_Lab.Rendering.Renderers
         private readonly FrameBuffer framebuffer = new FrameBuffer();
         private readonly ShaderProgram resultImageShader =
             new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.frag"));
-        private readonly ShaderProgram wboitShader =
-            new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.frag"));
+        private readonly ShaderProgram wboitShader;
 
-        public WBOITRenderer(RenderBuffer depthBuffer, float width, float height)
+        public WBOITRenderer(RenderBuffer depthBuffer, float width, float height, ShaderProgram.LibShader lib)
         {
+            wboitShader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.frag"), lib);
             ReallocateFramebuffer((int)width, (int)height);
             framebuffer.Bind();
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTexture.Buffer, 0);

@@ -2,7 +2,7 @@
 
 uniform sampler2DRect TempTex;
 
-void main(void)
+void main()
 {
 	gl_FragColor = texelFetch(TempTex, ivec2(gl_FragCoord.xy));
 	// for occlusion query

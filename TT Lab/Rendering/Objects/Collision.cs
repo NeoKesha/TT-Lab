@@ -45,6 +45,12 @@ namespace TT_Lab.Rendering.Objects
         public void Render()
         {
             Bind();
+            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            // Fragment program uniforms
+            Parent?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
+            Parent?.Renderer.RenderProgram.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
+            Parent?.Renderer.RenderProgram.SetUniform3("LightPosition", Parent.CameraPosition.x, Parent.CameraPosition.y, Parent.CameraPosition.z);
+            Parent?.Renderer.RenderProgram.SetUniform3("LightDirection", -Parent.CameraDirection.x, Parent.CameraDirection.y, Parent.CameraDirection.z);
             // Draw collision
             GL.DrawElements(PrimitiveType.Triangles, collisionBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Unbind();

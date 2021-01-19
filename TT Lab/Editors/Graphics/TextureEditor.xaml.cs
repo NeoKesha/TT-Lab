@@ -56,7 +56,8 @@ namespace TT_Lab.Editors.Graphics
         private void ResetViewer()
         {
             TextureViewer.Glcontrol.MakeCurrent();
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight);
+            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
+                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
             var texPlane = new Plane(((TextureViewModel)viewModel).Texture);

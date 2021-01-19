@@ -1,16 +1,18 @@
 #version 450 core
 
 in vec3 Texpos;
+in vec3 Diffuse;
 in vec4 Color;
+in vec3 EyespaceNormal;
 
 uniform sampler2DRect DepthBlenderTex;
 uniform sampler2DRect FrontBlenderTex;
 
 #define MAX_DEPTH 1.0
 
-vec4 ShadeFragment(vec3 texCoord);
+vec4 ShadeFragment(vec3 texCoord, vec4 color, vec3 diffuse, vec3 eyespaceNormal);
 
-void main(void)
+void main()
 {
 	// window-space depth interpolated linearly in screen space
 	float fragDepth = gl_FragCoord.z;
@@ -49,7 +51,7 @@ void main(void)
 	
 	// If we made it here, this fragment is on the peeled layer from last pass
 	// therefore, we need to shade it, and make sure it is not peeled any farther
-	vec4 color = ShadeFragment(Texpos);
+	vec4 color = ShadeFragment(Texpos, Color, Diffuse, EyespaceNormal);
 	gl_FragData[0].xy = vec2(-MAX_DEPTH);
 	
 	if (fragDepth == nearestDepth) {

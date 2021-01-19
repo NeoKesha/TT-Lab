@@ -6,7 +6,7 @@ uniform mat4 View;
 uniform mat4 Model;
 uniform mat3 NormalMatrix;
 
-void main(void)
+void main()
 {
      gl_Position = Projection * View * Model * vec4(in_Position, 1.0);
 }

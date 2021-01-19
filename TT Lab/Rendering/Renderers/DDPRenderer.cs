@@ -31,8 +31,9 @@ namespace TT_Lab.Rendering.Renderers
         private readonly ShaderProgram ddpFinalShader =
             new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\DDP_final.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\DDP_final.frag"));
 
-        public DDPRenderer(float width, float height)
+        public DDPRenderer(float width, float height, ShaderProgram.LibShader lib)
         {
+            ddpPeelShader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\DDP_peel.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\DDP_peel.frag"), lib);
             ReallocateFramebuffer((int)width, (int)height);
             dualBackBlenderFbo.Bind();
             GL.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.ColorAttachment0Ext,

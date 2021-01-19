@@ -2,6 +2,5 @@
 
 vec3 ShadeVertex(mat3 normalMat, vec3 vertex, vec3 normal)
 {
-	float diffuse = abs(normalize(normalMat * normal).z);
-	return vec3(vertex.xy, diffuse);
+	return vec3(0.25, 0.2, 0.2);
 }

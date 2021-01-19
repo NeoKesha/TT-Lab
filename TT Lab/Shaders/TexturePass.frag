@@ -3,13 +3,9 @@
 uniform float Alpha;
 uniform sampler2D tex;
 
-vec4 ShadeFragment(vec3 texPos)
+vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
 {
-    vec4 color = texture(tex, texPos.st);
+    vec4 color = texture(tex, texCoord.st);
     color.a *= Alpha;
     return color;
-    /*float weight = GetWeight(Depth, color);
-
-    gl_FragData[0] = vec4(color.rgb, color.a) * weight;
-    gl_FragData[1] = vec4(color.a);*/
 }

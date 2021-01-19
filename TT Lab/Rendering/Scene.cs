@@ -26,8 +26,10 @@ namespace TT_Lab.Rendering
         public Scene? Parent { get => parent; set => parent = value; }
         public float Opacity { get; set; } = 1.0f;
         public IRenderer Renderer { get; private set; }
+        public vec3 CameraPosition { get => cameraPosition; }
+        public vec3 CameraDirection { get => cameraDirection; }
 
-        // Rendering matrices
+        // Rendering matrices and settings
         private mat4 projectionMat;
         private mat4 viewMat;
         private mat4 modelMat;
@@ -39,9 +41,9 @@ namespace TT_Lab.Rendering
         private float cameraSpeed = 1.0f;
         private float cameraZoom = 90.0f;
         private bool canManipulateCamera = true;
+        private ShaderProgram.LibShader libShader;
 
         // Scene rendering
-        private readonly ShaderProgram? viewModelShader;
         private readonly List<IRenderable> objects = new List<IRenderable>();
         private readonly TextureBuffer colorTextureNT = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebufferNT = new FrameBuffer();
@@ -56,9 +58,10 @@ namespace TT_Lab.Rendering
         /// </summary>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        private Scene(float width, float height)
+        public Scene(float width, float height, ShaderProgram.LibShader libShader)
         {
             Preferences.PreferenceChanged += Preferences_PreferenceChanged;
+
             resolution.x = width;
             resolution.y = height;
             projectionMat = glm.perspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
@@ -66,6 +69,8 @@ namespace TT_Lab.Rendering
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
             var modelView = viewMat * modelMat;
             normalMat = modelView.to_mat3();
+
+            this.libShader = libShader;
             ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
             framebufferNT.Bind();
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
@@ -74,39 +79,13 @@ namespace TT_Lab.Rendering
         }
 
         /// <summary>
-        /// Constructor to setup a simple rendering scene with a custom shader
-        /// </summary>
-        /// <param name="width">Viewport render width</param>
-        /// <param name="height">Viewport render height</param>
-        /// <param name="shaderName">Shader file name for both .vert and .frag programs</param>
-        /// <param name="shdSetUni">Callback when setting shader's uniforms</param>
-        public Scene(float width, float height, string shaderName = "Light",
-            Action<ShaderProgram, Scene> shdSetUni = null)
-            : this(width, height)
-        {
-            var passVerShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.vert");
-            var passFragShader = ManifestResourceLoader.LoadTextFile($"Shaders\\{shaderName}.frag");
-            viewModelShader = new ShaderProgram(passVerShader, passFragShader);
-            if (shdSetUni == null)
-            {
-                viewModelShader.SetUniformsAction(() =>
-                {
-                    DefaultShaderUniforms();
-                });
-            }
-            else
-            {
-                viewModelShader.SetUniformsAction(() => shdSetUni(viewModelShader, this));
-            }
-        }
-
-        /// <summary>
         /// Constructor to perform a full chunk render
         /// </summary>
         /// <param name="sceneTree">Tree of chunk resources collision data, positions, cameras, etc.</param>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(List<AssetViewModel> sceneTree, float width, float height) : this(width, height, "Light")
+        public Scene(List<AssetViewModel> sceneTree, float width, float height) :
+            this(width, height, new ShaderProgram.LibShader { Path = "Shaders\\Light.frag", Type = ShaderType.FragmentShader })
         {
             // Collision renderer
             var colData = (CollisionData)sceneTree.Find((avm) =>
@@ -131,22 +110,6 @@ namespace TT_Lab.Rendering
         {
             objects.Add(renderObj);
             renderObj.Parent = this;
-        }
-
-        public void DefaultShaderUniforms()
-        {
-            if (viewModelShader != null)
-            {
-                // Fragment program uniforms
-                viewModelShader.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
-                viewModelShader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
-                viewModelShader.SetUniform3("LightPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-                viewModelShader.SetUniform3("LightDirection", cameraDirection.x, cameraDirection.y, cameraDirection.z);
-
-                // Vertex program uniforms
-                SetPVMNShaderUniforms(viewModelShader);
-                viewModelShader.SetUniform3("DiffuseMaterial", 0.75f, 0.75f, 0.75f);
-            }
         }
 
         /// <summary>
@@ -203,8 +166,24 @@ namespace TT_Lab.Rendering
 
         public void Bind()
         {
-            viewModelShader?.Bind();
-            viewModelShader?.SetUniforms();
+        }
+
+        public void Unbind()
+        {
+        }
+
+        public void Delete()
+        {
+            colorTextureNT.Delete();
+            framebufferNT.Delete();
+            depthRenderbuffer.Delete();
+            Renderer.Delete();
+            foreach (var @object in objects)
+            {
+                @object.Delete();
+            }
+            objects.Clear();
+            Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
         }
 
         public void SetCameraSpeed(float s)
@@ -282,26 +261,6 @@ namespace TT_Lab.Rendering
             }
         }
 
-        public void Unbind()
-        {
-            viewModelShader?.Unbind();
-        }
-
-        public void Delete()
-        {
-            viewModelShader?.Delete();
-            colorTextureNT.Delete();
-            framebufferNT.Delete();
-            depthRenderbuffer.Delete();
-            Renderer.Delete();
-            foreach (var @object in objects)
-            {
-                @object.Delete();
-            }
-            objects.Clear();
-            Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
-        }
-
         public void PreRender()
         {
             foreach (var @object in objects)
@@ -339,6 +298,7 @@ namespace TT_Lab.Rendering
         {
             if (e.PreferenceName == Preferences.TranslucencyMethod)
             {
+                // Update renderer on next render frame
                 queuedRenderActions.Enqueue(() =>
                 {
                     SetupTransparencyRender();
@@ -353,11 +313,11 @@ namespace TT_Lab.Rendering
             switch (method)
             {
                 case RenderSwitches.TranslucencyMethod.WBOIT:
-                    Renderer = new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y);
+                    Renderer = new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y, libShader);
                     break;
                 case RenderSwitches.TranslucencyMethod.DDP:
                 default:
-                    Renderer = new DDPRenderer(resolution.x, resolution.y);
+                    Renderer = new DDPRenderer(resolution.x, resolution.y, libShader);
                     break;
             }
             Renderer.Scene = this;

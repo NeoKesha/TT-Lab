@@ -5,11 +5,10 @@ uniform float Alpha;
 #define COLOR_FREQ 30.0
 #define ALPHA_FREQ 30.0
 
-vec4 ShadeFragment(vec3 texCoord)
+vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
 {
 	float xWorldPos = texCoord.x;
 	float yWorldPos = texCoord.y;
-	float diffuse = texCoord.z;
 
 	vec4 color;
 	float i = floor(xWorldPos * COLOR_FREQ);

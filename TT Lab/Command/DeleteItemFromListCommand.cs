@@ -9,9 +9,9 @@ namespace TT_Lab.Command
 {
     public class DeleteItemFromListCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-        private object _item;
+        private object? _item;
         private Stack _deletedItems = new Stack();
         private IList _list;
 
@@ -20,7 +20,7 @@ namespace TT_Lab.Command
             _list = list;
         }
 
-        public object Item
+        public object? Item
         {
             set
             {
@@ -30,12 +30,12 @@ namespace TT_Lab.Command
             private get => _item;
         }
 
-        public Boolean CanExecute(Object parameter)
+        public Boolean CanExecute(Object? parameter)
         {
             return Item != null;
         }
 
-        public void Execute(Object parameter = null)
+        public void Execute(Object? parameter = null)
         {
             _deletedItems.Push(_item);
             _list.Remove(_item);

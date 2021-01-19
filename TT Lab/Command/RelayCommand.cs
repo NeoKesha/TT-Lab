@@ -8,7 +8,7 @@ namespace TT_Lab.Command
 {
     public class RelayCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         private ICommand _command;
         private CommandManager _comManager;
@@ -20,17 +20,17 @@ namespace TT_Lab.Command
             _comManager = comManager;
         }
 
-        private void _command_CanExecuteChanged(Object sender, EventArgs e)
+        private void _command_CanExecuteChanged(Object? sender, EventArgs e)
         {
             CanExecuteChanged?.Invoke(sender, e);
         }
 
-        public Boolean CanExecute(Object parameter)
+        public Boolean CanExecute(Object? parameter)
         {
             return _command.CanExecute(parameter);
         }
 
-        public void Execute(Object parameter = null)
+        public void Execute(Object? parameter = null)
         {
             _comManager.Execute(_command);
         }

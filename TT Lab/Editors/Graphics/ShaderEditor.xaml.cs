@@ -100,7 +100,8 @@ namespace TT_Lab.Editors.Graphics
                 var texData = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(texId).GetData();
                 bitmap = texData.Bitmap;
             }
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight);
+            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
+                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
             var texPlane = new Plane(bitmap);

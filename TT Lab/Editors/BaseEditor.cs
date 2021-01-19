@@ -17,7 +17,7 @@ namespace TT_Lab.Editors
     {
         protected object viewModel;
         internal Command.CommandManager CommandManager = new Command.CommandManager();
-        protected Dictionary<string, Func<object, object, object>> AcceptNewPropValuePredicate = new Dictionary<string, Func<object, object, object>>();
+        protected Dictionary<string, Func<object, object, object?>> AcceptNewPropValuePredicate = new Dictionary<string, Func<object, object, object?>>();
 
         public BaseEditor()
         {

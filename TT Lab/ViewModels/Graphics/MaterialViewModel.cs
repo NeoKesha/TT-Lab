@@ -36,12 +36,12 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 var shaderViewModel = new LabShaderViewModel(shader);
                 _shaders.Add(shaderViewModel);
-                shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged1;
+                shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged;
             }
-            AddShaderCommand = new AddItemToListCommand(Shaders, typeof(LabShaderViewModel));
+            AddShaderCommand = new AddItemToListCommand<LabShaderViewModel>(Shaders, typeof(LabShaderViewModel), 5);
             DeleteShaderCommand = new DeleteItemFromListCommand(Shaders);
-            CloneShaderCommand = new CloneItemIntoCollectionCommand<LabShaderViewModel>(Shaders);
-            Shaders.CollectionChanged += ShaderViewModel_PropertyChanged;
+            CloneShaderCommand = new CloneItemIntoCollectionCommand<LabShaderViewModel>(Shaders, 5);
+            Shaders.CollectionChanged += Shaders_Changed;
         }
 
         public override void Save()
@@ -59,7 +59,7 @@ namespace TT_Lab.ViewModels.Graphics
             base.Save();
         }
 
-        public AddItemToListCommand AddShaderCommand { private set; get; }
+        public AddItemToListCommand<LabShaderViewModel> AddShaderCommand { private set; get; }
         public DeleteItemFromListCommand DeleteShaderCommand { private set; get; }
         public CloneItemIntoCollectionCommand<LabShaderViewModel> CloneShaderCommand { private set; get; }
         public UInt64 Header
@@ -117,14 +117,14 @@ namespace TT_Lab.ViewModels.Graphics
 
         public static ObservableCollection<MenuItem> TreeContextMenu { get; private set; }
 
-        private void ShaderViewModel_PropertyChanged(Object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Shaders_Changed(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             IsDirty = true;
         }
 
-        private void ShaderViewModel_PropertyChanged1(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ShaderViewModel_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            NotifyChange(e.PropertyName);
+            NotifyChange(e.PropertyName!);
             IsDirty = true;
         }
     }

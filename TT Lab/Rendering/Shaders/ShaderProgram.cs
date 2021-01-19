@@ -14,10 +14,17 @@ namespace TT_Lab.Rendering.Shaders
     {
         private readonly Shader vertexShader;
         private readonly Shader fragmentShader;
-        private static readonly Shader weightLibShader;
-        private static readonly Shader shadeLibShaderVert;
-        private static readonly Shader shadeLibShaderFrag;
+        private readonly Shader shadeLibShaderVert;
+        private readonly Shader shadeLibShaderFrag;
         private Action? uniformSetAction;
+
+        private static readonly Shader weightLibShader;
+
+        public struct LibShader
+        {
+            public string Path;
+            public ShaderType Type;
+        }
 
         /// <summary>
         /// Creates the shader program.
@@ -25,7 +32,7 @@ namespace TT_Lab.Rendering.Shaders
         /// <param name="vertexShaderSource">The vertex shader source.</param>
         /// <param name="fragmentShaderSource">The fragment shader source.</param>
         /// <exception cref="ShaderCompilationException"></exception>
-        public ShaderProgram(string vertexShaderSource, string fragmentShaderSource)
+        public ShaderProgram(string vertexShaderSource, string fragmentShaderSource, LibShader? fragShader = null, LibShader? vertShader = null)
         {
             //  Create the shaders.
             vertexShader = new Shader(ShaderType.VertexShader, vertexShaderSource);
@@ -37,6 +44,23 @@ namespace TT_Lab.Rendering.Shaders
             GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
             // Library shaders
             GL.AttachShader((int)shaderProgramObject, weightLibShader.ShaderObject);
+
+            if (!vertShader.HasValue)
+            {
+                shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.vert"));
+            }
+            else
+            {
+                shadeLibShaderVert = new Shader(vertShader.Value.Type, Util.ManifestResourceLoader.LoadTextFile(vertShader.Value.Path));
+            }
+            if (!fragShader.HasValue)
+            {
+                shadeLibShaderFrag = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.frag"));
+            }
+            else
+            {
+                shadeLibShaderFrag = new Shader(fragShader.Value.Type, Util.ManifestResourceLoader.LoadTextFile(fragShader.Value.Path));
+            }
             GL.AttachShader((int)shaderProgramObject, shadeLibShaderVert.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, shadeLibShaderFrag.ShaderObject);
 
@@ -54,8 +78,6 @@ namespace TT_Lab.Rendering.Shaders
         static ShaderProgram()
         {
             weightLibShader = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\WeightCalc.frag"));
-            shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.vert"));
-            shadeLibShaderFrag = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));
         }
 
         public void SetUniforms()
