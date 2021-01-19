@@ -289,9 +289,9 @@ namespace Twinsanity.Libraries
 		public static void ColorsToByte(Color color, byte[] array, int index)
         {
 			array[index * 4 + 3] = (Byte)(color.A >> 1);
-			array[index * 4 + 2] = color.B;
-			array[index * 4 + 1] = color.G;
-			array[index * 4 + 0] = color.R;
+			array[index * 4 + 2] = (Byte)(color.B >> 1);
+			array[index * 4 + 1] = (Byte)(color.G >> 1);
+			array[index * 4 + 0] = (Byte)(color.R >> 1);
         }
 		public static Color BytesToColor(byte[] array, int index)
 		{
