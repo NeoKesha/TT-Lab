@@ -249,14 +249,19 @@ namespace Twinsanity.Libraries
 		{
 			GIFTag tag = new GIFTag();
 			tag.NREG = 16;
+			tag.EOP = 1;
 			tag.NLOOP = (ushort)(colors.Count / 4);
 			tag.REGS = new REGSEnum[16];
 			tag.FLG = GIFModeEnum.IMAGE;
 			tag.Data = new List<RegOutput>();
 			for (var i = 0; i < colors.Count - 3; i += 4)
 			{
-				UInt64 long1 = colors[i + 1].ToABGR() << 32 | colors[i + 0].ToABGR();
-				UInt64 long2 = colors[i + 3].ToABGR() << 32 | colors[i + 2].ToABGR();
+				UInt64 col0 = colors[i + 0].ToABGR();
+				UInt64 col1 = colors[i + 1].ToABGR();
+				UInt64 col2 = colors[i + 2].ToABGR();
+				UInt64 col3 = colors[i + 3].ToABGR();
+				UInt64 long1 = (col1 << 32) | (col0);
+				UInt64 long2 = (col3 << 32) | (col2);
 				RegOutput reg1 = new RegOutput();
 				reg1.REG = REGSEnum.HWREG;
 				reg1.Output = long1;

@@ -190,18 +190,21 @@ namespace Twinsanity.PS2Hardware
         public void Write(BinaryWriter writer)
         {
             UInt64 low = 0;
-            low |= (UInt64)NLOOP & 0b111111111111111 << 0;
-            low |= (UInt64)EOP & 0b1 << 15;
-            low |= (UInt64)PRE & 0b1 << 46;
-            low |= (UInt64)PRIM & 0b1 << 47;
-            low |= (UInt64)FLG & 0b1 << 58;
-            low |= (UInt64)NREG & 0b1 << 60;
+            low |= ((UInt64)NLOOP & 0b111111111111111) << 0;
+            low |= ((UInt64)EOP & 0b1) << 15;
+            low |= ((UInt64)PRE & 0b1) << 46;
+            low |= ((UInt64)PRIM & 0b11111111111) << 47;
+            low |= ((UInt64)FLG & 0b11) << 58;
+            low |= ((UInt64)NREG & 0b1111) << 60;
             writer.Write(low);
             UInt64 high = 0;
             for (int i = 0; i < 16; ++i)
             {
                 high |= (UInt64)REGS[REGS.Length - i - 1] & 0b1111;
-                high <<= 4;
+                if (i != 15)
+                {
+                    high <<= 4;
+                }
             }
             writer.Write(high);
             switch (FLG)

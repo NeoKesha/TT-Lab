@@ -43,30 +43,60 @@ namespace TT_Lab.AssetData.Graphics
 
         public override void Import()
         {
-            PS2AnyTexture texture = (PS2AnyTexture)twinRef;
-            if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
             {
-                Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
-                Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
-                texture.CalculateData();
-
-                var Bits = new UInt32[width * height];
-                var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
-                var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
-
-                for (var x = 0; x < width; ++x)
+                PS2AnyTexture texture = (PS2AnyTexture)twinRef;
+                if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
                 {
-                    for (var y = 0; y < height; ++y)
-                    {
-                        var dstx = x;
-                        var dsty = height - 1 - y;
-                        Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
-                    }
-                }
+                    Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
+                    Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
+                    texture.CalculateData();
 
-                Bitmap = new Bitmap(tmpBmp);
-                tmpBmp.Dispose();
-                BitsHandle.Free();
+                    var Bits = new UInt32[width * height];
+                    var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+                    var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+
+                    for (var x = 0; x < width; ++x)
+                    {
+                        for (var y = 0; y < height; ++y)
+                        {
+                            var dstx = x;
+                            var dsty = height - 1 - y;
+                            Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
+                        }
+                    }
+
+                    Bitmap = new Bitmap(tmpBmp);
+                    tmpBmp.Dispose();
+                    BitsHandle.Free();
+                }
+            }
+            twinRef = Export();
+            {
+                PS2AnyTexture texture = (PS2AnyTexture)twinRef;
+                if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
+                {
+                    Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
+                    Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
+                    texture.CalculateData();
+
+                    var Bits = new UInt32[width * height];
+                    var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+                    var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+
+                    for (var x = 0; x < width; ++x)
+                    {
+                        for (var y = 0; y < height; ++y)
+                        {
+                            var dstx = x;
+                            var dsty = height - 1 - y;
+                            Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
+                        }
+                    }
+
+                    Bitmap = new Bitmap(tmpBmp);
+                    tmpBmp.Dispose();
+                    BitsHandle.Free();
+                }
             }
         }
 
@@ -82,7 +112,7 @@ namespace TT_Lab.AssetData.Graphics
                 var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 unsafe
                 {
-                    byte* source = (byte*)bits.Scan0;
+                    byte* source = (byte*)(bits.Scan0 + bits.Stride*(bits.Height - 1));
                     for (int i = 0; i < bits.Height; i++)
                     {
                         var scan = source;
@@ -95,7 +125,7 @@ namespace TT_Lab.AssetData.Graphics
                             tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(r,g,b,a));
                             source += 4;
                         }
-                        source = scan + bits.Stride;
+                        source = scan - bits.Stride;
                     }
                 }
                 
@@ -106,7 +136,7 @@ namespace TT_Lab.AssetData.Graphics
                 var bits = IndexedBitmap.LockBits(new Rectangle(0, 0, IndexedBitmap.Width, IndexedBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
                 unsafe
                 {
-                    byte* source = (byte*)bits.Scan0;
+                    byte* source = (byte*)(bits.Scan0 + bits.Stride * (bits.Height - 1));
                     for (int i = 0; i < bits.Height; i++)
                     {
                         var scan = source;
@@ -117,7 +147,7 @@ namespace TT_Lab.AssetData.Graphics
                             tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(color.R, color.G, color.B, color.A));
                             source += 1;
                         }
-                        source = scan + bits.Stride;
+                        source = scan - bits.Stride;
                     }
                 }
             }

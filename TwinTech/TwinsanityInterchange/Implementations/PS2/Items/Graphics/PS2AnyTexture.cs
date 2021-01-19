@@ -185,6 +185,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public void FromBitmap(List<Color> image, Int32 width, byte mips, TextureFunction fun, TexturePixelFormat format)
         {
+            mips = 1;
             int height = image.Count / width;
             TexFun = fun;
             TextureFormat = format;
@@ -284,21 +285,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             using (MemoryStream stream = new MemoryStream())
             {
                 BinaryWriter writer = new BinaryWriter(stream);
-                writer.Write((UInt64)1152921504606846979); //DMA tag say hi
+                var QWC = (UInt64)headerTag.GetLength() + (UInt64)tag.GetLength() + 2;
+                UInt64 low = QWC;
+                low |= (UInt64)6 << 28;
+                writer.Write(low);
                 VIFCode code1 = new VIFCode();
                 code1.OP = VIFCodeEnum.NOP;
                 code1.Write(writer);
                 VIFCode code2 = new VIFCode();
                 code2.OP = VIFCodeEnum.DIRECT;
-                code2.Immediate = (ushort)((headerTag.GetLength() + tag.GetLength()) / 16);
+                code2.Immediate = (ushort)QWC;
                 code2.Write(writer);
-                var pos1 = stream.Position;
                 headerTag.Write(writer);
-                var pos2 = stream.Position;
-                var len1 = pos2 - pos1;
                 tag.Write(writer);
-                var pos3 = stream.Position;
-                var len2 = pos3 - pos2;
                 TextureData = stream.ToArray();
             }
         }
