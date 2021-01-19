@@ -166,7 +166,7 @@ namespace TT_Lab.ViewModels.Graphics
         }
         public Boolean CanColorSpec
         {
-            get => !UsePresetAlphaRegSettings;
+            get => !UsePresetAlphaRegSettings && AlphaBlending;
         }
         public LabShader.Type Type
         {
@@ -178,12 +178,12 @@ namespace TT_Lab.ViewModels.Graphics
                     _type = value;
                     _name = $"{_type}";
                     NotifyChange();
-                    NotifyChange("HasIntParam");
-                    NotifyChange("HasFloatParam1");
-                    NotifyChange("HasFloatParam2");
-                    NotifyChange("HasFloatParam3");
-                    NotifyChange("HasFloatParam4");
-                    NotifyChange("Name");
+                    NotifyChange(nameof(HasIntParam));
+                    NotifyChange(nameof(HasFloatParam1));
+                    NotifyChange(nameof(HasFloatParam2));
+                    NotifyChange(nameof(HasFloatParam3));
+                    NotifyChange(nameof(HasFloatParam4));
+                    NotifyChange(nameof(Name));
                 }
             }
         }
@@ -209,6 +209,7 @@ namespace TT_Lab.ViewModels.Graphics
                 {
                     _alphaBlending = value ? TwinShader.AlphaBlending.ON : TwinShader.AlphaBlending.OFF;
                     NotifyChange();
+                    NotifyChange(nameof(CanColorSpec));
                 }
             }
         }
@@ -377,7 +378,7 @@ namespace TT_Lab.ViewModels.Graphics
                 {
                     _usePresetAlphaRegSettings = value;
                     NotifyChange();
-                    NotifyChange("CanColorSpec");
+                    NotifyChange(nameof(CanColorSpec));
                 }
             }
         }

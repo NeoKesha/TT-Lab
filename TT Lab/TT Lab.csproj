@@ -121,6 +121,9 @@
     <None Update="Shaders\LightTexture.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Shaders\MultitexturePass.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Shaders\Pass.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -140,6 +143,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\TexurePass.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\TwinmaterialPass.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\TwinTexture.frag">

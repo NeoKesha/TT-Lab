@@ -10,12 +10,13 @@ using System.Windows.Input;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Command;
-using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.ViewModels.Graphics
 {
     public class MaterialViewModel : AssetViewModel
     {
+        public event EventHandler<System.ComponentModel.PropertyChangedEventArgs>? PropChanged;
+
         private UInt64 _header;
         private UInt32 _dmaChainIndex;
         private String _name;
@@ -120,12 +121,19 @@ namespace TT_Lab.ViewModels.Graphics
         private void Shaders_Changed(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             IsDirty = true;
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                var addedShader = Shaders[e.NewStartingIndex];
+                addedShader.PropertyChanged += ShaderViewModel_PropertyChanged;
+            }
+            PropChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Shaders)));
         }
 
         private void ShaderViewModel_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             NotifyChange(e.PropertyName!);
             IsDirty = true;
+            PropChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(e.PropertyName));
         }
     }
 }

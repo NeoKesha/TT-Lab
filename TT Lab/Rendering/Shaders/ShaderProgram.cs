@@ -150,6 +150,11 @@ namespace TT_Lab.Rendering.Shaders
             GL.Uniform1(GetUniformLocation(uniformName), v1);
         }
 
+        public void SetUniform1(string uniformName, int v1)
+        {
+            GL.Uniform1(GetUniformLocation(uniformName), v1);
+        }
+
         public void SetUniform3(string uniformName, float v1, float v2, float v3)
         {
             GL.Uniform3(GetUniformLocation(uniformName), v1, v2, v3);

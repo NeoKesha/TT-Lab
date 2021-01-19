@@ -1,40 +1,35 @@
-﻿using GlmNet;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TT_Lab.AssetData.Graphics;
-using TT_Lab.Project;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
+using TT_Lab.ViewModels.Graphics;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Plane : IRenderable
+    public class TwinMaterialPlane : IRenderable
     {
         public Scene? Parent { get; set; }
-        public float Opacity { get; set; } = 1.0f;
+        public Single Opacity { get; set; } = 1.0f;
 
-        IndexedBufferArray planeBuffer;
-        TextureBuffer? texture;
+        private IndexedBufferArray planeBuffer;
+        private TwinMaterial[] materialBuffers = new TwinMaterial[5];
+        private int texAmt;
 
-        public Plane() : this(new vec3())
-        {
-        }
-
-        public Plane(vec3 position)
+        private TwinMaterialPlane()
         {
             planeBuffer = BufferGeneration.GetModelBuffer(
                 new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
                 {
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1 + position.x, 1 + position.y, -1 + position.z),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1 + position.x, 1 + position.y, -1 + position.z),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1 + position.x, -1 + position.y, -1 + position.z),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1 + position.x, -1 + position.y, -1 + position.z)
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 1, -1),
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, 1, -1),
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, -1, -1),
+                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, -1, -1)
                 },
                 new List<AssetData.Graphics.SubModels.IndexedFace>
                 {
@@ -51,38 +46,34 @@ namespace TT_Lab.Rendering.Objects
                 });
         }
 
-        public Plane(MaterialData material) : this()
+        public TwinMaterialPlane(ShaderProgram shader, Bitmap[] textures, LabShaderViewModel[] viewModels, int texAmt = 1) : this()
         {
-            if (material.Shaders[0].TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON)
+            if (texAmt > 5) texAmt = 5;
+            this.texAmt = texAmt;
+            for (var i = 0; i < texAmt; ++i)
             {
-                var tex = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(material.Shaders[0].TextureId).GetData();
-                texture = new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap);
+                materialBuffers[i] = new TwinMaterial(shader, "tex", textures[i], viewModels[i], 3 + i, i);
             }
-        }
-
-        public Plane(TextureData tex) : this(tex.Bitmap)
-        {
-        }
-
-        public Plane(Bitmap texImage) : this()
-        {
-            texture = new TextureBuffer(texImage.Width, texImage.Height, texImage);
         }
 
         public void Bind()
         {
-            if (texture != null)
+            for (var i = 0; i < texAmt; ++i)
             {
-                Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 3);
+                materialBuffers[i].Bind();
             }
             Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Parent?.Renderer.RenderProgram.SetUniform1("TexturesAmount", texAmt);
             planeBuffer.Bind();
         }
 
         public void Delete()
         {
-            texture?.Delete();
             planeBuffer.Delete();
+            for (var i = 0; i < texAmt; ++i)
+            {
+                materialBuffers[i].Delete();
+            }
         }
 
         public void Render()
@@ -94,7 +85,10 @@ namespace TT_Lab.Rendering.Objects
 
         public void Unbind()
         {
-            texture?.Unbind();
+            for (var i = 0; i < texAmt; ++i)
+            {
+                materialBuffers[i].Unbind();
+            }
             planeBuffer.Unbind();
         }
     }

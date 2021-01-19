@@ -34,7 +34,7 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.RendererInit += SceneRenderer_RendererInit;
         }
 
-        private void SceneRenderer_RendererInit(Object sender, EventArgs e)
+        private void SceneRenderer_RendererInit(Object? sender, EventArgs e)
         {
             SceneRenderer.Scene = new Scene((float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight,
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\Light.frag" });

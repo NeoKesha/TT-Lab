@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.Command;
 using TT_Lab.Controls;
+using TT_Lab.Project;
+using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
 
@@ -50,6 +55,7 @@ namespace TT_Lab.Editors.Graphics
             InitPredicates();
             MaterialViewer.RendererInit += MaterialViewer_RendererInit;
             matViewModel.PropertyChanged += MatViewModel_PropertyChanged;
+            matViewModel.PropChanged += MatViewModel_PropertyChanged;
         }
 
         private void MatViewModel_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -65,10 +71,28 @@ namespace TT_Lab.Editors.Graphics
         void ResetViewer()
         {
             MaterialViewer.Glcontrol.MakeCurrent();
+            MaterialViewer.Scene?.Delete();
             MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GLHost.ActualWidth, (float)MaterialViewer.GLHost.ActualWidth,
-                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\Pass.frag" });
+                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\MultitexturePass.frag" });
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
+            var viewModel = (MaterialViewModel)AssetViewModel;
+            List<Bitmap> textures = new List<Bitmap>();
+            for (var i = 0; i < viewModel.Shaders.Count; ++i)
+            {
+                var tex = viewModel.Shaders[i].TexID;
+                if (tex == Guid.Empty)
+                {
+                    textures.Add(MiscUtils.GetBoatGuy());
+                }
+                else
+                {
+                    var texData = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(tex).GetData();
+                    textures.Add(texData.Bitmap);
+                }
+            }
+            TwinMaterialPlane plane = new TwinMaterialPlane(MaterialViewer.Scene.Renderer.RenderProgram, textures.ToArray(), viewModel.Shaders.ToArray(), viewModel.Shaders.Count);
+            MaterialViewer.Scene.AddRender(plane);
         }
 
         void InitPredicates()

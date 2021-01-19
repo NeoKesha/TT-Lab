@@ -60,7 +60,7 @@ namespace TT_Lab.Editors.Graphics
             shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged;
         }
 
-        private void ShaderViewModel_PropertyChanged(Object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ShaderViewModel_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "TexID" || e.PropertyName == "TxtMapping")
             {
@@ -68,12 +68,12 @@ namespace TT_Lab.Editors.Graphics
             }
         }
 
-        private void TextureViewer_RendererInit(Object sender, EventArgs e)
+        private void TextureViewer_RendererInit(Object? sender, EventArgs e)
         {
             ResetViewer();
         }
 
-        private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
+        private void TextureViewer_FileDrop(Object? sender, Controls.FileDropEventArgs e)
         {
             if (string.IsNullOrEmpty(e.File))
             {
