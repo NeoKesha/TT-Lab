@@ -3,7 +3,7 @@
 uniform float Alpha;
 uniform int TexturesAmount;
 uniform sampler2D tex[5];
-uniform bool AlphaBlending[5];
+uniform int AlphaBlending[5];
 uniform float FIX[5];
 uniform int SpecColA[5];
 uniform int SpecColB[5];
