@@ -44,6 +44,14 @@ namespace TT_Lab.Editors.Instance
                 Layers = new ObservableCollection<object>(Enum.GetValues(typeof(Enums.Layouts)).Cast<object>())
             };
             InitValidators();
+            Loaded += PositionEditor_Loaded;
+        }
+
+        private void PositionEditor_Loaded(Object sender, RoutedEventArgs e)
+        {
+            var chunkEditor = (ChunkEditor)ParentEditor!;
+            var vm = (PositionViewModel)AssetViewModel;
+            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
         }
 
         private void InitValidators()

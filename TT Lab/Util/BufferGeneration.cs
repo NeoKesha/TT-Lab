@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using GlmNet;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +14,7 @@ namespace TT_Lab.Util
     public static class BufferGeneration
     {
         public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors,
-            Func<List<Color>, int, float[]> colorSelector = null)
+            Func<List<Color>, int, float[]>? colorSelector = null)
         {
             var vertices = new List<float>();
             var vert3s = new List<Vector3>();
@@ -122,6 +123,66 @@ namespace TT_Lab.Util
             bufferArray.Unbind();
 
             return bufferArray;
+        }
+        public static IndexedBufferArray GetCubeBuffer(Vector3 position = default, float scale = 1.0f, List<Color>? colors = null)
+        {
+            if (colors == null)
+            {
+                colors = new List<Color> { Color.LightGray };
+            }
+            float[] cubeVertecies = {
+                -1.0f,-1.0f,-1.0f,
+                -1.0f,-1.0f, 1.0f,
+                -1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f,-1.0f,
+                -1.0f,-1.0f,-1.0f,
+                -1.0f, 1.0f,-1.0f,
+                1.0f,-1.0f, 1.0f,
+                -1.0f,-1.0f,-1.0f,
+                1.0f,-1.0f,-1.0f,
+                1.0f, 1.0f,-1.0f,
+                1.0f,-1.0f,-1.0f,
+                -1.0f,-1.0f,-1.0f,
+                -1.0f,-1.0f,-1.0f,
+                -1.0f, 1.0f, 1.0f,
+                -1.0f, 1.0f,-1.0f,
+                1.0f,-1.0f, 1.0f,
+                -1.0f,-1.0f, 1.0f,
+                -1.0f,-1.0f,-1.0f,
+                -1.0f, 1.0f, 1.0f,
+                -1.0f,-1.0f, 1.0f,
+                1.0f,-1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f,
+                1.0f,-1.0f,-1.0f,
+                1.0f, 1.0f,-1.0f,
+                1.0f,-1.0f,-1.0f,
+                1.0f, 1.0f, 1.0f,
+                1.0f,-1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f,-1.0f,
+                -1.0f, 1.0f,-1.0f,
+                1.0f, 1.0f, 1.0f,
+                -1.0f, 1.0f,-1.0f,
+                -1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f,
+                -1.0f, 1.0f, 1.0f,
+                1.0f,-1.0f, 1.0f
+            };
+            for (var i = 0; i < cubeVertecies.Length; ++i)
+            {
+                cubeVertecies[i] *= scale;
+            }
+            var vectors = new List<Twinsanity.TwinsanityInterchange.Common.Vector3>();
+            var faces = new List<IndexedFace>();
+            for (var i = 0; i < cubeVertecies.Length; i += 3)
+            {
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3(cubeVertecies[i] + position.X, cubeVertecies[i + 1] + position.Y, cubeVertecies[i + 2] + position.Z));
+            }
+            for (var i = 0; i < vectors.Count; i += 3)
+            {
+                faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
+            }
+            return GetModelBuffer(vectors, faces, colors);
         }
     }
 }

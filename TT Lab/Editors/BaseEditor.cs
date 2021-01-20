@@ -19,6 +19,8 @@ namespace TT_Lab.Editors
         internal Command.CommandManager CommandManager = new Command.CommandManager();
         protected Dictionary<string, Func<object, object, object?>> AcceptNewPropValuePredicate = new Dictionary<string, Func<object, object, object?>>();
 
+        public BaseEditor? ParentEditor { get; set; }
+
         public BaseEditor()
         {
             //throw new Exception("Can't create BaseEditor with no asset view model bound!");
