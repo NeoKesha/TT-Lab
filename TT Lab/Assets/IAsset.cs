@@ -75,7 +75,7 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <remarks>Ranges from 0 to 7</remarks>
         [JsonProperty(Required = Required.AllowNull)]
-        Int32? LayoutID { get; }
+        Int32? LayoutID { get; set; }
 
         /// <summary>
         /// Whether the data for this asset is currently in memory

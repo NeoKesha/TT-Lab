@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ViewModels.Instance
 {
     public class PositionViewModel : AssetViewModel
     {
-        private readonly PositionData posData;
+        private Vector4ViewModel position;
+        private Enums.Layouts layId;
 
         public PositionViewModel(Guid asset) : base(asset)
         {
@@ -17,43 +20,57 @@ namespace TT_Lab.ViewModels.Instance
 
         public PositionViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
-            posData = (PositionData)_asset.GetData();
+            var posData = (PositionData)_asset.GetData();
+            position = new Vector4ViewModel(posData.Coords);
+            position.PropertyChanged += Position_PropertyChanged;
+            layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
         }
 
-        public float X
+        private void Position_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            get => posData.Coords.X;
+            IsDirty = true;
+            NotifyChange(nameof(Position));
+        }
+
+        public override void Save()
+        {
+            _asset.LayoutID = (int)LayoutID;
+            var data = (PositionData)_asset.GetData();
+            data.Coords = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = Position.X,
+                Y = Position.Y,
+                Z = Position.Z,
+                W = Position.W
+            };
+            base.Save();
+        }
+
+        public Enums.Layouts LayoutID
+        {
+            get => layId;
             set
             {
-                posData.Coords.X = value;
-                NotifyChange();
+                if (layId != value)
+                {
+                    layId = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
             }
         }
-        public float Y
+
+        public Vector4ViewModel Position
         {
-            get => posData.Coords.Y;
+            get => position;
             set
             {
-                posData.Coords.Y = value;
-                NotifyChange();
-            }
-        }
-        public float Z
-        {
-            get => posData.Coords.Z;
-            set
-            {
-                posData.Coords.Z = value;
-                NotifyChange();
-            }
-        }
-        public float W
-        {
-            get => posData.Coords.W;
-            set
-            {
-                posData.Coords.W = value;
-                NotifyChange();
+                if (position != value)
+                {
+                    position = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
             }
         }
     }
