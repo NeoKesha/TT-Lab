@@ -256,6 +256,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 ulong low = (ulong)rr.Key;
                 head2.Output = (high << 32) | (low);
                 byte[] rawTextureData = new byte[rr.Value * 256];
+                
                 EzSwizzle.writeTexPSMT8To(MipLevelsTBP[0], TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
                 if (MipLevels > 1)
                 {
@@ -278,8 +279,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                         prevLevel = mipData;
                     }
                 }
-                EzSwizzle.writeTexPSMT8To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);
-                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, rr.Key, rr.Value, rawTextureData); // what's difference between RRW and width
+                EzSwizzle.writeTexPSMCT32To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);
+                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, rr.Key, rr.Value, rawTextureData);
                 tag = EzSwizzle.ColorsToTag(EzSwizzle.BytesToColors(gifData));
             }
             using (MemoryStream stream = new MemoryStream())

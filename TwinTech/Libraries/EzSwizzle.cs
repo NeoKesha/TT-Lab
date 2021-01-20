@@ -202,6 +202,26 @@ namespace Twinsanity.Libraries
 			return destination;
 		}
 
+		public static byte[] writeTexPSMCT32To(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, byte[] destination)
+		{
+			int src = 0;
+			int startBlockPos = dbp * 64;
+
+			for (int y = dsay; y < dsay + rrh; y++)
+			{
+				for (int x = dsax; x < dsax + rrw; x++)
+				{
+					var dst = startBlockPos + MapCoords32(x, y, dbw);
+					for (int i = 0; i < 4; i++)
+					{
+						destination[4 * dst + i] = source[src + i];
+					}
+					src += 4;
+				}
+			}
+			return destination;
+		}
+
 		public static byte[] readTexPSMCT32(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
 			int src = 0;
