@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using TT_Lab.Command;
 using TT_Lab.Controls;
 using TT_Lab.ViewModels.Instance;
 
@@ -36,6 +25,11 @@ namespace TT_Lab.Editors.Instance
                 Layers = Util.Layers
             };
             InitValidators();
+            InstancesListContextMenu.Items.Add(new MenuItem
+            {
+                Header = "Delete",
+                Command = new RelayCommand(viewModel.DeleteInstanceFromListCommand, commandManager)
+            });
         }
 
         private void InitValidators()
@@ -60,6 +54,12 @@ namespace TT_Lab.Editors.Instance
                 return result;
             };
             AcceptNewPropValuePredicate[nameof(vm.HeaderH)] = AcceptNewPropValuePredicate[nameof(vm.Header1)];
+        }
+
+        private void InstancesList_SelectionChanged(Object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var viewModel = (TriggerViewModel)AssetViewModel;
+            viewModel.DeleteInstanceFromListCommand.Item = InstancesList.SelectedItem;
         }
     }
 }

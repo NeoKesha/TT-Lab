@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Command;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
@@ -38,9 +39,13 @@ namespace TT_Lab.ViewModels.Instance
             _headerT = data.HeaderT;
             _headerH = data.HeaderH;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
+            AddInstanceToListCommand = new AddItemToListCommand<ushort>(_instances, typeof(UInt16));
+            DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
 
 
+        public AddItemToListCommand<UInt16> AddInstanceToListCommand { get; private set; }
+        public DeleteItemFromListCommand DeleteInstanceFromListCommand { get; private set; }
         public Enums.Layouts LayoutID
         {
             get => _layId;

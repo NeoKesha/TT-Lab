@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
+using TT_Lab.Controls;
 using TT_Lab.Project;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Shaders;

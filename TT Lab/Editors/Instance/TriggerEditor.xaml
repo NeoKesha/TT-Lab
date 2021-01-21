@@ -35,7 +35,11 @@
                 <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
             <GroupBox Header="Instances" HorizontalAlignment="Stretch" Margin="0,0,0,0">
-                <ListBox x:Name="InstancesList" ItemsSource="{Binding ViewModel.Instances}"/>
+                <ListBox x:Name="InstancesList" ItemsSource="{Binding ViewModel.Instances}" AllowDrop="True" SelectionChanged="InstancesList_SelectionChanged">
+                    <ListBox.ContextMenu>
+                        <ContextMenu x:Name="InstancesListContextMenu"/>
+                    </ListBox.ContextMenu>
+                </ListBox>
             </GroupBox>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>

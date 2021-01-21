@@ -23,6 +23,8 @@ namespace TT_Lab.AssetData.Instance
 
         [JsonProperty(Required = Required.Always)]
         public Vector4 Coords { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public UInt16 Arg { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -33,6 +35,7 @@ namespace TT_Lab.AssetData.Instance
         {
             PS2AnyAIPosition aiPosition = (PS2AnyAIPosition)twinRef;
             Coords = CloneUtils.Clone(aiPosition.Position);
+            Arg = aiPosition.UnkShort;
         }
     }
 }

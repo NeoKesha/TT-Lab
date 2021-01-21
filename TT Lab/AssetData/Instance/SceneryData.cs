@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
@@ -31,7 +32,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public UInt32? SkydomeID { get; set; }
+        public Guid? SkydomeID { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public List<AmbientLight> AmbientLights { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
@@ -55,7 +56,7 @@ namespace TT_Lab.AssetData.Instance
             SceneryName = scenery.Name.Substring(0);
             UnkUInt = scenery.UnkUInt;
             UnkByte = scenery.UnkByte;
-            SkydomeID = scenery.SkydomeID;
+            SkydomeID = GuidManager.GetGuidByTwinId(scenery.SkydomeID, typeof(Skydome));
             AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
             DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
             PointLights = CloneUtils.DeepClone(scenery.PointLights);

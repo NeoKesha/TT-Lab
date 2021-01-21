@@ -60,7 +60,12 @@ namespace TT_Lab.AssetData.Instance
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Instances.Clear();
+            Positions.Clear();
+            Paths.Clear();
+            ParamList1.Clear();
+            ParamList2.Clear();
+            ParamList3.Clear();
         }
 
         public override void Import()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.Assets.Code;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
@@ -23,7 +24,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public String TemplateName { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 ObjectId { get; set; }
+        public Guid ObjectId { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt16 Bitfield { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -53,7 +54,7 @@ namespace TT_Lab.AssetData.Instance
         {
             PS2AnyTemplate template = (PS2AnyTemplate)twinRef;
             TemplateName = new String(template.Name.ToCharArray());
-            ObjectId = template.ObjectId;
+            ObjectId = GuidManager.GetGuidByTwinId(template.ObjectId, typeof(GameObject));
             Bitfield = template.Bitfield;
             Header1 = template.Header1;
             Header2 = template.Header2;
