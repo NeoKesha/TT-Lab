@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Command;
+using TT_Lab.Controls;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -41,7 +42,7 @@ namespace TT_Lab.Editors.Instance
             DataContext = new
             {
                 ViewModel = pvm,
-                Layers = new ObservableCollection<object>(Enum.GetValues(typeof(Enums.Layouts)).Cast<object>())
+                Layers = Util.Layers
             };
             InitValidators();
             Loaded += PositionEditor_Loaded;
@@ -56,18 +57,10 @@ namespace TT_Lab.Editors.Instance
 
         private void InitValidators()
         {
-            AcceptNewPropValuePredicate["X"] = (n, o) =>
+            foreach (var pair in VectorEditor.GetValidators())
             {
-                var nStr = (string)n;
-                var oStr = (string)o;
-                if (oStr == nStr) return null;
-                if (string.IsNullOrEmpty(nStr)) return 0f;
-                if (!Single.TryParse(nStr, NumberStyles.Float, CultureInfo.InvariantCulture, out Single result)) return null;
-                return result;
-            };
-            AcceptNewPropValuePredicate["Y"] = AcceptNewPropValuePredicate["X"];
-            AcceptNewPropValuePredicate["Z"] = AcceptNewPropValuePredicate["X"];
-            AcceptNewPropValuePredicate["W"] = AcceptNewPropValuePredicate["X"];
+                AcceptNewPropValuePredicate.Add(pair.Key, pair.Value);
+            }
         }
     }
 }

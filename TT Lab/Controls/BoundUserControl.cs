@@ -16,6 +16,7 @@ namespace TT_Lab.Controls
         protected event EventHandler<BoundPropertyChangedEventArgs> BoundPropertyChanged;
         protected event EventHandler UndoPerformed;
         protected event EventHandler RedoPerformed;
+        protected event EventHandler TargetChanged;
 
         [Description("Editor that owns this user control"), Category("Common Properties")]
         public BaseEditor Editor
@@ -50,7 +51,7 @@ namespace TT_Lab.Controls
 
         // Using a DependencyProperty as the backing store for PropertyTarget.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PropertyTargetProperty =
-            DependencyProperty.Register("PropertyTarget", typeof(object), typeof(BoundUserControl), new PropertyMetadata(null));
+            DependencyProperty.Register("PropertyTarget", typeof(object), typeof(BoundUserControl), new PropertyMetadata(null, OnTargetChanged));
 
         protected void InvokeUndo()
         {
@@ -67,6 +68,11 @@ namespace TT_Lab.Controls
             BoundPropertyChanged?.Invoke(this, new BoundPropertyChangedEventArgs { NewValue = newVal, OldValue = oldVal, PropName = BoundProperty, Target = PropertyTarget });
         }
 
+        protected void InvokeTargetChanged()
+        {
+            TargetChanged?.Invoke(this, new EventArgs());
+        }
+
         protected static void OnEditorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BoundUserControl control = d as BoundUserControl;
@@ -75,5 +81,10 @@ namespace TT_Lab.Controls
             control.BoundPropertyChanged += control.Editor.BoundPropertyChanged;
         }
 
+        protected static void OnTargetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            BoundUserControl control = d as BoundUserControl;
+            control.InvokeTargetChanged();
+        }
     }
 }

@@ -23,21 +23,7 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Boolean Enabled { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Position { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Rotation { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Scale { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<UInt16> Instances { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Header1 { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Single HeaderT { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 HeaderH { get; set; }
+        public TriggerData Trigger { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 CameraHeader { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -97,15 +83,8 @@ namespace TT_Lab.AssetData.Instance
         }
         public override void Import()
         {
-            PS2AnyCamera camera = (PS2AnyCamera)twinRef;
-            Enabled = camera.CamTrigger.Enabled > 0;
-            Position = CloneUtils.Clone(camera.CamTrigger.Position);
-            Rotation = CloneUtils.Clone(camera.CamTrigger.Rotation);
-            Scale = CloneUtils.Clone(camera.CamTrigger.Scale);
-            Instances = CloneUtils.CloneList(camera.CamTrigger.Instances);
-            Header1 = camera.CamTrigger.Header1;
-            HeaderT = camera.CamTrigger.HeaderT;
-            HeaderH = camera.CamTrigger.HeaderH;
+            PS2AnyCamera camera = (PS2AnyCamera)twinRef!;
+            Trigger = new TriggerData(camera.CamTrigger);
             CameraHeader = camera.CameraHeader;
             UnkShort = camera.UnkShort;
             UnkFloat1 = camera.UnkFloat1;

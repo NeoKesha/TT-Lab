@@ -22,6 +22,18 @@ namespace TT_Lab.AssetData.Instance
             twinRef = trigger;
         }
 
+        public TriggerData(TwinTrigger trigger) : this()
+        {
+            Enabled = trigger.Enabled > 0;
+            Position = CloneUtils.Clone(trigger.Position);
+            Rotation = CloneUtils.Clone(trigger.Rotation);
+            Scale = CloneUtils.Clone(trigger.Scale);
+            Instances = CloneUtils.CloneList(trigger.Instances);
+            Header1 = trigger.Header1;
+            HeaderT = trigger.HeaderT;
+            HeaderH = trigger.HeaderH;
+        }
+
         [JsonProperty(Required = Required.Always)]
         public Boolean Enabled { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -41,7 +53,7 @@ namespace TT_Lab.AssetData.Instance
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Instances.Clear();
         }
 
         public override void Import()

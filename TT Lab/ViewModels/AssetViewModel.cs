@@ -80,18 +80,17 @@ namespace TT_Lab.ViewModels
         {
             if (_editor == null)
             {
-                _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this);
+                _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this)!;
                 _editor.Unloaded += EditorUnload;
             }
             return _editor;
         }
 
-        public Control GetEditor(Command.CommandManager commandManager)
+        public Control GetEditor(CommandManager commandManager)
         {
             if (_editor == null)
             {
-                _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this, commandManager);
-                _editor.Unloaded += EditorUnload;
+                _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this, commandManager)!;
             }
             return _editor;
         }
@@ -100,7 +99,7 @@ namespace TT_Lab.ViewModels
         {
             if (_editor == null)
             {
-                var baseEdit = (BaseEditor)Activator.CreateInstance(Asset.GetEditorType(), this);
+                var baseEdit = (BaseEditor)Activator.CreateInstance(Asset.GetEditorType(), this)!;
                 _editor = new TabItem
                 {
                     Content = baseEdit
