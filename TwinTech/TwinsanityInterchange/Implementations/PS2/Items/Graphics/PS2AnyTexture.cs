@@ -239,16 +239,37 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             {
                 byte[] textureData = new byte[width * height];
                 byte[] paletteData = new byte[256 * 4];
-                Dictionary<Color, Byte> palette = new Dictionary<Color, Byte>();
-                var index = 0;
+                List<Color> palette = new List<Color>(256);
                 foreach (var c in image)
                 {
-                    if (!palette.ContainsKey(c))
+                    if (!palette.Contains(c))
                     {
-                        EzSwizzle.ColorsToByte(c, paletteData, palette.Count);
-                        palette.Add(c, (Byte)palette.Count);
+                        palette.Add(c);
                     }
-                    textureData[index] = palette[c];
+                }
+                while (palette.Count < 256)
+                {
+                    palette.Add(new Color());
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 8; j < 16; j++)
+                    {
+                        Color tmp = palette[j + i * 32 + 8];
+                        palette[j + i * 32 + 8] = palette[j + i * 32];
+                        palette[j + i * 32] = tmp;
+                    }
+                }
+                var index = 0;
+                foreach (var c in palette)
+                {
+                    EzSwizzle.ColorsToByte(c, paletteData, index);
+                    ++index;
+                }
+                index = 0;
+                foreach (var c in image)
+                {
+                    textureData[index] = (Byte)palette.IndexOf(c);
                     ++index;
                 }
                 var rr = ResolutionMapper[$"[{width}, {height}]"];
