@@ -277,29 +277,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 ulong low = (ulong)rr.Key;
                 head2.Output = (high << 32) | (low);
                 byte[] rawTextureData = new byte[rr.Value * 256];
-                
-                EzSwizzle.writeTexPSMT8To(MipLevelsTBP[0], TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
-                if (MipLevels > 1)
-                {
-                    var mipWidth = width;
-                    var mipHeight = height;
-                    var prevLevel = textureData;
-                    for (var i = 1; i < MipLevels; ++i)
-                    {
-                        mipWidth /= 2;
-                        mipHeight /= 2;
-                        byte[] mipData = new byte[mipWidth * mipHeight];
-                        for (var x = 0; x < mipWidth; ++x)
-                        {
-                            for (var y = 0; y < mipHeight; ++y)
-                            {
-                                mipData[x + y * mipWidth] = prevLevel[x * 2 + y * 2 * (mipWidth * 2)];
-                            }
-                        }
-                        EzSwizzle.writeTexPSMT8To(MipLevelsTBP[i], MipLevelsTBW[i], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
-                        prevLevel = mipData;
-                    }
-                }
+
+                /*
+                    byte[] rawTextureData = EzSwizzle.writeTexPSMCT32(0, 1, 0, 0, RRW, RRH, gifData);
+                    byte[] texData = EzSwizzle.readTexPSMT8(0, TextureBufferWidth, 0, 0, Width, Height, rawTextureData, false);
+                    byte[] paletteData = EzSwizzle.readTexPSMCT32(ClutBufferBasePointer, 1, 0, 0, 16, 16, rawTextureData, false);
+                 */
+
+                EzSwizzle.writeTexPSMT8To(0, TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
                 EzSwizzle.writeTexPSMCT32To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);
                 byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, rr.Key, rr.Value, rawTextureData);
                 tag = EzSwizzle.ColorsToTag(EzSwizzle.BytesToColors(gifData));
