@@ -21,6 +21,10 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
+        public UInt16 PathBegin { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public UInt16 PathEnd { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public UInt16[] Args { get; set; }
 
         protected override void Dispose(Boolean disposing)
@@ -31,7 +35,9 @@ namespace TT_Lab.AssetData.Instance
         public override void Import()
         {
             PS2AnyAIPath aiPath = (PS2AnyAIPath)twinRef;
-            Args = CloneUtils.CloneArray(aiPath.Args);
+            PathBegin = aiPath.Args[0];
+            PathEnd = aiPath.Args[1];
+            Args = new UInt16[] { aiPath.Args[2], aiPath.Args[3], aiPath.Args[4] };
         }
     }
 }
