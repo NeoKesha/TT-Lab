@@ -17,14 +17,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public UInt32 Flags { get; set; }
         public UInt16 SurfaceId { get; set; }
         public UInt16[] StepSoundIds { get; set; }
-        public Single[] Parameters { get; set; }
-        public UInt16[] UnkShorts { get; set; }
+        public Single[] UnkFloatParams { get; set; }
+        public Vector4 UnkVec { get; set; }
+        public Vector4[] UnkBoundingBox { get; set; }
         
         public PS2AnyCollisionSurface()
         {
             StepSoundIds = new ushort[10];
-            Parameters = new float[16];
-            UnkShorts = new ushort[12];
+            UnkFloatParams = new float[10];
+            UnkVec = new Vector4();
+            UnkBoundingBox = new Vector4[2];
         }
 
         public override int GetLength()
@@ -40,13 +42,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             {
                 StepSoundIds[i] = reader.ReadUInt16();
             }
-            for (int i = 0; i < Parameters.Length; ++i)
+            for (int i = 0; i < UnkFloatParams.Length; ++i)
             {
-                Parameters[i] = reader.ReadSingle();
+                UnkFloatParams[i] = reader.ReadSingle();
             }
-            for (int i = 0; i < UnkShorts.Length; ++i)
+            UnkVec.Read(reader, Constants.SIZE_VECTOR4);
+            for (int i = 0; i < UnkBoundingBox.Length; ++i)
             {
-                UnkShorts[i] = reader.ReadUInt16();
+                UnkBoundingBox[i] = new Vector4();
+                UnkBoundingBox[i].Read(reader, Constants.SIZE_VECTOR4);
             }
         }
 
@@ -58,13 +62,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             {
                 writer.Write(StepSoundIds[i]);
             }
-            for (int i = 0; i < Parameters.Length; ++i)
+            for (int i = 0; i < UnkFloatParams.Length; ++i)
             {
-                writer.Write(Parameters[i]);
+                writer.Write(UnkFloatParams[i]);
             }
-            for (int i = 0; i < UnkShorts.Length; ++i)
+            UnkVec.Write(writer);
+            for (int i = 0; i < UnkBoundingBox.Length; ++i)
             {
-                writer.Write(UnkShorts[i]);
+                UnkBoundingBox[i].Write(writer);
             }
         }
 
