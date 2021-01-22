@@ -124,7 +124,7 @@ namespace TT_Lab.Util
 
             return bufferArray;
         }
-        public static IndexedBufferArray GetCubeBuffer(Vector3 position = default, float scale = 1.0f, List<Color>? colors = null)
+        public static IndexedBufferArray GetCubeBuffer(Vector3 position = default, Vector3 scale = default, Quaternion rotation = default, List<Color>? colors = null)
         {
             if (colors == null)
             {
@@ -168,15 +168,43 @@ namespace TT_Lab.Util
                 -1.0f, 1.0f, 1.0f,
                 1.0f,-1.0f, 1.0f
             };
-            for (var i = 0; i < cubeVertecies.Length; ++i)
+            // Scale
+            var scaleMat = glm.scale(mat4.identity(), new vec3(scale.X, scale.Y, scale.Z));
+            for (var i = 0; i < cubeVertecies.Length; i += 3)
             {
-                cubeVertecies[i] *= scale;
+                var v = new vec4(cubeVertecies[i], cubeVertecies[i + 1], cubeVertecies[i + 2], 1.0f);
+                v = scaleMat * v;
+                cubeVertecies[i] = v.x;
+                cubeVertecies[i + 1] = v.y;
+                cubeVertecies[i + 2] = v.z;
+            }
+            // Rotation
+            if (rotation != default)
+            {
+                var rotMat = Matrix4.CreateFromQuaternion(rotation);
+                for (var i = 0; i < cubeVertecies.Length; i += 3)
+                {
+                    var v = new Vector4(cubeVertecies[i], cubeVertecies[i + 1], cubeVertecies[i + 2], 1.0f);
+                    v = rotMat * v;
+                    v = rotMat * v;
+                    v = rotMat * v;
+                    cubeVertecies[i] = v.X;
+                    cubeVertecies[i + 1] = v.Y;
+                    cubeVertecies[i + 2] = v.Z;
+                }
+            }
+            // Translation
+            for (var i = 0; i < cubeVertecies.Length; i += 3)
+            {
+                cubeVertecies[i] += position.X;
+                cubeVertecies[i + 1] += position.Y;
+                cubeVertecies[i + 2] += position.Z;
             }
             var vectors = new List<Twinsanity.TwinsanityInterchange.Common.Vector3>();
             var faces = new List<IndexedFace>();
             for (var i = 0; i < cubeVertecies.Length; i += 3)
             {
-                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3(cubeVertecies[i] + position.X, cubeVertecies[i + 1] + position.Y, cubeVertecies[i + 2] + position.Z));
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3(cubeVertecies[i], cubeVertecies[i + 1], cubeVertecies[i + 2]));
             }
             for (var i = 0; i < vectors.Count; i += 3)
             {
@@ -184,5 +212,10 @@ namespace TT_Lab.Util
             }
             return GetModelBuffer(vectors, faces, colors);
         }
+        public static IndexedBufferArray GetCubeBuffer(Vector3 position = default, float scale = 1.0f, List<Color>? colors = null)
+        {
+            return GetCubeBuffer(position, new Vector3(scale, scale, scale), default, colors);
+        }
+        
     }
 }

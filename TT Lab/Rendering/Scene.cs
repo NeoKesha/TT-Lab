@@ -105,6 +105,15 @@ namespace TT_Lab.Rendering
                 pRend.Parent = this;
                 objects.Add(pRend);
             }
+
+            // Triggers renderer
+            var triggers = sceneTree.Find(avm => avm.Alias == "Triggers");
+            foreach (var trg in triggers!.Children)
+            {
+                var trRend = new Objects.Trigger((TriggerViewModel)trg);
+                trRend.Parent = this;
+                objects.Add(trRend);
+            }
         }
 
         public void AddRender(IRenderable renderObj)

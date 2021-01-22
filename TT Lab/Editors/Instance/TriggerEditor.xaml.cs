@@ -30,6 +30,14 @@ namespace TT_Lab.Editors.Instance
                 Header = "Delete",
                 Command = new RelayCommand(viewModel.DeleteInstanceFromListCommand, commandManager)
             });
+            Loaded += TriggerEditor_Loaded;
+        }
+
+        private void TriggerEditor_Loaded(Object sender, System.Windows.RoutedEventArgs e)
+        {
+            var chunkEditor = (ChunkEditor)ParentEditor!;
+            var vm = (TriggerViewModel)AssetViewModel;
+            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
         }
 
         private void InitValidators()

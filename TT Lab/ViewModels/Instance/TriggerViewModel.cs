@@ -35,6 +35,9 @@ namespace TT_Lab.ViewModels.Instance
             _position = new Vector4ViewModel(data.Position);
             _rotation = new Vector4ViewModel(data.Rotation);
             _scale = new Vector4ViewModel(data.Scale);
+            _position.PropertyChanged += _vector_PropertyChanged;
+            _rotation.PropertyChanged += _vector_PropertyChanged;
+            _scale.PropertyChanged += _vector_PropertyChanged;
             _header1 = data.Header1;
             _headerT = data.HeaderT;
             _headerH = data.HeaderH;
@@ -43,6 +46,49 @@ namespace TT_Lab.ViewModels.Instance
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
 
+        public override void Save()
+        {
+            _asset.LayoutID = (int)LayoutID;
+            var data = (TriggerData)_asset.GetData();
+            data.Enabled = Enabled;
+            data.Header1 = Header1;
+            data.HeaderH = HeaderH;
+            data.HeaderT = HeaderT;
+            data.Position = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = Position.X,
+                Y = Position.Y,
+                Z = Position.Z,
+                W = Position.W
+            };
+            data.Scale = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = Scale.X,
+                Y = Scale.Y,
+                Z = Scale.Z,
+                W = Scale.W
+            };
+            data.Rotation = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = Rotation.X,
+                Y = Rotation.Y,
+                Z = Rotation.Z,
+                W = Rotation.W
+            };
+            data.Instances.Clear();
+            foreach (var inst in Instances)
+            {
+                data.Instances.Add(inst);
+            }
+            base.Save();
+        }
+
+        private void _vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            NotifyChange(nameof(Position));
+            NotifyChange(nameof(Scale));
+            NotifyChange(nameof(Rotation));
+        }
 
         public AddItemToListCommand<UInt16> AddInstanceToListCommand { get; private set; }
         public DeleteItemFromListCommand DeleteInstanceFromListCommand { get; private set; }

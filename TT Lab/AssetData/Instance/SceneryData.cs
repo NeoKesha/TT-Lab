@@ -56,7 +56,10 @@ namespace TT_Lab.AssetData.Instance
             SceneryName = scenery.Name.Substring(0);
             UnkUInt = scenery.UnkUInt;
             UnkByte = scenery.UnkByte;
-            SkydomeID = GuidManager.GetGuidByTwinId(scenery.SkydomeID, typeof(Skydome));
+            if (scenery.SkydomeID != 0)
+            {
+                SkydomeID = GuidManager.GetGuidByTwinId(scenery.SkydomeID, typeof(Skydome));
+            }
             AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
             DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
             PointLights = CloneUtils.DeepClone(scenery.PointLights);
