@@ -85,6 +85,7 @@ namespace TT_Lab.ViewModels.Instance
 
         private void _vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            IsDirty = true;
             NotifyChange(nameof(Position));
             NotifyChange(nameof(Scale));
             NotifyChange(nameof(Rotation));
