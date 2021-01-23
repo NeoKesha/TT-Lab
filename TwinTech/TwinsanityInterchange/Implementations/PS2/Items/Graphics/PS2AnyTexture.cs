@@ -163,6 +163,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     int Height = (int)(Math.Pow(2, ImageHeightPower));
                     byte[] rawTextureData = EzSwizzle.writeTexPSMCT32(0, 1, 0, 0, RRW, RRH, gifData);
                     byte[] texData = EzSwizzle.readTexPSMT8(0, TextureBufferWidth, 0, 0, Width, Height, rawTextureData, false);
+                    HashSet<Int32> indexSet = new HashSet<int>();
+                    foreach (var i in texData)
+                    {
+                        indexSet.Add(i);
+                    }
                     byte[] paletteData = EzSwizzle.readTexPSMCT32(ClutBufferBasePointer, 1, 0, 0, 16, 16, rawTextureData, false);
                     List<Color> palette = EzSwizzle.BytesToColors(paletteData);
                     for (int i = 0; i < 8; i++)
@@ -185,7 +190,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public void FromBitmap(List<Color> image, Int32 width, byte mips, TextureFunction fun, TexturePixelFormat format)
         {
-            mips = 1;
+            //mips = 1;
             int height = image.Count / width;
             TexFun = fun;
             TextureFormat = format;
@@ -201,14 +206,30 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 var mipWidth = width;
                 var mipHeight = height;
                 var basePointer = 0;
-                for (var i = 0; i < MipLevels; ++i)
+                for (var i = 0; i < mips; ++i)
                 {
-                    MipLevelsTBP[i] = basePointer;
-                    MipLevelsTBW[i] = (Byte)Math.Ceiling(mipWidth / 64.0f);
                     mipWidth /= 2;
                     mipHeight /= 2;
+                    if (mipWidth != 8 && mipHeight != 8)
+                    {
+                        var mul = Math.Min(mipWidth, mipHeight);
+                        basePointer += (mul * mul) / 64;
+                    }
+                    else
+                    {
+                        basePointer += 2;
+                    }
+                    MipLevelsTBP[i] = basePointer;
+                    MipLevelsTBW[i] = 1;
+                    if (i == 1)
+                    {
+                        basePointer += 4;
+                        ClutBufferBasePointer = basePointer;
+                    }
+                }
+                if (ClutBufferBasePointer == 0)
+                {
                     ClutBufferBasePointer = basePointer + 4;
-                    basePointer += (int)Math.Ceiling(mipWidth * mipHeight / 64.0f);
                 }
             }
             GIFTag headerTag = new GIFTag();
@@ -251,6 +272,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 {
                     palette.Add(new Color());
                 }
+                var index = 0;
+                foreach (var c in image)
+                {
+                    textureData[index] = (Byte)palette.IndexOf(c);
+                    ++index;
+                }
                 for (int i = 0; i < 8; i++)
                 {
                     for (int j = 8; j < 16; j++)
@@ -260,18 +287,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                         palette[j + i * 32] = tmp;
                     }
                 }
-                var index = 0;
+                index = 0;
                 foreach (var c in palette)
                 {
                     EzSwizzle.ColorsToByte(c, paletteData, index);
                     ++index;
                 }
-                index = 0;
-                foreach (var c in image)
-                {
-                    textureData[index] = (Byte)palette.IndexOf(c);
-                    ++index;
-                }
+                
+                
                 var rr = ResolutionMapper[$"[{width}, {height}]"];
                 ulong high = (ulong)rr.Value;
                 ulong low = (ulong)rr.Key;
