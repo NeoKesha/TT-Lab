@@ -17,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyTexture : BaseTwinItem, ITwinTexture
     {
-        static Dictionary<string, KeyValuePair<Int32, Int32>> ResolutionMapper;
+        static Dictionary<string, TextureDescriptor> TextureDescriptorHelper;
         public UInt32 HeaderSignature { get; set; }
         public UInt16 ImageWidthPower { get; set; }
         public UInt16 ImageHeightPower { get; set; }
@@ -40,15 +40,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public PS2AnyTexture()
         {
-            if (ResolutionMapper == null)
+            
+            if (TextureDescriptorHelper == null)
             {
                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 UriBuilder uri = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
-                using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"TextureResolutionMapper.json"), FileMode.Open, FileAccess.Read))
+                using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"TextureDescriptionHelper.json"), FileMode.Open, FileAccess.Read))
                 using (StreamReader reader = new StreamReader(stream))
                 {
-                    ResolutionMapper = JsonSerializer.Deserialize<Dictionary<string, KeyValuePair<Int32, Int32>>>(reader.ReadToEnd());
+                    TextureDescriptorHelper = JsonSerializer.Deserialize<Dictionary<string, TextureDescriptor>>(reader.ReadToEnd());
                 }
             }
             UnusedMetadata = new byte[32];
@@ -188,50 +189,33 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void FromBitmap(List<Color> image, Int32 width, byte mips, TextureFunction fun, TexturePixelFormat format)
+        public void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format)
         {
-            //mips = 1;
             int height = image.Count / width;
             TexFun = fun;
             TextureFormat = format;
-            MipLevels = mips;
             TextureBufferWidth = (int)Math.Ceiling(width / 64.0f);
             ImageWidthPower = (ushort)Math.Log2(width);
             ImageHeightPower = (ushort)Math.Log2(height);
-            ClutBufferBasePointer = 0;
+            if (width != 256)
+            {
+                TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
+                ClutBufferBasePointer = textureDescriptor.CBP;
+                MipLevelsTBP = textureDescriptor.MipTBP;
+                MipLevelsTBP = textureDescriptor.MipTBP;
+                MipLevels = (byte)textureDescriptor.MipLevels;
+            } 
+            else
+            {
+                ClutBufferBasePointer = 0;
+                MipLevelsTBP = new Int32[6];
+                MipLevelsTBP = new Int32[6];
+                MipLevels = 1;
+            }
             //this is probably not bytes but whatever
             UnkBytes2[5] = UnkBytes3[0] = (width == 256) ? 0 : (byte)Math.Min(width, height);
             UnkBytes2[6] = UnkBytes3[1] = (width == 256) ? 2 : 0;
-            {
-                var mipWidth = width;
-                var mipHeight = height;
-                var basePointer = 0;
-                for (var i = 0; i < mips; ++i)
-                {
-                    mipWidth /= 2;
-                    mipHeight /= 2;
-                    if (mipWidth != 8 && mipHeight != 8)
-                    {
-                        var mul = Math.Min(mipWidth, mipHeight);
-                        basePointer += (mul * mul) / 64;
-                    }
-                    else
-                    {
-                        basePointer += 2;
-                    }
-                    MipLevelsTBP[i] = basePointer;
-                    MipLevelsTBW[i] = 1;
-                    if (i == 1)
-                    {
-                        basePointer += 4;
-                        ClutBufferBasePointer = basePointer;
-                    }
-                }
-                if (ClutBufferBasePointer == 0)
-                {
-                    ClutBufferBasePointer = basePointer + 4;
-                }
-            }
+           
             GIFTag headerTag = new GIFTag();
             headerTag.REGS = new REGSEnum[16];
             headerTag.REGS[0] = REGSEnum.ApD;
@@ -293,23 +277,31 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     EzSwizzle.ColorsToByte(c, paletteData, index);
                     ++index;
                 }
-                
-                
-                var rr = ResolutionMapper[$"[{width}, {height}]"];
-                ulong high = (ulong)rr.Value;
-                ulong low = (ulong)rr.Key;
-                head2.Output = (high << 32) | (low);
-                byte[] rawTextureData = new byte[rr.Value * 256];
 
-                /*
-                    byte[] rawTextureData = EzSwizzle.writeTexPSMCT32(0, 1, 0, 0, RRW, RRH, gifData);
-                    byte[] texData = EzSwizzle.readTexPSMT8(0, TextureBufferWidth, 0, 0, Width, Height, rawTextureData, false);
-                    byte[] paletteData = EzSwizzle.readTexPSMCT32(ClutBufferBasePointer, 1, 0, 0, 16, 16, rawTextureData, false);
-                 */
+                TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
+                ulong high = (ulong)textureDescriptor.RRH;
+                ulong low = (ulong)textureDescriptor.RRW;
+                head2.Output = (high << 32) | (low);
+                byte[] rawTextureData = new byte[textureDescriptor.RRH * 256];
 
                 EzSwizzle.writeTexPSMT8To(0, TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
+                var prevData = textureData;
+                var mipWidth = width;
+                var mipHeight = height;
+                for (var i = 1; i < MipLevels; ++i)
+                {
+                    mipWidth /= 2;
+                    mipHeight /= 2;
+                    var mipData = new byte[prevData.Length / 4];
+                    for (var j = 0; j < mipData.Length; ++j)
+                    {
+                        mipData[j] = prevData[4 * j];
+                    }
+                    EzSwizzle.writeTexPSMT8To(textureDescriptor.MipTBP[i - 1], textureDescriptor.MipTBW[i-1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
+                    prevData = mipData;
+                }
                 EzSwizzle.writeTexPSMCT32To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);
-                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, rr.Key, rr.Value, rawTextureData);
+                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, textureDescriptor.RRW, textureDescriptor.RRH, rawTextureData);
                 tag = EzSwizzle.ColorsToTag(EzSwizzle.BytesToColors(gifData));
             }
             using (MemoryStream stream = new MemoryStream())
@@ -367,5 +359,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             HIGHLIGHT2 = 0b11
         }
         #endregion
+
+        public struct TextureDescriptor
+        {
+            public Int32 MipLevels { get; set; }
+            public Int32 CBP { get; set; }
+            public Int32 RRW { get; set; }
+            public Int32 RRH { get; set; }
+            public Int32[] MipTBP { get; set; }
+            public Int32[] MipTBW { get; set; }
+
+        }
     }
 }

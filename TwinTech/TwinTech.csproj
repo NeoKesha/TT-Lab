@@ -21,7 +21,7 @@
     <None Update="AgentLabDefs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TextureResolutionMapper.json">
+    <None Update="TextureDescriptionHelper.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
