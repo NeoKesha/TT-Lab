@@ -11,36 +11,30 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     public class CameraLine : CameraSubBase
     {
-        public Vector4[] BoundingBox { get; set; }
+        public Vector4 LineStart { get; set; }
+        public Vector4 LineEnd { get; set; }
         public CameraLine()
         {
-            BoundingBox = new Vector4[2];
-            for (int i = 0; i < BoundingBox.Length; ++i)
-            {
-                BoundingBox[i] = new Vector4();
-            }
+            LineStart = new Vector4();
+            LineEnd = new Vector4();
         }
         public override int GetLength()
         {
-            return base.GetLength() + BoundingBox.Length * Constants.SIZE_VECTOR4;
+            return base.GetLength() + LineStart.GetLength() + LineEnd.GetLength();
         }
 
         public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, base.GetLength());
-            for (int i = 0; i < BoundingBox.Length; ++i)
-            {
-                BoundingBox[i].Read(reader, Constants.SIZE_VECTOR4);
-            }
+            LineStart.Read(reader, Constants.SIZE_VECTOR4);
+            LineEnd.Read(reader, Constants.SIZE_VECTOR4);
         }
 
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            for (int i = 0; i < BoundingBox.Length; ++i)
-            {
-                BoundingBox[i].Write(writer);
-            }
+            LineStart.Write(writer);
+            LineEnd.Write(writer);
         }
     }
 }

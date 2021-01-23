@@ -14,7 +14,16 @@ namespace TT_Lab.ViewModels.Instance
         private Enums.Layouts layId;
         private UInt16 surfId;
         private UInt32 flags;
-        private Guid[] soundIds;
+        private Guid stepSoundId1;
+        private Guid stepSoundId2;
+        private Guid landSoundId1;
+        private Guid landSoundId2;
+        private Guid unkSoundId;
+        private UInt16 unkId1;
+        private UInt16 unkId2;
+        private UInt16 unkId3;
+        private UInt16 unkId4;
+        private UInt16 unkId5;
         private Single[] floatParams;
         private Vector4ViewModel unkVec;
         private Vector4ViewModel[] unkBoundingBox;
@@ -24,8 +33,17 @@ namespace TT_Lab.ViewModels.Instance
             var surfData = (CollisionSurfaceData)_asset.GetData();
             surfId = surfData.SurfaceID;
             flags = surfData.Flags;
-            soundIds = CloneUtils.CloneArray(surfData.StepSoundIds);
             floatParams = CloneUtils.CloneArray(surfData.Parameters);
+            stepSoundId1 = surfData.StepSoundId1;
+            stepSoundId2 = surfData.StepSoundId2;
+            landSoundId1 = surfData.LandSoundId1;
+            landSoundId2 = surfData.LandSoundId2;
+            unkSoundId = surfData.UnkSoundId;
+            unkId1 = surfData.UnkId1;
+            unkId2 = surfData.UnkId2;
+            unkId3 = surfData.UnkId3;
+            unkId4 = surfData.UnkId4;
+            unkId5 = surfData.UnkId5;
             unkVec = new Vector4ViewModel(surfData.UnkVec);
             unkVec.PropertyChanged += Vector_PropertyChanged;
             unkBoundingBox = new Vector4ViewModel[2];
@@ -43,7 +61,16 @@ namespace TT_Lab.ViewModels.Instance
             var data = (CollisionSurfaceData)_asset.GetData();
             data.SurfaceID = SurfId;
             data.Flags = Flags;
-            data.StepSoundIds = CloneUtils.CloneArray(SoundIds);
+            data.StepSoundId1 = StepSoundId1;
+            data.StepSoundId2 = StepSoundId2;
+            data.LandSoundId1 = LandSoundId1;
+            data.LandSoundId2 = LandSoundId2;
+            data.UnkSoundId = UnkSoundId;
+            data.UnkId1 = UnkId1;
+            data.UnkId2 = UnkId2;
+            data.UnkId3 = UnkId3;
+            data.UnkId4 = UnkId4;
+            data.UnkId5 = UnkId5;
             data.Parameters = CloneUtils.CloneArray(FloatParams);
             data.UnkVec = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {
@@ -115,15 +142,122 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Guid[] SoundIds
+        public Guid StepSoundId1
         {
-            get => soundIds;
+            get => stepSoundId1;
             set
             {
-                if (soundIds != value)
+                if (stepSoundId1 != value)
                 {
-                    soundIds = value;
-                    IsDirty = true;
+                    stepSoundId1 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Guid StepSoundId2
+        {
+            get => stepSoundId2;
+            set
+            {
+                if (stepSoundId2 != value)
+                {
+                    stepSoundId2 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Guid LandSoundId1
+        {
+            get => landSoundId1;
+            set
+            {
+                if (landSoundId1 != value)
+                {
+                    landSoundId1 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Guid LandSoundId2
+        {
+            get => landSoundId2;
+            set
+            {
+                if (landSoundId2 != value)
+                {
+                    landSoundId2 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Guid UnkSoundId
+        {
+            get => unkSoundId;
+            set
+            {
+                if (unkSoundId != value)
+                {
+                    unkSoundId = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 UnkId1
+        {
+            get => unkId1;
+            set
+            {
+                if (unkId1 != value)
+                {
+                    unkId1 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 UnkId2
+        {
+            get => unkId2;
+            set
+            {
+                if (unkId2 != value)
+                {
+                    unkId2 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 UnkId3
+        {
+            get => unkId3;
+            set
+            {
+                if (unkId3 != value)
+                {
+                    unkId3 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 UnkId4
+        {
+            get => unkId4;
+            set
+            {
+                if (unkId4 != value)
+                {
+                    unkId4 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 UnkId5
+        {
+            get => unkId5;
+            set
+            {
+                if (unkId5 != value)
+                {
+                    unkId5 = value;
                     NotifyChange();
                 }
             }

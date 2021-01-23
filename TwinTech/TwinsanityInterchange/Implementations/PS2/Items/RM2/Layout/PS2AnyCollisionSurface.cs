@@ -16,14 +16,22 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
     {
         public UInt32 Flags { get; set; }
         public UInt16 SurfaceId { get; set; }
-        public UInt16[] StepSoundIds { get; set; }
+        public UInt16 StepSoundId1 { get; set; }
+        public UInt16 StepSoundId2 { get; set; }
+        public UInt16 UnkId1 { get; set; }
+        public UInt16 UnkId2 { get; set; }
+        public UInt16 LandSoundId1 { get; set; }
+        public UInt16 UnkId3 { get; set; }
+        public UInt16 UnkId4 { get; set; }
+        public UInt16 LandSoundId2 { get; set; }
+        public UInt16 UnkSoundId { get; set; }
+        public UInt16 UnkId5 { get; set; }
         public Single[] UnkFloatParams { get; set; }
         public Vector4 UnkVec { get; set; }
         public Vector4[] UnkBoundingBox { get; set; }
         
         public PS2AnyCollisionSurface()
         {
-            StepSoundIds = new ushort[10];
             UnkFloatParams = new float[10];
             UnkVec = new Vector4();
             UnkBoundingBox = new Vector4[2];
@@ -38,10 +46,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         {
             Flags = reader.ReadUInt32();
             SurfaceId = reader.ReadUInt16();
-            for (int i = 0; i < StepSoundIds.Length; ++i)
-            {
-                StepSoundIds[i] = reader.ReadUInt16();
-            }
+            StepSoundId1 = reader.ReadUInt16();
+            StepSoundId2 = reader.ReadUInt16();
+            UnkId1 = reader.ReadUInt16();
+            UnkId2 = reader.ReadUInt16();
+            LandSoundId1 = reader.ReadUInt16();
+            UnkId3 = reader.ReadUInt16();
+            UnkId4 = reader.ReadUInt16();
+            LandSoundId2 = reader.ReadUInt16();
+            UnkSoundId = reader.ReadUInt16();
+            UnkId5 = reader.ReadUInt16();
             for (int i = 0; i < UnkFloatParams.Length; ++i)
             {
                 UnkFloatParams[i] = reader.ReadSingle();
@@ -58,10 +72,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         {
             writer.Write(Flags);
             writer.Write(SurfaceId);
-            for (int i = 0; i < StepSoundIds.Length; ++i)
-            {
-                writer.Write(StepSoundIds[i]);
-            }
+            writer.Write(StepSoundId1);
+            writer.Write(StepSoundId2);
+            writer.Write(UnkId1);
+            writer.Write(UnkId2);
+            writer.Write(LandSoundId1);
+            writer.Write(UnkId3);
+            writer.Write(UnkId4);
+            writer.Write(LandSoundId2);
+            writer.Write(UnkSoundId);
+            writer.Write(UnkId5);
             for (int i = 0; i < UnkFloatParams.Length; ++i)
             {
                 writer.Write(UnkFloatParams[i]);

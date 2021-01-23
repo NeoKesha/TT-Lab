@@ -278,7 +278,7 @@ namespace TT_Lab.Project
                 }
                 catch(Exception ex)
                 {
-                    Log.WriteLine($"Error when working with assets: {ex.Message}");
+                    Log.WriteLine($"Error when working with assets: {ex.Message}\n{ex.StackTrace}");
                 }
             });
         }

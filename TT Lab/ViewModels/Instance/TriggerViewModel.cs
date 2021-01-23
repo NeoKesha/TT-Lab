@@ -25,7 +25,29 @@ namespace TT_Lab.ViewModels.Instance
 
         public TriggerViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
-            var data = (TriggerData)Asset.GetData();
+            var data = (TriggerData)_asset.GetData();
+            _enabled = data.Enabled;
+            _instances = new ObservableCollection<UInt16>();
+            foreach (var inst in data.Instances)
+            {
+                _instances.Add(inst);
+            }
+            _position = new Vector4ViewModel(data.Position);
+            _rotation = new Vector4ViewModel(data.Rotation);
+            _scale = new Vector4ViewModel(data.Scale);
+            _position.PropertyChanged += _vector_PropertyChanged;
+            _rotation.PropertyChanged += _vector_PropertyChanged;
+            _scale.PropertyChanged += _vector_PropertyChanged;
+            _header1 = data.Header1;
+            _headerT = data.HeaderT;
+            _headerH = data.HeaderH;
+            _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
+            AddInstanceToListCommand = new AddItemToListCommand<ushort>(_instances, typeof(UInt16));
+            DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
+        }
+
+        public TriggerViewModel(Guid asset, AssetViewModel parent, TriggerData data) : base(asset, parent)
+        {
             _enabled = data.Enabled;
             _instances = new ObservableCollection<UInt16>();
             foreach (var inst in data.Instances)
@@ -50,6 +72,11 @@ namespace TT_Lab.ViewModels.Instance
         {
             _asset.LayoutID = (int)LayoutID;
             var data = (TriggerData)_asset.GetData();
+            Save(data);
+            base.Save();
+        }
+        public void Save(TriggerData data)
+        {
             data.Enabled = Enabled;
             data.Header1 = Header1;
             data.HeaderH = HeaderH;
@@ -80,7 +107,6 @@ namespace TT_Lab.ViewModels.Instance
             {
                 data.Instances.Add(inst);
             }
-            base.Save();
         }
 
         private void _vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)

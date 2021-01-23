@@ -73,13 +73,13 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public CameraSubBase MainCamera1 { get; set; }
+        public CameraSubBase? MainCamera1 { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public CameraSubBase MainCamera2 { get; set; }
+        public CameraSubBase? MainCamera2 { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Trigger.Dispose();
         }
         public override void Import()
         {
