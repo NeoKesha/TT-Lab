@@ -26,6 +26,35 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             NotifyChange(nameof(LineEnd));
         }
 
+        public override void Save(CameraSubBase? cam)
+        {
+            if (cam == null)
+            {
+                cam = new CameraLine();
+            }
+            var lineCam = (CameraLine)cam;
+            lineCam.LineStart = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = LineStart.X,
+                Y = LineStart.Y,
+                Z = LineStart.Z,
+                W = LineStart.W,
+            };
+            lineCam.LineEnd = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = LineEnd.X,
+                Y = LineEnd.Y,
+                Z = LineEnd.Z,
+                W = LineEnd.W,
+            };
+            base.Save(cam);
+        }
+
+        public override UInt32 GetIndex()
+        {
+            return 0x1C03;
+        }
+
         public Vector4ViewModel LineStart
         {
             get => lineStart;

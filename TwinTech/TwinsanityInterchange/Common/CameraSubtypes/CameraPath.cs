@@ -12,14 +12,15 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
     public class CameraPath : CameraSubBase
     {
         public List<Vector4> PathPoints { get; set; }
-        public UInt64[] UnkData { get; set; }
+        public List<UInt64> UnkData { get; set; }
         public CameraPath()
         {
             PathPoints = new List<Vector4>();
+            UnkData = new List<UInt64>();
         }
         public override int GetLength()
         {
-            return base.GetLength() + 4 + PathPoints.Count * Constants.SIZE_VECTOR4 + 4 + UnkData.Length * 8;
+            return base.GetLength() + 4 + PathPoints.Count * Constants.SIZE_VECTOR4 + 4 + UnkData.Count * 8;
         }
 
         public override void Read(BinaryReader reader, int length)
@@ -34,10 +35,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
                 PathPoints.Add(vec);
             }
             int cnt2 = reader.ReadInt32();
-            UnkData = new UInt64[cnt2];
+            UnkData.Clear();
             for (var i = 0; i < cnt2; ++i)
             {
-                UnkData[i] = reader.ReadUInt64();
+                UnkData.Add(reader.ReadUInt64());
             }
         }
 
@@ -48,7 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             foreach(ITwinSerializable e in PathPoints) {
                 e.Write(writer);
             }
-            writer.Write(UnkData.Length);
+            writer.Write(UnkData.Count);
             foreach (var unk in UnkData)
             {
                 writer.Write(unk);

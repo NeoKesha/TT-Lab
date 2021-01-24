@@ -20,6 +20,18 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             unkFloat2 = baseCam.UnkFloat2;
         }
 
+        public virtual void Save(CameraSubBase? cam)
+        {
+            cam.UnkInt = UnkInt;
+            cam.UnkFloat1 = UnkFloat1;
+            cam.UnkFloat2 = UnkFloat2;
+        }
+
+        public virtual UInt32 GetIndex()
+        {
+            return 3;
+        }
+
         public UInt32 UnkInt
         {
             get => unkInt;

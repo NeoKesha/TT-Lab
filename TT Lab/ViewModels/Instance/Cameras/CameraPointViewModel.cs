@@ -22,6 +22,28 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             NotifyChange(nameof(Point));
         }
 
+        public override void Save(CameraSubBase? cam)
+        {
+            if (cam == null)
+            {
+                cam = new CameraPoint();
+            }
+            var pCam = (CameraPoint)cam;
+            pCam.Point = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = point.X,
+                Y = point.Y,
+                Z = point.Z,
+                W = point.W,
+            };
+            base.Save(cam);
+        }
+
+        public override UInt32 GetIndex()
+        {
+            return 0x1C02;
+        }
+
         public Vector4ViewModel Point
         {
             get => point;

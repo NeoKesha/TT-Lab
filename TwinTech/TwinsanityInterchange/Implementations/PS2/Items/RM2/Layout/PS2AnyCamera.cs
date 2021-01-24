@@ -14,7 +14,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyCamera : BaseTwinItem, ITwinCamera
     {
-        Dictionary<UInt32, Type> subCamIdToCamera = new Dictionary<UInt32, Type>();
+        private static readonly Dictionary<UInt32, Type> subCamIdToCamera = new Dictionary<UInt32, Type>();
         public TwinTrigger CamTrigger { get; }
         public UInt32 CameraHeader { get; set; }
         public UInt16 UnkShort { get; set; }
@@ -47,6 +47,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             CamTrigger = new TwinTrigger();
             UnkVector1 = new Vector4();
             UnkVector2 = new Vector4();
+        }
+
+        static PS2AnyCamera()
+        {
             subCamIdToCamera.Add(0xA19, typeof(BossCamera));
             subCamIdToCamera.Add(0x1C02, typeof(CameraPoint));
             subCamIdToCamera.Add(0x1C03, typeof(CameraLine));

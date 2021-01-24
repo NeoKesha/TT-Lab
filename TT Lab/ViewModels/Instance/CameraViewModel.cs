@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.ViewModels.Instance.Cameras;
 
 namespace TT_Lab.ViewModels.Instance
 {
     public class CameraViewModel : AssetViewModel
     {
+        private static readonly Dictionary<UInt32, Type> subIdToCamVM = new Dictionary<uint, Type>();
         private TriggerViewModel trigger;
         private UInt32 cameraHeader;
         private UInt16 unkShort;
@@ -30,9 +32,9 @@ namespace TT_Lab.ViewModels.Instance
         private UInt32 unkInt7;
         private UInt32 unkInt8;
         private Single unkFloat8;
-        private UInt32 typeIndex1;
-        private UInt32 typeIndex2;
         private Byte unkByte;
+        private BaseCameraViewModel? mainCamera1;
+        private BaseCameraViewModel? mainCamera2;
 
         public CameraViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
@@ -61,9 +63,41 @@ namespace TT_Lab.ViewModels.Instance
             unkInt7 = data.UnkInt7;
             unkInt8 = data.UnkInt8;
             unkFloat8 = data.UnkFloat8;
-            typeIndex1 = data.TypeIndex1;
-            typeIndex2 = data.TypeIndex2;
             unkByte = data.UnkByte;
+            if (subIdToCamVM.ContainsKey(data.TypeIndex1))
+            {
+                mainCamera1 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.TypeIndex1], data.MainCamera1)!;
+                mainCamera1.PropertyChanged += MainCamera1_PropertyChanged;
+            }
+            if (subIdToCamVM.ContainsKey(data.TypeIndex2))
+            {
+                mainCamera2 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.TypeIndex2], data.MainCamera2)!;
+                mainCamera2.PropertyChanged += MainCamera2_PropertyChanged;
+            }
+        }
+
+        private void MainCamera1_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(MainCamera1));
+        }
+
+        private void MainCamera2_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(MainCamera2));
+        }
+
+        static CameraViewModel()
+        {
+            subIdToCamVM.Add(0xA19, typeof(BossCameraViewModel));
+            subIdToCamVM.Add(0x1C02, typeof(CameraPointViewModel));
+            subIdToCamVM.Add(0x1C03, typeof(CameraLineViewModel));
+            subIdToCamVM.Add(0x1C04, typeof(CameraPathViewModel));
+            subIdToCamVM.Add(0x1C06, typeof(CameraSplineViewModel));
+            subIdToCamVM.Add(0x1C0B, typeof(CameraPoint2ViewModel));
+            subIdToCamVM.Add(0x1C0D, typeof(CameraLine2ViewModel));
+            subIdToCamVM.Add(0x1C0F, typeof(CameraZoneViewModel));
         }
 
         private void Trigger_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -116,9 +150,27 @@ namespace TT_Lab.ViewModels.Instance
             data.UnkInt6 = UnkInt6;
             data.UnkInt7 = UnkInt7;
             data.UnkInt8 = UnkInt8;
-            data.TypeIndex1 = TypeIndex1;
-            data.TypeIndex2 = TypeIndex2;
             data.UnkByte = UnkByte;
+            if (MainCamera1 != null)
+            {
+                data.TypeIndex1 = MainCamera1.GetIndex();
+                MainCamera1.Save(data.MainCamera1);
+            }
+            else
+            {
+                data.TypeIndex1 = 3;
+                data.MainCamera1 = null;
+            }
+            if (MainCamera2 != null)
+            {
+                data.TypeIndex2 = MainCamera2.GetIndex();
+                MainCamera2.Save(data.MainCamera2);
+            }
+            else
+            {
+                data.TypeIndex2 = 3;
+                data.MainCamera2 = null;
+            }
             base.Save();
         }
 
@@ -395,32 +447,6 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt32 TypeIndex1
-        {
-            get => typeIndex1;
-            set
-            {
-                if (typeIndex1 != value)
-                {
-                    typeIndex1 = value;
-                    IsDirty = true;
-                    NotifyChange();
-                }
-            }
-        }
-        public UInt32 TypeIndex2
-        {
-            get => typeIndex2;
-            set
-            {
-                if (typeIndex2 != value)
-                {
-                    typeIndex2 = value;
-                    IsDirty = true;
-                    NotifyChange();
-                }
-            }
-        }
         public Byte UnkByte
         {
             get => unkByte;
@@ -430,6 +456,30 @@ namespace TT_Lab.ViewModels.Instance
                 {
                     unkByte = value;
                     IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
+        public BaseCameraViewModel? MainCamera1
+        {
+            get => mainCamera1;
+            set
+            {
+                if (mainCamera1 != value)
+                {
+                    mainCamera1 = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public BaseCameraViewModel? MainCamera2
+        {
+            get => mainCamera2;
+            set
+            {
+                if (mainCamera2 != value)
+                {
+                    mainCamera2 = value;
                     NotifyChange();
                 }
             }

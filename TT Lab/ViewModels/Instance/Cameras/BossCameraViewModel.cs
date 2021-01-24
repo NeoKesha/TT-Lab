@@ -40,6 +40,51 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             unkFloat6 = bossCam.UnkFloat6;
         }
 
+        public override void Save(CameraSubBase? cam)
+        {
+            if (cam == null)
+            {
+                cam = new BossCamera();
+            }
+            var bossCam = (BossCamera)cam;
+            for (var i = 0; i < 4; ++i)
+            {
+                bossCam.UnkMatrix1[i] = new Twinsanity.TwinsanityInterchange.Common.Vector4
+                {
+                    X = UnkMatrix1[i].X,
+                    Y = UnkMatrix1[i].Y,
+                    Z = UnkMatrix1[i].Z,
+                    W = UnkMatrix1[i].W,
+                };
+                bossCam.UnkMatrix2[i] = new Twinsanity.TwinsanityInterchange.Common.Vector4
+                {
+                    X = UnkMatrix2[i].X,
+                    Y = UnkMatrix2[i].Y,
+                    Z = UnkMatrix2[i].Z,
+                    W = UnkMatrix2[i].W,
+                };
+            }
+            bossCam.UnkVector = new Twinsanity.TwinsanityInterchange.Common.Vector4
+            {
+                X = UnkVec.X,
+                Y = UnkVec.Y,
+                Z = UnkVec.Z,
+                W = UnkVec.W,
+            };
+            bossCam.UnkByte1 = UnkByte1;
+            bossCam.UnkByte2 = UnkByte2;
+            bossCam.UnkFloat3 = UnkFloat3;
+            bossCam.UnkFloat5 = UnkFloat4;
+            bossCam.UnkFloat6 = UnkFloat5;
+            bossCam.UnkFloat6 = UnkFloat6;
+            base.Save(cam);
+        }
+
+        public override UInt32 GetIndex()
+        {
+            return 0xA19;
+        }
+
         private void Vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             NotifyChange(nameof(UnkMatrix1));
