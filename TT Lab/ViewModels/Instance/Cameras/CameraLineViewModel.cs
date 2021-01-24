@@ -12,8 +12,9 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private Vector4ViewModel lineStart;
         private Vector4ViewModel lineEnd;
 
-        public CameraLineViewModel(CameraLine baseCam) : base(baseCam)
+        public CameraLineViewModel(CameraSubBase cam) : base(cam)
         {
+            var baseCam = (CameraLine)cam;
             lineStart = new Vector4ViewModel(baseCam.LineStart);
             lineEnd = new Vector4ViewModel(baseCam.LineEnd);
             lineEnd.PropertyChanged += Vector_PropertyChanged;

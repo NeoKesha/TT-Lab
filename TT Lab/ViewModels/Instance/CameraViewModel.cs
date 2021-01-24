@@ -11,6 +11,7 @@ namespace TT_Lab.ViewModels.Instance
     public class CameraViewModel : AssetViewModel
     {
         private static readonly Dictionary<UInt32, Type> subIdToCamVM = new Dictionary<uint, Type>();
+
         private TriggerViewModel trigger;
         private UInt32 cameraHeader;
         private UInt16 unkShort;
@@ -467,6 +468,10 @@ namespace TT_Lab.ViewModels.Instance
             {
                 if (mainCamera1 != value)
                 {
+                    if (value == null)
+                    {
+                        mainCamera1!.PropertyChanged -= MainCamera1_PropertyChanged;
+                    }
                     mainCamera1 = value;
                     NotifyChange();
                 }
@@ -479,6 +484,10 @@ namespace TT_Lab.ViewModels.Instance
             {
                 if (mainCamera2 != value)
                 {
+                    if (value == null)
+                    {
+                        mainCamera2!.PropertyChanged -= MainCamera2_PropertyChanged;
+                    }
                     mainCamera2 = value;
                     NotifyChange();
                 }

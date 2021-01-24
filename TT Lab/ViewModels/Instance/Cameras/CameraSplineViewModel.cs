@@ -16,24 +16,21 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private ObservableCollection<UInt64> unkData;
         private UInt16 unkShort;
 
-        public CameraSplineViewModel(CameraSpline baseCam) : base(baseCam)
+        public CameraSplineViewModel(CameraSubBase cam) : base(cam)
         {
+            var baseCam = (CameraSpline)cam;
             unkFloat3 = baseCam.UnkFloat3;
             pathPoints = new ObservableCollection<Vector4ViewModel>();
             pathPoints.CollectionChanged += Points_CollectionChanged;
             foreach (var v in baseCam.PathPoints)
             {
-                var vm = new Vector4ViewModel(v);
-                pathPoints.Add(vm);
-                vm.PropertyChanged += Vector_PropertyChanged;
+                pathPoints.Add(new Vector4ViewModel(v));
             }
             interpolationPoints = new ObservableCollection<Vector4ViewModel>();
             interpolationPoints.CollectionChanged += Points_CollectionChanged;
             foreach (var v in baseCam.InterpolationPoints)
             {
-                var vm = new Vector4ViewModel(v);
-                interpolationPoints.Add(vm);
-                vm.PropertyChanged += Vector_PropertyChanged;
+                interpolationPoints.Add(new Vector4ViewModel(v));
             }
             unkData = new ObservableCollection<UInt64>();
             foreach (var d in baseCam.UnkData)
@@ -47,12 +44,12 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
-                var vm = (Vector4ViewModel)e.NewItems![e.NewStartingIndex]!;
+                var vm = (Vector4ViewModel)e.NewItems![0]!;
                 vm.PropertyChanged += Vector_PropertyChanged;
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
-                var vm = (Vector4ViewModel)e.OldItems![e.OldStartingIndex]!;
+                var vm = (Vector4ViewModel)e.OldItems![0]!;
                 vm.PropertyChanged -= Vector_PropertyChanged;
             }
         }

@@ -19,8 +19,9 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private Single unkFloat6;
         private Byte unkByte2;
 
-        public BossCameraViewModel(BossCamera bossCam) : base(bossCam)
+        public BossCameraViewModel(CameraSubBase cam) : base(cam)
         {
+            var bossCam = (BossCamera)cam;
             unkMatrix1 = new Vector4ViewModel[4];
             unkMatrix2 = new Vector4ViewModel[4];
             for (var i = 0; i < 4; ++i)

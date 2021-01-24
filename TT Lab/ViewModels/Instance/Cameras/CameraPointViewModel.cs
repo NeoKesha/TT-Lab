@@ -11,8 +11,9 @@ namespace TT_Lab.ViewModels.Instance.Cameras
     {
         private Vector4ViewModel point;
 
-        public CameraPointViewModel(CameraPoint cameraPoint) : base(cameraPoint)
+        public CameraPointViewModel(CameraSubBase cam) : base(cam)
         {
+            var cameraPoint = (CameraPoint)cam;
             point = new Vector4ViewModel(cameraPoint.Point);
             point.PropertyChanged += Point_PropertyChanged;
         }

@@ -13,15 +13,14 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private ObservableCollection<Vector4ViewModel> pathPoints;
         private ObservableCollection<UInt64> unkData;
 
-        public CameraPathViewModel(CameraPath baseCam) : base(baseCam)
+        public CameraPathViewModel(CameraSubBase cam) : base(cam)
         {
+            var baseCam = (CameraPath)cam;
             pathPoints = new ObservableCollection<Vector4ViewModel>();
             pathPoints.CollectionChanged += PathPoints_CollectionChanged;
             foreach (var v in baseCam.PathPoints)
             {
-                var vm = new Vector4ViewModel(v);
-                pathPoints.Add(vm);
-                vm.PropertyChanged += Vector_PropertyChanged;
+                pathPoints.Add(new Vector4ViewModel(v));
             }
             unkData = new ObservableCollection<ulong>();
             foreach (var d in baseCam.UnkData)
@@ -34,12 +33,12 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
-                var vm = (Vector4ViewModel)e.NewItems![e.NewStartingIndex]!;
+                var vm = (Vector4ViewModel)e.NewItems![0]!;
                 vm.PropertyChanged += Vector_PropertyChanged;
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
-                var vm = (Vector4ViewModel)e.OldItems![e.OldStartingIndex]!;
+                var vm = (Vector4ViewModel)e.OldItems![0]!;
                 vm.PropertyChanged -= Vector_PropertyChanged;
             }
         }

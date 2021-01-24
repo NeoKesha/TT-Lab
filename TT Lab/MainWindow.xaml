@@ -334,7 +334,7 @@
             <MenuItem x:Name="About" Header="About" HorizontalAlignment="Center"/>
         </Menu>
 
-        <Grid x:Name="MainControlsGrid" Margin="0" Grid.Row="1" IsEnabled="{Binding WorkableProject}">
+        <Grid x:Name="MainControlsGrid" Margin="0" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200*"/>
                 <ColumnDefinition/>

@@ -14,8 +14,9 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private Single unkFloat3;
         private Single unkFloat4;
 
-        public CameraLine2ViewModel(CameraLine2 baseCam) : base(baseCam)
+        public CameraLine2ViewModel(CameraSubBase cam) : base(cam)
         {
+            var baseCam = (CameraLine2)cam;
             lineStart = new Vector4ViewModel(baseCam.LineStart);
             lineEnd = new Vector4ViewModel(baseCam.LineEnd);
             lineEnd.PropertyChanged += Vector_PropertyChanged;

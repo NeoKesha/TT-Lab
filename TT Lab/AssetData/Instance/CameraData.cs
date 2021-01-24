@@ -17,6 +17,18 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
+        public CameraData(Type? mainCam1T, Type? mainCam2T)
+        {
+            if (mainCam1T != null)
+            {
+                MainCamera1 = (CameraSubBase)Activator.CreateInstance(mainCam1T)!;
+            }
+            if (mainCam2T != null)
+            {
+                MainCamera2 = (CameraSubBase)Activator.CreateInstance(mainCam2T)!;
+            }
+        }
+
         public CameraData(PS2AnyCamera camera) : this()
         {
             twinRef = camera;
@@ -77,6 +89,11 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.AllowNull)]
         public CameraSubBase? MainCamera2 { get; set; }
 
+        public override void Load(String dataPath)
+        {
+            base.Load(dataPath);
+        }
+
         protected override void Dispose(Boolean disposing)
         {
             Trigger.Dispose();
@@ -109,8 +126,14 @@ namespace TT_Lab.AssetData.Instance
             TypeIndex1 = camera.TypeIndex1;
             TypeIndex2 = camera.TypeIndex2;
             UnkByte = camera.UnkByte;
-            MainCamera1 = CloneUtils.DeepClone(camera.MainCamera1);
-            MainCamera2 = CloneUtils.DeepClone(camera.MainCamera2);
+            if (camera.MainCamera1 != null)
+            {
+                MainCamera1 = (CameraSubBase)CloneUtils.DeepClone(camera.MainCamera1, camera.MainCamera1.GetType());
+            }
+            if (camera.MainCamera2 != null)
+            {
+                MainCamera2 = (CameraSubBase)CloneUtils.DeepClone(camera.MainCamera2, camera.MainCamera2.GetType());
+            }
         }
     }
 }

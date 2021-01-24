@@ -34,8 +34,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 {
                     0 => V1,
                     1 => V2,
-                    3 => V3,
-                    4 => V4,
+                    2 => V3,
+                    3 => V4,
                     _ => throw new IndexOutOfRangeException(),
                 };
             }

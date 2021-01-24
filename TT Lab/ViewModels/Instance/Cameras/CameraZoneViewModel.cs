@@ -12,8 +12,9 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private Vector4ViewModel[] unkVecs1;
         private Vector4ViewModel[] unkVecs2;
 
-        public CameraZoneViewModel(CameraZone baseCam) : base(baseCam)
+        public CameraZoneViewModel(CameraSubBase cam) : base(cam)
         {
+            var baseCam = (CameraZone)cam;
             unkVecs1 = new Vector4ViewModel[5];
             unkVecs2 = new Vector4ViewModel[5];
             for (var i = 0; i < 5; ++i)

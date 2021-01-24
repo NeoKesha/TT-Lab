@@ -13,8 +13,9 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private Single unkFloat3;
         private Byte unkByte;
 
-        public CameraPoint2ViewModel(CameraPoint2 baseCam) : base(baseCam)
+        public CameraPoint2ViewModel(CameraSubBase cam) : base(cam)
         {
+            var baseCam = (CameraPoint2)cam;
             point = new Vector4ViewModel(baseCam.Point);
             point.PropertyChanged += Point_PropertyChanged;
             unkFloat3 = baseCam.UnkFloat3;

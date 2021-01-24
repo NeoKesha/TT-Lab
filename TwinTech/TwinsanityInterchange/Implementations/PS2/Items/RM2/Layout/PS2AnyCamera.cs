@@ -14,7 +14,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyCamera : BaseTwinItem, ITwinCamera
     {
-        private static readonly Dictionary<UInt32, Type> subCamIdToCamera = new Dictionary<UInt32, Type>();
+        public static readonly Dictionary<UInt32, Type> subCamIdToCamera = new Dictionary<UInt32, Type>();
+
         public TwinTrigger CamTrigger { get; }
         public UInt32 CameraHeader { get; set; }
         public UInt16 UnkShort { get; set; }

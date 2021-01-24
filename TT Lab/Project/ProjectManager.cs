@@ -310,7 +310,7 @@ namespace TT_Lab.Project
                         }
                         catch (Exception ex)
                         {
-                            Log.WriteLine($"Error opening project: {ex.Message}");
+                            Log.WriteLine($"Error opening project: {ex.Message}\n{ex.StackTrace}");
                         }
                     });
                 }

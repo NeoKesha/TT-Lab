@@ -28,6 +28,25 @@ namespace TT_Lab.Util
             return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
         }
         /// <summary>
+        /// Deep clone. Use ONLY when all other Cloning procedures do not apply.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
+        static public object DeepClone(object original, Type type)
+        {
+            using var stream = new MemoryStream();
+            using StreamWriter writer = new StreamWriter(stream);
+            using StreamReader reader = new StreamReader(stream);
+            writer.Write(JsonConvert.SerializeObject(original));
+            writer.Flush();
+            stream.Position = 0;
+            var deserObj = typeof(JsonConvert).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .First(m => m.Name == "DeserializeObject"
+                && m.IsGenericMethod && m.GetParameters().Length == 1);
+            return deserObj.MakeGenericMethod(type).Invoke(null, new object[] { reader.ReadToEnd() })!;
+        }
+        /// <summary>
         /// List clone. Use when Clone is aplicable for T
         /// </summary>
         /// <typeparam name="T"></typeparam>
