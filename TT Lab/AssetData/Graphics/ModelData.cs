@@ -9,6 +9,7 @@ using System.Threading;
 using TT_Lab.AssetData.Graphics.SubModels;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -116,7 +117,6 @@ namespace TT_Lab.AssetData.Graphics
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
             var refIndex = 0;
-            var offset = 0;
             foreach (var e in model.SubModels)
             {
                 var vertList = new List<Vertex>();
@@ -129,7 +129,7 @@ namespace TT_Lab.AssetData.Graphics
                     {
                         if (e.Connection[j + 2])
                         {
-                            if ((/*offset +*/ j) % 2 == 0)
+                            if (j % 2 == 0)
                             {
                                 faceList.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
                             }
@@ -147,6 +147,40 @@ namespace TT_Lab.AssetData.Graphics
                 //offset += e.Vertexes.Count;
                 refIndex += 2;
             }
+        }
+
+        public override ITwinItem Export()
+        {
+            PS2AnyModel model = new PS2AnyModel();
+            var submodels = Vertexes.Count();
+            for (var i = 0; i < submodels; ++i)
+            {
+                var verts = Vertexes[i];
+                var faces = Faces[i];
+
+                var twinVerts = new List<Vector4>();
+                var twinUWVs = new List<Vector4>();
+                var twinEmits = new List<Vector4>();
+                var twinColors = new List<Vector4>();
+                var twinConns = new List<bool>();
+
+                foreach (var v in verts)
+                {
+                    twinVerts.Add(new Vector4(v.Position.X, v.Position.Y, v.Position.Z, 1.0f));
+                    twinUWVs.Add(new Vector4(v.UV.X, v.UV.Y, v.UV.Z, 1.0f));
+                    twinEmits.Add(new Vector4(v.EmitColor.X, v.EmitColor.Y, v.EmitColor.Z, v.EmitColor.Z));
+                    twinColors.Add(new Vector4(v.Color.X, v.Color.Y, v.Color.Z, v.Color.Z));
+                }
+                var refIndex = 0;
+                for (var j = 0; j < faces.Count; ++j)
+                {
+                    // i have no idea how to count conn :(
+                }
+                var subModel = new SubModel();
+                subModel.FromVertexArrays(twinVerts, twinUWVs, twinEmits, twinColors, twinConns);
+                model.SubModels.Add(subModel);
+            }
+            return model;
         }
     }
 }

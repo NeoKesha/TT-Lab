@@ -105,6 +105,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 TrimList(Colors, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
+
+        public void FromVertexArrays(List<Vector4> verts, List<Vector4> uwv, List<Vector4> emit, List<Vector4> color, List<bool> conns)
+        {
+
+        }
+
         public void Write(BinaryWriter writer)
         {
             //TODO: uncomment VertixesCount = (UInt32)Vertixes.Count();
