@@ -49,6 +49,11 @@ namespace TT_Lab.AssetData
 
         public abstract void Import();
 
+        public virtual ITwinItem Export()
+        {
+            return null;
+        }
+
         public void NullifyReference()
         {
             twinRef = null;

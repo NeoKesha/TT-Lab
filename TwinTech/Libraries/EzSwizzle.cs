@@ -116,6 +116,24 @@ namespace Twinsanity.Libraries
 			}
 			return destination;
 		}
+		public static byte[] writeTexPSMT8To(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, byte[] destination)
+		{
+			dbw >>= 1;
+			int src = 0;
+			int startBlockPos = dbp * 64;
+
+			for (int y = dsay; y < dsay + rrh; y++)
+			{
+				for (int x = dsax; x < dsax + rrw; x++)
+				{
+					int cb = 0;
+					int dst = startBlockPos + MapCoords8(x, y, dbw, ref cb);
+					destination[4 * dst + cb] = source[src];
+					src++;
+				}
+			}
+			return destination;
+		}
 
 		public static byte[] writeTexPSMCT16(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
@@ -184,6 +202,26 @@ namespace Twinsanity.Libraries
 			return destination;
 		}
 
+		public static byte[] writeTexPSMCT32To(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, byte[] destination)
+		{
+			int src = 0;
+			int startBlockPos = dbp * 64;
+
+			for (int y = dsay; y < dsay + rrh; y++)
+			{
+				for (int x = dsax; x < dsax + rrw; x++)
+				{
+					var dst = startBlockPos + MapCoords32(x, y, dbw);
+					for (int i = 0; i < 4; i++)
+					{
+						destination[4 * dst + i] = source[src + i];
+					}
+					src += 4;
+				}
+			}
+			return destination;
+		}
+
 		public static byte[] readTexPSMCT32(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
 			int src = 0;
@@ -226,6 +264,35 @@ namespace Twinsanity.Libraries
 			}
 			return colors;
 		}
+
+		public static GIFTag ColorsToTag(List<Color> colors)
+		{
+			GIFTag tag = new GIFTag();
+			tag.NREG = 16;
+			tag.EOP = 1;
+			tag.NLOOP = (ushort)(colors.Count / 4);
+			tag.REGS = new REGSEnum[16];
+			tag.FLG = GIFModeEnum.IMAGE;
+			tag.Data = new List<RegOutput>();
+			for (var i = 0; i < colors.Count - 3; i += 4)
+			{
+				UInt64 col0 = colors[i + 0].ToABGR();
+				UInt64 col1 = colors[i + 1].ToABGR();
+				UInt64 col2 = colors[i + 2].ToABGR();
+				UInt64 col3 = colors[i + 3].ToABGR();
+				UInt64 long1 = (col1 << 32) | (col0);
+				UInt64 long2 = (col3 << 32) | (col2);
+				RegOutput reg1 = new RegOutput();
+				reg1.REG = REGSEnum.HWREG;
+				reg1.Output = long1;
+				RegOutput reg2 = new RegOutput();
+				reg2.REG = REGSEnum.HWREG;
+				reg2.Output = long2;
+				tag.Data.Add(reg2);
+				tag.Data.Add(reg1);
+			}
+			return tag;
+		}
 		public static byte[] TagToBytes(GIFTag tag) {
 			List<UInt64> data = tag.Data.Select(d => d.Output).ToList();
 			byte[] bytes = new byte[data.Count * 8];
@@ -241,18 +308,16 @@ namespace Twinsanity.Libraries
 
 		public static void ColorsToByte(Color color, byte[] array, int index)
         {
-			array[index * 4 + 3] = (Byte)(color.A >> 1);
-			array[index * 4 + 2] = color.B;
-			array[index * 4 + 1] = color.G;
-			array[index * 4 + 0] = color.R;
+			UInt32 abrg = color.ToABGR();
+			array[index * 4 + 3] = (Byte)((abrg >> 24) & 0xFF);
+			array[index * 4 + 2] = (Byte)((abrg >> 16) & 0xFF);
+			array[index * 4 + 1] = (Byte)((abrg >> 8) & 0xFF);
+			array[index * 4 + 0] = (Byte)((abrg >> 0) & 0xFF);
         }
 		public static Color BytesToColor(byte[] array, int index)
 		{
 			Color color = new Color();
-			color.A = (Byte)(array[index + 3] << 1);
-			color.B = (Byte)(array[index + 2] << 1);
-			color.G = (Byte)(array[index + 1] << 1);
-			color.R = (Byte)(array[index + 0] << 1);
+			color.FromABGR((UInt32)((array[index + 3] << 24) | (array[index + 2] << 16) | (array[index + 1] << 8) | (array[index + 0] << 0)));
 			return color;
 		}
 
