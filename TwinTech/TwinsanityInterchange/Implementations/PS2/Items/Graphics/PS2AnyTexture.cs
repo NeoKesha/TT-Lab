@@ -155,6 +155,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             {
                 case TexturePixelFormat.PSMCT32:
                     EzSwizzle.TagToColors(data[1], Colors);
+                    foreach (var c in Colors)
+                    {
+                        c.ScaleAlphaUp();
+                    }
                     break;
                 case TexturePixelFormat.PSMT8:
                     byte[] gifData = EzSwizzle.TagToBytes(data[1]);
@@ -164,11 +168,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     int Height = (int)(Math.Pow(2, ImageHeightPower));
                     byte[] rawTextureData = EzSwizzle.writeTexPSMCT32(0, 1, 0, 0, RRW, RRH, gifData);
                     byte[] texData = EzSwizzle.readTexPSMT8(0, TextureBufferWidth, 0, 0, Width, Height, rawTextureData, false);
-                    HashSet<Int32> indexSet = new HashSet<int>();
-                    foreach (var i in texData)
-                    {
-                        indexSet.Add(i);
-                    }
                     byte[] paletteData = EzSwizzle.readTexPSMCT32(ClutBufferBasePointer, 1, 0, 0, 16, 16, rawTextureData, false);
                     List<Color> palette = EzSwizzle.BytesToColors(paletteData);
                     for (int i = 0; i < 8; i++)
@@ -179,6 +178,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                             palette[j + i * 32] = palette[j + i * 32 + 8];
                             palette[j + i * 32 + 8] = tmp;
                         }
+                    }
+                    foreach (var c in palette)
+                    {
+                        c.ScaleAlphaUp();
                     }
                     int Pixels = Width * Height;
                     for (var i = 0; i < Pixels; ++i)
@@ -238,6 +241,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             GIFTag tag;
             if (format == TexturePixelFormat.PSMCT32)
             {
+                foreach (var c in image)
+                {
+                    c.ScaleAlphaDown();
+                }
                 tag = EzSwizzle.ColorsToTag(image);
             } 
             else
@@ -262,13 +269,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     textureData[index] = (Byte)palette.IndexOf(c);
                     ++index;
                 }
+                foreach (var c in palette)
+                {
+                    c.ScaleAlphaDown();
+                }
                 for (int i = 0; i < 8; i++)
                 {
                     for (int j = 8; j < 16; j++)
                     {
-                        Color tmp = palette[j + i * 32 + 8];
-                        palette[j + i * 32 + 8] = palette[j + i * 32];
-                        palette[j + i * 32] = tmp;
+                        var srcIndex = j + i * 32 + 8;
+                        var dstIndex = j + i * 32;
+                        Color tmp = palette[srcIndex];
+                        palette[srcIndex] = palette[dstIndex];
+                        palette[dstIndex] = tmp;
                     }
                 }
                 index = 0;

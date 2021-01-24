@@ -308,18 +308,16 @@ namespace Twinsanity.Libraries
 
 		public static void ColorsToByte(Color color, byte[] array, int index)
         {
-			array[index * 4 + 3] = (Byte)(color.A >> 1);
-			array[index * 4 + 2] = (Byte)(color.B >> 1);
-			array[index * 4 + 1] = (Byte)(color.G >> 1);
-			array[index * 4 + 0] = (Byte)(color.R >> 1);
+			UInt32 abrg = color.ToABGR();
+			array[index * 4 + 3] = (Byte)((abrg >> 24) & 0xFF);
+			array[index * 4 + 2] = (Byte)((abrg >> 16) & 0xFF);
+			array[index * 4 + 1] = (Byte)((abrg >> 8) & 0xFF);
+			array[index * 4 + 0] = (Byte)((abrg >> 0) & 0xFF);
         }
 		public static Color BytesToColor(byte[] array, int index)
 		{
 			Color color = new Color();
-			color.A = (Byte)(array[index + 3] << 1);
-			color.B = (Byte)(array[index + 2] << 1);
-			color.G = (Byte)(array[index + 1] << 1);
-			color.R = (Byte)(array[index + 0] << 1);
+			color.FromABGR((UInt32)((array[index + 3] << 24) | (array[index + 2] << 16) | (array[index + 1] << 8) | (array[index + 0] << 0)));
 			return color;
 		}
 

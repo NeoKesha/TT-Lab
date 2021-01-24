@@ -72,17 +72,32 @@ namespace Twinsanity.TwinsanityInterchange.Common
         }
         public void FromABGR(UInt32 val)
         {
-            A = (Byte)(((val >> 24) & 0xFF) << 1);
-            B = (Byte)(((val >> 16) & 0xFF) << 1);
-            G = (Byte)(((val >> 8) & 0xFF) << 1);
-            R = (Byte)(((val >> 0) & 0xFF) << 1);
+            A = (Byte)((val >> 24) & 0xFF);
+            B = (Byte)((val >> 16) & 0xFF);
+            G = (Byte)((val >> 8) & 0xFF);
+            R = (Byte)((val >> 0) & 0xFF);
+        }
+        public void ScaleAlphaUp()
+        {
+            A = (Byte)(A << 1);
+            R = (Byte)(R << 1);
+            G = (Byte)(G << 1);
+            B = (Byte)(B << 1);
+
+        }
+        public void ScaleAlphaDown()
+        {
+            A = (Byte)(A >> 1);
+            R = (Byte)(R >> 1);
+            G = (Byte)(G >> 1);
+            B = (Byte)(B >> 1);
         }
         public UInt32 ToABGR()
         {
-            var a = A >> 1;
-            var b = B >> 1;
-            var g = G >> 1;
-            var r = R >> 1;
+            Byte a = A;
+            Byte b = B;
+            Byte g = G;
+            Byte r = R;
             return (UInt32)((a << 24) | (b << 16) | (g << 8) | (r << 0));
         }
 
@@ -102,7 +117,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 else
                 {
                     Color other = (Color)obj;
-                    return (other.A == A) && (other.B == B) && (other.G == G) && (other.B == B);
+                    return other.ToARGB() == ToARGB();
                 }
             } 
             else
@@ -112,7 +127,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         }
         public override Int32 GetHashCode()
         {
-            return (Int32)ToABGR();
+            return (Int32)ToARGB();
         }
     }
 }

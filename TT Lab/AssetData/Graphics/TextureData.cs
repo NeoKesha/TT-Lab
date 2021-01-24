@@ -106,48 +106,23 @@ namespace TT_Lab.AssetData.Graphics
             var fun = TextureFunction.MODULATE;
             var format = (Bitmap.Width == 256) ? TexturePixelFormat.PSMCT32 : TexturePixelFormat.PSMT8;
             var tex = new List<Twinsanity.TwinsanityInterchange.Common.Color>();
-            if (format == TexturePixelFormat.PSMCT32)
+            var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            unsafe
             {
-                var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                unsafe
+                byte* source = (byte*)(bits.Scan0 + bits.Stride * (bits.Height - 1));
+                for (int i = 0; i < bits.Height; i++)
                 {
-                    byte* source = (byte*)(bits.Scan0 + bits.Stride*(bits.Height - 1));
-                    for (int i = 0; i < bits.Height; i++)
+                    var scan = source;
+                    for (int j = 0; j < bits.Width; j++)
                     {
-                        var scan = source;
-                        for (int j = 0; j < bits.Width; j++)
-                        {
-                            var b = source[0];
-                            var g = source[1];
-                            var r = source[2];
-                            var a = source[3];
-                            tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(r,g,b,a));
-                            source += 4;
-                        }
-                        source = scan - bits.Stride;
+                        var b = source[0];
+                        var g = source[1];
+                        var r = source[2];
+                        var a = source[3];
+                        tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(r, g, b, a));
+                        source += 4;
                     }
-                } 
-            }
-            else
-            {
-                var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                unsafe
-                {
-                    byte* source = (byte*)(bits.Scan0 + bits.Stride * (bits.Height - 1));
-                    for (int i = 0; i < bits.Height; i++)
-                    {
-                        var scan = source;
-                        for (int j = 0; j < bits.Width; j++)
-                        {
-                            var b = source[0];
-                            var g = source[1];
-                            var r = source[2];
-                            var a = source[3];
-                            tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(r, g, b, a));
-                            source += 4;
-                        }
-                        source = scan - bits.Stride;
-                    }
+                    source = scan - bits.Stride;
                 }
             }
             texture.FromBitmap(tex, Bitmap.Width, fun, format);
