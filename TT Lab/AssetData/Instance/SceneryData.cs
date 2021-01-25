@@ -53,7 +53,7 @@ namespace TT_Lab.AssetData.Instance
         {
             PS2AnyScenery scenery = (PS2AnyScenery)twinRef;
             Flags = scenery.Flags;
-            SceneryName = scenery.Name.Substring(0);
+            SceneryName = scenery.Name[..];
             UnkUInt = scenery.UnkUInt;
             UnkByte = scenery.UnkByte;
             if (scenery.SkydomeID != 0)

@@ -68,12 +68,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
                         var conn = (e.GetBinaryW() & 0xFF00) >> 8;
                         Connection.Add(conn == 128 ? false : true);
                         Vector4 uv = new Vector4(e);
-                        uv.X /= uv.Z;
-                        uv.Y /= uv.Z;
-                        uv.X -= (float)Math.Truncate(uv.X);
-                        uv.Y -= (float)Math.Truncate(uv.Y);
-                        uv.X = Math.Abs(uv.X);
-                        uv.Y = Math.Abs(uv.Y);
+                        uv.X *= uv.Z;
+                        uv.Y = 1 - uv.Y * uv.Z;
                         UVW.Add(uv);
                     }
                 }

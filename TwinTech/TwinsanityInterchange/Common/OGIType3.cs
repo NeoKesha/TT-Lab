@@ -11,28 +11,35 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class OGIType3 : ITwinSerializable
     {
-        public Byte[] Data { get; set; }
+        public UInt16[] Data { get; set; }
         public Byte[] Blob { get; set; }
         public OGIType3()
         {
-            Data = new byte[0x16];
+            Data = new UInt16[11];
             Blob = Array.Empty<byte>();
         }
         public int GetLength()
         {
-            return 4 + Data.Length + Blob.Length;
+            return 4 + Data.Length * 2 + Blob.Length;
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            reader.Read(Data, 0, Data.Length);
+            Data = new UInt16[11];
+            for (var i = 0; i < 11; ++i)
+            {
+                Data[i] = reader.ReadUInt16();
+            }
             Int32 blobSize = reader.ReadInt32();
             Blob = reader.ReadBytes(blobSize);
         }
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Data);
+            for (var i = 0; i < 11; ++i)
+            {
+                writer.Write(Data[i]);
+            }
             writer.Write(Blob.Length);
             writer.Write(Blob);
         }

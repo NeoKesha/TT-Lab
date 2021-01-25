@@ -32,6 +32,7 @@ namespace TT_Lab.Util
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="original"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
         static public object DeepClone(object original, Type type)
         {

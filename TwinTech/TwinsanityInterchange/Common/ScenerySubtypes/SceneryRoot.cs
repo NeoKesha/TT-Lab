@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 {
-    public class SceneryRoot : SceneryType_0x1600
+    public class SceneryRoot : SceneryNode
     {
         public UInt32 UnkUInt;
 
@@ -19,11 +19,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
         public override void Read(BinaryReader reader, Int32 length)
         {
             UnkUInt = reader.ReadUInt32();
+            base.Read(reader, length);
         }
 
         public override void Read(BinaryReader reader, Int32 length, IList<SceneryBaseType> sceneries)
         {
-            Read(reader, length);
             base.Read(reader, length, sceneries);
         }
 

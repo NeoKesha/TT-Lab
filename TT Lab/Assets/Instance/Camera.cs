@@ -19,6 +19,9 @@ namespace TT_Lab.Assets.Instance
         public Camera(UInt32 id, String name, String chunk, Int32 layId, PS2AnyCamera camera) : base(id, name, chunk, layId)
         {
             assetData = new CameraData(camera);
+            Parameters = new Dictionary<string, object?>();
+            Parameters["MainCamera1Type"] = null;
+            Parameters["MainCamera2Type"] = null;
         }
 
         public Camera()

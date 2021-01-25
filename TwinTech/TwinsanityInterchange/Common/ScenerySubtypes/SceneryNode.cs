@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 {
-    public class SceneryType_0x1600 : SceneryBaseType
+    public class SceneryNode : SceneryBaseType
     {
         public Int32[] SceneryTypes;
 
-        public SceneryType_0x1600()
+        public SceneryNode()
         {
             SceneryTypes = new Int32[8];
         }
@@ -32,6 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 
         public virtual void Read(BinaryReader reader, Int32 length, IList<SceneryBaseType> sceneries)
         {
+            Read(reader, length);
             foreach (var sceneryType in SceneryTypes)
             {
                 // This is pretty tough since these are the only 2 types besides the Root type
@@ -41,13 +42,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
                 //                                                                      ~Smartkin
                 if (sceneryType == 0x1600)
                 {
-                    var newSc = new SceneryType_0x1600();
+                    var newSc = new SceneryNode();
                     sceneries.Add(newSc);
                     newSc.Read(reader, length, sceneries);
                 }
                 if (sceneryType == 0x1605)
                 {
-                    var newSc = new SceneryType_0x1605();
+                    var newSc = new SceneryLeaf();
                     sceneries.Add(newSc);
                     newSc.Read(reader, length);
                 }

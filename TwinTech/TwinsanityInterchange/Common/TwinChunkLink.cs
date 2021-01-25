@@ -19,32 +19,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Matrix4 LoadingWall { get; set; }
         public List<TwinChunkLinkOGI3> ChunkLinksOGI3 { get; set; }
 
-        /*public UInt16[] UnknownShorts { get; set; }
-        public Matrix4 LoadAreaA { get; set; }
-        public Matrix4 LoadAreaB { get; set; }
-        public Vector4 AreaVectorA { get; set; }
-        public Vector4 AreaVectorB { get; set; }
-        public Matrix4 AreaMatrix { get; set; }
-        public Vector4 UnknownVectorA { get; set; }
-        public Vector4 UnknownVectorB { get; set; }
-        public Matrix4 UnknownMatrix { get; set; }
-        public Byte[] UnknownBytes { get; set; }*/
         public TwinChunkLink()
         {
             ObjectMatrix = new Matrix4();
             ChunkMatrix = new Matrix4();
             LoadingWall = null;
             ChunkLinksOGI3 = new List<TwinChunkLinkOGI3>();
-            /*UnknownShorts = new ushort[15];
-            LoadAreaA = new Matrix4();
-            LoadAreaB = new Matrix4();
-            AreaVectorA = new Vector4();
-            AreaVectorB = new Vector4();
-            AreaMatrix = new Matrix4();
-            UnknownVectorA = new Vector4();
-            UnknownVectorB = new Vector4();
-            UnknownMatrix = new Matrix4();
-            UnknownBytes = new byte[60];*/
         }
         public int GetLength()
         {
@@ -81,19 +61,6 @@ namespace Twinsanity.TwinsanityInterchange.Common
                         clOgi3 = new TwinChunkLinkOGI3();
                     }
                 } while (hasNext);
-                /*for (int i = 0; i < UnknownShorts.Length; ++i)
-                {
-                    UnknownShorts[i] = reader.ReadUInt16();
-                }
-                LoadAreaA.Read(reader, Constants.SIZE_MATRIX4);
-                LoadAreaB.Read(reader, Constants.SIZE_MATRIX4);
-                AreaVectorA.Read(reader, Constants.SIZE_VECTOR4);
-                AreaVectorB.Read(reader, Constants.SIZE_VECTOR4);
-                AreaMatrix.Read(reader, Constants.SIZE_MATRIX4);
-                UnknownVectorA.Read(reader, Constants.SIZE_VECTOR4);
-                UnknownVectorB.Read(reader, Constants.SIZE_VECTOR4);
-                UnknownMatrix.Read(reader, Constants.SIZE_MATRIX4);
-                reader.Read(UnknownBytes, 0, UnknownBytes.Length);*/
             }
             var pos2 = reader.BaseStream.Position;
             var read = pos2 - pos1;

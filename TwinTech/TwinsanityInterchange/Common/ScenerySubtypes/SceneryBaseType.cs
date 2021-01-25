@@ -37,8 +37,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 
         public virtual Int32 GetLength()
         {
-            return 4 + 5 * Constants.SIZE_VECTOR4 +
-                (MeshIDs.Count + LodIDs.Count) * (Constants.SIZE_VECTOR4 * 2 + Constants.SIZE_MATRIX4 + 4);
+            return 4 + 5 * Constants.SIZE_VECTOR4 + (MeshIDs.Count + LodIDs.Count) * (Constants.SIZE_VECTOR4 * 2 + Constants.SIZE_MATRIX4 + 4) +
+                (MeshIDs.Count != 0 || LodIDs.Count != 0 ? 4 : 0);
         }
 
         public virtual void Read(BinaryReader reader, Int32 length)
@@ -53,7 +53,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
                 {
                     for (var i = 0; i < sum; ++i)
                     {
-                        Vector4[] bb = new Vector4[2];
+                        Vector4[] bb = { new Vector4(), new Vector4() };
                         bb[0].Read(reader, Constants.SIZE_VECTOR4);
                         bb[1].Read(reader, Constants.SIZE_VECTOR4);
                         BoundingBoxes.Add(bb);

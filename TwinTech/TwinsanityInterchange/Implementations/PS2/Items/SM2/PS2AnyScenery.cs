@@ -87,6 +87,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
                 {
                     var negative = new NegativeLight();
                     negative.Read(reader, negative.GetLength());
+                    NegativeLights.Add(negative);
                 }
             }
             if (sceneryType == 0x160A)
@@ -114,7 +115,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
             writer.Write(UnkUInt);
-            writer.Write(Sceneries.Count != 0 ? 0x1609 : 0);
+            writer.Write(Sceneries.Count != 0 ? 0x160A : 0);
             writer.Write(UnkByte);
             if ((Flags & 0x10000) != 0)
             {
