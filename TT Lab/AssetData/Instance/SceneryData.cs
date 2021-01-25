@@ -18,6 +18,18 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
+        public SceneryData(List<Type?>? sceneryTypes)
+        {
+            Sceneries = new List<SceneryBaseType>();
+            foreach (var type in sceneryTypes)
+            {
+                if (type != null)
+                {
+                    Sceneries.Add((SceneryBaseType)Activator.CreateInstance(type)!);
+                }
+            }
+        }
+
         public SceneryData(PS2AnyScenery scenery) : this()
         {
             twinRef = scenery;
@@ -34,6 +46,8 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.AllowNull)]
         public Guid? SkydomeID { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
+        public Boolean[] UnkLightFlags { get; set; }
+        [JsonProperty(Required = Required.AllowNull)]
         public List<AmbientLight> AmbientLights { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public List<DirectionalLight> DirectionalLights { get; set; }
@@ -46,7 +60,11 @@ namespace TT_Lab.AssetData.Instance
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            AmbientLights.Clear();
+            DirectionalLights.Clear();
+            PointLights.Clear();
+            NegativeLights.Clear();
+            Sceneries.Clear();
         }
 
         public override void Import()
@@ -60,11 +78,17 @@ namespace TT_Lab.AssetData.Instance
             {
                 SkydomeID = GuidManager.GetGuidByTwinId(scenery.SkydomeID, typeof(Skydome));
             }
+            UnkLightFlags = CloneUtils.CloneArray(scenery.UnkLightFlags);
             AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
             DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
             PointLights = CloneUtils.DeepClone(scenery.PointLights);
             NegativeLights = CloneUtils.DeepClone(scenery.NegativeLights);
-            Sceneries = CloneUtils.DeepClone(scenery.Sceneries);
+            Sceneries = new List<SceneryBaseType>();
+            foreach (var sc in scenery.Sceneries)
+            {
+                Sceneries.Add((SceneryBaseType)CloneUtils.DeepClone(sc, sc.GetType()));
+            }
+            //Sceneries = CloneUtils.DeepClone(scenery.Sceneries);
         }
     }
 }

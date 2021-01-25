@@ -49,6 +49,14 @@ namespace TT_Lab.Assets.Instance
         public override void Deserialize(String json)
         {
             base.Deserialize(json);
+            if (Parameters["MainCamera1Type"] != null)
+            {
+                Parameters["MainCamera1Type"] = Type.GetType((string)Parameters["MainCamera1Type"]!, false);
+            }
+            if (Parameters["MainCamera2Type"] != null)
+            {
+                Parameters["MainCamera2Type"] = Type.GetType((string)Parameters["MainCamera2Type"]!, false);
+            }
         }
 
         public override void Serialize()
@@ -81,17 +89,7 @@ namespace TT_Lab.Assets.Instance
         {
             if (!IsLoaded || assetData.Disposed)
             {
-                Type? type1 = null;
-                if (Parameters["MainCamera1Type"] != null)
-                {
-                    type1 = Type.GetType((string)Parameters["MainCamera1Type"]!, false);
-                }
-                Type? type2 = null;
-                if (Parameters["MainCamera2Type"] != null)
-                {
-                    type2 = Type.GetType((string)Parameters["MainCamera2Type"]!, false);
-                }
-                assetData = new CameraData(type1, type2);
+                assetData = new CameraData((Type?)Parameters["MainCamera1Type"], (Type?)Parameters["MainCamera2Type"]);
                 assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
                 IsLoaded = true;
             }

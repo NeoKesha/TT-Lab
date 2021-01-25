@@ -18,7 +18,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
         public UInt32 UnkUInt;
         public Byte UnkByte;
         public UInt32 SkydomeID;
-        public Byte[] UnkBlob;
+        public Boolean[] UnkLightFlags;
+        public Byte[] ReservedBlob;
         public List<AmbientLight> AmbientLights;
         public List<DirectionalLight> DirectionalLights;
         public List<PointLight> PointLights;
@@ -27,6 +28,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 
         public PS2AnyScenery()
         {
+            UnkLightFlags = new Boolean[6];
             AmbientLights = new List<AmbientLight>();
             DirectionalLights = new List<DirectionalLight>();
             PointLights = new List<PointLight>();
@@ -38,7 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
         {
             return 4 + 4 + Name.Length + 4 + 4 + 1 + 
                 (SkydomeID != 0 ? 4 : 0) +
-                (UnkBlob != null ? 0x400 + 4 * 5 + AmbientLights.Sum(a => a.GetLength()) + 
+                (ReservedBlob != null ? 0x3E8 + 24 + 4 * 5 + AmbientLights.Sum(a => a.GetLength()) + 
                     DirectionalLights.Sum(d => d.GetLength()) + PointLights.Sum(p => p.GetLength()) +
                     NegativeLights.Sum(n => n.GetLength()) : 0) +
                 Sceneries.Sum(s => s.GetLength());
@@ -58,7 +60,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
             if ((Flags & 0x20000) != 0)
             {
-                UnkBlob = reader.ReadBytes(0x400);
+                for (var i = 0; i < UnkLightFlags.Length; ++i)
+                {
+                    UnkLightFlags[i] = reader.ReadInt32() != 0;
+                }
+                ReservedBlob = reader.ReadBytes(0x3E8);
                 reader.ReadInt32(); // Total lights amount
                 var ambientLights = reader.ReadInt32();
                 var dirLights = reader.ReadInt32();
@@ -105,7 +111,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             {
                 newFlags |= 0x10000;
             }
-            if (UnkBlob != null)
+            if (ReservedBlob != null)
             {
                 newFlags |= 0x20000;
             }
@@ -123,7 +129,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
             if ((Flags & 0x20000) != 0)
             {
-                writer.Write(UnkBlob);
+                for (var i = 0; i < UnkLightFlags.Length; ++i)
+                {
+                    writer.Write(UnkLightFlags[i] ? 1 : 0);
+                }
+                writer.Write(ReservedBlob);
                 writer.Write(AmbientLights.Count + DirectionalLights.Count + PointLights.Count + NegativeLights.Count);
                 writer.Write(AmbientLights.Count);
                 writer.Write(DirectionalLights.Count);
