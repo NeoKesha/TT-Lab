@@ -34,8 +34,6 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Flags { get; set; }
-        [JsonProperty(Required = Required.Always)]
         public String SceneryName { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 UnkUInt { get; set; }
@@ -86,7 +84,6 @@ namespace TT_Lab.AssetData.Instance
         public override void Import()
         {
             PS2AnyScenery scenery = (PS2AnyScenery)twinRef;
-            Flags = scenery.Flags;
             SceneryName = scenery.Name[..];
             UnkUInt = scenery.UnkUInt;
             UnkByte = scenery.UnkByte;
