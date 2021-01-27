@@ -89,9 +89,9 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.AllowNull)]
         public CameraSubBase? MainCamera2 { get; set; }
 
-        public override void Load(String dataPath)
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
-            base.Load(dataPath);
+            base.Load(dataPath, settings);
         }
 
         protected override void Dispose(Boolean disposing)

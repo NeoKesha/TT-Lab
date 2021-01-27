@@ -31,7 +31,8 @@ namespace TT_Lab.AssetData.Instance
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            ParticleTypes.Clear();
+            ParticleInstances.Clear();
         }
 
         public override void Import()

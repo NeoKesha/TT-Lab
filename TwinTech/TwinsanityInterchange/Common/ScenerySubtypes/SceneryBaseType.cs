@@ -11,11 +11,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 {
     public class SceneryBaseType : ITwinSerializable
     {
-        public Int32 UnkObjType;
         public List<UInt32> MeshIDs;
         public List<UInt32> LodIDs;
         public List<Vector4[]> BoundingBoxes;
-        public List<Matrix4> UnkMatrices;
+        public List<Matrix4> MeshModelMatrices;
+        public List<Matrix4> LodModelMatrices;
         public Vector4 UnkVec1;
         public Vector4 UnkVec2;
         public Vector4 UnkVec3;
@@ -27,7 +27,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             MeshIDs = new List<UInt32>();
             LodIDs = new List<UInt32>();
             BoundingBoxes = new List<Vector4[]>();
-            UnkMatrices = new List<Matrix4>();
+            MeshModelMatrices = new List<Matrix4>();
+            LodModelMatrices = new List<Matrix4>();
             UnkVec1 = new Vector4();
             UnkVec2 = new Vector4();
             UnkVec3 = new Vector4();
@@ -43,8 +44,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 
         public virtual void Read(BinaryReader reader, Int32 length)
         {
-            UnkObjType = reader.ReadInt32();
-            if (UnkObjType == 0x1613)
+            var hasMeshLods = reader.ReadInt32();
+            if (hasMeshLods == 0x1613)
             {
                 var meshAmt = reader.ReadInt16();
                 var lodAmt = reader.ReadInt16();
@@ -74,7 +75,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
                     {
                         var mat = new Matrix4();
                         mat.Read(reader, Constants.SIZE_MATRIX4);
-                        UnkMatrices.Add(mat);
+                        if (i < meshAmt)
+                        {
+                            MeshModelMatrices.Add(mat);
+                        }
+                        else
+                        {
+                            LodModelMatrices.Add(mat);
+                        }
                     }
                 }
             }
@@ -106,7 +114,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
                 {
                     writer.Write(lodID);
                 }
-                foreach (var mat in UnkMatrices)
+                foreach (var mat in MeshModelMatrices)
+                {
+                    mat.Write(writer);
+                }
+                foreach (var mat in LodModelMatrices)
                 {
                     mat.Write(writer);
                 }
@@ -116,6 +128,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             UnkVec3.Write(writer);
             UnkVec4.Write(writer);
             UnkVec5.Write(writer);
+        }
+
+        public virtual Int32 GetObjectIndex()
+        {
+            return 0x1605;
         }
     }
 }

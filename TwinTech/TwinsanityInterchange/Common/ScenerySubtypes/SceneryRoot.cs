@@ -32,5 +32,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             writer.Write(UnkUInt);
             base.Write(writer);
         }
+
+        public override Int32 GetObjectIndex()
+        {
+            return 0x160A;
+        }
     }
 }

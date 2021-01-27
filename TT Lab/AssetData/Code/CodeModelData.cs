@@ -21,7 +21,7 @@ namespace TT_Lab.AssetData.Code
         }
         public String Script { get; set; }
         public List<UInt32> ScriptIds { get; set; }
-        public override void Save(string dataPath)
+        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
             using (BinaryWriter writer = new BinaryWriter(fs))
@@ -30,7 +30,7 @@ namespace TT_Lab.AssetData.Code
             }
         }
 
-        public override void Load(String dataPath)
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
             using (FileStream fs = new FileStream(dataPath, System.IO.FileMode.Open, FileAccess.Read))
             using (StreamReader reader = new StreamReader(fs))

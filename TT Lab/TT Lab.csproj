@@ -165,8 +165,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AssetData\Instance\Scenery\" />
-  </ItemGroup>
-
 </Project>

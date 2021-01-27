@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Instance.Scenery;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
@@ -14,20 +15,17 @@ namespace TT_Lab.AssetData.Instance
 {
     public class SceneryData : AbstractAssetData
     {
-        public SceneryData()
+        private readonly static Dictionary<Int32, Type> scIndexToType = new Dictionary<Int32, Type>();
+
+        static SceneryData()
         {
+            scIndexToType.Add(0x160A, typeof(SceneryRootData));
+            scIndexToType.Add(0x1605, typeof(SceneryLeafData));
+            scIndexToType.Add(0x1600, typeof(SceneryNodeData));
         }
 
-        public SceneryData(List<Type?>? sceneryTypes)
+        public SceneryData()
         {
-            Sceneries = new List<SceneryBaseType>();
-            foreach (var type in sceneryTypes)
-            {
-                if (type != null)
-                {
-                    Sceneries.Add((SceneryBaseType)Activator.CreateInstance(type)!);
-                }
-            }
         }
 
         public SceneryData(PS2AnyScenery scenery) : this()
@@ -44,7 +42,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public Guid? SkydomeID { get; set; }
+        public Guid SkydomeID { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public Boolean[] UnkLightFlags { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
@@ -56,7 +54,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.AllowNull)]
         public List<NegativeLight> NegativeLights { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public List<SceneryBaseType> Sceneries { get; set; }
+        public List<SceneryBaseData> Sceneries { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -65,6 +63,24 @@ namespace TT_Lab.AssetData.Instance
             PointLights.Clear();
             NegativeLights.Clear();
             Sceneries.Clear();
+        }
+
+        public override void Save(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            base.Save(dataPath, settings);
+        }
+
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            base.Load(dataPath, settings);
         }
 
         public override void Import()
@@ -83,12 +99,11 @@ namespace TT_Lab.AssetData.Instance
             DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
             PointLights = CloneUtils.DeepClone(scenery.PointLights);
             NegativeLights = CloneUtils.DeepClone(scenery.NegativeLights);
-            Sceneries = new List<SceneryBaseType>();
+            Sceneries = new List<SceneryBaseData>();
             foreach (var sc in scenery.Sceneries)
             {
-                Sceneries.Add((SceneryBaseType)CloneUtils.DeepClone(sc, sc.GetType()));
+                Sceneries.Add((SceneryBaseData)Activator.CreateInstance(scIndexToType[sc.GetObjectIndex()], sc)!);
             }
-            //Sceneries = CloneUtils.DeepClone(scenery.Sceneries);
         }
     }
 }

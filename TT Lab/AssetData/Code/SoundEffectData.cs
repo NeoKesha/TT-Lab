@@ -28,7 +28,7 @@ namespace TT_Lab.AssetData.Code
         {
             return;
         }
-        public override void Save(string dataPath)
+        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
             using (BinaryWriter writer = new BinaryWriter(fs))
@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Code
             }
         }
 
-        public override void Load(String dataPath)
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
             using (FileStream fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read))
             using (BinaryReader reader = new BinaryReader(fs))

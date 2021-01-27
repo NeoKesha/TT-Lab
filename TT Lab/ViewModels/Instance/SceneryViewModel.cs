@@ -8,7 +8,7 @@ namespace TT_Lab.ViewModels.Instance
 {
     public class SceneryViewModel : AssetViewModel
     {
-        public SceneryViewModel(Guid asset) : base(asset)
+        public SceneryViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
         }
     }
