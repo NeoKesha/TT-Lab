@@ -45,6 +45,31 @@ namespace TT_Lab.ViewModels.Instance
             }
         }
 
+        public override void Save()
+        {
+            var data = (SceneryData)_asset.GetData();
+            data.SceneryName = sceneryName;
+            data.UnkUInt = UnkUInt;
+            data.UnkByte = UnkByte;
+            data.SkydomeID = Skydome;
+            data.UnkLightFlags[0] = LightFlag1;
+            data.UnkLightFlags[1] = LightFlag2;
+            data.UnkLightFlags[2] = LightFlag3;
+            data.UnkLightFlags[3] = LightFlag4;
+            data.UnkLightFlags[4] = LightFlag5;
+            data.UnkLightFlags[5] = LightFlag6;
+            data.Sceneries.Clear();
+            if (SceneryTree != null)
+            {
+                var root = new SceneryRootData(SceneryTree);
+                data.Sceneries.Add(root);
+                IList<SceneryBaseData> list = data.Sceneries;
+                SceneryTree.CompileTree(ref list);
+                data.Sceneries = (List<SceneryBaseData>)list;
+            }
+            base.Save();
+        }
+
         public String SceneryName { get => sceneryName; set => sceneryName = value; }
         public UInt32 UnkUInt { get => unkUInt; set => unkUInt = value; }
         public Byte UnkByte { get => unkByte; set => unkByte = value; }

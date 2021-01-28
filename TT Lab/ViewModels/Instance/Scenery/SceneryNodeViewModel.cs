@@ -42,6 +42,24 @@ namespace TT_Lab.ViewModels.Instance.Scenery
             }
         }
 
+        public void CompileTree(ref IList<SceneryBaseData> sceneryTree)
+        {
+            foreach (var child in Children)
+            {
+                if (child is SceneryNodeViewModel model)
+                {
+                    var nodeData = new SceneryNodeData(model);
+                    sceneryTree.Add(nodeData);
+                    model.CompileTree(ref sceneryTree);
+                }
+                else
+                {
+                    var leafData = new SceneryLeafData(child);
+                    sceneryTree.Add(leafData);
+                }
+            }
+        }
+
         public Int32[] SceneryTypes
         {
             get => sceneryTypes;

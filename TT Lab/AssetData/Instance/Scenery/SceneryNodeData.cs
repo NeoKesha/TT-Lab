@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.Util;
+using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 
 namespace TT_Lab.AssetData.Instance.Scenery
@@ -20,6 +21,11 @@ namespace TT_Lab.AssetData.Instance.Scenery
         {
             var node = (SceneryNode)baseType;
             SceneryTypes = CloneUtils.CloneArray(node.SceneryTypes);
+        }
+
+        public SceneryNodeData(SceneryNodeViewModel vm) : base(vm)
+        {
+            SceneryTypes = CloneUtils.CloneArray(vm.SceneryTypes);
         }
     }
 }
