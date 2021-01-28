@@ -8,7 +8,7 @@ using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 
 namespace TT_Lab.AssetData.Instance.Scenery
 {
-    public class SceneryRootData : SceneryBaseData
+    public class SceneryRootData : SceneryNodeData
     {
         [JsonProperty(Required = Required.Always)]
         public UInt32 UnkUInt { get; set; }

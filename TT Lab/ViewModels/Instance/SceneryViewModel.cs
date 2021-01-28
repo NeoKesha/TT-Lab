@@ -23,7 +23,7 @@ namespace TT_Lab.ViewModels.Instance
         private Boolean lightFlag4;
         private Boolean lightFlag5;
         private Boolean lightFlag6;
-        private ObservableCollection<BaseSceneryViewModel> sceneryTree;
+        private SceneryRootViewModel? sceneryTree;
 
         public SceneryViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
@@ -38,21 +38,10 @@ namespace TT_Lab.ViewModels.Instance
             lightFlag4 = data.UnkLightFlags[3];
             lightFlag5 = data.UnkLightFlags[4];
             lightFlag6 = data.UnkLightFlags[5];
-            sceneryTree = new ObservableCollection<BaseSceneryViewModel>();
-            foreach (var scenery in data.Sceneries)
+            if (data.Sceneries.Count != 0)
             {
-                if (scenery is SceneryLeafData)
-                {
-                    sceneryTree.Add(new SceneryLeafViewModel(scenery));
-                }
-                else if (scenery is SceneryNodeData)
-                {
-                    sceneryTree.Add(new SceneryNodeViewModel(scenery));
-                }
-                else if (scenery is SceneryRootData)
-                {
-                    sceneryTree.Add(new SceneryRootViewModel(scenery));
-                }
+                sceneryTree = new SceneryRootViewModel(data.Sceneries[0], data.Sceneries.Skip(1).ToList());
+                sceneryTree.BuildTree();
             }
         }
 
@@ -66,7 +55,7 @@ namespace TT_Lab.ViewModels.Instance
         public Boolean LightFlag4 { get => lightFlag4; set => lightFlag4 = value; }
         public Boolean LightFlag5 { get => lightFlag5; set => lightFlag5 = value; }
         public Boolean LightFlag6 { get => lightFlag6; set => lightFlag6 = value; }
-        public ObservableCollection<BaseSceneryViewModel> SceneryTree
+        public SceneryRootViewModel? SceneryTree
         {
             get => sceneryTree;
         }
