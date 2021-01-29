@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Instance;
@@ -103,10 +102,7 @@ namespace TT_Lab.Util
             {
                 return CmSubScriptIdToGuid[key];
             }
-            else
-            {
-                return Guid.Empty;
-            }
+            return Guid.Empty;
         }
         public static IAsset GetAssetByGuid(Guid guid)
         {
@@ -132,6 +128,12 @@ namespace TT_Lab.Util
         }
         public static Guid GetGuidByTwinId(KeyValuePair<Type, UInt32> key)
         {
+            if (!TwinIdToGuid.ContainsKey(key))
+            {
+                //var trace = new System.Diagnostics.StackTrace();
+                //Log.WriteLine($"WARNING: FOUND EMPTY GUID CHECK THAT YOU USED CORRECT TWIN ID AND TYPE");
+                return Guid.Empty;
+            }
             return TwinIdToGuid[key];
         }
 

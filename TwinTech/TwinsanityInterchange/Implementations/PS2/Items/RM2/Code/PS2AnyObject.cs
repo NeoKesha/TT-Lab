@@ -35,8 +35,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public List<UInt16> ScriptSlots;
         public List<UInt16> ObjectSlots;
         public List<UInt16> SoundSlots;
-        public UInt32 InstancePropsHeader;
-        public UInt32 UnkUInt;
+        public UInt32 InstanceStateFlags;
         public List<UInt32> InstFlags;
         public List<Single> InstFloats;
         public List<UInt32> InstIntegers;
@@ -160,8 +159,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
             if (hasInstProps)
             {
-                InstancePropsHeader = reader.ReadUInt32();
-                UnkUInt = reader.ReadUInt32();
+                reader.ReadUInt32();
+                InstanceStateFlags = reader.ReadUInt32();
                 FillResourceList(reader, InstFlags, true);
                 // Sadly this is the only one not fitting into UI32 or UI16, smh too lazy to create a Type to BinaryReader mapper :^)
                 var amount = reader.ReadInt32();
@@ -235,8 +234,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
             if (HasInstanceProperties)
             {
-                writer.Write(InstancePropsHeader);
-                writer.Write(UnkUInt);
+                writer.Write((Byte)InstFlags.Count);
+                writer.Write((Byte)InstFloats.Count);
+                writer.Write((Byte)InstIntegers.Count);
+                writer.Write((Byte)0);
+                writer.Write(InstanceStateFlags);
                 WriteResourceList(writer, InstFlags, true);
                 writer.Write(InstFloats.Count);
                 for (var i = 0; i < InstFloats.Count; ++i)
