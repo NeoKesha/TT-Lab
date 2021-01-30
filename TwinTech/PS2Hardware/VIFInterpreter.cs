@@ -87,8 +87,8 @@ namespace Twinsanity.PS2Hardware
                     Byte m = (Byte)((cmd & 0b10000) >> 4);
                     Byte amount = vif.Amount;
                     UInt16 addr = (UInt16)(vif.Immediate & 0b111111111);
-                    Byte usn = (Byte)(vif.Immediate & 0b010000000000000);
-                    Byte flg = (Byte)(vif.Immediate & 0b100000000000000);
+                    Byte usn = (Byte)(vif.Immediate & 0b0100000000000000);
+                    Byte flg = (Byte)(vif.Immediate & 0b1000000000000000);
                     Byte WL = (Byte)((VIFn_CYCLE >> 7) & 0xFF);
                     Byte CL = (Byte)((VIFn_CYCLE >> 0) & 0xFF);
                     UInt32 dimensions = (UInt32)(vn + 1);
@@ -215,12 +215,12 @@ namespace Twinsanity.PS2Hardware
 
         private void SEXT(ref UInt32 n)
         {
-            n = ((n & 0x8000) == 0) ? n | 0xFFFF0000 : n;
+            n = ((n & 0x8000) != 0) ? n | 0xFFFF0000 : n;
         }
 
         private void SEXT8(ref UInt32 n)
         {
-            n = ((n & 0x80) == 0) ? n | 0xFFFFFF00 : n;
+            n = ((n & 0x80) != 0) ? n | 0xFFFFFF00 : n;
         }
 
         private void Unpack(List<UInt32> src, List<Vector4> dst, PackFormat fmt, Byte amount, Byte unsigned)

@@ -55,27 +55,26 @@ namespace Twinsanity.TwinsanityInterchange.Common
                         break;
                     }
                 }
-                Vertexes.AddRange(data[i + 3]);
+                var vertexes = data[i + 3];
+                var divNum = 65535f;
+                foreach (var v in vertexes)
+                {
+                    Vertexes.Add(new Vector4((v.GetBinaryX() & 0xFFFF) / divNum,
+                        (v.GetBinaryY() & 0xFFFF) / divNum,
+                        (v.GetBinaryZ() & 0xFFFF) / divNum,
+                        (v.GetBinaryW() & 0xFFFF) / divNum));
+                }
                 if (fields > 1)
                 {
-                    var colors_conn = data[i + 4];
-                    foreach (var e in colors_conn)
-                    {
-                        var conn = (e.GetBinaryW() & 0xFF00) >> 8;
-                        Connection.Add(conn == 128 ? false : true);
-                        var r = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        var g = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        var b = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        Colors.Add(new Vector4(r, g, b, 1.0f));
-                    }
+                    // What is this?
+                    UVW.AddRange(data[i + 4].Select(v => new Vector4((v.GetBinaryX() & 0xFFFF) / divNum,
+                        (v.GetBinaryY() & 0xFFFF) / divNum,
+                        (v.GetBinaryZ() & 0xFFFF) / divNum,
+                        (v.GetBinaryW() & 0xFFFF) / divNum)).ToList());
                 }
-                if (fields > 5)
+                if (fields > 2)
                 {
-                    UVW.AddRange(data[i + 5]);
-                }
-                if (fields > 6)
-                {
-                    foreach (var e in data[i + 6])
+                    foreach (var e in data[i + 5])
                     {
                         Vector4 emit = new Vector4(e);
                         emit.X = (emit.X + 126.0f) / 256.0f;
@@ -83,6 +82,19 @@ namespace Twinsanity.TwinsanityInterchange.Common
                         emit.Z = (emit.Z + 126.0f) / 256.0f;
                         emit.W = (emit.W + 126.0f) / 256.0f;
                         EmitColor.Add(emit);
+                    }
+                }
+                if (fields > 3)
+                {
+                    var colors_conn = data[i + 6];
+                    foreach (var e in colors_conn)
+                    {
+                        var conn = (e.GetBinaryW() & 0xFF00) >> 8;
+                        Connection.Add(conn == 128 ? false : true);
+                        var r = e.X;
+                        var g = e.X;
+                        var b = e.X;
+                        Colors.Add(new Vector4(r, g, b, 1.0f));
                     }
                 }
                 i += fields + 3;
