@@ -1,7 +1,9 @@
-﻿using System;
+﻿using System.Text.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.Libraries;
@@ -15,6 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyTexture : BaseTwinItem, ITwinTexture
     {
+        static Dictionary<string, TextureDescriptor> TextureDescriptorHelper;
         public UInt32 HeaderSignature { get; set; }
         public UInt16 ImageWidthPower { get; set; }
         public UInt16 ImageHeightPower { get; set; }
@@ -37,7 +40,37 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public PS2AnyTexture()
         {
+            
+            if (TextureDescriptorHelper == null)
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"TextureDescriptionHelper.json"), FileMode.Open, FileAccess.Read))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    TextureDescriptorHelper = JsonSerializer.Deserialize<Dictionary<string, TextureDescriptor>>(reader.ReadToEnd());
+                }
+            }
             UnusedMetadata = new byte[32];
+            HeaderSignature = 0xbbcccdcd;
+            DestinationTextureFormat = TexturePixelFormat.PSMCT32;
+            ColorComponent = TextureColorComponent.RGBA;
+            UnkByte = 0;
+            TextureBasePointer = 0;
+            MipLevelsTBP = new int[6];
+            TextureBufferWidth = 4;
+            MipLevelsTBW = new int[6];
+            ClutBufferBasePointer = 0;
+            UnkBytes1 = new byte[2];
+            UnkBytes2 = new byte[8] { 0, 0, 0, 0, 224, 0, 2, 0 };
+            UnkBytes3 = new byte[2] { 0, 2}; 
+            UnusedMetadata = new byte[32];
+            UnusedMetadata[0] = 31;
+            UnusedMetadata[16] = 64;
+            UnusedMetadata[17] = 246;
+            UnusedMetadata[18] = 89;
+            UnusedMetadata[19] = 32;
         }
 
         public override Int32 GetLength()
@@ -122,6 +155,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             {
                 case TexturePixelFormat.PSMCT32:
                     EzSwizzle.TagToColors(data[1], Colors);
+                    foreach (var c in Colors)
+                    {
+                        c.ScaleAlphaUp();
+                    }
                     break;
                 case TexturePixelFormat.PSMT8:
                     byte[] gifData = EzSwizzle.TagToBytes(data[1]);
@@ -142,12 +179,161 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                             palette[j + i * 32 + 8] = tmp;
                         }
                     }
+                    foreach (var c in palette)
+                    {
+                        c.ScaleAlphaUp();
+                    }
                     int Pixels = Width * Height;
                     for (var i = 0; i < Pixels; ++i)
                     {
                         Colors.Add(palette[texData[i]]);
                     }
                     break;
+            }
+        }
+
+        public void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format)
+        {
+            int height = image.Count / width;
+            TexFun = fun;
+            TextureFormat = format;
+            TextureBufferWidth = (int)Math.Ceiling(width / 64.0f);
+            ImageWidthPower = (ushort)Math.Log2(width);
+            ImageHeightPower = (ushort)Math.Log2(height);
+            if (width != 256)
+            {
+                TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
+                ClutBufferBasePointer = textureDescriptor.CBP;
+                MipLevelsTBP = textureDescriptor.MipTBP;
+                MipLevelsTBP = textureDescriptor.MipTBP;
+                MipLevels = (byte)textureDescriptor.MipLevels;
+            } 
+            else
+            {
+                ClutBufferBasePointer = 0;
+                MipLevelsTBP = new Int32[6];
+                MipLevelsTBP = new Int32[6];
+                MipLevels = 1;
+            }
+            //this is probably not bytes but whatever
+            UnkBytes2[5] = UnkBytes3[0] = (width == 256) ? 0 : (byte)Math.Min(width, height);
+            UnkBytes2[6] = UnkBytes3[1] = (width == 256) ? 2 : 0;
+           
+            GIFTag headerTag = new GIFTag();
+            headerTag.REGS = new REGSEnum[16];
+            headerTag.REGS[0] = REGSEnum.ApD;
+            headerTag.NLOOP = 3;
+            headerTag.NREG = 1;
+            headerTag.FLG = GIFModeEnum.PACKED;
+            headerTag.Data = new List<RegOutput>();
+            RegOutput head1 = new RegOutput();
+            head1.REG = REGSEnum.ApD;
+            head1.Address = 81;
+            RegOutput head2 = new RegOutput();
+            head2.REG = REGSEnum.ApD;
+            head2.Address = 82;
+            RegOutput head3 = new RegOutput();
+            head3.REG = REGSEnum.ApD;
+            head3.Address = 83;
+            headerTag.Data.Add(head1);
+            headerTag.Data.Add(head2);
+            headerTag.Data.Add(head3);
+            GIFTag tag;
+            if (format == TexturePixelFormat.PSMCT32)
+            {
+                foreach (var c in image)
+                {
+                    c.ScaleAlphaDown();
+                }
+                tag = EzSwizzle.ColorsToTag(image);
+            } 
+            else
+            {
+                byte[] textureData = new byte[width * height];
+                byte[] paletteData = new byte[256 * 4];
+                List<Color> palette = new List<Color>(256);
+                foreach (var c in image)
+                {
+                    if (!palette.Contains(c))
+                    {
+                        palette.Add(c);
+                    }
+                }
+                while (palette.Count < 256)
+                {
+                    palette.Add(new Color());
+                }
+                var index = 0;
+                foreach (var c in image)
+                {
+                    textureData[index] = (Byte)palette.IndexOf(c);
+                    ++index;
+                }
+                foreach (var c in palette)
+                {
+                    c.ScaleAlphaDown();
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 8; j < 16; j++)
+                    {
+                        var srcIndex = j + i * 32 + 8;
+                        var dstIndex = j + i * 32;
+                        Color tmp = palette[srcIndex];
+                        palette[srcIndex] = palette[dstIndex];
+                        palette[dstIndex] = tmp;
+                    }
+                }
+                index = 0;
+                foreach (var c in palette)
+                {
+                    EzSwizzle.ColorsToByte(c, paletteData, index);
+                    ++index;
+                }
+
+                TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
+                ulong high = (ulong)textureDescriptor.RRH;
+                ulong low = (ulong)textureDescriptor.RRW;
+                head2.Output = (high << 32) | (low);
+                byte[] rawTextureData = new byte[textureDescriptor.RRH * 256];
+
+                EzSwizzle.writeTexPSMT8To(0, TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
+                var prevData = textureData;
+                var mipWidth = width;
+                var mipHeight = height;
+                for (var i = 1; i < MipLevels; ++i)
+                {
+                    mipWidth /= 2;
+                    mipHeight /= 2;
+                    var mipData = new byte[prevData.Length / 4];
+                    for (var j = 0; j < mipData.Length; ++j)
+                    {
+                        mipData[j] = prevData[4 * j];
+                    }
+                    EzSwizzle.writeTexPSMT8To(textureDescriptor.MipTBP[i - 1], textureDescriptor.MipTBW[i-1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
+                    prevData = mipData;
+                }
+                EzSwizzle.writeTexPSMCT32To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);
+                byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, textureDescriptor.RRW, textureDescriptor.RRH, rawTextureData);
+                tag = EzSwizzle.ColorsToTag(EzSwizzle.BytesToColors(gifData));
+            }
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(stream);
+                var QWC = (UInt64)headerTag.GetLength() + (UInt64)tag.GetLength() + 2;
+                UInt64 low = QWC;
+                low |= (UInt64)6 << 28;
+                writer.Write(low);
+                VIFCode code1 = new VIFCode();
+                code1.OP = VIFCodeEnum.NOP;
+                code1.Write(writer);
+                VIFCode code2 = new VIFCode();
+                code2.OP = VIFCodeEnum.DIRECT;
+                code2.Immediate = (ushort)QWC;
+                code2.Write(writer);
+                headerTag.Write(writer);
+                tag.Write(writer);
+                TextureData = stream.ToArray();
             }
         }
         public List<Color> Colors { get; set; } = new List<Color>();
@@ -186,5 +372,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             HIGHLIGHT2 = 0b11
         }
         #endregion
+
+        public struct TextureDescriptor
+        {
+            public Int32 MipLevels { get; set; }
+            public Int32 CBP { get; set; }
+            public Int32 RRW { get; set; }
+            public Int32 RRH { get; set; }
+            public Int32[] MipTBP { get; set; }
+            public Int32[] MipTBW { get; set; }
+
+        }
     }
 }
