@@ -11,11 +11,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
     public class TwinChunkLinkOGI3 : ITwinSerializable
     {
         public Int32 Type;
-        public OGIType3 OGIType3;
+        public BoundingBoxBuilder OGIType3;
 
         public TwinChunkLinkOGI3()
         {
-            OGIType3 = new OGIType3();
+            OGIType3 = new BoundingBoxBuilder();
         }
 
         public Int32 GetLength()

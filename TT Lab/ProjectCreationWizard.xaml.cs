@@ -13,7 +13,7 @@ namespace TT_Lab
     {
         public ProjectCreationWizard()
         {
-            DataContext = new ProjectCreator(this);
+            DataContext = new ProjectCreationViewModel(this);
             InitializeComponent();
         }
 

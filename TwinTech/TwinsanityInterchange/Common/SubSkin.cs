@@ -32,7 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             BlobSize = reader.ReadInt32();
             VertexAmount = reader.ReadInt32();
             VifCode = reader.ReadBytes(BlobSize);
-            
+            CalculateData();
         }
         public void CalculateData()
         {

@@ -39,7 +39,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public UInt32 BlendSkinID { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<OGIType3> Type3List { get; set; }
+        public List<BoundingBoxBuilder> Type3List { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<Byte> Type3RelatedList { get; set; }
 

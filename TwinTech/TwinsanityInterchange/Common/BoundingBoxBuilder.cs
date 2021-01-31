@@ -9,11 +9,11 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class OGIType3 : ITwinSerializable
+    public class BoundingBoxBuilder : ITwinSerializable
     {
         public UInt16[] Data { get; set; }
         public Byte[] Blob { get; set; }
-        public OGIType3()
+        public BoundingBoxBuilder()
         {
             Data = new UInt16[11];
             Blob = Array.Empty<byte>();

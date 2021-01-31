@@ -12,7 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
     public class DynamicSceneryModel : ITwinSerializable
     {
         public Int32 UnkInt1;
-        public List<OGIType3> OGIType3s;
+        public List<BoundingBoxBuilder> OGIType3s;
         public Int32 UnkInt2;
         public UInt32 UnkBlobSizePacked { get; set; }
         public UInt16 UnkBlobSizeHelper { get; set; }
@@ -24,7 +24,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public DynamicSceneryModel()
         {
-            OGIType3s = new List<OGIType3>();
+            OGIType3s = new List<BoundingBoxBuilder>();
             UnkVec1 = new Vector4();
             UnkVec2 = new Vector4();
             UnkBlob = new Byte[0];
@@ -43,7 +43,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             {
                 for (var i = 0; i < type3s; ++i)
                 {
-                    var type3 = new OGIType3();
+                    var type3 = new BoundingBoxBuilder();
                     OGIType3s.Add(type3);
                     type3.Read(reader, length);
                 }
