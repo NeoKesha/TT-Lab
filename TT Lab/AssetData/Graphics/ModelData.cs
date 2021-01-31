@@ -140,7 +140,11 @@ namespace TT_Lab.AssetData.Graphics
                         }
                         ++refIndex;
                     }
-                    vertList.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j]));
+                    var ver = new Vertex(e.Vertexes[j], new Vector4(1.0f, 1.0f, 1.0f, 1.0f), e.UVW[j], e.EmitColor[j])
+                    {
+                        Normal = new Vector4(e.Normals[j].X, e.Normals[j].Y, e.Normals[j].Z, e.Normals[j].W)
+                    };
+                    vertList.Add(ver);
                 }
                 Vertexes.Add(vertList);
                 Faces.Add(faceList);

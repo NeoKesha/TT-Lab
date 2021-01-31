@@ -13,12 +13,13 @@ namespace TT_Lab.Util
     public static class BufferGeneration
     {
         public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors,
-            Func<List<Color>, int, float[]> colorSelector = null)
+            List<Twinsanity.TwinsanityInterchange.Common.Vector4>? preCalcNormals = null, Func<List<Color>, int, float[]>? colorSelector = null)
         {
             var vertices = new List<float>();
             var vert3s = new List<Vector3>();
             var vertColors = new List<float>();
             var indices = new List<uint>();
+            var normals = new List<Vector3>(faces.Count * 3);
             var index = 0;
             foreach (var face in faces)
             {
@@ -28,6 +29,18 @@ namespace TT_Lab.Util
                 var v1 = vectors[i1];
                 var v2 = vectors[i2];
                 var v3 = vectors[i3];
+                if (preCalcNormals != null)
+                {
+                    var n1 = preCalcNormals[i1].ToGL();
+                    var n2 = preCalcNormals[i2].ToGL();
+                    var n3 = preCalcNormals[i3].ToGL();
+                    n1.X = -n1.X;
+                    n2.X = -n2.X;
+                    n3.X = -n3.X;
+                    normals.Add(n1.Xyz);
+                    normals.Add(n2.Xyz);
+                    normals.Add(n3.Xyz);
+                }
                 var vec1 = v1.ToGL();
                 var vec2 = v2.ToGL();
                 var vec3 = v3.ToGL();
@@ -49,23 +62,30 @@ namespace TT_Lab.Util
                 index++;
             }
 
-            var normals = new Vector3[faces.Count * 3];
-            for (var i = 0; i < indices.Count; i += 3)
+            
+            if (preCalcNormals == null)
             {
-                var vec1 = vert3s[(int)indices[i]];
-                var vec2 = vert3s[(int)indices[i + 1]];
-                var vec3 = vert3s[(int)indices[i + 2]];
+                for (var i = 0; i < indices.Count; ++i)
+                {
+                    normals.Add(new Vector3());
+                }
+                for (var i = 0; i < indices.Count; i += 3)
+                {
+                    var vec1 = vert3s[(int)indices[i]];
+                    var vec2 = vert3s[(int)indices[i + 1]];
+                    var vec3 = vert3s[(int)indices[i + 2]];
 
-                normals[indices[i]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
-                normals[indices[i + 1]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
-                normals[indices[i + 2]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
-            }
+                    normals[(int)indices[i]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
+                    normals[(int)indices[i + 1]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
+                    normals[(int)indices[i + 2]] += Vector3.Cross(vec2 - vec1, vec3 - vec1);
+                }
 
-            for (var i = 0; i < normals.Length; ++i)
-            {
-                var n = normals[i];
-                n.Normalize();
-                normals[i] = n;
+                for (var i = 0; i < normals.Count; ++i)
+                {
+                    var n = normals[i];
+                    n.Normalize();
+                    normals[i] = n;
+                }
             }
 
             var buffer = new IndexedBufferArray();
@@ -92,7 +112,8 @@ namespace TT_Lab.Util
 
             return buffer;
         }
-        public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors, List<Twinsanity.TwinsanityInterchange.Common.Vector3> uvs)
+        public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors, List<Twinsanity.TwinsanityInterchange.Common.Vector3>? uvs,
+            List<Twinsanity.TwinsanityInterchange.Common.Vector4>? normals = null)
         {
             var uvVecs = new List<float>();
 
@@ -112,7 +133,7 @@ namespace TT_Lab.Util
                 uvVecs.AddRange(vec3.ToArray());
             }
 
-            var bufferArray = GetModelBuffer(vectors, faces, colors);
+            var bufferArray = GetModelBuffer(vectors, faces, colors, normals);
             bufferArray.Bind();
 
             var uvBuffer = new VertexBuffer();

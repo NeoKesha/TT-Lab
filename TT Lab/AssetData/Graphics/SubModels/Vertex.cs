@@ -14,6 +14,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             Position = new Vector3();
             Color = new Vector4();
             UV = new Vector3();
+            Normal = new Vector4();
             EmitColor = new Vector4();
         }
         public Vertex(Vector4 pos) : this()
@@ -44,6 +45,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         }
         public Vector3 Position { get; set; }
         public Vector4 Color { get; set; }
+        public Vector4 Normal { get; set; }
         public Vector4 EmitColor { get; set; }
         public Vector3 UV { get; set; }
 
