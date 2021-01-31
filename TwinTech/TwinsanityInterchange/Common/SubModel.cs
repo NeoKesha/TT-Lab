@@ -18,7 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
         public List<Vector4> EmitColor { get; set; }
-        public List<Vector4> Colors { get; set; }
+        public List<Vector4> Normals { get; set; }
         public List<bool> Connection { get; set; }
         public SubModel()
         {
@@ -45,7 +45,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             Vertexes = new List<Vector4>();
             UVW = new List<Vector4>();
             EmitColor = new List<Vector4>();
-            Colors = new List<Vector4>();
+            Normals = new List<Vector4>();
             Connection = new List<bool>();
             for (var i = 0; i < data.Count; )
             {
@@ -62,8 +62,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 Vertexes.AddRange(data[i + 2]);
                 if (fields > 1)
                 {
-                    var colors_conn = data[i + 3];
-                    foreach (var e in colors_conn)
+                    var uv_con = data[i + 3];
+                    foreach (var e in uv_con)
                     {
                         var conn = (e.GetBinaryW() & 0xFF00) >> 8;
                         Connection.Add(conn == 128 ? false : true);
@@ -77,10 +77,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 {
                     foreach (var e in data[i + 4])
                     {
-                        var r = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        var g = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        var b = (e.GetBinaryX() & 0xFF) / 255.0f;
-                        Colors.Add(new Vector4(r, g, b, 1.0f));
+                        Normals.Add(new Vector4(e.X, e.Y, e.Z, 1.0f));
                     }  
                 }
                 if (fields > 3)
@@ -98,7 +95,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 i += fields + 2;
                 TrimList(UVW, Vertexes.Count);
                 TrimList(EmitColor, Vertexes.Count);
-                TrimList(Colors, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+                TrimList(Normals, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
         public void Write(BinaryWriter writer)
@@ -108,14 +105,14 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var unkVec2 = new Vector4();
             TrimList(UVW, (Int32)VertexesCount);
             TrimList(EmitColor, (Int32)VertexesCount);
-            TrimList(Colors, (Int32)VertexesCount, new Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+            TrimList(Normals, (Int32)VertexesCount, new Vector4(0.5f, 0.5f, 0.5f, 0.5f));
             var data = new List<List<Vector4>>();
             data.Add(new List<Vector4>() { unkVec1 });
             data.Add(new List<Vector4>() { unkVec2 });
             data.Add(Vertexes);
             data.Add(UVW);
             data.Add(EmitColor);
-            data.Add(Colors);
+            data.Add(Normals);
             //TODO: Pack data to VIF
             writer.Write(VertexesCount);
             writer.Write(VertexData.Length);

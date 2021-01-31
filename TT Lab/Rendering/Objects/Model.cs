@@ -27,7 +27,8 @@ namespace TT_Lab.Rendering.Objects
                     {
                         var col = v.Color.GetColor();
                         return System.Drawing.Color.FromArgb((int)col.ToARGB());
-                    }).ToList()));
+                    }).ToList(),
+                    model.Vertexes[i].Select(v => v.Normal).ToList()));
             }
         }
 
