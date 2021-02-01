@@ -15,6 +15,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public ParticlesData()
         {
+            Version = 0x1E;
         }
 
         public ParticlesData(PS2AnyParticleData particleData) : this()

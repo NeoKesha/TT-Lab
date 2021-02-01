@@ -98,7 +98,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkLongs7 = new Int64[8];
             UnkShorts = new Int16[4];
             UnkVec3 = new Vector4();
-            Version = 0x1D;
+            Version = 0x1E;
         }
         public ParticleType(UInt32 ver) : this()
         {

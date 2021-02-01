@@ -27,13 +27,13 @@ namespace TT_Lab.ViewModels.Graphics
             _texFun = MiscUtils.ConvertEnum<PS2AnyTexture.TextureFunction>(Asset.Parameters["texture_function"]);
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             var data = (TextureData)Asset.GetData();
             data.Bitmap = Texture;
             Asset.Parameters["pixel_storage_format"] = PixelStorageFormat;
             Asset.Parameters["texture_function"] = TextureFunction;
-            base.Save();
+            base.Save(o);
         }
 
         protected override void UnloadData()

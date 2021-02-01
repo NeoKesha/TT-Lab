@@ -18,6 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
 
         public PS2AnyParticleData()
         {
+            Version = 0x1E;
             ParticleTypes = new List<ParticleType>();
             ParticleInstances = new List<ParticleInstance>();
         }

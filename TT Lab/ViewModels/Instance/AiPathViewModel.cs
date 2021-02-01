@@ -25,7 +25,7 @@ namespace TT_Lab.ViewModels.Instance
             layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
             var data = (AiPathData)_asset.GetData();
@@ -34,7 +34,7 @@ namespace TT_Lab.ViewModels.Instance
             data.Args[0] = Arg1;
             data.Args[1] = Arg2;
             data.Args[2] = Arg3;
-            base.Save();
+            base.Save(o);
         }
 
         public Enums.Layouts LayoutID

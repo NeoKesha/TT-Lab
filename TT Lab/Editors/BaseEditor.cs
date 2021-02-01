@@ -81,7 +81,7 @@ namespace TT_Lab.Editors
         {
             if (AssetViewModel.IsDirty)
             {
-                AssetViewModel.Save();
+                AssetViewModel.Save(null);
             }
         }
 

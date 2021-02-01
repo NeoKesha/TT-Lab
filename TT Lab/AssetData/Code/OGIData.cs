@@ -39,18 +39,24 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public UInt32 BlendSkinID { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<BoundingBoxBuilder> Type3List { get; set; }
+        public List<BoundingBoxBuilder> BoundingBoxBuilders { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Byte> Type3RelatedList { get; set; }
+        public List<Byte> BuilderMatrixIndex { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Type1List.Clear();
+            Type2List.Clear();
+            RigidRelatedList.Clear();
+            RigidModelIds.Clear();
+            Type1RelatedMatrix.Clear();
+            BoundingBoxBuilders.Clear();
+            BuilderMatrixIndex.Clear();
         }
 
         public override void Import()
         {
-            PS2AnyOGI ogi = (PS2AnyOGI)twinRef;
+            PS2AnyOGI ogi = (PS2AnyOGI)twinRef!;
             BoundingBox = CloneUtils.CloneArray(ogi.BoundingBox);
             RigidRelatedList = CloneUtils.CloneList(ogi.RigidRelatedList);
             RigidModelIds = new List<Guid>();
@@ -58,10 +64,10 @@ namespace TT_Lab.AssetData.Code
             {
                 RigidModelIds.Add(GuidManager.GetGuidByTwinId(model, typeof(RigidModel)));
             }
-            Type3RelatedList = CloneUtils.CloneList(ogi.Type3RelatedList);
+            BuilderMatrixIndex = CloneUtils.CloneList(ogi.Type3RelatedList);
             Type1List = CloneUtils.DeepClone(ogi.Type1List);
             Type2List = CloneUtils.DeepClone(ogi.Type2List);
-            Type3List = CloneUtils.DeepClone(ogi.Type3List);
+            BoundingBoxBuilders = CloneUtils.DeepClone(ogi.Type3List);
             Type1RelatedMatrix = CloneUtils.CloneListUnsafe(ogi.Type1RelatedMatrix);
         }
     }

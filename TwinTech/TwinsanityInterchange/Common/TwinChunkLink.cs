@@ -17,25 +17,24 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Matrix4 ObjectMatrix { get; set; }
         public Matrix4 ChunkMatrix { get; set; }
         public Matrix4 LoadingWall { get; set; }
-        public List<TwinChunkLinkOGI3> ChunkLinksOGI3 { get; set; }
+        public List<TwinChunkLinkCollisionData> ChunkLinksCollisionData { get; set; }
 
         public TwinChunkLink()
         {
             ObjectMatrix = new Matrix4();
             ChunkMatrix = new Matrix4();
             LoadingWall = null;
-            ChunkLinksOGI3 = new List<TwinChunkLinkOGI3>();
+            ChunkLinksCollisionData = new List<TwinChunkLinkCollisionData>();
         }
         public int GetLength()
         {
             return 4 + 4 + Path.Length + 4 + Constants.SIZE_MATRIX4 * 2
                 + (LoadingWall != null ? Constants.SIZE_MATRIX4 : 0)
-                + ChunkLinksOGI3.Sum(l => l.GetLength());
+                + ChunkLinksCollisionData.Sum(l => l.GetLength());
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            var pos1 = reader.BaseStream.Position;
             Type = reader.ReadUInt32();
             int pathLen = reader.ReadInt32();
             Path = new String(reader.ReadChars(pathLen));
@@ -49,38 +48,33 @@ namespace Twinsanity.TwinsanityInterchange.Common
             }
             if ((Type & 0x1) != 0)
             {
-                var clOgi3 = new TwinChunkLinkOGI3();
+                var clOgi3 = new TwinChunkLinkCollisionData();
                 Boolean hasNext;
                 do
                 {
                     clOgi3.Read(reader, length);
-                    ChunkLinksOGI3.Add(clOgi3);
+                    ChunkLinksCollisionData.Add(clOgi3);
                     hasNext = (clOgi3.Type & 0x1) != 0;
                     if (hasNext)
                     {
-                        clOgi3 = new TwinChunkLinkOGI3();
+                        clOgi3 = new TwinChunkLinkCollisionData();
                     }
                 } while (hasNext);
-            }
-            var pos2 = reader.BaseStream.Position;
-            var read = pos2 - pos1;
-            var calc = GetLength();
-            if (calc != read)
-            {
-                int a = 0;
             }
         }
 
         public void Write(BinaryWriter writer)
         {
+            Flags &= ~(uint)0x80000;
+            Type &= ~(uint)0x1;
             if (LoadingWall != null)
             {
                 Flags |= 0x80000;
-            } else
-            {
-                Flags &= ~(uint)0x80000;
             }
-            
+            if (ChunkLinksCollisionData.Count != 0)
+            {
+                Type |= 0x1;
+            }
             writer.Write(Type);
             writer.Write(Path.Length);
             writer.Write(Path.ToCharArray());
@@ -93,31 +87,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
             }
             if ((Type & 0x1) != 0)
             {
-                foreach (var clOgi3 in ChunkLinksOGI3)
+                foreach (var colData in ChunkLinksCollisionData)
                 {
-                    if (!clOgi3.Equals(ChunkLinksOGI3.Last()))
+                    colData.Type &= ~0x1;
+                    if (!colData.Equals(ChunkLinksCollisionData.Last()))
                     {
-                        clOgi3.Type |= 0x1;
+                        colData.Type |= 0x1;
                     }
-                    else
-                    {
-                        clOgi3.Type &= ~0x1;
-                    }
-                    clOgi3.Write(writer);
+                    colData.Write(writer);
                 }
-                /*for (int i = 0; i < UnknownShorts.Length; ++i)
-                {
-                    writer.Write(UnknownShorts[i]);
-                }
-                LoadAreaA.Write(writer);
-                LoadAreaB.Write(writer);
-                AreaVectorA.Write(writer);
-                AreaVectorB.Write(writer);
-                AreaMatrix.Write(writer);
-                UnknownVectorA.Write(writer);
-                UnknownVectorB.Write(writer);
-                UnknownMatrix.Write(writer);
-                writer.Write(UnknownBytes);*/
             }
         }
     }

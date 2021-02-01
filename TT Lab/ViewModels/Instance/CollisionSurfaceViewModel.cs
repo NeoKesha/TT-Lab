@@ -55,7 +55,7 @@ namespace TT_Lab.ViewModels.Instance
             layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
             var data = (CollisionSurfaceData)_asset.GetData();
@@ -93,7 +93,7 @@ namespace TT_Lab.ViewModels.Instance
                 Z = UnkBoundingBox[1].Z,
                 W = UnkBoundingBox[1].W
             };
-            base.Save();
+            base.Save(o);
         }
 
         private void Vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -114,7 +114,7 @@ namespace TT_Lab.ViewModels.Instance
             NotifyChange(nameof(UnkVector2));
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             _asset.LayoutID = (int)Trigger.LayoutID;
             var data = (CameraData)_asset.GetData();
@@ -172,7 +172,7 @@ namespace TT_Lab.ViewModels.Instance
                 data.TypeIndex2 = 3;
                 data.MainCamera2 = null;
             }
-            base.Save();
+            base.Save(o);
         }
 
         public TriggerViewModel Trigger

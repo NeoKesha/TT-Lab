@@ -11,36 +11,52 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class BoundingBoxBuilder : ITwinSerializable
     {
-        public UInt16[] Data { get; set; }
+        public UInt16[] Header { get; set; }
         public Byte[] Blob { get; set; }
+        public List<Vector4> BoundingBoxPoints { get; set; }
+
         public BoundingBoxBuilder()
         {
-            Data = new UInt16[11];
+            Header = new UInt16[11];
             Blob = Array.Empty<byte>();
+            BoundingBoxPoints = new List<Vector4>();
         }
         public int GetLength()
         {
-            return 4 + Data.Length * 2 + Blob.Length;
+            return 4 + Header.Length * 2 + Blob.Length + BoundingBoxPoints.Count * Constants.SIZE_VECTOR4;
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            Data = new UInt16[11];
+            Header = new UInt16[11];
             for (var i = 0; i < 11; ++i)
             {
-                Data[i] = reader.ReadUInt16();
+                Header[i] = reader.ReadUInt16();
             }
             Int32 blobSize = reader.ReadInt32();
-            Blob = reader.ReadBytes(blobSize);
+            var vecs = Header[0];
+            for (var i = 0; i < vecs; ++i)
+            {
+                var vec = new Vector4();
+                vec.Read(reader, Constants.SIZE_VECTOR4);
+                BoundingBoxPoints.Add(vec);
+            }
+            // Potentially unused?
+            Blob = reader.ReadBytes(blobSize - vecs * Constants.SIZE_VECTOR4);
         }
 
         public void Write(BinaryWriter writer)
         {
+            Header[0] = (UInt16)BoundingBoxPoints.Count;
             for (var i = 0; i < 11; ++i)
             {
-                writer.Write(Data[i]);
+                writer.Write(Header[i]);
             }
-            writer.Write(Blob.Length);
+            writer.Write(Blob.Length + BoundingBoxPoints.Count * Constants.SIZE_VECTOR4);
+            foreach (var v in BoundingBoxPoints)
+            {
+                v.Write(writer);
+            }
             writer.Write(Blob);
         }
     }

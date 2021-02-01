@@ -9,7 +9,7 @@ using TT_Lab.Util;
 
 namespace TT_Lab.ViewModels.Instance.Scenery
 {
-    public class BaseSceneryViewModel : ObservableObject
+    public class BaseSceneryViewModel : SavebleViewModel
     {
         private ObservableCollection<Guid> meshes;
         private ObservableCollection<Guid> lods;
@@ -66,6 +66,12 @@ namespace TT_Lab.ViewModels.Instance.Scenery
             unkVec3 = new Vector4ViewModel(data.UnkVec3);
             unkVec4 = new Vector4ViewModel(data.UnkVec4);
             unkVec5 = new Vector4ViewModel(data.UnkVec5);
+        }
+
+        public override void Save(object? o)
+        {
+            var baseD = (SceneryBaseData)o!;
+
         }
 
         public ObservableCollection<Guid> Meshes { get => meshes; set => meshes = value; }

@@ -45,7 +45,7 @@ namespace TT_Lab.ViewModels.Graphics
             Shaders.CollectionChanged += Shaders_Changed;
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             var data = (MaterialData)Asset.GetData();
             data.Header = Header;
@@ -57,7 +57,7 @@ namespace TT_Lab.ViewModels.Graphics
                 var shader = new LabShader(Shaders[i]);
                 data.Shaders.Add(shader);
             }
-            base.Save();
+            base.Save(o);
         }
 
         public AddItemToListCommand<LabShaderViewModel> AddShaderCommand { private set; get; }

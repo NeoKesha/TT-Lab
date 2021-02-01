@@ -70,7 +70,7 @@ namespace TT_Lab.ViewModels.Instance
             NotifyChange(nameof(Points));
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             var data = (PathData)_asset.GetData();
             data.Points.Clear();
@@ -101,7 +101,7 @@ namespace TT_Lab.ViewModels.Instance
                     Y = ParamGroup2[i + 1]
                 });
             }
-            base.Save();
+            base.Save(o);
         }
 
         public ObservableCollection<Vector4ViewModel> Points

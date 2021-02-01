@@ -18,7 +18,7 @@ using TT_Lab.Util;
 
 namespace TT_Lab.ViewModels
 {
-    public class AssetViewModel : ObservableObject
+    public class AssetViewModel : SavebleViewModel
     {
         protected IAsset _asset;
 
@@ -68,7 +68,7 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public virtual void Save()
+        public override void Save(object? o)
         {
             Directory.SetCurrentDirectory("assets");
             _asset.Serialize();
@@ -125,7 +125,7 @@ namespace TT_Lab.ViewModels
                 switch (result)
                 {
                     case UnsavedChangesDialogue.AnswerResult.YES:
-                        Save();
+                        Save(null);
                         break;
                     case UnsavedChangesDialogue.AnswerResult.DISCARD:
                         IsDirty = false;

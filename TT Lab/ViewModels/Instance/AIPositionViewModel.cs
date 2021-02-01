@@ -30,7 +30,7 @@ namespace TT_Lab.ViewModels.Instance
             NotifyChange(nameof(Position));
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
             var data = (AiPositionData)_asset.GetData();
@@ -42,7 +42,7 @@ namespace TT_Lab.ViewModels.Instance
                 W = Position.W
             };
             data.Arg = Argument;
-            base.Save();
+            base.Save(o);
         }
 
         public Enums.Layouts LayoutID

@@ -45,7 +45,7 @@ namespace TT_Lab.ViewModels.Instance
             }
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             var data = (SceneryData)_asset.GetData();
             data.SceneryName = sceneryName;
@@ -67,7 +67,7 @@ namespace TT_Lab.ViewModels.Instance
                 SceneryTree.CompileTree(ref list);
                 data.Sceneries = (List<SceneryBaseData>)list;
             }
-            base.Save();
+            base.Save(o);
         }
 
         public String SceneryName { get => sceneryName; set => sceneryName = value; }

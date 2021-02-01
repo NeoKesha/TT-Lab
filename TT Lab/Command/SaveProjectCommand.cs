@@ -31,7 +31,7 @@ namespace TT_Lab.Command
                     foreach (var viewModel in pr)
                     {
                         if (viewModel.EditorOpened && viewModel.IsDirty)
-                            viewModel.Save();
+                            viewModel.Save(null);
                     }
                     Log.WriteLine($"Saved project in {DateTime.Now - now}");
                 }

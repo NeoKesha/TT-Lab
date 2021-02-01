@@ -68,12 +68,12 @@ namespace TT_Lab.ViewModels.Instance
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
 
-        public override void Save()
+        public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
             var data = (TriggerData)_asset.GetData();
             Save(data);
-            base.Save();
+            base.Save(o);
         }
         public void Save(TriggerData data)
         {
