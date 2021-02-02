@@ -22,6 +22,7 @@ namespace TT_Lab.Editors.Instance
             positions = new ObservableCollection<object>();
             InitializeComponent();
             Loaded += AiNavPathEditor_Loaded;
+            InitValidators();
         }
 
         private void AiNavPathEditor_Loaded(System.Object sender, System.Windows.RoutedEventArgs e)
@@ -39,6 +40,25 @@ namespace TT_Lab.Editors.Instance
                 Layers = Util.Layers,
                 Positions = positions
             };
+        }
+
+        private void InitValidators()
+        {
+            var vm = (AiPathViewModel)AssetViewModel;
+            AcceptNewPropValuePredicate[nameof(vm.Arg1)] = (n, o) =>
+            {
+                var nStr = (string)n;
+                var oStr = (string)o;
+                if (nStr == oStr) return null;
+                if (string.IsNullOrEmpty(nStr))
+                {
+                    return (UInt16)0;
+                }
+                if (!UInt16.TryParse(nStr, out UInt16 result)) return null;
+                return result;
+            };
+            AcceptNewPropValuePredicate[nameof(vm.Arg2)] = AcceptNewPropValuePredicate[nameof(vm.Arg1)];
+            AcceptNewPropValuePredicate[nameof(vm.Arg3)] = AcceptNewPropValuePredicate[nameof(vm.Arg1)];
         }
     }
 }
