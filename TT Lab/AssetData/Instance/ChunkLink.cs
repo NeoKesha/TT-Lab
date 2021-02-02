@@ -24,6 +24,8 @@ namespace TT_Lab.AssetData.Instance
         public Matrix4 ChunkMatrix { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public Matrix4? LoadingWall { get; set; }
+        [JsonProperty(Required = Required.AllowNull)]
+        public List<TwinChunkLinkCollisionData> CollisionDatas { get; set; }
 
         public ChunkLink() { }
 
@@ -35,6 +37,7 @@ namespace TT_Lab.AssetData.Instance
             ObjectMatrix = CloneUtils.DeepClone(link.ObjectMatrix);
             ChunkMatrix = CloneUtils.DeepClone(link.ChunkMatrix);
             LoadingWall = CloneUtils.DeepClone(link.LoadingWall);
+            CollisionDatas = CloneUtils.DeepClone(link.ChunkLinksCollisionData);
         }
     }
 }

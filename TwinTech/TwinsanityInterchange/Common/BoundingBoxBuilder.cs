@@ -41,7 +41,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 vec.Read(reader, Constants.SIZE_VECTOR4);
                 BoundingBoxPoints.Add(vec);
             }
-            // Potentially unused?
+            // The rest is potentially unused?
             Blob = reader.ReadBytes(blobSize - vecs * Constants.SIZE_VECTOR4);
         }
 
