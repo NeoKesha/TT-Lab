@@ -17,17 +17,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt32 UnkBlobSizePacked { get; set; }
         public UInt16 UnkBlobSizeHelper { get; set; }
         public Byte[] UnkBlob { get; set; }
-        public Byte UnkByte;
+        public Byte LodFlag;
         public UInt32 ID;
-        public Vector4 UnkVec1;
-        public Vector4 UnkVec2;
+        public Vector4[] BoundingBox;
 
         public DynamicSceneryModel()
         {
             OGIType3s = new List<BoundingBoxBuilder>();
-            UnkVec1 = new Vector4();
-            UnkVec2 = new Vector4();
-            UnkBlob = new Byte[0];
+            BoundingBox = new Vector4[2];
+            UnkBlob = Array.Empty<Byte>();
         }
 
         public Int32 GetLength()
@@ -55,10 +53,13 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 (UnkBlobSizePacked >> 0x9 & 0x1FFC) +
                 (UnkBlobSizePacked >> 0x16) * UnkBlobSizeHelper * 0x4;
             UnkBlob = reader.ReadBytes((Int32)blobSize);
-            UnkByte = reader.ReadByte();
+            LodFlag = reader.ReadByte();
             ID = reader.ReadUInt32();
-            UnkVec1.Read(reader, Constants.SIZE_VECTOR4);
-            UnkVec2.Read(reader, Constants.SIZE_VECTOR4);
+            for (var i = 0; i < 2; ++i)
+            {
+                BoundingBox[i] = new Vector4();
+                BoundingBox[i].Read(reader, Constants.SIZE_VECTOR4);
+            }
         }
 
         public void Write(BinaryWriter writer)
@@ -73,10 +74,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(UnkBlobSizePacked);
             writer.Write(UnkBlobSizeHelper);
             writer.Write(UnkBlob);
-            writer.Write(UnkByte);
+            writer.Write(LodFlag);
             writer.Write(ID);
-            UnkVec1.Write(writer);
-            UnkVec2.Write(writer);
+            foreach (var v in BoundingBox)
+            {
+                v.Write(writer);
+            }
         }
     }
 }

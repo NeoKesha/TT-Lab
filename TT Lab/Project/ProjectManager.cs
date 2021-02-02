@@ -203,7 +203,7 @@ namespace TT_Lab.Project
             get
             {
                 var recents = Properties.Settings.Default.RecentProjects;
-                if (recents != null && _recentMenus.Length != recents.Count)
+                if (recents != null)
                 {
                     var menus = new MenuItem[recents.Count];
                     for (var i = 0; i < recents.Count; ++i)
