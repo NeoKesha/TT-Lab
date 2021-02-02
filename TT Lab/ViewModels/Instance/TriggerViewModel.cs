@@ -42,7 +42,7 @@ namespace TT_Lab.ViewModels.Instance
             _headerT = data.HeaderT;
             _headerH = data.HeaderH;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
-            AddInstanceToListCommand = new AddItemToListCommand<ushort>(_instances, typeof(UInt16));
+            AddInstanceToListCommand = new AddItemToListCommand<ushort>(_instances, typeof(UInt16), UInt16.MaxValue);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
 

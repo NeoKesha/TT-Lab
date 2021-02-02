@@ -209,7 +209,10 @@ namespace TT_Lab.AssetData.Code
             {
                 _writer.Write(str);
                 stream.Position = 0;
-                existingValue.ReadText(_reader);
+                if (_reader.BaseStream.Length != 0)
+                {
+                    existingValue.ReadText(_reader);
+                }
             }
             return existingValue;
         }

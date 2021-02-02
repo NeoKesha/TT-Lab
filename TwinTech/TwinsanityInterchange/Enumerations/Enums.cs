@@ -17,6 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
             LAYER_5,
             LAYER_6,
             LAYER_7,
+            LAYER_8
         }
     }
 }

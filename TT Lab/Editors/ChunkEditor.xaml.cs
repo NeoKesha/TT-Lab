@@ -86,5 +86,10 @@ namespace TT_Lab.Editors
                 Log.WriteLine($"Failed to create editor: {ex.Message}");
             }
         }
+
+        public List<AssetViewModel> ChunkTree
+        {
+            get => chunkTree;
+        }
     }
 }

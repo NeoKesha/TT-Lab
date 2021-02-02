@@ -365,7 +365,7 @@ namespace TT_Lab.Project
                         // RM2 per chunk instances
                         if (isRm2)
                         {
-                            if (chunkName != "default")
+                            if (!isDefault)
                             {
                                 // Extract collision data
                                 var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);

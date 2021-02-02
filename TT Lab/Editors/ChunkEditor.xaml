@@ -18,7 +18,7 @@
             <ColumnDefinition Width="119*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Header="Chunk tree">
-            <TreeView x:Name="ChunkTree" Margin="0"
+            <TreeView x:Name="ChunkTreeView" Margin="0"
                 ItemsSource="{Binding Items}"
                 VirtualizingPanel.IsVirtualizing="True"
                 VirtualizingPanel.VirtualizationMode="Recycling" SelectedItemChanged="ChunkTree_SelectedItemChanged"

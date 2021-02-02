@@ -4,7 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets.Code;
+using TT_Lab.Project;
 using TT_Lab.Util;
 
 namespace TT_Lab.ViewModels.Instance
@@ -111,6 +114,15 @@ namespace TT_Lab.ViewModels.Instance
                 data.ParamList3.Add(i);
             }
             base.Save(o);
+        }
+
+        public string Name
+        {
+            get
+            {
+                var obj = (GameObject)ProjectManagerSingleton.PM.OpenedProject.GetAsset(ObjectId);
+                return $"Instance {_asset.ID} - {obj.Alias}";
+            }
         }
 
         public Vector4ViewModel Position
