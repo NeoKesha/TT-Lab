@@ -9,7 +9,7 @@ using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.ViewModels.Graphics
 {
-    public class LabShaderViewModel : ObservableObject
+    public class LabShaderViewModel : SavebleViewModel
     {
         private String _name = "Shader";
         private LabShader.Type _type;

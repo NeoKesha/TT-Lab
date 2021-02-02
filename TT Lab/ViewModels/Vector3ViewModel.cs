@@ -7,7 +7,7 @@ using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels
 {
-    public class Vector3ViewModel : ObservableObject
+    public class Vector3ViewModel : SavebleViewModel
     {
         private float _x;
         private float _y;
@@ -22,6 +22,14 @@ namespace TT_Lab.ViewModels
         }
         public Vector3ViewModel(Vector3 twinVec) : this(twinVec.X, twinVec.Y, twinVec.Z)
         {
+        }
+
+        public override void Save(Object? o = null)
+        {
+            var v = (Vector3)o!;
+            v.X = X;
+            v.Y = Y;
+            v.Z = Z;
         }
 
         public float X

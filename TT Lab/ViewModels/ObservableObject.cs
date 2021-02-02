@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace TT_Lab.ViewModels
 {
-    public abstract class ObservableObject : INotifyPropertyChanged
+    public abstract class SavebleViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

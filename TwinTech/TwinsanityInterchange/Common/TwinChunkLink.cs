@@ -17,14 +17,14 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Matrix4 ObjectMatrix { get; set; }
         public Matrix4 ChunkMatrix { get; set; }
         public Matrix4 LoadingWall { get; set; }
-        public List<TwinChunkLinkCollisionData> ChunkLinksCollisionData { get; set; }
+        public List<TwinChunkLinkBoundingBoxBuilder> ChunkLinksCollisionData { get; set; }
 
         public TwinChunkLink()
         {
             ObjectMatrix = new Matrix4();
             ChunkMatrix = new Matrix4();
             LoadingWall = null;
-            ChunkLinksCollisionData = new List<TwinChunkLinkCollisionData>();
+            ChunkLinksCollisionData = new List<TwinChunkLinkBoundingBoxBuilder>();
         }
         public int GetLength()
         {
@@ -48,7 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             }
             if ((Type & 0x1) != 0)
             {
-                var clOgi3 = new TwinChunkLinkCollisionData();
+                var clOgi3 = new TwinChunkLinkBoundingBoxBuilder();
                 Boolean hasNext;
                 do
                 {
@@ -57,7 +57,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                     hasNext = (clOgi3.Type & 0x1) != 0;
                     if (hasNext)
                     {
-                        clOgi3 = new TwinChunkLinkCollisionData();
+                        clOgi3 = new TwinChunkLinkBoundingBoxBuilder();
                     }
                 } while (hasNext);
             }

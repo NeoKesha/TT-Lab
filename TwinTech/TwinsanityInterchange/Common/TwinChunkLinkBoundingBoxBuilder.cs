@@ -8,12 +8,12 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class TwinChunkLinkCollisionData : ITwinSerializable
+    public class TwinChunkLinkBoundingBoxBuilder : ITwinSerializable
     {
         public Int32 Type;
         public BoundingBoxBuilder BondingBoxBuilder;
 
-        public TwinChunkLinkCollisionData()
+        public TwinChunkLinkBoundingBoxBuilder()
         {
             BondingBoxBuilder = new BoundingBoxBuilder();
         }
