@@ -16,6 +16,9 @@ namespace TT_Lab.AssetData.Instance
     {
         public ObjectInstanceData()
         {
+            InstancesRelated = 10;
+            PathsRelated = 10;
+            PositionsRelated = 10;
         }
 
         public ObjectInstanceData(PS2AnyInstance instance) : this()
@@ -46,7 +49,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Guid ObjectId { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 RefListIndex { get; set; }
+        public Int16 RefListIndex { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Guid OnSpawnScriptId { get; set; }
         [JsonProperty(Required = Required.Always)]

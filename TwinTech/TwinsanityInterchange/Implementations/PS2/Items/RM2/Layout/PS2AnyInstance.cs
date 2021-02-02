@@ -25,7 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public UInt32 PathsRelated { get; set; }
         public List<UInt16> Paths { get; set; }
         public UInt16 ObjectId { get; set; }
-        public UInt16 RefListIndex { get; set; }
+        public Int16 RefListIndex { get; set; }
         public UInt16 OnSpawnHeaderScriptID { get; set; }
         public UInt32 StateFlags { get; set; }
         public List<UInt32> ParamList1 { get; set; }
@@ -93,7 +93,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
             ObjectId = reader.ReadUInt16();
 
-            RefListIndex = reader.ReadUInt16();
+            RefListIndex = reader.ReadInt16();
             OnSpawnHeaderScriptID = reader.ReadUInt16();
             // Flags, floats and ints amount + pad byte
             reader.ReadUInt32();

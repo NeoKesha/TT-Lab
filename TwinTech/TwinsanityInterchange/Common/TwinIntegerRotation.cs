@@ -29,5 +29,18 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(Angle);
             writer.Write(Fract);
         }
+
+        public Single GetRotation()
+        {
+            var result = (Single)Math.Floor(Angle / (Single)UInt16.MaxValue * 360);
+            result += (Fract / (Single)UInt16.MaxValue);
+            return result;
+        }
+
+        public void SetRotation(Single angle)
+        {
+            Angle = (UInt16)(Math.Floor(angle) / 360 * UInt16.MaxValue);
+            Fract = (UInt16)((angle - Math.Truncate(angle)) * UInt16.MaxValue);
+        }
     }
 }
