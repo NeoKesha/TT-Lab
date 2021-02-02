@@ -42,7 +42,7 @@ namespace TT_Lab.ViewModels.Instance
             _headerT = data.HeaderT;
             _headerH = data.HeaderH;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
-            AddInstanceToListCommand = new AddItemToListCommand<ushort>(_instances, typeof(UInt16), UInt16.MaxValue);
+            AddInstanceToListCommand = new AddItemToListCommand<UInt16>(_instances, typeof(UInt16), UInt16.MaxValue);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
 
@@ -50,6 +50,7 @@ namespace TT_Lab.ViewModels.Instance
         {
             _enabled = data.Enabled;
             _instances = new ObservableCollection<UInt16>();
+            _instances.CollectionChanged += _instances_CollectionChanged;
             foreach (var inst in data.Instances)
             {
                 _instances.Add(inst);
@@ -81,27 +82,9 @@ namespace TT_Lab.ViewModels.Instance
             data.Header1 = Header1;
             data.HeaderH = HeaderH;
             data.HeaderT = HeaderT;
-            data.Position = new Twinsanity.TwinsanityInterchange.Common.Vector4
-            {
-                X = Position.X,
-                Y = Position.Y,
-                Z = Position.Z,
-                W = Position.W
-            };
-            data.Scale = new Twinsanity.TwinsanityInterchange.Common.Vector4
-            {
-                X = Scale.X,
-                Y = Scale.Y,
-                Z = Scale.Z,
-                W = Scale.W
-            };
-            data.Rotation = new Twinsanity.TwinsanityInterchange.Common.Vector4
-            {
-                X = Rotation.X,
-                Y = Rotation.Y,
-                Z = Rotation.Z,
-                W = Rotation.W
-            };
+            Position.Save(data.Position);
+            Scale.Save(data.Scale);
+            Rotation.Save(data.Rotation);
             data.Instances.Clear();
             foreach (var inst in Instances)
             {
@@ -115,6 +98,12 @@ namespace TT_Lab.ViewModels.Instance
             NotifyChange(nameof(Position));
             NotifyChange(nameof(Scale));
             NotifyChange(nameof(Rotation));
+        }
+
+        private void _instances_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(Instances));
         }
 
         public AddItemToListCommand<UInt16> AddInstanceToListCommand { get; private set; }

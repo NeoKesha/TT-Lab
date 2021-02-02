@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Editors.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -38,7 +39,7 @@ namespace TT_Lab.Assets.Instance
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
+            return typeof(AiNavPositionEditor);
         }
 
         public override AssetViewModel GetViewModel(AssetViewModel parent = null)

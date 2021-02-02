@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.Assets;
 using TT_Lab.Project;
 
 namespace TT_Lab.Command
 {
     public class SaveProjectCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-        public Boolean CanExecute(Object parameter)
+        public Boolean CanExecute(Object? parameter)
         {
             return true;
         }
 
-        public void Execute(Object parameter = null)
+        public void Execute(Object? parameter = null)
         {
             if (!ProjectManagerSingleton.PM.ProjectOpened) return;
 
@@ -27,11 +28,10 @@ namespace TT_Lab.Command
                 {
                     Log.WriteLine($"Saving project...");
                     var now = DateTime.Now;
-                    var pr = ProjectManagerSingleton.PM.ProjectTree;
+                    var pr = ProjectManagerSingleton.PM.FullProjectTree;
                     foreach (var viewModel in pr)
                     {
-                        if (viewModel.EditorOpened && viewModel.IsDirty)
-                            viewModel.Save(null);
+                        viewModel.Save(null);
                     }
                     Log.WriteLine($"Saved project in {DateTime.Now - now}");
                 }

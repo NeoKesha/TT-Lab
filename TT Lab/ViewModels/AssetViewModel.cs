@@ -22,13 +22,13 @@ namespace TT_Lab.ViewModels
     {
         protected IAsset _asset;
 
-        private AssetViewModel _parent;
+        private AssetViewModel? _parent;
         private ObservableCollection<AssetViewModel> _children;
         private List<AssetViewModel> _internalChildren;
         private Boolean _isSelected;
         private Boolean _isExpanded;
         private Visibility _isVisible;
-        private Control _editor;
+        private Control? _editor;
         private bool _dirty;
         private OpenDialogueCommand.DialogueResult _dialogueResult = new OpenDialogueCommand.DialogueResult();
         private ICommand _unsavedChangesCommand;
@@ -42,7 +42,7 @@ namespace TT_Lab.ViewModels
         {
         }
 
-        public AssetViewModel(Guid asset, AssetViewModel parent) : this()
+        public AssetViewModel(Guid asset, AssetViewModel? parent) : this()
         {
             _asset = ProjectManagerSingleton.PM.OpenedProject.GetAsset(asset);
             _parent = parent;
@@ -50,7 +50,7 @@ namespace TT_Lab.ViewModels
             if (_asset is Folder)
             {
                 // Build the tree
-                var myChildren = ((FolderData)(_asset as Folder).GetData()).Children;
+                var myChildren = ((FolderData)(_asset as Folder)!.GetData()).Children;
                 _children = new ObservableCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order
@@ -74,6 +74,16 @@ namespace TT_Lab.ViewModels
             _asset.Serialize();
             IsDirty = false;
             Directory.SetCurrentDirectory(ProjectManagerSingleton.PM.OpenedProject.ProjectPath);
+            if (_internalChildren != null)
+            {
+                foreach (var c in _internalChildren)
+                {
+                    if (c.IsDirty || c.Asset is Folder)
+                    {
+                        c.Save(o);
+                    }
+                }
+            }
         }
 
         public Control GetEditor()
@@ -114,7 +124,7 @@ namespace TT_Lab.ViewModels
             return _editor;
         }
 
-        private void EditorUnload(Object sender, EventArgs e)
+        private void EditorUnload(Object? sender, EventArgs e)
         {
             if (IsDirty)
             {

@@ -190,6 +190,11 @@ namespace TT_Lab.Project
             }
         }
 
+        public List<AssetViewModel> FullProjectTree
+        {
+            get => _internalTree;
+        }
+
         public string ProjectTitle
         {
             get

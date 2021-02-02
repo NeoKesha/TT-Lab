@@ -34,13 +34,7 @@ namespace TT_Lab.ViewModels.Instance
         {
             _asset.LayoutID = (int)LayoutID;
             var data = (AiPositionData)_asset.GetData();
-            data.Coords = new Twinsanity.TwinsanityInterchange.Common.Vector4
-            {
-                X = Position.X,
-                Y = Position.Y,
-                Z = Position.Z,
-                W = Position.W
-            };
+            Position.Save(data.Coords);
             data.Arg = Argument;
             base.Save(o);
         }
