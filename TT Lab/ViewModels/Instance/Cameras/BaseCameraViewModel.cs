@@ -7,7 +7,7 @@ using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
 namespace TT_Lab.ViewModels.Instance.Cameras
 {
-    public class BaseCameraViewModel : SavebleViewModel
+    public class BaseCameraViewModel : ObservableObject
     {
         private UInt32 unkInt;
         private Single unkFloat1;

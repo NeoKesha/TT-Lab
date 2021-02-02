@@ -37,7 +37,7 @@ namespace TT_Lab.Project
         }
     }
 
-    public class ProjectManager : SavebleViewModel
+    public class ProjectManager : ObservableObject
     {
         private IProject _openedProject;
         private CommandManager _commandManager = new CommandManager();

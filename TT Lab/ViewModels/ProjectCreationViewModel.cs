@@ -5,7 +5,7 @@ using TT_Lab.Properties;
 
 namespace TT_Lab.ViewModels
 {
-    public class ProjectCreationViewModel : SavebleViewModel
+    public class ProjectCreationViewModel : ObservableObject
     {
         private string _projectName = "New project";
         private string _projectPath = Settings.Default.ProjectPath;
