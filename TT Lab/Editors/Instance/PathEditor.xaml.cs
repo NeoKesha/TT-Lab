@@ -36,6 +36,14 @@ namespace TT_Lab.Editors.Instance
                 Layers = Util.Layers
             };
             InitValidators();
+            Loaded += PathEditor_Loaded;
+        }
+
+        private void PathEditor_Loaded(Object sender, RoutedEventArgs e)
+        {
+            PointsList.SelectedIndex = 0;
+            ArgumentsList.SelectedIndex = 0;
+            PointsList.Focus();
         }
 
         private void InitValidators()
