@@ -7,32 +7,26 @@ using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels
 {
-    public class Vector4ViewModel : SavebleViewModel
+    public class Vector2ViewModel : SavebleViewModel
     {
         private float _x;
         private float _y;
-        private float _z;
-        private float _w;
 
-        public Vector4ViewModel() { }
-        public Vector4ViewModel(float x, float y, float z, float w)
+        public Vector2ViewModel() { }
+        public Vector2ViewModel(float x, float y)
         {
             X = x;
             Y = y;
-            Z = z;
-            W = w;
         }
-        public Vector4ViewModel(Vector4 twinVec) : this(twinVec.X, twinVec.Y, twinVec.Z, twinVec.W)
+        public Vector2ViewModel(Vector2 twinVec) : this(twinVec.X, twinVec.Y)
         {
         }
 
         public override void Save(Object? o = null)
         {
-            var v = (Vector4)o!;
+            var v = (Vector2)o!;
             v.X = X;
             v.Y = Y;
-            v.Z = Z;
-            v.W = W;
         }
 
         public float X
@@ -61,35 +55,9 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public float Z
-        {
-            get
-            {
-                return _z;
-            }
-            set
-            {
-                _z = value;
-                NotifyChange();
-            }
-        }
-
-        public float W
-        {
-            get
-            {
-                return _w;
-            }
-            set
-            {
-                _w = value;
-                NotifyChange();
-            }
-        }
-
         public override String ToString()
         {
-            return $"({X}; {Y}; {Z})";
+            return $"({X}; {Y})";
         }
     }
 }

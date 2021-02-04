@@ -17,11 +17,11 @@ namespace TT_Lab.Command
         private Type _item;
         private int _maxItems;
 
-        public AddItemToListCommand(ObservableCollection<T> list, Type itemType, int maxItems = -1)
+        public AddItemToListCommand(ObservableCollection<T> list, int maxItems = -1)
         {
             _list = list;
             _list.CollectionChanged += _list_CollectionChanged;
-            _item = itemType;
+            _item = typeof(T);
             _maxItems = maxItems;
         }
 

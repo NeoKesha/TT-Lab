@@ -39,7 +39,7 @@ namespace TT_Lab.ViewModels.Graphics
                 _shaders.Add(shaderViewModel);
                 shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged;
             }
-            AddShaderCommand = new AddItemToListCommand<LabShaderViewModel>(Shaders, typeof(LabShaderViewModel), 5);
+            AddShaderCommand = new AddItemToListCommand<LabShaderViewModel>(Shaders, 5);
             DeleteShaderCommand = new DeleteItemFromListCommand(Shaders);
             CloneShaderCommand = new CloneItemIntoCollectionCommand<LabShaderViewModel>(Shaders, 5);
             Shaders.CollectionChanged += Shaders_Changed;

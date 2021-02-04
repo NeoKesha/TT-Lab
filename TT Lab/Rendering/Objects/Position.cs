@@ -33,7 +33,7 @@ namespace TT_Lab.Rendering.Objects
 
         private void Pos_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.PropertyName) && e.PropertyName == "IsSelected") return;
+            if (!string.IsNullOrEmpty(e.PropertyName) && (e.PropertyName == "IsSelected" || e.PropertyName == "IsDirty")) return;
             var vm = (PositionViewModel)sender!;
             positionBuffer.Delete();
             layid = (int)vm.LayoutID;

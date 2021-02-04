@@ -36,6 +36,21 @@ namespace TT_Lab.Controls
             DependencyProperty.Register("VerticalLayout", typeof(bool), typeof(VectorEditor),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnLayoutChanged)));
 
+
+        [Description("Amount of components in the given vector. Up to 4"), Category("Common Properties")]
+        public int VectorComponentsAmount
+        {
+            get { return (int)GetValue(VectorComponentsAmountProperty); }
+            set { SetValue(VectorComponentsAmountProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for VectorComponentsAmount.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty VectorComponentsAmountProperty =
+            DependencyProperty.Register("VectorComponentsAmount", typeof(int), typeof(VectorEditor),
+                new FrameworkPropertyMetadata(4, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnLayoutChanged)));
+
+
+
         public VectorEditor()
         {
             InitializeComponent();
@@ -64,15 +79,44 @@ namespace TT_Lab.Controls
         private static void OnLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as VectorEditor;
-            var isVert = (bool)e.NewValue;
+            var isVert = control.VerticalLayout;
+            var compAmount = control.VectorComponentsAmount;
+            if (e.Property.Name == nameof(control.VerticalLayout))
+            {
+                isVert = (bool)e.NewValue;
+            }
+            else if (e.Property.Name == nameof(control.VectorComponentsAmount))
+            {
+                compAmount = (int)e.NewValue;
+                if (compAmount < 1 || compAmount > 4) return;
+
+                control.YCoordBox.Visibility = Visibility.Visible;
+                control.ZCoordBox.Visibility = Visibility.Visible;
+                control.WCoordBox.Visibility = Visibility.Visible;
+                switch (compAmount)
+                {
+                    case 1:
+                        control.YCoordBox.Visibility = Visibility.Collapsed;
+                        control.ZCoordBox.Visibility = Visibility.Collapsed;
+                        control.WCoordBox.Visibility = Visibility.Collapsed;
+                        break;
+                    case 2:
+                        control.ZCoordBox.Visibility = Visibility.Collapsed;
+                        control.WCoordBox.Visibility = Visibility.Collapsed;
+                        break;
+                    case 3:
+                        control.WCoordBox.Visibility = Visibility.Collapsed;
+                        break;
+                }
+            }
             if (isVert)
             {
                 control.FormationGrid.Columns = 0;
-                control.FormationGrid.Rows = 4;
+                control.FormationGrid.Rows = compAmount;
             }
             else
             {
-                control.FormationGrid.Columns = 4;
+                control.FormationGrid.Columns = compAmount;
                 control.FormationGrid.Rows = 1;
             }
         }

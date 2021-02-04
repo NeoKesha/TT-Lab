@@ -5,14 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Command;
+using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ViewModels.Instance
 {
     public class PathViewModel : AssetViewModel
     {
+        private Enums.Layouts layoutId;
         private ObservableCollection<Vector4ViewModel> points;
-        private ObservableCollection<Single> paramGroup1;
-        private ObservableCollection<Single> paramGroup2;
+        private ObservableCollection<Vector2ViewModel> arguments;
 
         public PathViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
@@ -25,28 +28,42 @@ namespace TT_Lab.ViewModels.Instance
                 points.Add(vm);
                 vm.PropertyChanged += Vector_PropertyChanged;
             }
-            paramGroup1 = new ObservableCollection<Single>();
-            paramGroup1.CollectionChanged += ParamGroup_CollectionChanged;
-            var pg1 = pathData.Parameters.FindAll(s => pathData.Parameters.IndexOf(s) < pathData.Parameters.Count / 2);
-            foreach (var p in pg1)
+            arguments = new ObservableCollection<Vector2ViewModel>();
+            arguments.CollectionChanged += ParamGroup_CollectionChanged;
+            foreach (var p in pathData.Parameters)
             {
-                paramGroup1.Add(p.X);
-                paramGroup1.Add(p.Y);
+                var vm = new Vector2ViewModel(p);
+                arguments.Add(vm);
+                vm.PropertyChanged += Arguments_PropertyChanged;
             }
-            paramGroup2 = new ObservableCollection<Single>();
-            paramGroup2.CollectionChanged += ParamGroup_CollectionChanged;
-            var pg2 = pathData.Parameters.FindAll(s => pathData.Parameters.IndexOf(s) >= pathData.Parameters.Count / 2);
-            foreach (var p in pg2)
-            {
-                paramGroup2.Add(p.X);
-                paramGroup2.Add(p.Y);
-            }
+            layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
+
+            AddArgumentCommand = new AddItemToListCommand<Vector2ViewModel>(Arguments);
+            AddPointCommand = new AddItemToListCommand<Vector4ViewModel>(Points);
+            DeleteArgumentCommand = new DeleteItemFromListCommand(Arguments);
+            DeletePointCommand = new DeleteItemFromListCommand(Points);
+        }
+
+        private void Arguments_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            NotifyChange(nameof(Arguments));
+            IsDirty = true;
         }
 
         private void ParamGroup_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            NotifyChange(nameof(ParamGroup1));
-            NotifyChange(nameof(ParamGroup2));
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                var vm = (Vector2ViewModel)e.NewItems![0]!;
+                vm.PropertyChanged += Arguments_PropertyChanged;
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                var vm = (Vector2ViewModel)e.OldItems![0]!;
+                vm.PropertyChanged -= Arguments_PropertyChanged;
+            }
+            NotifyChange(nameof(Arguments));
+            IsDirty = true;
         }
 
         private void Points_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -62,6 +79,7 @@ namespace TT_Lab.ViewModels.Instance
                 vm.PropertyChanged -= Vector_PropertyChanged;
             }
             NotifyChange(nameof(Points));
+            IsDirty = true;
         }
 
         private void Vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -72,6 +90,7 @@ namespace TT_Lab.ViewModels.Instance
 
         public override void Save(object? o)
         {
+            _asset.LayoutID = (int)LayoutID;
             var data = (PathData)_asset.GetData();
             data.Points.Clear();
             foreach (var p in Points)
@@ -81,36 +100,40 @@ namespace TT_Lab.ViewModels.Instance
                 data.Points.Add(v);
             }
             data.Parameters.Clear();
-            for (var i = 0; i < ParamGroup1.Count; i += 2)
+            foreach (var p in Arguments)
             {
-                data.Parameters.Add(new Twinsanity.TwinsanityInterchange.Common.Vector2
-                {
-                    X = ParamGroup1[i],
-                    Y = ParamGroup1[i + 1]
-                });
-            }
-            for (var i = 0; i < ParamGroup2.Count; i += 2)
-            {
-                data.Parameters.Add(new Twinsanity.TwinsanityInterchange.Common.Vector2
-                {
-                    X = ParamGroup2[i],
-                    Y = ParamGroup2[i + 1]
-                });
+                var v = new Twinsanity.TwinsanityInterchange.Common.Vector2();
+                p.Save(v);
+                data.Parameters.Add(v);
             }
             base.Save(o);
         }
 
+        public AddItemToListCommand<Vector2ViewModel> AddArgumentCommand { get; private set; }
+        public AddItemToListCommand<Vector4ViewModel> AddPointCommand { get; private set; }
+        public DeleteItemFromListCommand DeleteArgumentCommand { get; private set; }
+        public DeleteItemFromListCommand DeletePointCommand { get; private set; }
+
+        public Enums.Layouts LayoutID
+        {
+            get => layoutId;
+            set
+            {
+                if (value != layoutId)
+                {
+                    layoutId = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
         public ObservableCollection<Vector4ViewModel> Points
         {
             get => points;
         }
-        public ObservableCollection<Single> ParamGroup1
+        public ObservableCollection<Vector2ViewModel> Arguments
         {
-            get => paramGroup1;
-        }
-        public ObservableCollection<Single> ParamGroup2
-        {
-            get => paramGroup2;
+            get => arguments;
         }
     }
 }
