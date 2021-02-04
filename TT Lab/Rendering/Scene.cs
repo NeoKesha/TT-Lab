@@ -214,7 +214,7 @@ namespace TT_Lab.Rendering
         private vec2 yaw_pitch;
         public void RotateView(Vector2 rot)
         {
-            if (!canManipulateCamera) return;
+            if (!canManipulateCamera || rot.Length == 0) return;
 
             rot.Normalize();
             yaw_pitch.x += rot.X;

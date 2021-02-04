@@ -76,13 +76,9 @@ namespace TT_Lab.ViewModels.Instance
             data.Points.Clear();
             foreach (var p in Points)
             {
-                data.Points.Add(new Twinsanity.TwinsanityInterchange.Common.Vector4
-                {
-                    X = p.X,
-                    Y = p.Y,
-                    Z = p.Z,
-                    W = p.W,
-                });
+                var v = new Twinsanity.TwinsanityInterchange.Common.Vector4();
+                p.Save(v);
+                data.Points.Add(v);
             }
             data.Parameters.Clear();
             for (var i = 0; i < ParamGroup1.Count; i += 2)
