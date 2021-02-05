@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
              xmlns:base="clr-namespace:TT_Lab.Editors"
-             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Class="TT_Lab.Editors.Instance.ObjectInstanceEditor"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="ObjectInstanceEditorControl" x:Class="TT_Lab.Editors.Instance.ObjectInstanceEditor"
              mc:Ignorable="d" 
              d:DesignHeight="650" d:DesignWidth="300">
     <Grid>
@@ -14,7 +14,7 @@
             <RowDefinition Height="50*"/>
             <RowDefinition Height="243*"/>
         </Grid.RowDefinitions>
-        <Controls:LabeledDropList x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48"/>
+        <Controls:LabeledDropList x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" SelectedItem="{Binding ViewModel.LayoutID}"/>
         <Grid x:Name="MainPropsGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -24,9 +24,9 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Controls:LabeledDropList HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object"/>
-            <Controls:LabeledDropList Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="On spawn script"/>
-            <Controls:LabeledTextBox HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index"/>
+            <Controls:LabeledDropList x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True"/>
+            <Controls:LabeledDropList x:Name="OnSpawnScriptList" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="On spawn script" AllowDrop="True"/>
+            <Controls:LabeledTextBox x:Name="GlobalInstanceRefListIndexBox" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index"/>
         </Grid>
         <ItemsControl Grid.Row="2">
             <Expander x:Name="PosPropsExpander" Header="Positional properties">
@@ -91,9 +91,14 @@
                     <ListBox x:Name="LinkedInstancesList" Height="300"/>
                 </Grid>
             </Expander>
-            <Expander x:Name="LinkedPositionsExpander" Header="Linked paths" MaxHeight="300">
+            <Expander x:Name="LinkedPositionsExpander" Header="Linked positions" MaxHeight="300">
                 <Grid>
                     <ListBox x:Name="LinkedPositionsList" Height="300"/>
+                </Grid>
+            </Expander>
+            <Expander x:Name="LinkedPathsExpander" Header="Linked paths">
+                <Grid Background="#FFE5E5E5">
+                    <ListBox x:Name="LinkedPathsList" Height="300"/>
                 </Grid>
             </Expander>
         </ItemsControl>

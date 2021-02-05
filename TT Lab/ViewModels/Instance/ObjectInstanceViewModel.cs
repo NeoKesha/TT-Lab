@@ -9,11 +9,13 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets.Code;
 using TT_Lab.Project;
 using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ViewModels.Instance
 {
     public class ObjectInstanceViewModel : AssetViewModel
     {
+        private Enums.Layouts layoutId;
         private Vector4ViewModel position;
         private Single rotX;
         private Single rotY;
@@ -70,6 +72,7 @@ namespace TT_Lab.ViewModels.Instance
             {
                 intParams.Add(i);
             }
+            layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
         }
 
         public override void Save(Object? o)
@@ -122,6 +125,20 @@ namespace TT_Lab.ViewModels.Instance
             {
                 var obj = (GameObject)ProjectManagerSingleton.PM.OpenedProject.GetAsset(ObjectId);
                 return $"Instance {_asset.ID} - {obj.Alias}";
+            }
+        }
+
+        public Enums.Layouts LayoutID
+        {
+            get => layoutId;
+            set
+            {
+                if (value != layoutId)
+                {
+                    layoutId = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
             }
         }
 

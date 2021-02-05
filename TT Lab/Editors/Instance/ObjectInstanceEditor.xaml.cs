@@ -29,6 +29,11 @@ namespace TT_Lab.Editors.Instance
         public ObjectInstanceEditor(ObjectInstanceViewModel vm, CommandManager commandManager) : base(vm, commandManager)
         {
             InitializeComponent();
+            DataContext = new
+            {
+                ViewModel = vm,
+                Layers = Util.Layers
+            };
         }
     }
 }

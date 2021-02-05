@@ -40,9 +40,9 @@ namespace TT_Lab.AssetData.Graphics
         {
             PS2AnyLOD lod = (PS2AnyLOD)twinRef;
             Type = lod.Type;
-            UnkInt1 = lod.UnkInt1;
-            UnkInt2 = lod.UnkInt2;
-            UnkInts = CloneUtils.CloneArray(lod.UnkInts);
+            UnkInt1 = lod.MinDrawDistance;
+            UnkInt2 = lod.MaxDrawDistance;
+            UnkInts = CloneUtils.CloneArray(lod.ModelsDrawDistances);
             UnkData = CloneUtils.CloneArray(lod.UnkData);
             Meshes = new List<Guid>();
             foreach (var mesh in lod.Meshes)
