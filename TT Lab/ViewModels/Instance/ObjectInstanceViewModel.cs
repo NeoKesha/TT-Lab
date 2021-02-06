@@ -17,16 +17,14 @@ namespace TT_Lab.ViewModels.Instance
     {
         private Enums.Layouts layoutId;
         private Vector4ViewModel position;
-        private Single rotX;
-        private Single rotY;
-        private Single rotZ;
+        private Vector3ViewModel rotation;
         private ObservableCollection<UInt16> instances;
         private ObservableCollection<UInt16> paths;
         private ObservableCollection<UInt16> positions;
         private Guid objectId;
         private Int16 refListIndex;
         private Guid onSpawnScriptId;
-        private UInt32 stateFlags;
+        private Enums.InstanceState stateFlags;
         private ObservableCollection<UInt32> flagParams;
         private ObservableCollection<Single> floatParams;
         private ObservableCollection<UInt32> intParams;
@@ -35,9 +33,10 @@ namespace TT_Lab.ViewModels.Instance
         {
             var data = (ObjectInstanceData)_asset.GetData();
             position = new Vector4ViewModel(data.Position);
-            rotX = data.RotationX.GetRotation();
-            rotY = data.RotationY.GetRotation();
-            rotZ = data.RotationZ.GetRotation();
+            var rotX = data.RotationX.GetRotation();
+            var rotY = data.RotationY.GetRotation();
+            var rotZ = data.RotationZ.GetRotation();
+            rotation = new Vector3ViewModel(rotX, rotY, rotZ);
             instances = new ObservableCollection<UInt16>();
             foreach (var i in data.Instances)
             {
@@ -56,7 +55,7 @@ namespace TT_Lab.ViewModels.Instance
             objectId = data.ObjectId;
             refListIndex = data.RefListIndex;
             onSpawnScriptId = data.OnSpawnScriptId;
-            stateFlags = data.StateFlags;
+            stateFlags = MiscUtils.ConvertEnum<Enums.InstanceState>(data.StateFlags);
             flagParams = new ObservableCollection<UInt32>();
             foreach (var f in data.ParamList1)
             {
@@ -79,9 +78,9 @@ namespace TT_Lab.ViewModels.Instance
         {
             var data = (ObjectInstanceData)_asset.GetData();
             Position.Save(data.Position);
-            data.RotationX.SetRotation(RotationX);
-            data.RotationY.SetRotation(RotationY);
-            data.RotationZ.SetRotation(RotationZ);
+            data.RotationX.SetRotation(Rotation.X);
+            data.RotationY.SetRotation(Rotation.Y);
+            data.RotationZ.SetRotation(Rotation.Z);
             data.Instances.Clear();
             foreach (var i in Instances)
             {
@@ -100,7 +99,7 @@ namespace TT_Lab.ViewModels.Instance
             data.ObjectId = ObjectId;
             data.RefListIndex = RefListIndex;
             data.OnSpawnScriptId = OnSpawnScriptId;
-            data.StateFlags = stateFlags;
+            data.StateFlags = (UInt32)stateFlags;
             data.ParamList1.Clear();
             foreach (var f in FlagParams)
             {
@@ -158,49 +157,17 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Single RotationX
+        public Vector3ViewModel Rotation
         {
             get
             {
-                return rotX;
+                return rotation;
             }
             set
             {
-                if (value != rotX)
+                if (value != rotation)
                 {
-                    rotX = value;
-                    NotifyChange();
-                    IsDirty = true;
-                }
-            }
-        }
-        public Single RotationY
-        {
-            get
-            {
-                return rotY;
-            }
-            set
-            {
-                if (value != rotY)
-                {
-                    rotY = value;
-                    NotifyChange();
-                    IsDirty = true;
-                }
-            }
-        }
-        public Single RotationZ
-        {
-            get
-            {
-                return rotZ;
-            }
-            set
-            {
-                if (value != rotZ)
-                {
-                    rotZ = value;
+                    rotation = value;
                     NotifyChange();
                     IsDirty = true;
                 }
@@ -247,7 +214,7 @@ namespace TT_Lab.ViewModels.Instance
         {
             get
             {
-                return RefListIndex;
+                return refListIndex;
             }
             set
             {
@@ -279,16 +246,337 @@ namespace TT_Lab.ViewModels.Instance
         {
             get
             {
-                return stateFlags;
+                return (UInt32)stateFlags;
             }
             set
             {
-                if (value != stateFlags)
+                var flags = MiscUtils.ConvertEnum<Enums.InstanceState>(value);
+                if (flags != stateFlags)
                 {
-                    stateFlags = value;
+                    stateFlags = flags;
                     NotifyChange();
+                    NotifyChange(nameof(Deactivated));
+                    NotifyChange(nameof(CollisionActive));
+                    NotifyChange(nameof(Visible));
+                    NotifyChange(nameof(ReceiveOnTriggerSignals));
+                    NotifyChange(nameof(CanDamageCharacter));
+                    NotifyChange(nameof(CanAlwaysDamageCharacter));
+                    NotifyChange(nameof(Unknown1));
+                    NotifyChange(nameof(Unknown2));
+                    NotifyChange(nameof(Unknown3));
+                    NotifyChange(nameof(Unknown4));
+                    NotifyChange(nameof(Unknown5));
+                    NotifyChange(nameof(Unknown6));
+                    NotifyChange(nameof(Unknown7));
+                    NotifyChange(nameof(Unknown8));
+                    NotifyChange(nameof(Unknown9));
+                    NotifyChange(nameof(Unknown10));
+                    NotifyChange(nameof(Unknown11));
+                    NotifyChange(nameof(Unknown12));
+                    NotifyChange(nameof(Unknown13));
+                    NotifyChange(nameof(Unknown14));
+                    NotifyChange(nameof(Unknown15));
+                    NotifyChange(nameof(Unknown16));
+                    NotifyChange(nameof(Unknown17));
+                    NotifyChange(nameof(Unknown18));
+                    NotifyChange(nameof(Unknown19));
+                    NotifyChange(nameof(Unknown20));
+                    NotifyChange(nameof(Unknown21));
+                    NotifyChange(nameof(Unknown22));
+                    NotifyChange(nameof(Unknown23));
+                    NotifyChange(nameof(Unknown24));
+                    NotifyChange(nameof(Unknown25));
+                    NotifyChange(nameof(Unknown26));
                     IsDirty = true;
                 }
+            }
+        }
+        public Boolean Deactivated
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Deactivated);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Deactivated, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean CollisionActive
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.CollisionActive);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CollisionActive, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Visible
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Visible);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Visible, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean ReceiveOnTriggerSignals
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.ReceiveOnTriggerSignals);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.ReceiveOnTriggerSignals, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean CanDamageCharacter
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.CanDamageCharacter);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CanDamageCharacter, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean CanAlwaysDamageCharacter
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.CanAlwaysDamageCharacter);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CanAlwaysDamageCharacter, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown1
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown1);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown1, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown2
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown2);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown2, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown3
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown3);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown3, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown4
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown4);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown4, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown5
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown5);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown5, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown6
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown6);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown6, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown7
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown7);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown7, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown8
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown8);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown8, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown9
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown9);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown9, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown10
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown10);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown10, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown11
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown11);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown11, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown12
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown12);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown12, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown13
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown13);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown13, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown14
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown14);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown14, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown15
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown15);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown15, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown16
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown16);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown16, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown17
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown17);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown17, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown18
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown18);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown18, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown19
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown19);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown19, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown20
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown20);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown20, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown21
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown21);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown21, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown22
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown22);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown22, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown23
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown23);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown23, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown24
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown24);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown24, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown25
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown25);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown25, !value);
+                NotifyChange(nameof(StateFlags));
+            }
+        }
+        public Boolean Unknown26
+        {
+            get => stateFlags.HasFlag(Enums.InstanceState.Unknown26);
+            set
+            {
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown26, !value);
+                NotifyChange(nameof(StateFlags));
             }
         }
         public ObservableCollection<UInt32> FlagParams

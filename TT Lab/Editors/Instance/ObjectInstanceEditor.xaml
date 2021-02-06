@@ -7,100 +7,147 @@
              xmlns:base="clr-namespace:TT_Lab.Editors"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="ObjectInstanceEditorControl" x:Class="TT_Lab.Editors.Instance.ObjectInstanceEditor"
              mc:Ignorable="d" 
-             d:DesignHeight="650" d:DesignWidth="300">
+             d:DesignHeight="1100" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="32*"/>
             <RowDefinition Height="50*"/>
             <RowDefinition Height="243*"/>
         </Grid.RowDefinitions>
-        <Controls:LabeledDropList x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" SelectedItem="{Binding ViewModel.LayoutID}"/>
-        <Grid x:Name="MainPropsGrid" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Controls:LabeledDropList x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True"/>
-            <Controls:LabeledDropList x:Name="OnSpawnScriptList" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="On spawn script" AllowDrop="True"/>
-            <Controls:LabeledTextBox x:Name="GlobalInstanceRefListIndexBox" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index"/>
-        </Grid>
-        <ItemsControl Grid.Row="2">
-            <Expander x:Name="PosPropsExpander" Header="Positional properties">
+        <TabControl Grid.RowSpan="3" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}">
+            <TabItem x:Name="MainPropsTab" Header="Main properties">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition Height="32*"/>
+                        <RowDefinition Height="50*"/>
+                        <RowDefinition Height="243*"/>
                     </Grid.RowDefinitions>
-                    <GroupBox Header="Position">
-                        <Controls:VectorEditor HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalLayout="True"/>
-                    </GroupBox>
-                    <GroupBox Header="Rotation" Grid.Row="1">
-                        <Controls:VectorEditor HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalLayout="True" VectorComponentsAmount="3"/>
-                    </GroupBox>
+                    <Controls:LabeledDropList Items="{Binding Layers}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" SelectedItem="{Binding ViewModel.LayoutID}"/>
+                    <Grid x:Name="MainPropsGrid" Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Controls:LabeledDropList Items="{Binding AllObjects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledDropList Items="{Binding AllScripts}" x:Name="OnSpawnScriptList" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="On spawn script" AllowDrop="True"/>
+                        <Controls:LabeledTextBox Text="{Binding ViewModel.RefListIndex}" x:Name="GlobalInstanceRefListIndexBox" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index" BoundProperty="RefListIndex" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                    </Grid>
+                    <ItemsControl Grid.Row="2">
+                        <Expander x:Name="PosPropsExpander" Header="Positional properties">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <GroupBox Header="Position">
+                                    <Controls:VectorEditor x:Name="PositionVec" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalLayout="True" BoundProperty="Position" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" PropertyTarget="{Binding ViewModel.Position}"/>
+                                </GroupBox>
+                                <GroupBox Header="Rotation" Grid.Row="1">
+                                    <Controls:VectorEditor x:Name="RotationVec" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalLayout="True" VectorComponentsAmount="3" BoundProperty="Rotation" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" PropertyTarget="{Binding ViewModel.Rotation}"/>
+                                </GroupBox>
+                            </Grid>
+                        </Expander>
+                        <Expander x:Name="StateFlagsExpander" Header="State flags">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Controls:LabeledTextBox x:Name="StateFlagsBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBoxName="HEX input" BoundProperty="StateFlags" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" Text="{Binding ViewModel.StateFlags, StringFormat={}{0:X}}"/>
+                                <UniformGrid Columns="2" Grid.Row="1">
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Deactivated}" x:Name="DeactivateFlag" Margin="0,0,0,0" CheckBoxName="Deactivated" BoundProperty="Deactivated" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.CollisionActive}" x:Name="CollisionFlag" Margin="0,0,0,0" CheckBoxName="Collision active" BoundProperty="CollisionActive" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Visible}" x:Name="VisibleFlag" Margin="0,0,0,0" CheckBoxName="Visible" BoundProperty="Visible" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown1}" x:Name="UnknownFlag1" Margin="0,0,0,0" CheckBoxName="Unknown 1" BoundProperty="Unknown1" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown2}" x:Name="UnknownFlag2" Margin="0,0,0,0" CheckBoxName="Unknown 2" BoundProperty="Unknown2" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown3}" x:Name="UnknownFlag3" Margin="0,0,0,0" CheckBoxName="Unknown 3" BoundProperty="Unknown3" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown4}" x:Name="UnknownFlag4" Margin="0,0,0,0" CheckBoxName="Unknown 4" BoundProperty="Unknown4" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown5}" x:Name="UnknownFlag5" Margin="0,0,0,0" CheckBoxName="Unknown 5" BoundProperty="Unknown5" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.ReceiveOnTriggerSignals}" x:Name="ReceiveOnTriggerSignalsFlag" Margin="0,0,0,0" CheckBoxName="Receive OnTrigger signals?" BoundProperty="ReceiveOnTriggerSignals" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.CanDamageCharacter}" x:Name="DamageCharacterFlag" Margin="0,0,0,0" CheckBoxName="Can damage character?" BoundProperty="CanDamageCharacter" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown6}" x:Name="UnknownFlag6" Margin="0,0,0,0" CheckBoxName="Unknown 6" BoundProperty="Unknown6" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown7}" x:Name="UnknownFlag7" Margin="0,0,0,0" CheckBoxName="Unknown 7" BoundProperty="Unknown7" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown8}" x:Name="UnknownFlag8" Margin="0,0,0,0" CheckBoxName="Unknown 8" BoundProperty="Unknown8" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown9}" x:Name="UnknownFlag9" Margin="0,0,0,0" CheckBoxName="Unknown 9" BoundProperty="Unknown9" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown10}" x:Name="UnknownFlag10" Margin="0,0,0,0" CheckBoxName="Unknown 10" BoundProperty="Unknown10" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown11}" x:Name="UnknownFlag11" Margin="0,0,0,0" CheckBoxName="Unknown 11" BoundProperty="Unknown11" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.CanAlwaysDamageCharacter}" x:Name="AlwaysDamageCharacterFlag" Margin="0,0,0,0" CheckBoxName="Can always damage character?" BoundProperty="CanAlwaysDamageCharacter" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown12}" x:Name="UnknownFlag12" Margin="0,0,0,0" CheckBoxName="Unknown 12" BoundProperty="Unknown12" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown13}" x:Name="UnknownFlag13" Margin="0,0,0,0" CheckBoxName="Unknown 13" BoundProperty="Unknown13" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown14}" x:Name="UnknownFlag14" Margin="0,0,0,0" CheckBoxName="Unknown 14" BoundProperty="Unknown14" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown15}" x:Name="UnknownFlag15" Margin="0,0,0,0" CheckBoxName="Unknown 15" BoundProperty="Unknown15" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown16}" x:Name="UnknownFlag16" Margin="0,0,0,0" CheckBoxName="Unknown 16" BoundProperty="Unknown16" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown17}" x:Name="UnknownFlag17" Margin="0,0,0,0" CheckBoxName="Unknown 17" BoundProperty="Unknown17" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown18}" x:Name="UnknownFlag18" Margin="0,0,0,0" CheckBoxName="Unknown 18" BoundProperty="Unknown18" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown19}" x:Name="UnknownFlag19" Margin="0,0,0,0" CheckBoxName="Unknown 19" BoundProperty="Unknown19" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown20}" x:Name="UnknownFlag20" Margin="0,0,0,0" CheckBoxName="Unknown 20" BoundProperty="Unknown20" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown21}" x:Name="UnknownFlag21" Margin="0,0,0,0" CheckBoxName="Unknown 21" BoundProperty="Unknown21" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown22}" x:Name="UnknownFlag22" Margin="0,0,0,0" CheckBoxName="Unknown 22" BoundProperty="Unknown22" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown23}" x:Name="UnknownFlag23" Margin="0,0,0,0" CheckBoxName="Unknown 23" BoundProperty="Unknown23" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown24}" x:Name="UnknownFlag24" Margin="0,0,0,0" CheckBoxName="Unknown 24" BoundProperty="Unknown24" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown25}" x:Name="UnknownFlag25" Margin="0,0,0,0" CheckBoxName="Unknown 25" BoundProperty="Unknown25" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Unknown26}" x:Name="UnknownFlag26" Margin="0,0,0,0" CheckBoxName="Unknown 26" BoundProperty="Unknown26" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
+                                </UniformGrid>
+                            </Grid>
+                        </Expander>
+                        <Expander x:Name="LinkedInstancesExpander" Header="Linked instances" MaxHeight="250">
+                            <Grid>
+                                <ListBox ItemsSource="{Binding ViewModel.Instances}" x:Name="LinkedInstancesList" Height="300"/>
+                            </Grid>
+                        </Expander>
+                        <Expander x:Name="LinkedPositionsExpander" Header="Linked positions" MaxHeight="300">
+                            <Grid>
+                                <ListBox ItemsSource="{Binding ViewModel.Positions}" x:Name="LinkedPositionsList" Height="300"/>
+                            </Grid>
+                        </Expander>
+                        <Expander x:Name="LinkedPathsExpander" Header="Linked paths">
+                            <Grid>
+                                <ListBox ItemsSource="{Binding ViewModel.Paths}" x:Name="LinkedPathsList" Height="300"/>
+                            </Grid>
+                        </Expander>
+                    </ItemsControl>
                 </Grid>
-            </Expander>
-            <Expander x:Name="StateFlagsExpander" Header="State flags">
+            </TabItem>
+            <TabItem x:Name="ExtraPropsTab" Header="Extra properties">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Controls:LabeledTextBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBoxName="HEX input"/>
-                    <UniformGrid Columns="2" Grid.Row="1">
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Deactivated"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Collision active"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Visible"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Receive OnTrigger signals?"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Can damage character?"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Can always damage character?"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                        <Controls:LabeledCheckBox Margin="0,0,0,0" CheckBoxName="Unknown"/>
-                    </UniformGrid>
+                    <ItemsControl>
+                        <Expander x:Name="IntPropsExpander" Header="Integer propeties" IsExpanded="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <ListBox ItemsSource="{Binding ViewModel.IntParams}" x:Name="IntPropsList" Height="200"/>
+                                <Controls:LabeledTextBox x:Name="IntPropBox" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch"/>
+                            </Grid>
+                        </Expander>
+                        <Expander x:Name="FlagPropsExpander" Header="Flag properties">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <ListBox ItemsSource="{Binding ViewModel.FlagParams}" x:Name="FlagPropsList" Height="200"/>
+                                <Controls:LabeledTextBox x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+                            </Grid>
+                        </Expander>
+                        <Expander x:Name="FloatPropsExpander" Header="Float properties">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <ListBox ItemsSource="{Binding ViewModel.FloatParams}" x:Name="FloatPropsList" Height="200"/>
+                                <Controls:LabeledTextBox x:Name="FloatPropBox" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Expander>
+                    </ItemsControl>
                 </Grid>
-            </Expander>
-            <Expander x:Name="LinkedInstancesExpander" Header="Linked instances" MaxHeight="250">
-                <Grid>
-                    <ListBox x:Name="LinkedInstancesList" Height="300"/>
-                </Grid>
-            </Expander>
-            <Expander x:Name="LinkedPositionsExpander" Header="Linked positions" MaxHeight="300">
-                <Grid>
-                    <ListBox x:Name="LinkedPositionsList" Height="300"/>
-                </Grid>
-            </Expander>
-            <Expander x:Name="LinkedPathsExpander" Header="Linked paths">
-                <Grid Background="#FFE5E5E5">
-                    <ListBox x:Name="LinkedPathsList" Height="300"/>
-                </Grid>
-            </Expander>
-        </ItemsControl>
+            </TabItem>
+        </TabControl>
     </Grid>
 </base:BaseEditor>

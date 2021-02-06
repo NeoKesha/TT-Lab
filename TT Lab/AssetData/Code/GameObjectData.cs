@@ -23,7 +23,13 @@ namespace TT_Lab.AssetData.Code
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Bitfield { get; set; }
+        public Byte Type { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Byte UnkTypeValue { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Byte UnkOGIArraySize { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Byte OGIType2ArraySize { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte[] SlotsMap { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -72,7 +78,10 @@ namespace TT_Lab.AssetData.Code
         public override void Import()
         {
             PS2AnyObject gameObject = (PS2AnyObject)twinRef;
-            Bitfield = gameObject.Bitfield;
+            Type = gameObject.Type;
+            UnkTypeValue = gameObject.UnkTypeValue;
+            UnkOGIArraySize = gameObject.UnkOgiArraySize;
+            OGIType2ArraySize = gameObject.OgiType2ArraySize;
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
             UInt32Slots = CloneUtils.CloneList(gameObject.UInt32Slots);

@@ -26,7 +26,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             SOUNDS = 1 << 6,
         }
 
-        public UInt32 Bitfield;
+        public Byte Type;
+        public Byte UnkTypeValue;
+        public Byte UnkOgiArraySize;
+        public Byte OgiType2ArraySize;
         public Byte[] SlotsMap;
         public String Name;
         public List<UInt32> UInt32Slots;
@@ -140,9 +143,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override void Read(BinaryReader reader, int length)
         {
-            Bitfield = reader.ReadUInt32();
-            var hasInstProps = (Bitfield & 0x20000000) != 0;
-            var refRes = (Bitfield & 0x40000000) != 0;
+            var bitfield = reader.ReadUInt32();
+            Type = (Byte)(bitfield >> 0x14 & 0xFF);
+            UnkTypeValue = (Byte)(bitfield >> 0xC & 0xFF);
+            UnkOgiArraySize = (Byte)(bitfield >> 0x6 & 0x3F);
+            OgiType2ArraySize = (Byte)(bitfield & 0x3F);
+
+            var hasInstProps = (bitfield & 0x20000000) != 0;
+            var refRes = (bitfield & 0x40000000) != 0;
             for (var i = 0; i < 8; ++i)
             {
                 SlotsMap[i] = reader.ReadByte();
@@ -210,7 +218,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override void Write(BinaryWriter writer)
         {
-            UInt32 newBitfield = 0;
+            UInt32 newBitfield = OgiType2ArraySize;
             if (ReferencesResources)
             {
                 newBitfield |= 0x40000000;
@@ -219,7 +227,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             {
                 newBitfield |= 0x20000000;
             }
-            newBitfield |= (Bitfield & 0x9FFFFFFF);
+            UInt32 objType = (UInt32)(Type << 0x14);
+            UInt32 objTypeRelVal = (UInt32)(UnkTypeValue << 0xC);
+            UInt32 unkOgiArraySize = (UInt32)(UnkOgiArraySize << 0x6);
+            newBitfield |= objType;
+            newBitfield |= objTypeRelVal;
+            newBitfield |= unkOgiArraySize;
             writer.Write(newBitfield);
             writer.Write(SlotsMap);
             writer.Write(Name.Length);
