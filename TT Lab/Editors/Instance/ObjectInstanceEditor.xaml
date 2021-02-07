@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
              xmlns:base="clr-namespace:TT_Lab.Editors"
+             xmlns:vm="clr-namespace:TT_Lab.ViewModels.Code"
+             xmlns:baseVm="clr-namespace:TT_Lab.ViewModels"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="ObjectInstanceEditorControl" x:Class="TT_Lab.Editors.Instance.ObjectInstanceEditor"
              mc:Ignorable="d" 
              d:DesignHeight="1100" d:DesignWidth="300">
@@ -32,8 +34,27 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Controls:LabeledDropList Items="{Binding AllObjects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
-                        <Controls:LabeledDropList Items="{Binding AllScripts}" x:Name="OnSpawnScriptList" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="On spawn script" AllowDrop="True"/>
+                        <Controls:LabeledDropList SelectedItem="{Binding ViewModel.InstanceObject}" Items="{Binding AllObjects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="InstanceObject">
+                            <Controls:LabeledDropList.ItemTemplate>
+                                <DataTemplate DataType="{x:Type baseVm:AssetViewModel}">
+                                    <TextBlock Text="{Binding Alias}"/>
+                                </DataTemplate>
+                            </Controls:LabeledDropList.ItemTemplate>
+                        </Controls:LabeledDropList>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="2*"/>
+                            </Grid.RowDefinitions>
+                            <Controls:LabeledDropList SelectedItem="{Binding ViewModel.OnSpawnScript}" Items="{Binding AllScripts}" x:Name="OnSpawnScriptList" Margin="0,0,0,0" DropListName="On spawn script" AllowDrop="True" BoundProperty="OnSpawnScript" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=UseOnSpawnScriptBox}">
+                                <Controls:LabeledDropList.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:HeaderScriptViewModel}">
+                                        <TextBlock Text="{Binding Alias}"/>
+                                    </DataTemplate>
+                                </Controls:LabeledDropList.ItemTemplate>
+                            </Controls:LabeledDropList>
+                            <Controls:LabeledCheckBox x:Name="UseOnSpawnScriptBox" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" CheckBoxName="Enabled" IsHorizontal="True" BoundProperty="UseOnSpawnScript" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" Checked="{Binding ViewModel.UseOnSpawnScript}"/>
+                        </Grid>
                         <Controls:LabeledTextBox Text="{Binding ViewModel.RefListIndex}" x:Name="GlobalInstanceRefListIndexBox" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index" BoundProperty="RefListIndex" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
                     </Grid>
                     <ItemsControl Grid.Row="2">

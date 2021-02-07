@@ -90,6 +90,7 @@ namespace TT_Lab.ViewModels
         {
             if (_editor == null)
             {
+                LoadData();
                 _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this)!;
                 _editor.Unloaded += EditorUnload;
             }
@@ -100,6 +101,7 @@ namespace TT_Lab.ViewModels
         {
             if (_editor == null)
             {
+                LoadData();
                 _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this, commandManager)!;
             }
             return _editor;
@@ -109,6 +111,7 @@ namespace TT_Lab.ViewModels
         {
             if (_editor == null)
             {
+                LoadData();
                 var baseEdit = (BaseEditor)Activator.CreateInstance(Asset.GetEditorType(), this)!;
                 _editor = new TabItem
                 {
@@ -152,6 +155,10 @@ namespace TT_Lab.ViewModels
                 var close = new CloseTabCommand(closeTab.Container, closeTab.TabParent);
                 close.Execute();
             }
+        }
+
+        protected virtual void LoadData()
+        {
         }
 
         protected virtual void UnloadData()
@@ -257,7 +264,7 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public String Alias
+        public virtual String Alias
         {
             get { return _asset.Alias; }
             set

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,8 +32,8 @@ namespace TT_Lab.Editors.Instance
         public ObjectInstanceEditor(ObjectInstanceViewModel vm, CommandManager commandManager) : base(vm, commandManager)
         {
             InitializeComponent();
-            var allObj = ProjectManagerSingleton.PM.OpenedProject.Assets.Values.Where(a => a.Type == typeof(GameObject)).Cast<object>().ToList();
-            var allScripts = ProjectManagerSingleton.PM.OpenedProject.Assets.Values.Where(a => a.Type == typeof(HeaderScript)).Cast<object>().ToList();
+            var allObj = new ObservableCollection<object>(ProjectManagerSingleton.PM.OpenedProject.Assets.Values.Where(a => a.Type == typeof(GameObject)).Select(a => a.GetViewModel()).Cast<object>());
+            var allScripts = new ObservableCollection<object>(ProjectManagerSingleton.PM.OpenedProject.Assets.Values.Where(a => a.Type == typeof(HeaderScript)).Select(a => a.GetViewModel()).Cast<object>());
             DataContext = new
             {
                 ViewModel = vm,

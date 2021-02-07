@@ -9,6 +9,7 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets.Code;
 using TT_Lab.Project;
 using TT_Lab.Util;
+using TT_Lab.ViewModels.Code;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ViewModels.Instance
@@ -21,6 +22,7 @@ namespace TT_Lab.ViewModels.Instance
         private ObservableCollection<UInt16> instances;
         private ObservableCollection<UInt16> paths;
         private ObservableCollection<UInt16> positions;
+        private Boolean useOnSpawnScript;
         private Guid objectId;
         private Int16 refListIndex;
         private Guid onSpawnScriptId;
@@ -55,6 +57,7 @@ namespace TT_Lab.ViewModels.Instance
             objectId = data.ObjectId;
             refListIndex = data.RefListIndex;
             onSpawnScriptId = data.OnSpawnScriptId;
+            useOnSpawnScript = onSpawnScriptId != Guid.Empty;
             stateFlags = MiscUtils.ConvertEnum<Enums.InstanceState>(data.StateFlags);
             flagParams = new ObservableCollection<UInt32>();
             foreach (var f in data.ParamList1)
@@ -96,9 +99,13 @@ namespace TT_Lab.ViewModels.Instance
             {
                 data.Paths.Add(p);
             }
-            data.ObjectId = ObjectId;
+            data.ObjectId = objectId;
             data.RefListIndex = RefListIndex;
-            data.OnSpawnScriptId = OnSpawnScriptId;
+            data.OnSpawnScriptId = Guid.Empty;
+            if (UseOnSpawnScript)
+            {
+                data.OnSpawnScriptId = onSpawnScriptId;
+            }
             data.StateFlags = (UInt32)stateFlags;
             data.ParamList1.Clear();
             foreach (var f in FlagParams)
@@ -122,11 +129,10 @@ namespace TT_Lab.ViewModels.Instance
         {
             get
             {
-                var obj = (GameObject)ProjectManagerSingleton.PM.OpenedProject.GetAsset(ObjectId);
+                var obj = (GameObject)ProjectManagerSingleton.PM.OpenedProject.GetAsset(objectId);
                 return $"Instance {_asset.ID} - {obj.Alias}";
             }
         }
-
         public Enums.Layouts LayoutID
         {
             get => layoutId;
@@ -140,7 +146,52 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-
+        public AssetViewModel InstanceObject
+        {
+            get => ProjectManagerSingleton.PM.OpenedProject.GetAsset(objectId).GetViewModel();
+            set
+            {
+                if (value.Asset.UUID != objectId)
+                {
+                    objectId = value.Asset.UUID;
+                    IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
+        public HeaderScriptViewModel? OnSpawnScript
+        {
+            get
+            {
+                if (onSpawnScriptId != Guid.Empty)
+                {
+                    return (HeaderScriptViewModel)ProjectManagerSingleton.PM.OpenedProject.GetAsset(onSpawnScriptId).GetViewModel();
+                }
+                return null;
+            }
+            set
+            {
+                if (value?.Asset.UUID != onSpawnScriptId)
+                {
+                    onSpawnScriptId = value == null ? Guid.Empty : value.Asset.UUID;
+                    IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
+        public Boolean UseOnSpawnScript
+        {
+            get => useOnSpawnScript;
+            set
+            {
+                if (value != useOnSpawnScript)
+                {
+                    useOnSpawnScript = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
         public Vector4ViewModel Position
         {
             get
@@ -194,22 +245,6 @@ namespace TT_Lab.ViewModels.Instance
                 return paths;
             }
         }
-        public Guid ObjectId
-        {
-            get
-            {
-                return objectId;
-            }
-            set
-            {
-                if (value != objectId)
-                {
-                    objectId = value;
-                    NotifyChange();
-                    IsDirty = true;
-                }
-            }
-        }
         public Int16 RefListIndex
         {
             get
@@ -221,22 +256,6 @@ namespace TT_Lab.ViewModels.Instance
                 if (value != refListIndex)
                 {
                     refListIndex = value;
-                    NotifyChange();
-                    IsDirty = true;
-                }
-            }
-        }
-        public Guid OnSpawnScriptId
-        {
-            get
-            {
-                return onSpawnScriptId;
-            }
-            set
-            {
-                if (value != onSpawnScriptId)
-                {
-                    onSpawnScriptId = value;
                     NotifyChange();
                     IsDirty = true;
                 }
