@@ -78,7 +78,7 @@ namespace TT_Lab.Editors.Instance
             var vm = (TriggerViewModel)AssetViewModel;
             var instVMs = new List<ObjectInstanceViewModel>();
             var tree = chunkEditor!.ChunkTree;
-            var instances = tree.Find(avm => avm.Alias == "Instances");
+            var instances = tree.Find(avm => avm.Asset.Name == "Instances");
             foreach (var item in vm.Instances)
             {
                 instVMs.Add((ObjectInstanceViewModel)instances!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.ID == item));

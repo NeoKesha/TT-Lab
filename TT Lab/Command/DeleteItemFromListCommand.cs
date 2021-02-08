@@ -16,7 +16,7 @@ namespace TT_Lab.Command
         }
         public event EventHandler? CanExecuteChanged;
 
-        private Int32 _index;
+        private Int32 _index = -1;
         private Stack<DelItemInfo> _deletedItems = new Stack<DelItemInfo>();
         private IList _list;
 

@@ -94,6 +94,9 @@ namespace TT_Lab.ViewModels.Instance
             DeleteIntParamCommand = new DeleteItemFromListCommand(IntParams);
             DeleteFlagParamCommand = new DeleteItemFromListCommand(FlagParams);
             DeleteFloatParamCommand = new DeleteItemFromListCommand(FloatParams);
+            DeleteLinkedInstanceCommand = new DeleteItemFromListCommand(Instances);
+            DeleteLinkedPathCommand = new DeleteItemFromListCommand(Paths);
+            DeleteLinkedPositionCommand = new DeleteItemFromListCommand(Positions);
         }
 
         private void IntParams_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -194,7 +197,9 @@ namespace TT_Lab.ViewModels.Instance
         public DeleteItemFromListCommand DeleteFlagParamCommand { get; private set; }
         public AddItemToListCommand<Single> AddFloatParamCommand { get; private set; }
         public DeleteItemFromListCommand DeleteFloatParamCommand { get; private set; }
-
+        public DeleteItemFromListCommand DeleteLinkedInstanceCommand { get; private set; }
+        public DeleteItemFromListCommand DeleteLinkedPositionCommand { get; private set; }
+        public DeleteItemFromListCommand DeleteLinkedPathCommand { get; private set; }
 
         public string Name
         {

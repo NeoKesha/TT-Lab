@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
              xmlns:base="clr-namespace:TT_Lab.Editors"
              xmlns:vm="clr-namespace:TT_Lab.ViewModels.Code"
+             xmlns:instVm="clr-namespace:TT_Lab.ViewModels.Instance"
              xmlns:baseVm="clr-namespace:TT_Lab.ViewModels"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="ObjectInstanceEditorControl" x:Class="TT_Lab.Editors.Instance.ObjectInstanceEditor"
              mc:Ignorable="d" 
@@ -117,7 +118,12 @@
                         </Expander>
                         <Expander x:Name="LinkedInstancesExpander" Header="Linked instances" MaxHeight="250">
                             <Grid>
-                                <ListBox ItemsSource="{Binding ViewModel.Instances}" x:Name="LinkedInstancesList" Height="300">
+                                <ListBox x:Name="LinkedInstancesList" Height="300" SelectionChanged="LinkedInstancesList_SelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type instVm:ObjectInstanceViewModel}">
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
                                     <ListBox.ContextMenu>
                                         <ContextMenu x:Name="LinkedInstancesContextMenu"/>
                                     </ListBox.ContextMenu>
@@ -126,7 +132,12 @@
                         </Expander>
                         <Expander x:Name="LinkedPositionsExpander" Header="Linked positions" MaxHeight="300">
                             <Grid>
-                                <ListBox ItemsSource="{Binding ViewModel.Positions}" x:Name="LinkedPositionsList" Height="300">
+                                <ListBox x:Name="LinkedPositionsList" Height="300" SelectionChanged="LinkedPositionsList_SelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type instVm:PositionViewModel}">
+                                            <TextBlock Text="{Binding Alias}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
                                     <ListBox.ContextMenu>
                                         <ContextMenu x:Name="LinkedPositionsContextMenu"/>
                                     </ListBox.ContextMenu>
@@ -135,7 +146,12 @@
                         </Expander>
                         <Expander x:Name="LinkedPathsExpander" Header="Linked paths">
                             <Grid>
-                                <ListBox ItemsSource="{Binding ViewModel.Paths}" x:Name="LinkedPathsList" Height="300">
+                                <ListBox x:Name="LinkedPathsList" Height="300" SelectionChanged="LinkedPathsList_SelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type instVm:PathViewModel}">
+                                            <TextBlock Text="{Binding Alias}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
                                     <ListBox.ContextMenu>
                                         <ContextMenu x:Name="LinkedPathsContextMenu"/>
                                     </ListBox.ContextMenu>

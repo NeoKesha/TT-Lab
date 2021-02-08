@@ -13,9 +13,9 @@ namespace TT_Lab.Command
         private Action _action;
         private Action? _unEx;
 
-        public GenerateCommand(Action a, Action? unEx = null)
+        public GenerateCommand(Action ex, Action? unEx = null)
         {
-            _action = a;
+            _action = ex;
             _unEx = unEx;
         }
 
