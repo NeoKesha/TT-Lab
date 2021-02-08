@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets.Code;
+using TT_Lab.Command;
 using TT_Lab.Project;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Code;
@@ -30,30 +31,38 @@ namespace TT_Lab.ViewModels.Instance
         private ObservableCollection<UInt32> flagParams;
         private ObservableCollection<Single> floatParams;
         private ObservableCollection<UInt32> intParams;
+        private Int32 _flagIndex;
+        private Int32 _floatIndex;
+        private Int32 _intIndex;
 
         public ObjectInstanceViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
             var data = (ObjectInstanceData)_asset.GetData();
             position = new Vector4ViewModel(data.Position);
+            position.PropertyChanged += Vector_PropertyChanged;
             var rotX = data.RotationX.GetRotation();
             var rotY = data.RotationY.GetRotation();
             var rotZ = data.RotationZ.GetRotation();
             rotation = new Vector3ViewModel(rotX, rotY, rotZ);
+            rotation.PropertyChanged += Vector_PropertyChanged;
             instances = new ObservableCollection<UInt16>();
             foreach (var i in data.Instances)
             {
                 instances.Add(i);
             }
+            Instances.CollectionChanged += Instances_CollectionChanged;
             paths = new ObservableCollection<UInt16>();
             foreach (var p in data.Paths)
             {
                 paths.Add(p);
             }
+            Paths.CollectionChanged += Paths_CollectionChanged;
             positions = new ObservableCollection<UInt16>();
             foreach (var p in data.Positions)
             {
                 positions.Add(p);
             }
+            Positions.CollectionChanged += Positions_CollectionChanged;
             objectId = data.ObjectId;
             refListIndex = data.RefListIndex;
             onSpawnScriptId = data.OnSpawnScriptId;
@@ -64,17 +73,70 @@ namespace TT_Lab.ViewModels.Instance
             {
                 flagParams.Add(f);
             }
+            FlagParams.CollectionChanged += FlagParams_CollectionChanged;
             floatParams = new ObservableCollection<Single>();
             foreach (var s in data.ParamList2)
             {
                 floatParams.Add(s);
             }
+            FloatParams.CollectionChanged += FloatParams_CollectionChanged;
             intParams = new ObservableCollection<UInt32>();
             foreach (var i in data.ParamList3)
             {
                 intParams.Add(i);
             }
+            IntParams.CollectionChanged += IntParams_CollectionChanged;
             layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
+
+            AddIntParamCommand = new AddItemToListCommand<UInt32>(IntParams);
+            AddFlagParamCommand = new AddItemToListCommand<UInt32>(FlagParams);
+            AddFloatParamCommand = new AddItemToListCommand<Single>(FloatParams);
+            DeleteIntParamCommand = new DeleteItemFromListCommand(IntParams);
+            DeleteFlagParamCommand = new DeleteItemFromListCommand(FlagParams);
+            DeleteFloatParamCommand = new DeleteItemFromListCommand(FloatParams);
+        }
+
+        private void IntParams_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(IntParams));
+        }
+
+        private void FloatParams_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(FloatParams));
+        }
+
+        private void FlagParams_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(FlagParams));
+        }
+
+        private void Positions_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(Positions));
+        }
+
+        private void Paths_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(Paths));
+        }
+
+        private void Instances_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(Instances));
+        }
+
+        private void Vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            IsDirty = true;
+            NotifyChange(nameof(Position));
+            NotifyChange(nameof(Rotation));
         }
 
         public override void Save(Object? o)
@@ -124,6 +186,15 @@ namespace TT_Lab.ViewModels.Instance
             }
             base.Save(o);
         }
+
+
+        public AddItemToListCommand<UInt32> AddIntParamCommand { get; private set; }
+        public DeleteItemFromListCommand DeleteIntParamCommand { get; private set; }
+        public AddItemToListCommand<UInt32> AddFlagParamCommand { get; private set; }
+        public DeleteItemFromListCommand DeleteFlagParamCommand { get; private set; }
+        public AddItemToListCommand<Single> AddFloatParamCommand { get; private set; }
+        public DeleteItemFromListCommand DeleteFloatParamCommand { get; private set; }
+
 
         public string Name
         {
@@ -605,6 +676,27 @@ namespace TT_Lab.ViewModels.Instance
                 return flagParams;
             }
         }
+        public Int32 FlagIndex
+        {
+            get => _flagIndex;
+            set
+            {
+                _flagIndex = value;
+                NotifyChange(nameof(SelectedFlag));
+            }
+        }
+        public UInt32 SelectedFlag
+        {
+            get => FlagParams[_flagIndex];
+            set
+            {
+                if (_flagIndex == -1) return;
+                FlagParams[_flagIndex] = value;
+                IsDirty = true;
+                NotifyChange(nameof(FlagParams));
+                NotifyChange();
+            }
+        }
         public ObservableCollection<Single> FloatParams
         {
             get
@@ -612,11 +704,53 @@ namespace TT_Lab.ViewModels.Instance
                 return floatParams;
             }
         }
+        public Int32 FloatIndex
+        {
+            get => _floatIndex;
+            set
+            {
+                _floatIndex = value;
+                NotifyChange(nameof(SelectedFloat));
+            }
+        }
+        public Single SelectedFloat
+        {
+            get => FloatParams[_floatIndex];
+            set
+            {
+                if (_floatIndex == -1) return;
+                FloatParams[_floatIndex] = value;
+                IsDirty = true;
+                NotifyChange(nameof(FloatParams));
+                NotifyChange();
+            }
+        }
         public ObservableCollection<UInt32> IntParams
         {
             get
             {
                 return intParams;
+            }
+        }
+        public Int32 IntIndex
+        {
+            get => _intIndex;
+            set
+            {
+                _intIndex = value;
+                NotifyChange(nameof(SelectedInt));
+            }
+        }
+        public UInt32 SelectedInt
+        {
+            get => IntParams[_intIndex];
+            set
+            {
+                if (_intIndex == -1) return;
+                IntParams[_intIndex] = value;
+                IsDirty = true;
+                NotifyChange(nameof(IntParams));
+                NotifyChange();
             }
         }
     }

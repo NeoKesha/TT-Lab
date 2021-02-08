@@ -138,7 +138,7 @@ namespace TT_Lab.Editors.Graphics
                 ShaderSettingsBox.Content = null;
             }
             var viewModel = (MaterialViewModel)AssetViewModel;
-            viewModel.DeleteShaderCommand.Item = ShaderList.SelectedItem;
+            viewModel.DeleteShaderCommand.Index = ShaderList.Items.IndexOf(ShaderList.SelectedItem);
             viewModel.CloneShaderCommand.Item = ShaderList.SelectedItem;
             ShaderSettingsBox.Content = new ShaderEditor((LabShaderViewModel)ShaderList.SelectedItem, this);
         }

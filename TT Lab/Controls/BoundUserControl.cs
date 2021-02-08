@@ -18,7 +18,7 @@ namespace TT_Lab.Controls
         protected event EventHandler RedoPerformed;
         protected event EventHandler TargetChanged;
 
-        [Description("Editor that owns this user control"), Category("Common Properties")]
+        [Description("Editor that owns this user control and receives the commands for Undo/Redo"), Category("Common Properties")]
         public BaseEditor Editor
         {
             get { return (BaseEditor)GetValue(EditorProperty); }

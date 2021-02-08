@@ -168,7 +168,7 @@ namespace TT_Lab.Editors.Instance
         private void InstancesList_SelectionChanged(Object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             var viewModel = (TriggerViewModel)AssetViewModel;
-            viewModel.DeleteInstanceFromListCommand.Item = InstancesList.SelectedItem;
+            viewModel.DeleteInstanceFromListCommand.Index = InstancesList.SelectedIndex;
         }
     }
 }

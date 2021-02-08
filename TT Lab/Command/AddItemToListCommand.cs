@@ -10,10 +10,16 @@ namespace TT_Lab.Command
 {
     public class AddItemToListCommand<T> : ICommand
     {
+        private class DelItemInfo
+        {
+            public object? Item;
+            public Int32 Index;
+        }
+
         public event EventHandler? CanExecuteChanged;
 
         private ObservableCollection<T> _list;
-        private Stack _items = new Stack();
+        private Stack<DelItemInfo> _items = new Stack<DelItemInfo>();
         private Type _item;
         private int _maxItems;
 
@@ -38,13 +44,17 @@ namespace TT_Lab.Command
         public void Execute(Object? parameter = null)
         {
             var item = Activator.CreateInstance(_item);
-            _items.Push(item);
+            _items.Push(new DelItemInfo
+            {
+                Index = _list.Count,
+                Item = item
+            });
             _list.Add((T)item!);
         }
 
         public void Unexecute()
         {
-            _list.Remove((T)_items.Pop()!);
+            _list.RemoveAt(_items.Pop()!.Index);
         }
     }
 }

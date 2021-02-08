@@ -117,17 +117,29 @@
                         </Expander>
                         <Expander x:Name="LinkedInstancesExpander" Header="Linked instances" MaxHeight="250">
                             <Grid>
-                                <ListBox ItemsSource="{Binding ViewModel.Instances}" x:Name="LinkedInstancesList" Height="300"/>
+                                <ListBox ItemsSource="{Binding ViewModel.Instances}" x:Name="LinkedInstancesList" Height="300">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu x:Name="LinkedInstancesContextMenu"/>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
                             </Grid>
                         </Expander>
                         <Expander x:Name="LinkedPositionsExpander" Header="Linked positions" MaxHeight="300">
                             <Grid>
-                                <ListBox ItemsSource="{Binding ViewModel.Positions}" x:Name="LinkedPositionsList" Height="300"/>
+                                <ListBox ItemsSource="{Binding ViewModel.Positions}" x:Name="LinkedPositionsList" Height="300">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu x:Name="LinkedPositionsContextMenu"/>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
                             </Grid>
                         </Expander>
                         <Expander x:Name="LinkedPathsExpander" Header="Linked paths">
                             <Grid>
-                                <ListBox ItemsSource="{Binding ViewModel.Paths}" x:Name="LinkedPathsList" Height="300"/>
+                                <ListBox ItemsSource="{Binding ViewModel.Paths}" x:Name="LinkedPathsList" Height="300">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu x:Name="LinkedPathsContextMenu"/>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
                             </Grid>
                         </Expander>
                     </ItemsControl>
@@ -142,8 +154,12 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding ViewModel.IntParams}" x:Name="IntPropsList" Height="200"/>
-                                <Controls:LabeledTextBox x:Name="IntPropBox" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch"/>
+                                <ListBox ItemsSource="{Binding ViewModel.IntParams}" x:Name="IntPropsList" Height="200" SelectionChanged="IntPropsList_SelectionChanged">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu x:Name="IntPropsContextMenu"/>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                                <Controls:LabeledTextBox Text="{Binding ViewModel.SelectedInt}" x:Name="IntPropBox" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="SelectedInt"/>
                             </Grid>
                         </Expander>
                         <Expander x:Name="FlagPropsExpander" Header="Flag properties">
@@ -152,8 +168,17 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding ViewModel.FlagParams}" x:Name="FlagPropsList" Height="200"/>
-                                <Controls:LabeledTextBox x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+                                <ListBox ItemsSource="{Binding ViewModel.FlagParams}" x:Name="FlagPropsList" Height="200" SelectionChanged="FlagPropsList_SelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding StringFormat={}{0:X}}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu x:Name="FlagPropsContextMenu"/>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                                <Controls:LabeledTextBox Text="{Binding ViewModel.SelectedFlag, StringFormat={}{0:X}}" x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="SelectedFlag"/>
                             </Grid>
                         </Expander>
                         <Expander x:Name="FloatPropsExpander" Header="Float properties">
@@ -162,8 +187,12 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding ViewModel.FloatParams}" x:Name="FloatPropsList" Height="200"/>
-                                <Controls:LabeledTextBox x:Name="FloatPropBox" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                <ListBox ItemsSource="{Binding ViewModel.FloatParams}" x:Name="FloatPropsList" Height="200" SelectionChanged="FloatPropsList_SelectionChanged">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu x:Name="FloatPropsContextMenu"/>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                                <Controls:LabeledTextBox Text="{Binding ViewModel.SelectedFloat}" x:Name="FloatPropBox" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" VerticalAlignment="Center" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="SelectedFloat"/>
                             </Grid>
                         </Expander>
                     </ItemsControl>

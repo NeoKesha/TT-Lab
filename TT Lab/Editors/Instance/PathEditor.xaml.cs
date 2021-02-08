@@ -59,7 +59,7 @@ namespace TT_Lab.Editors.Instance
             if (PointsList.SelectedItem == null) return;
 
             var vm = (PathViewModel)AssetViewModel;
-            vm.DeletePointCommand.Item = PointsList.SelectedItem;
+            vm.DeletePointCommand.Index = PointsList.SelectedIndex;
             CoordEditor.VectorComponentsAmount = 4;
             CoordEditor.PropertyTarget = PointsList.SelectedItem;
         }
@@ -69,7 +69,7 @@ namespace TT_Lab.Editors.Instance
             if (ArgumentsList.SelectedItem == null) return;
 
             var vm = (PathViewModel)AssetViewModel;
-            vm.DeleteArgumentCommand.Item = ArgumentsList.SelectedItem;
+            vm.DeleteArgumentCommand.Index = ArgumentsList.SelectedIndex;
             CoordEditor.VectorComponentsAmount = 2;
             CoordEditor.PropertyTarget = ArgumentsList.SelectedItem;
         }
