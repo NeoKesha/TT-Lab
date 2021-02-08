@@ -148,8 +148,8 @@ namespace TT_Lab.Editors.Instance
                 AcceptNewPropValuePredicate.Add(pair.Key, pair.Value);
             }
             var vm = (TriggerViewModel)AssetViewModel;
-            AcceptNewPropValuePredicate[nameof(vm.HeaderT)] = AcceptNewPropValuePredicate["X"];
-            AcceptNewPropValuePredicate[nameof(vm.Header1)] = (n, o) =>
+            AcceptNewPropValuePredicate[nameof(vm.UnkFloat)] = AcceptNewPropValuePredicate["X"];
+            AcceptNewPropValuePredicate[nameof(vm.Header)] = (n, o) =>
             {
                 var nStr = (string)n;
                 var oStr = (string)o;
@@ -158,11 +158,9 @@ namespace TT_Lab.Editors.Instance
                 {
                     return 0U;
                 }
-                if (!UInt32.TryParse(nStr, out UInt32 result)) return null;
-                if (result > 27) return null;
+                if (!UInt32.TryParse(nStr, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out UInt32 result)) return null;
                 return result;
             };
-            AcceptNewPropValuePredicate[nameof(vm.HeaderH)] = AcceptNewPropValuePredicate[nameof(vm.Header1)];
         }
 
         private void InstancesList_SelectionChanged(Object sender, System.Windows.Controls.SelectionChangedEventArgs e)

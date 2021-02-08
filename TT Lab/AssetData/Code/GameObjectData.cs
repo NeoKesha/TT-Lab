@@ -35,7 +35,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt32> UInt32Slots { get; set; }
+        public List<UInt32> TriggerScripts { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<Guid> OGISlots { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -84,7 +84,7 @@ namespace TT_Lab.AssetData.Code
             OGIType2ArraySize = gameObject.OgiType2ArraySize;
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
-            UInt32Slots = CloneUtils.CloneList(gameObject.UInt32Slots);
+            TriggerScripts = CloneUtils.CloneList(gameObject.TriggerScripts);
             OGISlots = new List<Guid>();
             foreach (var e in gameObject.OGISlots)
             {

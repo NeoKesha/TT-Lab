@@ -32,7 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public Byte OgiType2ArraySize;
         public Byte[] SlotsMap;
         public String Name;
-        public List<UInt32> UInt32Slots;
+        public List<UInt32> TriggerScripts;
         public List<UInt16> OGISlots;
         public List<UInt16> AnimationSlots;
         public List<UInt16> ScriptSlots;
@@ -72,7 +72,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public PS2AnyObject()
         {
             SlotsMap = new Byte[8];
-            UInt32Slots = new List<UInt32>();
+            TriggerScripts = new List<UInt32>();
             OGISlots = new List<UInt16>();
             AnimationSlots = new List<UInt16>();
             ScriptSlots = new List<UInt16>();
@@ -134,7 +134,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
             // Truly a bruh moment
             return 16 + Name.Length + 24 +
-                UInt32Slots.Count * Constants.SIZE_UINT32 + OGISlots.Count * Constants.SIZE_UINT16 +
+                TriggerScripts.Count * Constants.SIZE_UINT32 + OGISlots.Count * Constants.SIZE_UINT16 +
                 AnimationSlots.Count * Constants.SIZE_UINT16 + ScriptSlots.Count * Constants.SIZE_UINT16 +
                 ObjectSlots.Count * Constants.SIZE_UINT16 + SoundSlots.Count * Constants.SIZE_UINT16 +
                 (HasInstanceProperties ? 20 + InstFlags.Count * Constants.SIZE_UINT32 + InstFloats.Count * 4 +
@@ -158,7 +158,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             var strLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(strLen));
 
-            FillResourceList(reader, UInt32Slots, true);
+            FillResourceList(reader, TriggerScripts, true);
             FillResourceList(reader, OGISlots);
             FillResourceList(reader, AnimationSlots);
             FillResourceList(reader, ScriptSlots);
@@ -238,7 +238,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray(), 0, Name.Length);
 
-            WriteResourceList(writer, UInt32Slots, true);
+            WriteResourceList(writer, TriggerScripts, true);
             WriteResourceList(writer, OGISlots);
             WriteResourceList(writer, AnimationSlots);
             WriteResourceList(writer, ScriptSlots);

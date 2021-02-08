@@ -13,20 +13,23 @@ namespace TT_Lab.ViewModels.Instance
 {
     public class TriggerViewModel : AssetViewModel
     {
-        private Boolean _enabled;
+        private UInt32 _objActivatorMask;
         private Vector4ViewModel _position;
         private Vector4ViewModel _rotation;
         private Vector4ViewModel _scale;
         private ObservableCollection<UInt16> _instances;
-        private UInt32 _header1;
-        private Single _headerT;
-        private UInt32 _headerH;
+        private UInt32 _header;
+        private Single _unkFloat;
         private Enums.Layouts _layId;
+        private UInt16 _arg1;
+        private UInt16 _arg2;
+        private UInt16 _arg3;
+        private UInt16 _arg4;
 
         public TriggerViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
             var data = (TriggerData)_asset.GetData();
-            _enabled = data.Enabled;
+            _objActivatorMask = data.ObjectActivatorMask;
             _instances = new ObservableCollection<UInt16>();
             foreach (var inst in data.Instances)
             {
@@ -38,16 +41,19 @@ namespace TT_Lab.ViewModels.Instance
             _position.PropertyChanged += _vector_PropertyChanged;
             _rotation.PropertyChanged += _vector_PropertyChanged;
             _scale.PropertyChanged += _vector_PropertyChanged;
-            _header1 = data.Header1;
-            _headerT = data.HeaderT;
-            _headerH = data.HeaderH;
+            _header = data.Header;
+            _unkFloat = data.UnkFloat;
+            _arg1 = data.Arg1;
+            _arg2 = data.Arg2;
+            _arg3 = data.Arg3;
+            _arg4 = data.Arg4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
 
         public TriggerViewModel(Guid asset, AssetViewModel parent, TriggerData data) : base(asset, parent)
         {
-            _enabled = data.Enabled;
+            _objActivatorMask = data.ObjectActivatorMask;
             _instances = new ObservableCollection<UInt16>();
             _instances.CollectionChanged += _instances_CollectionChanged;
             foreach (var inst in data.Instances)
@@ -60,9 +66,12 @@ namespace TT_Lab.ViewModels.Instance
             _position.PropertyChanged += _vector_PropertyChanged;
             _rotation.PropertyChanged += _vector_PropertyChanged;
             _scale.PropertyChanged += _vector_PropertyChanged;
-            _header1 = data.Header1;
-            _headerT = data.HeaderT;
-            _headerH = data.HeaderH;
+            _header = data.Header;
+            _unkFloat = data.UnkFloat;
+            _arg1 = data.Arg1;
+            _arg2 = data.Arg2;
+            _arg3 = data.Arg3;
+            _arg4 = data.Arg4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
@@ -76,10 +85,9 @@ namespace TT_Lab.ViewModels.Instance
         }
         public void Save(TriggerData data)
         {
-            data.Enabled = Enabled;
-            data.Header1 = Header1;
-            data.HeaderH = HeaderH;
-            data.HeaderT = HeaderT;
+            data.ObjectActivatorMask = ObjectActivatorMask;
+            data.Header = Header;
+            data.UnkFloat = UnkFloat;
             Position.Save(data.Position);
             Scale.Save(data.Scale);
             Rotation.Save(data.Rotation);
@@ -88,6 +96,10 @@ namespace TT_Lab.ViewModels.Instance
             {
                 data.Instances.Add(inst);
             }
+            data.Arg1 = Arg1;
+            data.Arg2 = Arg2;
+            data.Arg3 = Arg3;
+            data.Arg4 = Arg4;
         }
 
         private void _vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -118,14 +130,14 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean Enabled
+        public UInt32 ObjectActivatorMask
         {
-            get => _enabled;
+            get => _objActivatorMask;
             set
             {
-                if (value != _enabled)
+                if (value != _objActivatorMask)
                 {
-                    _enabled = value;
+                    _objActivatorMask = value;
                     IsDirty = true;
                     NotifyChange();
                 }
@@ -179,40 +191,163 @@ namespace TT_Lab.ViewModels.Instance
                 NotifyChange();
             }
         }
-        public UInt32 Header1
+        public UInt32 Header
         {
-            get => _header1;
+            get => _header;
             set
             {
-                if (value != _header1)
+                if (value != _header)
                 {
-                    _header1 = value;
+                    _header = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public Single HeaderT
+        public Boolean Arg1Enabled
         {
-            get => _headerT;
+            get => (_header >> 0xB & 0x1) != 0;
             set
             {
-                if (value != _headerT)
+                if (value != Arg1Enabled)
                 {
-                    _headerT = value;
+                    if (value)
+                    {
+                        _header |= (1 << 0xB);
+                    }
+                    else
+                    {
+                        var mask = ~(1 << 0xB);
+                        _header &= (UInt32)mask;
+                    }
+                    NotifyChange();
+                    NotifyChange(nameof(Header));
+                }
+            }
+        }
+        public Boolean Arg2Enabled
+        {
+            get => (_header >> 0x8 & 0x1) != 0;
+            set
+            {
+                if (value != Arg2Enabled)
+                {
+                    if (value)
+                    {
+                        _header |= (1 << 0x8);
+                    }
+                    else
+                    {
+                        var mask = ~(1 << 0x8);
+                        _header &= (UInt32)mask;
+                    }
+                    NotifyChange();
+                    NotifyChange(nameof(Header));
+                }
+            }
+        }
+        public Boolean Arg3Enabled
+        {
+            get => (_header >> 0x9 & 0x1) != 0;
+            set
+            {
+                if (value != Arg3Enabled)
+                {
+                    if (value)
+                    {
+                        _header |= (1 << 0x9);
+                    }
+                    else
+                    {
+                        var mask = ~(1 << 0x9);
+                        _header &= (UInt32)mask;
+                    }
+                    NotifyChange();
+                    NotifyChange(nameof(Header));
+                }
+            }
+        }
+        public Boolean Arg4Enabled
+        {
+            get => (_header >> 0xA & 0x1) != 0;
+            set
+            {
+                if (value != Arg4Enabled)
+                {
+                    if (value)
+                    {
+                        _header |= (1 << 0xA);
+                    }
+                    else
+                    {
+                        var mask = ~(1 << 0xA);
+                        _header &= (UInt32)mask;
+                    }
+                    NotifyChange();
+                    NotifyChange(nameof(Header));
+                }
+            }
+        }
+        public Single UnkFloat
+        {
+            get => _unkFloat;
+            set
+            {
+                if (value != _unkFloat)
+                {
+                    _unkFloat = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public UInt32 HeaderH
+        public UInt16 Arg1
         {
-            get => _headerH;
+            get => _arg1;
             set
             {
-                if (value != _headerH)
+                if (value != _arg1)
                 {
-                    _headerH = value;
+                    _arg1 = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 Arg2
+        {
+            get => _arg2;
+            set
+            {
+                if (value != _arg2)
+                {
+                    _arg2 = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 Arg3
+        {
+            get => _arg3;
+            set
+            {
+                if (value != _arg3)
+                {
+                    _arg3 = value;
+                    IsDirty = true;
+                    NotifyChange();
+                }
+            }
+        }
+        public UInt16 Arg4
+        {
+            get => _arg4;
+            set
+            {
+                if (value != _arg4)
+                {
+                    _arg4 = value;
                     IsDirty = true;
                     NotifyChange();
                 }

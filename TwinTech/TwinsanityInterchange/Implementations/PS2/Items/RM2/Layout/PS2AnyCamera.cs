@@ -73,15 +73,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override void Read(BinaryReader reader, int length)
         {
-            CamTrigger.Header1 = reader.ReadUInt32();
-            CamTrigger.Enabled = reader.ReadUInt32();
-            CamTrigger.HeaderT = reader.ReadSingle();
+            CamTrigger.Header = reader.ReadUInt32();
+            CamTrigger.ObjectActivatorMask = reader.ReadUInt32();
+            CamTrigger.UnkFloat = reader.ReadSingle();
             CamTrigger.Rotation.Read(reader, Constants.SIZE_VECTOR4);
             CamTrigger.Position.Read(reader, Constants.SIZE_VECTOR4);
             CamTrigger.Scale.Read(reader, Constants.SIZE_VECTOR4);
             reader.ReadUInt32();
             UInt32 instances_cnt = reader.ReadUInt32();
-            CamTrigger.HeaderH = reader.ReadUInt32();
+            CamTrigger.InstanceExtensionValue = reader.ReadUInt32();
             CamTrigger.Instances.Clear();
             for (int i = 0; i < instances_cnt; ++i)
             {
@@ -126,15 +126,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(CamTrigger.Header1);
-            writer.Write(CamTrigger.Enabled);
-            writer.Write(CamTrigger.HeaderT);
+            writer.Write(CamTrigger.Header);
+            writer.Write(CamTrigger.ObjectActivatorMask);
+            writer.Write(CamTrigger.UnkFloat);
             CamTrigger.Rotation.Write(writer);
             CamTrigger.Position.Write(writer);
             CamTrigger.Scale.Write(writer);
             writer.Write(CamTrigger.Instances.Count);
             writer.Write(CamTrigger.Instances.Count);
-            writer.Write(CamTrigger.HeaderH);
+            writer.Write(CamTrigger.InstanceExtensionValue);
             for (int i = 0; i < CamTrigger.Instances.Count; ++i)
             {
                 writer.Write(CamTrigger.Instances[i]);

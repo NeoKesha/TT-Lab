@@ -79,6 +79,10 @@ namespace TT_Lab.Controls
         {
             LabeledCheckBox control = d as LabeledCheckBox;
             control.CheckboxLabel.Content = e.NewValue;
+            if (control.IsHorizontal)
+            {
+                control.CheckBox.Content = control.CheckboxLabel.Content;
+            }
         }
 
         private static void OnCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
