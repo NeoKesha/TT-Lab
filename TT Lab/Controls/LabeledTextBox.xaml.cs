@@ -34,12 +34,12 @@ namespace TT_Lab.Controls
         // Using a DependencyProperty as the backing store for DisplayText.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplayTextProperty =
             DependencyProperty.Register("DisplayText", typeof(string), typeof(LabeledTextBox),
-                new FrameworkPropertyMetadata("This is labeled textbox", FrameworkPropertyMetadataOptions.AffectsRender));
+                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender));
 
         // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(LabeledTextBox),
-                new FrameworkPropertyMetadata("This is labeled textbox", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnTextChanged)));
+                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnTextChanged)));
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextBoxNameProperty =

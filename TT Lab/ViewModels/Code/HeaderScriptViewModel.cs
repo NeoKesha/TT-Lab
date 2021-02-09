@@ -17,6 +17,10 @@ namespace TT_Lab.ViewModels.Code
         public HeaderScriptViewModel(Guid asset, AssetViewModel? parent) : base(asset, parent)
         {
             callConventions = new ObservableCollection<UInt32>();
+        }
+
+        protected override void LoadData()
+        {
             var data = (HeaderScriptData)_asset.GetData();
             attachedScript = data.Pairs[0].Key;
             callConventions.Clear();
@@ -24,10 +28,6 @@ namespace TT_Lab.ViewModels.Code
             {
                 callConventions.Add(pair.Value);
             }
-        }
-
-        protected override void LoadData()
-        {
             base.LoadData();
         }
 
@@ -47,15 +47,6 @@ namespace TT_Lab.ViewModels.Code
         public ObservableCollection<UInt32> CallConventions
         {
             get => callConventions;
-        }
-        public override String Alias
-        {
-            get
-            {
-                var obj = ProjectManagerSingleton.PM.OpenedProject.GetAsset(AttachedScript);
-                return $"{base.Alias} - {obj.Alias}";
-            }
-            set => base.Alias = value;
         }
     }
 }

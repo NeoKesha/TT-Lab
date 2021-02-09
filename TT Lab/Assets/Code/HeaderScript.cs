@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
+using TT_Lab.Project;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Code;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
@@ -16,7 +17,7 @@ namespace TT_Lab.Assets.Code
 {
     public class HeaderScript : Script
     {
-        protected override String DataExt => ".lab";
+        protected override String DataExt => ".data";
         public HeaderScript() { }
 
         public HeaderScript(UInt32 id, String name, PS2HeaderScript script) : base(id, name)
@@ -37,6 +38,15 @@ namespace TT_Lab.Assets.Code
         public override Type GetEditorType()
         {
             throw new NotImplementedException();
+        }
+
+        public override void Import()
+        {
+            base.Import();
+            // Generate better Alias for header scripts
+            var data = (HeaderScriptData)assetData;
+            var mainScrAlias = ProjectManagerSingleton.PM.OpenedProject.GetAsset(data.Pairs[0].Key).Alias;
+            Alias = $"Header Script {ID:X} - {mainScrAlias}";
         }
 
         public override AssetViewModel GetViewModel(AssetViewModel parent = null)
