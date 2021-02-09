@@ -69,5 +69,19 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
             Unknown25           = 1 << 30,
             Unknown26           = 1U << 31,
         }
+
+        [Flags]
+        public enum TriggerActivatorObjects
+        {
+            PlayableCharacter   = 1 << 0,
+            Collectibles        = 1 << 1,
+            Crates              = 1 << 2,
+            Type3Objects        = 1 << 3,
+            Type4Objects        = 1 << 4,
+            Type5Objects        = 1 << 5,
+            Type6Objects        = 1 << 6,
+            Type7Objects        = 1 << 7,
+            PlayerProjectiles   = 1 << 8
+        }
     }
 }

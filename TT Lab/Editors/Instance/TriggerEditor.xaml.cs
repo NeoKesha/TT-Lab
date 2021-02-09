@@ -158,7 +158,7 @@ namespace TT_Lab.Editors.Instance
                 {
                     return 0U;
                 }
-                if (!UInt32.TryParse(nStr, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out UInt32 result)) return null;
+                if (!UInt32.TryParse(nStr.ToUpperInvariant(), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out UInt32 result)) return null;
                 return result;
             };
         }

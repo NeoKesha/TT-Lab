@@ -391,7 +391,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Deactivated);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Deactivated, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Deactivated, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -400,7 +401,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.CollisionActive);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CollisionActive, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CollisionActive, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -409,7 +411,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Visible);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Visible, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Visible, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -418,7 +421,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.ReceiveOnTriggerSignals);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.ReceiveOnTriggerSignals, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.ReceiveOnTriggerSignals, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -427,7 +431,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.CanDamageCharacter);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CanDamageCharacter, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CanDamageCharacter, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -436,7 +441,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.CanAlwaysDamageCharacter);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CanAlwaysDamageCharacter, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.CanAlwaysDamageCharacter, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -445,7 +451,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown1);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown1, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown1, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -454,7 +461,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown2);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown2, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown2, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -463,7 +471,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown3);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown3, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown3, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -472,7 +481,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown4);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown4, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown4, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -481,7 +491,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown5);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown5, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown5, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -490,7 +501,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown6);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown6, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown6, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -499,7 +511,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown7);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown7, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown7, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -508,7 +521,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown8);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown8, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown8, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -517,7 +531,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown9);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown9, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown9, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -526,7 +541,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown10);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown10, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown10, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -535,7 +551,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown11);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown11, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown11, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -544,7 +561,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown12);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown12, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown12, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -553,7 +571,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown13);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown13, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown13, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -562,7 +581,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown14);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown14, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown14, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -571,7 +591,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown15);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown15, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown15, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -580,7 +601,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown16);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown16, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown16, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -589,7 +611,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown17);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown17, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown17, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -598,7 +621,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown18);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown18, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown18, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -607,7 +631,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown19);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown19, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown19, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -616,7 +641,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown20);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown20, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown20, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -625,7 +651,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown21);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown21, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown21, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -634,7 +661,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown22);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown22, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown22, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -643,7 +671,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown23);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown23, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown23, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -652,7 +681,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown24);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown24, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown24, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -661,7 +691,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown25);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown25, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown25, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }
@@ -670,7 +701,8 @@ namespace TT_Lab.ViewModels.Instance
             get => stateFlags.HasFlag(Enums.InstanceState.Unknown26);
             set
             {
-                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown26, !value);
+                stateFlags = stateFlags.ChangeFlag(Enums.InstanceState.Unknown26, value);
+                IsDirty = true;
                 NotifyChange(nameof(StateFlags));
             }
         }

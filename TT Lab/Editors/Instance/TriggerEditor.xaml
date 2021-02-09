@@ -7,7 +7,7 @@
              xmlns:base="clr-namespace:TT_Lab.Editors"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="TriggerEditorControl" x:Class="TT_Lab.Editors.Instance.TriggerEditor"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="350">
     <Grid>
         <TabControl Background="{x:Null}">
             <TabItem x:Name="MainPropertiesTab" Header="Properties" Background="White">
@@ -80,6 +80,21 @@
                             <Controls:LabeledCheckBox x:Name="Arg4EnabledBox" Checked="{Binding ViewModel.Arg4Enabled}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Grid.Row="3" BoundProperty="Arg4Enabled"/>
                         </Grid>
                     </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="ActivatorsTab" Header="Activators" Background="White">
+                <Grid Margin="0,0,0,0">
+                    <UniformGrid>
+                        <Controls:LabeledCheckBox x:Name="ActByPlayCharBox" CheckBoxName="Playable character" BoundProperty="ActivateByPlayableCharacter" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Checked="{Binding ViewModel.ActivateByPlayableCharacter}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByCollectBox" Margin="0,0,0,0" BoundProperty="ActivateByCollectibles" CheckBoxName="Collectibles" Checked="{Binding ViewModel.ActivateByCollectibles}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByCratesBox" Margin="0,0,0,0" BoundProperty="ActivateByCrates" Checked="{Binding ViewModel.ActivateByCrates}" CheckBoxName="Crates" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType3" Margin="0,0,0,0" BoundProperty="ActivateByType3" CheckBoxName="Type 3" Checked="{Binding ViewModel.ActivateByType3}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType4" Margin="0,0,0,0" BoundProperty="ActivateByType4" CheckBoxName="Type 4" Checked="{Binding ViewModel.ActivateByType4}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType5" Margin="0,0,0,0" BoundProperty="ActivateByType5" CheckBoxName="Type 5 (Nina Hooks)" Checked="{Binding ViewModel.ActivateByType5}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType6" Margin="0,0,0,0" BoundProperty="ActivateByType6" CheckBoxName="Type 6 (Unused)" Checked="{Binding ViewModel.ActivateByType6}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType7" Margin="0,0,0,0" BoundProperty="ActivateByType7" CheckBoxName="Type 7 (Nina Hand)" Checked="{Binding ViewModel.ActivateByType7}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByPlayProj" Margin="0,0,0,0" BoundProperty="ActivateByPlayerProjectiles" CheckBoxName="Player Projectiles" Checked="{Binding ViewModel.ActivateByPlayerProjectiles}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                    </UniformGrid>
                 </Grid>
             </TabItem>
         </TabControl>

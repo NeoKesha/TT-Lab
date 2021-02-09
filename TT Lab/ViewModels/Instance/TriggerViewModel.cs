@@ -13,7 +13,7 @@ namespace TT_Lab.ViewModels.Instance
 {
     public class TriggerViewModel : AssetViewModel
     {
-        private UInt32 _objActivatorMask;
+        private Enums.TriggerActivatorObjects _objActivatorMask;
         private Vector4ViewModel _position;
         private Vector4ViewModel _rotation;
         private Vector4ViewModel _scale;
@@ -29,7 +29,7 @@ namespace TT_Lab.ViewModels.Instance
         public TriggerViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
         {
             var data = (TriggerData)_asset.GetData();
-            _objActivatorMask = data.ObjectActivatorMask;
+            _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
             _instances = new ObservableCollection<UInt16>();
             foreach (var inst in data.Instances)
             {
@@ -53,7 +53,7 @@ namespace TT_Lab.ViewModels.Instance
 
         public TriggerViewModel(Guid asset, AssetViewModel parent, TriggerData data) : base(asset, parent)
         {
-            _objActivatorMask = data.ObjectActivatorMask;
+            _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
             _instances = new ObservableCollection<UInt16>();
             _instances.CollectionChanged += _instances_CollectionChanged;
             foreach (var inst in data.Instances)
@@ -85,7 +85,7 @@ namespace TT_Lab.ViewModels.Instance
         }
         public void Save(TriggerData data)
         {
-            data.ObjectActivatorMask = ObjectActivatorMask;
+            data.ObjectActivatorMask = (UInt32)ObjectActivatorMask;
             data.Header = Header;
             data.UnkFloat = UnkFloat;
             Position.Save(data.Position);
@@ -130,7 +130,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt32 ObjectActivatorMask
+        public Enums.TriggerActivatorObjects ObjectActivatorMask
         {
             get => _objActivatorMask;
             set
@@ -140,6 +140,132 @@ namespace TT_Lab.ViewModels.Instance
                     _objActivatorMask = value;
                     IsDirty = true;
                     NotifyChange();
+                }
+            }
+        }
+        public Boolean ActivateByPlayableCharacter
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.PlayableCharacter);
+            set
+            {
+                if (value != ActivateByPlayableCharacter)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.PlayableCharacter, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByCollectibles
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Collectibles);
+            set
+            {
+                if (value != ActivateByCollectibles)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Collectibles, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByCrates
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Crates);
+            set
+            {
+                if (value != ActivateByCrates)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Crates, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByType3
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type3Objects);
+            set
+            {
+                if (value != ActivateByType3)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type3Objects, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByType4
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type4Objects);
+            set
+            {
+                if (value != ActivateByType4)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type4Objects, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByType5
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type5Objects);
+            set
+            {
+                if (value != ActivateByType5)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type5Objects, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByType6
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type6Objects);
+            set
+            {
+                if (value != ActivateByType6)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type6Objects, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByType7
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type7Objects);
+            set
+            {
+                if (value != ActivateByType7)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type7Objects, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
+                }
+            }
+        }
+        public Boolean ActivateByPlayerProjectiles
+        {
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.PlayerProjectiles);
+            set
+            {
+                if (value != ActivateByPlayerProjectiles)
+                {
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.PlayerProjectiles, value);
+                    IsDirty = true;
+                    NotifyChange();
+                    NotifyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
@@ -220,6 +346,7 @@ namespace TT_Lab.ViewModels.Instance
                         var mask = ~(1 << 0xB);
                         _header &= (UInt32)mask;
                     }
+                    IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(Header));
                 }
@@ -241,6 +368,7 @@ namespace TT_Lab.ViewModels.Instance
                         var mask = ~(1 << 0x8);
                         _header &= (UInt32)mask;
                     }
+                    IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(Header));
                 }
@@ -262,6 +390,7 @@ namespace TT_Lab.ViewModels.Instance
                         var mask = ~(1 << 0x9);
                         _header &= (UInt32)mask;
                     }
+                    IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(Header));
                 }
@@ -283,6 +412,7 @@ namespace TT_Lab.ViewModels.Instance
                         var mask = ~(1 << 0xA);
                         _header &= (UInt32)mask;
                     }
+                    IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(Header));
                 }
