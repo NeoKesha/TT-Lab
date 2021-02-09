@@ -365,7 +365,7 @@ namespace TT_Lab.Project
                         // RM2 per chunk instances
                         if (isRm2)
                         {
-                            if (chunkName != "default")
+                            if (!isDefault)
                             {
                                 // Extract collision data
                                 var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
@@ -380,8 +380,8 @@ namespace TT_Lab.Project
                             //chunkFolder.AddChild(partData);
                             // Instance layout
                             var instFolder = new Folder("Instances", chunkFolder);
-                            var aiPathFolder = new Folder("AI Paths", chunkFolder);
-                            var aiPosFolder = new Folder("AI Positions", chunkFolder);
+                            var aiPathFolder = new Folder("AI Navigation Paths", chunkFolder);
+                            var aiPosFolder = new Folder("AI Navigation Positions", chunkFolder);
                             var cameraFolder = new Folder("Cameras", chunkFolder);
                             var colSurfaceFolder = new Folder("Collision Surfaces", chunkFolder);
                             var instTempFolder = new Folder("Instance Templates", chunkFolder);

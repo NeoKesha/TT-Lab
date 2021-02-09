@@ -40,7 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override String GetName()
         {
-            return $"AI Position {id:X}";
+            return $"AI Navigation Position {id:X}";
         }
     }
 }

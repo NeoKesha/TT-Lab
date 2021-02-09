@@ -5,14 +5,14 @@ using TT_Lab.Properties;
 
 namespace TT_Lab.ViewModels
 {
-    public class ProjectCreator : ObservableObject
+    public class ProjectCreationViewModel : ObservableObject
     {
         private string _projectName = "New project";
         private string _projectPath = Settings.Default.ProjectPath;
         private string _discContentPath = Settings.Default.DiscContentPath;
-        private Window _owner = null;
+        private Window _owner;
 
-        public ProjectCreator(Window owner)
+        public ProjectCreationViewModel(Window owner)
         {
             _owner = owner;
         }

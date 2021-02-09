@@ -17,27 +17,25 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
+        public CameraData(Type? mainCam1T, Type? mainCam2T)
+        {
+            if (mainCam1T != null)
+            {
+                MainCamera1 = (CameraSubBase)Activator.CreateInstance(mainCam1T)!;
+            }
+            if (mainCam2T != null)
+            {
+                MainCamera2 = (CameraSubBase)Activator.CreateInstance(mainCam2T)!;
+            }
+        }
+
         public CameraData(PS2AnyCamera camera) : this()
         {
             twinRef = camera;
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Boolean Enabled { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Position { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Rotation { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Vector4 Scale { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public List<UInt16> Instances { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Header1 { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Single HeaderT { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 HeaderH { get; set; }
+        public TriggerData Trigger { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 CameraHeader { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -87,25 +85,23 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public CameraSubBase MainCamera1 { get; set; }
+        public CameraSubBase? MainCamera1 { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public CameraSubBase MainCamera2 { get; set; }
+        public CameraSubBase? MainCamera2 { get; set; }
+
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            base.Load(dataPath, settings);
+        }
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Trigger.Dispose();
         }
         public override void Import()
         {
-            PS2AnyCamera camera = (PS2AnyCamera)twinRef;
-            Enabled = camera.CamTrigger.Enabled > 0;
-            Position = CloneUtils.Clone(camera.CamTrigger.Position);
-            Rotation = CloneUtils.Clone(camera.CamTrigger.Rotation);
-            Scale = CloneUtils.Clone(camera.CamTrigger.Scale);
-            Instances = CloneUtils.CloneList(camera.CamTrigger.Instances);
-            Header1 = camera.CamTrigger.Header1;
-            HeaderT = camera.CamTrigger.HeaderT;
-            HeaderH = camera.CamTrigger.HeaderH;
+            PS2AnyCamera camera = (PS2AnyCamera)twinRef!;
+            Trigger = new TriggerData(camera.CamTrigger);
             CameraHeader = camera.CameraHeader;
             UnkShort = camera.UnkShort;
             UnkFloat1 = camera.UnkFloat1;
@@ -130,8 +126,14 @@ namespace TT_Lab.AssetData.Instance
             TypeIndex1 = camera.TypeIndex1;
             TypeIndex2 = camera.TypeIndex2;
             UnkByte = camera.UnkByte;
-            MainCamera1 = CloneUtils.DeepClone(camera.MainCamera1);
-            MainCamera2 = CloneUtils.DeepClone(camera.MainCamera2);
+            if (camera.MainCamera1 != null)
+            {
+                MainCamera1 = (CameraSubBase)CloneUtils.DeepClone(camera.MainCamera1, camera.MainCamera1.GetType());
+            }
+            if (camera.MainCamera2 != null)
+            {
+                MainCamera2 = (CameraSubBase)CloneUtils.DeepClone(camera.MainCamera2, camera.MainCamera2.GetType());
+            }
         }
     }
 }

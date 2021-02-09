@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.Util
 {
@@ -62,6 +63,44 @@ namespace TT_Lab.Util
                 }
             }
             return string.Empty;
+        }
+
+        public static Enums.InstanceState ChangeFlag(this Enums.InstanceState state, Enums.InstanceState flags, Boolean set)
+        {
+            if (!set)
+            {
+                return state.UnsetFlag(flags);
+            }
+            return state.SetFlag(flags);
+        }
+        public static Enums.InstanceState SetFlag(this Enums.InstanceState state, Enums.InstanceState flags)
+        {
+            state |= flags;
+            return state;
+        }
+        public static Enums.InstanceState UnsetFlag(this Enums.InstanceState state, Enums.InstanceState flags)
+        {
+            state &= ~flags;
+            return state;
+        }
+
+        public static Enums.TriggerActivatorObjects ChangeFlag(this Enums.TriggerActivatorObjects state, Enums.TriggerActivatorObjects flags, Boolean set)
+        {
+            if (!set)
+            {
+                return state.UnsetFlag(flags);
+            }
+            return state.SetFlag(flags);
+        }
+        public static Enums.TriggerActivatorObjects SetFlag(this Enums.TriggerActivatorObjects state, Enums.TriggerActivatorObjects flags)
+        {
+            state |= flags;
+            return state;
+        }
+        public static Enums.TriggerActivatorObjects UnsetFlag(this Enums.TriggerActivatorObjects state, Enums.TriggerActivatorObjects flags)
+        {
+            state &= ~flags;
+            return state;
         }
     }
 }

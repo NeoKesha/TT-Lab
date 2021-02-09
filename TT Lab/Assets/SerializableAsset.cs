@@ -30,7 +30,7 @@ namespace TT_Lab.Assets
         public Boolean IsLoaded { get; protected set; }
         public UInt32 Order { get; set; }
 
-        public Dictionary<String, Object> Parameters { get; set; }
+        public Dictionary<String, Object?> Parameters { get; set; }
 
         public SerializableAsset()
         {
@@ -46,7 +46,7 @@ namespace TT_Lab.Assets
             Raw = true;
             Data = UUID.ToString() + DataExt;
             IsLoaded = true;
-            Parameters = new Dictionary<string, object>();
+            Parameters = new Dictionary<string, object?>();
             Type = GetType();
         }
 

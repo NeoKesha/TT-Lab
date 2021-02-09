@@ -40,6 +40,20 @@ namespace TT_Lab.Controls
             set { SetValue(CheckedProperty, value); }
         }
 
+        [Description("Whether the checkbox label is horizontal or vertical in relation to the checkbox"), Category("Common Properties")]
+        public bool IsHorizontal
+        {
+            get { return (bool)GetValue(IsHorizontalProperty); }
+            set { SetValue(IsHorizontalProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsHorizontal.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsHorizontalProperty =
+            DependencyProperty.Register("IsHorizontal", typeof(bool), typeof(LabeledCheckBox),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnLayoutChanged)));
+
+
+
         public bool DisplayChecked
         {
             get { return (bool)GetValue(DisplayCheckedProperty); }
@@ -65,12 +79,32 @@ namespace TT_Lab.Controls
         {
             LabeledCheckBox control = d as LabeledCheckBox;
             control.CheckboxLabel.Content = e.NewValue;
+            if (control.IsHorizontal)
+            {
+                control.CheckBox.Content = control.CheckboxLabel.Content;
+            }
         }
 
         private static void OnCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LabeledCheckBox control = d as LabeledCheckBox;
             control.DisplayChecked = (bool)e.NewValue;
+        }
+
+        private static void OnLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            LabeledCheckBox control = d as LabeledCheckBox;
+            control.IsHorizontal = (bool)e.NewValue;
+            if (control.IsHorizontal)
+            {
+                control.CheckboxLabel.Visibility = Visibility.Collapsed;
+                control.CheckBox.Content = control.CheckboxLabel.Content;
+            }
+            else
+            {
+                control.CheckboxLabel.Visibility = Visibility.Visible;
+                control.CheckBox.Content = String.Empty;
+            }
         }
 
         private void CheckBox_Checked(Object sender, RoutedEventArgs e)

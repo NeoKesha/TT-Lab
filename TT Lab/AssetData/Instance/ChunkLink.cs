@@ -23,18 +23,27 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Matrix4 ChunkMatrix { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public Matrix4 LoadingWall { get; set; }
+        public Matrix4? LoadingWall { get; set; }
+        [JsonProperty(Required = Required.AllowNull)]
+        public List<TwinChunkLinkBoundingBoxBuilder> BoundingBoxBuilders { get; set; }
 
-        public ChunkLink() { }
+        public ChunkLink()
+        {
+            Path = "levels\\earth\\hub\\beach";
+            ObjectMatrix = new Matrix4();
+            ChunkMatrix = new Matrix4();
+            BoundingBoxBuilders = new List<TwinChunkLinkBoundingBoxBuilder>();
+        }
 
         public ChunkLink(TwinChunkLink link)
         {
             Type = link.Type;
-            Path = link.Path.Substring(0);
+            Path = link.Path[..];
             Flags = link.Flags;
             ObjectMatrix = CloneUtils.DeepClone(link.ObjectMatrix);
             ChunkMatrix = CloneUtils.DeepClone(link.ChunkMatrix);
             LoadingWall = CloneUtils.DeepClone(link.LoadingWall);
+            BoundingBoxBuilders = CloneUtils.DeepClone(link.ChunkLinksCollisionData);
         }
     }
 }

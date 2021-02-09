@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.Assets.Instance
@@ -35,6 +37,15 @@ namespace TT_Lab.Assets.Instance
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();
+        }
+
+        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        {
+            if (viewModel == null)
+            {
+                viewModel = new ChunkLinkViewModel(UUID, parent);
+            }
+            return viewModel;
         }
 
         public override AbstractAssetData GetData()

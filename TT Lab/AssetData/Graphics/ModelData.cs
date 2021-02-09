@@ -36,7 +36,7 @@ namespace TT_Lab.AssetData.Graphics
             Faces.Clear();
         }
 
-        public override void Save(string dataPath)
+        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace TT_Lab.AssetData.Graphics
             }
         }
 
-        public override void Load(String dataPath)
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
             Vertexes.Clear();
             Faces.Clear();

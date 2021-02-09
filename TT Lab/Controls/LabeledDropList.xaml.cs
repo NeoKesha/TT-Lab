@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -63,6 +64,16 @@ namespace TT_Lab.Controls
             set { SetValue(DisplaySelectedItemProperty, value); }
         }
 
+        public DataTemplate ItemTemplate
+        {
+            get { return (DataTemplate)GetValue(ItemTemplateProperty); }
+            set { SetValue(ItemTemplateProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ItemTemplate.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ItemTemplateProperty =
+            DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(LabeledDropList), new PropertyMetadata(null));
+
         // Using a DependencyProperty as the backing store for DisplaySelectedItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplaySelectedItemProperty =
             DependencyProperty.Register("DisplaySelectedItem", typeof(object), typeof(LabeledDropList),
@@ -98,6 +109,20 @@ namespace TT_Lab.Controls
         {
             InitializeComponent();
             SetValue(ItemsProperty, new ObservableCollection<object>());
+            // Default ToString() implementation of DataTemplate
+            var stringAssembly = typeof(string);
+            string xamlTemplate = $"<DataTemplate DataType=\"{{x:Type sys:{stringAssembly.Name}}}\"><TextBlock Text=\"{{Binding}}\" /></DataTemplate>";
+            var xaml = xamlTemplate;
+            var context = new ParserContext
+            {
+                XamlTypeMapper = new XamlTypeMapper(Array.Empty<String>())
+            };
+            context.XamlTypeMapper.AddMappingProcessingInstruction("sys", stringAssembly.Namespace, stringAssembly.Assembly.FullName);
+
+            context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+            context.XmlnsDictionary.Add("x", "http://schemas.microsoft.com/winfx/2006/xaml");
+            context.XmlnsDictionary.Add("sys", "sys");
+            SetValue(ItemTemplateProperty, (DataTemplate)XamlReader.Parse(xaml, context));
         }
 
         private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

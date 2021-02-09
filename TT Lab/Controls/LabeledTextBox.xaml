@@ -12,7 +12,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Label x:Name="TextBoxLabel" Content="Label" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
-        <local:BaseTextBox x:Name="TextContainer" Text="{Binding DisplayText, Mode=TwoWay, ElementName=LabeledTextBoxControl, UpdateSourceTrigger=PropertyChanged}" Margin="0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" UndoPerformed="BaseTextBox_UndoPerformed" RedoPerformed="BaseTextBox_RedoPerformed" TextChanged="TextContainer_TextChanged"/>
+        <local:BaseTextBox x:Name="TextContainer" Text="{Binding DisplayText, Mode=TwoWay, ElementName=LabeledTextBoxControl, UpdateSourceTrigger=PropertyChanged}" Margin="0" Grid.Row="1" TextWrapping="NoWrap" VerticalAlignment="Top" UndoPerformed="BaseTextBox_UndoPerformed" RedoPerformed="BaseTextBox_RedoPerformed" TextChanged="TextContainer_TextChanged"/>
 
     </Grid>
 </local:BoundUserControl>

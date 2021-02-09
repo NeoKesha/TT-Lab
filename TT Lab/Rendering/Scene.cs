@@ -13,6 +13,7 @@ using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Rendering
 {
@@ -100,9 +101,18 @@ namespace TT_Lab.Rendering
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
             foreach (var pos in positions!.Children)
             {
-                var pRend = new Objects.Position((Assets.Instance.Position)pos.Asset);
+                var pRend = new Objects.Position((PositionViewModel)pos);
                 pRend.Parent = this;
                 objects.Add(pRend);
+            }
+
+            // Triggers renderer
+            var triggers = sceneTree.Find(avm => avm.Alias == "Triggers");
+            foreach (var trg in triggers!.Children)
+            {
+                var trRend = new Objects.Trigger((TriggerViewModel)trg);
+                trRend.Parent = this;
+                objects.Add(trRend);
             }
         }
 
@@ -110,6 +120,11 @@ namespace TT_Lab.Rendering
         {
             objects.Add(renderObj);
             renderObj.Parent = this;
+        }
+
+        public void SetCameraPosition(vec3 position)
+        {
+            cameraPosition = position;
         }
 
         /// <summary>
@@ -199,7 +214,7 @@ namespace TT_Lab.Rendering
         private vec2 yaw_pitch;
         public void RotateView(Vector2 rot)
         {
-            if (!canManipulateCamera) return;
+            if (!canManipulateCamera || rot.Length == 0) return;
 
             rot.Normalize();
             yaw_pitch.x += rot.X;

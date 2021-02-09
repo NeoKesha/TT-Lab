@@ -16,6 +16,9 @@ namespace TT_Lab.AssetData.Instance
     {
         public ObjectInstanceData()
         {
+            InstancesRelated = 10;
+            PathsRelated = 10;
+            PositionsRelated = 10;
         }
 
         public ObjectInstanceData(PS2AnyInstance instance) : this()
@@ -46,11 +49,11 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Guid ObjectId { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkInt1 { get; set; }
+        public Int16 RefListIndex { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkInt2 { get; set; }
+        public Guid OnSpawnScriptId { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkInt3 { get; set; }
+        public UInt32 StateFlags { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> ParamList1 { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -60,7 +63,12 @@ namespace TT_Lab.AssetData.Instance
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Instances.Clear();
+            Positions.Clear();
+            Paths.Clear();
+            ParamList1.Clear();
+            ParamList2.Clear();
+            ParamList3.Clear();
         }
 
         public override void Import()
@@ -77,9 +85,9 @@ namespace TT_Lab.AssetData.Instance
             PathsRelated = instance.PathsRelated;
             Paths = CloneUtils.CloneList(instance.Paths);
             ObjectId = GuidManager.GetGuidByTwinId(instance.ObjectId, typeof(GameObject));
-            UnkInt1 = instance.UnkInt1;
-            UnkInt2 = instance.UnkInt2;
-            UnkInt3 = instance.UnkInt3;
+            RefListIndex = instance.RefListIndex;
+            OnSpawnScriptId = GuidManager.GetGuidByTwinId(instance.OnSpawnHeaderScriptID, typeof(HeaderScript));
+            StateFlags = instance.StateFlags;
             ParamList1 = CloneUtils.CloneList(instance.ParamList1);
             ParamList2 = CloneUtils.CloneList(instance.ParamList2);
             ParamList3 = CloneUtils.CloneList(instance.ParamList3);

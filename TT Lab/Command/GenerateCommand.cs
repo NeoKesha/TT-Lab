@@ -8,13 +8,15 @@ namespace TT_Lab.Command
 {
     public class GenerateCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         private Action _action;
+        private Action? _unEx;
 
-        public GenerateCommand(Action a)
+        public GenerateCommand(Action ex, Action? unEx = null)
         {
-            _action = a;
+            _action = ex;
+            _unEx = unEx;
         }
 
         public Boolean CanExecute(Object parameter)
@@ -29,7 +31,7 @@ namespace TT_Lab.Command
 
         public void Unexecute()
         {
-            throw new NotImplementedException();
+            _unEx?.Invoke();
         }
     }
 }

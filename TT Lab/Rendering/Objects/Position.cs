@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Rendering.Buffers;
+using TT_Lab.Util;
+using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -17,45 +20,48 @@ namespace TT_Lab.Rendering.Objects
         private uint id;
         private int layid;
         private Vector4 pos;
+        private IndexedBufferArray positionBuffer;
 
-        public Position(Assets.Instance.Position pos)
+        public Position(PositionViewModel pos)
         {
-            id = pos.ID;
-            layid = (int)pos.LayoutID!;
-            var posData = (PositionData)pos.GetData();
-            this.pos = new Vector4(posData.Coords.X, posData.Coords.Y, posData.Coords.Z, posData.Coords.W);
+            id = pos.Asset.ID;
+            layid = (int)pos.LayoutID;
+            this.pos = new Vector4(pos.Position.X, pos.Position.Y, pos.Position.Z, pos.Position.W);
+            positionBuffer = BufferGeneration.GetCubeBuffer(this.pos.Xyz, 0.3f, new List<System.Drawing.Color> { System.Drawing.Color.FromArgb(layid * 255 / 7, 100, 200) });
+            pos.PropertyChanged += Pos_PropertyChanged;
+        }
+
+        private void Pos_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.PropertyName) && (e.PropertyName == "IsSelected" || e.PropertyName == "IsDirty")) return;
+            var vm = (PositionViewModel)sender!;
+            positionBuffer.Delete();
+            layid = (int)vm.LayoutID;
+            pos = new Vector4(vm.Position.X, vm.Position.Y, vm.Position.Z, vm.Position.W);
+            positionBuffer = BufferGeneration.GetCubeBuffer(pos.Xyz, 0.3f, new List<System.Drawing.Color> { System.Drawing.Color.FromArgb(layid * 255 / 7, 100, 200) });
         }
 
         public void Bind()
         {
+            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            positionBuffer.Bind();
         }
 
         public void Delete()
         {
-        }
-
-        public void PostRender()
-        {
-        }
-
-        public void PreRender()
-        {
+            positionBuffer.Delete();
         }
 
         public void Render()
         {
-            /*GL.Begin(PrimitiveType.LineLoop);
-            GL.LineWidth(20.0f);
-            GL.Color3(255, 0, 0);
-            GL.Vertex4(pos.X, pos.Y, pos.Z - 1, pos.W);
-            GL.Vertex4(pos.X + 1, pos.Y, pos.Z, pos.W);
-            GL.Vertex4(pos.X, pos.Y + 1, pos.Z, pos.W);
-            GL.Vertex4(pos.X - 1, pos.Y, pos.Z + 1, pos.W);
-            GL.End();*/
+            Bind();
+            GL.DrawElements(PrimitiveType.Triangles, positionBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            Unbind();
         }
 
         public void Unbind()
         {
+            positionBuffer.Unbind();
         }
     }
 }

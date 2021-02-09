@@ -34,11 +34,7 @@ namespace TT_Lab.Rendering.Objects
 
         public void Bind()
         {
-            foreach (var modelBuffer in modelBuffers)
-            {
-                modelBuffer.Bind();
-            }
-            
+            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
         }
 
         public void Delete()
@@ -49,30 +45,20 @@ namespace TT_Lab.Rendering.Objects
             }
         }
 
-        public void PostRender()
-        {
-        }
-
-        public void PreRender()
-        {
-        }
-
         public void Render()
         {
             Bind();
             foreach (var modelBuffer in modelBuffers)
             {
+                modelBuffer.Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+                modelBuffer.Unbind();
             }
             Unbind();
         }
 
         public void Unbind()
         {
-            foreach (var modelBuffer in modelBuffers)
-            {
-                modelBuffer.Unbind();
-            }
         }
     }
 }

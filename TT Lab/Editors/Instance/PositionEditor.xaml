@@ -12,13 +12,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
-        <controls:LabeledTextBox Text="{Binding X}" x:Name="XCoord" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextBoxName="X"/>
-        <controls:LabeledTextBox Text="{Binding Y}" x:Name="YCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Y"/>
-        <controls:LabeledTextBox Text="{Binding Z}" x:Name="ZCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="2" VerticalAlignment="Center" TextBoxName="Z"/>
-        <controls:LabeledTextBox Text="{Binding W}" x:Name="WCoord" HorizontalAlignment="Stretch" Margin="0" Grid.Row="3" VerticalAlignment="Center" TextBoxName="W"/>
+        <controls:LabeledDropList x:Name="InstanceLayerIDList" SelectedItem="{Binding ViewModel.LayoutID}" Items="{Binding Layers}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout" Editor="{Binding ElementName=PositionEditorControl, Mode=OneWay}" BoundProperty="LayoutID"/>
+        <controls:VectorEditor Editor="{Binding ElementName=PositionEditorControl, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="-5,-5,-5,-5" Grid.Row="1" VerticalAlignment="Stretch" VerticalLayout="True" PropertyTarget="{Binding ViewModel.Position}"/>
     </Grid>
 </base:BaseEditor>

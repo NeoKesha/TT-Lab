@@ -190,6 +190,11 @@ namespace TT_Lab.Project
             }
         }
 
+        public List<AssetViewModel> FullProjectTree
+        {
+            get => _internalTree;
+        }
+
         public string ProjectTitle
         {
             get
@@ -203,7 +208,7 @@ namespace TT_Lab.Project
             get
             {
                 var recents = Properties.Settings.Default.RecentProjects;
-                if (recents != null && _recentMenus.Length != recents.Count)
+                if (recents != null)
                 {
                     var menus = new MenuItem[recents.Count];
                     for (var i = 0; i < recents.Count; ++i)
@@ -211,7 +216,7 @@ namespace TT_Lab.Project
                         menus[i] = new MenuItem
                         {
                             Header = $"{i + 1}. {recents[i]}",
-                            Command = new OpenProjectCommand(recents[i]),
+                            Command = new OpenProjectCommand(recents[i]!),
                             HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                             VerticalAlignment = System.Windows.VerticalAlignment.Center,
                         };
@@ -278,7 +283,7 @@ namespace TT_Lab.Project
                 }
                 catch(Exception ex)
                 {
-                    Log.WriteLine($"Error when working with assets: {ex.Message}");
+                    Log.WriteLine($"Error when working with assets: {ex.Message}\n{ex.StackTrace}");
                 }
             });
         }
@@ -310,7 +315,7 @@ namespace TT_Lab.Project
                         }
                         catch (Exception ex)
                         {
-                            Log.WriteLine($"Error opening project: {ex.Message}");
+                            Log.WriteLine($"Error opening project: {ex.Message}\n{ex.StackTrace}");
                         }
                     });
                 }

@@ -34,7 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             Position = new Vector3();
             Name = new Char[16];
-            Version = 0x1D;
+            Version = 0x1E;
         }
         public ParticleInstance(UInt32 ver) : this()
         {

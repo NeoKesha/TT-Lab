@@ -18,7 +18,7 @@
             <ColumnDefinition Width="119*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Header="Chunk tree">
-            <TreeView x:Name="ChunkTree" Margin="0"
+            <TreeView x:Name="ChunkTreeView" Margin="0"
                 ItemsSource="{Binding Items}"
                 VirtualizingPanel.IsVirtualizing="True"
                 VirtualizingPanel.VirtualizationMode="Recycling" SelectedItemChanged="ChunkTree_SelectedItemChanged"
@@ -38,7 +38,9 @@
         </GroupBox>
         <local:SceneEditor x:Name="SceneRenderer" Grid.Column="2" Grid.RowSpan="3" Header="Chunk viewer"/>
         <GridSplitter Background="#FFCBE082" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Top" Height="5" ResizeBehavior="PreviousAndNext"/>
-        <GroupBox x:Name="ItemEditorContainer" Header="Item editor" Margin="0" Grid.Row="2" Background="White"/>
+        <GroupBox x:Name="ItemEditorContainer" Header="Item editor" Margin="0" Grid.Row="2" Background="White">
+            <ScrollViewer x:Name="EditorScroll" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        </GroupBox>
         <GridSplitter Background="#FFCBE082" HorizontalAlignment="Center" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="1" Grid.RowSpan="3" Width="5"/>
     </Grid>
 </local:BaseEditor>

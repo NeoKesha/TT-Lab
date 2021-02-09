@@ -9,10 +9,15 @@ namespace TT_Lab.Command
 {
     public class DeleteItemFromListCommand : ICommand
     {
+        private class DelItemInfo
+        {
+            public object? Item;
+            public Int32 Index;
+        }
         public event EventHandler? CanExecuteChanged;
 
-        private object? _item;
-        private Stack _deletedItems = new Stack();
+        private Int32 _index = -1;
+        private Stack<DelItemInfo> _deletedItems = new Stack<DelItemInfo>();
         private IList _list;
 
         public DeleteItemFromListCommand(IList list)
@@ -20,30 +25,36 @@ namespace TT_Lab.Command
             _list = list;
         }
 
-        public object? Item
+        public Int32 Index
         {
             set
             {
-                _item = value;
+                _index = value;
                 CanExecuteChanged?.Invoke(this, new EventArgs());
             }
-            private get => _item;
+            private get => _index;
         }
 
         public Boolean CanExecute(Object? parameter)
         {
-            return Item != null;
+            return _index != -1;
         }
 
         public void Execute(Object? parameter = null)
         {
-            _deletedItems.Push(_item);
-            _list.Remove(_item);
+            var item = _list[_index];
+            _deletedItems.Push(new DelItemInfo
+            {
+                Item = item,
+                Index = _index
+            });
+            _list.RemoveAt(_index);
         }
 
         public void Unexecute()
         {
-            _list.Add(_deletedItems.Pop());
+            var info = _deletedItems.Pop();
+            _list.Insert(info.Index, info.Item);
         }
     }
 }

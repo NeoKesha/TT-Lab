@@ -34,7 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public List<Matrix4> Type1RelatedMatrix { get; set; }
         public UInt32 SkinID { get; set; }
         public UInt32 BlendSkinID { get; set; }
-        public List<OGIType3> Type3List { get; set; }
+        public List<BoundingBoxBuilder> Type3List { get; set; }
         public List<Byte> Type3RelatedList { get; set; }
 
         public PS2AnyOGI()
@@ -48,7 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             RigidRelatedList = new List<byte>();
             RigidModelIds = new List<uint>();
             Type1RelatedMatrix = new List<Matrix4>();
-            Type3List = new List<OGIType3>();
+            Type3List = new List<BoundingBoxBuilder>();
             Type3RelatedList = new List<byte>();
         }
 
@@ -115,7 +115,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             Type3List.Clear();
             for (int i = 0; i < t3cnt; ++i)
             {
-                OGIType3 type3 = new OGIType3();
+                BoundingBoxBuilder type3 = new BoundingBoxBuilder();
                 type3.Read(reader, type3.GetLength());
                 Type3List.Add(type3);
             }

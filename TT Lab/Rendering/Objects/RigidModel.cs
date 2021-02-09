@@ -19,7 +19,6 @@ namespace TT_Lab.Rendering.Objects
 
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         List<TextureBuffer> textureBuffers = new List<TextureBuffer>();
-        //ShaderProgram shader;
 
         public RigidModel(RigidModelData rigid)
         {
@@ -51,13 +50,11 @@ namespace TT_Lab.Rendering.Objects
                         }).ToList()));
                 }
             }
-            /*shader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.vert"),
-                ManifestResourceLoader.LoadTextFile("Shaders\\TexturePass.frag"));*/
         }
 
         public void Bind()
         {
-            //shader.Bind();
+            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
         }
 
         public void Delete()
@@ -83,20 +80,14 @@ namespace TT_Lab.Rendering.Objects
         public void Render()
         {
             Bind();
-            //Parent?.SetPVMNShaderUniforms(shader);
             for (var i = 0; i < modelBuffers.Count; ++i)
             {
                 if (textureBuffers.Count != 0)
                 {
                     Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, textureBuffers[i].Buffer, 3);
                 }
-                Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
                 modelBuffers[i].Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffers[i].Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-                /*if (textureBuffers.Count != 0)
-                {
-                    textureBuffers[i].Unbind();
-                }*/
                 modelBuffers[i].Unbind();
             }
             Unbind();
@@ -104,7 +95,6 @@ namespace TT_Lab.Rendering.Objects
         
         public void Unbind()
         {
-            //shader.Unbind();
         }
     }
 }

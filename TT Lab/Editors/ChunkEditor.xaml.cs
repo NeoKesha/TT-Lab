@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
+using TT_Lab.Controls;
 using TT_Lab.Project;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Shaders;
@@ -66,25 +67,29 @@ namespace TT_Lab.Editors
 
         private void ChunkTree_SelectedItemChanged(Object sender, RoutedPropertyChangedEventArgs<Object> e)
         {
+            if (e.NewValue == null) return;
             var asset = (AssetViewModel)e.NewValue;
             if (asset.Asset.Type == typeof(Folder)) return;
 
             try
             {
                 var editor = asset.GetEditor(CommandManager);
-                if (ItemEditorContainer.Content != null)
+                ((BaseEditor)editor).ParentEditor = this;
+                if (EditorScroll.Content != null)
                 {
-                    ItemEditorContainer.Content = null;
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    GC.Collect();
+                    EditorScroll.Content = null;
                 }
-                ItemEditorContainer.Content = editor;
+                EditorScroll.Content = editor;
             }
             catch (Exception ex)
             {
                 Log.WriteLine($"Failed to create editor: {ex.Message}");
             }
+        }
+
+        public List<AssetViewModel> ChunkTree
+        {
+            get => chunkTree;
         }
     }
 }

@@ -11,12 +11,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     public class CameraPoint2 : CameraSubBase
     {
-        public Vector4 UnkVec { get; set; }
+        public Vector4 Point { get; set; }
         public Single UnkFloat3 { get; set; }
         public Byte UnkByte { get; set; }
         public CameraPoint2()
         {
-            UnkVec = new Vector4();
+            Point = new Vector4();
         }
         public override int GetLength()
         {
@@ -26,7 +26,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, base.GetLength());
-            UnkVec.Read(reader, Constants.SIZE_VECTOR4);
+            Point.Read(reader, Constants.SIZE_VECTOR4);
             UnkFloat3 = reader.ReadSingle();
             UnkByte = reader.ReadByte();
         }
@@ -34,7 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            UnkVec.Write(writer);
+            Point.Write(writer);
             writer.Write(UnkFloat3);
             writer.Write(UnkByte);
         }

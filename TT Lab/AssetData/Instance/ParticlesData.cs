@@ -15,6 +15,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public ParticlesData()
         {
+            Version = 0x1E;
         }
 
         public ParticlesData(PS2AnyParticleData particleData) : this()
@@ -31,7 +32,8 @@ namespace TT_Lab.AssetData.Instance
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            ParticleTypes.Clear();
+            ParticleInstances.Clear();
         }
 
         public override void Import()
