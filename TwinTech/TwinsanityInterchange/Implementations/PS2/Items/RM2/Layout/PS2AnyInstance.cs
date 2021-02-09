@@ -14,23 +14,23 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyInstance : BaseTwinItem, ITwinInstance
     {
-        public Vector4 Position { get; private set; }
-        public TwinIntegerRotation RotationX { get; private set; }
-        public TwinIntegerRotation RotationY { get; private set; }
-        public TwinIntegerRotation RotationZ { get; private set; }
+        public Vector4 Position { get; set; }
+        public TwinIntegerRotation RotationX { get; set; }
+        public TwinIntegerRotation RotationY { get; set; }
+        public TwinIntegerRotation RotationZ { get; set; }
         public UInt32 InstancesRelated { get; set; }
-        public List<UInt16> Instances { get; private set; }
+        public List<UInt16> Instances { get; set; }
         public UInt32 PositionsRelated { get; set; }
-        public List<UInt16> Positions { get; private set; }
+        public List<UInt16> Positions { get; set; }
         public UInt32 PathsRelated { get; set; }
-        public List<UInt16> Paths { get; private set; }
+        public List<UInt16> Paths { get; set; }
         public UInt16 ObjectId { get; set; }
-        public UInt32 UnkInt1 { get; set; }
-        public UInt32 UnkInt2 { get; set; }
-        public UInt32 UnkInt3 { get; set; }
-        public List<UInt32> ParamList1 { get; private set; }
-        public List<Single> ParamList2 { get; private set; }
-        public List<UInt32> ParamList3 { get; private set; }
+        public Int16 RefListIndex { get; set; }
+        public UInt16 OnSpawnHeaderScriptID { get; set; }
+        public UInt32 StateFlags { get; set; }
+        public List<UInt32> ParamList1 { get; set; }
+        public List<Single> ParamList2 { get; set; }
+        public List<UInt32> ParamList3 { get; set; }
 
         public PS2AnyInstance()
         {
@@ -93,9 +93,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
             ObjectId = reader.ReadUInt16();
 
-            UnkInt1 = reader.ReadUInt32();
-            UnkInt2 = reader.ReadUInt32();
-            UnkInt3 = reader.ReadUInt32();
+            RefListIndex = reader.ReadInt16();
+            OnSpawnHeaderScriptID = reader.ReadUInt16();
+            // Flags, floats and ints amount + pad byte
+            reader.ReadUInt32();
+            StateFlags = reader.ReadUInt32();
 
             Int32 param1_cnt = reader.ReadInt32();
             ParamList1.Clear();
@@ -150,9 +152,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             }
 
             writer.Write(ObjectId);
-            writer.Write(UnkInt1);
-            writer.Write(UnkInt2);
-            writer.Write(UnkInt3);
+            writer.Write(RefListIndex);
+            writer.Write(OnSpawnHeaderScriptID);
+            writer.Write((Byte)ParamList1.Count);
+            writer.Write((Byte)ParamList2.Count);
+            writer.Write((Byte)ParamList3.Count);
+            writer.Write((Byte)0);
+            writer.Write(StateFlags);
 
             writer.Write(ParamList1.Count);
             foreach (UInt32 id in ParamList1)

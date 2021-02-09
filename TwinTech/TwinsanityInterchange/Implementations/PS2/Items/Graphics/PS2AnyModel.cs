@@ -13,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyModel : BaseTwinItem, ITwinModel
     {
-        public List<SubModel> SubModels { get; private set; }
+        public List<SubModel> SubModels { get; set; }
         public PS2AnyModel()
         {
             SubModels = new List<SubModel>();

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
@@ -69,25 +70,27 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 Type1.Write(writer);
             }
         }
-        public void WriteText(StreamWriter writer, Int32 i)
+        public void WriteText(StreamWriter writer, Int32 i, Int32 tabs = 0)
         {
             if (ScriptIndexOrSlot != -1)
             {
-                writer.WriteLine($"    State_{i}({ScriptIndexOrSlot}) {"{"}");
+                StringUtils.WriteLineTabulated(writer, $"State_{i}({ScriptIndexOrSlot}) {"{"}", tabs);
+                writer.WriteLine();
             } else
             {
-                writer.WriteLine($"    State_{i}() {"{"}");
+                StringUtils.WriteLineTabulated(writer, $"State_{i}() {"{"}", tabs);
+                writer.WriteLine();
             }
-            //writer.WriteLine($"        SET BITFIELD {Bitfield}");
             if (Type1 != null)
             {
-                Type1.WriteText(writer);
+                Type1.WriteText(writer, tabs + 1);
             }
             foreach(var body in Bodies)
             {
-                body.WriteText(writer);
+                body.WriteText(writer, tabs + 1);
             }
-            writer.WriteLine($"    {"}"}");
+            StringUtils.WriteLineTabulated(writer, "}", tabs);
+            writer.WriteLine();
         }
 
         public void ReadText(StreamReader reader)

@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
+using Twinsanity.PS2Hardware;
+using Twinsanity.TwinsanityInterchange.Common;
 
 namespace Twinsanity.Libraries
 {
 	public static class EzSwizzle
 	{
-		static byte[] gs = new byte[1024 * 1024 * 4];
-
 		#region Constants
 		static readonly int[] block32 = new int[32] {
 			 0,  1,  4,  5, 16, 17, 20, 21,
@@ -75,201 +75,48 @@ namespace Twinsanity.Libraries
 			1, 1, 1, 1, 1, 1, 1, 1,  3, 3, 3, 3, 3, 3, 3, 3,
 			1, 1, 1, 1, 1, 1, 1, 1,  3, 3, 3, 3, 3, 3, 3, 3
 		};
-
-		static readonly int[] block4 = new int[32] {
-			0,  2,  8, 10,
-			1,  3,  9, 11,
-			4,  6, 12, 14,
-			5,  7, 13, 15,
-			16, 18, 24, 26,
-			17, 19, 25, 27,
-			20, 22, 28, 30,
-			21, 23, 29, 31
-		};
-
-		static readonly int[][] columnWord4 = new int[2][] {
-			new int[128] {
-				 0,  1,  4,  5,  8,  9, 12, 13,   0,  1,  4,  5,  8,  9, 12, 13,   0,  1,  4,  5,  8,  9, 12, 13,   0,  1,  4,  5,  8,  9, 12, 13,
-				 2,  3,  6,  7, 10, 11, 14, 15,   2,  3,  6,  7, 10, 11, 14, 15,   2,  3,  6,  7, 10, 11, 14, 15,   2,  3,  6,  7, 10, 11, 14, 15,
-
-				 8,  9, 12, 13,  0,  1,  4,  5,   8,  9, 12, 13,  0,  1,  4,  5,   8,  9, 12, 13,  0,  1,  4,  5,   8,  9, 12, 13,  0,  1,  4,  5,
-				10, 11, 14, 15,  2,  3,  6,  7,  10, 11, 14, 15,  2,  3,  6,  7,  10, 11, 14, 15,  2,  3,  6,  7,  10, 11, 14, 15,  2,  3,  6,  7
-			},
-			new int[128] {
-				 8,  9, 12, 13,  0,  1,  4,  5,   8,  9, 12, 13,  0,  1,  4,  5,   8,  9, 12, 13,  0,  1,  4,  5,   8,  9, 12, 13,  0,  1,  4,  5,
-				10, 11, 14, 15,  2,  3,  6,  7,  10, 11, 14, 15,  2,  3,  6,  7,  10, 11, 14, 15,  2,  3,  6,  7,  10, 11, 14, 15,  2,  3,  6,  7,
-
-				 0,  1,  4,  5,  8,  9, 12, 13,   0,  1,  4,  5,  8,  9, 12, 13,   0,  1,  4,  5,  8,  9, 12, 13,   0,  1,  4,  5,  8,  9, 12, 13,
-				 2,  3,  6,  7, 10, 11, 14, 15,   2,  3,  6,  7, 10, 11, 14, 15,   2,  3,  6,  7, 10, 11, 14, 15,   2,  3,  6,  7, 10, 11, 14, 15
-			}
-		};
-
-		static readonly int[] columnByte4 = new int[128] {
-			0, 0, 0, 0, 0, 0, 0, 0,  2, 2, 2, 2, 2, 2, 2, 2,  4, 4, 4, 4, 4, 4, 4, 4,  6, 6, 6, 6, 6, 6, 6, 6,
-			0, 0, 0, 0, 0, 0, 0, 0,  2, 2, 2, 2, 2, 2, 2, 2,  4, 4, 4, 4, 4, 4, 4, 4,  6, 6, 6, 6, 6, 6, 6, 6,
-
-			1, 1, 1, 1, 1, 1, 1, 1,  3, 3, 3, 3, 3, 3, 3, 3,  5, 5, 5, 5, 5, 5, 5, 5,  7, 7, 7, 7, 7, 7, 7, 7,
-			1, 1, 1, 1, 1, 1, 1, 1,  3, 3, 3, 3, 3, 3, 3, 3,  5, 5, 5, 5, 5, 5, 5, 5,  7, 7, 7, 7, 7, 7, 7, 7
-		};
-
 		#endregion
 
-		public static void writeTexPSMT4(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] data)
+		public static byte[] readTexPSMT8(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
 			dbw >>= 1;
 			int src = 0;
 			int startBlockPos = dbp * 64;
-
-			bool odd = false;
+			byte[] destination = new byte[useSrcLen ? source.Length : rrw * rrh];
 
 			for (int y = dsay; y < dsay + rrh; y++)
 			{
 				for (int x = dsax; x < dsax + rrw; x++)
 				{
-					int pageX = x / 128;
-					int pageY = y / 128;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 128);
-					int py = y - (pageY * 128);
-
-					int blockX = px / 32;
-					int blockY = py / 16;
-					int block = block4[blockX + blockY * 4];
-
-					int bx = px - blockX * 32;
-					int by = py - blockY * 16;
-
-					int column = by / 4;
-
-					int cx = bx;
-					int cy = by - column * 4;
-					int cw = columnWord4[column & 1][cx + cy * 32];
-					int cb = columnByte4[cx + cy * 32];
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw;
-
-					if ((cb & 1) != 0)
-					{
-						if (odd)
-							gs[4 * dst + cb >> 1] = (byte)((gs[4 * dst + cb >> 1] & 0x0f) | ((data[src]) & 0xf0));
-						else
-							gs[4 * dst + cb >> 1] = (byte)((gs[4 * dst + cb >> 1] & 0x0f) | (((data[src]) << 4) & 0xf0));
-					}
-					else
-					{
-						if (odd)
-							gs[4 * dst + cb >> 1] = (byte)((gs[4 * dst + cb >> 1] & 0xf0) | (((data[src]) >> 4) & 0x0f));
-						else
-							gs[4 * dst + cb >> 1] = (byte)((gs[4 * dst + cb >> 1] & 0xf0) | ((data[src]) & 0x0f));
-					}
-
-					if (odd)
-						src++;
-
-					odd = !odd;
-				}
-			}
-		}
-
-		public static void readTexPSMT4(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, ref byte[] data)
-		{
-			dbw >>= 1;
-			int src = 0;
-			int startBlockPos = dbp * 64;
-
-			bool odd = false;
-
-			for (int y = dsay; y < dsay + rrh; y++)
-			{
-				for (int x = dsax; x < dsax + rrw; x++)
-				{
-					int pageX = x / 128;
-					int pageY = y / 128;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 128);
-					int py = y - (pageY * 128);
-
-					int blockX = px / 32;
-					int blockY = py / 16;
-					int block = block4[blockX + blockY * 4];
-
-					int bx = px - blockX * 32;
-					int by = py - blockY * 16;
-
-					int column = by / 4;
-
-					int cx = bx;
-					int cy = by - column * 4;
-					int cw = columnWord4[column & 1][cx + cy * 32];
-					int cb = columnByte4[cx + cy * 32];
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw + cb >> 1;
-					//unsigned char* dst = (unsigned char*)&gsmem[startBlockPos + page * 2048 + block * 64 + column * 16 + cw];
-
-					if ((cb & 1) != 0)
-					{
-						if (odd)
-							data[src] = (byte)(((data[src]) & 0x0f) | (byte)(gs[4 * dst + cb >> 1] & 0xf0));
-						else
-							data[src] = (byte)(((data[src]) & 0xf0) | ((byte)(gs[4 * dst + cb >> 1] >> 4) & 0x0f));
-					}
-					else
-					{
-						if (odd)
-							data[src] = (byte)(((data[src]) & 0x0f) | (((byte)gs[4 * dst + cb >> 1] << 4) & 0xf0));
-						else
-							data[src] = (byte)(((data[src]) & 0xf0) | ((byte)gs[4 * dst + cb >> 1] & 0x0f));
-					}
-
-					if (odd)
-						src++;
-
-					odd = !odd;
-				}
-			}
-		}
-
-		public static void readTexPSMT8(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, ref byte[] data)
-		{
-			dbw >>= 1;
-			int src = 0;
-			int startBlockPos = dbp * 64;
-
-			for (int y = dsay; y < dsay + rrh; y++)
-			{
-				for (int x = dsax; x < dsax + rrw; x++)
-				{
-					int pageX = x / 128;
-					int pageY = y / 64;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 128);
-					int py = y - (pageY * 64);
-
-					int blockX = px / 16;
-					int blockY = py / 16;
-					int block = block8[blockX + blockY * 8];
-
-					int bx = px - blockX * 16;
-					int by = py - blockY * 16;
-
-					int column = by / 4;
-
-					int cx = bx;
-					int cy = by - column * 4;
-					int cw = columnWord8[column & 1][cx + cy * 16];
-					int cb = columnByte8[cx + cy * 16];
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw;
-					data[src] = gs[4 * dst + cb];
+					int cb = 0;
+					int dst = startBlockPos + MapCoords8(x, y, dbw, ref cb);
+					destination[src] = source[4 * dst + cb];
 					src++;
 				}
 			}
+			return destination;
 		}
 
-		public static void writeTexPSMT8(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] data)
+		public static byte[] writeTexPSMT8(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
+		{
+			dbw >>= 1;
+			int src = 0;
+			int startBlockPos = dbp * 64;
+			byte[] destination = new byte[useSrcLen ? source.Length : rrw * rrh];
+
+			for (int y = dsay; y < dsay + rrh; y++)
+			{
+				for (int x = dsax; x < dsax + rrw; x++)
+				{
+					int cb = 0;
+					int dst = startBlockPos + MapCoords8(x, y, dbw, ref cb);
+					destination[4 * dst + cb] = source[src];
+					src++;
+				}
+			}
+			return destination;
+		}
+		public static byte[] writeTexPSMT8To(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, byte[] destination)
 		{
 			dbw >>= 1;
 			int src = 0;
@@ -279,115 +126,83 @@ namespace Twinsanity.Libraries
 			{
 				for (int x = dsax; x < dsax + rrw; x++)
 				{
-					int pageX = x / 128;
-					int pageY = y / 64;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 128);
-					int py = y - (pageY * 64);
-
-					int blockX = px / 16;
-					int blockY = py / 16;
-					int block = block8[blockX + blockY * 8];
-
-					int bx = px - (blockX * 16);
-					int by = py - (blockY * 16);
-
-					int column = by / 4;
-
-					int cx = bx;
-					int cy = by - column * 4;
-					int cw = columnWord8[column & 1][cx + cy * 16];
-					int cb = columnByte8[cx + cy * 16];
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw;
-					gs[4 * dst + cb] = data[src];
+					int cb = 0;
+					int dst = startBlockPos + MapCoords8(x, y, dbw, ref cb);
+					destination[4 * dst + cb] = source[src];
 					src++;
 				}
 			}
+			return destination;
 		}
 
-		public static void writeTexPSMCT16(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] data)
+		public static byte[] writeTexPSMCT16(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
 			int src = 0;
 			int startBlockPos = dbp * 64;
+			byte[] destination = new byte[useSrcLen ? source.Length : rrw * rrh * 2];
 
 			for (int y = dsay; y < dsay + rrh; y++)
 			{
 				for (int x = dsax; x < dsax + rrw; x++)
 				{
-					int pageX = x / 64;
-					int pageY = y / 64;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 64);
-					int py = y - (pageY * 64);
-
-					int blockX = px / 16;
-					int blockY = py / 8;
-					int block = block16[blockX + blockY * 4];
-
-					int bx = px - blockX * 16;
-					int by = py - blockY * 8;
-
-					int column = by / 2;
-
-					int cx = bx;
-					int cy = by - column * 2;
-					int cw = columnWord16[cx + cy * 16];
-					int ch = columnHalf16[cx + cy * 16];
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw;
+					int ch = 0;
+					int dst = startBlockPos + MapCoords16(x, y, dbw, ref ch);
 					for (int i = 0; i < 2; i++)
 					{
-						gs[4 * dst + 2 * ch + i] = data[src + i];
+						destination[4 * dst + 2 * ch + i] = source[src + i];
 					}
 					src += 2;
 				}
 			}
+
+			return destination;
 		}
 
-		public static void readTexPSMCT16(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, ref byte[] data)
+		public static byte[] readTexPSMCT16(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
 			int src = 0;
 			int startBlockPos = dbp * 64;
+			byte[] destination = new byte[useSrcLen ? source.Length : rrw * rrh * 2];
 
 			for (int y = dsay; y < dsay + rrh; y++)
 			{
 				for (int x = dsax; x < dsax + rrw; x++)
 				{
-					int pageX = x / 64;
-					int pageY = y / 64;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 64);
-					int py = y - (pageY * 64);
-
-					int blockX = px / 16;
-					int blockY = py / 8;
-					int block = block16[blockX + blockY * 4];
-
-					int bx = px - blockX * 16;
-					int by = py - blockY * 8;
-
-					int column = by / 2;
-
-					int cx = bx;
-					int cy = by - column * 2;
-					int cw = columnWord16[cx + cy * 16];
-					int ch = columnHalf16[cx + cy * 16];
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw;
+					int ch = 0;
+					int dst = startBlockPos + MapCoords16(x,y,dbw,ref ch);
 					for (int i = 0; i < 2; i++)
 					{
-						data[src + i] = gs[4 * dst + 2 * ch + i];
+						destination[src + i] = source[4 * dst + 2 * ch + i];
 					}
 					src += 2;
 				}
 			}
+
+			return destination;
 		}
 
-		public static void writeTexPSMCT32(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] data)
+		public static byte[] writeTexPSMCT32(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
+		{
+			int src = 0;
+			int startBlockPos = dbp * 64;
+			byte[] destination = new byte[useSrcLen ? source.Length : rrw * rrh * 4];
+
+			for (int y = dsay; y < dsay + rrh; y++)
+			{
+				for (int x = dsax; x < dsax + rrw; x++)
+				{
+					var dst = startBlockPos + MapCoords32(x, y, dbw);
+					for (int i = 0; i < 4; i++)
+					{
+						destination[4 * dst + i] = source[src + i];
+					}
+					src += 4;
+				}
+			}
+			return destination;
+		}
+
+		public static byte[] writeTexPSMCT32To(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, byte[] destination)
 		{
 			int src = 0;
 			int startBlockPos = dbp * 64;
@@ -396,74 +211,200 @@ namespace Twinsanity.Libraries
 			{
 				for (int x = dsax; x < dsax + rrw; x++)
 				{
-					int pageX = x / 64;
-					int pageY = y / 32;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 64);
-					int py = y - (pageY * 32);
-
-					int blockX = px / 8;
-					int blockY = py / 8;
-					int block = block32[blockX + blockY * 8];
-
-					int bx = px - blockX * 8;
-					int by = py - blockY * 8;
-
-					int column = by / 2;
-
-					int cx = bx;
-					int cy = by - column * 2;
-					int cw = columnWord32[cx + cy * 8];
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw;
+					var dst = startBlockPos + MapCoords32(x, y, dbw);
 					for (int i = 0; i < 4; i++)
 					{
-						gs[4 * dst + i] = data[src + i];
+						destination[4 * dst + i] = source[src + i];
 					}
 					src += 4;
 				}
 			}
+			return destination;
 		}
 
-		public static void readTexPSMCT32(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, ref byte[] data)
+		public static byte[] readTexPSMCT32(int dbp, int dbw, int dsax, int dsay, int rrw, int rrh, byte[] source, bool useSrcLen = true)
 		{
 			int src = 0;
 			int startBlockPos = dbp * 64;
+			byte[] destination = new byte[useSrcLen ? source.Length : rrw * rrh * 4];
 
 			for (int y = dsay; y < dsay + rrh; y++)
 			{
 				for (int x = dsax; x < dsax + rrw; x++)
 				{
-					int pageX = x / 64;
-					int pageY = y / 32;
-					int page = pageX + pageY * dbw;
-
-					int px = x - (pageX * 64);
-					int py = y - (pageY * 32);
-
-					int blockX = px / 8;
-					int blockY = py / 8;
-					int block = block32[blockX + blockY * 8];
-
-					int bx = px - blockX * 8;
-					int by = py - blockY * 8;
-
-					int column = by / 2;
-
-					int cx = bx;
-					int cy = by - column * 2;
-					int cw = columnWord32[cx + cy * 8];
-
-
-					int dst = startBlockPos + page * 2048 + block * 64 + column * 16 + cw;
+					var dst = startBlockPos + MapCoords32(x, y, dbw);
 					for (int i = 0; i < 4; i++)
 					{
-						data[src + i] = gs[4 * dst + i];
+						destination[src + i] = source[4 * dst + i];
 					}
 					src += 4;
 				}
 			}
+			return destination;
+		}
+		public static List<Color> TagToColors(GIFTag tag, List<Color> colors)
+		{
+			List<UInt64> data = tag.Data.Select(d => d.Output).ToList();
+			for (var i = 0; i < data.Count - 1; i += 2)
+			{
+				UInt64 output1 = data[i + 1];
+				UInt64 output2 = data[i];
+				Color c1 = new Color();
+				Color c2 = new Color();
+				Color c3 = new Color();
+				Color c4 = new Color();
+				c1.FromABGR((UInt32)((output1 >> 0) & 0xFFFFFFFF));
+				c2.FromABGR((UInt32)((output1 >> 32) & 0xFFFFFFFF));
+				c3.FromABGR((UInt32)((output2 >> 0) & 0xFFFFFFFF));
+				c4.FromABGR((UInt32)((output2 >> 32) & 0xFFFFFFFF));
+				colors.Add(c1);
+				colors.Add(c2);
+				colors.Add(c3);
+				colors.Add(c4);
+			}
+			return colors;
+		}
+
+		public static GIFTag ColorsToTag(List<Color> colors)
+		{
+			GIFTag tag = new GIFTag();
+			tag.NREG = 16;
+			tag.EOP = 1;
+			tag.NLOOP = (ushort)(colors.Count / 4);
+			tag.REGS = new REGSEnum[16];
+			tag.FLG = GIFModeEnum.IMAGE;
+			tag.Data = new List<RegOutput>();
+			for (var i = 0; i < colors.Count - 3; i += 4)
+			{
+				UInt64 col0 = colors[i + 0].ToABGR();
+				UInt64 col1 = colors[i + 1].ToABGR();
+				UInt64 col2 = colors[i + 2].ToABGR();
+				UInt64 col3 = colors[i + 3].ToABGR();
+				UInt64 long1 = (col1 << 32) | (col0);
+				UInt64 long2 = (col3 << 32) | (col2);
+				RegOutput reg1 = new RegOutput();
+				reg1.REG = REGSEnum.HWREG;
+				reg1.Output = long1;
+				RegOutput reg2 = new RegOutput();
+				reg2.REG = REGSEnum.HWREG;
+				reg2.Output = long2;
+				tag.Data.Add(reg2);
+				tag.Data.Add(reg1);
+			}
+			return tag;
+		}
+		public static byte[] TagToBytes(GIFTag tag) {
+			List<UInt64> data = tag.Data.Select(d => d.Output).ToList();
+			byte[] bytes = new byte[data.Count * 8];
+			for (var i = 0; i < data.Count/2; ++i)
+			{
+				UInt64 output1 = data[i * 2];
+				UInt64 output2 = data[i * 2 + 1];
+				Array.Copy(BitConverter.GetBytes(output2), 0, bytes, i * 16, 8);
+				Array.Copy(BitConverter.GetBytes(output1), 0, bytes, i * 16 + 8, 8);
+			}
+			return bytes;
+        }
+
+		public static void ColorsToByte(Color color, byte[] array, int index)
+        {
+			UInt32 abrg = color.ToABGR();
+			array[index * 4 + 3] = (Byte)((abrg >> 24) & 0xFF);
+			array[index * 4 + 2] = (Byte)((abrg >> 16) & 0xFF);
+			array[index * 4 + 1] = (Byte)((abrg >> 8) & 0xFF);
+			array[index * 4 + 0] = (Byte)((abrg >> 0) & 0xFF);
+        }
+		public static Color BytesToColor(byte[] array, int index)
+		{
+			Color color = new Color();
+			color.FromABGR((UInt32)((array[index + 3] << 24) | (array[index + 2] << 16) | (array[index + 1] << 8) | (array[index + 0] << 0)));
+			return color;
+		}
+
+		public static List<Color> BytesToColors(byte[] array)
+        {
+			List<Color> colors = new List<Color>(array.Length/4);
+			for (var i = 0; i < array.Length / 4; ++i)
+            {
+				colors.Add(BytesToColor(array, i * 4));
+			}
+
+			return colors;
+        }
+
+		public static Int32 MapCoords32(Int32 x, Int32 y, Int32 width)
+        {
+			int pageX = x / 64;
+			int pageY = y / 32;
+			int page = pageX + pageY * width;
+
+			int px = x - (pageX * 64);
+			int py = y - (pageY * 32);
+
+			int blockX = px / 8;
+			int blockY = py / 8;
+			int block = block32[blockX + blockY * 8];
+
+			int bx = px - blockX * 8;
+			int by = py - blockY * 8;
+
+			int column = by / 2;
+
+			int cx = bx;
+			int cy = by - column * 2;
+			int cw = columnWord32[cx + cy * 8];
+
+			return page * 2048 + block * 64 + column * 16 + cw;
+		}
+		public static Int32 MapCoords16(Int32 x, Int32 y, Int32 width, ref Int32 ch)
+		{
+			int pageX = x / 64;
+			int pageY = y / 64;
+			int page = pageX + pageY * width;
+
+			int px = x - (pageX * 64);
+			int py = y - (pageY * 64);
+
+			int blockX = px / 16;
+			int blockY = py / 8;
+			int block = block16[blockX + blockY * 4];
+
+			int bx = px - blockX * 16;
+			int by = py - blockY * 8;
+
+			int column = by / 2;
+
+			int cx = bx;
+			int cy = by - column * 2;
+			int cw = columnWord16[cx + cy * 16];
+			ch = columnHalf16[cx + cy * 16];
+
+			return page * 2048 + block * 64 + column * 16 + cw;
+		}
+		public static Int32 MapCoords8(Int32 x, Int32 y, Int32 width, ref Int32 cb)
+		{
+			int pageX = x / 128;
+			int pageY = y / 64;
+			int page = pageX + pageY * width;
+
+			int px = x - (pageX * 128);
+			int py = y - (pageY * 64);
+
+			int blockX = px / 16;
+			int blockY = py / 16;
+			int block = block8[blockX + blockY * 8];
+
+			int bx = px - (blockX * 16);
+			int by = py - (blockY * 16);
+
+			int column = by / 4;
+
+			int cx = bx;
+			int cy = by - column * 4;
+			int cw = columnWord8[column & 1][cx + cy * 16];
+			cb = columnByte8[cx + cy * 16];
+
+			return page * 2048 + block * 64 + column * 16 + cw;
 		}
 	}
 }

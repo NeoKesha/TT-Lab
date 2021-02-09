@@ -1,0 +1,103 @@
+﻿<base:BaseEditor
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
+             xmlns:base="clr-namespace:TT_Lab.Editors"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="TriggerEditorControl" x:Class="TT_Lab.Editors.Instance.TriggerEditor"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="350">
+    <Grid>
+        <TabControl Background="{x:Null}">
+            <TabItem x:Name="MainPropertiesTab" Header="Properties" Background="White">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="4*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="0,0,0,0">
+                        <Grid>
+                            <UniformGrid Rows="1" Margin="0,0,0,0" Grid.Column="1">
+                                <Controls:LabeledDropList x:Name="InstanceLayoutList" SelectedItem="{Binding ViewModel.LayoutID}" Items="{Binding Layers}" DropListName="Instance layout" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" BoundProperty="LayoutID"/>
+                                <Controls:LabeledTextBox x:Name="HeaderBox" Text="{Binding ViewModel.Header, StringFormat={}{0:X}}" TextBoxName="Header" Margin="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" BoundProperty="Header"/>
+                                <Controls:LabeledTextBox x:Name="UnkFloatBox" Text="{Binding ViewModel.UnkFloat}" TextBoxName="Unknown float" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" BoundProperty="UnkFloat"/>
+                            </UniformGrid>
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="0,0,0,0" Grid.Row="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <GroupBox Header="Position" Margin="0,0,0,0">
+                                <Controls:VectorEditor x:Name="PositionEditorControl" PropertyTarget="{Binding ViewModel.Position}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                            </GroupBox>
+                            <GroupBox Header="Rotation" Margin="0,0,0,0" Grid.Row="1">
+                                <Controls:VectorEditor x:Name="RotationEditorControl" PropertyTarget="{Binding ViewModel.Rotation}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                            </GroupBox>
+                            <GroupBox Header="Scale" Margin="0,0,0,0" Grid.Row="2">
+                                <Controls:VectorEditor x:Name="ScaleEditorControl" PropertyTarget="{Binding ViewModel.Scale}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                            </GroupBox>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="ArgumentsTab" Header="Arguments" Background="White">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Header="Instances" Margin="0,0,0,0">
+                        <ListBox x:Name="InstancesList" SelectionChanged="InstancesList_SelectionChanged">
+                            <ListBox.ContextMenu>
+                                <ContextMenu x:Name="InstancesListContextMenu"/>
+                            </ListBox.ContextMenu>
+                        </ListBox>
+                    </GroupBox>
+                    <GroupBox Grid.Column="1" Header="Arguments">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Controls:LabeledTextBox x:Name="Arg1Box" Text="{Binding ViewModel.Arg1}" BoundProperty="Arg1" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" TextBoxName="Trigger script 1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{Binding Checked, ElementName=Arg1EnabledBox}"/>
+                            <Controls:LabeledTextBox x:Name="Arg2Box" Text="{Binding ViewModel.Arg2}" Grid.Row="1" BoundProperty="Arg2" TextBoxName="Trigger script 2" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{Binding Checked, ElementName=Arg2EnabledBox}"/>
+                            <Controls:LabeledTextBox x:Name="Arg3Box" Text="{Binding ViewModel.Arg3}" Grid.Row="2" BoundProperty="Arg3" TextBoxName="Trigger script 3" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{Binding Checked, ElementName=Arg3EnabledBox}"/>
+                            <Controls:LabeledTextBox x:Name="Arg4Box" Text="{Binding ViewModel.Arg4}" Grid.Row="3" BoundProperty="Arg4" TextBoxName="Trigger script 4" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{Binding Checked, ElementName=Arg4EnabledBox}"/>
+                            <Controls:LabeledCheckBox x:Name="Arg1EnabledBox" Checked="{Binding ViewModel.Arg1Enabled}" Grid.Column="1" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Stretch" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" BoundProperty="Arg1Enabled"/>
+                            <Controls:LabeledCheckBox x:Name="Arg2EnabledBox" Checked="{Binding ViewModel.Arg2Enabled}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Grid.Row="1" BoundProperty="Arg2Enabled"/>
+                            <Controls:LabeledCheckBox x:Name="Arg3EnabledBox" Checked="{Binding ViewModel.Arg3Enabled}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Grid.Row="2" BoundProperty="Arg3Enabled"/>
+                            <Controls:LabeledCheckBox x:Name="Arg4EnabledBox" Checked="{Binding ViewModel.Arg4Enabled}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Grid.Row="3" BoundProperty="Arg4Enabled"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="ActivatorsTab" Header="Activators" Background="White">
+                <Grid Margin="0,0,0,0">
+                    <UniformGrid>
+                        <Controls:LabeledCheckBox x:Name="ActByPlayCharBox" CheckBoxName="Playable character" BoundProperty="ActivateByPlayableCharacter" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Checked="{Binding ViewModel.ActivateByPlayableCharacter}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByCollectBox" Margin="0,0,0,0" BoundProperty="ActivateByCollectibles" CheckBoxName="Collectibles" Checked="{Binding ViewModel.ActivateByCollectibles}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByCratesBox" Margin="0,0,0,0" BoundProperty="ActivateByCrates" Checked="{Binding ViewModel.ActivateByCrates}" CheckBoxName="Crates" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType3" Margin="0,0,0,0" BoundProperty="ActivateByType3" CheckBoxName="Type 3" Checked="{Binding ViewModel.ActivateByType3}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType4" Margin="0,0,0,0" BoundProperty="ActivateByType4" CheckBoxName="Type 4" Checked="{Binding ViewModel.ActivateByType4}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType5" Margin="0,0,0,0" BoundProperty="ActivateByType5" CheckBoxName="Type 5 (Nina Hooks)" Checked="{Binding ViewModel.ActivateByType5}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType6" Margin="0,0,0,0" BoundProperty="ActivateByType6" CheckBoxName="Type 6 (Unused)" Checked="{Binding ViewModel.ActivateByType6}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType7" Margin="0,0,0,0" BoundProperty="ActivateByType7" CheckBoxName="Type 7 (Nina Hand)" Checked="{Binding ViewModel.ActivateByType7}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByPlayProj" Margin="0,0,0,0" BoundProperty="ActivateByPlayerProjectiles" CheckBoxName="Player Projectiles" Checked="{Binding ViewModel.ActivateByPlayerProjectiles}" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}"/>
+                    </UniformGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</base:BaseEditor>

@@ -8,11 +8,9 @@ using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets.Instance
 {
-    public abstract class SerializableInstance<T> : SerializableAsset<T> where T : AbstractAssetData, new()
+    public abstract class SerializableInstance : SerializableAsset
     {
         protected override String SavePath => $"Instance\\{Chunk}\\{Type}";
-
-        public override String Type => $"InstanceAsset";
 
         public SerializableInstance(UInt32 id, String name, String chunk, Int32? layId) : base(id, name)
         {

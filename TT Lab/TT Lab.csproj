@@ -1,223 +1,173 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{640EEAEC-CB84-4499-B5A9-E084CAB68D91}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>TT_Lab</RootNamespace>
-    <AssemblyName>TT Lab</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWpf>true</UseWpf>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ApplicationIcon>Images\tt_lab_logo_v6_2k.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="BetterFolderBrowser, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BetterFolderBrowser.1.2.0\lib\BetterFolderBrowser.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <None Remove="Images\AfroGod.png" />
+    <None Remove="Images\boat_guy.png" />
+    <None Remove="Images\God_Messenger.png" />
   </ItemGroup>
+
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="AssetData\Code\AnimationData.cs" />
-    <Compile Include="AssetData\Code\CodeModelData.cs" />
-    <Compile Include="AssetData\Code\GameObjectData.cs" />
-    <Compile Include="AssetData\Code\HeaderScriptData.cs" />
-    <Compile Include="AssetData\Code\MainScriptData.cs" />
-    <Compile Include="AssetData\Code\OGIData.cs" />
-    <Compile Include="AssetData\Code\ScriptData.cs" />
-    <Compile Include="AssetData\Code\SoundEffectData.cs" />
-    <Compile Include="AssetData\FolderData.cs" />
-    <Compile Include="AssetData\AbstractAssetData.cs" />
-    <Compile Include="AssetData\Graphics\BlendSkinData.cs" />
-    <Compile Include="AssetData\Graphics\LodModelData.cs" />
-    <Compile Include="AssetData\Graphics\MaterialData.cs" />
-    <Compile Include="AssetData\Graphics\MeshData.cs" />
-    <Compile Include="AssetData\Graphics\ModelData.cs" />
-    <Compile Include="AssetData\Graphics\RigidModelData.cs" />
-    <Compile Include="AssetData\Graphics\SkinData.cs" />
-    <Compile Include="AssetData\Graphics\SkydomeData.cs" />
-    <Compile Include="AssetData\Graphics\TextureData.cs" />
-    <Compile Include="AssetData\Instance\AiPathData.cs" />
-    <Compile Include="AssetData\Instance\AiPositionData.cs" />
-    <Compile Include="AssetData\Instance\CameraData.cs" />
-    <Compile Include="AssetData\Instance\ChunkLink.cs" />
-    <Compile Include="AssetData\Instance\ChunkLinksData.cs" />
-    <Compile Include="AssetData\Instance\CollisionData.cs" />
-    <Compile Include="AssetData\Instance\CollisionSurfaceData.cs" />
-    <Compile Include="AssetData\Instance\Collision\CollisionTriangle.cs" />
-    <Compile Include="AssetData\Instance\Collision\CollisionTrigger.cs" />
-    <Compile Include="AssetData\Instance\Collision\GroupInformation.cs" />
-    <Compile Include="AssetData\Instance\DynamicSceneryData.cs" />
-    <Compile Include="AssetData\Instance\InstanceTemplateData.cs" />
-    <Compile Include="AssetData\Instance\ObjectInstanceData.cs" />
-    <Compile Include="AssetData\Instance\ParticlesData.cs" />
-    <Compile Include="AssetData\Instance\PathData.cs" />
-    <Compile Include="AssetData\Instance\PositionData.cs" />
-    <Compile Include="AssetData\Instance\SceneryData.cs" />
-    <Compile Include="AssetData\Instance\TriggerData.cs" />
-    <Compile Include="Assets\AssetFactory.cs" />
-    <Compile Include="Assets\Code\GameObject.cs" />
-    <Compile Include="Assets\Code\HeaderScript.cs" />
-    <Compile Include="Assets\Code\MainScript.cs" />
-    <Compile Include="Assets\Code\OGI.cs" />
-    <Compile Include="Assets\Code\Script.cs" />
-    <Compile Include="Assets\Code\SoundEffect.cs" />
-    <Compile Include="Assets\Code\CodeModel.cs" />
-    <Compile Include="Assets\Code\Animation.cs" />
-    <Compile Include="Assets\Folder.cs" />
-    <Compile Include="Assets\Graphics\BlendSkin.cs" />
-    <Compile Include="Assets\Graphics\LodModel.cs" />
-    <Compile Include="Assets\Graphics\RigidModel.cs" />
-    <Compile Include="Assets\Graphics\Mesh.cs" />
-    <Compile Include="Assets\Graphics\Skin.cs" />
-    <Compile Include="Assets\Graphics\Model.cs" />
-    <Compile Include="Assets\IAsset.cs" />
-    <Compile Include="Assets\Graphics\Material.cs" />
-    <Compile Include="Assets\Instance\AiPath.cs" />
-    <Compile Include="Assets\Instance\AiPosition.cs" />
-    <Compile Include="Assets\Instance\Camera.cs" />
-    <Compile Include="Assets\Instance\ChunkLinks.cs" />
-    <Compile Include="Assets\Instance\Collision.cs" />
-    <Compile Include="Assets\Instance\CollisionSurface.cs" />
-    <Compile Include="Assets\Instance\DynamicScenery.cs" />
-    <Compile Include="Assets\Instance\InstanceTemplate.cs" />
-    <Compile Include="Assets\Instance\ObjectInstance.cs" />
-    <Compile Include="Assets\Instance\Path.cs" />
-    <Compile Include="Assets\Instance\Position.cs" />
-    <Compile Include="Assets\Instance\Scenery.cs" />
-    <Compile Include="Assets\Instance\SerializableInstance.cs" />
-    <Compile Include="Assets\Instance\Trigger.cs" />
-    <Compile Include="Assets\Instance\Particles.cs" />
-    <Compile Include="Assets\SerializableAsset.cs" />
-    <Compile Include="Assets\Graphics\Skydome.cs" />
-    <Compile Include="Assets\Graphics\Texture.cs" />
-    <Compile Include="Command\OpenDialogueCommand.cs" />
-    <Compile Include="Command\OpenProjectCommand.cs" />
-    <Compile Include="Command\OpenProjectDialogueCommand.cs" />
-    <Compile Include="Command\SaveProjectCommand.cs" />
-    <Compile Include="Command\SelectFolderCommand.cs" />
-    <Compile Include="Log.cs" />
-    <Compile Include="Project\IProject.cs" />
-    <Compile Include="ViewModels\AssetViewModel.cs" />
-    <Compile Include="ViewModels\ObservableObject.cs" />
-    <Compile Include="ViewModels\ProjectCreator.cs" />
-    <Page Include="About.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Command\CommandManager.cs" />
-    <Compile Include="Command\ICommand.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="ProjectCreationWizard.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Simple Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Content Include="Images\AfroGod.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="ProjectCreationWizard.xaml.cs">
-      <DependentUpon>ProjectCreationWizard.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Project\PS2Project.cs" />
-    <Compile Include="Project\ProjectManager.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
+    <Content Include="Images\God_Messenger.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
+    <PackageReference Include="GlmNet" Version="0.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="OpenTK" Version="3.3.1" />
+    <PackageReference Include="OpenTK.GLControl" Version="3.1.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TwinTech\TwinTech.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WindowsFormsIntegration">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.0\WindowsFormsIntegration.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\boat_guy.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Update="Shaders\DDP_blend.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_blend.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_final.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_final.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_init.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_init.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_peel.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_peel.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_shade.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_shade.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_shade_default.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\DDP_shade_default.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\Light.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\Light.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\LightTexture.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\LightTexture.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\MultitexturePass.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\Pass.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\Pass.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\ScreenResult.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\ScreenResult.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\TexturePass.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\TexturePass.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\TexurePass.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\TwinmaterialPass.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\TwinTexture.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\TwinTexture.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\WBOIT_blend.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\WBOIT_blend.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\WeightCalc.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\AfroGod.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\boat_guy.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TwinTech\TwinTech.csproj">
-      <Project>{14348117-4503-49cd-94f9-1852069543e3}</Project>
-      <Name>TwinTech</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

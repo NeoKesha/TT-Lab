@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Twinsanity.Libraries;
+using System.Reflection;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
@@ -20,7 +21,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         {
             if (AgentLabDefs == null)
             {
-                using (FileStream stream = new FileStream(@"AgentLabDefs.json", FileMode.Open, FileAccess.Read))
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"AgentLabDefs.json"), FileMode.Open, FileAccess.Read))
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
@@ -100,17 +104,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public void WriteText(StreamWriter writer)
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            writer.WriteLine($"Script({Name}) {"{"}");
-            writer.WriteLine($"    bitfield = {UnkInt}");
+            StringUtils.WriteLineTabulated(writer, $"Script({Name}) {"{"}", tabs);
+            StringUtils.WriteLineTabulated(writer, $"bitfield = {UnkInt}", tabs + 1);
             int i = 0;
             foreach(var state in ScriptStates)
             {
-                state.WriteText(writer, i);
+                state.WriteText(writer, i, tabs + 1);
                 ++i;
             }
-            writer.WriteLine("}");
+            StringUtils.WriteLineTabulated(writer, "}", tabs + 0);
             writer.Flush();
         }
 
@@ -161,6 +165,18 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                     state.ReadText(reader);
                     
                 }
+            }
+        }
+        public override String ToString()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                StreamWriter writer = new StreamWriter(stream);
+                StreamReader reader = new StreamReader(stream);
+                WriteText(writer);
+                writer.Flush();
+                stream.Position = 0;
+                return reader.ReadToEnd();
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,14 +17,50 @@ namespace TT_Lab.AssetData.Code
 
         public CodeModelData(PS2AnyCodeModel codeModel) : this()
         {
+            twinRef = codeModel;
+        }
+        public String Script { get; set; }
+        public List<UInt32> ScriptIds { get; set; }
+        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
+        {
+            using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
+            using (BinaryWriter writer = new BinaryWriter(fs))
+            {
+                writer.Write(Script.ToCharArray());
+            }
         }
 
-        [JsonProperty(Required = Required.Always)]
-        public Int32 Header { get; set; }
-
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            using (FileStream fs = new FileStream(dataPath, System.IO.FileMode.Open, FileAccess.Read))
+            using (StreamReader reader = new StreamReader(fs))
+            {
+                var cm = new PS2AnyCodeModel();
+                cm.ReadText(reader);
+                Script = cm.ToString();
+                GenerateSubScriptIdList(cm);
+                twinRef = cm;
+            }
+        }
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyCodeModel codeModel = (PS2AnyCodeModel)twinRef;
+            Script = codeModel.ToString();
+            GenerateSubScriptIdList(codeModel);
+        }
+
+        private void GenerateSubScriptIdList(PS2AnyCodeModel cm)
+        {
+            ScriptIds = new List<uint>();
+            foreach (var e in cm.ScriptPacks)
+            {
+                ScriptIds.Add(e.Key);
+            }
         }
     }
 }

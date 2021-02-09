@@ -11,10 +11,10 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class TwinTrigger : ITwinSerializable
     {
-        public UInt32 Header1 { get; set; }
-        public UInt32 Enabled { get; set; }
-        public Single HeaderT { get; set; }
-        public UInt32 HeaderH { get; set; }
+        public UInt32 Header { get; set; }
+        public UInt32 ObjectActivatorMask { get; set; }
+        public Single UnkFloat { get; set; }
+        public UInt32 InstanceExtensionValue { get; set; }
         public Vector4 Rotation { get; }
         public Vector4 Position { get; }
         public Vector4 Scale { get; }
@@ -34,15 +34,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Read(BinaryReader reader, int length)
         {
-            Header1 = reader.ReadUInt32();
-            Enabled = reader.ReadUInt32();
-            HeaderT = reader.ReadSingle();
+            Header = reader.ReadUInt32();
+            ObjectActivatorMask = reader.ReadUInt32();
+            UnkFloat = reader.ReadSingle();
             Rotation.Read(reader, Constants.SIZE_VECTOR4);
             Position.Read(reader, Constants.SIZE_VECTOR4);
             Scale.Read(reader, Constants.SIZE_VECTOR4);
             reader.ReadUInt32();
             UInt32 instances_cnt = reader.ReadUInt32();
-            HeaderH = reader.ReadUInt32();
+            InstanceExtensionValue = reader.ReadUInt32();
             Instances.Clear();
             for (int i = 0; i < instances_cnt; ++i)
             {
@@ -52,15 +52,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Header1);
-            writer.Write(Enabled);
-            writer.Write(HeaderT);
+            writer.Write(Header);
+            writer.Write(ObjectActivatorMask);
+            writer.Write(UnkFloat);
             Rotation.Write(writer);
             Position.Write(writer);
             Scale.Write(writer);
             writer.Write(Instances.Count);
             writer.Write(Instances.Count);
-            writer.Write(HeaderH);
+            writer.Write(InstanceExtensionValue);
             for (int i = 0; i < Instances.Count; ++i)
             {
                 writer.Write(Instances[i]);

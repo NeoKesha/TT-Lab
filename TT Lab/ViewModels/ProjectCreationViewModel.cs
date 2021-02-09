@@ -1,20 +1,27 @@
 ﻿using System;
+using System.Windows;
 using TT_Lab.Command;
 using TT_Lab.Properties;
 
 namespace TT_Lab.ViewModels
 {
-    public class ProjectCreator : ObservableObject
+    public class ProjectCreationViewModel : ObservableObject
     {
         private string _projectName = "New project";
         private string _projectPath = Settings.Default.ProjectPath;
         private string _discContentPath = Settings.Default.DiscContentPath;
+        private Window _owner;
+
+        public ProjectCreationViewModel(Window owner)
+        {
+            _owner = owner;
+        }
 
         public ICommand SetProjectPathCommand
         {
             get
             {
-                return new SelectFolderCommand(this, "ProjectPath");
+                return new SelectFolderCommand(_owner, this, "ProjectPath");
             }
         }
 
@@ -22,7 +29,7 @@ namespace TT_Lab.ViewModels
         {
             get
             {
-                return new SelectFolderCommand(this, "DiscContentPath");
+                return new SelectFolderCommand(_owner, this, "DiscContentPath");
             }
         }
 
@@ -43,8 +50,8 @@ namespace TT_Lab.ViewModels
             set
             {
                 _projectName = value;
-                RaisePropertyChangedEvent("CanCreate");
-                RaisePropertyChangedEvent("ProjectName");
+                NotifyChange("CanCreate");
+                NotifyChange("ProjectName");
             }
         }
         public string ProjectPath
@@ -57,8 +64,8 @@ namespace TT_Lab.ViewModels
             {
                 _projectPath = value;
                 Settings.Default.ProjectPath = _projectPath;
-                RaisePropertyChangedEvent("CanCreate");
-                RaisePropertyChangedEvent("ProjectPath");
+                NotifyChange("CanCreate");
+                NotifyChange("ProjectPath");
             }
         }
         public string DiscContentPath
@@ -71,8 +78,8 @@ namespace TT_Lab.ViewModels
             {
                 _discContentPath = value;
                 Settings.Default.DiscContentPath = _discContentPath;
-                RaisePropertyChangedEvent("CanCreate");
-                RaisePropertyChangedEvent("DiscContentPath");
+                NotifyChange("CanCreate");
+                NotifyChange("DiscContentPath");
             }
         }
     }

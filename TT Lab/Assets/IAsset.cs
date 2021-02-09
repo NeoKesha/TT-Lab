@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 using TT_Lab.AssetData;
+using TT_Lab.ViewModels;
 
 namespace TT_Lab.Assets
 {
@@ -17,7 +20,7 @@ namespace TT_Lab.Assets
         /// Asset's string type
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        string Type { get; }
+        Type Type { get; }
 
         /// <summary>
         /// In-Game's ID number
@@ -56,6 +59,12 @@ namespace TT_Lab.Assets
         string Chunk { get; }
 
         /// <summary>
+        /// TT Lab specific data
+        /// </summary>
+        [JsonProperty(Required = Required.AllowNull)]
+        Dictionary<String, Object> Parameters { get; }
+
+        /// <summary>
         /// Order in the Project Tree
         /// </summary>
         [JsonProperty(Required = Required.Always)]
@@ -66,7 +75,7 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <remarks>Ranges from 0 to 7</remarks>
         [JsonProperty(Required = Required.AllowNull)]
-        Int32? LayoutID { get; }
+        Int32? LayoutID { get; set; }
 
         /// <summary>
         /// Whether the data for this asset is currently in memory
@@ -74,10 +83,22 @@ namespace TT_Lab.Assets
         Boolean IsLoaded { get; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Asset's editor type</returns>
+        Type GetEditorType();
+
+        /// <summary>
         /// Loads in asset's data if it's not loaded
         /// </summary>
         /// <returns>Asset's data</returns>
+        /// <typeparam name="T">Type of data</typeparam>
         AbstractAssetData GetData();
+
+        /// <summary>
+        /// Returns asset's viewmodel for editing
+        /// </summary>
+        AssetViewModel GetViewModel(AssetViewModel parent = null);
 
         /// <summary>
         /// Dump on disk in JSON format
@@ -100,5 +121,10 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <returns>Data in the format</returns>
         Byte[] ToFormat();
+
+        /// <summary>
+        /// Finishes import on Project Creation stage
+        /// </summary>
+        void Import();
     }
 }

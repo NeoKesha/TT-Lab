@@ -4,14 +4,15 @@ namespace TT_Lab.Command
 {
     public interface ICommand : System.Windows.Input.ICommand
     {
+        /// <summary>
+        /// Performs the command
+        /// </summary>
+        /// <param name="parameter">Optional parameter</param>
+        new void Execute(object? parameter = null);
 
-        /**
-        * Performs the command
-        */
-        new void Execute(object parameter = null);
-        /**
-         * Undoes the performed command
-         */
+        /// <summary>
+        /// Undoes the performed command
+        /// </summary>
         void Unexecute();
     }
 }

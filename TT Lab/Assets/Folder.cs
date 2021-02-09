@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
 {
-    public class Folder : SerializableAsset<FolderData>
+    public class Folder : SerializableAsset
     {
-        public override String Type => "Folder";
 
         private static UInt32 rootOrder = 0;
         private UInt32 order = 0;
@@ -29,7 +29,7 @@ namespace TT_Lab.Assets
         {
             if (parent != null)
             {
-                assetData.Parent = parent.UUID;
+                ((FolderData)GetData()).Parent = parent.UUID;
                 parent.AddChild(this);
             }
             else
@@ -38,21 +38,16 @@ namespace TT_Lab.Assets
             }
         }
 
-        public void AddChild(IAsset asset)
-        {
-            GetData().Children.Add(asset.UUID);
-            asset.Order = GetOrder();
-        }
-
-        internal UInt32 GetOrder()
-        {
-            return order++;
-        }
-
-        private Folder(UInt32 id, String name) : base(id, name)
+        protected Folder(UInt32 id, String name) : base(id, name)
         {
             IsLoaded = true;
             assetData = new FolderData();
+        }
+
+        public void AddChild(IAsset asset)
+        {
+            ((FolderData)GetData()).Children.Add(asset.UUID);
+            asset.Order = GetOrder();
         }
 
         public override void Deserialize(String json)
@@ -69,6 +64,26 @@ namespace TT_Lab.Assets
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();
+        }
+
+        public override Type GetEditorType()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal UInt32 GetOrder()
+        {
+            return order++;
+        }
+        public override AbstractAssetData GetData()
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = new FolderData();
+                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                IsLoaded = true;
+            }
+            return assetData;
         }
     }
 }

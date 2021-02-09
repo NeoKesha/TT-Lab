@@ -86,23 +86,22 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 com.Write(writer);
             };
         }
-        public void WriteText(StreamWriter writer)
+        public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            writer.WriteLine($"        Body {"{"}");
-            //writer.WriteLine($"            SET BITFIELD {Bitfield}");
+            StringUtils.WriteLineTabulated(writer, $"Body {"{"}", tabs);
             if (HasStateJump)
             {
-                writer.WriteLine($"            next_state = {JumpToState}");
+                StringUtils.WriteLineTabulated(writer, $"next_state = {JumpToState}", tabs + 1);
             }
             if (Condition != null)
             {
-                Condition.WriteText(writer);
+                Condition.WriteText(writer, tabs + 1);
             }
             foreach (var cmd in Commands)
             {
-                cmd.WriteText(writer);
+                cmd.WriteText(writer, tabs + 1);
             }
-            writer.WriteLine($"        {"}"}");
+            StringUtils.WriteLineTabulated(writer, "}", tabs);
         }
 
         public void ReadText(StreamReader reader)

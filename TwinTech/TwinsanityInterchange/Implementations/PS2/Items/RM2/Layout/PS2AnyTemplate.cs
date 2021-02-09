@@ -16,19 +16,21 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
     {
         public String Name { get; set; }
         public UInt16 ObjectId { get; set; }
-        public UInt16 Bitfield { get; set; }
+        public Byte UnkByte1 { get; set; }
+        public Byte UnkByte2 { get; set; }
+        public List<UInt16> UnkIds { get; set; }
         public UInt32 Header1 { get; set; }
         public UInt32 Header2 { get; set; }
-        public UInt32 Header3 { get; set; }
-        public UInt16 UnkShort { get; set; }
-        public Byte[] UnkFlags { get; private set; }
-        public UInt32 Properties { get; set; }
-        public List<UInt32> Flags { get; private set; }
-        public List<Single> Floats { get; private set; }
-        public List<UInt32> Ints { get; private set; }
+        public Byte UnkByte3 { get; set; }
+        public Byte UnkByte4 { get; set; }
+        public UInt32 InstancePropsHeader { get; set; }
+        public UInt32 UnkInt1 { get; set; }
+        public List<UInt32> Flags { get; set; }
+        public List<Single> Floats { get; set; }
+        public List<UInt32> Ints { get; set; }
         public PS2AnyTemplate()
         {
-            UnkFlags = new byte[6];
+            UnkIds = new List<ushort>();
             Floats = new List<float>();
             Ints = new List<uint>();
             Flags = new List<uint>();
@@ -36,7 +38,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override int GetLength()
         {
-            return 4 + Name.Length + 16 + ((Header1 == 1)?2:0) + UnkFlags.Length + 4 + 12 + Flags.Count*4 + Floats.Count*4 + Ints.Count*4;
+            return 4 + Name.Length + 16 + UnkIds.Count * 2 + 22 + Flags.Count*4 + Floats.Count*4 + Ints.Count*4;
         }
 
         public override void Read(BinaryReader reader, int length)
@@ -44,19 +46,20 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             Int32 nameLen = reader.ReadInt32();
             Name = new string(reader.ReadChars(nameLen));
             ObjectId = reader.ReadUInt16();
-            Bitfield = reader.ReadUInt16();
+            UnkByte1 = reader.ReadByte();
+            UnkByte2 = reader.ReadByte();
+            var amt = reader.ReadUInt32();
             Header1 = reader.ReadUInt32();
             Header2 = reader.ReadUInt32();
-            Header3 = reader.ReadUInt32();
-            if (Header1 == 1)
+            UnkIds.Clear();
+            for (var i = 0; i < amt; ++i)
             {
-                UnkShort = reader.ReadUInt16();
+                UnkIds.Add(reader.ReadUInt16());
             }
-            for (int i = 0; i < 6; ++i)
-            {
-                UnkFlags[i] = reader.ReadByte();
-            }
-            Properties = reader.ReadUInt32();
+            UnkByte3 = reader.ReadByte();
+            UnkByte4 = reader.ReadByte();
+            InstancePropsHeader = reader.ReadUInt32();
+            UnkInt1 = reader.ReadUInt32();
             Int32 flags = reader.ReadInt32();
             Flags.Clear();
             for (int i = 0; i < flags; ++i)
@@ -82,19 +85,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
             writer.Write(ObjectId);
-            writer.Write(Bitfield);
+            writer.Write(UnkByte1);
+            writer.Write(UnkByte2);
+            writer.Write(UnkIds.Count);
             writer.Write(Header1);
             writer.Write(Header2);
-            writer.Write(Header3);
-            if (Header1 == 1)
+            foreach (var s in UnkIds)
             {
-                writer.Write(UnkShort);
+                writer.Write(s);
             }
-            for (int i = 0; i < 6; ++i)
-            {
-                writer.Write(UnkFlags[i]);
-            }
-            writer.Write(Properties);
+            writer.Write(UnkByte3);
+            writer.Write(UnkByte4);
+            writer.Write(InstancePropsHeader);
+            writer.Write(UnkInt1);
             writer.Write(Flags.Count);
             foreach (UInt32 e in Flags)
             {

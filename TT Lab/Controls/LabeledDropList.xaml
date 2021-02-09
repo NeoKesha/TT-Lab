@@ -1,0 +1,22 @@
+﻿<local:BoundUserControl x:Name="DropListControl" x:Class="TT_Lab.Controls.LabeledDropList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TT_Lab.Controls"
+             mc:Ignorable="d">
+    <local:BoundUserControl.Resources>
+        
+    </local:BoundUserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label x:Name="ComboBoxName" Content="Label" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <ComboBox x:Name="DropList" Margin="0" Grid.Row="1" VerticalAlignment="Top" ItemsSource="{Binding Items}" SelectedIndex="{Binding DisplaySelectedIndex, Mode=TwoWay, ElementName=DropListControl}" SelectedItem="{Binding DisplaySelectedItem, ElementName=DropListControl, Mode=TwoWay}" IsReadOnly="True" SelectionChanged="DropList_SelectionChanged"
+                  ItemTemplate="{Binding ItemTemplate, ElementName=DropListControl}"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.VirtualizationMode="Recycling"/>
+    </Grid>
+</local:BoundUserControl>

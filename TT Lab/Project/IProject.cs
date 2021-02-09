@@ -15,14 +15,6 @@ namespace TT_Lab.Project
     public interface IProject
     {
         /// <summary>
-        /// Maps a string to an asset Type
-        /// </summary>
-        /// <example>
-        /// IAsset newTex = (IAsset)Activator.CreateInstance(StringToAsset["Texture"]);
-        /// </example>
-        Dictionary<string, Type> StringToAsset { get; }
-
-        /// <summary>
         /// Project's collection of assets
         /// </summary>
         Dictionary<Guid, IAsset> Assets { get; }
@@ -31,7 +23,7 @@ namespace TT_Lab.Project
         /// Project's list of assets
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        List<Guid> AssetIds { get; }
+        Dictionary<Guid, UInt32> GuidToTwinId { get; }
 
         /// <summary>
         /// Project's UUID
@@ -64,6 +56,12 @@ namespace TT_Lab.Project
         DateTime LastModified { get; set; }
 
         /// <summary>
+        /// Project's version
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        string Version { get; }
+
+        /// <summary>
         /// Project's root file path
         /// </summary>
         string ProjectPath { get; }
@@ -79,7 +77,7 @@ namespace TT_Lab.Project
         /// <typeparam name="T">Asset type</typeparam>
         /// <param name="id">Asset ID</param>
         /// <returns>Returns requested asset or null if not found</returns>
-        T GetAsset<T>(Guid id) where T : IAsset;
+        IAsset GetAsset(Guid id);
 
         /// <summary>
         /// Dump on disk in JSON format

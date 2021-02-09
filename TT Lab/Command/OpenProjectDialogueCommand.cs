@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WK.Libraries.BetterFolderBrowserNS;
+using TT_Lab.Util;
 
 namespace TT_Lab.Command
 {
@@ -19,17 +19,11 @@ namespace TT_Lab.Command
         public void Execute(Object parameter = null)
         {
             var recents = Properties.Settings.Default.RecentProjects;
-            using (System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog
+            var proj = MiscUtils.GetFileFromDialogue("PS2 TT Lab Project|*.tson|XBox TT Lab Project|*.xson", recents != null && recents.Count != 0 ? recents[0] : "");
+            if (proj != string.Empty)
             {
-                InitialDirectory = recents != null && recents.Count != 0 ? recents[0] : "",
-                Filter = "PS2 TT Lab Project|*.tson|XBox TT Lab Project|*.xson"
-            })
-            {
-                if (System.Windows.Forms.DialogResult.OK == ofd.ShowDialog())
-                {
-                    var open = new OpenProjectCommand(System.IO.Path.GetDirectoryName(ofd.FileName));
-                    open.Execute();
-                }
+                var open = new OpenProjectCommand(System.IO.Path.GetDirectoryName(proj));
+                open.Execute();
             }
         }
 

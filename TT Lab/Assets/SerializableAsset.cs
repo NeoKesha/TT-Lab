@@ -1,18 +1,24 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 using TT_Lab.AssetData;
+using TT_Lab.ViewModels;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
-    public abstract class SerializableAsset<T> : IAsset where T : AbstractAssetData, new()
+    public abstract class SerializableAsset : IAsset
     {
         public Guid UUID { get; private set; }
 
-        protected virtual String SavePath => Type;
+        protected virtual String SavePath => Type.Name;
+        protected virtual String DataExt => ".data";
 
-        protected T assetData;
+        protected AbstractAssetData assetData;
+        protected AssetViewModel viewModel;
 
-        public virtual String Type => "Asset";
+        public Type Type { get; set; }
 
         public String Name { get; set; }
         public Boolean Raw { get; set; }
@@ -23,6 +29,8 @@ namespace TT_Lab.Assets
         public Int32? LayoutID { get; set; }
         public Boolean IsLoaded { get; protected set; }
         public UInt32 Order { get; set; }
+
+        public Dictionary<String, Object?> Parameters { get; set; }
 
         public SerializableAsset()
         {
@@ -36,8 +44,10 @@ namespace TT_Lab.Assets
             Name = name;
             Alias = Name;
             Raw = true;
-            Data = UUID.ToString() + ".data";
+            Data = UUID.ToString() + DataExt;
             IsLoaded = true;
+            Parameters = new Dictionary<string, object?>();
+            Type = GetType();
         }
 
         public virtual void Serialize()
@@ -49,7 +59,7 @@ namespace TT_Lab.Assets
             {
                 writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
             }
-            // Created data needs to be saved on disk but then disposed of since we are not gonna need it unless user wishes to edit the exact asset
+            // Created or loaded data needs to be saved on disk but then disposed of since we are not gonna need it unless user wishes to edit the exact asset
             if (assetData != null)
             {
                 assetData.Save(System.IO.Path.Combine(path, Data));
@@ -64,21 +74,22 @@ namespace TT_Lab.Assets
 
         public abstract void ToRaw(Byte[] data);
         public abstract Byte[] ToFormat();
+        public abstract Type GetEditorType();
 
-        public T GetData()
+        public abstract AbstractAssetData GetData();
+        public virtual void Import()
         {
-            if (!IsLoaded || assetData.Disposed)
-            {
-                assetData = new T();
-                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
-                IsLoaded = true;
-            }
-            return assetData;
+            assetData.Import();
+            assetData.NullifyReference();
         }
 
-        AbstractAssetData IAsset.GetData()
+        public virtual AssetViewModel GetViewModel(AssetViewModel parent = null)
         {
-            return GetData();
+            if (viewModel == null)
+            {
+                viewModel = new AssetViewModel(UUID, parent);
+            }
+            return viewModel;
         }
     }
 }

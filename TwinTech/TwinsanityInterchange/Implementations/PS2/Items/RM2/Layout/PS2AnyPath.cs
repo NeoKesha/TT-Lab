@@ -15,8 +15,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyPath : BaseTwinItem, ITwinPath 
     { 
-        public List<Vector4> PointList { get; private set; }
-        public List<Vector2> ParameterList { get; private set; }
+        public List<Vector4> PointList { get; set; }
+        public List<Vector2> ParameterList { get; set; }
         public PS2AnyPath()
         {
             PointList = new List<Vector4>();

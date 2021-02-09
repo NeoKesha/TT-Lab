@@ -26,7 +26,39 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             return V1.GetLength() + V2.GetLength() + V3.GetLength() + V4.GetLength();
         }
-
+        public Vector4 this[int key]
+        {
+            get
+            {
+                return key switch
+                {
+                    0 => V1,
+                    1 => V2,
+                    2 => V3,
+                    3 => V4,
+                    _ => throw new IndexOutOfRangeException(),
+                };
+            }
+            set
+            {
+                switch(key)
+                {
+                    case 0:
+                        V1 = value;
+                        break;
+                    case 1:
+                        V2 = value;
+                        break;
+                    case 2:
+                        V3 = value;
+                        break;
+                    case 3:
+                        V4 = value;
+                        break;
+                }
+                throw new IndexOutOfRangeException();
+            }
+        }
         public void Read(BinaryReader reader, int length)
         {
             V1.Read(reader, Constants.SIZE_VECTOR4);

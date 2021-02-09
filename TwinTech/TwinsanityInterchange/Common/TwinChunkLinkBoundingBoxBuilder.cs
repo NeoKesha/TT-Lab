@@ -8,31 +8,31 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    public class TwinChunkLinkOGI3 : ITwinSerializable
+    public class TwinChunkLinkBoundingBoxBuilder : ITwinSerializable
     {
         public Int32 Type;
-        public OGIType3 OGIType3;
+        public BoundingBoxBuilder BondingBoxBuilder;
 
-        public TwinChunkLinkOGI3()
+        public TwinChunkLinkBoundingBoxBuilder()
         {
-            OGIType3 = new OGIType3();
+            BondingBoxBuilder = new BoundingBoxBuilder();
         }
 
         public Int32 GetLength()
         {
-            return 4 + OGIType3.GetLength();
+            return 4 + BondingBoxBuilder.GetLength();
         }
 
         public void Read(BinaryReader reader, Int32 length)
         {
             Type = reader.ReadInt32();
-            OGIType3.Read(reader, length);
+            BondingBoxBuilder.Read(reader, length);
         }
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(Type);
-            OGIType3.Write(writer);
+            BondingBoxBuilder.Write(writer);
         }
     }
 }

@@ -13,15 +13,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
     public class PS2AnyLOD : BaseTwinItem, ITwinLOD
     {
         public Int32 Type;
-        public Int32 UnkInt1;
-        public Int32 UnkInt2; // Draw distance?
-        public Int32[] UnkInts; // For Type 0x1001
-        public Byte[] UnkData; // For Type 0x1002
+        public Int32 MinDrawDistance;
+        public Int32 MaxDrawDistance;
+        public Int32[] ModelsDrawDistances;
         public List<UInt32> Meshes;
 
         public PS2AnyLOD()
         {
-            UnkInts = new Int32[3];
+            ModelsDrawDistances = new Int32[3];
             Meshes = new List<UInt32>();
         }
 
@@ -40,11 +39,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             if (Type == 0x1001)
             {
                 var meshAmt = reader.ReadInt32() & 0xFF;
-                UnkInt1 = reader.ReadInt32();
-                UnkInt2 = reader.ReadInt32();
+                MinDrawDistance = reader.ReadInt32();
+                MaxDrawDistance = reader.ReadInt32();
                 for (int i = 0; i < 3; ++i)
                 {
-                    UnkInts[i] = reader.ReadInt32();
+                    ModelsDrawDistances[i] = reader.ReadInt32();
                 }
                 reader.ReadInt32(); // Unused by the game
                 for (int i = 0; i < meshAmt; ++i)
@@ -55,9 +54,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             else
             {
                 var meshAmt = reader.ReadByte();
-                UnkInt1 = reader.ReadInt32();
-                UnkInt2 = reader.ReadInt32();
-                UnkData = reader.ReadBytes(0xC);
+                MinDrawDistance = reader.ReadInt32();
+                MaxDrawDistance = reader.ReadInt32();
+                for (int i = 0; i < 3; ++i)
+                {
+                    ModelsDrawDistances[i] = reader.ReadInt32();
+                }
                 for (int i = 0; i < meshAmt; ++i)
                 {
                     Meshes.Add(reader.ReadUInt32());
@@ -71,11 +73,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             if (Type == 0x1001)
             {
                 writer.Write(Meshes.Count);
-                writer.Write(UnkInt1);
-                writer.Write(UnkInt2);
+                writer.Write(MinDrawDistance);
+                writer.Write(MaxDrawDistance);
                 for (int i = 0; i < 3; ++i)
                 {
-                    writer.Write(UnkInts[i]);
+                    writer.Write(ModelsDrawDistances[i]);
                 }
                 writer.Write(0);
                 for (int i = 0; i < Meshes.Count; ++i)
@@ -86,9 +88,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             else
             {
                 writer.Write((byte)Meshes.Count);
-                writer.Write(UnkInt1);
-                writer.Write(UnkInt2);
-                writer.Write(UnkData);
+                writer.Write(MinDrawDistance);
+                writer.Write(MaxDrawDistance);
+                for (int i = 0; i < 3; ++i)
+                {
+                    writer.Write(ModelsDrawDistances[i]);
+                }
                 for (int i = 0; i < Meshes.Count; ++i)
                 {
                     writer.Write(Meshes[i]);

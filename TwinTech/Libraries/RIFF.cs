@@ -1,13 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Twinsanity.Libraries
 {
     public static class RIFF
     {
-        public static byte[] SaveRiff(byte[] pcm, short channels, int samplerate)
+        public static void SaveRiff(BinaryWriter writer, byte[] pcm, ref short channels, ref UInt32 samplerate)
         {
-            byte[] data = new byte[pcm.Length + 44];
-            BinaryWriter writer = new BinaryWriter(new MemoryStream(data));
             writer.Write("RIFF".ToCharArray());
             writer.Write(36 + pcm.Length);
             writer.Write("WAVE".ToCharArray());
@@ -16,14 +15,21 @@ namespace Twinsanity.Libraries
             writer.Write((ushort)1);
             writer.Write(channels);
             writer.Write(samplerate);
-            writer.Write(samplerate * channels * 2);
+            writer.Write((uint)(samplerate * channels * 2));
             writer.Write((short)(channels * 2));
             writer.Write((ushort)16);
             writer.Write("data".ToCharArray());
             writer.Write(pcm.Length);
             writer.Write(pcm);
-            writer.Close();
-            return data;
+        }
+        public static byte[] LoadRiff(BinaryReader reader,ref short channels, ref UInt32 samplerate)
+        {
+            reader.BaseStream.Position = 22;
+            channels = reader.ReadInt16();
+            samplerate = reader.ReadUInt32();
+            reader.BaseStream.Position += 16;
+            var len = reader.ReadInt32();
+            return reader.ReadBytes(len);
         }
     }
 }

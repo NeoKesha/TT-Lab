@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using TT_Lab.Project;
-using WK.Libraries.BetterFolderBrowserNS;
+using TT_Lab.ViewModels;
 
 namespace TT_Lab
 {
@@ -13,6 +13,7 @@ namespace TT_Lab
     {
         public ProjectCreationWizard()
         {
+            DataContext = new ProjectCreationViewModel(this);
             InitializeComponent();
         }
 
@@ -25,7 +26,7 @@ namespace TT_Lab
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Failed to create project: {ex.Message}", "Error creating project!", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.WriteLine($"Error creating project: {ex.Message}");
             }
         }
     }

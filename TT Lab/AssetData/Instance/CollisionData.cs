@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
@@ -17,6 +18,31 @@ namespace TT_Lab.AssetData.Instance
 
         public CollisionData(PS2AnyCollisionData collision) : this()
         {
+            twinRef = collision;
+        }
+
+        [JsonProperty(Required = Required.Always)]
+        public UInt32 UnkInt { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<Collision.CollisionTrigger> Triggers { get; set; } = new List<Collision.CollisionTrigger>();
+        [JsonProperty(Required = Required.Always)]
+        public List<Collision.GroupInformation> Groups { get; set; } = new List<Collision.GroupInformation>();
+        [JsonProperty(Required = Required.Always)]
+        public List<Collision.CollisionTriangle> Triangles { get; set; } = new List<Collision.CollisionTriangle>();
+        [JsonProperty(Required = Required.Always)]
+        public List<Vector4> Vectors { get; set; }
+
+        protected override void Dispose(Boolean disposing)
+        {
+            Triggers.Clear();
+            Groups.Clear();
+            Triangles.Clear();
+            Vectors.Clear();
+        }
+
+        public override void Import()
+        {
+            PS2AnyCollisionData collision = (PS2AnyCollisionData)twinRef;
             UnkInt = collision.UnkInt;
             foreach (var trigger in collision.Triggers)
             {
@@ -31,26 +57,7 @@ namespace TT_Lab.AssetData.Instance
                 Triangles.Add(new Collision.CollisionTriangle(triangle));
             }
             // Clone the vectors instead of reference copying
-            Vectors = collision.Vectors.Select(v => v).ToList();
-        }
-
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkInt;
-        [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTrigger> Triggers { get; } = new List<Collision.CollisionTrigger>();
-        [JsonProperty(Required = Required.Always)]
-        public List<Collision.GroupInformation> Groups { get; } = new List<Collision.GroupInformation>();
-        [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTriangle> Triangles { get; } = new List<Collision.CollisionTriangle>();
-        [JsonProperty(Required = Required.Always)]
-        public List<Vector4> Vectors { get; } = new List<Vector4>();
-
-        protected override void Dispose(Boolean disposing)
-        {
-            Triggers.Clear();
-            Groups.Clear();
-            Triangles.Clear();
-            Vectors.Clear();
+            Vectors = CloneUtils.CloneList(collision.Vectors);
         }
     }
 }

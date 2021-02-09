@@ -57,5 +57,32 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         {
             return $"Sound {id:X}";
         }
+
+        public ushort GetFreq()
+        {
+            switch (FreqFac)
+            {
+                case 0x2:
+                    return 8000;
+                case 0x3:
+                    return 10000;
+                case 0x4:
+                    return 11025;
+                case 0x5:
+                    return 16000;
+                case 0x6:
+                    return 18000;
+                case 0x7:
+                    return 22050;
+                case 0xA:
+                    return 32000;
+                case 0xE:
+                    return 44100;
+                case 0x10:
+                    return 48000;
+                default:
+                    throw new ArgumentException($"Unhandled sfx frequency. Value was: {FreqFac}", "freq");
+            }
+        }
     }
 }

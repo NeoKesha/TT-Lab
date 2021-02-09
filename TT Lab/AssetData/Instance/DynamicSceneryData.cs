@@ -16,7 +16,7 @@ namespace TT_Lab.AssetData.Instance
 
         public DynamicSceneryData(PS2AnyDynamicScenery dynamicScenery) : this()
         {
-            UnkInt = dynamicScenery.UnkInt;
+            twinRef = dynamicScenery;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -25,6 +25,12 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             return;
+        }
+
+        public override void Import()
+        {
+            PS2AnyDynamicScenery dynamicScenery = (PS2AnyDynamicScenery)twinRef;
+            UnkInt = dynamicScenery.UnkInt;
         }
     }
 }

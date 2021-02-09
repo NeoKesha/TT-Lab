@@ -11,41 +11,49 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
     public class CameraPath : CameraSubBase
     {
-        public List<Vector4> UnkVectors { get; private set; }
-        public Byte[] UnkData { get; private set; }
+        public List<Vector4> PathPoints { get; set; }
+        public List<UInt64> UnkData { get; set; }
         public CameraPath()
         {
-            UnkVectors = new List<Vector4>();
+            PathPoints = new List<Vector4>();
+            UnkData = new List<UInt64>();
         }
         public override int GetLength()
         {
-            return base.GetLength() + 4 + UnkVectors.Count * Constants.SIZE_VECTOR4 + 4 + UnkData.Length;
+            return base.GetLength() + 4 + PathPoints.Count * Constants.SIZE_VECTOR4 + 4 + UnkData.Count * 8;
         }
 
         public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, base.GetLength());
             int cnt1 = reader.ReadInt32();
-            UnkVectors.Clear();
+            PathPoints.Clear();
             for (int i = 0; i < cnt1; ++i)
             {
                 Vector4 vec = new Vector4();
                 vec.Read(reader, Constants.SIZE_VECTOR4);
-                UnkVectors.Add(vec);
+                PathPoints.Add(vec);
             }
             int cnt2 = reader.ReadInt32();
-            UnkData = reader.ReadBytes(cnt2 * 8);
+            UnkData.Clear();
+            for (var i = 0; i < cnt2; ++i)
+            {
+                UnkData.Add(reader.ReadUInt64());
+            }
         }
 
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(UnkVectors.Count);
-            foreach(ITwinSerializable e in UnkVectors) {
+            writer.Write(PathPoints.Count);
+            foreach(ITwinSerializable e in PathPoints) {
                 e.Write(writer);
             }
-            writer.Write(UnkData.Length / 8);
-            writer.Write(UnkData);
+            writer.Write(UnkData.Count);
+            foreach (var unk in UnkData)
+            {
+                writer.Write(unk);
+            }
         }
     }
 }

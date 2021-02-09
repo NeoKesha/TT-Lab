@@ -1,0 +1,18 @@
+﻿<local:BoundUserControl x:Name="LabeledTextBoxControl" x:Class="TT_Lab.Controls.LabeledTextBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TT_Lab.Controls"
+             mc:Ignorable="d" 
+             HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label x:Name="TextBoxLabel" Content="Label" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
+        <local:BaseTextBox x:Name="TextContainer" Text="{Binding DisplayText, Mode=TwoWay, ElementName=LabeledTextBoxControl, UpdateSourceTrigger=PropertyChanged}" Margin="0" Grid.Row="1" TextWrapping="NoWrap" VerticalAlignment="Top" UndoPerformed="BaseTextBox_UndoPerformed" RedoPerformed="BaseTextBox_RedoPerformed" TextChanged="TextContainer_TextChanged"/>
+
+    </Grid>
+</local:BoundUserControl>

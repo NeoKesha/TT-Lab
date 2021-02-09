@@ -327,7 +327,7 @@
                 <MenuItem x:Name="CreateProject" Header="Create Project..."/>
                 <MenuItem x:Name="OpenProject" Header="Open Project..." InputGestureText="Ctrl+O"/>
                 <MenuItem x:Name="OpenRecentSubMenu" Header="Open Recent" ItemsSource="{Binding RecentlyOpened}" IsEnabled="{Binding HasRecents}"/>
-                <MenuItem x:Name="SaveProject" Header="Save Project" InputGestureText="Ctrl+S" IsEnabled="{Binding ProjectOpened}"/>
+                <MenuItem x:Name="SaveProject" Header="Save all" InputGestureText="Ctrl+Shift+S" IsEnabled="{Binding ProjectOpened}"/>
                 <MenuItem x:Name="CloseProject" Header="Close Project" Click="CloseProject_Click" IsEnabled="{Binding ProjectOpened}"/>
             </MenuItem>
             <MenuItem x:Name="ToolsSubmenu" Header="Tools" HorizontalAlignment="Center" IsEnabled="False"/>
@@ -336,44 +336,25 @@
 
         <Grid x:Name="MainControlsGrid" Margin="0" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="70*"/>
-                <ColumnDefinition/>
                 <ColumnDefinition Width="200*"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="50*"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="MainLeftGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="25*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="50*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Rows" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Center" Height="5"/>
-                <ScrollViewer x:Name="ChunkInformationViewer" VerticalScrollBarVisibility="Auto">
-                    <TextBox TextWrapping="Wrap" IsReadOnly="True" AllowDrop="False"/>
-                </ScrollViewer>
-                <GroupBox Header="Instance properties" Grid.Row="2">
-                    <ScrollViewer x:Name="InstancePropertiesViewer" Margin="0"/>
-                </GroupBox>
-            </Grid>
-            <Grid x:Name="MainCenterGrid" Grid.Column="2">
+            <Grid x:Name="MainCenterGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100*"/>
                     <RowDefinition/>
                     <RowDefinition Height="25*"/>
                 </Grid.RowDefinitions>
                 <TabControl x:Name="CentralViewerTabs" Margin="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" UseLayoutRounding="False" Style="{DynamicResource MainCenterTabStyle}">
-                    <TabItem Header="Resource Viewer" HorizontalContentAlignment="Stretch" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
+                    <TabItem x:Name="ScenesViewerTab" Header="Scenes Viewer" HorizontalContentAlignment="Stretch" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
                         <Grid Background="#FFE5E5E5">
-                            <TabControl x:Name="MainViewerTabs"/>
+                            <TabControl x:Name="ScenesViewerTabs"/>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="AgentLab Editor" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
+                    <TabItem x:Name="ResourcesEditorTab" Header="Resources Editor" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
                         <Grid Background="#FFE5E5E5">
-                            <Label Content="Coming soon!" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="64"/>
+                            <TabControl x:Name="ResourcesEditorTabs"/>
                         </Grid>
                     </TabItem>
                 </TabControl>
@@ -388,29 +369,72 @@
                     </TabItem>
                 </TabControl>
             </Grid>
-            <GroupBox Header="Project tree" Grid.Column="4">
-                <TreeView 
+            <GroupBox Header="Project tree" Grid.Column="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="19*"/>
+                        <RowDefinition Height="132*"/>
+                        <RowDefinition Height="490*"/>
+                    </Grid.RowDefinitions>
+                    <TextBox 
+                        x:Name="SearchBar" 
+                        TextWrapping="NoWrap" 
+                        Text="{Binding SearchAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                        Margin="0,0,0,1.999" VerticalAlignment="Center" MaxLines="1" ToolTip="">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                        <VisualBrush.Visual>
+                                            <Label Content="Search" Foreground="LightGray" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <TreeView 
+                    Grid.Row="1"
                     x:Name="ProjectTree" 
-                    ItemsSource="{Binding ProjectTree}" 
+                    ItemsSource="{Binding ProjectTree, Mode=OneWay}" 
                     Margin="0" 
                     Style="{DynamicResource ProjectTreeStyle}" 
                     VirtualizingStackPanel.IsVirtualizing="True"
-                    VirtualizingStackPanel.VirtualizationMode="Recycling">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Alias}"/>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
+                    VirtualizingStackPanel.VirtualizationMode="Recycling" Grid.RowSpan="2">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                <Setter Property="Visibility" Value="{Binding IsVisible, Mode=TwoWay}"/>
+                                <Setter Property="ItemsControl.ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel IsItemsHost="True"/>
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <TextBlock x:Name="AssetBlock" Text="{Binding Alias}" MouseDown="AssetBlock_MouseDown" MouseMove="AssetBlock_MouseMove"/>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </Grid>
             </GroupBox>
             <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Columns" HorizontalAlignment="Stretch" Grid.Column="1"/>
-            <GridSplitter Margin="0" Background="#FFCBE082" ResizeDirection="Columns" HorizontalAlignment="Stretch" Grid.Column="3"/>
         </Grid>
 
     </Grid>

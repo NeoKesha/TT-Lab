@@ -15,6 +15,27 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public float Y { get; set; }
         public float Z { get; set; }
         public float W { get; set; }
+        public Vector4()
+        {
+            X = 0.0f;
+            Y = 0.0f;
+            Z = 0.0f;
+            W = 0.0f;
+        }
+        public Vector4(float X, float Y, float Z, float W)
+        {
+            this.X = X;
+            this.Y = Y;
+            this.Z = Z;
+            this.W = W;
+        }
+        public Vector4(Vector4 other)
+        {
+            X = other.X;
+            Y = other.Y;
+            Z = other.Z;
+            W = other.W;
+        }
         public int GetLength()
         {
             return Constants.SIZE_VECTOR4;

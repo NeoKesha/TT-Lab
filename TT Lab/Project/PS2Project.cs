@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Assets.Instance;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
@@ -29,11 +32,13 @@ namespace TT_Lab.Project
     /// </summary>
     public class PS2Project : IProject
     {
-        public Dictionary<string, Type> StringToAsset { get; }
+        private const string CURRENT_VERSION = "0.1.0";
+
+        private string _version = CURRENT_VERSION;
 
         public Dictionary<Guid, IAsset> Assets { get; private set; }
 
-        public List<Guid> AssetIds { get; private set; }
+        public Dictionary<Guid, UInt32> GuidToTwinId { get; set; }
 
         public Guid UUID { get; }
 
@@ -44,6 +49,8 @@ namespace TT_Lab.Project
         public string DiscContentPath { get; set; }
 
         public DateTime LastModified { get; set; }
+
+        public string Version { get => _version; private set => _version = value; }
 
         public string ProjectPath
         {
@@ -58,40 +65,6 @@ namespace TT_Lab.Project
             LastModified = DateTime.Now;
             UUID = Guid.NewGuid();
             Assets = new Dictionary<Guid, IAsset>();
-            StringToAsset = new Dictionary<string, Type>
-            {
-                { "ObjectInstance", typeof(ObjectInstance) },
-                { "AiPath", typeof(AiPath) },
-                { "AiPosition", typeof(AiPosition) },
-                { "Camera", typeof(Camera) },
-                { "CollisionSurface", typeof(CollisionSurface) },
-                { "InstanceTemplate", typeof(InstanceTemplate) },
-                { "Path", typeof(Path) },
-                { "Position", typeof(Position) },
-                { "Trigger", typeof(Trigger) },
-                { "Animation", typeof(Animation) },
-                { "CodeModel", typeof(CodeModel) },
-                { "GameObject", typeof(GameObject) },
-                { "HeaderScript", typeof(HeaderScript) },
-                { "MainScript", typeof(MainScript) },
-                { "OGI", typeof(OGI) },
-                { "SoundEffect", typeof(SoundEffect) },
-                { "BlendSkin", typeof(BlendSkin) },
-                { "LodModel", typeof(LodModel) },
-                { "Material", typeof(Material) },
-                { "Mesh", typeof(Mesh) },
-                { "Model", typeof(Model) },
-                { "RigidModel", typeof(RigidModel) },
-                { "Skin", typeof(Skin) },
-                { "Skydome", typeof(Skydome) },
-                { "Texture", typeof(Texture) },
-                { "CollisionData", typeof(Collision) },
-                { "ParticleData", typeof(Particles) },
-                { "Scenery", typeof(Scenery) },
-                { "DynamicScenery", typeof(DynamicScenery) },
-                { "ChunkLinks", typeof(ChunkLinks) },
-                { "Folder", typeof(Folder) },
-            };
         }
 
         public PS2Project(string name, string path, string discContentPath) : this()
@@ -111,7 +84,12 @@ namespace TT_Lab.Project
         public void Serialize()
         {
             var path = ProjectPath;
-            AssetIds = Assets.Keys.ToList();
+
+            GuidToTwinId = GuidManager.GuidToTwinId;
+
+            // Update last modified date
+            LastModified = DateTime.Now;
+
             System.IO.Directory.SetCurrentDirectory(path);
             using (System.IO.FileStream fs = new System.IO.FileStream(Name + ".tson", System.IO.FileMode.Create, System.IO.FileAccess.Write))
             using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(fs))
@@ -130,6 +108,7 @@ namespace TT_Lab.Project
                 tasks[index++] = Task.Factory.StartNew(() =>
                 {
                     Log.WriteLine($"Serializing {group.Key}...");
+                    var now = DateTime.Now;
                     try
                     {
                         foreach (var asset in group)
@@ -141,6 +120,8 @@ namespace TT_Lab.Project
                     {
                         Log.WriteLine($"Error serializing: {ex.Message}");
                     }
+                    var span = DateTime.Now - now;
+                    Log.WriteLine($"Finished serializing {group.Key} in {span}");
                 });
             }
             Task.WaitAll(tasks);
@@ -157,10 +138,14 @@ namespace TT_Lab.Project
                 var prText = new string(reader.ReadChars((Int32)fs.Length));
                 pr = JsonConvert.DeserializeObject<PS2Project>(prText);
             }
+            if (pr.Version != CURRENT_VERSION)
+            {
+                throw new ProjectException("The provided version of the project is not supported!");
+            }
             System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(projectPath));
             // Deserialize assets
             var assetFiles = System.IO.Directory.GetFiles("assets", "*.json", System.IO.SearchOption.AllDirectories);
-            pr.Assets = AssetFactory.GetAssets(pr.StringToAsset, assetFiles);
+            pr.Assets = AssetFactory.GetAssets(assetFiles);
             return pr;
         }
 
@@ -336,17 +321,17 @@ namespace TT_Lab.Project
                             }
                             ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_SOUND_EFFECTS_SECTION, sfxFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectSP, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_SPA_SECTION, spaFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectJP, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_JPN_SECTION, jpnFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectIT, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_ITA_SECTION, itaFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectGR, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_GER_SECTION, grFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectFR, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_FRE_SECTION, frFolder);
-                            ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
+                            ReadSectionItems<SoundEffectEN, PS2AnySoundsSection, PS2AnySound>
                                 (code, codeCheck, Constants.CODE_LANG_ENG_SECTION, enFolder);
                         }
 
@@ -358,13 +343,21 @@ namespace TT_Lab.Project
                         // Create chunk folder hierarchy
                         for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            var existFolder = prevFolder.GetData().Children.FirstOrDefault(c => GetAsset<Folder>(c)?.Name == otherFolders[i]);
+                            var existFolder = ((FolderData)prevFolder.GetData()).Children.FirstOrDefault(c => GetAsset(c)?.Name == otherFolders[i]);
                             if (existFolder != Guid.Empty)
                             {
-                                prevFolder = GetAsset<Folder>(existFolder);
+                                prevFolder = (Folder)GetAsset(existFolder);
                                 continue;
                             }
-                            var nextFolder = new Folder(otherFolders[i], prevFolder);
+                            Folder nextFolder;
+                            if (i != otherFolders.Length - 1)
+                            {
+                                nextFolder = new Folder(otherFolders[i], prevFolder);
+                            }
+                            else
+                            {
+                                nextFolder = new ChunkFolder(otherFolders[i], prevFolder);
+                            }
                             Assets.Add(nextFolder.UUID, nextFolder);
                             prevFolder = nextFolder;
                         }
@@ -372,7 +365,7 @@ namespace TT_Lab.Project
                         // RM2 per chunk instances
                         if (isRm2)
                         {
-                            if (chunkName != "default")
+                            if (!isDefault)
                             {
                                 // Extract collision data
                                 var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
@@ -384,11 +377,11 @@ namespace TT_Lab.Project
                             var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
                             var partData = new Particles(particleData.GetID(), particleData.GetName(), pathLow, particleData);
                             Assets.Add(partData.UUID, partData);
-                            chunkFolder.AddChild(partData);
+                            //chunkFolder.AddChild(partData);
                             // Instance layout
                             var instFolder = new Folder("Instances", chunkFolder);
-                            var aiPathFolder = new Folder("AI Paths", chunkFolder);
-                            var aiPosFolder = new Folder("AI Positions", chunkFolder);
+                            var aiPathFolder = new Folder("AI Navigation Paths", chunkFolder);
+                            var aiPosFolder = new Folder("AI Navigation Positions", chunkFolder);
                             var cameraFolder = new Folder("Cameras", chunkFolder);
                             var colSurfaceFolder = new Folder("Collision Surfaces", chunkFolder);
                             var instTempFolder = new Folder("Instance Templates", chunkFolder);
@@ -449,11 +442,11 @@ namespace TT_Lab.Project
             }
         }
 
-        public T GetAsset<T>(Guid id) where T : IAsset
+        public IAsset GetAsset(Guid id)
         {
             if (Assets.TryGetValue(id, out IAsset getAss))
             {
-                return (T)getAss;
+                return getAss;
             }
             return default;
         }

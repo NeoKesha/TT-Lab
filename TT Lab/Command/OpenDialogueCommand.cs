@@ -7,11 +7,22 @@ namespace TT_Lab.Command
     {
         public event EventHandler CanExecuteChanged;
 
+        public class DialogueResult
+        {
+            public object Result;
+        }
+
         private readonly Type window;
+        private readonly DialogueResult result;
 
         public OpenDialogueCommand(Type target)
         {
             window = target;
+        }
+
+        public OpenDialogueCommand(Type target, DialogueResult resultRef) : this(target)
+        {
+            result = resultRef;
         }
 
         public Boolean CanExecute(Object parameter)
@@ -21,7 +32,15 @@ namespace TT_Lab.Command
 
         public void Execute(Object parameter = null)
         {
-            var w = (Window)Activator.CreateInstance(window);
+            Window w;
+            if (result == null)
+            {
+                w = (Window)Activator.CreateInstance(window);
+            }
+            else
+            {
+                w = (Window)Activator.CreateInstance(window, result);
+            }
             w.ShowDialog();
         }
 

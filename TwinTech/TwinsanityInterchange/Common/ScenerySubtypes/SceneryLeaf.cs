@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 {
-    public class SceneryType_0x1605 : SceneryBaseType
+    public class SceneryLeaf : SceneryBaseType
     {
     }
 }

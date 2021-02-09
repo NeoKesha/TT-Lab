@@ -1,5 +1,7 @@
-﻿using System;
-using WK.Libraries.BetterFolderBrowserNS;
+﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
+using System.Windows;
 
 namespace TT_Lab.Command
 {
@@ -8,12 +10,19 @@ namespace TT_Lab.Command
         private readonly object target;
         private readonly string propName;
         private readonly string startPath;
+        private readonly Window owner;
 
         public SelectFolderCommand(object target, string textStoragePropName, string startPath = "")
         {
             this.target = target;
             this.startPath = startPath;
             propName = textStoragePropName;
+        }
+
+        public SelectFolderCommand(Window owner, object target, string textStoragePropName, string startPath = "")
+            : this(target, textStoragePropName, startPath)
+        {
+            this.owner = owner;
         }
 
         public event EventHandler CanExecuteChanged;
@@ -25,16 +34,16 @@ namespace TT_Lab.Command
 
         public void Execute(object parameter = null)
         {
-            using (BetterFolderBrowser bfb = new BetterFolderBrowser
+            using CommonOpenFileDialog ofd = new CommonOpenFileDialog
             {
-                RootFolder = startPath
-            })
+                IsFolderPicker = true,
+                InitialDirectory = startPath
+            };
+            var dialRes = owner == null ? ofd.ShowDialog() : ofd.ShowDialog(owner);
+            if (dialRes == CommonFileDialogResult.Ok)
             {
-                if (bfb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    var prop = target.GetType().GetProperty(propName);
-                    prop.SetValue(target, bfb.SelectedPath);
-                }
+                var prop = target.GetType().GetProperty(propName);
+                prop.SetValue(target, ofd.FileName);
             }
         }
 

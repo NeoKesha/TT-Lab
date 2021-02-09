@@ -1,18 +1,25 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.Assets.Instance
 {
-    public class Scenery : SerializableInstance<SceneryData>
+    public class Scenery : SerializableInstance
     {
+
         public Scenery()
         {
+            Parameters = new Dictionary<string, object?>();
         }
 
         public Scenery(UInt32 id, String name, String chunk, PS2AnyScenery scenery) : base(id, name, chunk, null)
@@ -20,7 +27,10 @@ namespace TT_Lab.Assets.Instance
             assetData = new SceneryData(scenery);
         }
 
-        public override String Type => "Scenery";
+        public override Type GetEditorType()
+        {
+            throw new NotImplementedException();
+        }
 
         public override Byte[] ToFormat()
         {
@@ -30,6 +40,26 @@ namespace TT_Lab.Assets.Instance
         public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();
+        }
+
+        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        {
+            if (viewModel == null)
+            {
+                viewModel = new SceneryViewModel(UUID, parent);
+            }
+            return viewModel;
+        }
+
+        public override AbstractAssetData GetData()
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = new SceneryData();
+                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                IsLoaded = true;
+            }
+            return assetData;
         }
     }
 }

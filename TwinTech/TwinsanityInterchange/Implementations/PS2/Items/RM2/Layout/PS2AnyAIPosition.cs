@@ -14,7 +14,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyAIPosition : BaseTwinItem, ITwinAIPosition
     {
-        public Vector4 Position { get; private set; }
+        public Vector4 Position { get; set; }
         public UInt16 UnkShort { get; set; }
 
         public PS2AnyAIPosition()
@@ -40,7 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override String GetName()
         {
-            return $"AI Position {id:X}";
+            return $"AI Navigation Position {id:X}";
         }
     }
 }

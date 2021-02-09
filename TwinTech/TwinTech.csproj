@@ -1,255 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{14348117-4503-49CD-94F9-1852069543E3}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net5.0-windows7.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
     <RootNamespace>Twinsanity</RootNamespace>
     <AssemblyName>TwinTech</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encodings.Web.5.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Json.5.0.0\lib\net461\System.Text.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Libraries\ADPCM.cs" />
-    <Compile Include="Libraries\BitConv.cs" />
-    <Compile Include="Libraries\EzSwizzle.cs" />
-    <Compile Include="Libraries\RIFF.cs" />
-    <Compile Include="Libraries\StringUtils.cs" />
-    <Compile Include="Meta.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PS2Hardware\DMATag.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\AgentLabDefs.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\PS2MainScript.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptPack.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptState.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptStateBody.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptType1.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\PS2HeaderScript.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCommand.cs" />
-    <Compile Include="TwinsanityInterchange\Common\AgentLab\ScriptCondition.cs" />
-    <Compile Include="TwinsanityInterchange\Common\BDRecord.cs" />
-    <Compile Include="TwinsanityInterchange\Common\BHRecord.cs" />
-    <Compile Include="TwinsanityInterchange\Common\BlendSkinType1.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraPath.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraLine.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraPoint.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\BossCamera.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSpline.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C09.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraPoint2.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSub1C0C.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraLine2.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraZone.cs" />
-    <Compile Include="TwinsanityInterchange\Common\CameraSubtypes\CameraSubBase.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Collision\CollisionTriangle.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Collision\CollisionTrigger.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Collision\GroupInformation.cs" />
-    <Compile Include="TwinsanityInterchange\Common\DynamicSceneryModel.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Lights\AmbientLight.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Lights\DirectionalLight.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Lights\Light.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Lights\NegativeLight.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Lights\PointLight.cs" />
-    <Compile Include="TwinsanityInterchange\Common\MBRecord.cs" />
-    <Compile Include="TwinsanityInterchange\Common\MHRecord.cs" />
-    <Compile Include="TwinsanityInterchange\Common\ParticleInstance.cs" />
-    <Compile Include="TwinsanityInterchange\Common\ParticleType.cs" />
-    <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryBaseType.cs" />
-    <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryRoot.cs" />
-    <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryType_0x1600.cs" />
-    <Compile Include="TwinsanityInterchange\Common\ScenerySubtypes\SceneryType_0x1605.cs" />
-    <Compile Include="TwinsanityInterchange\Common\TwinChunkLink.cs" />
-    <Compile Include="TwinsanityInterchange\Common\OGIType3.cs" />
-    <Compile Include="TwinsanityInterchange\Common\OGIType2.cs" />
-    <Compile Include="TwinsanityInterchange\Common\OGIType1.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Record.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Matrix4.cs" />
-    <Compile Include="TwinsanityInterchange\Common\SubBlendSkin.cs" />
-    <Compile Include="TwinsanityInterchange\Common\SubSkin.cs" />
-    <Compile Include="TwinsanityInterchange\Common\TwinBlob.cs" />
-    <Compile Include="TwinsanityInterchange\Common\TwinChunkLinkOGI3.cs" />
-    <Compile Include="TwinsanityInterchange\Common\TwinShader.cs" />
-    <Compile Include="TwinsanityInterchange\Common\TwinTrigger.cs" />
-    <Compile Include="TwinsanityInterchange\Common\TwinIntegerRotation.cs" />
-    <Compile Include="TwinsanityInterchange\Common\SubModel.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Vector2.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Vector3.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Color.cs" />
-    <Compile Include="TwinsanityInterchange\Common\Vector4.cs" />
-    <Compile Include="TwinsanityInterchange\Enumerations\Constants.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinItem.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\Base\BaseTwinSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2BD.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2MB.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2MH.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyAnimation.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyCodeModel.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyObject.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyOGI.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnyScript.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Code\PS2AnySound.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyBlendSkin.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyLOD.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyMaterial.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyMesh.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyModel.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyTexture.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnyRigidModel.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkin.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\Graphics\PS2AnySkydome.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyAIPath.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyPath.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyAIPosition.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyCollisionSurface.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyInstance.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2AnyCollisionData.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2AnyParticleData.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\PS2DefaultParticleData.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyDynamicScenery.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyLink.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyTemplate.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyPosition.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyCamera.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\RM2\Layout\PS2AnyTrigger.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Items\SM2\PS2AnyScenery.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanityRM2.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2AnyTwinsanitySM2.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Archives\PS2BH.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2Default.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2PSF.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2PSM.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\PS2PTC.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyCodeModelsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyOGIsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnySoundsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyAnimationsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyScriptsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Code\PS2AnyGameObjectSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyCamerasSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyTriggersSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyPathsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyAIPathsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyPositionsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyAIPositionsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyInstancesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnySurfacesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\Layout\PS2AnyTemplatesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\PS2AnyCodeSection .cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\RM2\PS2AnyLayoutSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\PS2AnyGraphicsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyMeshesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnySkydomesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyLODsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyBlendSkinsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnySkinsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyRigidModelsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyModelsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyMaterialsSection.cs" />
-    <Compile Include="TwinsanityInterchange\Implementations\PS2\Sections\Graphics\PS2AnyTexturesSection.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Code\ITwinCodeModel.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinSkydome.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinLOD.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinBlendSkin.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinSkin.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinRigidModel.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinModel.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinMesh.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinMaterial.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\Graphics\ITwinTexture.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Code\ITwinObject.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Code\ITwinScript.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Code\ITwinAnimation.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Code\ITwinOGI.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Code\ITwinSound.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\SM\ITwinDynamicScenery.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\SM\ITwinLink.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\SM\ITwinScenery.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\ITwinCollision.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\ITwinPatricle.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinAIPath.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinPosition.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinPath.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinSurface.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinInstance.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinTrigger.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinCamera.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinAIPosition.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\Items\RM\Layout\ITwinTemplate.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\ITwinItem.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\ITwinSection.cs" />
-    <Compile Include="TwinsanityInterchange\Interfaces\ITwinSerializable.cs" />
-    <Compile Include="PS2Hardware\GIFTag.cs" />
-    <Compile Include="PS2Hardware\VIFCode.cs" />
-    <Compile Include="PS2Hardware\VIFInterpreter.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
-    <None Include="AgentLabDefs.json">
+    <None Update="AgentLabDefs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Update="TextureDescriptionHelper.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

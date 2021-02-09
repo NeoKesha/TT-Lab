@@ -13,9 +13,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
     {
         public UInt32 ShaderType { get; set; }
         public UInt32 IntParam { get; set; }
-        public Single[] FloatParam { get; private set; }
+        public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending;
-        private byte AlphaRegSettingsIndex;
+        public byte AlphaRegSettingsIndex;
         public AlphaTest ATest;
         public AlphaTestMethod ATestMethod;
         public byte AlphaValueToBeComparedTo;
@@ -45,11 +45,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public bool UnkFlag3;
         public UInt16 LodParamK { get; set; }
         public UInt16 LodParamL { get; set; }
-        public Vector4 UnkVector1 { get; private set; }
-        public Vector4 UnkVector2 { get; private set; }
-        public Vector4 UnkVector3 { get; private set; }
+        public Vector4 UnkVector1 { get; set; }
+        public Vector4 UnkVector2 { get; set; }
+        public Vector4 UnkVector3 { get; set; }
         public UInt32 TextureId { get; set; }
-        public TwinBlob Blob { get; private set; }
+        public TwinBlob Blob { get; set; }
         public TwinShader()
         {
             FloatParam = new float[4];
