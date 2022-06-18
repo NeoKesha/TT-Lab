@@ -58,7 +58,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             return $"Sound {id:X}";
         }
 
-        public ushort GetFreq()
+        public virtual ushort GetFreq()
         {
             switch (FreqFac)
             {

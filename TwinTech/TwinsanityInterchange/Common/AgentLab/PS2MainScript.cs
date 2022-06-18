@@ -82,6 +82,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
+        public void ReadBase(BinaryReader reader, int length)
+        {
+            base.Read(reader, length);
+        }
+
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
@@ -118,7 +123,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Flush();
         }
 
-        public void ReadText(StreamReader reader)
+        public virtual void ReadText(StreamReader reader)
         {
             String line = "";
             ScriptStates.Clear();

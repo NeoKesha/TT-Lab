@@ -24,12 +24,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
 
         }
-        public int GetLength()
+        public virtual int GetLength()
         {
             return 12 + (VertexData != null ? VertexData.Length : 0) + (UnusedBlob != null ? UnusedBlob.Length : 0);
         }
 
-        public void Read(BinaryReader reader, int length)
+        public virtual void Read(BinaryReader reader, int length)
         {
             VertexesCount = reader.ReadUInt32();
             int vertexLen = reader.ReadInt32();
@@ -38,7 +38,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnusedBlob = reader.ReadBytes(blobLen);
         }
 
-        public void CalculateData()
+        public virtual void CalculateData()
         {
             var interpreter = VIFInterpreter.InterpretCode(VertexData);
             var data = interpreter.GetMem();
@@ -98,7 +98,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 TrimList(Normals, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
-        public void Write(BinaryWriter writer)
+        public virtual void Write(BinaryWriter writer)
         {
             //TODO: uncomment VertixesCount = (UInt32)Vertixes.Count();
             var unkVec1 = new Vector4();

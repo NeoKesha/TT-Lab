@@ -212,6 +212,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                     FillResourceList(reader, RefSounds);
                 }
             }
+            ReadScriptPack(reader, length);
+        }
+
+        public virtual void ReadScriptPack(BinaryReader reader, int length)
+        {
             ScriptPack = new ScriptPack();
             ScriptPack.Read(reader, length);
         }

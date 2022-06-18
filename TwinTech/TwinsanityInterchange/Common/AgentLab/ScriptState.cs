@@ -39,7 +39,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public void Read(BinaryReader reader, int length, IList<ScriptState> scriptStates)
+        public virtual void Read(BinaryReader reader, int length, IList<ScriptState> scriptStates)
         {
             Read(reader, length);
             var hasNext = (Bitfield & 0x8000) != 0;
@@ -93,7 +93,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.WriteLine();
         }
 
-        public void ReadText(StreamReader reader)
+        public virtual void ReadText(StreamReader reader)
         {
             String line = "";
             Type1 = null;

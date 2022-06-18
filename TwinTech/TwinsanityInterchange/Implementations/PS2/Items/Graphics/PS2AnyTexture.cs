@@ -146,7 +146,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             writer.Write(TextureData);
         }
 
-        public void CalculateData()
+        public virtual void CalculateData()
         {
             var interpreter = VIFInterpreter.InterpretCode(TextureData);
             var data = interpreter.GetGifMem();
@@ -192,7 +192,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format)
+        public virtual void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format)
         {
             int height = image.Count / width;
             TexFun = fun;
@@ -216,8 +216,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 MipLevels = 1;
             }
             //this is probably not bytes but whatever
-            UnkBytes2[5] = UnkBytes3[0] = (width == 256) ? 0 : (byte)Math.Min(width, height);
-            UnkBytes2[6] = UnkBytes3[1] = (width == 256) ? 2 : 0;
+            UnkBytes2[5] = UnkBytes3[0] = (width == 256) ? (byte)0 : (byte)Math.Min(width, height);
+            UnkBytes2[6] = UnkBytes3[1] = (width == 256) ? (byte)2 : (byte)0;
            
             GIFTag headerTag = new GIFTag();
             headerTag.REGS = new REGSEnum[16];

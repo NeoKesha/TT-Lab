@@ -8,49 +8,50 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
-    public class ScriptPack : ITwinSerializable
+    // Only overrides for XBOX command size mapper
+    public class XBOXScriptPack : ScriptPack
     {
-        public List<ScriptCommand> Commands;
+        public List<XBOXScriptCommand> XCommands;
 
-        public ScriptPack()
+        public XBOXScriptPack()
         {
-            Commands = new List<ScriptCommand>();
+            XCommands = new List<XBOXScriptCommand>();
         }
 
-        public virtual int GetLength()
+        public override int GetLength()
         {
-            return 4 + Commands.Sum(com => com.GetLength());
+            return 4 + XCommands.Sum(com => com.GetLength());
         }
 
-        public virtual void Read(BinaryReader reader, int length)
+        public override void Read(BinaryReader reader, int length)
         {
             var amt = reader.ReadInt32();
-            Commands.Clear();
+            XCommands.Clear();
             for (var i = 0; i < amt; ++i)
             {
-                var com = new ScriptCommand();
-                Commands.Add(com);
+                var com = new XBOXScriptCommand();
+                XCommands.Add(com);
                 com.Read(reader, length);
             }
         }
 
-        public virtual void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
-            writer.Write(Commands.Count);
-            foreach (var com in Commands)
+            writer.Write(XCommands.Count);
+            foreach (var com in XCommands)
             {
-                com.hasNext = !(Commands.Last().Equals(com));
+                com.hasNext = !(XCommands.Last().Equals(com));
                 com.Write(writer);
             }
         }
-        public virtual void WriteText(StreamWriter writer, Int32 tabs = 0)
+        public override void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            foreach (ScriptCommand cmd in Commands)
+            foreach (XBOXScriptCommand cmd in XCommands)
             {
                 cmd.WriteText(writer, tabs);
             }
         }
-        public virtual void ReadText(StreamReader reader)
+        public override void ReadText(StreamReader reader)
         {
             String line = "";
             while (!line.EndsWith("}"))
@@ -60,9 +61,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 {
                     continue;
                 }
-                ScriptCommand cmd = new ScriptCommand();
+                XBOXScriptCommand cmd = new XBOXScriptCommand();
                 cmd.ReadText(line);
-                Commands.Add(cmd);
+                XCommands.Add(cmd);
             }
         }
         public override String ToString()

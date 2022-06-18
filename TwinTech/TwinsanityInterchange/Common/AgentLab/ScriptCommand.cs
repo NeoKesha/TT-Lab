@@ -18,7 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         internal Boolean hasNext;
 
-        public UInt32 CommandSize
+        public virtual UInt32 CommandSize
         {
             get
             {
@@ -51,7 +51,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public void Read(BinaryReader reader, int length, IList<ScriptCommand> commands)
+        public virtual void Read(BinaryReader reader, int length, IList<ScriptCommand> commands)
         {
             Read(reader, length);
             var hasNext = (Bitfield & 0x1000000) != 0;

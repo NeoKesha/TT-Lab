@@ -252,8 +252,7 @@ namespace TT_Lab.Project
             }
             else
             {
-                // TODO: XBox type project
-                throw new Exception("XBox project type not supported!");
+                OpenedProject = new XBOXProject(name, path, discContentPath);
             }
             OpenedProject.CreateProjectStructure();
             // Unpack assets
@@ -307,6 +306,27 @@ namespace TT_Lab.Project
                         {
                             Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
                             OpenedProject = PS2Project.Deserialize(prFile);
+                            Log.WriteLine($"Building project tree...");
+                            BuildProjectTree();
+                            WorkableProject = true;
+                            NotifyChange("ProjectOpened");
+                            NotifyChange("ProjectTitle");
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.WriteLine($"Error opening project: {ex.Message}\n{ex.StackTrace}");
+                        }
+                    });
+                }
+                else
+                {
+                    var prFile = Directory.GetFiles(path, "*.xson")[0];
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
+                            OpenedProject = XBOXProject.Deserialize(prFile);
                             Log.WriteLine($"Building project tree...");
                             BuildProjectTree();
                             WorkableProject = true;

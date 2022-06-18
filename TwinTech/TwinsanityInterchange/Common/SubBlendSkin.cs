@@ -19,12 +19,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
             Type1s = new List<BlendSkinType1>();
         }
 
-        public int GetLength()
+        public virtual int GetLength()
         {
             return 8 + Type1s.Sum((type1) => type1.GetLength());
         }
 
-        public void Read(BinaryReader reader, int length)
+        public virtual void Read(BinaryReader reader, int length)
         {
             var type1s = reader.ReadInt32();
             Material = reader.ReadUInt32();
@@ -37,7 +37,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             }
         }
 
-        public void Write(BinaryWriter writer)
+        public virtual void Write(BinaryWriter writer)
         {
             writer.Write(Type1s.Count);
             writer.Write(Material);

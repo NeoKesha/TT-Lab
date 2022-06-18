@@ -80,7 +80,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
             StringUtils.WriteLineTabulated(writer, "}", tabs);
         }
-        public void ReadText(StreamReader reader)
+        public virtual void ReadText(StreamReader reader)
         {
             String line = "";
             ScriptPacks.Clear();

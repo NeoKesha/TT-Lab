@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.XBOX.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using static Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics.PS2AnyTexture;
 
@@ -69,6 +70,11 @@ namespace TT_Lab.AssetData.Graphics
                     tmpBmp.Dispose();
                     BitsHandle.Free();
                 }
+            }
+            if (twinRef is XBOXAnyTexture)
+            {
+                // Cannot continue due to losing inheritance
+                return;
             }
             twinRef = Export();
             {

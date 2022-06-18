@@ -30,7 +30,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 (Condition != null ? Condition.GetLength() : 0);
         }
 
-        public void Read(BinaryReader reader, int length)
+        public virtual void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
             var hasStateJump = (Bitfield & 0x400) != 0;
@@ -104,7 +104,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             StringUtils.WriteLineTabulated(writer, "}", tabs);
         }
 
-        public void ReadText(StreamReader reader)
+        public virtual void ReadText(StreamReader reader)
         {
             String line = "";
             Condition = null;

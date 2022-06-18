@@ -21,19 +21,19 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public List<Vector4> Colors { get; set; }
         public List<bool> Connection { get; set; }
 
-        public int GetLength()
+        public virtual int GetLength()
         {
             return 12 + VifCode.Length;
         }
 
-        public void Read(BinaryReader reader, int length)
+        public virtual void Read(BinaryReader reader, int length)
         {
             Material = reader.ReadUInt32();
             BlobSize = reader.ReadInt32();
             VertexAmount = reader.ReadInt32();
             VifCode = reader.ReadBytes(BlobSize);
         }
-        public void CalculateData()
+        public virtual void CalculateData()
         {
             var interpreter = VIFInterpreter.InterpretCode(VifCode);
             var data = interpreter.GetMem();
@@ -102,7 +102,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 TrimList(Colors, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
-        public void Write(BinaryWriter writer)
+        public virtual void Write(BinaryWriter writer)
         {
             writer.Write(Material);
             writer.Write(BlobSize);
