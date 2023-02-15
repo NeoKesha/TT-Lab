@@ -35,7 +35,7 @@ namespace TT_Lab.Editors.Graphics
                 PixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(PS2AnyTexture.TexturePixelFormat)).Cast<object>())
             };
             InitializeComponent();
-            TextureViewer.RendererInit += TextureViewer_RendererInit;
+            TextureViewer_RendererInit();
             TextureViewer.FileDrop += TextureViewer_FileDrop;
             var repBinding = new CommandBinding(ReplaceCommand, ReplaceExecuted);
             CommandBindings.Add(repBinding);
@@ -48,15 +48,14 @@ namespace TT_Lab.Editors.Graphics
             TextureViewer_FileDrop(this, new Controls.FileDropEventArgs { File = file });
         }
 
-        private void TextureViewer_RendererInit(Object sender, EventArgs e)
+        private void TextureViewer_RendererInit()
         {
             ResetViewer();
         }
 
         private void ResetViewer()
         {
-            TextureViewer.Glcontrol.MakeCurrent();
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
+            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.Glcontrol.ActualWidth, (float)TextureViewer.Glcontrol.ActualHeight,
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
@@ -88,7 +87,7 @@ namespace TT_Lab.Editors.Graphics
             return (x != 0) && ((x & (x - 1)) == 0);
         }
 
-        private void TextureViewer_FileDrop(Object sender, Controls.FileDropEventArgs e)
+        private void TextureViewer_FileDrop(Object? sender, Controls.FileDropEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.File))
             {

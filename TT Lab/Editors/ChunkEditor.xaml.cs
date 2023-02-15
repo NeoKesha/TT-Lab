@@ -51,10 +51,9 @@ namespace TT_Lab.Editors
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        SceneRenderer.Glcontrol.MakeCurrent();
                         try
                         {
-                            SceneRenderer.Scene = new Scene(chunkTree, (float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight);
+                            SceneRenderer.Scene = new Scene(chunkTree, (float)SceneRenderer.Glcontrol.ActualWidth, (float)SceneRenderer.Glcontrol.ActualHeight);
                         }
                         catch (ShaderCompilationException ex)
                         {

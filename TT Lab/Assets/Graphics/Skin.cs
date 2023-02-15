@@ -8,7 +8,7 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Skin : SerializableAsset
     {
-        protected override String DataExt => ".data";
+        protected override String DataExt => ".dae";
         public Skin(UInt32 id, String name, PS2AnySkin skin) : base(id, name)
         {
             assetData = new SkinData(skin);

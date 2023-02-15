@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 compatibility
 
 uniform vec3 LightPosition;
 uniform vec3 LightDirection;

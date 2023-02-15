@@ -53,7 +53,7 @@ namespace TT_Lab.Editors.Graphics
                 Command = new RelayCommand(matViewModel.DeleteShaderCommand, CommandManager)
             });
             InitPredicates();
-            MaterialViewer.RendererInit += MaterialViewer_RendererInit;
+            MaterialViewer_RendererInit();
             matViewModel.PropertyChanged += MatViewModel_PropertyChanged;
             matViewModel.PropChanged += MatViewModel_PropertyChanged;
         }
@@ -63,16 +63,15 @@ namespace TT_Lab.Editors.Graphics
             ResetViewer();
         }
 
-        private void MaterialViewer_RendererInit(Object? sender, EventArgs e)
+        private void MaterialViewer_RendererInit()
         {
             ResetViewer();
         }
 
         void ResetViewer()
         {
-            MaterialViewer.Glcontrol.MakeCurrent();
             MaterialViewer.Scene?.Delete();
-            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GLHost.ActualWidth, (float)MaterialViewer.GLHost.ActualWidth,
+            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.Glcontrol.ActualWidth, (float)MaterialViewer.Glcontrol.ActualWidth,
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TwinmaterialPass.frag" });
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();

@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 compatibility
 
 uniform float Alpha;
 uniform int TexturesAmount;

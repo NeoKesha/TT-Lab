@@ -30,7 +30,7 @@ namespace TT_Lab.AssetData.Graphics
             Faces.ForEach(f => f.Clear());
             Faces.Clear();
         }
-        /*public override void Save(string dataPath)
+        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             Scene scene = new Scene
             {
@@ -45,13 +45,12 @@ namespace TT_Lab.AssetData.Graphics
                 foreach (var ver in submodel)
                 {
                     var pos = new Vector4(ver.Position.X, ver.Position.Y, ver.Position.Z, 1.0f);
-                    var col = ver.Color;
+                    var adjustment = ver.Color;
                     var emCol = ver.EmitColor;
                     var uv = ver.UV;
-                    mesh.Vertices.Add(new Vector3D(pos.GetBinaryX() / 65535f / 65535f, pos.GetBinaryY() / 65535f / 65535f, pos.GetBinaryZ() / 65535f / 65535f));
-                    mesh.VertexColorChannels[0].Add(new Color4D(col.X, col.Y, col.Z, col.W));
-                    mesh.VertexColorChannels[1].Add(new Color4D(emCol.X, emCol.Y, emCol.Z, emCol.W));
-                    mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, uv.Z));
+                    mesh.Vertices.Add(new Vector3D(pos.X / adjustment.X, pos.Y / adjustment.Y, pos.Z / adjustment.Z));
+                    mesh.VertexColorChannels[0].Add(new Color4D(emCol.X, emCol.Y, emCol.Z, emCol.W));
+                    mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, 1.0f));
                 }
                 foreach (var face in faces)
                 {
@@ -71,7 +70,7 @@ namespace TT_Lab.AssetData.Graphics
             AssimpContext context = new AssimpContext();
             context.ExportFile(scene, dataPath, "collada");
         }
-        public override void Load(String dataPath)
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
             Vertexes.Clear();
             Faces.Clear();
@@ -98,7 +97,7 @@ namespace TT_Lab.AssetData.Graphics
                 Faces.Add(faces);
             }
             context.Dispose();
-        }*/
+        }
 
         public override void Import()
         {
@@ -130,7 +129,7 @@ namespace TT_Lab.AssetData.Graphics
                         }
                         ++refIndex;
                     }
-                    vertList.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j]));
+                    vertList.Add(new Vertex(e.Vertexes[j], e.VertexAdjustments[j], e.UVW[j], e.EmitColor[j]));
                 }
                 Vertexes.Add(vertList);
                 Faces.Add(faceList);

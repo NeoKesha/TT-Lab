@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0-windows7.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <RootNamespace>Twinsanity_Command_Interface</RootNamespace>
@@ -14,6 +14,11 @@
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TwinTech\TwinTech.csproj" />

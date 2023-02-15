@@ -143,9 +143,23 @@ namespace TT_Lab.Project
                 throw new ProjectException("The provided version of the project is not supported!");
             }
             System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(projectPath));
+
+            var taskList = new List<Task<Dictionary<Guid, IAsset>>>();
             // Deserialize assets
-            var assetFiles = System.IO.Directory.GetFiles("assets", "*.json", System.IO.SearchOption.AllDirectories);
-            pr.Assets = AssetFactory.GetAssets(assetFiles);
+            foreach (var dir in System.IO.Directory.GetDirectories("assets"))
+            {
+                var assetFiles = System.IO.Directory.GetFiles(dir, "*.json", System.IO.SearchOption.AllDirectories);
+                taskList.Add(AssetFactory.GetAssets(assetFiles));
+            }
+            Task.WaitAll(taskList.ToArray());
+            pr.Assets = new();
+            foreach (var assetsList in taskList)
+            {
+                foreach (var asset in assetsList.Result)
+                {
+                    pr.Assets.Add(asset.Key, asset.Value);
+                }
+            }
             return pr;
         }
 

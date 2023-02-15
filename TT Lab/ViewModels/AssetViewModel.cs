@@ -51,6 +51,10 @@ namespace TT_Lab.ViewModels
             {
                 // Build the tree
                 var myChildren = ((FolderData)(_asset as Folder)!.GetData()).Children;
+                var cList = (from child in myChildren
+                             orderby _asset.Order
+                             let c = ProjectManagerSingleton.PM.OpenedProject.GetAsset(child)
+                             select c).ToList();
                 _children = new ObservableCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order

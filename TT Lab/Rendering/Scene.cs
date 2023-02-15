@@ -1,12 +1,12 @@
 ﻿using GlmNet;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Renderers;
@@ -14,6 +14,7 @@ using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
+using System.Windows.Input;
 
 namespace TT_Lab.Rendering
 {
@@ -245,13 +246,13 @@ namespace TT_Lab.Rendering
             cameraZoom = (z + cameraZoom).Clamp(10.0f, 100.0f);
         }
 
-        public void Move(List<Keys> keysPressed)
+        public void Move(List<Key> keysPressed)
         {
             if (!canManipulateCamera) return;
 
             var camSp = cameraSpeed;
 
-            if (keysPressed.Contains(Keys.ShiftKey))
+            if (keysPressed.Contains(Key.LeftShift) || keysPressed.Contains(Key.RightShift))
             {
                 camSp *= 5;
             }
@@ -260,16 +261,16 @@ namespace TT_Lab.Rendering
             {
                 switch (keyPressed)
                 {
-                    case Keys.W:
+                    case Key.W:
                         cameraPosition += camSp * cameraDirection;
                         break;
-                    case Keys.S:
+                    case Key.S:
                         cameraPosition -= camSp * cameraDirection;
                         break;
-                    case Keys.A:
+                    case Key.A:
                         cameraPosition -= camSp * glm.cross(cameraDirection, cameraUp);
                         break;
-                    case Keys.D:
+                    case Key.D:
                         cameraPosition += camSp * glm.cross(cameraDirection, cameraUp);
                         break;
                 }
@@ -336,7 +337,7 @@ namespace TT_Lab.Rendering
                     break;
             }
             Renderer.Scene = this;
-            GL.BindFramebuffer(FramebufferTarget.FramebufferExt, 0);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
     }
 }

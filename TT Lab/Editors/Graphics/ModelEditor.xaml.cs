@@ -31,12 +31,12 @@ namespace TT_Lab.Editors.Graphics
         public ModelEditor(AssetViewModel model) : base(model)
         {
             InitializeComponent();
-            SceneRenderer.RendererInit += SceneRenderer_RendererInit;
+            SceneRenderer_RendererInit();
         }
 
-        private void SceneRenderer_RendererInit(Object? sender, EventArgs e)
+        private void SceneRenderer_RendererInit()
         {
-            SceneRenderer.Scene = new Scene((float)SceneRenderer.GLHost.ActualWidth, (float)SceneRenderer.GLHost.ActualHeight,
+            SceneRenderer.Scene = new Scene((float)SceneRenderer.Glcontrol.ActualWidth, (float)SceneRenderer.Glcontrol.ActualHeight,
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\Light.frag" });
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
             Model m = new Model((AssetData.Graphics.ModelData)GetAssetData());

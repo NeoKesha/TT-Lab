@@ -48,7 +48,7 @@ namespace TT_Lab.Editors.Graphics
             };
             InitValidators();
             TextureViewer.FileDrop += TextureViewer_FileDrop;
-            TextureViewer.RendererInit += TextureViewer_RendererInit;
+            TextureViewer_RendererInit();
             TextureViewer.ContextMenu.Items.Add(new MenuItem
             {
                 Header = "Clear",
@@ -68,7 +68,7 @@ namespace TT_Lab.Editors.Graphics
             }
         }
 
-        private void TextureViewer_RendererInit(Object? sender, EventArgs e)
+        private void TextureViewer_RendererInit()
         {
             ResetViewer();
         }
@@ -87,7 +87,6 @@ namespace TT_Lab.Editors.Graphics
 
         private void ResetViewer()
         {
-            TextureViewer.Glcontrol.MakeCurrent();
             var texId = ((LabShaderViewModel)viewModel).TexID;
             var hasMapping = ((LabShaderViewModel)viewModel).TxtMapping;
             Bitmap bitmap;
@@ -100,7 +99,7 @@ namespace TT_Lab.Editors.Graphics
                 var texData = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(texId).GetData();
                 bitmap = texData.Bitmap;
             }
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GLHost.ActualWidth, (float)TextureViewer.GLHost.ActualHeight,
+            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.Glcontrol.ActualWidth, (float)TextureViewer.Glcontrol.ActualHeight,
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();

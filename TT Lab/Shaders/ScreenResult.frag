@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 compatibility
 
 layout (location = 0) uniform sampler2DMS colorTexture;
 layout (location = 1) uniform sampler2DMS alphaTexture;
