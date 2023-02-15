@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30320.27
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwinTech", "TwinTech\TwinTech.csproj", "{14348117-4503-49CD-94F9-1852069543E3}"
 EndProject
@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TT Lab", "TT Lab\TT Lab.csp
 	ProjectSection(ProjectDependencies) = postProject
 		{14348117-4503-49CD-94F9-1852069543E3} = {14348117-4503-49CD-94F9-1852069543E3}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GLWpfControl", "..\..\Projects\C#\GLWpfControl\src\GLWpfControl\GLWpfControl.csproj", "{3C35A462-4869-4443-A4F5-D84C52C30690}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,14 @@ Global
 		{640EEAEC-CB84-4499-B5A9-E084CAB68D91}.Release|Any CPU.Build.0 = Release|Any CPU
 		{640EEAEC-CB84-4499-B5A9-E084CAB68D91}.Release|x64.ActiveCfg = Release|x64
 		{640EEAEC-CB84-4499-B5A9-E084CAB68D91}.Release|x64.Build.0 = Release|x64
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Debug|x64.Build.0 = Debug|Any CPU
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Release|x64.ActiveCfg = Release|Any CPU
+		{3C35A462-4869-4443-A4F5-D84C52C30690}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

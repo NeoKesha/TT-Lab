@@ -47,9 +47,6 @@ namespace TT_Lab.Rendering
 
         // Scene rendering
         private readonly List<IRenderable> objects = new List<IRenderable>();
-        private readonly TextureBuffer colorTextureNT = new TextureBuffer(TextureTarget.Texture2DMultisample);
-        private readonly FrameBuffer framebufferNT = new FrameBuffer();
-        private readonly RenderBuffer depthRenderbuffer = new RenderBuffer();
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new Queue<Action>();
@@ -74,9 +71,6 @@ namespace TT_Lab.Rendering
 
             this.libShader = libShader;
             ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
-            framebufferNT.Bind();
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
-            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
             SetupTransparencyRender();
         }
 
@@ -159,11 +153,9 @@ namespace TT_Lab.Rendering
             GL.CullFace(CullFaceMode.FrontAndBack);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            GL.Enable(EnableCap.Multisample);
             GL.DepthMask(true);
             GL.DepthFunc(DepthFunction.Lequal);
             // Opaque rendering color
-            framebufferNT.Bind();
             Bind();
             float[] clearColorNT = System.Drawing.Color.LightGray.ToArray();
             float clearDepth = 1f;
@@ -190,9 +182,6 @@ namespace TT_Lab.Rendering
 
         public void Delete()
         {
-            colorTextureNT.Delete();
-            framebufferNT.Delete();
-            depthRenderbuffer.Delete();
             Renderer.Delete();
             foreach (var @object in objects)
             {
@@ -303,10 +292,6 @@ namespace TT_Lab.Rendering
 
         private void ReallocateFramebuffer(int width, int height)
         {
-            colorTextureNT.Bind();
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, 4, PixelInternalFormat.Rgb10A2, width, height, true);
-            depthRenderbuffer.Bind();
-            GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, 4, RenderbufferStorage.DepthComponent, width, height);
             Renderer?.ReallocateFramebuffer(width, height);
         }
 
@@ -328,12 +313,8 @@ namespace TT_Lab.Rendering
             Renderer?.Delete();
             switch (method)
             {
-                case RenderSwitches.TranslucencyMethod.WBOIT:
-                    Renderer = new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y, libShader);
-                    break;
-                case RenderSwitches.TranslucencyMethod.DDP:
                 default:
-                    Renderer = new DDPRenderer(resolution.x, resolution.y, libShader);
+                    Renderer = new BasicRenderer(libShader);
                     break;
             }
             Renderer.Scene = this;

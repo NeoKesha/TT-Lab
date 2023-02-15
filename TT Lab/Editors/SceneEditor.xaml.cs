@@ -17,6 +17,7 @@ using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using System.Windows.Input;
 using OpenTK.Wpf;
+using System.Diagnostics;
 
 namespace TT_Lab.Editors
 {
@@ -53,17 +54,22 @@ namespace TT_Lab.Editors
 
             SizeChanged += SceneEditor_SizeChanged;
 
-            Glcontrol.DragEnter += Glcontrol_DragEnter;
-            Glcontrol.DragOver += Glcontrol_DragDrop;
-            Glcontrol.MouseMove += Glcontrol_MouseMove;
+            //Glcontrol.DragEnter += Glcontrol_DragEnter;
+            //Glcontrol.DragOver += Glcontrol_DragDrop;
+            //Glcontrol.MouseMove += Glcontrol_MouseMove;
             Glcontrol.KeyDown += Glcontrol_KeyDown;
             Glcontrol.KeyUp += Glcontrol_KeyUp;
-            Glcontrol.MouseWheel += Glcontrol_MouseWheel;
-            Glcontrol.MouseDown += Glcontrol_MouseClick;
+            //Glcontrol.MouseWheel += Glcontrol_MouseWheel;
+            //Glcontrol.MouseDown += Glcontrol_MouseClick;
 
             ContextMenu = new System.Windows.Controls.ContextMenu();
-
-            var settings = new GLWpfControlSettings();
+            var settings = new GLWpfControlSettings
+            {
+                MajorVersion = 4,
+                MinorVersion = 3,
+                GraphicsProfile = OpenTK.Windowing.Common.ContextProfile.Compatability,
+                GraphicsContextFlags = OpenTK.Windowing.Common.ContextFlags.Debug
+            };
             Glcontrol.Start(settings);
         }
 
@@ -142,6 +148,8 @@ namespace TT_Lab.Editors
             Scene?.Move(pressedKeys);
             Scene?.Render();
             Scene?.PostRender();
+
+            GL.Finish();
         }
 
         private void SceneEditor_SizeChanged(Object sender, SizeChangedEventArgs e)

@@ -44,11 +44,11 @@
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3-beta1" />
     <PackageReference Include="OpenTK" Version="4.7.5" />
-    <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.2" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Projects\C#\GLWpfControl\src\GLWpfControl\GLWpfControl.csproj" />
     <ProjectReference Include="..\TwinTech\TwinTech.csproj" />
   </ItemGroup>
 
@@ -117,6 +117,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\LightTexture.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\ModelRender.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\ModelTextured.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\MultitexturePass.frag">
