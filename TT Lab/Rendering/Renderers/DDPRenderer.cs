@@ -201,7 +201,7 @@ namespace TT_Lab.Rendering.Renderers
             }
 
             GL.Disable(EnableCap.Blend);
-            GL.BindFramebuffer(FramebufferTarget.FramebufferExt, 0);
+            GL.BindFramebuffer(FramebufferTarget.FramebufferExt, Scene.RenderFramebuffer);
             GL.DrawBuffer(DrawBufferMode.Back);
 
             ddpFinalShader.Bind();
@@ -210,6 +210,10 @@ namespace TT_Lab.Rendering.Renderers
             ddpFinalShader.SetTextureUniform("BackBlenderTex", TextureTarget.TextureRectangleArb, dualBackBlenderTex.Buffer, 2);
             GL.CallList(displayList.Buffer);
             ddpFinalShader.Unbind();
+        }
+
+        public void RenderOpaque(List<IRenderable> objects)
+        {
         }
     }
 }

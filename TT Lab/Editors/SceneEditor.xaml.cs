@@ -44,7 +44,23 @@ namespace TT_Lab.Editors
             DependencyProperty.Register("Header", typeof(object), typeof(SceneEditor),
                 new FrameworkPropertyMetadata("Scene viewer", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnHeaderChanged)));
 
-        public Scene Scene;
+        public Scene Scene
+        {
+            get => _scene;
+            set
+            {
+                if (_scene != value)
+                {
+                    _scene = value;
+                }
+                if (_scene != null)
+                {
+                    _scene.RenderFramebuffer = Glcontrol.Framebuffer;
+                }
+            }
+        }
+
+        private Scene _scene;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public SceneEditor()
@@ -54,13 +70,13 @@ namespace TT_Lab.Editors
 
             SizeChanged += SceneEditor_SizeChanged;
 
-            //Glcontrol.DragEnter += Glcontrol_DragEnter;
-            //Glcontrol.DragOver += Glcontrol_DragDrop;
-            //Glcontrol.MouseMove += Glcontrol_MouseMove;
+            Glcontrol.DragEnter += Glcontrol_DragEnter;
+            Glcontrol.DragOver += Glcontrol_DragDrop;
+            Glcontrol.MouseMove += Glcontrol_MouseMove;
             Glcontrol.KeyDown += Glcontrol_KeyDown;
             Glcontrol.KeyUp += Glcontrol_KeyUp;
-            //Glcontrol.MouseWheel += Glcontrol_MouseWheel;
-            //Glcontrol.MouseDown += Glcontrol_MouseClick;
+            Glcontrol.MouseWheel += Glcontrol_MouseWheel;
+            Glcontrol.MouseDown += Glcontrol_MouseClick;
 
             ContextMenu = new System.Windows.Controls.ContextMenu();
             var settings = new GLWpfControlSettings
@@ -141,11 +157,16 @@ namespace TT_Lab.Editors
 
         private void Glcontrol_Paint(TimeSpan delta)
         {
+            if (Scene != null)
+            {
+                Scene.RenderFramebuffer = Glcontrol.Framebuffer;
+            }
             GL.ClearColor(Color4.LightGray);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Scene?.PreRender();
             Scene?.Move(pressedKeys);
+            Scene?.HandleInputs(pressedKeys);
             Scene?.Render();
             Scene?.PostRender();
 

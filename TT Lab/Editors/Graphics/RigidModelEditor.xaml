@@ -8,30 +8,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="549*"/>
-            <ColumnDefinition Width="251*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="97*"/>
-            <RowDefinition Height="128*"/>
+            <RowDefinition Height="59*"/>
+            <RowDefinition Height="166*"/>
         </Grid.RowDefinitions>
-        <base:SceneEditor x:Name="SceneRenderer" Margin="0" Grid.Row="1" Grid.ColumnSpan="2" Header="Rigid model viewer"/>
-        <base:SceneEditor x:Name="MaterialViewer" Margin="0" Grid.Column="1" Header="Material viewer"/>
-        <Grid Margin="0">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="2*"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Button x:Name="PrevMatButton" Content="Previous material" Grid.Column="1" Margin="0" Click="NextMatButton_Click"/>
-            <Button x:Name="NextMatButton" Content="Next material" Grid.Column="1" Margin="0" Grid.Row="2" Click="NextMatButton_Click"/>
-            <TextBlock x:Name="MaterialName" Grid.Column="1" HorizontalAlignment="Center" Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="Material Name" VerticalAlignment="Center"/>
-        </Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="659*"/>
+            <ColumnDefinition Width="141*"/>
+        </Grid.ColumnDefinitions>
+        <base:SceneEditor x:Name="SceneRenderer" Header="Rigid model viewer" Margin="10,0,0,0" Grid.RowSpan="2"/>
+        <base:SceneEditor x:Name="MaterialViewer" Grid.Column="1" Header="Material viewer" Margin="0,0,0,11"/>
+        <Button x:Name="NextMatButton" Content="Next material" Click="NextMatButton_Click" Margin="23,107,23,0" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"/>
+        <TextBlock x:Name="MaterialName" TextWrapping="Wrap" Text="Material Name" Grid.Column="1" TextAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" Grid.Row="1"/>
+        <Button x:Name="PrevMatButton" Content="Previous material" Click="NextMatButton_Click" Margin="23,8,23,0" Grid.Column="1" VerticalAlignment="Top" Height="19" Grid.Row="1"/>
 
     </Grid>
 </base:BaseEditor>

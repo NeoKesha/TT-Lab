@@ -12,6 +12,7 @@ namespace TT_Lab.Rendering.Renderers
         Scene Scene { get; set; }
         ShaderProgram RenderProgram { get; }
         void Render(List<IRenderable> objects);
+        void RenderOpaque(List<IRenderable> objects);
         void ReallocateFramebuffer(int width, int height);
         void Delete();
     }

@@ -38,5 +38,9 @@ namespace TT_Lab.Rendering.Renderers
                 @object.Render();
             }
         }
+
+        public void RenderOpaque(List<IRenderable> objects)
+        {
+        }
     }
 }

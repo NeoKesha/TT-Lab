@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <GroupBox x:Name="SceneHeader" Header="Scene viewer" AllowDrop="True">
-            <glWpfControl:GLWpfControl x:Name="Glcontrol" RegisterToEventsDirectly="False" Initialized="Glcontrol_Init" Render="Glcontrol_Paint" Margin="0" AllowDrop="True"/>
+            <glWpfControl:GLWpfControl x:Name="Glcontrol" Initialized="Glcontrol_Init" Render="Glcontrol_Paint" Margin="0" AllowDrop="True"/>
         </GroupBox>
     </Grid>
 </UserControl>
