@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using TT_Lab.AssetData.Graphics.SubModels;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using TT_Lab.Util;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -15,14 +16,19 @@ namespace TT_Lab.AssetData.Graphics
     {
         public SkinData()
         {
+            Vertexes = new List<List<Vertex>>();
+            Faces = new List<List<IndexedFace>>();
         }
 
         public SkinData(PS2AnySkin skin) : this()
         {
             twinRef = skin;
         }
-        List<List<Vertex>> Vertexes { get; set; }
-        List<List<IndexedFace>> Faces { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<List<Vertex>> Vertexes { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<List<IndexedFace>> Faces { get; set; }
+        
         protected override void Dispose(Boolean disposing)
         {
             Vertexes.ForEach(v => v.Clear());
@@ -45,10 +51,9 @@ namespace TT_Lab.AssetData.Graphics
                 foreach (var ver in submodel)
                 {
                     var pos = new Vector4(ver.Position.X, ver.Position.Y, ver.Position.Z, 1.0f);
-                    var adjustment = ver.Color;
                     var emCol = ver.EmitColor;
                     var uv = ver.UV;
-                    mesh.Vertices.Add(new Vector3D(pos.X / adjustment.X, pos.Y / adjustment.Y, pos.Z / adjustment.Z));
+                    mesh.Vertices.Add(new Vector3D(pos.X, pos.Y, pos.Z));
                     mesh.VertexColorChannels[0].Add(new Color4D(emCol.X, emCol.Y, emCol.Z, emCol.W));
                     mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, 1.0f));
                 }
@@ -99,11 +104,17 @@ namespace TT_Lab.AssetData.Graphics
             context.Dispose();
         }
 
+        public PS2AnySkin GetRef()
+        {
+            return (PS2AnySkin)twinRef;
+        }
+
         public override void Import()
         {
             PS2AnySkin skin = (PS2AnySkin)twinRef;
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
+            
             var refIndex = 0;
             var offset = 0;
             foreach (var e in skin.SubSkins)
@@ -116,7 +127,7 @@ namespace TT_Lab.AssetData.Graphics
                 {
                     if (j < e.Vertexes.Count - 2)
                     {
-                        if (e.Connection[j + 2])
+                        if (e.SkinJoints[j + 2].Connection)
                         {
                             if ((/*offset +*/ j) % 2 == 0)
                             {
@@ -129,7 +140,7 @@ namespace TT_Lab.AssetData.Graphics
                         }
                         ++refIndex;
                     }
-                    vertList.Add(new Vertex(e.Vertexes[j], e.VertexAdjustments[j], e.UVW[j], e.EmitColor[j]));
+                    vertList.Add(new Vertex(e.Vertexes[j], e.EmitColor[j], e.UVW[j], e.EmitColor[j]));
                 }
                 Vertexes.Add(vertList);
                 Faces.Add(faceList);

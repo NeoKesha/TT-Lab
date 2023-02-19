@@ -59,6 +59,10 @@ namespace TT_Lab.Editors
                         {
                             Log.WriteLine($"Error creating scene: {ex.Message}\n{ex.CompilerOutput}");
                         }
+                        catch (Exception ex)
+                        {
+                            Log.WriteLine($"Error creating scene: {ex.Message}");
+                        }
                     });
                 });
             }

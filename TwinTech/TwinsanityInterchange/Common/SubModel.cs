@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.PS2Hardware;
@@ -17,6 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Byte[] UnusedBlob { get; set; }
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
+        public List<Color> Colors { get; set; }
         public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Normals { get; set; }
         public List<bool> Connection { get; set; }
@@ -38,6 +40,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnusedBlob = reader.ReadBytes(blobLen);
         }
 
+        [Flags]
+        private enum FieldsPresent
+        {
+            Vertex = 0,
+            UV_Color = 1,
+            Normals = 2,
+            EmitColors = 4
+        }
+
         public void CalculateData()
         {
             var interpreter = VIFInterpreter.InterpretCode(VertexData);
@@ -46,49 +57,84 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UVW = new List<Vector4>();
             EmitColor = new List<Vector4>();
             Normals = new List<Vector4>();
+            Colors = new List<Color>();
             Connection = new List<bool>();
-            for (var i = 0; i < data.Count; )
+            var index = 0;
+            for (var i = 0; i < data.Count;)
             {
                 var verts = (data[i][0].GetBinaryX() & 0xFF);
+                var fieldsPresent = FieldsPresent.Vertex;
+                var outputAddr = interpreter.GetAddressOutput();
                 var fields = 0;
-                while (data[i+2+fields].Count == verts)
+                foreach (var addr in outputAddr[index++])
                 {
-                    ++fields;
-                    if (i + fields + 2 >= data.Count)
+                    switch (addr)
                     {
-                        break;
+                        case 0x3:
+                            fieldsPresent |= FieldsPresent.Vertex;
+                            fields++;
+                            break;
+                        case 0x4:
+                            fieldsPresent |= FieldsPresent.UV_Color;
+                            fields++;
+                            break;
+                        case 0x5:
+                            fieldsPresent |= FieldsPresent.Normals;
+                            fields++;
+                            break;
+                        case 0x6:
+                            fieldsPresent |= FieldsPresent.EmitColors;
+                            fields++;
+                            break;
                     }
+                    if (i + fields + 2 >= data.Count)
+                        break;
+
                 }
-                Vertexes.AddRange(data[i + 2]);
-                if (fields > 1)
+                Vertexes.AddRange(data[i + 2].Where((v) => v != null));
+                if (fieldsPresent.HasFlag(FieldsPresent.UV_Color))
                 {
-                    var uv_con = data[i + 3];
+                    var uv_con = data[i + 3].Where((v) => v != null);
                     foreach (var e in uv_con)
                     {
                         var conn = (e.GetBinaryW() & 0xFF00) >> 8;
                         Connection.Add(conn == 128 ? false : true);
+                        var r = Math.Min(e.GetBinaryX() & 0xFF, 255);
+                        var g = Math.Min(e.GetBinaryY() & 0xFF, 255);
+                        var b = Math.Min(e.GetBinaryZ() & 0xFF, 255);
+                        var a = (e.GetBinaryW() & 0xFF) << 1;
+
+                        Color col = new Color((byte)r, (byte)g, (byte)b, (byte)a);
+                        Colors.Add(col);
+
                         Vector4 uv = new Vector4(e);
-                        uv.X *= uv.Z;
-                        uv.Y = 1 - uv.Y * uv.Z;
+                        uv.SetBinaryX(uv.GetBinaryX() & 0xFFFFFF00);
+                        uv.SetBinaryY(uv.GetBinaryY() & 0xFFFFFF00);
+                        uv.SetBinaryZ(uv.GetBinaryZ() & 0xFFFFFF00);
+                        uv.Y = 1 - uv.Y;
                         UVW.Add(uv);
                     }
                 }
-                if (fields > 2)
+                if (fieldsPresent.HasFlag(FieldsPresent.Normals))
                 {
                     foreach (var e in data[i + 4])
                     {
+                        if (e == null)
+                            break;
                         Normals.Add(new Vector4(e.X, e.Y, e.Z, 1.0f));
-                    }  
+                    }
                 }
-                if (fields > 3)
+                if (fieldsPresent.HasFlag(FieldsPresent.EmitColors))
                 {
-                    foreach (var e in data[i + 5])
+                    foreach (var e in data[i + fields + 1])
                     {
+                        if (e == null)
+                            break;
                         Vector4 emit = new Vector4(e);
-                        emit.X = (emit.X + 126.0f) / 256.0f;
-                        emit.Y = (emit.Y + 126.0f) / 256.0f;
-                        emit.Z = (emit.Z + 126.0f) / 256.0f;
-                        emit.W = (emit.W + 126.0f) / 256.0f;
+                        emit.X = (emit.GetBinaryX() & 0xFF);// / 256.0f;
+                        emit.Y = (emit.GetBinaryY() & 0xFF);// / 256.0f;
+                        emit.Z = (emit.GetBinaryZ() & 0xFF);// / 256.0f;
+                        emit.W = (emit.GetBinaryW() & 0xFF);// / 256.0f;
                         EmitColor.Add(emit);
                     }
                 }
@@ -113,6 +159,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             data.Add(UVW);
             data.Add(EmitColor);
             data.Add(Normals);
+            data.Add(Colors.ConvertAll(Vector4.FromColor));
             //TODO: Pack data to VIF
             writer.Write(VertexesCount);
             writer.Write(VertexData.Length);

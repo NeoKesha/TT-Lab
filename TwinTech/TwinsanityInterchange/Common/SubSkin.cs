@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using Twinsanity.PS2Hardware;
@@ -18,9 +19,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
         public List<Vector4> EmitColor { get; set; }
-        public List<Vector4> VertexAdjustments { get; set; }
-        public List<bool> Connection { get; set; }
-        public List<Vector4> DecompressedData { get; set; }
+        public List<VertexJointInfo> SkinJoints { get; set; }
 
         public int GetLength()
         {
@@ -39,7 +38,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             var interpreter = VIFInterpreter.InterpretCode(VifCode);
             var data = interpreter.GetMem();
 
-            DecompressedData = new();
+            /*DecompressedData = new();
 
             foreach (var d in data)
             {
@@ -49,7 +48,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                         break;
                     DecompressedData.Add(v);
                 }
-            }
+            }*/
 
             // Skin vector processing step 1
             /*var dataIndex = 3;
@@ -231,8 +230,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             Vertexes = new List<Vector4>();
             UVW = new List<Vector4>();
             EmitColor = new List<Vector4>();
-            VertexAdjustments = new List<Vector4>();
-            Connection = new List<bool>();
+            SkinJoints = new List<VertexJointInfo>();
 
             const int VERT_DATA_INDEX = 3;
             for (int i = 0; i < data.Count;)
@@ -240,13 +238,117 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 var verts = (data[i][0].GetBinaryX() & 0xFF);
                 var fields = (data[i + 1][0].GetBinaryX() & 0xFF) / verts;
                 var scaleVec = data[i + 2][0];
+
+                var vertex_batch_1 = data[i + VERT_DATA_INDEX];     // Position vectors
+                var vertex_batch_2 = data[i + VERT_DATA_INDEX + 1]; // UV vectors
+                var vertex_batch_3 = data[i + VERT_DATA_INDEX + 3]; // Weights and joint indices
+                var vertex_batch_4 = data[i + VERT_DATA_INDEX + 2]; // Color vectors
+
+                // Vertex conversion
+                for (int j = 0; j < verts; ++j)
+                {
+                    var v1 = new Vector4(vertex_batch_1[j]);
+                    var v2 = new Vector4(vertex_batch_2[j]);
+                    v1.X = (int)v1.GetBinaryX();
+                    v1.Y = (int)v1.GetBinaryY();
+                    v1.Z = (int)v1.GetBinaryZ();
+                    v1.W = (int)v1.GetBinaryW();
+                    v2.X = (int)v2.GetBinaryX();
+                    v2.Y = (int)v2.GetBinaryY();
+                    v2.Z = (int)v2.GetBinaryZ();
+                    v2.W = (int)v2.GetBinaryW();
+                    v1 = v1.Multiply(scaleVec.X);
+                    v2 = v2.Multiply(scaleVec.Y);
+                    vertex_batch_1[j] = v1;
+                    vertex_batch_2[j] = v2;
+                }
+                var jointInfos = new List<VertexJointInfo>();
+                for (int j = 0; j < verts; ++j)
+                {
+                    var v1 = vertex_batch_3[j];
+
+                    var connValue = v1.GetBinaryW() & 0xFF00;
+
+                    var weightAmount = v1.GetBinaryW() & 0xFF;
+                    var weight1 = 0f;
+                    var weight2 = 0f;
+                    var weight3 = 0f;
+                    var jointIndex1 = 0u;
+                    var jointIndex2 = 0u;
+                    var jointIndex3 = 0u;
+                    if (weightAmount > 0)
+                    {
+                        jointIndex1 = v1.GetBinaryX() & 0xFF;
+                        jointIndex1 /= 4;
+                        v1.SetBinaryX(v1.GetBinaryX() & 0xFFFFFF00);
+                        weight1 = v1.X;
+                    }
+                    if (weightAmount > 1)
+                    {
+                        jointIndex2 = v1.GetBinaryY() & 0xFF;
+                        jointIndex2 /= 4;
+                        v1.SetBinaryY(v1.GetBinaryY() & 0xFFFFFF00);
+                        weight2 = v1.Y;
+                    }
+                    if (weightAmount > 2)
+                    {
+                        jointIndex3 = v1.GetBinaryZ() & 0xFF;
+                        jointIndex3 /= 4;
+                        v1.SetBinaryZ(v1.GetBinaryZ() & 0xFFFFFF00);
+                        weight3 = v1.Z;
+                    }
+
+                    var joint = new VertexJointInfo()
+                    {
+                        Weight1 = weight1,
+                        Weight2 = weight2,
+                        Weight3 = weight3,
+                        JointIndex1 = (int)jointIndex1,
+                        JointIndex2 = (int)jointIndex2,
+                        JointIndex3 = (int)jointIndex3,
+                        Connection = (connValue >> 8) != 128
+                    };
+
+                    jointInfos.Add(joint);
+                }
+
+                for (int j = 0; j < verts; j++)
+                {
+                    Vertexes.Add(vertex_batch_1[j]);
+                    UVW.Add(vertex_batch_2[j]);
+                    EmitColor.Add(vertex_batch_4[j]);
+                    SkinJoints.Add(jointInfos[j]);
+                    /*var vertData = new VertexData
+                    {
+                        // Vert coords
+                        X = vertex_batch_1[j].X,
+                        Y = vertex_batch_1[j].Y,
+                        Z = vertex_batch_1[j].Z,
+                        // UVs
+                        U = vertex_batch_2[j].X,
+                        V = vertex_batch_2[j].Y,
+                        // Colors
+                        R = (byte)(Math.Min((int)(vertex_batch_4[j].GetBinaryX() & 0xFF) + 127, 255)),
+                        G = (byte)(Math.Min((int)(vertex_batch_4[j].GetBinaryY() & 0xFF) + 127, 255)),
+                        B = (byte)(Math.Min((int)(vertex_batch_4[j].GetBinaryZ() & 0xFF) + 127, 255)),
+                        A = (byte)(Math.Min((int)(vertex_batch_4[j].GetBinaryW() & 0xFF) + 127, 255)),
+                        Joint = jointInfos[j],
+                        Conn = connections[j]
+                    };
+                    vertexes.Add(vertData);*/
+                }
+
+                i += (int)fields + 3;
+                /*var verts = (data[i][0].GetBinaryX() & 0xFF);
+                var fields = (data[i + 1][0].GetBinaryX() & 0xFF) / verts;
+                var scaleVec = data[i + 2][0];
                 Console.WriteLine($"Verts in this subskin block {verts}");
                 Console.WriteLine($"Fields in this subskin block {fields}");
                 Console.WriteLine($"Scale vector for this subskin block ({scaleVec.X};{scaleVec.Y})");
-                var vertex_batch_1 = data[i + VERT_DATA_INDEX];
-                var vertex_batch_2 = data[i + VERT_DATA_INDEX + 1];
-                var vertex_batch_3 = data[i + VERT_DATA_INDEX + 3];
-                var vertex_batch_4 = data[i + VERT_DATA_INDEX + 2];
+                var vertex_batch_1 = data[i + VERT_DATA_INDEX];     // Vertexes
+                var vertex_batch_2 = data[i + VERT_DATA_INDEX + 1]; // UVs
+                var vertex_batch_3 = data[i + VERT_DATA_INDEX + 3]; // Weights and bone indices
+                var vertex_batch_4 = data[i + VERT_DATA_INDEX + 2]; // Colors
                 // Vertex conversion
                 for (int j = 0; j < verts; ++j)
                 {
@@ -278,58 +380,60 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 matrix[3].Z = 1.0f;
 
                 const Int32 mask = 0x3;
-                const Int32 mask2 = 0x1FF;
+                const Int32 mask2 = 0x1FF;*/
 
-                for (int j = 0; j < verts; ++j)
+                /*for (int j = 0; j < verts; ++j)
                 {
                     var v1 = vertex_batch_3[j];
 
-                    var unkValue = v1.GetBinaryW() & 0xFFFF;
-                    Connection.Add((unkValue >> 8) != 128);
-                    /*var unkValue2 = unkValue;
-                    unkValue &= mask;
-                    var unkMatrixAddress = v1.GetBinaryX() & 0xFFFF;
-                    unkMatrixAddress &= mask2;
-                    Console.WriteLine($"Unknown matrix address at the VU memory 0x{unkMatrixAddress:x}");
+                    var connVal = v1.GetBinaryW() & 0xFF00;
+                    Connection.Add((connVal >> 8) != 128);
+                    var weightCount = v1.GetBinaryW() & 0xFF;*/
 
-                    var acc = matrix[0].Multiply(v2.W);
-                    acc += matrix[1].Multiply(vectors[7].Z);
-                    vectors[9] = acc + matrix[2].Multiply(vectors[7].W);
-                    acc = matrix[3].Multiply(vectors[6].X);
-                    acc += matrix[0].Multiply(vectors[3].X);
-                    acc += matrix[1].Multiply(vectors[3].Y);
-                    var counter = 1;
-                    if (counter == unkValue)
-                    {
-                        acc += matrix[0].Multiply(vectors[8].X);
-                        acc += matrix[1].Multiply(vectors[8].Y);
-                        vectors[12] = acc + matrix[2].Multiply(vectors[8].Z);
+                /*var unkValue2 = unkValue;
+                unkValue &= mask;
+                var unkMatrixAddress = v1.GetBinaryX() & 0xFFFF;
+                unkMatrixAddress &= mask2;
+                Console.WriteLine($"Unknown matrix address at the VU memory 0x{unkMatrixAddress:x}");
 
-                        vectors[7].Z = 1.0f;
-                        vectors[13] = new Vector4(vectors[9]);
-                        vectors[13].SetBinaryW(unkValue2);
+                var acc = matrix[0].Multiply(v2.W);
+                acc += matrix[1].Multiply(vectors[7].Z);
+                vectors[9] = acc + matrix[2].Multiply(vectors[7].W);
+                acc = matrix[3].Multiply(vectors[6].X);
+                acc += matrix[0].Multiply(vectors[3].X);
+                acc += matrix[1].Multiply(vectors[3].Y);
+                var counter = 1;
+                if (counter == unkValue)
+                {
+                    acc += matrix[0].Multiply(vectors[8].X);
+                    acc += matrix[1].Multiply(vectors[8].Y);
+                    vectors[12] = acc + matrix[2].Multiply(vectors[8].Z);
 
-                        vertex_batch_1[j] = vectors[12];
-                        vertex_batch_2[j] = vectors[7];
-                        vertex_batch_3[j] = vectors[13];
-                        continue;
-                    }
-                    var matrix2 = matrix;
-                    vectors[10] = acc + matrix[2].Multiply(vectors[3].Z);
-                    vectors[11] = new Vector4(vectors[4]);
-                    acc = matrix2[3].Multiply(vectors[6].Y);
-                    acc += matrix2[0].Multiply(vectors[4].X);
-                    acc += vectors[9];
-                    acc += matrix2[1].Multiply(vectors[4].Y);
-                    vectors[12] = acc + matrix2[2].Multiply(vectors[4].Z);
                     vectors[7].Z = 1.0f;
                     vectors[13] = new Vector4(vectors[9]);
                     vectors[13].SetBinaryW(unkValue2);
 
                     vertex_batch_1[j] = vectors[12];
                     vertex_batch_2[j] = vectors[7];
-                    vertex_batch_3[j] = vectors[13];*/
+                    vertex_batch_3[j] = vectors[13];
+                    continue;
                 }
+                var matrix2 = matrix;
+                vectors[10] = acc + matrix[2].Multiply(vectors[3].Z);
+                vectors[11] = new Vector4(vectors[4]);
+                acc = matrix2[3].Multiply(vectors[6].Y);
+                acc += matrix2[0].Multiply(vectors[4].X);
+                acc += vectors[9];
+                acc += matrix2[1].Multiply(vectors[4].Y);
+                vectors[12] = acc + matrix2[2].Multiply(vectors[4].Z);
+                vectors[7].Z = 1.0f;
+                vectors[13] = new Vector4(vectors[9]);
+                vectors[13].SetBinaryW(unkValue2);
+
+                vertex_batch_1[j] = vectors[12];
+                vertex_batch_2[j] = vectors[7];
+                vertex_batch_3[j] = vectors[13];*/
+                //}
 
                 // Third conversion step
                 /*const float VALUE = 255.0f;
@@ -386,14 +490,14 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 }*/
 
                 // Save the batches into their respective vertex parts
-                for (int j = 0; j < verts; j++)
+                /*for (int j = 0; j < verts; j++)
                 {
                     Vertexes.Add(vertex_batch_1[j]);
                     UVW.Add(vertex_batch_2[j]);
                     EmitColor.Add(vertex_batch_4[j]);
                     VertexAdjustments.Add(vertex_batch_4[j]);
                 }
-                i += (int)fields + 3;
+                i += (int)fields + 3;*/
             }
             //Vertexes = new List<Vector4>();
             //UVW = new List<Vector4>();
@@ -493,95 +597,6 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(BlobSize);
             writer.Write(VertexAmount);
             writer.Write(VifCode);
-        }
-        private float FixedToFloat(int value)
-        {
-            var shortVal = (short)(value >> 16);
-            var c = Math.Abs(shortVal);
-            var sign = 1;
-            if (shortVal < 0)
-            {
-                c = (short)(shortVal - 1);
-                c = (short)~c;
-                sign = -1;
-            }
-            var f = (1.0f * c) / 16f;
-            f *= sign;
-            return f;
-        }
-        private void ReadAndConvert(int dataOffset, List<Vector4> memory, out List<Vector4> vectors)
-        {
-            var resVec = new List<Vector4>
-            {
-                new Vector4(memory[dataOffset]), new Vector4(memory[dataOffset + 1]),
-                new Vector4(memory[dataOffset + 4]), new Vector4(memory[dataOffset + 5]),
-                new Vector4(memory[dataOffset + 8]), new Vector4(memory[dataOffset + 9]),
-                new Vector4(memory[dataOffset + 0xC]), new Vector4(memory[dataOffset + 0xD]),
-            };
-            foreach (var v in resVec)
-            {
-                v.X = v.GetBinaryX();
-                v.Y = v.GetBinaryY();
-                v.Z = v.GetBinaryZ();
-                v.W = v.GetBinaryW();
-            }
-            vectors = resVec;
-        }
-        private void ScaleVectors(float scaleX, float scaleY, ref List<Vector4> vectors)
-        {
-            vectors[0].X *= scaleX;
-            vectors[0].Y *= scaleX;
-            vectors[0].Z *= scaleX;
-            vectors[0].W *= scaleX;
-            vectors[1].X *= scaleY;
-            vectors[1].Y *= scaleY;
-            vectors[1].Z *= scaleY;
-            vectors[1].W *= scaleY;
-            vectors[2].X *= scaleX;
-            vectors[2].Y *= scaleX;
-            vectors[2].Z *= scaleX;
-            vectors[2].W *= scaleX;
-            vectors[3].X *= scaleY;
-            vectors[3].Y *= scaleY;
-            vectors[3].Z *= scaleY;
-            vectors[3].W *= scaleY;
-            vectors[4].X *= scaleX;
-            vectors[4].Y *= scaleX;
-            vectors[4].Z *= scaleX;
-            vectors[4].W *= scaleX;
-            vectors[5].X *= scaleY;
-            vectors[5].Y *= scaleY;
-            vectors[5].Z *= scaleY;
-            vectors[5].W *= scaleY;
-            vectors[6].X *= scaleX;
-            vectors[6].Y *= scaleX;
-            vectors[6].Z *= scaleX;
-            vectors[6].W *= scaleX;
-            vectors[7].X *= scaleY;
-            vectors[7].Y *= scaleY;
-            vectors[7].Z *= scaleY;
-            vectors[7].W *= scaleY;
-        }
-        private void TrimList(List<Vector4> list, Int32 desiredLength, Vector4 defaultValue = null)
-        {
-            if (list != null)
-            {
-                if (list.Count > desiredLength)
-                {
-                    list.RemoveRange(desiredLength, list.Count - desiredLength);
-                }
-                while (list.Count < desiredLength)
-                {
-                    if (defaultValue != null)
-                    {
-                        list.Add(new Vector4(defaultValue));
-                    }
-                    else
-                    {
-                        list.Add(new Vector4());
-                    }
-                }
-            }
         }
     }
 }

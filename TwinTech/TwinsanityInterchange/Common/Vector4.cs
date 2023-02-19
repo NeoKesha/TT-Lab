@@ -118,5 +118,9 @@ namespace Twinsanity.TwinsanityInterchange.Common
             };
             return c;
         }
+        public static Vector4 FromColor(Color c)
+        {
+            return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
+        }
     }
 }

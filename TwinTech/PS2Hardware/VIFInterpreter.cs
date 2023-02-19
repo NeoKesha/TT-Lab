@@ -29,6 +29,7 @@ namespace Twinsanity.PS2Hardware
         private List<Vector4> PureVUMem  = new List<Vector4>(new Vector4[1024]);
         private List<GIFTag> GifBuffer = new List<GIFTag>();
         private List<UInt32> tmpStack = new List<UInt32>();
+        private List<List<UInt16>> AddressOuput = new List<List<UInt16>>();
 
         // Wrapper function for generating Interpreter instances
         public static VIFInterpreter InterpretCode(BinaryReader reader)
@@ -72,6 +73,11 @@ namespace Twinsanity.PS2Hardware
         public List<GIFTag> GetGifMem()
         {
             return GifBuffer;
+        }
+
+        public List<List<UInt16>> GetAddressOutput()
+        {
+            return AddressOuput;
         }
 
         public List<Vector4> GetPureMem()
@@ -124,6 +130,11 @@ namespace Twinsanity.PS2Hardware
                         packet_length = 1 + f;
                     }
                     Console.WriteLine($"VU memory address 0x{addr:x}");
+                    if (AddressOuput.Count == 0)
+                    {
+                        AddressOuput.Add(new List<ushort>());
+                    }
+                    AddressOuput[^1].Add(addr);
                     PackFormat fmt = (PackFormat)(vl | (vn << 2));
                     List<Vector4> vectors = new List<Vector4>(new Vector4[1024]);
                     tmpStack.Clear();
@@ -176,6 +187,7 @@ namespace Twinsanity.PS2Hardware
                             break;
                         case VIFCodeEnum.MSCAL:
                             //throw new NotImplementedException();
+                            AddressOuput.Add(new List<ushort>());
                             break;
                         case VIFCodeEnum.MSCNT:
                             //throw new NotImplementedException();
