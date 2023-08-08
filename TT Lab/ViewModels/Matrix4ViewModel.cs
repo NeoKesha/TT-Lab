@@ -23,10 +23,10 @@ namespace TT_Lab.ViewModels
         }
         public Matrix4ViewModel(Matrix4 m)
         {
-            V1 = new Vector4ViewModel(m.V1);
-            V2 = new Vector4ViewModel(m.V2);
-            V3 = new Vector4ViewModel(m.V3);
-            V4 = new Vector4ViewModel(m.V4);
+            V1 = new Vector4ViewModel(m.Column1);
+            V2 = new Vector4ViewModel(m.Column2);
+            V3 = new Vector4ViewModel(m.Column3);
+            V4 = new Vector4ViewModel(m.Column4);
         }
         public Vector4ViewModel this[int key]
         {
@@ -64,10 +64,10 @@ namespace TT_Lab.ViewModels
         public override void Save(Object? o = null)
         {
             var m = (Matrix4)o!;
-            V1.Save(m.V1);
-            V2.Save(m.V2);
-            V3.Save(m.V3);
-            V4.Save(m.V4);
+            V1.Save(m.Column1);
+            V2.Save(m.Column2);
+            V3.Save(m.Column3);
+            V4.Save(m.Column4);
         }
     }
 }

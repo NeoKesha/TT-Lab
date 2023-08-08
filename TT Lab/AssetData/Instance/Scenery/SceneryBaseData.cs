@@ -129,10 +129,10 @@ namespace TT_Lab.AssetData.Instance.Scenery
                 };
                 MeshModelMatrices.Add(new Matrix4
                 {
-                    V1 = V1,
-                    V2 = V2,
-                    V3 = V3,
-                    V4 = V4,
+                    Column1 = V1,
+                    Column2 = V2,
+                    Column3 = V3,
+                    Column4 = V4,
                 });
             }
             LodModelMatrices = new List<Matrix4>();
@@ -168,10 +168,10 @@ namespace TT_Lab.AssetData.Instance.Scenery
                 };
                 LodModelMatrices.Add(new Matrix4
                 {
-                    V1 = V1,
-                    V2 = V2,
-                    V3 = V3,
-                    V4 = V4,
+                    Column1 = V1,
+                    Column2 = V2,
+                    Column3 = V3,
+                    Column4 = V4,
                 });
             }
             UnkVec1 = new Vector4

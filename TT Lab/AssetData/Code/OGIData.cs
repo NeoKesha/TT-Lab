@@ -25,9 +25,9 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public Vector4[] BoundingBox { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<OGIType1> Type1List { get; set; }
+        public List<Joint> Type1List { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<OGIType2> Type2List { get; set; }
+        public List<ExitPoint> Type2List { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<Byte> RigidRelatedList { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -58,17 +58,17 @@ namespace TT_Lab.AssetData.Code
         {
             PS2AnyOGI ogi = (PS2AnyOGI)twinRef!;
             BoundingBox = CloneUtils.CloneArray(ogi.BoundingBox);
-            RigidRelatedList = CloneUtils.CloneList(ogi.RigidRelatedList);
+            RigidRelatedList = CloneUtils.CloneList(ogi.JointIndices);
             RigidModelIds = new List<Guid>();
             foreach (var model in ogi.RigidModelIds)
             {
                 RigidModelIds.Add(GuidManager.GetGuidByTwinId(model, typeof(RigidModel)));
             }
-            BuilderMatrixIndex = CloneUtils.CloneList(ogi.Type3RelatedList);
-            Type1List = CloneUtils.DeepClone(ogi.Type1List);
-            Type2List = CloneUtils.DeepClone(ogi.Type2List);
-            BoundingBoxBuilders = CloneUtils.DeepClone(ogi.Type3List);
-            Type1RelatedMatrix = CloneUtils.CloneListUnsafe(ogi.Type1RelatedMatrix);
+            BuilderMatrixIndex = CloneUtils.CloneList(ogi.CollisionJointIndices);
+            Type1List = CloneUtils.DeepClone(ogi.Joints);
+            Type2List = CloneUtils.DeepClone(ogi.ExitPoints);
+            BoundingBoxBuilders = CloneUtils.DeepClone(ogi.Collisions);
+            Type1RelatedMatrix = CloneUtils.CloneListUnsafe(ogi.SkinInverseBindMatrices);
         }
     }
 }

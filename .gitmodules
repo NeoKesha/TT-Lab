@@ -1,0 +1,3 @@
+[submodule "GLWpfControl"]
+	path = GLWpfControl
+	url = https://github.com/opentk/GLWpfControl

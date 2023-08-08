@@ -235,6 +235,7 @@ namespace TT_Lab.Rendering
             yaw_pitch.x += rot.X;
             yaw_pitch.y += rot.Y;
 
+            // Avoid gimbal lock
             if (yaw_pitch.y > 89f)
             {
                 yaw_pitch.y = 89f;

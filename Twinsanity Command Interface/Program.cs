@@ -182,7 +182,7 @@ namespace Twinsanity_Command_Interface
 
                                 //foreach (var list in e.Vertexes)
                                 {
-                                    fullSkinData.Add(e.DecompressedData);
+                                    //fullSkinData.Add(e.DecompressedData);
                                 }
                                 /*for (var j = 0; j < e.Vertexes.Count; ++j)
                                 {

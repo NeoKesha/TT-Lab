@@ -17,25 +17,26 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public enum HeaderInfo
         {
-            TYPE1_AMOUNT = 0,
-            TYPE2_AMOUNT = 1,
+            JOINT_AMOUNT = 0,
+            EXIT_POINT_AMOUNT = 1,
+            REACT_JOINT_AMOUNT = 2,
             RIGID_MODELS_AMOUNT = 5,
             HAS_SKIN = 6,
             HAS_BLEND_SKIN = 7,
-            TYPE3_AMOUNT = 8,
+            COLLISIONS_AMOUNT = 8,
         }
 
         Byte[] headerData;
-        public List<OGIType1> Type1List { get; set; }
-        public List<OGIType2> Type2List { get; set; }
+        public List<Joint> Joints { get; set; }
+        public List<ExitPoint> ExitPoints { get; set; }
         public Vector4[] BoundingBox { get; set; }
-        public List<Byte> RigidRelatedList { get; set; }
+        public List<Byte> JointIndices { get; set; }
         public List<UInt32> RigidModelIds { get; set; }
-        public List<Matrix4> Type1RelatedMatrix { get; set; }
+        public List<Matrix4> SkinInverseBindMatrices { get; set; }
         public UInt32 SkinID { get; set; }
         public UInt32 BlendSkinID { get; set; }
-        public List<BoundingBoxBuilder> Type3List { get; set; }
-        public List<Byte> Type3RelatedList { get; set; }
+        public List<BoundingBoxBuilder> Collisions { get; set; }
+        public List<Byte> CollisionJointIndices { get; set; }
 
         public PS2AnyOGI()
         {
@@ -43,109 +44,109 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             BoundingBox = new Vector4[2];
             BoundingBox[0] = new Vector4();
             BoundingBox[1] = new Vector4();
-            Type1List = new List<OGIType1>();
-            Type2List = new List<OGIType2>();
-            RigidRelatedList = new List<byte>();
+            Joints = new List<Joint>();
+            ExitPoints = new List<ExitPoint>();
+            JointIndices = new List<byte>();
             RigidModelIds = new List<uint>();
-            Type1RelatedMatrix = new List<Matrix4>();
-            Type3List = new List<BoundingBoxBuilder>();
-            Type3RelatedList = new List<byte>();
+            SkinInverseBindMatrices = new List<Matrix4>();
+            Collisions = new List<BoundingBoxBuilder>();
+            CollisionJointIndices = new List<byte>();
         }
 
         public override int GetLength()
         {
             int dynamic_size = 0;
-            foreach (ITwinSerializable e in Type3List)
+            foreach (ITwinSerializable e in Collisions)
             {
                 dynamic_size += e.GetLength();
             }
             return headerData.Length + Constants.SIZE_VECTOR4 * 2
-                + Constants.SIZE_OGI_TYPE1 * Type1List.Count
-                + Constants.SIZE_OGI_TYPE2 * Type2List.Count
-                + RigidRelatedList.Count
+                + Constants.SIZE_JOINT * Joints.Count
+                + Constants.SIZE_EXIT_POINT * ExitPoints.Count
+                + JointIndices.Count
                 + Constants.SIZE_UINT32 * RigidModelIds.Count
-                + Constants.SIZE_MATRIX4 * Type1RelatedMatrix.Count
-                + 8 + dynamic_size + Type3RelatedList.Count;
+                + Constants.SIZE_MATRIX4 * SkinInverseBindMatrices.Count
+                + 8 + dynamic_size + CollisionJointIndices.Count;
         }
 
         public override void Read(BinaryReader reader, int length)
         {
             reader.Read(headerData, 0, headerData.Length);
-            Byte t1cnt = headerData[(int)HeaderInfo.TYPE1_AMOUNT];
-            Byte t2cnt = headerData[(int)HeaderInfo.TYPE2_AMOUNT];
+            Byte jcnt = headerData[(int)HeaderInfo.JOINT_AMOUNT];
+            Byte epcnt = headerData[(int)HeaderInfo.EXIT_POINT_AMOUNT];
             Byte rigidcnt = headerData[(int)HeaderInfo.RIGID_MODELS_AMOUNT];
             Byte skinFlag = headerData[(int)HeaderInfo.HAS_SKIN];
             Byte blendFlag = headerData[(int)HeaderInfo.HAS_BLEND_SKIN];
-            Byte t3cnt = headerData[(int)HeaderInfo.TYPE3_AMOUNT];
+            Byte t3cnt = headerData[(int)HeaderInfo.COLLISIONS_AMOUNT];
             BoundingBox[0].Read(reader, Constants.SIZE_VECTOR4);
             BoundingBox[1].Read(reader, Constants.SIZE_VECTOR4);
-            Type1List.Clear();
-            for (int i = 0; i < t1cnt; ++i)
+            Joints.Clear();
+            for (int i = 0; i < jcnt; ++i)
             {
-                OGIType1 type1 = new OGIType1();
-                type1.Read(reader, type1.GetLength());
-                Type1List.Add(type1);
+                Joint joint = new Joint();
+                joint.Read(reader, joint.GetLength());
+                Joints.Add(joint);
             }
-            Type2List.Clear();
-            for (int i = 0; i < t2cnt; ++i)
+            ExitPoints.Clear();
+            for (int i = 0; i < epcnt; ++i)
             {
-                OGIType2 type2 = new OGIType2();
-                type2.Read(reader, type2.GetLength());
-                Type2List.Add(type2);
+                ExitPoint exitPoint = new ExitPoint();
+                exitPoint.Read(reader, exitPoint.GetLength());
+                ExitPoints.Add(exitPoint);
             }
-            RigidRelatedList.Clear();
+            JointIndices.Clear();
             for (int i = 0; i < rigidcnt; ++i)
             {
-                RigidRelatedList.Add(reader.ReadByte());
+                JointIndices.Add(reader.ReadByte());
             }
             RigidModelIds.Clear();
             for (int i = 0; i < rigidcnt; ++i)
             {
                 RigidModelIds.Add(reader.ReadUInt32());
             }
-            Type1RelatedMatrix.Clear();
-            for (int i = 0; i < t1cnt; ++i)
+            SkinInverseBindMatrices.Clear();
+            for (int i = 0; i < jcnt; ++i)
             {
                 Matrix4 m = new Matrix4();
                 m.Read(reader, m.GetLength());
-                Type1RelatedMatrix.Add(m);
+                SkinInverseBindMatrices.Add(m);
             }
             SkinID = reader.ReadUInt32();
             BlendSkinID = reader.ReadUInt32();
-            Type3List.Clear();
+            Collisions.Clear();
             for (int i = 0; i < t3cnt; ++i)
             {
                 BoundingBoxBuilder type3 = new BoundingBoxBuilder();
                 type3.Read(reader, type3.GetLength());
-                Type3List.Add(type3);
+                Collisions.Add(type3);
             }
-            Type3RelatedList.Clear();
+            CollisionJointIndices.Clear();
             for (int i = 0; i < t3cnt; ++i)
             {
-                Type3RelatedList.Add(reader.ReadByte());
+                CollisionJointIndices.Add(reader.ReadByte());
             }
         }
 
         public override void Write(BinaryWriter writer)
         {
-            headerData[(int)HeaderInfo.TYPE1_AMOUNT] = (Byte)Type1List.Count;
-            headerData[(int)HeaderInfo.TYPE2_AMOUNT] = (Byte)Type2List.Count;
+            headerData[(int)HeaderInfo.JOINT_AMOUNT] = (Byte)Joints.Count;
+            headerData[(int)HeaderInfo.EXIT_POINT_AMOUNT] = (Byte)ExitPoints.Count;
             headerData[(int)HeaderInfo.RIGID_MODELS_AMOUNT] = (Byte)RigidModelIds.Count;
             headerData[(int)HeaderInfo.HAS_SKIN] = (Byte)((SkinID == 0) ? 0 : 1);
             headerData[(int)HeaderInfo.HAS_BLEND_SKIN] = (Byte)((BlendSkinID == 0) ? 0 : 1);
-            headerData[(int)HeaderInfo.TYPE3_AMOUNT] = (Byte)Type3List.Count;
+            headerData[(int)HeaderInfo.COLLISIONS_AMOUNT] = (Byte)Collisions.Count;
             writer.Write(headerData);
             BoundingBox[0].Write(writer);
             BoundingBox[1].Write(writer);
-            foreach(ITwinSerializable item in Type1List)
+            foreach(ITwinSerializable item in Joints)
             {
                 item.Write(writer);
             }
-            foreach (ITwinSerializable item in Type2List)
+            foreach (ITwinSerializable item in ExitPoints)
             {
                 item.Write(writer);
             }
-            foreach (Byte item in RigidRelatedList)
+            foreach (Byte item in JointIndices)
             {
                 writer.Write(item);
             }
@@ -153,17 +154,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             {
                 writer.Write(item);
             }
-            foreach (ITwinSerializable item in Type1RelatedMatrix)
+            foreach (ITwinSerializable item in SkinInverseBindMatrices)
             {
                 item.Write(writer);
             }
             writer.Write(SkinID);
             writer.Write(BlendSkinID);
-            foreach (ITwinSerializable item in Type3List)
+            foreach (ITwinSerializable item in Collisions)
             {
                 item.Write(writer);
             }
-            foreach (Byte item in Type3RelatedList)
+            foreach (Byte item in CollisionJointIndices)
             {
                 writer.Write(item);
             }

@@ -18,6 +18,5 @@
             <RowDefinition Height="19*"/>
             <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
-        <Label x:Name="BitfieldLabel" Content="Bitfield" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
     </Grid>
 </base:BaseEditor>
