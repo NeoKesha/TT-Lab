@@ -71,7 +71,7 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public const Int32 SIZE_MATRIX4 = 64;
         public const Int32 SIZE_UINT16 = 2;
         public const Int32 SIZE_UINT32 = 4;
-        public const Int32 SIZE_OGI_TYPE1 = 100;
-        public const Int32 SIZE_OGI_TYPE2 = 72;
+        public const Int32 SIZE_JOINT = 100;
+        public const Int32 SIZE_EXIT_POINT = 72;
     }
 }

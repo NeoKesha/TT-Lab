@@ -1,12 +1,12 @@
 ﻿using GlmNet;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Renderers;
@@ -14,6 +14,7 @@ using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
+using System.Windows.Input;
 
 namespace TT_Lab.Rendering
 {
@@ -29,6 +30,8 @@ namespace TT_Lab.Rendering
         public IRenderer Renderer { get; private set; }
         public vec3 CameraPosition { get => cameraPosition; }
         public vec3 CameraDirection { get => cameraDirection; }
+        public int RenderFramebuffer { get; set; }
+        public TextureBuffer ColorTextureNT { get => colorTextureNT; }
 
         // Rendering matrices and settings
         private mat4 projectionMat;
@@ -45,14 +48,15 @@ namespace TT_Lab.Rendering
         private ShaderProgram.LibShader libShader;
 
         // Scene rendering
-        private readonly List<IRenderable> objects = new List<IRenderable>();
+        private readonly List<IRenderable> objectsTransparent = new List<IRenderable>();
+        private readonly List<IRenderable> objectsOpaque = new List<IRenderable>();
         private readonly TextureBuffer colorTextureNT = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebufferNT = new FrameBuffer();
         private readonly RenderBuffer depthRenderbuffer = new RenderBuffer();
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new Queue<Action>();
-        
+
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -95,7 +99,7 @@ namespace TT_Lab.Rendering
             })!.Asset.GetData();
             var colRender = new Objects.Collision(colData);
             colRender.Parent = this;
-            objects.Add(colRender);
+            objectsOpaque.Add(colRender);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
@@ -103,7 +107,7 @@ namespace TT_Lab.Rendering
             {
                 var pRend = new Objects.Position((PositionViewModel)pos);
                 pRend.Parent = this;
-                objects.Add(pRend);
+                objectsOpaque.Add(pRend);
             }
 
             // Triggers renderer
@@ -112,13 +116,20 @@ namespace TT_Lab.Rendering
             {
                 var trRend = new Objects.Trigger((TriggerViewModel)trg);
                 trRend.Parent = this;
-                objects.Add(trRend);
+                objectsTransparent.Add(trRend);
             }
         }
 
-        public void AddRender(IRenderable renderObj)
+        public void AddRender(IRenderable renderObj, bool transparent = true)
         {
-            objects.Add(renderObj);
+            if (transparent)
+            {
+                objectsTransparent.Add(renderObj);
+            }
+            else
+            {
+                objectsOpaque.Add(renderObj);
+            }
             renderObj.Parent = this;
         }
 
@@ -157,20 +168,19 @@ namespace TT_Lab.Rendering
             Bind();
             GL.CullFace(CullFaceMode.FrontAndBack);
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.Blend);
+            //GL.Enable(EnableCap.Blend);
             GL.Enable(EnableCap.Multisample);
             GL.DepthMask(true);
             GL.DepthFunc(DepthFunction.Lequal);
-            // Opaque rendering color
             framebufferNT.Bind();
             Bind();
             float[] clearColorNT = System.Drawing.Color.LightGray.ToArray();
             float clearDepth = 1f;
             GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
             GL.ClearBuffer(ClearBuffer.Depth, 0, ref clearDepth);
-            // Transparency rendering
-            Renderer.Render(objects);
-
+            // Render all objects
+            Renderer.RenderOpaque(objectsOpaque);
+            Renderer.Render(objectsTransparent);
             // Reset modes
             GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.Blend);
@@ -193,11 +203,16 @@ namespace TT_Lab.Rendering
             framebufferNT.Delete();
             depthRenderbuffer.Delete();
             Renderer.Delete();
-            foreach (var @object in objects)
+            foreach (var @object in objectsOpaque)
             {
                 @object.Delete();
             }
-            objects.Clear();
+            foreach (var @object in objectsTransparent)
+            {
+                @object.Delete();
+            }
+            objectsTransparent.Clear();
+            objectsOpaque.Clear();
             Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
         }
 
@@ -220,6 +235,7 @@ namespace TT_Lab.Rendering
             yaw_pitch.x += rot.X;
             yaw_pitch.y += rot.Y;
 
+            // Avoid gimbal lock
             if (yaw_pitch.y > 89f)
             {
                 yaw_pitch.y = 89f;
@@ -245,13 +261,18 @@ namespace TT_Lab.Rendering
             cameraZoom = (z + cameraZoom).Clamp(10.0f, 100.0f);
         }
 
-        public void Move(List<Keys> keysPressed)
+        public void HandleInputs(List<Key> keysPressed)
+        {
+            
+        }
+
+        public void Move(List<Key> keysPressed)
         {
             if (!canManipulateCamera) return;
 
             var camSp = cameraSpeed;
 
-            if (keysPressed.Contains(Keys.ShiftKey))
+            if (keysPressed.Contains(Key.LeftShift) || keysPressed.Contains(Key.RightShift))
             {
                 camSp *= 5;
             }
@@ -260,16 +281,16 @@ namespace TT_Lab.Rendering
             {
                 switch (keyPressed)
                 {
-                    case Keys.W:
+                    case Key.W:
                         cameraPosition += camSp * cameraDirection;
                         break;
-                    case Keys.S:
+                    case Key.S:
                         cameraPosition -= camSp * cameraDirection;
                         break;
-                    case Keys.A:
+                    case Key.A:
                         cameraPosition -= camSp * glm.cross(cameraDirection, cameraUp);
                         break;
-                    case Keys.D:
+                    case Key.D:
                         cameraPosition += camSp * glm.cross(cameraDirection, cameraUp);
                         break;
                 }
@@ -278,7 +299,7 @@ namespace TT_Lab.Rendering
 
         public void PreRender()
         {
-            foreach (var @object in objects)
+            foreach (var @object in objectsTransparent)
             {
                 @object.PreRender();
             }
@@ -286,7 +307,7 @@ namespace TT_Lab.Rendering
 
         public void PostRender()
         {
-            foreach (var @object in objects)
+            foreach (var @object in objectsTransparent)
             {
                 @object.PostRender();
             }
@@ -303,7 +324,7 @@ namespace TT_Lab.Rendering
         private void ReallocateFramebuffer(int width, int height)
         {
             colorTextureNT.Bind();
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, 4, PixelInternalFormat.Rgb10A2, width, height, true);
+            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, 4, PixelInternalFormat.Rgb16f, width, height, true);
             depthRenderbuffer.Bind();
             GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, 4, RenderbufferStorage.DepthComponent, width, height);
             Renderer?.ReallocateFramebuffer(width, height);
@@ -336,7 +357,7 @@ namespace TT_Lab.Rendering
                     break;
             }
             Renderer.Scene = this;
-            GL.BindFramebuffer(FramebufferTarget.FramebufferExt, 0);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
     }
 }

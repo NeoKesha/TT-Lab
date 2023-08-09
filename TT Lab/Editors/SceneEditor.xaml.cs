@@ -1,11 +1,11 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
@@ -15,6 +15,9 @@ using TT_Lab.Rendering;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
+using System.Windows.Input;
+using OpenTK.Wpf;
+using System.Diagnostics;
 
 namespace TT_Lab.Editors
 {
@@ -23,8 +26,8 @@ namespace TT_Lab.Editors
     /// </summary>
     public partial class SceneEditor : System.Windows.Controls.UserControl
     {
-        private List<Keys> pressedKeys = new List<Keys>();
-        private System.Drawing.Point mousePos;
+        private List<Key> pressedKeys = new();
+        private Point mousePos;
 
         public event EventHandler RendererInit;
         public event EventHandler<FileDropEventArgs> FileDrop;
@@ -41,8 +44,23 @@ namespace TT_Lab.Editors
             DependencyProperty.Register("Header", typeof(object), typeof(SceneEditor),
                 new FrameworkPropertyMetadata("Scene viewer", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnHeaderChanged)));
 
-        public Scene Scene;
-        public GLControl Glcontrol;
+        public Scene Scene
+        {
+            get => _scene;
+            set
+            {
+                if (_scene != value)
+                {
+                    _scene = value;
+                }
+                if (_scene != null)
+                {
+                    _scene.RenderFramebuffer = Glcontrol.Framebuffer;
+                }
+            }
+        }
+
+        private Scene _scene;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public SceneEditor()
@@ -50,133 +68,114 @@ namespace TT_Lab.Editors
         {
             InitializeComponent();
 
-            // Design viewer crashes if it attempts to use GLControl so prevent that :)
-#if DEBUG
-            if (DesignerProperties.GetIsInDesignMode(this)) return;
-#endif
             SizeChanged += SceneEditor_SizeChanged;
 
-            Glcontrol = new GLControl
-            {
-                Enabled = true,
-                AllowDrop = true,
-                Visible = true,
-                VSync = true
-            };
             Glcontrol.DragEnter += Glcontrol_DragEnter;
-            Glcontrol.DragDrop += Glcontrol_DragDrop;
-            Glcontrol.Load += Glcontrol_Init;
-            Glcontrol.Paint += Glcontrol_Paint;
+            Glcontrol.DragOver += Glcontrol_DragDrop;
             Glcontrol.MouseMove += Glcontrol_MouseMove;
             Glcontrol.KeyDown += Glcontrol_KeyDown;
             Glcontrol.KeyUp += Glcontrol_KeyUp;
             Glcontrol.MouseWheel += Glcontrol_MouseWheel;
-            Glcontrol.MouseClick += Glcontrol_MouseClick;
-            Glcontrol.Dock = DockStyle.Fill;
-
-            GLHost.Child = Glcontrol;
+            Glcontrol.MouseDown += Glcontrol_MouseClick;
 
             ContextMenu = new System.Windows.Controls.ContextMenu();
-
-            // Start render loop
-            Timer timer = new Timer
+            var settings = new GLWpfControlSettings
             {
-                Interval = (int)TimeSpan.FromSeconds(1 / 60.0).TotalMilliseconds
+                MajorVersion = 4,
+                MinorVersion = 3,
+                GraphicsProfile = OpenTK.Windowing.Common.ContextProfile.Compatability,
+                GraphicsContextFlags = OpenTK.Windowing.Common.ContextFlags.Debug
             };
-            timer.Tick += OnRender;
-            timer.Start();
+            Glcontrol.Start(settings);
         }
 
-        private void Glcontrol_DragDrop(Object sender, System.Windows.Forms.DragEventArgs e)
+        private void Glcontrol_DragDrop(Object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                var files = (string[])e.Data.GetData(System.Windows.Forms.DataFormats.FileDrop);
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 FileDrop?.Invoke(this, new FileDropEventArgs { File = files[0] });
             }
             else if (e.Data.GetDataPresent(typeof(DraggedData)))
             {
-                var data = e.Data.GetDragDropData() as DraggedData;
+                var data = e.Data.GetData(typeof(DraggedData)) as DraggedData;
                 FileDrop?.Invoke(this, new FileDropEventArgs { Data = data });
             }
         }
 
-        private void Glcontrol_DragEnter(Object sender, System.Windows.Forms.DragEventArgs e)
+        private void Glcontrol_DragEnter(Object sender, DragEventArgs e)
         {
             if (AllowDrop)
             {
-                e.Effect = System.Windows.Forms.DragDropEffects.All;
+                e.Effects = DragDropEffects.All;
             }
         }
 
-        private void Glcontrol_MouseWheel(Object? sender, System.Windows.Forms.MouseEventArgs e)
+        private void Glcontrol_MouseWheel(Object? sender, MouseWheelEventArgs e)
         {
             Scene?.ZoomView(e.Delta);
         }
 
         private void Glcontrol_KeyUp(Object? sender, KeyEventArgs e)
         {
-            if (pressedKeys.Contains(e.KeyCode))
+            if (pressedKeys.Contains(e.Key))
             {
-                pressedKeys.Remove(e.KeyCode);
+                pressedKeys.Remove(e.Key);
             }
         }
 
         private void Glcontrol_KeyDown(Object? sender, KeyEventArgs e)
         {
-            if (!pressedKeys.Contains(e.KeyCode))
+            if (!pressedKeys.Contains(e.Key))
             {
-                pressedKeys.Add(e.KeyCode);
+                pressedKeys.Add(e.Key);
             }
         }
 
         private void Glcontrol_MouseClick(Object? sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && ContextMenu.Items.Count != 0)
+            if (e.RightButton == MouseButtonState.Pressed && ContextMenu.Items.Count != 0)
             {
                 ContextMenu.IsOpen = true;
             }
         }
 
-        private void Glcontrol_MouseMove(Object? sender, System.Windows.Forms.MouseEventArgs e)
+        private void Glcontrol_MouseMove(Object? sender, MouseEventArgs e)
         {
-            var curMousePos = e.Location;
-            if (e.Button == MouseButtons.Middle)
+            var curMousePos = e.GetPosition(Glcontrol);
+            if (e.MiddleButton == MouseButtonState.Pressed)
             {
-                Scene?.RotateView(new Vector2(curMousePos.X - mousePos.X, mousePos.Y - curMousePos.Y));
+                Scene?.RotateView(new Vector2((float)(curMousePos.X - mousePos.X), (float)(mousePos.Y - curMousePos.Y)));
             }
             mousePos = curMousePos;
         }
 
-        private void Glcontrol_Init(Object? sender, EventArgs e)
+        private void Glcontrol_Init(Object sender, EventArgs e)
         {
-            Glcontrol.MakeCurrent();
             RendererInit?.Invoke(sender, e);
         }
 
-        private void Glcontrol_Paint(Object sender, System.Windows.Forms.PaintEventArgs e)
+        private void Glcontrol_Paint(TimeSpan delta)
         {
-            Glcontrol.MakeCurrent();
-            GL.Viewport(Glcontrol.Location, Glcontrol.Size);
-            GL.ClearColor(System.Drawing.Color.LightGray);
+            if (Scene != null)
+            {
+                Scene.RenderFramebuffer = Glcontrol.Framebuffer;
+            }
+            GL.ClearColor(Color4.LightGray);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Scene?.PreRender();
             Scene?.Move(pressedKeys);
+            Scene?.HandleInputs(pressedKeys);
             Scene?.Render();
             Scene?.PostRender();
 
-            Glcontrol.SwapBuffers();
+            GL.Finish();
         }
 
-        private void OnRender(Object? sender, EventArgs e)
+        private void SceneEditor_SizeChanged(Object sender, SizeChangedEventArgs e)
         {
-            Glcontrol.Invalidate();
-        }
-
-        private void SceneEditor_SizeChanged(Object sender, System.Windows.SizeChangedEventArgs e)
-        {
-            Scene?.SetResolution((float)GLHost.ActualWidth, (float)GLHost.ActualHeight);
+            Scene?.SetResolution((float)Glcontrol.ActualWidth, (float)Glcontrol.ActualHeight);
         }
 
         private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

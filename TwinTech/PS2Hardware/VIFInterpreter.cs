@@ -26,8 +26,10 @@ namespace Twinsanity.PS2Hardware
         public UInt32 VIFn_CODE;
 
         private List<List<Vector4>> VUMem = new List<List<Vector4>>();
+        private List<Vector4> PureVUMem  = new List<Vector4>(new Vector4[1024]);
         private List<GIFTag> GifBuffer = new List<GIFTag>();
         private List<UInt32> tmpStack = new List<UInt32>();
+        private List<List<UInt16>> AddressOuput = new List<List<UInt16>>();
 
         // Wrapper function for generating Interpreter instances
         public static VIFInterpreter InterpretCode(BinaryReader reader)
@@ -73,6 +75,16 @@ namespace Twinsanity.PS2Hardware
             return GifBuffer;
         }
 
+        public List<List<UInt16>> GetAddressOutput()
+        {
+            return AddressOuput;
+        }
+
+        public List<Vector4> GetPureMem()
+        {
+            return PureVUMem;
+        }
+
         private void Execute(BinaryReader reader)
         {
             while(reader.BaseStream.Position < reader.BaseStream.Length)
@@ -89,11 +101,14 @@ namespace Twinsanity.PS2Hardware
                     UInt16 addr = (UInt16)(vif.Immediate & 0b111111111);
                     Byte usn = (Byte)(vif.Immediate & 0b0100000000000000);
                     Byte flg = (Byte)(vif.Immediate & 0b1000000000000000);
-                    Byte WL = (Byte)((VIFn_CYCLE >> 7) & 0xFF);
+                    Byte WL = (Byte)((VIFn_CYCLE >> 8) & 0xFF);
                     Byte CL = (Byte)((VIFn_CYCLE >> 0) & 0xFF);
                     UInt32 dimensions = (UInt32)(vn + 1);
                     UInt32 packet_length = 0;
-                    if (WL <= CL)
+                    Boolean fill = WL > CL;
+                    Console.WriteLine($"Total cycle specifier {CL}");
+                    Console.WriteLine($"Write cycle specifier {WL}");
+                    if (!fill)
                     {
                         UInt32 a = (UInt32)(32 >> vl);
                         UInt32 b = dimensions;
@@ -105,7 +120,7 @@ namespace Twinsanity.PS2Hardware
                     } 
                     else
                     {
-                        UInt32 n = (UInt32)(CL * (amount / WL) + ((amount % WL) > CL ? CL: (amount % WL)));
+                        UInt32 n = (UInt32)(CL * (amount / WL) + ((amount % WL) > CL ? CL : (amount % WL)));
                         UInt32 a = (UInt32)(32 >> vl);
                         UInt32 b = dimensions;
                         Single c = (Single)(a * b * n);
@@ -114,14 +129,21 @@ namespace Twinsanity.PS2Hardware
                         UInt32 f = (UInt32)e;
                         packet_length = 1 + f;
                     }
+                    Console.WriteLine($"VU memory address 0x{addr:x}");
+                    if (AddressOuput.Count == 0)
+                    {
+                        AddressOuput.Add(new List<ushort>());
+                    }
+                    AddressOuput[^1].Add(addr);
                     PackFormat fmt = (PackFormat)(vl | (vn << 2));
-                    List<Vector4> vectors = new List<Vector4>();
+                    List<Vector4> vectors = new List<Vector4>(new Vector4[1024]);
                     tmpStack.Clear();
                     for (int i = 0; i < packet_length - 1; ++i)
                     {
                         tmpStack.Add(reader.ReadUInt32());
                     }
-                    Unpack(tmpStack, vectors, fmt, amount, usn);
+                    Unpack(tmpStack, PureVUMem, fmt, amount, usn, fill, WL, CL, addr);
+                    Unpack(tmpStack, vectors, fmt, amount, usn, false, 1, 1, 0);
                     VUMem.Add(vectors);
                     Console.WriteLine($"UNPACK {((int)packet_length - 1) * 4} bytes into {amount} 128bit vectors using {fmt} format");
                 } 
@@ -165,6 +187,7 @@ namespace Twinsanity.PS2Hardware
                             break;
                         case VIFCodeEnum.MSCAL:
                             //throw new NotImplementedException();
+                            AddressOuput.Add(new List<ushort>());
                             break;
                         case VIFCodeEnum.MSCNT:
                             //throw new NotImplementedException();
@@ -223,7 +246,7 @@ namespace Twinsanity.PS2Hardware
             n = ((n & 0x80) != 0) ? n | 0xFFFFFF00 : n;
         }
 
-        private void Unpack(List<UInt32> src, List<Vector4> dst, PackFormat fmt, Byte amount, Byte unsigned)
+        private void Unpack(List<UInt32> src, List<Vector4> dst, PackFormat fmt, Byte amount, Byte unsigned, Boolean fill, Byte write, Byte cycle, UInt16 addr)
         {
             var srcIdx = 0;
             switch (fmt)
@@ -236,7 +259,8 @@ namespace Twinsanity.PS2Hardware
                         v.SetBinaryY(src[i] + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v.SetBinaryZ(src[i] + (IsInOffsetMode() ? VIFn_R[2] : 0));
                         v.SetBinaryW(src[i] + (IsInOffsetMode() ? VIFn_R[3] : 0));
-                        dst.Add(v);
+
+                        Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.S_16:
@@ -258,7 +282,7 @@ namespace Twinsanity.PS2Hardware
                         v1.SetBinaryY(w1 + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v1.SetBinaryZ(w1 + (IsInOffsetMode() ? VIFn_R[2] : 0));
                         v1.SetBinaryW(w1 + (IsInOffsetMode() ? VIFn_R[3] : 0));
-                        dst.Add(v1);
+                        Fill(dst, v1, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.S_8:
@@ -291,7 +315,7 @@ namespace Twinsanity.PS2Hardware
                         v1.SetBinaryY(w1 + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v1.SetBinaryZ(w1 + (IsInOffsetMode() ? VIFn_R[2] : 0));
                         v1.SetBinaryW(w1 + (IsInOffsetMode() ? VIFn_R[3] : 0));
-                        dst.Add(v1);
+                        Fill(dst, v1, i, fill, write, cycle, ref addr);
                         if (i % 4 == 3)
                         {
                             srcIdx++;
@@ -304,7 +328,7 @@ namespace Twinsanity.PS2Hardware
                         Vector4 v = new Vector4();
                         v.SetBinaryX(src[i * 2 + 0] + (IsInOffsetMode() ? VIFn_R[0] : 0));
                         v.SetBinaryY(src[i * 2 + 1] + (IsInOffsetMode() ? VIFn_R[1] : 0));
-                        dst.Add(v);
+                        Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V2_16:
@@ -320,7 +344,7 @@ namespace Twinsanity.PS2Hardware
                         }
                         v.SetBinaryX(w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
                         v.SetBinaryY(w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
-                        dst.Add(v);
+                        Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V2_8:
@@ -346,7 +370,7 @@ namespace Twinsanity.PS2Hardware
 
                         v1.X = (w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
                         v1.Y = (w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
-                        dst.Add(v1);
+                        Fill(dst, v1, i, fill, write, cycle, ref addr);
                         if (i % 2 != 0)
                         {
                             srcIdx++;
@@ -360,7 +384,7 @@ namespace Twinsanity.PS2Hardware
                         v.SetBinaryX(src[i * 3 + 0] + (IsInOffsetMode() ? VIFn_R[0] : 0));
                         v.SetBinaryY(src[i * 3 + 1] + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v.SetBinaryZ(src[i * 3 + 2] + (IsInOffsetMode() ? VIFn_R[2] : 0));
-                        dst.Add(v);
+                        Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V3_16:
@@ -400,7 +424,7 @@ namespace Twinsanity.PS2Hardware
                         v1.SetBinaryX(w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
                         v1.SetBinaryY(w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v1.SetBinaryZ(w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
-                        dst.Add(v1);
+                        Fill(dst, v1, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V3_8:
@@ -456,7 +480,7 @@ namespace Twinsanity.PS2Hardware
                         v1.X = (w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
                         v1.Y = (w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v1.Z = (w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
-                        dst.Add(v1);
+                        Fill(dst, v1, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V4_32:
@@ -467,7 +491,7 @@ namespace Twinsanity.PS2Hardware
                         v.SetBinaryY(src[i * 4 + 1] + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v.SetBinaryZ(src[i * 4 + 2] + (IsInOffsetMode() ? VIFn_R[2] : 0));
                         v.SetBinaryW(src[i * 4 + 3] + (IsInOffsetMode() ? VIFn_R[3] : 0));
-                        dst.Add(v);
+                        Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V4_16:
@@ -489,7 +513,7 @@ namespace Twinsanity.PS2Hardware
                         v.SetBinaryY(w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v.SetBinaryZ(w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
                         v.SetBinaryW(w4 + (IsInOffsetMode() ? VIFn_R[3] : 0));
-                        dst.Add(v);
+                        Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V4_8:
@@ -511,7 +535,7 @@ namespace Twinsanity.PS2Hardware
                         v.Y = (w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
                         v.Z = (w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
                         v.W = (w4 + (IsInOffsetMode() ? VIFn_R[3] : 0));
-                        dst.Add(v);
+                        Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
                 case PackFormat.V4_5:
@@ -531,7 +555,7 @@ namespace Twinsanity.PS2Hardware
                             B = (Byte)((rgba1 & (0b11111 << 10)) >> 10 << 3),
                             A = (Byte)((rgba1 & (0b1 << 15)) >> 15 << 7)
                         };
-                        dst.Add(c1.GetVector());
+                        Fill(dst, c1.GetVector(), i, fill, write, cycle, ref addr);
                     }
                     break;
             }
@@ -790,6 +814,41 @@ namespace Twinsanity.PS2Hardware
                         }
                     }
                     break;
+            }
+        }
+
+        private void Fill(List<Vector4> dst, Vector4 vec, Int32 index, Boolean fill, Byte wl, Byte cl, ref UInt16 addr)
+        {
+            // Fill writing
+            if (fill)
+            {
+                var doFill = ((index+1) % cl == 0);
+                dst[addr++] = vec;
+                if (doFill)
+                {
+                    var fillVec = new Vector4();
+                    fillVec.SetBinaryX(VIFn_R[0]);
+                    fillVec.SetBinaryY(VIFn_R[1]);
+                    fillVec.SetBinaryZ(VIFn_R[2]);
+                    fillVec.SetBinaryW(VIFn_R[3]);
+                    for (int i = 0; i < wl - cl; i++)
+                    {
+                        dst[addr++] = fillVec;
+                    }
+                }
+                return;
+            }
+            // Skip writing
+            var nullVec = new Vector4();
+            var skipAmt = cl - wl;
+            dst[addr++] = vec;
+            if (wl != 0)
+            {
+                var doSkip = ((index + 1) % wl == 0);
+                if (doSkip)
+                {
+                    addr += (UInt16)skipAmt;
+                }
             }
         }
 

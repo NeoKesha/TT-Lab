@@ -10,7 +10,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class SubBlendSkin : ITwinSerializable
     {
-        public Int32 ListLength { get; set; }
+        public Int32 BlendsAmount { get; set; }
         public UInt32 Material;
         public List<BlendSkinType1> Type1s;
 
@@ -31,7 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             for (int i = 0; i < type1s; ++i)
             {
                 var type1 = new BlendSkinType1();
-                type1.ListLength = ListLength;
+                type1.BlendsAmount = BlendsAmount;
                 type1.Read(reader, length);
                 Type1s.Add(type1);
             }

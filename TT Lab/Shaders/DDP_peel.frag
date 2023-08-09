@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 compatibility
 
 in vec3 Texpos;
 in vec3 Diffuse;

@@ -11,20 +11,21 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class Matrix4 : ITwinSerializable
     {
-        public Vector4 V1 { get; set; }
-        public Vector4 V2 { get; set; }
-        public Vector4 V3 { get; set; }
-        public Vector4 V4 { get; set; }
+        // Twinsanity matrices are column-major
+        public Vector4 Column1 { get; set; }
+        public Vector4 Column2 { get; set; }
+        public Vector4 Column3 { get; set; }
+        public Vector4 Column4 { get; set; }
         public Matrix4()
         {
-            V1 = new Vector4();
-            V2 = new Vector4();
-            V3 = new Vector4();
-            V4 = new Vector4();
+            Column1 = new Vector4();
+            Column2 = new Vector4();
+            Column3 = new Vector4();
+            Column4 = new Vector4();
         }
         public int GetLength()
         {
-            return V1.GetLength() + V2.GetLength() + V3.GetLength() + V4.GetLength();
+            return Column1.GetLength() + Column2.GetLength() + Column3.GetLength() + Column4.GetLength();
         }
         public Vector4 this[int key]
         {
@@ -32,10 +33,10 @@ namespace Twinsanity.TwinsanityInterchange.Common
             {
                 return key switch
                 {
-                    0 => V1,
-                    1 => V2,
-                    2 => V3,
-                    3 => V4,
+                    0 => Column1,
+                    1 => Column2,
+                    2 => Column3,
+                    3 => Column4,
                     _ => throw new IndexOutOfRangeException(),
                 };
             }
@@ -44,16 +45,16 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 switch(key)
                 {
                     case 0:
-                        V1 = value;
+                        Column1 = value;
                         break;
                     case 1:
-                        V2 = value;
+                        Column2 = value;
                         break;
                     case 2:
-                        V3 = value;
+                        Column3 = value;
                         break;
                     case 3:
-                        V4 = value;
+                        Column4 = value;
                         break;
                 }
                 throw new IndexOutOfRangeException();
@@ -61,18 +62,18 @@ namespace Twinsanity.TwinsanityInterchange.Common
         }
         public void Read(BinaryReader reader, int length)
         {
-            V1.Read(reader, Constants.SIZE_VECTOR4);
-            V2.Read(reader, Constants.SIZE_VECTOR4);
-            V3.Read(reader, Constants.SIZE_VECTOR4);
-            V4.Read(reader, Constants.SIZE_VECTOR4);
+            Column1.Read(reader, Constants.SIZE_VECTOR4);
+            Column2.Read(reader, Constants.SIZE_VECTOR4);
+            Column3.Read(reader, Constants.SIZE_VECTOR4);
+            Column4.Read(reader, Constants.SIZE_VECTOR4);
         }
 
         public void Write(BinaryWriter writer)
         {
-            V1.Write(writer);
-            V2.Write(writer);
-            V3.Write(writer);
-            V4.Write(writer);
+            Column1.Write(writer);
+            Column2.Write(writer);
+            Column3.Write(writer);
+            Column4.Write(writer);
         }
     }
 }

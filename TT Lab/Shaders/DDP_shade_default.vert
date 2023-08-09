@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 compatibility
 
 vec3 ShadeVertex(mat3 normalMat, vec3 vertex, vec3 normal)
 {

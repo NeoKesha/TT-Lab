@@ -12,7 +12,7 @@ namespace TT_Lab.Assets
 {
     public static class AssetFactory
     {
-        public static Dictionary<Guid, IAsset> GetAssets(string[] jsonAssets)
+        public static async Task<Dictionary<Guid, IAsset>> GetAssets(string[] jsonAssets)
         {
             var assets = new Dictionary<Guid, IAsset>();
             var assetMut = new Mutex();
@@ -37,7 +37,7 @@ namespace TT_Lab.Assets
                     assetMut.ReleaseMutex();
                 });
             }
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
             return assets;
         }
 

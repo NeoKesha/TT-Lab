@@ -1,22 +1,32 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Editors.Graphics;
+using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class Skin : SerializableAsset
     {
-        protected override String DataExt => ".data";
+        protected override String DataExt => ".dae";
         public Skin(UInt32 id, String name, PS2AnySkin skin) : base(id, name)
         {
             assetData = new SkinData(skin);
             Raw = false;
+            Materials = new();
         }
+
+        [JsonProperty(Required = Required.Always)]
+        public List<Guid> Materials { get; set; }
 
         public Skin()
         {
+            Materials = new();
         }
 
         public override void ToRaw(Byte[] data)
@@ -31,7 +41,18 @@ namespace TT_Lab.Assets.Graphics
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
+            return typeof(SkinModelEditor);
+        }
+
+        public override void Import()
+        {
+            var skinData = (SkinData)assetData;
+            var skin = skinData.GetRef();
+            foreach (var e in skin.SubSkins)
+            {
+                Materials.Add(GuidManager.GetGuidByTwinId(e.Material, typeof(Material)));
+            }
+            base.Import();
         }
 
         public override AbstractAssetData GetData()

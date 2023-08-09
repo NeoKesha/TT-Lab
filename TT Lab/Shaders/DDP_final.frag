@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 compatibility
 
 uniform sampler2DRect DepthBlenderTex;
 uniform sampler2DRect FrontBlenderTex;

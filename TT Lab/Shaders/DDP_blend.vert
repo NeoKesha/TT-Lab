@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 compatibility
 layout (location = 0) in vec3 in_Position;
 
 void main()

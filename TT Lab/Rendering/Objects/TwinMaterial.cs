@@ -55,7 +55,7 @@ namespace TT_Lab.Rendering.Objects
             {
                 _shader.SetTextureUniform($"{_texName}", OpenTK.Graphics.OpenGL.TextureTarget.Texture2D, _texture.Buffer, (uint)texUnitPos);
                 _shader.SetUniform1($"AlphaBlending", AlphaBlending);
-                _shader.SetUniform1($"FIX", (float)FIX / 255f);
+                _shader.SetUniform1($"FIX", FIX / 255f);
                 _shader.SetUniform1($"SpecColA", SpecColA);
                 _shader.SetUniform1($"SpecColB", SpecColB);
                 _shader.SetUniform1($"SpecAlphaC", SpecAlphaC);

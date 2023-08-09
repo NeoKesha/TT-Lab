@@ -1,4 +1,4 @@
-﻿<base:BaseEditor x:Class="TT_Lab.Editors.Graphics.RigidModelEditor"
+﻿<base:BaseEditor x:Class="TT_Lab.Editors.Graphics.SkinModelEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -16,7 +16,7 @@
             <ColumnDefinition Width="659*"/>
             <ColumnDefinition Width="141*"/>
         </Grid.ColumnDefinitions>
-        <base:SceneEditor x:Name="SceneRenderer" Header="Rigid model viewer" Margin="10,0,0,0" Grid.RowSpan="2"/>
+        <base:SceneEditor x:Name="SceneRenderer" Header="Skin model viewer" Margin="10,0,0,0" Grid.RowSpan="2"/>
         <base:SceneEditor x:Name="MaterialViewer" Grid.Column="1" Header="Material viewer" Margin="0,0,0,11"/>
         <Button x:Name="NextMatButton" Content="Next material" Click="NextMatButton_Click" Margin="23,107,23,0" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"/>
         <TextBlock x:Name="MaterialName" TextWrapping="Wrap" Text="Material Name" Grid.Column="1" TextAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" Grid.Row="1"/>

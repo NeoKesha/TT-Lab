@@ -724,7 +724,12 @@ namespace TT_Lab.ViewModels.Instance
         }
         public UInt32 SelectedFlag
         {
-            get => FlagParams[_flagIndex];
+            get
+            {
+                if (FlagParams.Count == 0) return 0;
+
+                return FlagParams[_flagIndex];
+            }
             set
             {
                 if (_flagIndex == -1) return;
@@ -752,7 +757,11 @@ namespace TT_Lab.ViewModels.Instance
         }
         public Single SelectedFloat
         {
-            get => FloatParams[_floatIndex];
+            get
+            {
+                if (FloatParams.Count == 0) return 0;
+                return FloatParams[_floatIndex];
+            }
             set
             {
                 if (_floatIndex == -1) return;
@@ -780,7 +789,11 @@ namespace TT_Lab.ViewModels.Instance
         }
         public UInt32 SelectedInt
         {
-            get => IntParams[_intIndex];
+            get {
+                if (IntParams.Count == 0)
+                    return 0;
+                return IntParams[_intIndex];
+            }
             set
             {
                 if (_intIndex == -1) return;

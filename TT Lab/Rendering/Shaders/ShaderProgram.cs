@@ -18,8 +18,6 @@ namespace TT_Lab.Rendering.Shaders
         private readonly Shader shadeLibShaderFrag;
         private Action? uniformSetAction;
 
-        private static readonly Shader weightLibShader;
-
         public struct LibShader
         {
             public string Path;
@@ -43,8 +41,6 @@ namespace TT_Lab.Rendering.Shaders
             GL.AttachShader((int)shaderProgramObject, vertexShader.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
             // Library shaders
-            GL.AttachShader((int)shaderProgramObject, weightLibShader.ShaderObject);
-
             if (!vertShader.HasValue)
             {
                 shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.vert"));
@@ -73,11 +69,6 @@ namespace TT_Lab.Rendering.Shaders
             {
                 throw new ShaderCompilationException(string.Format("Failed to link shader program with ID {0}.", shaderProgramObject), GetInfoLog());
             }
-        }
-
-        static ShaderProgram()
-        {
-            weightLibShader = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\WeightCalc.frag"));
         }
 
         public void SetUniforms()

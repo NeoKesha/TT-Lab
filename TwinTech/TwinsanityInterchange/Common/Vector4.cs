@@ -49,6 +49,21 @@ namespace Twinsanity.TwinsanityInterchange.Common
             W = reader.ReadSingle();
         }
 
+        public Vector4 Multiply(float value)
+        {
+            var resVec = new Vector4();
+            resVec.X = X * value;
+            resVec.Y = Y * value;
+            resVec.Z = Z * value;
+            resVec.W = W * value;
+            return resVec;
+        }
+
+        public static Vector4 operator +(Vector4 v1, Vector4 v2)
+        {
+            return new Vector4(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z, v1.W + v2.W);
+        }
+
         public void Write(BinaryWriter writer)
         {
             writer.Write(X);
@@ -102,6 +117,10 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 A = (Byte)(W * 255),
             };
             return c;
+        }
+        public static Vector4 FromColor(Color c)
+        {
+            return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
         }
     }
 }

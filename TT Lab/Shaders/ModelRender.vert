@@ -1,5 +1,4 @@
 #version 410 compatibility
-
 layout (location = 0) in vec3 in_Position;
 layout (location = 1) in vec4 in_Color;
 layout (location = 2) in vec3 in_Normal;
@@ -19,7 +18,7 @@ vec3 ShadeVertex(mat3 normalMat, vec3 vertex, vec3 normal);
 
 void main()
 {
-	gl_Position = Projection * View * Model * vec4(in_Position, 1.0);
+    gl_Position = Projection * View * Model * vec4(in_Position, 1.0);
 	Texpos = in_Texpos;
 	Diffuse = ShadeVertex(NormalMatrix, in_Position, in_Normal);
 	EyespaceNormal = NormalMatrix * in_Normal;

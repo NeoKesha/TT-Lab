@@ -176,7 +176,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 case "byte":
                     {
                         Byte val = Convert.ToByte(arg);
-                        return BitConverter.ToUInt32(BitConverter.GetBytes(val), 0);
+                        return BitConverter.ToUInt32(new byte[1] { val }, 0);
                     }
                 case "single":
                     {

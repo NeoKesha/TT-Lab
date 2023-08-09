@@ -85,10 +85,7 @@ namespace TT_Lab.Assets
 
         public virtual AssetViewModel GetViewModel(AssetViewModel parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new AssetViewModel(UUID, parent);
-            }
+            viewModel ??= new AssetViewModel(UUID, parent);
             return viewModel;
         }
     }
