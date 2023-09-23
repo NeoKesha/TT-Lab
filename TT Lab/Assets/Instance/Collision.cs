@@ -1,13 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
-using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
 namespace TT_Lab.Assets.Instance
@@ -19,7 +12,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public Collision(UInt32 id, String name, String chunk, PS2AnyCollisionData collisionData) : base(id, name, chunk, null)
+        public Collision(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyCollisionData collisionData) : base(package, subpackage, id, name, chunk, null)
         {
             assetData = new CollisionData(collisionData);
         }

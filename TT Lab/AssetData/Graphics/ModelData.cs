@@ -1,14 +1,10 @@
-﻿using Newtonsoft.Json;
-using Assimp;
+﻿using Assimp;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using TT_Lab.AssetData.Graphics.SubModels;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -22,7 +18,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public ModelData(PS2AnyModel model) : this()
         {
-            twinRef = model;
+            SetTwinItem(model);
         }
         [JsonProperty(Required = Required.Always)]
         public List<List<Vertex>> Vertexes { get; set; }
@@ -77,7 +73,7 @@ namespace TT_Lab.AssetData.Graphics
             }
             catch (Exception ex)
             {
-                Log.WriteLine($"Error exporting for Model {twinRef.GetID()}: {ex.Message} Stack: \n{ex.StackTrace}");
+                Log.WriteLine($"Error exporting for Model {GetTwinItem<PS2AnyModel>().GetID()}: {ex.Message} Stack: \n{ex.StackTrace}");
             }
         }
 
@@ -110,9 +106,9 @@ namespace TT_Lab.AssetData.Graphics
             context.Dispose();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyModel model = (PS2AnyModel)twinRef;
+            PS2AnyModel model = GetTwinItem<PS2AnyModel>();
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
             var refIndex = 0;

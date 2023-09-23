@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
@@ -18,7 +14,7 @@ namespace TT_Lab.AssetData.Instance
 
         public AiPositionData(PS2AnyAIPosition aiPosition) : this()
         {
-            twinRef = aiPosition;
+            SetTwinItem(aiPosition);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -31,9 +27,9 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyAIPosition aiPosition = (PS2AnyAIPosition)twinRef;
+            PS2AnyAIPosition aiPosition = GetTwinItem<PS2AnyAIPosition>();
             Coords = CloneUtils.Clone(aiPosition.Position);
             Arg = aiPosition.UnkShort;
         }

@@ -1,12 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Util;
-using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
@@ -23,7 +20,7 @@ namespace TT_Lab.AssetData.Instance
 
         public ObjectInstanceData(PS2AnyInstance instance) : this()
         {
-            twinRef = instance;
+            SetTwinItem(instance);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -47,11 +44,11 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public List<UInt16> Paths { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid ObjectId { get; set; }
+        public LabURI ObjectId { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Int16 RefListIndex { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid OnSpawnScriptId { get; set; }
+        public LabURI OnSpawnScriptId { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 StateFlags { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -71,9 +68,9 @@ namespace TT_Lab.AssetData.Instance
             ParamList3.Clear();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyInstance instance = (PS2AnyInstance)twinRef;
+            PS2AnyInstance instance = GetTwinItem<PS2AnyInstance>();
             Position = CloneUtils.Clone(instance.Position);
             RotationX = CloneUtils.Clone(instance.RotationX);
             RotationY = CloneUtils.Clone(instance.RotationY);
@@ -84,9 +81,9 @@ namespace TT_Lab.AssetData.Instance
             Positions = CloneUtils.CloneList(instance.Positions);
             PathsRelated = instance.PathsRelated;
             Paths = CloneUtils.CloneList(instance.Paths);
-            ObjectId = GuidManager.GetGuidByTwinId(instance.ObjectId, typeof(GameObject));
+            ObjectId = AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, instance.ObjectId);
             RefListIndex = instance.RefListIndex;
-            OnSpawnScriptId = GuidManager.GetGuidByTwinId(instance.OnSpawnHeaderScriptID, typeof(HeaderScript));
+            OnSpawnScriptId = AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, variant, instance.OnSpawnHeaderScriptID);
             StateFlags = instance.StateFlags;
             ParamList1 = CloneUtils.CloneList(instance.ParamList1);
             ParamList2 = CloneUtils.CloneList(instance.ParamList2);

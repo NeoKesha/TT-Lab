@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace Twinsanity.PS2Hardware
@@ -26,7 +23,7 @@ namespace Twinsanity.PS2Hardware
         public UInt32 VIFn_CODE;
 
         private List<List<Vector4>> VUMem = new List<List<Vector4>>();
-        private List<Vector4> PureVUMem  = new List<Vector4>(new Vector4[1024]);
+        private List<Vector4> PureVUMem = new List<Vector4>(new Vector4[1024]);
         private List<GIFTag> GifBuffer = new List<GIFTag>();
         private List<UInt32> tmpStack = new List<UInt32>();
         private List<List<UInt16>> AddressOuput = new List<List<UInt16>>();
@@ -87,7 +84,7 @@ namespace Twinsanity.PS2Hardware
 
         private void Execute(BinaryReader reader)
         {
-            while(reader.BaseStream.Position < reader.BaseStream.Length)
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 VIFCode vif = new VIFCode();
                 vif.Read(reader);
@@ -117,7 +114,7 @@ namespace Twinsanity.PS2Hardware
                         Single e = (Single)Math.Ceiling(d);
                         UInt32 f = (UInt32)e;
                         packet_length = 1 + f;
-                    } 
+                    }
                     else
                     {
                         UInt32 n = (UInt32)(CL * (amount / WL) + ((amount % WL) > CL ? CL : (amount % WL)));
@@ -146,7 +143,7 @@ namespace Twinsanity.PS2Hardware
                     Unpack(tmpStack, vectors, fmt, amount, usn, false, 1, 1, 0);
                     VUMem.Add(vectors);
                     Console.WriteLine($"UNPACK {((int)packet_length - 1) * 4} bytes into {amount} 128bit vectors using {fmt} format");
-                } 
+                }
                 else
                 {
                     Console.WriteLine(vif.OP.ToString());
@@ -291,7 +288,7 @@ namespace Twinsanity.PS2Hardware
                         Vector4 v1 = new Vector4();
                         UInt32 mask = 0x000000FF;
                         var shift = 0;
-                        switch(i % 4)
+                        switch (i % 4)
                         {
                             case 1:
                                 mask = 0x0000FF00;
@@ -435,7 +432,7 @@ namespace Twinsanity.PS2Hardware
                         UInt32[] mask = { 0x000000FF, 0x0000FF00, 0x00FF0000 };
                         Int32[] shift = { 0, 8, 16 };
                         Boolean[] incIdx = { false, false, false };
-                        switch(i % 4)
+                        switch (i % 4)
                         {
                             case 1:
                                 mask[0] = 0xFF000000;
@@ -597,7 +594,7 @@ namespace Twinsanity.PS2Hardware
                     for (var i = 0; i < src.Count; ++i)
                     {
                         var vecPart = (src[i].GetBinaryX() & 0xFF);
-                        switch(i % 4)
+                        switch (i % 4)
                         {
                             case 0:
                                 resUInt |= vecPart;
@@ -822,7 +819,7 @@ namespace Twinsanity.PS2Hardware
             // Fill writing
             if (fill)
             {
-                var doFill = ((index+1) % cl == 0);
+                var doFill = ((index + 1) % cl == 0);
                 dst[addr++] = vec;
                 if (doFill)
                 {
@@ -859,18 +856,18 @@ namespace Twinsanity.PS2Hardware
     }
     public enum PackFormat
     {
-        S_32 =      0b0000,
-        S_16 =      0b0001,
-        S_8 =       0b0010,
-        V2_32 =     0b0100,
-        V2_16 =     0b0101,
-        V2_8 =      0b0110,
-        V3_32 =     0b1000,
-        V3_16 =     0b1001,
-        V3_8 =      0b1010,
-        V4_32 =     0b1100,
-        V4_16 =     0b1101,
-        V4_8 =      0b1110,
-        V4_5 =      0b1111,
+        S_32 = 0b0000,
+        S_16 = 0b0001,
+        S_8 = 0b0010,
+        V2_32 = 0b0100,
+        V2_16 = 0b0101,
+        V2_8 = 0b0110,
+        V3_32 = 0b1000,
+        V3_16 = 0b1001,
+        V3_8 = 0b1010,
+        V4_32 = 0b1100,
+        V4_16 = 0b1101,
+        V4_8 = 0b1110,
+        V4_5 = 0b1111,
     }
 }

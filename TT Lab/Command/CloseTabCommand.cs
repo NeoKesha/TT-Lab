@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using TT_Lab.ViewModels;
 
 namespace TT_Lab.Command
 {
     public class CloseTabCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         private TabControl _tabsContainer;
-        private object _tabToClose;
+        private object? _tabToClose;
 
-        public CloseTabCommand(TabControl tabs)
+        private CloseTabCommand(TabControl tabs)
         {
             _tabsContainer = tabs;
         }
@@ -25,12 +20,12 @@ namespace TT_Lab.Command
             _tabToClose = tabToClose;
         }
 
-        public Boolean CanExecute(Object parameter)
+        public Boolean CanExecute(Object? parameter)
         {
             return true;
         }
 
-        public void Execute(Object parameter = null)
+        public void Execute(Object? parameter = null)
         {
             if (_tabToClose != null)
             {

@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.AssetData.Instance
@@ -16,7 +13,7 @@ namespace TT_Lab.AssetData.Instance
 
         public ChunkLinksData(PS2AnyLink link) : this()
         {
-            twinRef = link;
+            SetTwinItem(link);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -27,9 +24,9 @@ namespace TT_Lab.AssetData.Instance
             Links.Clear();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyLink link = (PS2AnyLink)twinRef;
+            PS2AnyLink link = GetTwinItem<PS2AnyLink>();
             foreach (var l in link.LinksList)
             {
                 Links.Add(new ChunkLink(l));

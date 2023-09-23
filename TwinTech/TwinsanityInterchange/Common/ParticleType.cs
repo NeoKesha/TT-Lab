@@ -82,7 +82,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Int32 UnkInt;
         public Vector4 UnkVec3;
 
-        private Dictionary<UInt32, Int32> versionSizeMap = new Dictionary<UInt32, Int32>();
+        private readonly Dictionary<UInt32, Int32> versionSizeMap = new();
         public ParticleType()
         {
             Name = new Char[16];
@@ -155,7 +155,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             if (Version <= 0x16 || Version == 0x20)
             {
                 UnkFloat5 = 0;
-            } 
+            }
             else
             {
                 UnkFloat5 = reader.ReadSingle();

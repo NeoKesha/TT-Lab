@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Instance.ChunkLinks
 {
-    public class LinkViewModel : SavebleViewModel
+    public class LinkViewModel : SaveableViewModel
     {
         public UInt32 type;
         public String path;

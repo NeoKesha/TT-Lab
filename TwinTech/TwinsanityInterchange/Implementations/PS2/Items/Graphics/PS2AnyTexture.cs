@@ -1,15 +1,11 @@
-﻿using System.Text.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using Twinsanity.Libraries;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -35,15 +31,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public Int32 ClutBufferBasePointer { get; set; }
         public Byte[] UnkBytes2;
         public Byte[] UnkBytes3;
-        public Byte[] UnusedMetadata {get; set; }
+        public Byte[] UnusedMetadata { get; set; }
         public Byte[] TextureData { get; set; }
 
         public PS2AnyTexture()
         {
-            
+
             if (TextureDescriptorHelper == null)
             {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                string codeBase = Assembly.GetExecutingAssembly().Location;
                 UriBuilder uri = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
                 using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"TextureDescriptionHelper.json"), FileMode.Open, FileAccess.Read))
@@ -64,7 +60,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             ClutBufferBasePointer = 0;
             UnkBytes1 = new byte[2];
             UnkBytes2 = new byte[8] { 0, 0, 0, 0, 224, 0, 2, 0 };
-            UnkBytes3 = new byte[2] { 0, 2}; 
+            UnkBytes3 = new byte[2] { 0, 2 };
             UnusedMetadata = new byte[32];
             UnusedMetadata[0] = 31;
             UnusedMetadata[16] = 64;
@@ -207,7 +203,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 MipLevelsTBP = textureDescriptor.MipTBP;
                 MipLevelsTBP = textureDescriptor.MipTBP;
                 MipLevels = (byte)textureDescriptor.MipLevels;
-            } 
+            }
             else
             {
                 ClutBufferBasePointer = 0;
@@ -218,7 +214,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             //this is probably not bytes but whatever
             UnkBytes2[5] = UnkBytes3[0] = (Byte)((width == 256) ? 0 : (byte)Math.Min(width, height));
             UnkBytes2[6] = UnkBytes3[1] = (Byte)((width == 256) ? 2 : 0);
-           
+
             GIFTag headerTag = new GIFTag();
             headerTag.REGS = new REGSEnum[16];
             headerTag.REGS[0] = REGSEnum.ApD;
@@ -246,7 +242,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     c.ScaleAlphaDown();
                 }
                 tag = EzSwizzle.ColorsToTag(image);
-            } 
+            }
             else
             {
                 byte[] textureData = new byte[width * height];
@@ -310,7 +306,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     {
                         mipData[j] = prevData[4 * j];
                     }
-                    EzSwizzle.writeTexPSMT8To(textureDescriptor.MipTBP[i - 1], textureDescriptor.MipTBW[i-1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
+                    EzSwizzle.writeTexPSMT8To(textureDescriptor.MipTBP[i - 1], textureDescriptor.MipTBW[i - 1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
                     prevData = mipData;
                 }
                 EzSwizzle.writeTexPSMCT32To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);

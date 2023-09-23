@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Code;
-using TT_Lab.Project;
+using TT_Lab.Assets;
 
 namespace TT_Lab.ViewModels.Code
 {
     public class HeaderScriptViewModel : AssetViewModel
     {
-        private Guid attachedScript;
+        private LabURI attachedScript;
         private ObservableCollection<UInt32> callConventions;
 
-        public HeaderScriptViewModel(Guid asset, AssetViewModel? parent) : base(asset, parent)
+        public HeaderScriptViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
             callConventions = new ObservableCollection<UInt32>();
         }
 
         protected override void LoadData()
         {
-            var data = (HeaderScriptData)_asset.GetData();
+            var data = _asset.GetData<BehaviourStarterData>();
             attachedScript = data.Pairs[0].Key;
             callConventions.Clear();
             foreach (var pair in data.Pairs)
@@ -31,7 +27,7 @@ namespace TT_Lab.ViewModels.Code
             base.LoadData();
         }
 
-        public Guid AttachedScript
+        public LabURI AttachedScript
         {
             get => attachedScript;
             set

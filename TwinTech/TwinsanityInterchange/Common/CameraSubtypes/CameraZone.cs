@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Twinsanity.TwinsanityInterchange.Enumerations;
-using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
@@ -25,7 +19,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 
         public override void Read(BinaryReader reader, int length)
         {
-            for(var i = 0; i < 5; ++i)
+            for (var i = 0; i < 5; ++i)
             {
                 UnkData1[i] = new Vector4();
                 UnkData1[i].Read(reader, Constants.SIZE_VECTOR4);

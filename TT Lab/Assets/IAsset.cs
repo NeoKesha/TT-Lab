@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.ViewModels;
 
@@ -27,6 +26,24 @@ namespace TT_Lab.Assets
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         UInt32 ID { get; set; }
+
+        /// <summary>
+        /// The main package the asset belongs to
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        string Package { get; set; }
+
+        /// <summary>
+        /// The subpackage the asset belongs to
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        string SubPackage { get; set; }
+
+        /// <summary>
+        /// In case of Twinsanity ID collisions the distinct category asset belongs to
+        /// </summary>
+        [JsonProperty(Required = Required.AllowNull)]
+        string? Variation { get; set; }
 
         /// <summary>
         /// Asset's name
@@ -59,10 +76,16 @@ namespace TT_Lab.Assets
         string Chunk { get; }
 
         /// <summary>
+        /// Resources unique URI to be accessed from around the project
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        LabURI URI { get; set; }
+
+        /// <summary>
         /// TT Lab specific data
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        Dictionary<String, Object> Parameters { get; }
+        Dictionary<String, Object?> Parameters { get; }
 
         /// <summary>
         /// Order in the Project Tree
@@ -92,13 +115,38 @@ namespace TT_Lab.Assets
         /// Loads in asset's data if it's not loaded
         /// </summary>
         /// <returns>Asset's data</returns>
-        /// <typeparam name="T">Type of data</typeparam>
-        AbstractAssetData GetData();
+        protected AbstractAssetData GetData();
+
+        /// <summary>
+        /// Loads in asset's data if it's not loaded
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>Asset's data as a specific type</returns>
+        T GetData<T>() where T : AbstractAssetData
+        {
+            return (T)GetData();
+        }
 
         /// <summary>
         /// Returns asset's viewmodel for editing
         /// </summary>
-        AssetViewModel GetViewModel(AssetViewModel parent = null);
+        AssetViewModel GetViewModel(AssetViewModel? parent = null);
+
+        /// <summary>
+        /// Return asset's viewmodel as a specific type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        T GetViewModel<T>(AssetViewModel? parent = null) where T : AssetViewModel
+        {
+            return (T)GetViewModel(parent);
+        }
+
+        void DisposeData()
+        {
+            GetData().Dispose();
+        }
 
         /// <summary>
         /// Dump on disk in JSON format

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -22,7 +19,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public Single UnkFloat1 { get; set; } // 10
         public Vector4 UnkVector1 { get; set; }
         public Vector4 UnkVector2 { get; set; } // 42
-        public Single UnkFloat2 { get; set; } 
+        public Single UnkFloat2 { get; set; }
         public Single UnkFloat3 { get; set; } // 50
         public UInt32 UnkInt1 { get; set; }
         public UInt32 UnkInt2 { get; set; }
@@ -36,7 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public Single UnkFloat7 { get; set; } // 90
         public UInt32 UnkInt7 { get; set; }
         public UInt32 UnkInt8 { get; set; } // 98
-        public UInt32 UnkInt9 { get; set; } 
+        public UInt32 UnkInt9 { get; set; }
         public Single UnkFloat8 { get; set; } // 106
         public UInt32 TypeIndex1 { get; set; }
         public UInt32 TypeIndex2 { get; set; } // 114

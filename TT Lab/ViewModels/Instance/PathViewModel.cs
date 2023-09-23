@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -17,9 +14,9 @@ namespace TT_Lab.ViewModels.Instance
         private ObservableCollection<Vector4ViewModel> points;
         private ObservableCollection<Vector2ViewModel> arguments;
 
-        public PathViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public PathViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var pathData = (PathData)_asset.GetData();
+            var pathData = _asset.GetData<PathData>();
             points = new ObservableCollection<Vector4ViewModel>();
             points.CollectionChanged += Points_CollectionChanged;
             foreach (var p in pathData.Points)
@@ -91,7 +88,7 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
-            var data = (PathData)_asset.GetData();
+            var data = _asset.GetData<PathData>();
             data.Points.Clear();
             foreach (var p in Points)
             {

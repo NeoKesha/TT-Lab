@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
@@ -11,7 +9,7 @@ namespace TT_Lab.Assets.Graphics
     public class RigidModel : SerializableAsset
     {
 
-        public RigidModel(UInt32 id, String name, PS2AnyRigidModel rigidModel) : base(id, name)
+        public RigidModel(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyRigidModel rigidModel) : base(id, name, package, subpackage, variant)
         {
             assetData = new RigidModelData(rigidModel);
         }

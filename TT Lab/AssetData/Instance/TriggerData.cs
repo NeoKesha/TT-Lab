@@ -1,13 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
-using Twinsanity.Libraries;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -19,7 +15,7 @@ namespace TT_Lab.AssetData.Instance
 
         public TriggerData(PS2AnyTrigger trigger) : this()
         {
-            twinRef = trigger;
+            SetTwinItem(trigger);
         }
 
         public TriggerData(TwinTrigger trigger) : this()
@@ -64,9 +60,9 @@ namespace TT_Lab.AssetData.Instance
             Instances.Clear();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyTrigger trigger = (PS2AnyTrigger)twinRef;
+            PS2AnyTrigger trigger = GetTwinItem<PS2AnyTrigger>();
             ObjectActivatorMask = trigger.Trigger.ObjectActivatorMask;
             Position = CloneUtils.Clone(trigger.Trigger.Position);
             Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);

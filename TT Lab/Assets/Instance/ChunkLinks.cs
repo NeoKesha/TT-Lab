@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
@@ -19,7 +13,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public ChunkLinks(UInt32 id, String name, String chunk, PS2AnyLink links) : base(id, name, chunk, null)
+        public ChunkLinks(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyLink links) : base(package, subpackage, id, name, chunk, null)
         {
             assetData = new ChunkLinksData(links);
         }
@@ -39,12 +33,9 @@ namespace TT_Lab.Assets.Instance
             throw new NotImplementedException();
         }
 
-        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new ChunkLinkViewModel(UUID, parent);
-            }
+            viewModel ??= new ChunkLinkViewModel(URI, parent);
             return viewModel;
         }
 

@@ -18,7 +18,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public TextureData(PS2AnyTexture texture) : this()
         {
-            twinRef = texture;
+            SetTwinItem(texture);
         }
         public Bitmap Bitmap;
         protected override void Dispose(Boolean disposing)
@@ -41,10 +41,10 @@ namespace TT_Lab.AssetData.Graphics
             Bitmap = new Bitmap(Bitmap.FromFile(dataPath));
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
             {
-                PS2AnyTexture texture = (PS2AnyTexture)twinRef;
+                PS2AnyTexture texture = GetTwinItem<PS2AnyTexture>();
                 if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
                 {
                     Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
@@ -70,9 +70,9 @@ namespace TT_Lab.AssetData.Graphics
                     BitsHandle.Free();
                 }
             }
-            twinRef = Export();
+            SetTwinItem(Export());
             {
-                PS2AnyTexture texture = (PS2AnyTexture)twinRef;
+                PS2AnyTexture texture = GetTwinItem<PS2AnyTexture>();
                 if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
                 {
                     Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);

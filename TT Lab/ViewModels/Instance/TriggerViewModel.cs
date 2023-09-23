@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -26,9 +23,9 @@ namespace TT_Lab.ViewModels.Instance
         private UInt16 _arg3;
         private UInt16 _arg4;
 
-        public TriggerViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public TriggerViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var data = (TriggerData)_asset.GetData();
+            var data = _asset.GetData<TriggerData>();
             _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
             _instances = new ObservableCollection<UInt16>();
             foreach (var inst in data.Instances)
@@ -51,7 +48,7 @@ namespace TT_Lab.ViewModels.Instance
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
 
-        public TriggerViewModel(Guid asset, AssetViewModel parent, TriggerData data) : base(asset, parent)
+        public TriggerViewModel(LabURI asset, AssetViewModel? parent, TriggerData data) : base(asset, parent)
         {
             _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
             _instances = new ObservableCollection<UInt16>();
@@ -79,7 +76,7 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
-            var data = (TriggerData)_asset.GetData();
+            var data = _asset.GetData<TriggerData>();
             Save(data);
             base.Save(o);
         }

@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
@@ -20,35 +14,35 @@ namespace TT_Lab.Assets.Instance
         {
             new Color(192,192,192,255),
             new Color(  0,  0,192,255),
-            new Color(  0,  0,127,255), 
-            new Color(255, 96,  0,255), 
-            new Color(255,  0,  0,127), 
-            new Color(  0,  0,  0,127), 
-            new Color(  0,255,  0,255), 
-            new Color( 96, 96,127,255), 
-            new Color( 64, 32,  0,255), 
-            new Color( 96, 96, 96,255), 
-            new Color(192,192,  0,255), 
+            new Color(  0,  0,127,255),
+            new Color(255, 96,  0,255),
+            new Color(255,  0,  0,127),
+            new Color(  0,  0,  0,127),
+            new Color(  0,255,  0,255),
+            new Color( 96, 96,127,255),
+            new Color( 64, 32,  0,255),
+            new Color( 96, 96, 96,255),
+            new Color(192,192,  0,255),
             new Color( 32, 16,  0,255),
-            new Color(  0,  0,255, 64), 
+            new Color(  0,  0,255, 64),
             new Color( 32, 32, 32,255),
-            new Color( 32, 32, 64,255), 
-            new Color(230,230,255,255), 
-            new Color(200,200,255,255), 
-            new Color( 32, 32,192,255), 
-            new Color(192,192,192,127), 
-            new Color(  0,255,  0,255), 
-            new Color(  0,127,  0, 64), 
-            new Color( 32, 32, 32,255), 
-            new Color( 64, 64,127,255), 
-            new Color(  0,  0,255,127), 
-            new Color(255,  0,  0,127), 
-            new Color(127,127,192,255), 
-            new Color(  0,  0,127,127), 
-            new Color(255,  0,255,127), 
+            new Color( 32, 32, 64,255),
+            new Color(230,230,255,255),
+            new Color(200,200,255,255),
+            new Color( 32, 32,192,255),
+            new Color(192,192,192,127),
+            new Color(  0,255,  0,255),
+            new Color(  0,127,  0, 64),
+            new Color( 32, 32, 32,255),
+            new Color( 64, 64,127,255),
+            new Color(  0,  0,255,127),
+            new Color(255,  0,  0,127),
+            new Color(127,127,192,255),
+            new Color(  0,  0,127,127),
+            new Color(255,  0,255,127),
         };
         public static Color DefaultColor = new Color(127, 127, 127);
-        public CollisionSurface(UInt32 id, String name, String chunk, Int32 layId, PS2AnyCollisionSurface surface) : base(id, name, chunk, layId)
+        public CollisionSurface(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyCollisionSurface surface) : base(package, subpackage, id, name, chunk, layId)
         {
             assetData = new CollisionSurfaceData(surface);
             if (id < DefaultColors.Length)
@@ -80,12 +74,9 @@ namespace TT_Lab.Assets.Instance
             throw new NotImplementedException();
         }
 
-        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new CollisionSurfaceViewModel(UUID, parent);
-            }
+            viewModel ??= new CollisionSurfaceViewModel(URI, parent);
             return viewModel;
         }
 

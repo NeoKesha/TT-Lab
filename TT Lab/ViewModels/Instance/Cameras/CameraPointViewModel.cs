@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
 namespace TT_Lab.ViewModels.Instance.Cameras
@@ -25,10 +21,7 @@ namespace TT_Lab.ViewModels.Instance.Cameras
 
         public override void Save(CameraSubBase? cam)
         {
-            if (cam == null)
-            {
-                cam = new CameraPoint();
-            }
+            cam ??= new CameraPoint();
             var pCam = (CameraPoint)cam;
             pCam.Point = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {

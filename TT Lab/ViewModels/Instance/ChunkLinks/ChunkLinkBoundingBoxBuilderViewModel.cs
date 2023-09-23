@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.ViewModels.Code.OGI;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Instance.ChunkLinks
 {
-    public class ChunkLinkBoundingBoxBuilderViewModel : SavebleViewModel
+    public class ChunkLinkBoundingBoxBuilderViewModel : SaveableViewModel
     {
         private Int32 type;
         private BoundingBoxBuilderViewModel boundingBoxBuilder;

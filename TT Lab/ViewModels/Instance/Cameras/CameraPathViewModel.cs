@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
 namespace TT_Lab.ViewModels.Instance.Cameras
@@ -50,10 +46,7 @@ namespace TT_Lab.ViewModels.Instance.Cameras
 
         public override void Save(CameraSubBase? cam)
         {
-            if (cam == null)
-            {
-                cam = new CameraPath();
-            }
+            cam ??= new CameraPath();
             var pathCam = (CameraPath)cam;
             pathCam.PathPoints.Clear();
             foreach (var p in PathPoints)

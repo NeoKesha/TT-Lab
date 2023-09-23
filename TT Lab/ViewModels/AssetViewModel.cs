@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
@@ -18,7 +15,7 @@ using TT_Lab.Util;
 
 namespace TT_Lab.ViewModels
 {
-    public class AssetViewModel : SavebleViewModel
+    public class AssetViewModel : SaveableViewModel
     {
         protected IAsset _asset;
 
@@ -30,7 +27,7 @@ namespace TT_Lab.ViewModels
         private Visibility _isVisible;
         private Control? _editor;
         private bool _dirty;
-        private OpenDialogueCommand.DialogueResult _dialogueResult = new OpenDialogueCommand.DialogueResult();
+        private OpenDialogueCommand.DialogueResult _dialogueResult = new();
         private ICommand _unsavedChangesCommand;
 
         private AssetViewModel()
@@ -38,13 +35,13 @@ namespace TT_Lab.ViewModels
             _unsavedChangesCommand = new OpenDialogueCommand(typeof(UnsavedChangesDialogue), _dialogueResult);
         }
 
-        public AssetViewModel(Guid asset) : this(asset, null)
+        public AssetViewModel(LabURI asset) : this(asset, null)
         {
         }
 
-        public AssetViewModel(Guid asset, AssetViewModel? parent) : this()
+        public AssetViewModel(LabURI asset, AssetViewModel? parent) : this()
         {
-            _asset = ProjectManagerSingleton.PM.OpenedProject.GetAsset(asset);
+            _asset = AssetManager.Get().GetAsset(asset);
             _parent = parent;
             // Personally, I am against ever using type checks but in this situation it's acceptable
             if (_asset is Folder)
@@ -53,12 +50,12 @@ namespace TT_Lab.ViewModels
                 var myChildren = ((FolderData)(_asset as Folder)!.GetData()).Children;
                 var cList = (from child in myChildren
                              orderby _asset.Order
-                             let c = ProjectManagerSingleton.PM.OpenedProject.GetAsset(child)
+                             let c = AssetManager.Get().GetAsset(child)
                              select c).ToList();
                 _children = new ObservableCollection<AssetViewModel>(
                     (from child in myChildren
                      orderby _asset.Order
-                     let c = ProjectManagerSingleton.PM.OpenedProject.GetAsset(child)
+                     let c = AssetManager.Get().GetAsset(child)
                      select c.GetViewModel(this)).ToList());
                 _internalChildren = new List<AssetViewModel>(_children);
             }
@@ -167,7 +164,7 @@ namespace TT_Lab.ViewModels
 
         protected virtual void UnloadData()
         {
-            _asset.GetData().Dispose();
+            _asset.DisposeData();
             _editor = null;
         }
 

@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
@@ -18,13 +16,13 @@ namespace TT_Lab.AssetData.Instance
 
         public InstanceTemplateData(PS2AnyTemplate template) : this()
         {
-            twinRef = template;
+            SetTwinItem(template);
         }
 
         [JsonProperty(Required = Required.Always)]
         public String TemplateName { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid ObjectId { get; set; }
+        public LabURI ObjectId { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte1 { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -54,11 +52,11 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyTemplate template = (PS2AnyTemplate)twinRef;
+            PS2AnyTemplate template = GetTwinItem<PS2AnyTemplate>();
             TemplateName = new String(template.Name.ToCharArray());
-            ObjectId = GuidManager.GetGuidByTwinId(template.ObjectId, typeof(GameObject));
+            ObjectId = AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, template.ObjectId);
             UnkByte1 = template.UnkByte1;
             UnkByte2 = template.UnkByte2;
             UnkByte3 = template.UnkByte3;

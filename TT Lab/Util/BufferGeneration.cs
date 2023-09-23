@@ -1,12 +1,9 @@
 ﻿using GlmNet;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Rendering.Buffers;
 
@@ -64,7 +61,7 @@ namespace TT_Lab.Util
                 index++;
             }
 
-            
+
             if (preCalcNormals == null)
             {
                 for (var i = 0; i < indices.Count; ++i)
@@ -148,10 +145,7 @@ namespace TT_Lab.Util
         }
         public static IndexedBufferArray GetCubeBuffer(Vector3 position = default, Vector3 scale = default, Quaternion rotation = default, List<Color>? colors = null)
         {
-            if (colors == null)
-            {
-                colors = new List<Color> { Color.LightGray };
-            }
+            colors ??= new List<Color> { Color.LightGray };
             float[] cubeVertecies = {
                 -1.0f,-1.0f,-1.0f,
                 -1.0f,-1.0f, 1.0f,
@@ -238,6 +232,6 @@ namespace TT_Lab.Util
         {
             return GetCubeBuffer(position, new Vector3(scale, scale, scale), default, colors);
         }
-        
+
     }
 }

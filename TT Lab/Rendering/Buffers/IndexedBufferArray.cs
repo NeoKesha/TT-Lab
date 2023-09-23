@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TT_Lab.Rendering.Buffers
+﻿namespace TT_Lab.Rendering.Buffers
 {
     /// <summary>
     /// Stores buffered indices for Element rendering. Works just like VertexBufferArray

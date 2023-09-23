@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Cameras;
 
 namespace TT_Lab.ViewModels.Instance
@@ -37,9 +35,9 @@ namespace TT_Lab.ViewModels.Instance
         private BaseCameraViewModel? mainCamera1;
         private BaseCameraViewModel? mainCamera2;
 
-        public CameraViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public CameraViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var data = (CameraData)_asset.GetData();
+            var data = _asset.GetData<CameraData>();
             trigger = new TriggerViewModel(asset, parent, data.Trigger);
             trigger.PropertyChanged += Trigger_PropertyChanged;
             cameraHeader = data.CameraHeader;
@@ -117,7 +115,7 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(object? o)
         {
             _asset.LayoutID = (int)Trigger.LayoutID;
-            var data = (CameraData)_asset.GetData();
+            var data = _asset.GetData<CameraData>();
             Trigger.Save(data.Trigger);
             data.CameraHeader = CameraHeader;
             data.UnkShort = UnkShort;

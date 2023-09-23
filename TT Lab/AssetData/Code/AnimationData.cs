@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.AssetData.Code
@@ -16,21 +11,16 @@ namespace TT_Lab.AssetData.Code
 
         public AnimationData(PS2AnyAnimation animation) : this()
         {
-            twinRef = animation;
+            SetTwinItem(animation);
         }
-
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Bitfield;
 
         protected override void Dispose(Boolean disposing)
         {
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyAnimation animation = (PS2AnyAnimation)twinRef;
-            Bitfield = animation.Bitfield;
         }
     }
 }

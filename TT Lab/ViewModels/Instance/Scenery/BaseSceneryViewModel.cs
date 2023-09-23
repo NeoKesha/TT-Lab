@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using TT_Lab.AssetData.Instance.Scenery;
-using TT_Lab.Util;
+using TT_Lab.Assets;
 
 namespace TT_Lab.ViewModels.Instance.Scenery
 {
-    public class BaseSceneryViewModel : SavebleViewModel
+    public class BaseSceneryViewModel : SaveableViewModel
     {
-        private ObservableCollection<Guid> meshes;
-        private ObservableCollection<Guid> lods;
+        private ObservableCollection<LabURI> meshes;
+        private ObservableCollection<LabURI> lods;
         private ObservableCollection<Vector4ViewModel[]> bbs;
         private ObservableCollection<Vector4ViewModel[]> meshModelMatrices;
         private ObservableCollection<Vector4ViewModel[]> lodModelMatrices;
@@ -24,12 +19,12 @@ namespace TT_Lab.ViewModels.Instance.Scenery
 
         public BaseSceneryViewModel(SceneryBaseData data)
         {
-            meshes = new ObservableCollection<Guid>();
+            meshes = new ObservableCollection<LabURI>();
             foreach (var m in data.MeshIDs)
             {
                 meshes.Add(m);
             }
-            lods = new ObservableCollection<Guid>();
+            lods = new ObservableCollection<LabURI>();
             foreach (var l in data.LodIDs)
             {
                 lods.Add(l);
@@ -74,8 +69,8 @@ namespace TT_Lab.ViewModels.Instance.Scenery
 
         }
 
-        public ObservableCollection<Guid> Meshes { get => meshes; set => meshes = value; }
-        public ObservableCollection<Guid> Lods { get => lods; set => lods = value; }
+        public ObservableCollection<LabURI> Meshes { get => meshes; set => meshes = value; }
+        public ObservableCollection<LabURI> Lods { get => lods; set => lods = value; }
         public ObservableCollection<Vector4ViewModel[]> Bbs { get => bbs; set => bbs = value; }
         public ObservableCollection<Vector4ViewModel[]> MeshModelMatrices { get => meshModelMatrices; set => meshModelMatrices = value; }
         public ObservableCollection<Vector4ViewModel[]> LodModelMatrices { get => lodModelMatrices; set => lodModelMatrices = value; }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
 namespace TT_Lab.ViewModels.Instance.Cameras
@@ -62,10 +58,7 @@ namespace TT_Lab.ViewModels.Instance.Cameras
 
         public override void Save(CameraSubBase? cam)
         {
-            if (cam == null)
-            {
-                cam = new CameraSpline();
-            }
+            cam ??= new CameraSpline();
             var splineCam = (CameraSpline)cam;
             splineCam.UnkFloat3 = UnkFloat3;
             splineCam.UnkShort = UnkShort;

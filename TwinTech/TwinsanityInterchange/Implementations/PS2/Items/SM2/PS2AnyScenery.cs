@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
@@ -38,9 +36,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 
         public override Int32 GetLength()
         {
-            return 4 + 4 + Name.Length + 4 + 4 + 1 + 
+            return 4 + 4 + Name.Length + 4 + 4 + 1 +
                 (SkydomeID != 0 ? 4 : 0) +
-                (ReservedBlob != null ? 0x3E8 + 24 + 4 * 5 + AmbientLights.Sum(a => a.GetLength()) + 
+                (ReservedBlob != null ? 0x3E8 + 24 + 4 * 5 + AmbientLights.Sum(a => a.GetLength()) +
                     DirectionalLights.Sum(d => d.GetLength()) + PointLights.Sum(p => p.GetLength()) +
                     NegativeLights.Sum(n => n.GetLength()) : 0) +
                 Sceneries.Sum(s => s.GetLength());

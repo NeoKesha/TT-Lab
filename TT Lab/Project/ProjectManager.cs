@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using TT_Lab.AssetData;
@@ -24,10 +22,7 @@ namespace TT_Lab.Project
         {
             get
             {
-                if (_pm == null)
-                {
-                    _pm = new ProjectManager();
-                }
+                _pm ??= new ProjectManager();
                 return _pm;
             }
             private set
@@ -40,13 +35,13 @@ namespace TT_Lab.Project
     public class ProjectManager : ObservableObject
     {
         private IProject _openedProject;
-        private CommandManager _commandManager = new CommandManager();
-        private MenuItem[] _recentMenus = new MenuItem[0];
-        private List<AssetViewModel> _projectTree = new List<AssetViewModel>();
-        private List<AssetViewModel> _internalTree = new List<AssetViewModel>();
+        private CommandManager _commandManager = new();
+        private MenuItem[] _recentMenus = Array.Empty<MenuItem>();
+        private List<AssetViewModel> _projectTree = new();
+        private List<AssetViewModel> _internalTree = new();
         private bool _workableProject = false;
         private string _searchAsset = "";
-        private object _treeLock = new object();
+        private object _treeLock = new();
 
         public ProjectManager()
         {
@@ -226,7 +221,7 @@ namespace TT_Lab.Project
                 return _recentMenus;
             }
         }
-        
+
         public bool HasRecents
         {
             get
@@ -235,26 +230,38 @@ namespace TT_Lab.Project
             }
         }
 
-        public void CreateProject(string name, string path, string discContentPath)
+        public void CreateProject(string name, string path, string? discContentPathPS2, string? discContentPathXbox)
         {
             Log.Clear();
             DateTime projCreateStart = DateTime.Now;
-            var discFiles = Directory.GetFiles(discContentPath).Select(s => Path.GetFileName(s)).ToArray();
-            // Check for either XBOX or PS2 required root disc files
-            if (!discFiles.Contains("default.xbe") && !discFiles.Contains("System.cnf"))
+            var ps2ContentProvided = false;
+            var xboxContentProvided = false;
+            if (discContentPathPS2 != null && discContentPathPS2.Length != 0)
             {
-                throw new Exception("Improper disc content provided!");
+                var ps2DiscFiles = Directory.GetFiles(discContentPathPS2).Select(s => Path.GetFileName(s)).ToArray();
+                // Check for PS2 required root disc files
+                if (!ps2DiscFiles.Contains("System.cnf"))
+                {
+                    throw new Exception("Improper disc content provided!");
+                }
+                ps2ContentProvided = true;
             }
-            // Create PS2 type project
-            if (discFiles.Contains("System.cnf"))
+            if (discContentPathXbox != null && discContentPathXbox.Length != 0)
             {
-                OpenedProject = new PS2Project(name, path, discContentPath);
+                var xboxDiscFiles = Directory.GetFiles(discContentPathXbox).Select(s => Path.GetFileName(s)).ToArray();
+                // Check for XBOX required root disc files
+                if (!xboxDiscFiles.Contains("default.xbe"))
+                {
+                    throw new Exception("Improper disc content provided!");
+                }
+                xboxContentProvided = true;
             }
-            else
+            if (!ps2ContentProvided && !xboxContentProvided)
             {
-                // TODO: XBox type project
-                throw new Exception("XBox project type not supported!");
+                throw new Exception("No content was provided for creating a new project!");
             }
+
+            OpenedProject = new Project(name, path, discContentPathPS2, discContentPathXbox);
             OpenedProject.CreateProjectStructure();
             // Unpack assets
             Directory.SetCurrentDirectory("assets");
@@ -262,26 +269,31 @@ namespace TT_Lab.Project
             {
                 try
                 {
-                    Log.WriteLine("Unpacking assets...");
-                    OpenedProject.UnpackAssets();
-                    Log.WriteLine($"Creating GUID Mapper...");
-                    GuidManager.InitMappers(OpenedProject.Assets);
+                    Log.WriteLine("Unpacking PS2 assets...");
+                    OpenedProject.UnpackAssetsPS2();
+                    Log.WriteLine("Unpacking XBox assets...");
+                    OpenedProject.UnpackAssetsXbox();
+
                     Log.WriteLine($"Converting assets...");
-                    foreach (var asset in OpenedProject.Assets)
+                    foreach (var asset in OpenedProject.AssetManager.GetAssets())
                     {
                         asset.Value.Import();
                     }
+
                     Log.WriteLine("Serializing assets...");
                     OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
+
                     AddRecentlyOpened(OpenedProject.ProjectPath);
+
                     Log.WriteLine("Building project tree...");
                     BuildProjectTree();
+
                     WorkableProject = true;
                     NotifyChange("ProjectOpened");
                     NotifyChange("ProjectTitle");
                     Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Log.WriteLine($"Error when working with assets: {ex.Message}\n{ex.StackTrace}");
                 }
@@ -306,7 +318,7 @@ namespace TT_Lab.Project
                         try
                         {
                             Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
-                            OpenedProject = PS2Project.Deserialize(prFile);
+                            OpenedProject = Project.Deserialize(prFile);
                             Log.WriteLine($"Building project tree...");
                             BuildProjectTree();
                             WorkableProject = true;
@@ -355,7 +367,7 @@ namespace TT_Lab.Project
 
         private void BuildProjectTree()
         {
-            ProjectTree = (from asset in OpenedProject.Assets.Values
+            ProjectTree = (from asset in OpenedProject.AssetManager.GetAssets().Values
                            where asset.Type == typeof(Folder)
                            let folder = asset as Folder
                            where ((FolderData)folder.GetData()).Parent == null

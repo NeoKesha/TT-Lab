@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
@@ -29,7 +24,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public Single[] UnkFloatParams { get; set; }
         public Vector4 UnkVec { get; set; }
         public Vector4[] UnkBoundingBox { get; set; }
-        
+
         public PS2AnyCollisionSurface()
         {
             UnkFloatParams = new float[10];

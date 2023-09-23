@@ -1,10 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TT_Lab.Rendering.Buffers
 {
@@ -33,7 +28,7 @@ namespace TT_Lab.Rendering.Buffers
             Unbind();
         }
 
-        public TextureBuffer(int width, int height, Bitmap data) : this (TextureTarget.Texture2D, width, height, data)
+        public TextureBuffer(int width, int height, Bitmap data) : this(TextureTarget.Texture2D, width, height, data)
         {
         }
 
@@ -43,7 +38,7 @@ namespace TT_Lab.Rendering.Buffers
             textureBuffer = (uint)GL.GenTexture();
         }
 
-        public TextureBuffer() : this (TextureTarget.Texture2D)
+        public TextureBuffer() : this(TextureTarget.Texture2D)
         {
         }
 

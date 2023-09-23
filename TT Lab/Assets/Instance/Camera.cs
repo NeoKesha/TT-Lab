@@ -1,34 +1,32 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
-using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
     public class Camera : SerializableInstance
     {
-        public Camera(UInt32 id, String name, String chunk, Int32 layId, PS2AnyCamera camera) : base(id, name, chunk, layId)
+        public Camera(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyCamera camera) : base(package, subpackage, id, name, chunk, layId)
         {
             assetData = new CameraData(camera);
-            Parameters = new Dictionary<string, object?>();
-            Parameters["MainCamera1Type"] = null;
-            Parameters["MainCamera2Type"] = null;
+            Parameters = new Dictionary<string, object?>
+            {
+                ["MainCamera1Type"] = null,
+                ["MainCamera2Type"] = null
+            };
         }
 
         public Camera()
         {
-            Parameters = new Dictionary<string, object?>();
-            Parameters["MainCamera1Type"] = null;
-            Parameters["MainCamera2Type"] = null;
+            Parameters = new Dictionary<string, object?>
+            {
+                ["MainCamera1Type"] = null,
+                ["MainCamera2Type"] = null
+            };
         }
 
         public override Byte[] ToFormat()
@@ -76,12 +74,9 @@ namespace TT_Lab.Assets.Instance
             base.Serialize();
         }
 
-        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new CameraViewModel(UUID, parent);
-            }
+            viewModel ??= new CameraViewModel(URI, parent);
             return viewModel;
         }
 

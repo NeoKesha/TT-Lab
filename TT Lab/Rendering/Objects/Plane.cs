@@ -3,13 +3,9 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Project;
+using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
@@ -55,7 +51,7 @@ namespace TT_Lab.Rendering.Objects
         {
             if (material.Shaders[0].TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON)
             {
-                var tex = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(material.Shaders[0].TextureId).GetData();
+                var tex = AssetManager.Get().GetAssetData<TextureData>(material.Shaders[0].TextureId);
                 texture = new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap);
             }
         }

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
@@ -14,13 +11,13 @@ namespace TT_Lab.ViewModels.Instance
         private Vector4ViewModel position;
         private Enums.Layouts layId;
 
-        public PositionViewModel(Guid asset) : base(asset)
+        public PositionViewModel(LabURI asset) : base(asset)
         {
         }
 
-        public PositionViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public PositionViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var posData = (PositionData)_asset.GetData();
+            var posData = _asset.GetData<PositionData>();
             position = new Vector4ViewModel(posData.Coords);
             position.PropertyChanged += Position_PropertyChanged;
             layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
@@ -35,7 +32,7 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
-            var data = (PositionData)_asset.GetData();
+            var data = _asset.GetData<PositionData>();
             data.Coords = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {
                 X = Position.X,

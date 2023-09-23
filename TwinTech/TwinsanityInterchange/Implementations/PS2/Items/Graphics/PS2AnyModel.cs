@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -44,7 +41,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public override void Write(BinaryWriter writer)
         {
             writer.Write(SubModels.Count);
-            foreach(ITwinSerializable e in SubModels)
+            foreach (ITwinSerializable e in SubModels)
             {
                 e.Write(writer);
             }

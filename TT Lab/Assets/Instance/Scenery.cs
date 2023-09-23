@@ -1,11 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
@@ -22,7 +16,7 @@ namespace TT_Lab.Assets.Instance
             Parameters = new Dictionary<string, object?>();
         }
 
-        public Scenery(UInt32 id, String name, String chunk, PS2AnyScenery scenery) : base(id, name, chunk, null)
+        public Scenery(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyScenery scenery) : base(package, subpackage, id, name, chunk, null)
         {
             assetData = new SceneryData(scenery);
         }
@@ -42,12 +36,9 @@ namespace TT_Lab.Assets.Instance
             throw new NotImplementedException();
         }
 
-        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new SceneryViewModel(UUID, parent);
-            }
+            viewModel ??= new SceneryViewModel(URI, parent);
             return viewModel;
         }
 

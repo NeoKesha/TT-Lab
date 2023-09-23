@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
@@ -17,7 +13,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryNodeData() { }
 
-        public SceneryNodeData(SceneryBaseType baseType) : base(baseType)
+        public SceneryNodeData(String package, String subpackage, String? variant, SceneryBaseType baseType) : base(package, subpackage, variant, baseType)
         {
             var node = (SceneryNode)baseType;
             SceneryTypes = CloneUtils.CloneArray(node.SceneryTypes);

@@ -1,23 +1,13 @@
-﻿using OpenTK;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Wpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
-using TT_Lab.AssetData;
-using TT_Lab.AssetData.Instance;
-using TT_Lab.Assets;
+using System.Windows.Input;
 using TT_Lab.Controls;
 using TT_Lab.Rendering;
-using TT_Lab.Rendering.Shaders;
-using TT_Lab.Util;
-using TT_Lab.ViewModels;
-using System.Windows.Input;
-using OpenTK.Wpf;
-using System.Diagnostics;
 
 namespace TT_Lab.Editors
 {

@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Controls;
 using TT_Lab.Project;
 
 namespace TT_Lab.Command
 {
     public class OpenProjectCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         private string path;
 
@@ -16,12 +14,12 @@ namespace TT_Lab.Command
             this.path = path;
         }
 
-        public Boolean CanExecute(Object parameter)
+        public Boolean CanExecute(Object? parameter)
         {
             return true;
         }
 
-        public void Execute(Object parameter = null)
+        public void Execute(Object? parameter = null)
         {
             try
             {

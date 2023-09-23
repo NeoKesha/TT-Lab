@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Assets.Graphics;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
@@ -13,23 +9,24 @@ namespace TT_Lab.ViewModels.Graphics
 {
     public class TextureViewModel : AssetViewModel
     {
-        private Bitmap _texture;
+        private Bitmap? _texture;
         private PS2AnyTexture.TextureFunction _texFun;
         private PS2AnyTexture.TexturePixelFormat _pixelFormat;
 
-        public TextureViewModel(Guid asset) : base(asset)
+        public TextureViewModel(LabURI asset) : base(asset)
         {
         }
 
-        public TextureViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public TextureViewModel(LabURI asset, AssetViewModel parent) : base(asset, parent)
         {
-            _pixelFormat = MiscUtils.ConvertEnum<PS2AnyTexture.TexturePixelFormat>(Asset.Parameters["pixel_storage_format"]);
-            _texFun = MiscUtils.ConvertEnum<PS2AnyTexture.TextureFunction>(Asset.Parameters["texture_function"]);
+            Debug.Assert(Asset.Parameters["pixel_storage_format"] != null && Asset.Parameters["texture_function"] != null, "Texture parameters must be filled in");
+            _pixelFormat = MiscUtils.ConvertEnum<PS2AnyTexture.TexturePixelFormat>(Asset.Parameters["pixel_storage_format"]!);
+            _texFun = MiscUtils.ConvertEnum<PS2AnyTexture.TextureFunction>(Asset.Parameters["texture_function"]!);
         }
 
         public override void Save(object? o)
         {
-            var data = (TextureData)Asset.GetData();
+            var data = Asset.GetData<TextureData>();
             data.Bitmap = Texture;
             Asset.Parameters["pixel_storage_format"] = PixelStorageFormat;
             Asset.Parameters["texture_function"] = TextureFunction;
@@ -47,10 +44,7 @@ namespace TT_Lab.ViewModels.Graphics
         {
             get
             {
-                if (_texture == null)
-                {
-                    _texture = (Bitmap)((TextureData)_asset.GetData()).Bitmap.Clone();
-                }
+                _texture ??= (Bitmap)(_asset.GetData<TextureData>()).Bitmap.Clone();
                 return _texture;
             }
             set

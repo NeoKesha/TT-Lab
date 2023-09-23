@@ -1,19 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Project;
+using TT_Lab.Assets;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
 
@@ -51,7 +39,7 @@ namespace TT_Lab.Editors.Graphics
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
-            var rm = (RigidModelData)GetAssetData();
+            var rm = GetAssetData<RigidModelData>();
             RigidModel model = new RigidModel(rm);
             SceneRenderer.Scene.AddRender(model, false);
         }
@@ -65,8 +53,8 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
 
-            var rm = (RigidModelData)GetAssetData();
-            var matData = (MaterialData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(rm.Materials[selectedMaterial]).GetData();
+            var rm = GetAssetData<RigidModelData>();
+            var matData = AssetManager.Get().GetAsset(rm.Materials[selectedMaterial]).GetData<MaterialData>();
             MaterialName.Text = matData.Name;
             var texPlane = new Plane(matData);
             MaterialViewer.Scene.AddRender(texPlane);
@@ -75,7 +63,7 @@ namespace TT_Lab.Editors.Graphics
         private void PrevMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial--;
-            var rm = (RigidModelData)GetAssetData();
+            var rm = GetAssetData<RigidModelData>();
             if (selectedMaterial < 0)
             {
                 selectedMaterial = rm.Materials.Count - 1;
@@ -86,7 +74,7 @@ namespace TT_Lab.Editors.Graphics
         private void NextMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial++;
-            var rm = (RigidModelData)GetAssetData();
+            var rm = GetAssetData<RigidModelData>();
             if (selectedMaterial >= rm.Materials.Count)
             {
                 selectedMaterial = 0;

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Twinsanity.PS2Hardware
 {
@@ -242,18 +239,14 @@ namespace Twinsanity.PS2Hardware
         }
         public Int32 GetLength()
         {
-            switch (FLG)
+            return FLG switch
             {
-                case GIFModeEnum.PACKED:
-                    return NREG * NLOOP; // QWORD
-                case GIFModeEnum.REGLIST:
-                    return NREG * NLOOP; // DWORD
-                case GIFModeEnum.IMAGE:
-                    return NLOOP; // QWORD
-                case GIFModeEnum.DISABLE:
-                    return 0;
-            }
-            return 0;
+                GIFModeEnum.PACKED => NREG * NLOOP,// QWORD
+                GIFModeEnum.REGLIST => NREG * NLOOP,// DWORD
+                GIFModeEnum.IMAGE => NLOOP,// QWORD
+                GIFModeEnum.DISABLE => 0,
+                _ => 0,
+            };
         }
     }
     public enum GIFModeEnum
@@ -286,7 +279,8 @@ namespace Twinsanity.PS2Hardware
     public class RegOutput
     {
         private UInt64 _Output;
-        public UInt64 Output { 
+        public UInt64 Output
+        {
             get
             {
                 return _Output;
@@ -304,7 +298,7 @@ namespace Twinsanity.PS2Hardware
                         Q = BitConverter.ToSingle(BitConverter.GetBytes((UInt32)BitUtils.GetBits(_Output, 32, 32)), 0);
                         break;
                     case REGSEnum.ST:
-                        S = BitConverter.ToSingle(BitConverter.GetBytes((UInt32)BitUtils.GetBits(_Output, 32, 0)),0);
+                        S = BitConverter.ToSingle(BitConverter.GetBytes((UInt32)BitUtils.GetBits(_Output, 32, 0)), 0);
                         T = BitConverter.ToSingle(BitConverter.GetBytes((UInt32)BitUtils.GetBits(_Output, 32, 32)), 0);
                         break;
                     case REGSEnum.UV:
@@ -410,5 +404,5 @@ namespace Twinsanity.PS2Hardware
             }
             return result;
         }
-    } 
+    }
 }

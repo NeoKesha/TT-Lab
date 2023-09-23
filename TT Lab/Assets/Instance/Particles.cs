@@ -1,14 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
-using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
 namespace TT_Lab.Assets.Instance
@@ -19,7 +12,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public Particles(UInt32 id, String name, String chunk, PS2AnyParticleData particleData) : base(id, name, chunk, null)
+        public Particles(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyParticleData particleData) : base(package, subpackage, id, name, chunk, null)
         {
             assetData = new ParticlesData(particleData);
         }
@@ -39,12 +32,9 @@ namespace TT_Lab.Assets.Instance
             throw new NotImplementedException();
         }
 
-        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new AssetViewModel(UUID, parent);
-            }
+            viewModel ??= new AssetViewModel(URI, parent);
             return viewModel;
         }
 

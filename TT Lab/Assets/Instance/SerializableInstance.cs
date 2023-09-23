@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TT_Lab.AssetData;
+﻿using System;
 
 namespace TT_Lab.Assets.Instance
 {
@@ -12,7 +6,7 @@ namespace TT_Lab.Assets.Instance
     {
         protected override String SavePath => $"Instance\\{Chunk}\\{Type}";
 
-        public SerializableInstance(UInt32 id, String name, String chunk, Int32? layId) : base(id, name)
+        public SerializableInstance(String package, String subpackage, UInt32 id, String name, String chunk, Int32? layId) : base(id, name, package, subpackage, chunk)
         {
             Chunk = chunk;
             LayoutID = layId;

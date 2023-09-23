@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Animation;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
@@ -12,33 +8,51 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
     public class PS2AnyAnimation : BaseTwinItem, ITwinAnimation
     {
-        public UInt32 Bitfield;
-        public TwinBlob UnkBlob1;
-        public TwinBlob UnkBlob2;
+        UInt32 bitfield;
+        public Boolean HasAnimationData { get; set; }
+        public Boolean HasFacialAnimationData { get; set; }
+        public UInt16 TotalFrames { get; set; }
+        public Byte DefaultFPS { get; set; }
+        public TwinAnimation MainAnimation;
+        public TwinAnimation FacialAnimation;
 
         public PS2AnyAnimation()
         {
-            UnkBlob1 = new TwinBlob();
-            UnkBlob2 = new TwinBlob();
+            MainAnimation = new TwinAnimation();
+            FacialAnimation = new TwinAnimation();
         }
 
         public override int GetLength()
         {
-            return 4 + UnkBlob1.GetLength() + UnkBlob2.GetLength();
+            return 4 + MainAnimation.GetLength() + FacialAnimation.GetLength();
         }
 
         public override void Read(BinaryReader reader, int length)
         {
-            Bitfield = reader.ReadUInt32();
-            UnkBlob1.Read(reader, length);
-            UnkBlob2.Read(reader, length);
+            bitfield = reader.ReadUInt32();
+            {
+                HasAnimationData = (bitfield & 0x1) == 1;
+                HasFacialAnimationData = (bitfield & 0x2) == 1;
+                TotalFrames = (UInt16)(bitfield >> 0x2 & 0xFFFF);
+                DefaultFPS = (Byte)(bitfield >> 0x11 & 0x1F);
+            }
+            MainAnimation.Read(reader, length);
+            FacialAnimation.Read(reader, length);
         }
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Bitfield);
-            UnkBlob1.Write(writer);
-            UnkBlob2.Write(writer);
+            var hasAnimationData = HasAnimationData ? 1 : 0;
+            var hasFacialAnimationData = HasFacialAnimationData ? 1 : 0;
+            UInt32 newBitfield = (UInt32)hasAnimationData;
+            newBitfield |= (UInt32)(hasFacialAnimationData << 1);
+            newBitfield |= (UInt32)(TotalFrames << 0x2 & 0xFFFF);
+            newBitfield |= (UInt32)(DefaultFPS << 0x11 & 0x1F);
+            bitfield = newBitfield;
+
+            writer.Write(bitfield);
+            MainAnimation.Write(writer);
+            FacialAnimation.Write(writer);
         }
 
         public override String GetName()

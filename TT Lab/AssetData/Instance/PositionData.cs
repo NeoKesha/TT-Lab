@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
-using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 
@@ -15,12 +10,12 @@ namespace TT_Lab.AssetData.Instance
     {
         public PositionData()
         {
-            
+
         }
 
         public PositionData(PS2AnyPosition position)
         {
-            twinRef = position;
+            SetTwinItem(position);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -31,9 +26,9 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyPosition position = (PS2AnyPosition)twinRef;
+            PS2AnyPosition position = GetTwinItem<PS2AnyPosition>();
             Coords = CloneUtils.Clone(position.Position);
         }
     }

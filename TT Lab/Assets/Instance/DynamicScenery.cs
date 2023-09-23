@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
@@ -17,7 +11,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public DynamicScenery(UInt32 id, String name, String chunk, PS2AnyDynamicScenery dynamicScenery) : base(id, name, chunk, null)
+        public DynamicScenery(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyDynamicScenery dynamicScenery) : base(package, subpackage, id, name, chunk, null)
         {
             assetData = new DynamicSceneryData(dynamicScenery);
         }

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
@@ -14,11 +11,11 @@ namespace TT_Lab.ViewModels.Instance
         private Enums.Layouts layId;
         private UInt16 surfId;
         private UInt32 flags;
-        private Guid stepSoundId1;
-        private Guid stepSoundId2;
-        private Guid landSoundId1;
-        private Guid landSoundId2;
-        private Guid unkSoundId;
+        private LabURI stepSoundId1;
+        private LabURI stepSoundId2;
+        private LabURI landSoundId1;
+        private LabURI landSoundId2;
+        private LabURI unkSoundId;
         private UInt16 unkId1;
         private UInt16 unkId2;
         private UInt16 unkId3;
@@ -28,9 +25,9 @@ namespace TT_Lab.ViewModels.Instance
         private Vector4ViewModel unkVec;
         private Vector4ViewModel[] unkBoundingBox;
 
-        public CollisionSurfaceViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public CollisionSurfaceViewModel(LabURI asset, AssetViewModel parent) : base(asset, parent)
         {
-            var surfData = (CollisionSurfaceData)_asset.GetData();
+            var surfData = _asset.GetData<CollisionSurfaceData>();
             surfId = surfData.SurfaceID;
             flags = surfData.Flags;
             floatParams = CloneUtils.CloneArray(surfData.Parameters);
@@ -58,7 +55,7 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
-            var data = (CollisionSurfaceData)_asset.GetData();
+            var data = _asset.GetData<CollisionSurfaceData>();
             data.SurfaceID = SurfId;
             data.Flags = Flags;
             data.StepSoundId1 = StepSoundId1;
@@ -142,7 +139,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Guid StepSoundId1
+        public LabURI StepSoundId1
         {
             get => stepSoundId1;
             set
@@ -154,7 +151,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Guid StepSoundId2
+        public LabURI StepSoundId2
         {
             get => stepSoundId2;
             set
@@ -166,7 +163,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Guid LandSoundId1
+        public LabURI LandSoundId1
         {
             get => landSoundId1;
             set
@@ -178,7 +175,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Guid LandSoundId2
+        public LabURI LandSoundId2
         {
             get => landSoundId2;
             set
@@ -190,7 +187,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Guid UnkSoundId
+        public LabURI UnkSoundId
         {
             get => unkSoundId;
             set

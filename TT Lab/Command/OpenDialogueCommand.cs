@@ -5,7 +5,7 @@ namespace TT_Lab.Command
 {
     public class OpenDialogueCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         public class DialogueResult
         {
@@ -25,21 +25,21 @@ namespace TT_Lab.Command
             result = resultRef;
         }
 
-        public Boolean CanExecute(Object parameter)
+        public Boolean CanExecute(Object? parameter)
         {
             return true;
         }
 
-        public void Execute(Object parameter = null)
+        public void Execute(Object? parameter = null)
         {
             Window w;
             if (result == null)
             {
-                w = (Window)Activator.CreateInstance(window);
+                w = (Window)Activator.CreateInstance(window)!;
             }
             else
             {
-                w = (Window)Activator.CreateInstance(window, result);
+                w = (Window)Activator.CreateInstance(window, result)!;
             }
             w.ShowDialog();
         }

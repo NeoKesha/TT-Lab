@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -15,7 +9,7 @@ namespace TT_Lab.Assets.Code
     {
         public GameObject() { }
 
-        public GameObject(UInt32 id, String name, PS2AnyObject @object) : base(id, name)
+        public GameObject(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyObject @object) : base(id, name, package, subpackage, variant)
         {
             assetData = new GameObjectData(@object);
         }
@@ -39,8 +33,7 @@ namespace TT_Lab.Assets.Code
         {
             if (!IsLoaded || assetData.Disposed)
             {
-                assetData = new GameObjectData();
-                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                assetData = new GameObjectData(System.IO.Path.Combine("assets", SavePath, Data));
                 IsLoaded = true;
             }
             return assetData;

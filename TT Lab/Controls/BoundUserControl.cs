@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TT_Lab.Controls.Events;
@@ -13,10 +9,10 @@ namespace TT_Lab.Controls
 {
     public class BoundUserControl : UserControl
     {
-        protected event EventHandler<BoundPropertyChangedEventArgs> BoundPropertyChanged;
-        protected event EventHandler UndoPerformed;
-        protected event EventHandler RedoPerformed;
-        protected event EventHandler TargetChanged;
+        protected event EventHandler<BoundPropertyChangedEventArgs>? BoundPropertyChanged;
+        protected event EventHandler? UndoPerformed;
+        protected event EventHandler? RedoPerformed;
+        protected event EventHandler? TargetChanged;
 
         [Description("Editor that owns this user control and receives the commands for Undo/Redo"), Category("Common Properties")]
         public BaseEditor Editor
@@ -75,7 +71,7 @@ namespace TT_Lab.Controls
 
         protected static void OnEditorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            BoundUserControl control = d as BoundUserControl;
+            BoundUserControl control = (BoundUserControl)d;
             control.UndoPerformed += control.Editor.UndoExecuted;
             control.RedoPerformed += control.Editor.RedoExecuted;
             control.BoundPropertyChanged += control.Editor.BoundPropertyChanged;
@@ -83,7 +79,7 @@ namespace TT_Lab.Controls
 
         protected static void OnTargetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            BoundUserControl control = d as BoundUserControl;
+            BoundUserControl control = (BoundUserControl)d;
             control.InvokeTargetChanged();
         }
     }

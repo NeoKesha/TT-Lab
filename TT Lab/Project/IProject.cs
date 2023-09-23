@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Assets;
 
 namespace TT_Lab.Project
@@ -17,13 +13,7 @@ namespace TT_Lab.Project
         /// <summary>
         /// Project's collection of assets
         /// </summary>
-        Dictionary<Guid, IAsset> Assets { get; }
-
-        /// <summary>
-        /// Project's list of assets
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        Dictionary<Guid, UInt32> GuidToTwinId { get; }
+        AssetManager AssetManager { get; }
 
         /// <summary>
         /// Project's UUID
@@ -44,10 +34,16 @@ namespace TT_Lab.Project
         string Path { get; set; }
 
         /// <summary>
-        /// Game's disc content path
+        /// PS2's disc content path
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        string DiscContentPath { get; set; }
+        string? DiscContentPathPS2 { get; set; }
+
+        /// <summary>
+        /// XBox's disc content path
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        string? DiscContentPathXbox { get; set; }
 
         /// <summary>
         /// Date and time when project was last modified
@@ -67,17 +63,14 @@ namespace TT_Lab.Project
         string ProjectPath { get; }
 
         /// <summary>
-        /// Unpacks game assets data into project readable format
+        /// Unpacks PS2 assets data into project readable format
         /// </summary>
-        void UnpackAssets();
+        void UnpackAssetsPS2();
 
         /// <summary>
-        /// Gets a requested asset
+        /// Unpacks XBox assets data into project readable format
         /// </summary>
-        /// <typeparam name="T">Asset type</typeparam>
-        /// <param name="id">Asset ID</param>
-        /// <returns>Returns requested asset or null if not found</returns>
-        IAsset GetAsset(Guid id);
+        void UnpackAssetsXbox();
 
         /// <summary>
         /// Dump on disk in JSON format

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
@@ -60,29 +56,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public ushort GetFreq()
         {
-            switch (FreqFac)
+            return FreqFac switch
             {
-                case 0x2:
-                    return 8000;
-                case 0x3:
-                    return 10000;
-                case 0x4:
-                    return 11025;
-                case 0x5:
-                    return 16000;
-                case 0x6:
-                    return 18000;
-                case 0x7:
-                    return 22050;
-                case 0xA:
-                    return 32000;
-                case 0xE:
-                    return 44100;
-                case 0x10:
-                    return 48000;
-                default:
-                    throw new ArgumentException($"Unhandled sfx frequency. Value was: {FreqFac}", "freq");
-            }
+                0x2 => 8000,
+                0x3 => 10000,
+                0x4 => 11025,
+                0x5 => 16000,
+                0x6 => 18000,
+                0x7 => 22050,
+                0xA => 32000,
+                0xE => 44100,
+                0x10 => 48000,
+                _ => throw new ArgumentException($"Unhandled sfx frequency. Value was: {FreqFac}", "freq"),
+            };
         }
     }
 }

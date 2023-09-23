@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.Util
@@ -25,14 +21,12 @@ namespace TT_Lab.Util
 
         public static Bitmap GetBoatGuy()
         {
-            if (_boatguy == null)
-            {
-                _boatguy = new Bitmap(ManifestResourceLoader.GetPathInExe("Images\\boat_guy.png"));
-            }
+            _boatguy ??= new Bitmap(ManifestResourceLoader.GetPathInExe("Images\\boat_guy.png"));
             return _boatguy;
         }
 
         // Ah yes, WinForms being garbage as usual
+        [Obsolete("WinForms are not used anymore. DO NOT EVER USE THIS METHOD")]
         public static object GetDragDropData(this System.Windows.Forms.IDataObject dataObject)
         {
             var info = dataObject.GetType().GetField("innerData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

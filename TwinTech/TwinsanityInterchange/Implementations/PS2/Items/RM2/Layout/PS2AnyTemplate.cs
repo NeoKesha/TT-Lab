@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
@@ -38,7 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override int GetLength()
         {
-            return 4 + Name.Length + 16 + UnkIds.Count * 2 + 22 + Flags.Count*4 + Floats.Count*4 + Ints.Count*4;
+            return 4 + Name.Length + 16 + UnkIds.Count * 2 + 22 + Flags.Count * 4 + Floats.Count * 4 + Ints.Count * 4;
         }
 
         public override void Read(BinaryReader reader, int length)

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Particles;
 using Twinsanity.TwinsanityInterchange.Common;
 
@@ -14,11 +11,11 @@ namespace TT_Lab.ViewModels.Instance
     {
         private UInt32 version;
 
-        public ParticlesViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public ParticlesViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
             ParticleTypes = new ObservableCollection<ParticleTypeViewModel>();
             ParticleInstances = new ObservableCollection<ParticleInstanceViewModel>();
-            var data = (ParticlesData)_asset.GetData();
+            var data = _asset.GetData<ParticlesData>();
             foreach (var type in data.ParticleTypes)
             {
                 ParticleTypes.Add(new ParticleTypeViewModel(type));
@@ -31,7 +28,7 @@ namespace TT_Lab.ViewModels.Instance
 
         public override void Save(Object? o)
         {
-            var data = (ParticlesData)_asset.GetData();
+            var data = _asset.GetData<ParticlesData>();
             data.Version = Version;
             data.ParticleTypes.Clear();
             foreach (var type in ParticleTypes)

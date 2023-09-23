@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
 namespace TT_Lab.ViewModels.Instance.Cameras
@@ -33,10 +29,7 @@ namespace TT_Lab.ViewModels.Instance.Cameras
 
         public override void Save(CameraSubBase? cam)
         {
-            if (cam == null)
-            {
-                cam = new CameraLine2();
-            }
+            cam ??= new CameraLine2();
             var lineCam = (CameraLine2)cam;
             lineCam.LineStart = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {

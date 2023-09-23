@@ -12,7 +12,7 @@ namespace TT_Lab.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -49,12 +49,24 @@ namespace TT_Lab.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DiscContentPath {
+        public string PS2DiscContentPath {
             get {
-                return ((string)(this["DiscContentPath"]));
+                return ((string)(this["PS2DiscContentPath"]));
             }
             set {
-                this["DiscContentPath"] = value;
+                this["PS2DiscContentPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string XboxDiscContentPath {
+            get {
+                return ((string)(this["XboxDiscContentPath"]));
+            }
+            set {
+                this["XboxDiscContentPath"] = value;
             }
         }
     }

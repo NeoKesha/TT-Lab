@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
@@ -47,7 +45,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
         {
             var recs = reader.ReadInt32();
             Interleave = reader.ReadInt32();
-            for(var i = 0; i < recs; ++i)
+            for (var i = 0; i < recs; ++i)
             {
                 var r = new MHRecord();
                 r.Read(reader, 20);

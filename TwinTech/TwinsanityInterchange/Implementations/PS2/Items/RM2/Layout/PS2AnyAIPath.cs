@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
@@ -15,7 +8,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
     public class PS2AnyAIPath : BaseTwinItem, ITwinAIPath
     {
         public UInt16[] Args { get; set; }
-        
+
         public PS2AnyAIPath()
         {
             Args = new ushort[5];

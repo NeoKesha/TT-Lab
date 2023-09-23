@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
@@ -108,18 +103,18 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public override Boolean Equals(Object obj)
         {
-            if (obj is Color)
+            if (obj is Color color)
             {
                 if (obj == this)
                 {
                     return true;
-                } 
+                }
                 else
                 {
-                    Color other = (Color)obj;
+                    Color other = color;
                     return other.ToARGB() == ToARGB();
                 }
-            } 
+            }
             else
             {
                 return false;

@@ -1,12 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics.Shaders;
-using TT_Lab.Util;
-using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.AssetData.Graphics
@@ -19,7 +14,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public MaterialData(PS2AnyMaterial material) : this()
         {
-            twinRef = material;
+            SetTwinItem(material);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -36,16 +31,16 @@ namespace TT_Lab.AssetData.Graphics
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyMaterial material = (PS2AnyMaterial)twinRef;
+            PS2AnyMaterial material = GetTwinItem<PS2AnyMaterial>();
             Header = material.Header;
             DmaChainIndex = material.DmaChainIndex;
             Name = new string(material.Name.ToCharArray());
             Shaders = new List<LabShader>();
             foreach (var shader in material.Shaders)
             {
-                Shaders.Add(new LabShader(shader));
+                Shaders.Add(new LabShader(package, subpackage, variant, shader));
             }
         }
     }

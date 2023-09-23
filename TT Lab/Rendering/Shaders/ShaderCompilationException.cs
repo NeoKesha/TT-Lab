@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 // Credits to https://github.com/dwmkerr/sharpgl
 namespace TT_Lab.Rendering.Shaders
 {

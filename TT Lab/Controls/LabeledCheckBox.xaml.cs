@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TT_Lab.Controls
 {
@@ -77,7 +65,7 @@ namespace TT_Lab.Controls
 
         private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            LabeledCheckBox control = d as LabeledCheckBox;
+            LabeledCheckBox control = (LabeledCheckBox)d;
             control.CheckboxLabel.Content = e.NewValue;
             if (control.IsHorizontal)
             {
@@ -87,13 +75,13 @@ namespace TT_Lab.Controls
 
         private static void OnCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            LabeledCheckBox control = d as LabeledCheckBox;
+            LabeledCheckBox control = (LabeledCheckBox)d;
             control.DisplayChecked = (bool)e.NewValue;
         }
 
         private static void OnLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            LabeledCheckBox control = d as LabeledCheckBox;
+            LabeledCheckBox control = (LabeledCheckBox)d;
             control.IsHorizontal = (bool)e.NewValue;
             if (control.IsHorizontal)
             {

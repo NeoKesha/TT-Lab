@@ -1,12 +1,5 @@
-﻿using GlmNet;
-using OpenTK;
-using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
+﻿using OpenTK.Mathematics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TT_Lab.Util
 {
@@ -57,6 +50,6 @@ namespace TT_Lab.Util
             return new float[] { color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f };
         }
 
-        
+
     }
 }

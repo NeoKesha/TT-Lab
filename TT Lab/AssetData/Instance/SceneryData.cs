@@ -1,14 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance.Scenery;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
-using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.AssetData.Instance
@@ -30,7 +27,7 @@ namespace TT_Lab.AssetData.Instance
 
         public SceneryData(PS2AnyScenery scenery) : this()
         {
-            twinRef = scenery;
+            SetTwinItem(scenery);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -40,7 +37,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
-        public Guid SkydomeID { get; set; }
+        public LabURI SkydomeID { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public Boolean[] UnkLightFlags { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
@@ -81,15 +78,15 @@ namespace TT_Lab.AssetData.Instance
             base.Load(dataPath, settings);
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyScenery scenery = (PS2AnyScenery)twinRef;
+            PS2AnyScenery scenery = GetTwinItem<PS2AnyScenery>();
             SceneryName = scenery.Name[..];
             UnkUInt = scenery.UnkUInt;
             UnkByte = scenery.UnkByte;
             if (scenery.SkydomeID != 0)
             {
-                SkydomeID = GuidManager.GetGuidByTwinId(scenery.SkydomeID, typeof(Skydome));
+                SkydomeID = AssetManager.Get().GetUri(package, subpackage, typeof(Skydome).Name, variant, scenery.SkydomeID);
             }
             UnkLightFlags = CloneUtils.CloneArray(scenery.UnkLightFlags);
             AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);

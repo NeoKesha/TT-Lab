@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Instance.Particles
 {
-    public class ParticleInstanceViewModel : SavebleViewModel
+    public class ParticleInstanceViewModel : SaveableViewModel
     {
         private UInt32 version;
         private Vector3ViewModel position = new Vector3ViewModel();

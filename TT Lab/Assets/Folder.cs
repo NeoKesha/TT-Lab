@@ -1,10 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
 
 namespace TT_Lab.Assets
@@ -21,15 +16,35 @@ namespace TT_Lab.Assets
             assetData = new FolderData();
         }
 
-        public Folder(String name) : this(name, null)
+        public static Folder CreatePS2Folder(String name, String? variant = null)
+        {
+            return new Folder("base", "PS2", name, variant);
+        }
+
+        public static Folder CreatePS2Folder(String name, Folder parent, String? variant = null)
+        {
+            return new Folder("base", "PS2", name, variant, parent);
+        }
+
+        public static Folder CreateXboxFolder(String name, String? variant = null)
+        {
+            return new Folder("base", "XBox", name, variant);
+        }
+
+        public static Folder CreateXboxFolder(String name, Folder parent, String? variant = null)
+        {
+            return new Folder("base", "XBox", name, variant, parent);
+        }
+
+        public Folder(String package, String subpackage, String name, String? variant = null) : this(package, subpackage, name, variant, null)
         {
         }
 
-        public Folder(String name, Folder parent) : this((UInt32)Guid.NewGuid().ToByteArray().Sum(b => b), name)
+        public Folder(String package, String subpackage, String name, String? variant = null, Folder? parent = null) : this(package, subpackage, variant, (UInt32)Guid.NewGuid().ToByteArray().Sum(b => b), name)
         {
             if (parent != null)
             {
-                ((FolderData)GetData()).Parent = parent.UUID;
+                ((FolderData)GetData()).Parent = parent.URI;
                 parent.AddChild(this);
             }
             else
@@ -38,7 +53,7 @@ namespace TT_Lab.Assets
             }
         }
 
-        protected Folder(UInt32 id, String name) : base(id, name)
+        protected Folder(String package, String subpackage, String? variant, UInt32 id, String name) : base(id, name, package, subpackage, variant)
         {
             IsLoaded = true;
             assetData = new FolderData();
@@ -46,7 +61,7 @@ namespace TT_Lab.Assets
 
         public void AddChild(IAsset asset)
         {
-            ((FolderData)GetData()).Children.Add(asset.UUID);
+            ((FolderData)GetData()).Children.Add(asset.URI);
             asset.Order = GetOrder();
         }
 

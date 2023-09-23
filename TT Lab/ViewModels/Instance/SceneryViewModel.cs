@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.AssetData.Instance.Scenery;
+using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Scenery;
 
 namespace TT_Lab.ViewModels.Instance
@@ -16,7 +14,7 @@ namespace TT_Lab.ViewModels.Instance
         private String sceneryName;
         private UInt32 unkUInt;
         private Byte unkByte;
-        private Guid skydome;
+        private LabURI skydome;
         private Boolean lightFlag1;
         private Boolean lightFlag2;
         private Boolean lightFlag3;
@@ -25,9 +23,9 @@ namespace TT_Lab.ViewModels.Instance
         private Boolean lightFlag6;
         private SceneryRootViewModel? sceneryTree;
 
-        public SceneryViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public SceneryViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var data = (SceneryData)_asset.GetData();
+            var data = _asset.GetData<SceneryData>();
             sceneryName = data.SceneryName[..];
             unkUInt = data.UnkUInt;
             unkByte = data.UnkByte;
@@ -47,7 +45,7 @@ namespace TT_Lab.ViewModels.Instance
 
         public override void Save(object? o)
         {
-            var data = (SceneryData)_asset.GetData();
+            var data = _asset.GetData<SceneryData>();
             data.SceneryName = sceneryName;
             data.UnkUInt = UnkUInt;
             data.UnkByte = UnkByte;
@@ -73,7 +71,7 @@ namespace TT_Lab.ViewModels.Instance
         public String SceneryName { get => sceneryName; set => sceneryName = value; }
         public UInt32 UnkUInt { get => unkUInt; set => unkUInt = value; }
         public Byte UnkByte { get => unkByte; set => unkByte = value; }
-        public Guid Skydome { get => skydome; set => skydome = value; }
+        public LabURI Skydome { get => skydome; set => skydome = value; }
         public Boolean LightFlag1 { get => lightFlag1; set => lightFlag1 = value; }
         public Boolean LightFlag2 { get => lightFlag2; set => lightFlag2 = value; }
         public Boolean LightFlag3 { get => lightFlag3; set => lightFlag3 = value; }

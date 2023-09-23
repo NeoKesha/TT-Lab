@@ -1,13 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
-using TT_Lab.Editors;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
@@ -16,7 +9,7 @@ namespace TT_Lab.Assets.Code
     {
         public Animation() { }
 
-        public Animation(UInt32 id, String name, PS2AnyAnimation animation) : base(id, name)
+        public Animation(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyAnimation animation) : base(id, name, package, subpackage, variant)
         {
             assetData = new AnimationData(animation);
         }

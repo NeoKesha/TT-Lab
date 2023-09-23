@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows;
 using TT_Lab.Project;
 using TT_Lab.ViewModels;
@@ -21,10 +20,10 @@ namespace TT_Lab
         {
             try
             {
-                ProjectManagerSingleton.PM.CreateProject(ProjectName.Text, ProjectPath.Text, DiscContentPath.Text);
+                ProjectManagerSingleton.PM.CreateProject(ProjectName.Text, ProjectPath.Text, PS2DiscContentPath.Text, XboxDiscContentPath.Text);
                 Close();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine($"Error creating project: {ex.Message}");
             }

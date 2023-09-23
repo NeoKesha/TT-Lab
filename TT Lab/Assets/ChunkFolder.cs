@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.Editors;
 
@@ -16,15 +11,15 @@ namespace TT_Lab.Assets
         {
         }
 
-        public ChunkFolder(String name) : base(name)
+        public ChunkFolder(String package, String subpackage, String name) : base(package, subpackage, name: name, variant: name)
         {
         }
 
-        public ChunkFolder(String name, Folder parent) : base(name, parent)
+        public ChunkFolder(String package, String subpackage, String name, Folder parent) : base(package, subpackage, name: name, variant: name, parent)
         {
         }
 
-        protected ChunkFolder(UInt32 id, String name) : base(id, name)
+        protected ChunkFolder(String package, String subpackage, UInt32 id, String name) : base(package, subpackage, variant: name, id, name: name)
         {
         }
 

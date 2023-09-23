@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TT_Lab.Util
 {
@@ -63,12 +61,32 @@ namespace TT_Lab.Util
                 {
                     newList.Add(e);
                 }
-            } 
+            }
             else
             {
                 foreach (T e in originalList)
                 {
                     newList.Add(Clone(e));
+                }
+            }
+            return newList;
+        }
+        static public List<T> CloneList<T>(List<T> originalList, Func<T, T> constructor)
+        {
+            List<T> newList = new List<T>(originalList.Count);
+            bool isPrimitive = typeof(T).IsPrimitive;
+            if (isPrimitive)
+            {
+                foreach (T e in originalList)
+                {
+                    newList.Add(e);
+                }
+            }
+            else
+            {
+                foreach (T e in originalList)
+                {
+                    newList.Add(constructor(e));
                 }
             }
             return newList;
@@ -185,7 +203,7 @@ namespace TT_Lab.Util
                 if (isPrimitive)
                 {
                     newObj = original;
-                } 
+                }
                 else
                 {
                     object val = typeof(CloneUtils)

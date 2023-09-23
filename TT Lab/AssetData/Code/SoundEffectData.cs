@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
@@ -18,7 +14,7 @@ namespace TT_Lab.AssetData.Code
 
         public SoundEffectData(PS2AnySound sound) : this()
         {
-            twinRef = sound;
+            SetTwinItem(sound);
         }
         Byte[] PCM;
         UInt32 Frequency;
@@ -30,36 +26,30 @@ namespace TT_Lab.AssetData.Code
         }
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
-            using (FileStream fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write))
-            using (BinaryWriter writer = new BinaryWriter(fs))
-            {
-                RIFF.SaveRiff(writer, PCM, ref Channels, ref Frequency);
-            }
+            using FileStream fs = new(dataPath, FileMode.Create, FileAccess.Write);
+            using BinaryWriter writer = new(fs);
+            RIFF.SaveRiff(writer, PCM, ref Channels, ref Frequency);
         }
 
         public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
-            using (FileStream fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read))
-            using (BinaryReader reader = new BinaryReader(fs))
-            {
-                PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
-            }
+            using FileStream fs = new(dataPath, FileMode.Open, FileAccess.Read);
+            using BinaryReader reader = new(fs);
+            PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnySound sound = (PS2AnySound)twinRef;
+            PS2AnySound sound = GetTwinItem<PS2AnySound>();
             Frequency = sound.GetFreq();
             Channels = 1;
             ADPCM adpcm = new ADPCM();
-            using (MemoryStream input = new MemoryStream(sound.Sound))
-            using (MemoryStream output = new MemoryStream())
-            {
-                BinaryReader reader = new BinaryReader(input);
-                BinaryWriter writer = new BinaryWriter(output);
-                adpcm.ToPCMMono(reader, writer);
-                PCM = output.ToArray();
-            }
+            using MemoryStream input = new(sound.Sound);
+            using MemoryStream output = new();
+            BinaryReader reader = new BinaryReader(input);
+            BinaryWriter writer = new BinaryWriter(output);
+            adpcm.ToPCMMono(reader, writer);
+            PCM = output.ToArray();
         }
     }
 }

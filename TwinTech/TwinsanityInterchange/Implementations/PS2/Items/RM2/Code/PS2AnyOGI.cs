@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
@@ -72,40 +69,40 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public override void Read(BinaryReader reader, int length)
         {
             reader.Read(headerData, 0, headerData.Length);
-            Byte jcnt = headerData[(int)HeaderInfo.JOINT_AMOUNT];
-            Byte epcnt = headerData[(int)HeaderInfo.EXIT_POINT_AMOUNT];
-            Byte rigidcnt = headerData[(int)HeaderInfo.RIGID_MODELS_AMOUNT];
+            Byte jointAmount = headerData[(int)HeaderInfo.JOINT_AMOUNT];
+            Byte exitPointAmount = headerData[(int)HeaderInfo.EXIT_POINT_AMOUNT];
+            Byte rigidModelsAmount = headerData[(int)HeaderInfo.RIGID_MODELS_AMOUNT];
             Byte skinFlag = headerData[(int)HeaderInfo.HAS_SKIN];
             Byte blendFlag = headerData[(int)HeaderInfo.HAS_BLEND_SKIN];
-            Byte t3cnt = headerData[(int)HeaderInfo.COLLISIONS_AMOUNT];
+            Byte collidersAmount = headerData[(int)HeaderInfo.COLLISIONS_AMOUNT];
             BoundingBox[0].Read(reader, Constants.SIZE_VECTOR4);
             BoundingBox[1].Read(reader, Constants.SIZE_VECTOR4);
             Joints.Clear();
-            for (int i = 0; i < jcnt; ++i)
+            for (int i = 0; i < jointAmount; ++i)
             {
                 Joint joint = new Joint();
                 joint.Read(reader, joint.GetLength());
                 Joints.Add(joint);
             }
             ExitPoints.Clear();
-            for (int i = 0; i < epcnt; ++i)
+            for (int i = 0; i < exitPointAmount; ++i)
             {
                 ExitPoint exitPoint = new ExitPoint();
                 exitPoint.Read(reader, exitPoint.GetLength());
                 ExitPoints.Add(exitPoint);
             }
             JointIndices.Clear();
-            for (int i = 0; i < rigidcnt; ++i)
+            for (int i = 0; i < rigidModelsAmount; ++i)
             {
                 JointIndices.Add(reader.ReadByte());
             }
             RigidModelIds.Clear();
-            for (int i = 0; i < rigidcnt; ++i)
+            for (int i = 0; i < rigidModelsAmount; ++i)
             {
                 RigidModelIds.Add(reader.ReadUInt32());
             }
             SkinInverseBindMatrices.Clear();
-            for (int i = 0; i < jcnt; ++i)
+            for (int i = 0; i < jointAmount; ++i)
             {
                 Matrix4 m = new Matrix4();
                 m.Read(reader, m.GetLength());
@@ -114,14 +111,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             SkinID = reader.ReadUInt32();
             BlendSkinID = reader.ReadUInt32();
             Collisions.Clear();
-            for (int i = 0; i < t3cnt; ++i)
+            for (int i = 0; i < collidersAmount; ++i)
             {
-                BoundingBoxBuilder type3 = new BoundingBoxBuilder();
-                type3.Read(reader, type3.GetLength());
-                Collisions.Add(type3);
+                BoundingBoxBuilder bbBuilder = new BoundingBoxBuilder();
+                bbBuilder.Read(reader, bbBuilder.GetLength());
+                Collisions.Add(bbBuilder);
             }
             CollisionJointIndices.Clear();
-            for (int i = 0; i < t3cnt; ++i)
+            for (int i = 0; i < collidersAmount; ++i)
             {
                 CollisionJointIndices.Add(reader.ReadByte());
             }
@@ -138,7 +135,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             writer.Write(headerData);
             BoundingBox[0].Write(writer);
             BoundingBox[1].Write(writer);
-            foreach(ITwinSerializable item in Joints)
+            foreach (ITwinSerializable item in Joints)
             {
                 item.Write(writer);
             }

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Instance.Particles
 {
-    public class ParticleTypeViewModel : SavebleViewModel
+    public class ParticleTypeViewModel : SaveableViewModel
     {
         private UInt32 version;
         private String name = "Particle Type";

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
@@ -46,7 +43,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         {
             base.Write(writer);
             writer.Write(PathPoints.Count);
-            foreach(ITwinSerializable e in PathPoints) {
+            foreach (ITwinSerializable e in PathPoints)
+            {
                 e.Write(writer);
             }
             writer.Write(UnkData.Count);

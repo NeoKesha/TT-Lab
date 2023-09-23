@@ -8,7 +8,10 @@
     <Setting Name="ProjectPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="DiscContentPath" Type="System.String" Scope="User">
+    <Setting Name="PS2DiscContentPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="XboxDiscContentPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

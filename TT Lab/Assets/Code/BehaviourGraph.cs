@@ -1,0 +1,46 @@
+﻿using System;
+using TT_Lab.AssetData;
+using TT_Lab.AssetData.Code;
+using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+
+namespace TT_Lab.Assets.Code
+{
+    public class BehaviourGraph : Behaviour
+    {
+
+        protected override String DataExt => ".lab";
+
+        public BehaviourGraph() { }
+
+        public BehaviourGraph(String package, String subpackage, String? variant, UInt32 id, String name, PS2BehaviourGraph script) : base(package, subpackage, variant, id, name)
+        {
+            assetData = new BehaviourGraphData(script);
+        }
+
+        public override Byte[] ToFormat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ToRaw(Byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Type GetEditorType()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override AbstractAssetData GetData()
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = new BehaviourGraphData();
+                assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
+                IsLoaded = true;
+            }
+            return assetData;
+        }
+    }
+}

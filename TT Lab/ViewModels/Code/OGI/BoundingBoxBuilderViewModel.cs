@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Code.OGI
 {
-    public class BoundingBoxBuilderViewModel : SavebleViewModel
+    public class BoundingBoxBuilderViewModel : SaveableViewModel
     {
         private ObservableCollection<Vector4ViewModel> bbPoints;
 

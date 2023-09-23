@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels
 {
-    public class Matrix4ViewModel : SavebleViewModel
+    public class Matrix4ViewModel : SaveableViewModel
     {
         private Vector4ViewModel V1;
         private Vector4ViewModel V2;

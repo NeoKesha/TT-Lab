@@ -2,9 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
@@ -49,7 +46,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public List<UInt16> RefScripts;
         public List<UInt16> RefUnknowns;
         public List<UInt16> RefSounds;
-        public ScriptPack ScriptPack;
+        public BehaviourCommandPack ScriptPack;
 
         public bool HasInstanceProperties
         {
@@ -212,7 +209,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                     FillResourceList(reader, RefSounds);
                 }
             }
-            ScriptPack = new ScriptPack();
+            ScriptPack = new BehaviourCommandPack();
             ScriptPack.Read(reader, length);
         }
 
@@ -360,7 +357,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override String GetName()
         {
-            return Name.Replace("|","_");
+            return Name.Replace("|", "_");
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.ChunkLinks;
 
 namespace TT_Lab.ViewModels.Instance
@@ -13,9 +10,9 @@ namespace TT_Lab.ViewModels.Instance
     {
         private ObservableCollection<LinkViewModel> links;
 
-        public ChunkLinkViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public ChunkLinkViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var data = (ChunkLinksData)_asset.GetData();
+            var data = _asset.GetData<ChunkLinksData>();
             links = new ObservableCollection<LinkViewModel>();
             foreach (var link in data.Links)
             {
@@ -25,7 +22,7 @@ namespace TT_Lab.ViewModels.Instance
 
         public override void Save(Object? o)
         {
-            var data = (ChunkLinksData)_asset.GetData();
+            var data = _asset.GetData<ChunkLinksData>();
             data.Links.Clear();
             foreach (var link in Links)
             {

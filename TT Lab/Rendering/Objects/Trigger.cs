@@ -1,11 +1,7 @@
-﻿using OpenTK;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance;

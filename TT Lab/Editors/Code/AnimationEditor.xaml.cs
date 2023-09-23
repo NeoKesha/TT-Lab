@@ -1,8 +1,4 @@
-﻿using System;
-using System.Windows.Input;
-using TT_Lab.AssetData.Code;
-using TT_Lab.Command;
-using TT_Lab.ViewModels;
+﻿using TT_Lab.ViewModels;
 
 namespace TT_Lab.Editors.Code
 {
@@ -13,7 +9,7 @@ namespace TT_Lab.Editors.Code
     {
         public AnimationEditor()
         {
-           InitializeComponent();
+            InitializeComponent();
         }
 
         public AnimationEditor(AssetViewModel animation) : base(animation)

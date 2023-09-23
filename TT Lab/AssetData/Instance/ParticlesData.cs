@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
-using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 
@@ -20,7 +16,7 @@ namespace TT_Lab.AssetData.Instance
 
         public ParticlesData(PS2AnyParticleData particleData) : this()
         {
-            twinRef = particleData;
+            SetTwinItem(particleData);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -36,9 +32,9 @@ namespace TT_Lab.AssetData.Instance
             ParticleInstances.Clear();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyParticleData particleData = (PS2AnyParticleData)twinRef;
+            PS2AnyParticleData particleData = GetTwinItem<PS2AnyParticleData>();
             Version = particleData.Version;
             ParticleTypes = CloneUtils.DeepClone(particleData.ParticleTypes);
             ParticleInstances = CloneUtils.DeepClone(particleData.ParticleInstances);

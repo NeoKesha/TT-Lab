@@ -1,23 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
-using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.Assets.Code
 {
     public class OGI : SerializableAsset
-    { 
+    {
 
         public OGI() { }
 
-        public OGI(UInt32 id, String name, PS2AnyOGI ogi) : base(id, name)
+        public OGI(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyOGI ogi) : base(id, name, package, subpackage, variant)
         {
             assetData = new OGIData(ogi);
         }

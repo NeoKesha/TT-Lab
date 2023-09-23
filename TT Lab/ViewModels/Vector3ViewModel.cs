@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels
 {
-    public class Vector3ViewModel : SavebleViewModel
+    public class Vector3ViewModel : SaveableViewModel
     {
         private float _x;
         private float _y;

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TT_Lab.AssetData;
@@ -43,9 +40,9 @@ namespace TT_Lab.Editors
             CommandManager = commandManager;
         }
 
-        protected AbstractAssetData GetAssetData()
+        protected T GetAssetData<T>() where T : AbstractAssetData
         {
-            return AssetViewModel.Asset.GetData();
+            return AssetViewModel.Asset.GetData<T>();
         }
 
         protected IAsset GetAsset()
@@ -102,7 +99,7 @@ namespace TT_Lab.Editors
 
         protected void SetData<T>(string propName, T data, object? target = null)
         {
-            if (target == null) target = viewModel;
+            target ??= viewModel;
             CommandManager.Execute(new SetDataCommand<T>(target, propName, data));
         }
     }

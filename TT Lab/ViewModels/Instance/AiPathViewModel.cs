@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
@@ -16,9 +13,9 @@ namespace TT_Lab.ViewModels.Instance
         private UInt16 pathEnd;
         private UInt16[] args;
 
-        public AiPathViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public AiPathViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var pathData = (AiPathData)_asset.GetData();
+            var pathData = _asset.GetData<AiPathData>();
             pathBegin = pathData.PathBegin;
             pathEnd = pathData.PathEnd;
             args = CloneUtils.CloneArray(pathData.Args);
@@ -28,7 +25,7 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(object? o)
         {
             _asset.LayoutID = (int)LayoutID;
-            var data = (AiPathData)_asset.GetData();
+            var data = _asset.GetData<AiPathData>();
             data.PathBegin = PathBegin;
             data.PathEnd = PathEnd;
             data.Args[0] = Arg1;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
@@ -7,8 +6,8 @@ using System.Linq;
 using System.Windows.Controls;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
+using TT_Lab.Assets;
 using TT_Lab.Command;
-using TT_Lab.Project;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Graphics;
@@ -90,13 +89,13 @@ namespace TT_Lab.Editors.Graphics
             var texId = ((LabShaderViewModel)viewModel).TexID;
             var hasMapping = ((LabShaderViewModel)viewModel).TxtMapping;
             Bitmap bitmap;
-            if (texId == Guid.Empty || !hasMapping)
+            if (texId == LabURI.Empty || !hasMapping)
             {
                 bitmap = MiscUtils.GetBoatGuy();
             }
             else
             {
-                var texData = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(texId).GetData();
+                var texData = AssetManager.Get().GetAsset(texId).GetData<TextureData>();
                 bitmap = texData.Bitmap;
             }
             TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.Glcontrol.ActualWidth, (float)TextureViewer.Glcontrol.ActualHeight,

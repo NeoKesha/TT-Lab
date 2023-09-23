@@ -1,14 +1,10 @@
 ﻿using Assimp;
 using Newtonsoft.Json;
-using Twinsanity.TwinsanityInterchange.Common;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Threading;
 using TT_Lab.AssetData.Graphics.SubModels;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
-using TT_Lab.Util;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -22,13 +18,13 @@ namespace TT_Lab.AssetData.Graphics
 
         public SkinData(PS2AnySkin skin) : this()
         {
-            twinRef = skin;
+            SetTwinItem(skin);
         }
         [JsonProperty(Required = Required.Always)]
         public List<List<Vertex>> Vertexes { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<List<IndexedFace>> Faces { get; set; }
-        
+
         protected override void Dispose(Boolean disposing)
         {
             Vertexes.ForEach(v => v.Clear());
@@ -106,15 +102,15 @@ namespace TT_Lab.AssetData.Graphics
 
         public PS2AnySkin GetRef()
         {
-            return (PS2AnySkin)twinRef;
+            return GetTwinItem<PS2AnySkin>();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnySkin skin = (PS2AnySkin)twinRef;
+            PS2AnySkin skin = GetTwinItem<PS2AnySkin>();
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
-            
+
             var refIndex = 0;
             var offset = 0;
             foreach (var e in skin.SubSkins)
@@ -140,7 +136,7 @@ namespace TT_Lab.AssetData.Graphics
                         }
                         ++refIndex;
                     }
-                    vertList.Add(new Vertex(e.Vertexes[j], e.EmitColor[j], e.UVW[j], e.EmitColor[j]));
+                    vertList.Add(new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.Colors[j]));
                 }
                 Vertexes.Add(vertList);
                 Faces.Add(faceList);

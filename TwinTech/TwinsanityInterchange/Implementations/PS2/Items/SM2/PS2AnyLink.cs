@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
@@ -16,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
     public class PS2AnyLink : BaseTwinItem, ITwinLink
     {
         public List<TwinChunkLink> LinksList;
-        
+
         public PS2AnyLink()
         {
             LinksList = new List<TwinChunkLink>();

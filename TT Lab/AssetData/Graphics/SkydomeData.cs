@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
-using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.AssetData.Graphics
@@ -15,27 +15,27 @@ namespace TT_Lab.AssetData.Graphics
 
         public SkydomeData(PS2AnySkydome skydome) : this()
         {
-            twinRef = skydome;
+            SetTwinItem(skydome);
         }
 
         [JsonProperty(Required = Required.Always)]
         public Int32 Header { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> Meshes { get; set; }
+        public List<LabURI> Meshes { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnySkydome skydome = (PS2AnySkydome)twinRef;
+            PS2AnySkydome skydome = GetTwinItem<PS2AnySkydome>();
             Header = skydome.Header;
-            Meshes = new List<Guid>();
+            Meshes = new List<LabURI>();
             foreach (var mesh in skydome.Meshes)
             {
-                Meshes.Add(GuidManager.GetGuidByTwinId(mesh, typeof(Mesh)));
+                Meshes.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Mesh).Name, variant, mesh));
             }
         }
     }

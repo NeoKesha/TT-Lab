@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Graphics;
@@ -41,7 +38,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public ZValueDrawMask ZValueDrawingMask { get; set; }
         public UInt16 LodParamK { get; set; }
         public UInt16 LodParamL { get; set; }
-        public Guid TextureId { get; set; }
+        public LabURI TextureId { get; set; }
         public byte UnkVal1 { get; set; }
         public byte UnkVal2 { get; set; }
         public byte UnkVal3 { get; set; }
@@ -119,7 +116,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             };
         }
 
-        public LabShader(TwinShader twinShader)
+        public LabShader(String package, String subpackage, String? variant, TwinShader twinShader)
         {
             ShaderType = (Type)twinShader.ShaderType;
             IntParam = twinShader.IntParam;
@@ -149,7 +146,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             ZValueDrawingMask = twinShader.ZValueDrawingMask;
             LodParamK = twinShader.LodParamK;
             LodParamL = twinShader.LodParamL;
-            TextureId = (twinShader.TextureId == 0)?Guid.Empty:GuidManager.GetGuidByTwinId(twinShader.TextureId, typeof(Texture));
+            TextureId = (twinShader.TextureId == 0) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(Texture).Name, variant, twinShader.TextureId);
             UnkVal1 = twinShader.UnkVal1;
             UnkVal2 = twinShader.UnkVal2;
             UnkVal3 = twinShader.UnkVal3;

@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Instance;
-using TT_Lab.Assets.Code;
+using TT_Lab.Assets;
 using TT_Lab.Command;
-using TT_Lab.Project;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Code;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -24,9 +18,9 @@ namespace TT_Lab.ViewModels.Instance
         private ObservableCollection<UInt16> paths;
         private ObservableCollection<UInt16> positions;
         private Boolean useOnSpawnScript;
-        private Guid objectId;
+        private LabURI objectId;
         private Int16 refListIndex;
-        private Guid onSpawnScriptId;
+        private LabURI onSpawnScriptId;
         private Enums.InstanceState stateFlags;
         private ObservableCollection<UInt32> flagParams;
         private ObservableCollection<Single> floatParams;
@@ -35,9 +29,9 @@ namespace TT_Lab.ViewModels.Instance
         private Int32 _floatIndex;
         private Int32 _intIndex;
 
-        public ObjectInstanceViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public ObjectInstanceViewModel(LabURI asset, AssetViewModel parent) : base(asset, parent)
         {
-            var data = (ObjectInstanceData)_asset.GetData();
+            var data = _asset.GetData<ObjectInstanceData>();
             position = new Vector4ViewModel(data.Position);
             position.PropertyChanged += Vector_PropertyChanged;
             var rotX = data.RotationX.GetRotation();
@@ -66,7 +60,7 @@ namespace TT_Lab.ViewModels.Instance
             objectId = data.ObjectId;
             refListIndex = data.RefListIndex;
             onSpawnScriptId = data.OnSpawnScriptId;
-            useOnSpawnScript = onSpawnScriptId != Guid.Empty;
+            useOnSpawnScript = onSpawnScriptId != LabURI.Empty;
             stateFlags = MiscUtils.ConvertEnum<Enums.InstanceState>(data.StateFlags);
             flagParams = new ObservableCollection<UInt32>();
             foreach (var f in data.ParamList1)
@@ -144,7 +138,7 @@ namespace TT_Lab.ViewModels.Instance
 
         public override void Save(Object? o)
         {
-            var data = (ObjectInstanceData)_asset.GetData();
+            var data = _asset.GetData<ObjectInstanceData>();
             Position.Save(data.Position);
             data.RotationX.SetRotation(Rotation.X);
             data.RotationY.SetRotation(Rotation.Y);
@@ -166,7 +160,7 @@ namespace TT_Lab.ViewModels.Instance
             }
             data.ObjectId = objectId;
             data.RefListIndex = RefListIndex;
-            data.OnSpawnScriptId = Guid.Empty;
+            data.OnSpawnScriptId = LabURI.Empty;
             if (UseOnSpawnScript)
             {
                 data.OnSpawnScriptId = onSpawnScriptId;
@@ -205,7 +199,7 @@ namespace TT_Lab.ViewModels.Instance
         {
             get
             {
-                var obj = (GameObject)ProjectManagerSingleton.PM.OpenedProject.GetAsset(objectId);
+                var obj = AssetManager.Get().GetAsset(objectId);
                 return $"Instance {_asset.ID} - {obj.Alias}";
             }
         }
@@ -224,12 +218,12 @@ namespace TT_Lab.ViewModels.Instance
         }
         public AssetViewModel InstanceObject
         {
-            get => ProjectManagerSingleton.PM.OpenedProject.GetAsset(objectId).GetViewModel();
+            get => AssetManager.Get().GetAsset(objectId).GetViewModel();
             set
             {
-                if (value.Asset.UUID != objectId)
+                if (value.Asset.URI != objectId)
                 {
-                    objectId = value.Asset.UUID;
+                    objectId = value.Asset.URI;
                     IsDirty = true;
                     NotifyChange();
                 }
@@ -239,17 +233,17 @@ namespace TT_Lab.ViewModels.Instance
         {
             get
             {
-                if (onSpawnScriptId != Guid.Empty)
+                if (onSpawnScriptId != LabURI.Empty)
                 {
-                    return (HeaderScriptViewModel)ProjectManagerSingleton.PM.OpenedProject.GetAsset(onSpawnScriptId).GetViewModel();
+                    return AssetManager.Get().GetAsset(onSpawnScriptId).GetViewModel<HeaderScriptViewModel>();
                 }
                 return null;
             }
             set
             {
-                if (value?.Asset.UUID != onSpawnScriptId)
+                if (value?.Asset.URI != onSpawnScriptId)
                 {
-                    onSpawnScriptId = value == null ? Guid.Empty : value.Asset.UUID;
+                    onSpawnScriptId = value == null ? LabURI.Empty : value.Asset.URI;
                     IsDirty = true;
                     NotifyChange();
                 }
@@ -789,7 +783,8 @@ namespace TT_Lab.ViewModels.Instance
         }
         public UInt32 SelectedInt
         {
-            get {
+            get
+            {
                 if (IntParams.Count == 0)
                     return 0;
                 return IntParams[_intIndex];

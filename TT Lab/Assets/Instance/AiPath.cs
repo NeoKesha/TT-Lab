@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Editors.Instance;
@@ -16,7 +10,7 @@ namespace TT_Lab.Assets.Instance
 {
     public class AiPath : SerializableInstance
     {
-        public AiPath(UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(id, name, chunk, layId)
+        public AiPath(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(package, subpackage, id, name, chunk, layId)
         {
             assetData = new AiPathData(path);
         }
@@ -40,12 +34,9 @@ namespace TT_Lab.Assets.Instance
             return typeof(AiNavPathEditor);
         }
 
-        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new AiPathViewModel(UUID, parent);
-            }
+            viewModel ??= new AiPathViewModel(URI, parent);
             return viewModel;
         }
 

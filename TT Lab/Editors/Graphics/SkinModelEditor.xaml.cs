@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Project;
+using TT_Lab.Assets;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
 
@@ -39,7 +39,7 @@ namespace TT_Lab.Editors.Graphics
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
-            var skinData = (SkinData)GetAssetData();
+            var skinData = GetAssetData<SkinData>();
             var skin = (Assets.Graphics.Skin)GetAsset();
             Skin model = new Skin(skinData, skin.Materials);
             SceneRenderer.Scene.AddRender(model, false);
@@ -55,7 +55,7 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Scene.DisableCameraManipulation();
 
             var skin = (Assets.Graphics.Skin)GetAsset();
-            var matData = (MaterialData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(skin.Materials[selectedMaterial]).GetData();
+            var matData = AssetManager.Get().GetAsset(skin.Materials[selectedMaterial]).GetData<MaterialData>();
             MaterialName.Text = matData.Name;
             var texPlane = new Plane(matData);
             MaterialViewer.Scene.AddRender(texPlane);

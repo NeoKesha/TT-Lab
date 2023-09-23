@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
 
 namespace TT_Lab.Command
@@ -23,12 +19,12 @@ namespace TT_Lab.Command
             _value = value;
         }
 
-        public Boolean CanExecute(object parameter)
+        public Boolean CanExecute(object? parameter)
         {
             return true;
         }
 
-        public void Execute(object parameter = null)
+        public void Execute(object? parameter = null)
         {
             Type t = _target.GetType();
             var field = t.GetProperty(_propName);

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -13,8 +9,8 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
-    public class PS2AnyPath : BaseTwinItem, ITwinPath 
-    { 
+    public class PS2AnyPath : BaseTwinItem, ITwinPath
+    {
         public List<Vector4> PointList { get; set; }
         public List<Vector2> ParameterList { get; set; }
         public PS2AnyPath()
@@ -51,7 +47,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public override void Write(BinaryWriter writer)
         {
             writer.Write(PointList.Count);
-            foreach(ITwinSerializable e in PointList)
+            foreach (ITwinSerializable e in PointList)
             {
                 e.Write(writer);
             }

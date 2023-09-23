@@ -25,13 +25,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public Int32 GetLength()
         {
-            switch (RecordHeader.Type)
+            return RecordHeader.Type switch
             {
-                case PS2MB.RecordType.MONO:
-                case PS2MB.RecordType.STEREO:
-                    return RecordHeader.Size;
-            }
-            return 0;
+                PS2MB.RecordType.MONO or PS2MB.RecordType.STEREO => RecordHeader.Size,
+                _ => 0,
+            };
         }
 
         public void Read(BinaryReader reader, Int32 length)

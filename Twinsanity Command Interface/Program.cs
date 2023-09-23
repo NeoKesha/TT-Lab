@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
-using Twinsanity.TwinsanityInterchange.Interfaces;
-using Twinsanity.PS2Hardware;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
-using Twinsanity.TwinsanityInterchange.Common;
-using Assimp;
-using System.Runtime.InteropServices;
-using System.Drawing;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity_Command_Interface
 {
@@ -291,7 +285,7 @@ namespace Twinsanity_Command_Interface
                                             TextureOperation.Multiply, TextureWrapMode.Wrap, TextureWrapMode.Wrap, 0);
                                     scene.Materials.Add(mat);
                                 }*/
-                                
+
                             }
 
                             /*Material mat = new Material

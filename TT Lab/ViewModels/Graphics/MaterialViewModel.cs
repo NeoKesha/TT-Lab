@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Input;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
+using TT_Lab.Assets;
 using TT_Lab.Command;
 
 namespace TT_Lab.ViewModels.Graphics
@@ -22,13 +17,13 @@ namespace TT_Lab.ViewModels.Graphics
         private String _name;
         private ObservableCollection<LabShaderViewModel> _shaders;
 
-        public MaterialViewModel(Guid asset) : base(asset)
+        public MaterialViewModel(LabURI asset) : base(asset)
         {
         }
 
-        public MaterialViewModel(Guid asset, AssetViewModel parent) : base(asset, parent)
+        public MaterialViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            var _matData = (MaterialData)_asset.GetData();
+            var _matData = _asset.GetData<MaterialData>();
             _header = _matData.Header;
             _dmaChainIndex = _matData.DmaChainIndex;
             _name = _matData.Name[..];
@@ -47,7 +42,7 @@ namespace TT_Lab.ViewModels.Graphics
 
         public override void Save(object? o)
         {
-            var data = (MaterialData)Asset.GetData();
+            var data = Asset.GetData<MaterialData>();
             data.Header = Header;
             data.DmaChainIndex = DmaChainIndex;
             data.Name = Name;

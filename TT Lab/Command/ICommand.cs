@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TT_Lab.Command
+﻿namespace TT_Lab.Command
 {
     public interface ICommand : System.Windows.Input.ICommand
     {

@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance.Scenery;
@@ -15,9 +14,9 @@ namespace TT_Lab.AssetData.Instance.Scenery
     public class SceneryBaseData
     {
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> MeshIDs { get; set; }
+        public List<LabURI> MeshIDs { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> LodIDs { get; set; }
+        public List<LabURI> LodIDs { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<Vector4[]> BoundingBoxes { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -37,17 +36,17 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryBaseData() { }
 
-        public SceneryBaseData(SceneryBaseType baseType)
+        public SceneryBaseData(String package, String subpackage, String? variant, SceneryBaseType baseType)
         {
-            MeshIDs = new List<Guid>();
+            MeshIDs = new List<LabURI>();
             foreach (var m in baseType.MeshIDs)
             {
-                MeshIDs.Add(GuidManager.GetGuidByTwinId(m, typeof(Mesh)));
+                MeshIDs.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Mesh).Name, variant, m));
             }
-            LodIDs = new List<Guid>();
+            LodIDs = new List<LabURI>();
             foreach (var l in baseType.LodIDs)
             {
-                LodIDs.Add(GuidManager.GetGuidByTwinId(l, typeof(LodModel)));
+                LodIDs.Add(AssetManager.Get().GetUri(package, subpackage, typeof(LodModel).Name, variant, l));
             }
             BoundingBoxes = new List<Vector4[]>();
             foreach (var bb in baseType.BoundingBoxes)
@@ -73,8 +72,8 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryBaseData(BaseSceneryViewModel vm)
         {
-            MeshIDs = CloneUtils.CloneList(vm.Meshes.ToList());
-            LodIDs = CloneUtils.CloneList(vm.Lods.ToList());
+            MeshIDs = CloneUtils.CloneList(vm.Meshes.ToList(), (e) => new(e.GetUri()));
+            LodIDs = CloneUtils.CloneList(vm.Lods.ToList(), (e) => new(e.GetUri()));
             BoundingBoxes = new List<Vector4[]>();
             foreach (var bb in vm.Bbs)
             {

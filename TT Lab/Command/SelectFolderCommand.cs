@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Windows;
 
@@ -27,12 +26,12 @@ namespace TT_Lab.Command
 
         public event EventHandler CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return true;
         }
 
-        public void Execute(object parameter = null)
+        public void Execute(object? parameter = null)
         {
             using CommonOpenFileDialog ofd = new CommonOpenFileDialog
             {
@@ -42,7 +41,7 @@ namespace TT_Lab.Command
             var dialRes = owner == null ? ofd.ShowDialog() : ofd.ShowDialog(owner);
             if (dialRes == CommonFileDialogResult.Ok)
             {
-                var prop = target.GetType().GetProperty(propName);
+                var prop = target.GetType().GetProperty(propName)!;
                 prop.SetValue(target, ofd.FileName);
             }
         }

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TT_Lab.Command
 {
@@ -52,7 +48,7 @@ namespace TT_Lab.Command
             var clone = Util.CloneUtils.DeepClone((T)_item!);
             _items.Push(clone);
             _list.Add(clone);
-            
+
         }
 
         public void Unexecute()

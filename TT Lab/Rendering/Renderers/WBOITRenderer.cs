@@ -1,9 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;

@@ -2,20 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Command;
 using TT_Lab.Controls;
-using TT_Lab.Project;
 using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Editors.Instance
@@ -50,8 +42,8 @@ namespace TT_Lab.Editors.Instance
             vm.Instances.CollectionChanged += Instances_CollectionChanged;
             vm.Positions.CollectionChanged += Positions_CollectionChanged;
             vm.Paths.CollectionChanged += Paths_CollectionChanged;
-            var allObj = new ObservableCollection<object>(ProjectManagerSingleton.PM.OpenedProject.Assets.Values.Where(a => a.Type == typeof(GameObject)).Select(a => a.GetViewModel()).Cast<object>());
-            var allScripts = new ObservableCollection<object>(ProjectManagerSingleton.PM.OpenedProject.Assets.Values.Where(a => a.Type == typeof(HeaderScript)).Select(a => a.GetViewModel()).Cast<object>());
+            var allObj = new ObservableCollection<object>(AssetManager.Get().GetAssets().Values.Where(a => a.Type == typeof(GameObject)).Select(a => a.GetViewModel()).Cast<object>());
+            var allScripts = new ObservableCollection<object>(AssetManager.Get().GetAssets().Values.Where(a => a.Type == typeof(BehaviourStarter)).Select(a => a.GetViewModel()).Cast<object>());
             DataContext = new
             {
                 ViewModel = vm,

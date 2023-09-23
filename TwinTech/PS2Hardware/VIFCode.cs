@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Twinsanity.PS2Hardware
 {
@@ -46,26 +42,26 @@ namespace Twinsanity.PS2Hardware
     }
     public enum VIFCodeEnum
     {
-        NOP         =           0b0000000,
-        STCYCL      =           0b0000001,
-        OFFSET      =           0b0000010,
-        BASE        =           0b0000011,
-        ITOP        =           0b0000100,
-        STMOD       =           0b0000101,
-        MSKPATH3    =           0b0000110,
-        MARK        =           0b0000111,
-        FLUSHE      =           0b0010000,
-        FLUSH       =           0b0010001,
-        FLUSHA      =           0b0010011,
-        MSCAL       =           0b0010100,
-        MSCNT       =           0b0010111,
-        MSCALF      =           0b0010101,
-        STMASK      =           0b0100000,
-        STROW       =           0b0110000,
-        STCOL       =           0b0110001,
-        MPG         =           0b1001010,
-        DIRECT      =           0b1010000,
-        DIRECTHL    =           0b1010001,
-        UNPACK      =           0b1100000,
+        NOP = 0b0000000,
+        STCYCL = 0b0000001,
+        OFFSET = 0b0000010,
+        BASE = 0b0000011,
+        ITOP = 0b0000100,
+        STMOD = 0b0000101,
+        MSKPATH3 = 0b0000110,
+        MARK = 0b0000111,
+        FLUSHE = 0b0010000,
+        FLUSH = 0b0010001,
+        FLUSHA = 0b0010011,
+        MSCAL = 0b0010100,
+        MSCNT = 0b0010111,
+        MSCALF = 0b0010101,
+        STMASK = 0b0100000,
+        STROW = 0b0110000,
+        STCOL = 0b0110001,
+        MPG = 0b1001010,
+        DIRECT = 0b1010000,
+        DIRECTHL = 0b1010001,
+        UNPACK = 0b1100000,
     }
 }

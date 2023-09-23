@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Project;
-using TT_Lab.Util;
+using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Shaders;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.Rendering.Objects
@@ -21,11 +18,11 @@ namespace TT_Lab.Rendering.Objects
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         List<TextureBuffer> textureBuffers = new List<TextureBuffer>();
 
-        public Skin(SkinData skin, List<Guid> materials)
+        public Skin(SkinData skin, List<LabURI> materials)
         {
             for (var i = 0; i < skin.Vertexes.Count; ++i)
             {
-                var matData = (MaterialData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(materials[i]).GetData();
+                var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[i]);
                 if (matData.Shaders.Any(s => s.TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON))
                 {
                     modelBuffers.Add(BufferGeneration.GetModelBuffer(skin.Vertexes[i].Select(v => v.Position).ToList(), skin.Faces[i],
@@ -36,7 +33,7 @@ namespace TT_Lab.Rendering.Objects
                         }).ToList(),
                         skin.Vertexes[i].Select(v => new Vector3(v.UV.X, 1 - v.UV.Y, v.UV.Z)).ToList(),
                         skin.Vertexes[i].Select(v => v.Normal).ToList()));
-                    var tex = (TextureData)ProjectManagerSingleton.PM.OpenedProject.GetAsset(matData.Shaders[0].TextureId).GetData();
+                    var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[0].TextureId);
                     textureBuffers.Add(new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
                 }
                 else
@@ -91,7 +88,7 @@ namespace TT_Lab.Rendering.Objects
             }
             Unbind();
         }
-        
+
         public void Unbind()
         {
         }

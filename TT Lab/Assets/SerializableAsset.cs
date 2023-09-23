@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.ViewModels;
-using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
@@ -30,14 +28,18 @@ namespace TT_Lab.Assets
         public Boolean IsLoaded { get; protected set; }
         public UInt32 Order { get; set; }
 
-        public Dictionary<String, Object?> Parameters { get; set; }
+        public Dictionary<String, Object?> Parameters { get; set; } = new();
+        public LabURI URI { get; set; }
+        public String Package { get; set; }
+        public String SubPackage { get; set; }
+        public String? Variation { get; set; }
 
         public SerializableAsset()
         {
             IsLoaded = false;
         }
 
-        public SerializableAsset(UInt32 id, String name)
+        private SerializableAsset(UInt32 id, String name)
         {
             UUID = Guid.NewGuid();
             ID = id;
@@ -46,8 +48,16 @@ namespace TT_Lab.Assets
             Raw = true;
             Data = UUID.ToString() + DataExt;
             IsLoaded = true;
-            Parameters = new Dictionary<string, object?>();
             Type = GetType();
+        }
+
+        public SerializableAsset(UInt32 id, String name, String package, String subpackage, String? variant) : this(id, name)
+        {
+            Package = package;
+            SubPackage = subpackage;
+            Variation = variant;
+            var variantAddition = variant == null ? "" : $"/{Variation}";
+            URI = new LabURI($"res://{Package}/{SubPackage}/{Type.Name}/{id}{variantAddition}");
         }
 
         public virtual void Serialize()
@@ -79,13 +89,13 @@ namespace TT_Lab.Assets
         public abstract AbstractAssetData GetData();
         public virtual void Import()
         {
-            assetData.Import();
+            assetData.Import(Package, SubPackage, Variation);
             assetData.NullifyReference();
         }
 
-        public virtual AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public virtual AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            viewModel ??= new AssetViewModel(UUID, parent);
+            viewModel ??= new AssetViewModel(URI, parent);
             return viewModel;
         }
     }

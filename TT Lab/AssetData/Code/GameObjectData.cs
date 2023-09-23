@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
@@ -13,14 +14,13 @@ namespace TT_Lab.AssetData.Code
 {
     public class GameObjectData : AbstractAssetData
     {
-        public GameObjectData()
+
+        public GameObjectData(PS2AnyObject gameObject)
         {
+            SetTwinItem(gameObject);
         }
 
-        public GameObjectData(PS2AnyObject gameObject) : this()
-        {
-            twinRef = gameObject;
-        }
+        public GameObjectData(String path) => Load(path);
 
         [JsonProperty(Required = Required.Always)]
         public Byte Type { get; set; }
@@ -37,15 +37,15 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> TriggerScripts { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> OGISlots { get; set; }
+        public List<LabURI> OGISlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> AnimationSlots { get; set; }
+        public List<LabURI> AnimationSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> ScriptSlots { get; set; }
+        public List<LabURI> BehaviourSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> ObjectSlots { get; set; }
+        public List<LabURI> ObjectSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> SoundSlots { get; set; }
+        public List<LabURI> SoundSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 InstanceStateFlags { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -55,29 +55,29 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> InstIntegers { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefObjects { get; set; }
+        public List<LabURI> RefObjects { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefOGIs { get; set; }
+        public List<LabURI> RefOGIs { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefAnimations { get; set; }
+        public List<LabURI> RefAnimations { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefCodemodels { get; set; }
+        public List<LabURI> RefBehaviourCommandsSequences { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefScripts { get; set; }
+        public List<LabURI> RefBehaviours { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RefSounds { get; set; }
+        public List<LabURI> RefSounds { get; set; }
         [JsonProperty(Required = Required.Always)]
         [JsonConverter(typeof(ScriptPackConverter))]
-        public ScriptPack ScriptPack { get; set; }
+        public BehaviourCommandPack ScriptPack { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyObject gameObject = (PS2AnyObject)twinRef;
+            PS2AnyObject gameObject = GetTwinItem<PS2AnyObject>();
             Type = gameObject.Type;
             UnkTypeValue = gameObject.UnkTypeValue;
             UnkOGIArraySize = gameObject.UnkOgiArraySize;
@@ -85,86 +85,86 @@ namespace TT_Lab.AssetData.Code
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
             TriggerScripts = CloneUtils.CloneList(gameObject.TriggerScripts);
-            OGISlots = new List<Guid>();
+            OGISlots = new List<LabURI>();
             foreach (var e in gameObject.OGISlots)
             {
-                OGISlots.Add((e == 65535)?Guid.Empty:GuidManager.GetGuidByTwinId(e, typeof(OGI)));
+                OGISlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(OGI).Name, variant, e));
             }
-            AnimationSlots = new List<Guid>();
+            AnimationSlots = new List<LabURI>();
             foreach (var e in gameObject.AnimationSlots)
             {
-                AnimationSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(Animation)));
+                AnimationSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(Animation).Name, variant, e));
             }
-            ScriptSlots = new List<Guid>();
+            BehaviourSlots = new List<LabURI>();
             foreach (var e in gameObject.ScriptSlots)
             {
                 var found = false;
                 foreach (var cm in gameObject.RefCodeModels)
                 {
-                    Guid cmGuid = GuidManager.GetGuidByTwinId(cm, typeof(CodeModel));
-                    Guid subGuid = GuidManager.GetGuidByCmSubScriptId(cmGuid, e);
-                    if (!subGuid.Equals(Guid.Empty))
+                    BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, subpackage, typeof(BehaviourCommandsSequence).Name, variant, e);
+                    LabURI subGuid = AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, cmGuid.ID.ToString(), e);
+                    if (!subGuid.Equals(LabURI.Empty))
                     {
-                        ScriptSlots.Add(subGuid);
+                        BehaviourSlots.Add(subGuid);
                         found = true;
                         break;
                     }
                 }
                 if (!found)
                 {
-                    ScriptSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(HeaderScript)));
+                    BehaviourSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, variant, e));
                 }
             }
-            ObjectSlots = new List<Guid>();
+            ObjectSlots = new List<LabURI>();
             foreach (var e in gameObject.ObjectSlots)
             {
-                ObjectSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(GameObject)));
+                ObjectSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, e));
             }
-            SoundSlots = new List<Guid>();
+            SoundSlots = new List<LabURI>();
             foreach (var e in gameObject.SoundSlots)
             {
-                var list = GuidManager.GetGuidListOfMulti5(e);
-                if (list != null)
+                var list = CollectMulti5Uri(package, subpackage, variant, e);
+                if (list.Count != 0)
                 {
                     SoundSlots.AddRange(list);
                 }
                 else
                 {
-                    SoundSlots.Add((e == 65535) ? Guid.Empty : GuidManager.GetGuidByTwinId(e, typeof(SoundEffect)));
+                    SoundSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, e));
                 }
             }
-            RefObjects = new List<Guid>();
+            RefObjects = new List<LabURI>();
             foreach (var e in gameObject.RefObjects)
             {
-                RefObjects.Add(GuidManager.GetGuidByTwinId(e, typeof(GameObject)));
+                RefObjects.Add(AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, e));
             }
-            RefOGIs = new List<Guid>();
+            RefOGIs = new List<LabURI>();
             foreach (var e in gameObject.RefOGIs)
             {
-                RefOGIs.Add(GuidManager.GetGuidByTwinId(e, typeof(OGI)));
+                RefOGIs.Add(AssetManager.Get().GetUri(package, subpackage, typeof(OGI).Name, variant, e));
             }
-            RefAnimations = new List<Guid>();
+            RefAnimations = new List<LabURI>();
             foreach (var e in gameObject.RefAnimations)
             {
-                RefAnimations.Add(GuidManager.GetGuidByTwinId(e, typeof(Animation)));
+                RefAnimations.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Animation).Name, variant, e));
             }
-            RefCodemodels = new List<Guid>();
+            RefBehaviourCommandsSequences = new List<LabURI>();
             foreach (var e in gameObject.RefCodeModels)
             {
-                RefCodemodels.Add(GuidManager.GetGuidByTwinId(e, typeof(CodeModel)));
+                RefBehaviourCommandsSequences.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourCommandsSequence).Name, variant, e));
             }
-            RefScripts = new List<Guid>();
+            RefBehaviours = new List<LabURI>();
             foreach (var e in gameObject.RefScripts)
             {
                 // Range reserved for CodeModel script IDs
                 if (e > 500 && e < 616)
                 {
-                    foreach (var cm in RefCodemodels)
+                    foreach (var cm in RefBehaviourCommandsSequences)
                     {
-                        Guid subGuid = GuidManager.GetGuidByCmSubScriptId(cm, e);
-                        if (!subGuid.Equals(Guid.Empty))
+                        var cmAsset = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(cm);
+                        if (cmAsset.BehaviourGraphLinks.ContainsKey(e))
                         {
-                            RefScripts.Add(subGuid);
+                            RefBehaviours.Add(cmAsset.BehaviourGraphLinks[e]);
                             break;
                         }
                     }
@@ -173,21 +173,21 @@ namespace TT_Lab.AssetData.Code
                 {
                     if (e % 2 == 0)
                     {
-                        RefScripts.Add(GuidManager.GetGuidByTwinId(e, typeof(HeaderScript)));
+                        RefBehaviours.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, variant, e));
                     }
                     else
                     {
-                        RefScripts.Add(GuidManager.GetGuidByTwinId(e, typeof(MainScript)));
+                        RefBehaviours.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, variant, e));
                     }
                 }
             }
-            RefSounds = new List<Guid>();
+            RefSounds = new List<LabURI>();
             foreach (var e in gameObject.RefSounds)
             {
-                var sndGuid = GuidManager.GetGuidByTwinId(e, typeof(SoundEffect));
-                if (sndGuid == Guid.Empty)
+                var sndGuid = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, e);
+                if (sndGuid == LabURI.Empty)
                 {
-                    var multi5 = GuidManager.GetGuidListOfMulti5(e);
+                    var multi5 = CollectMulti5Uri(package, subpackage, variant, e);
                     foreach (var snd in multi5)
                     {
                         RefSounds.Add(snd);
@@ -202,19 +202,54 @@ namespace TT_Lab.AssetData.Code
             InstIntegers = CloneUtils.CloneList(gameObject.InstIntegers);
             ScriptPack = gameObject.ScriptPack;
         }
-    }
-    class ScriptPackConverter : JsonConverter<ScriptPack>
-    {
-        public override ScriptPack ReadJson(JsonReader reader, Type objectType, ScriptPack? existingValue, Boolean hasExistingValue, JsonSerializer serializer)
+
+        private static List<LabURI> CollectMulti5Uri(String package, String subpackage, String? variant, UInt16 id)
         {
-            if (existingValue == null)
+            var result = new List<LabURI>();
+            var enUri = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffectEN).Name, variant, id);
+            var frUri = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffectFR).Name, variant, id);
+            var grUri = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffectGR).Name, variant, id);
+            var itUri = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffectIT).Name, variant, id);
+            var spUri = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffectSP).Name, variant, id);
+            var jpUri = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffectJP).Name, variant, id);
+
+            if (!enUri.Equals(LabURI.Empty))
             {
-                existingValue = new ScriptPack();
+                result.Add(enUri);
             }
+            if (!frUri.Equals(LabURI.Empty))
+            {
+                result.Add(frUri);
+            }
+            if (!grUri.Equals(LabURI.Empty))
+            {
+                result.Add(grUri);
+            }
+            if (!itUri.Equals(LabURI.Empty))
+            {
+                result.Add(itUri);
+            }
+            if (!spUri.Equals(LabURI.Empty))
+            {
+                result.Add(spUri);
+            }
+            if (!jpUri.Equals(LabURI.Empty))
+            {
+                result.Add(jpUri);
+            }
+
+            return result;
+        }
+    }
+    class ScriptPackConverter : JsonConverter<BehaviourCommandPack>
+    {
+        public override BehaviourCommandPack ReadJson(JsonReader reader, Type objectType, BehaviourCommandPack? existingValue, Boolean hasExistingValue, JsonSerializer serializer)
+        {
+            existingValue ??= new BehaviourCommandPack();
             String? str = reader.ReadAsString();
-            using (MemoryStream stream = new MemoryStream())
-            using (StreamWriter _writer = new StreamWriter(stream))
-            using (StreamReader _reader = new StreamReader(stream))
+            using (var stream = new MemoryStream())
+            using (var _writer = new StreamWriter(stream))
+            using (var _reader = new StreamReader(stream))
             {
                 _writer.Write(str);
                 stream.Position = 0;
@@ -226,7 +261,7 @@ namespace TT_Lab.AssetData.Code
             return existingValue;
         }
 
-        public override void WriteJson(JsonWriter writer, ScriptPack? value, JsonSerializer serializer) 
+        public override void WriteJson(JsonWriter writer, BehaviourCommandPack? value, JsonSerializer serializer)
         {
             JToken t = JToken.FromObject(value.ToString());
 

@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
@@ -18,7 +15,7 @@ namespace TT_Lab.AssetData.Instance
 
         public CollisionData(PS2AnyCollisionData collision) : this()
         {
-            twinRef = collision;
+            SetTwinItem(collision);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -40,9 +37,9 @@ namespace TT_Lab.AssetData.Instance
             Vectors.Clear();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyCollisionData collision = (PS2AnyCollisionData)twinRef;
+            PS2AnyCollisionData collision = GetTwinItem<PS2AnyCollisionData>();
             UnkInt = collision.UnkInt;
             foreach (var trigger in collision.Triggers)
             {

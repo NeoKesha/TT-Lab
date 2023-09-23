@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.AssetData.Graphics.SubModels
@@ -30,13 +26,13 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             Color.Z = color.Z;
             Color.W = color.W;
         }
-        public Vertex(Vector4 pos,  Vector4 color, Vector4 uv) : this(pos,color)
+        public Vertex(Vector4 pos, Vector4 color, Vector4 uv) : this(pos, color)
         {
             UV.X = uv.X;
             UV.Y = uv.Y;
             UV.Z = uv.Z;
         }
-        public Vertex(Vector4 pos, Vector4 color, Vector4 uv, Vector4 emitColor) : this(pos,color,uv)
+        public Vertex(Vector4 pos, Vector4 color, Vector4 uv, Vector4 emitColor) : this(pos, color, uv)
         {
             EmitColor.X = emitColor.X;
             EmitColor.Y = emitColor.Y;

@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
@@ -17,7 +11,7 @@ namespace TT_Lab.Assets.Graphics
     public class Material : SerializableAsset
     {
 
-        public Material(UInt32 id, String name, PS2AnyMaterial material) : base(id, name)
+        public Material(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyMaterial material) : base(id, name, package, subpackage, variant)
         {
             assetData = new MaterialData(material);
         }
@@ -52,12 +46,9 @@ namespace TT_Lab.Assets.Graphics
             return assetData;
         }
 
-        public override AssetViewModel GetViewModel(AssetViewModel parent = null)
+        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = new MaterialViewModel(UUID, parent);
-            }
+            viewModel ??= new MaterialViewModel(URI, parent);
             return viewModel;
         }
     }

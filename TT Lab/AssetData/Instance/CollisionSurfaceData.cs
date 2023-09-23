@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -19,7 +16,7 @@ namespace TT_Lab.AssetData.Instance
 
         public CollisionSurfaceData(PS2AnyCollisionSurface collisionSurface) : this()
         {
-            twinRef = collisionSurface;
+            SetTwinItem(collisionSurface);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -27,23 +24,23 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 Flags { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid StepSoundId1 { get; set; }
+        public LabURI StepSoundId1 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid StepSoundId2 { get; set; }
+        public LabURI StepSoundId2 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt16 UnkId1 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt16 UnkId2 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid LandSoundId1 { get; set; }
+        public LabURI LandSoundId1 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt16 UnkId3 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt16 UnkId4 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid LandSoundId2 { get; set; }
+        public LabURI LandSoundId2 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Guid UnkSoundId { get; set; }
+        public LabURI UnkSoundId { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt16 UnkId5 { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -58,35 +55,35 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyCollisionSurface collisionSurface = (PS2AnyCollisionSurface)twinRef;
+            PS2AnyCollisionSurface collisionSurface = GetTwinItem<PS2AnyCollisionSurface>();
             SurfaceID = collisionSurface.SurfaceId;
             Flags = collisionSurface.Flags;
-            StepSoundId1 = Guid.Empty;
-            StepSoundId2 = Guid.Empty;
-            LandSoundId1 = Guid.Empty;
-            LandSoundId2 = Guid.Empty;
-            UnkSoundId = Guid.Empty;
+            StepSoundId1 = LabURI.Empty;
+            StepSoundId2 = LabURI.Empty;
+            LandSoundId1 = LabURI.Empty;
+            LandSoundId2 = LabURI.Empty;
+            UnkSoundId = LabURI.Empty;
             if (collisionSurface.StepSoundId1 != 0xFFFF)
             {
-                StepSoundId1 = GuidManager.GetGuidByTwinId(collisionSurface.StepSoundId1, typeof(SoundEffect));
+                StepSoundId1 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.StepSoundId1);
             }
             if (collisionSurface.StepSoundId2 != 0xFFFF)
             {
-                StepSoundId2 = GuidManager.GetGuidByTwinId(collisionSurface.StepSoundId1, typeof(SoundEffect));
+                StepSoundId2 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.StepSoundId2);
             }
             if (collisionSurface.LandSoundId1 != 0xFFFF)
             {
-                LandSoundId1 = GuidManager.GetGuidByTwinId(collisionSurface.LandSoundId1, typeof(SoundEffect));
+                LandSoundId1 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.LandSoundId1);
             }
             if (collisionSurface.LandSoundId2 != 0xFFFF)
             {
-                LandSoundId2 = GuidManager.GetGuidByTwinId(collisionSurface.LandSoundId2, typeof(SoundEffect));
+                LandSoundId2 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.LandSoundId2);
             }
             if (collisionSurface.UnkSoundId != 0xFFFF)
             {
-                UnkSoundId = GuidManager.GetGuidByTwinId(collisionSurface.UnkSoundId, typeof(SoundEffect));
+                UnkSoundId = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.UnkSoundId);
             }
             UnkId1 = collisionSurface.UnkId1;
             UnkId2 = collisionSurface.UnkId2;

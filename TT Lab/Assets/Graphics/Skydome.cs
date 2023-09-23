@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Windows.Controls;
+﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
@@ -10,7 +8,7 @@ namespace TT_Lab.Assets.Graphics
     public class Skydome : SerializableAsset
     {
 
-        public Skydome(UInt32 id, String name, PS2AnySkydome skydome) : base(id, name)
+        public Skydome(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnySkydome skydome) : base(id, name, package, subpackage, variant)
         {
             assetData = new SkydomeData(skydome);
         }

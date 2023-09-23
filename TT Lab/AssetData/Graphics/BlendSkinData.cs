@@ -11,16 +11,16 @@ namespace TT_Lab.AssetData.Graphics
 
         public BlendSkinData(PS2AnyBlendSkin blendSkin) : this()
         {
-            twinRef = blendSkin;
+            SetTwinItem(blendSkin);
         }
 
         protected override void Dispose(Boolean disposing)
         {
             return;
         }
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyBlendSkin blendSkin = (PS2AnyBlendSkin)twinRef;
+            PS2AnyBlendSkin blendSkin = GetTwinItem<PS2AnyBlendSkin>();
 
         }
     }

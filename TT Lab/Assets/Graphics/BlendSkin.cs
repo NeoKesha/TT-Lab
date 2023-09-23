@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
@@ -10,7 +9,7 @@ namespace TT_Lab.Assets.Graphics
     {
         public BlendSkin() { }
 
-        public BlendSkin(UInt32 id, String name, PS2AnyBlendSkin blendSkin) : base(id, name)
+        public BlendSkin(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyBlendSkin blendSkin) : base(id, name, package, subpackage, variant)
         {
             assetData = new BlendSkinData(blendSkin);
         }

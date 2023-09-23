@@ -1,12 +1,10 @@
 ﻿using GlmNet;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Renderers;
@@ -14,7 +12,6 @@ using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
-using System.Windows.Input;
 
 namespace TT_Lab.Rendering
 {
@@ -93,10 +90,10 @@ namespace TT_Lab.Rendering
             this(width, height, new ShaderProgram.LibShader { Path = "Shaders\\Light.frag", Type = ShaderType.FragmentShader })
         {
             // Collision renderer
-            var colData = (CollisionData)sceneTree.Find((avm) =>
+            var colData = sceneTree.Find((avm) =>
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
-            })!.Asset.GetData();
+            })!.Asset.GetData<CollisionData>();
             var colRender = new Objects.Collision(colData);
             colRender.Parent = this;
             objectsOpaque.Add(colRender);
@@ -263,7 +260,7 @@ namespace TT_Lab.Rendering
 
         public void HandleInputs(List<Key> keysPressed)
         {
-            
+
         }
 
         public void Move(List<Key> keysPressed)
@@ -346,16 +343,11 @@ namespace TT_Lab.Rendering
         {
             var method = Preferences.GetPreference<RenderSwitches.TranslucencyMethod>(Preferences.TranslucencyMethod);
             Renderer?.Delete();
-            switch (method)
+            Renderer = method switch
             {
-                case RenderSwitches.TranslucencyMethod.WBOIT:
-                    Renderer = new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y, libShader);
-                    break;
-                case RenderSwitches.TranslucencyMethod.DDP:
-                default:
-                    Renderer = new DDPRenderer(resolution.x, resolution.y, libShader);
-                    break;
-            }
+                RenderSwitches.TranslucencyMethod.WBOIT => new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y, libShader),
+                _ => new DDPRenderer(resolution.x, resolution.y, libShader),
+            };
             Renderer.Scene = this;
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }

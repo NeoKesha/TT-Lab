@@ -1,5 +1,4 @@
-﻿using System;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+﻿using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
 namespace TT_Lab.AssetData.Graphics
 {

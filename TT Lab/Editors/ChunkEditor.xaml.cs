@@ -1,21 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
-using TT_Lab.Controls;
-using TT_Lab.Project;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels;
@@ -40,7 +28,7 @@ namespace TT_Lab.Editors
             var chunk = (ChunkFolder)chunkAss.Asset;
             foreach (var item in ((FolderData)chunk.GetData()).Children)
             {
-                chunkTree.Add(ProjectManagerSingleton.PM.OpenedProject.GetAsset(item).GetViewModel());
+                chunkTree.Add(AssetManager.Get().GetAsset(item).GetViewModel());
             }
             DataContext = new { Items = chunkTree };
             isDefault = chunk.Name.ToLower() == "default";

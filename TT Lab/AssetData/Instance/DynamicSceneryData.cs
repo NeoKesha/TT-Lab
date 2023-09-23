@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.AssetData.Instance
@@ -16,7 +12,7 @@ namespace TT_Lab.AssetData.Instance
 
         public DynamicSceneryData(PS2AnyDynamicScenery dynamicScenery) : this()
         {
-            twinRef = dynamicScenery;
+            SetTwinItem(dynamicScenery);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -27,9 +23,9 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyDynamicScenery dynamicScenery = (PS2AnyDynamicScenery)twinRef;
+            PS2AnyDynamicScenery dynamicScenery = GetTwinItem<PS2AnyDynamicScenery>();
             UnkInt = dynamicScenery.UnkInt;
         }
     }

@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -19,7 +17,7 @@ namespace TT_Lab.AssetData.Code
 
         public OGIData(PS2AnyOGI ogi) : this()
         {
-            twinRef = ogi;
+            SetTwinItem(ogi);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -31,7 +29,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<Byte> RigidRelatedList { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> RigidModelIds { get; set; }
+        public List<LabURI> RigidModelIds { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<Matrix4> Type1RelatedMatrix { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -54,15 +52,15 @@ namespace TT_Lab.AssetData.Code
             BuilderMatrixIndex.Clear();
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
-            PS2AnyOGI ogi = (PS2AnyOGI)twinRef!;
+            PS2AnyOGI ogi = GetTwinItem<PS2AnyOGI>();
             BoundingBox = CloneUtils.CloneArray(ogi.BoundingBox);
             RigidRelatedList = CloneUtils.CloneList(ogi.JointIndices);
-            RigidModelIds = new List<Guid>();
+            RigidModelIds = new List<LabURI>();
             foreach (var model in ogi.RigidModelIds)
             {
-                RigidModelIds.Add(GuidManager.GetGuidByTwinId(model, typeof(RigidModel)));
+                RigidModelIds.Add(AssetManager.Get().GetUri(package, subpackage, typeof(RigidModel).Name, variant, model));
             }
             BuilderMatrixIndex = CloneUtils.CloneList(ogi.CollisionJointIndices);
             Type1List = CloneUtils.DeepClone(ogi.Joints);

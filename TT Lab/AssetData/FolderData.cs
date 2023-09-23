@@ -1,19 +1,17 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.Assets;
 
 namespace TT_Lab.AssetData
 {
     public class FolderData : AbstractAssetData
     {
         [JsonProperty(Required = Required.AllowNull)]
-        public Guid? Parent { get; set; }
+        public LabURI? Parent { get; set; }
 
         [JsonProperty(Required = Required.Always)]
-        public List<Guid> Children { get; private set; } = new List<Guid>();
+        public List<LabURI> Children { get; private set; } = new();
 
         // The Folder is a special case data since we do need it loaded at all times due to its heavy relationship to Project Tree
         // so it doesn't get disposed
@@ -22,7 +20,7 @@ namespace TT_Lab.AssetData
             return;
         }
 
-        public override void Import()
+        public override void Import(String package, String subpackage, String? variant)
         {
         }
     }

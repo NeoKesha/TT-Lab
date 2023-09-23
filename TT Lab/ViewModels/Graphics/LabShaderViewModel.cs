@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics.Shaders;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Common;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
@@ -40,7 +37,7 @@ namespace TT_Lab.ViewModels.Graphics
         private ZValueDrawMask _zValueDrawMask;
         private UInt16 _lodParamK;
         private UInt16 _lodParamL;
-        private Guid _texID;
+        private LabURI _texID;
         private Byte _unkVal1;
         private Byte _unkVal2;
         private Byte _unkVal3;
@@ -104,7 +101,7 @@ namespace TT_Lab.ViewModels.Graphics
             _unkVec2 = new Vector4ViewModel(shader.UnkVector2);
             _unkVec3 = new Vector4ViewModel(shader.UnkVector3);
         }
-        
+
         public String Name
         {
             get => _name;
@@ -503,7 +500,7 @@ namespace TT_Lab.ViewModels.Graphics
                 }
             }
         }
-        public Guid TexID
+        public LabURI TexID
         {
             get => _texID;
             set
