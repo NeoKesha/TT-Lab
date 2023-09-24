@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public Collision(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyCollisionData collisionData) : base(package, subpackage, id, name, chunk, null)
+        public Collision(String package, String subpackage, UInt32 id, String Name, String chunk, PS2AnyCollisionData collisionData) : base(package, subpackage, id, Name, chunk, null)
         {
             assetData = new CollisionData(collisionData);
         }

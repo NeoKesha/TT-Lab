@@ -23,10 +23,28 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             SOUNDS = 1 << 6,
         }
 
-        public Byte Type;
+        public enum ObjectType
+        {
+            Character,
+            Pickup,
+            Crate,
+            Creature,
+            GenericObject, // aka Furniture, internal name by Twinsanity's engine
+            Grabbable, // aka ChiChiGrass
+            PayGate,   // Unused by all the objects included in the game
+            Graple,    // aka Nina's Hand/Foofie in Evolution
+            Projectile
+        }
+
+        Byte type;
+        public ObjectType Type
+        {
+            get => (ObjectType)type;
+            set => type = (Byte)value;
+        }
         public Byte UnkTypeValue;
-        public Byte UnkOgiArraySize;
-        public Byte OgiType2ArraySize;
+        public Byte ReactJointAmount;
+        public Byte ExitPointAmount;
         public Byte[] SlotsMap;
         public String Name;
         public List<UInt32> TriggerScripts;
@@ -141,10 +159,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public override void Read(BinaryReader reader, int length)
         {
             var bitfield = reader.ReadUInt32();
-            Type = (Byte)(bitfield >> 0x14 & 0xFF);
+            type = (Byte)(bitfield >> 0x14 & 0xFF);
             UnkTypeValue = (Byte)(bitfield >> 0xC & 0xFF);
-            UnkOgiArraySize = (Byte)(bitfield >> 0x6 & 0x3F);
-            OgiType2ArraySize = (Byte)(bitfield & 0x3F);
+            ReactJointAmount = (Byte)(bitfield >> 0x6 & 0x3F);
+            ExitPointAmount = (Byte)(bitfield & 0x3F);
 
             var hasInstProps = (bitfield & 0x20000000) != 0;
             var refRes = (bitfield & 0x40000000) != 0;
@@ -215,7 +233,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override void Write(BinaryWriter writer)
         {
-            UInt32 newBitfield = OgiType2ArraySize;
+            UInt32 newBitfield = ExitPointAmount;
             if (ReferencesResources)
             {
                 newBitfield |= 0x40000000;
@@ -224,9 +242,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             {
                 newBitfield |= 0x20000000;
             }
-            UInt32 objType = (UInt32)(Type << 0x14);
+            UInt32 objType = (UInt32)(type << 0x14);
             UInt32 objTypeRelVal = (UInt32)(UnkTypeValue << 0xC);
-            UInt32 unkOgiArraySize = (UInt32)(UnkOgiArraySize << 0x6);
+            UInt32 unkOgiArraySize = (UInt32)(ReactJointAmount << 0x6);
             newBitfield |= objType;
             newBitfield |= objTypeRelVal;
             newBitfield |= unkOgiArraySize;

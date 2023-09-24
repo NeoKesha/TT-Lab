@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SharpHash.Base;
+using System;
 using System.IO;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Base
@@ -11,14 +13,30 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         protected bool isLazy;
         protected ITwinItem root;
         protected MemoryStream stream;
+        protected String hash;
         Byte[] data;
         public BaseTwinItem()
         {
-            data = new Byte[0];
+            data = Array.Empty<Byte>();
         }
         public BaseTwinItem(Byte[] data)
         {
             this.data = data;
+        }
+
+        public void ComputeHash(Stream stream)
+        {
+            hash = Hasher.ComputeHash(stream);
+        }
+
+        public void ComputeHash(Stream stream, UInt32 length)
+        {
+            hash = Hasher.ComputeHash(stream, length);
+        }
+
+        public virtual String GetHash()
+        {
+            return hash;
         }
 
         public virtual uint GetID()

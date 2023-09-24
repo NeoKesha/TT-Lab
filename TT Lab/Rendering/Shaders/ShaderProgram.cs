@@ -24,8 +24,8 @@ namespace TT_Lab.Rendering.Shaders
         /// <summary>
         /// Creates the shader program.
         /// </summary>
-        /// <param name="vertexShaderSource">The vertex shader source.</param>
-        /// <param name="fragmentShaderSource">The fragment shader source.</param>
+        /// <param Name="vertexShaderSource">The vertex shader source.</param>
+        /// <param Name="fragmentShaderSource">The fragment shader source.</param>
         /// <exception cref="ShaderCompilationException"></exception>
         public ShaderProgram(string vertexShaderSource, string fragmentShaderSource, LibShader? fragShader = null, LibShader? vertShader = null)
         {
@@ -168,7 +168,7 @@ namespace TT_Lab.Rendering.Shaders
 
         public int GetUniformLocation(string uniformName)
         {
-            //  If we don't have the uniform name in the dictionary, get it's 
+            //  If we don't have the uniform Name in the dictionary, get it's 
             //  location and add it.
             if (uniformNamesToLocations.ContainsKey(uniformName) == false)
             {
@@ -193,8 +193,8 @@ namespace TT_Lab.Rendering.Shaders
         private uint shaderProgramObject;
 
         /// <summary>
-        /// A mapping of uniform names to locations. This allows us to very easily specify 
-        /// uniform data by name, quickly looking up the location first if needed.
+        /// A mapping of uniform Names to locations. This allows us to very easily specify 
+        /// uniform data by Name, quickly looking up the location first if needed.
         /// </summary>
         private readonly Dictionary<string, int> uniformNamesToLocations = new Dictionary<string, int>();
     }

@@ -560,7 +560,7 @@
     <!-- This is the area which contains the selected item in the ComboBox -->
     
     <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
-        <!-- This must be named as PART_ContentHost -->
+        <!-- This must be Named as PART_ContentHost -->
         <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}"/>
     </ControlTemplate>
     
@@ -579,7 +579,7 @@
                         <ToggleButton Grid.Column="2" Template="{DynamicResource ComboBoxToggleButton}" x:Name="ToggleButton" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
                         <ContentPresenter HorizontalAlignment="Left" Margin="3,3,23,3" x:Name="ContentSite" VerticalAlignment="Center" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False"/>
                         
-                        <!-- The TextBox must be named PART_EditableTextBox or ComboBox will not recognize it -->
+                        <!-- The TextBox must be Named PART_EditableTextBox or ComboBox will not recognize it -->
                         <TextBox Visibility="Hidden" Template="{DynamicResource ComboBoxTextBox}" HorizontalAlignment="Left" Margin="3,3,23,3" x:Name="PART_EditableTextBox" Style="{x:Null}" VerticalAlignment="Center" Focusable="True" Background="Transparent" IsReadOnly="{TemplateBinding IsReadOnly}"/>
                         
                         <!-- The Popup shows the list of items in the ComboBox. IsOpen is databound to IsDropDownOpen which is toggled via the ComboBoxToggleButton -->
@@ -656,10 +656,10 @@
                 <ControlTemplate TargetType="{x:Type ProgressBar}">
                     <Grid>
                     
-                        <!-- This Border is the track. It must be named PART_Track -->
+                        <!-- This Border is the track. It must be Named PART_Track -->
                         <Border x:Name="PART_Track" Background="{DynamicResource PressedBrush}" BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1" CornerRadius="2"/>
                         
-                        <!-- This Border shows progress. It must be named PART_Indicator for the control to function -->
+                        <!-- This Border shows progress. It must be Named PART_Indicator for the control to function -->
                         <Border HorizontalAlignment="Left" x:Name="PART_Indicator" Background="{DynamicResource MouseOverBrush}" BorderBrush="{DynamicResource NormalBorderBrush}" BorderThickness="1" CornerRadius="2"/>
                     
                     </Grid>
@@ -679,7 +679,7 @@
                     <Grid>
                         <Border x:Name="Border" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1" Padding="2" CornerRadius="2">
                             
-                            <!-- The implementation places the Content into the ScrollViewer. It must be named PART_ContentHost for the control to function -->
+                            <!-- The implementation places the Content into the ScrollViewer. It must be Named PART_ContentHost for the control to function -->
                             <ScrollViewer Margin="0" x:Name="PART_ContentHost" Style="{DynamicResource SimpleScrollViewer}" Background="{TemplateBinding Background}"/>
                         
                         </Border>
@@ -891,7 +891,7 @@
                         
                         <Border Grid.Row="1" x:Name="Border" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1" CornerRadius="2" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="2">
                             
-                            <!-- The implementation switches the content. This control must be named PART_SelectedContentHost -->
+                            <!-- The implementation switches the content. This control must be Named PART_SelectedContentHost -->
                             <ContentPresenter Margin="4" x:Name="PART_SelectedContentHost" ContentSource="SelectedContent"/>
                             
                         </Border>

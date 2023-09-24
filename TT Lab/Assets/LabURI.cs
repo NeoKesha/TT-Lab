@@ -17,6 +17,8 @@ namespace TT_Lab.Assets
             _uri = uri;
         }
 
+        public override string ToString() => _uri;
+
         public static LabURI Empty { get; } = new LabURI("res://EMPTY");
 
         public string GetUri() { return _uri; }

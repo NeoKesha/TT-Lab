@@ -1,6 +1,6 @@
 ﻿namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
 {
-    interface ITwinPosition : ITwinItem
+    public interface ITwinPosition : ITwinItem
     {
     }
 }

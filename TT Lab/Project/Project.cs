@@ -175,33 +175,33 @@ namespace TT_Lab.Project
             // Load only unique resources
             Dictionary<Guid, IAsset> assets = new();
             // Graphics
-            var graphicsCheck = new Dictionary<uint, List<uint>>
+            var graphicsCheck = new Dictionary<uint, List<String>>
             {
-                { Constants.GRAPHICS_BLEND_SKINS_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_LODS_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_MATERIALS_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_MESHES_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_MODELS_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_RIGID_MODELS_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_SKINS_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_SKYDOMES_SECTION, new List<uint>() },
-                { Constants.GRAPHICS_TEXTURES_SECTION, new List<uint>() }
+                { Constants.GRAPHICS_BLEND_SKINS_SECTION, new() },
+                { Constants.GRAPHICS_LODS_SECTION, new() },
+                { Constants.GRAPHICS_MATERIALS_SECTION, new() },
+                { Constants.GRAPHICS_MESHES_SECTION, new() },
+                { Constants.GRAPHICS_MODELS_SECTION, new() },
+                { Constants.GRAPHICS_RIGID_MODELS_SECTION, new() },
+                { Constants.GRAPHICS_SKINS_SECTION, new() },
+                { Constants.GRAPHICS_SKYDOMES_SECTION, new() },
+                { Constants.GRAPHICS_TEXTURES_SECTION, new() }
             };
             // Code
-            var codeCheck = new Dictionary<uint, List<uint>>
+            var codeCheck = new Dictionary<uint, List<String>>
             {
-                { Constants.CODE_ANIMATIONS_SECTION, new List<uint>() },
-                { Constants.CODE_CODE_MODELS_SECTION, new List<uint>() },
-                { Constants.CODE_GAME_OBJECTS_SECTION, new List<uint>() },
-                { Constants.CODE_LANG_ENG_SECTION, new List<uint>() },
-                { Constants.CODE_LANG_FRE_SECTION, new List<uint>() },
-                { Constants.CODE_LANG_GER_SECTION, new List<uint>() },
-                { Constants.CODE_LANG_ITA_SECTION, new List<uint>() },
-                { Constants.CODE_LANG_JPN_SECTION, new List<uint>() },
-                { Constants.CODE_LANG_SPA_SECTION, new List<uint>() },
-                { Constants.CODE_OGIS_SECTION, new List<uint>() },
-                { Constants.CODE_SCRIPTS_SECTION, new List<uint>() },
-                { Constants.CODE_SOUND_EFFECTS_SECTION, new List<uint>() }
+                { Constants.CODE_ANIMATIONS_SECTION, new() },
+                { Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION, new() },
+                { Constants.CODE_GAME_OBJECTS_SECTION, new() },
+                { Constants.CODE_LANG_ENG_SECTION, new() },
+                { Constants.CODE_LANG_FRE_SECTION, new() },
+                { Constants.CODE_LANG_GER_SECTION, new() },
+                { Constants.CODE_LANG_ITA_SECTION, new() },
+                { Constants.CODE_LANG_JPN_SECTION, new() },
+                { Constants.CODE_LANG_SPA_SECTION, new() },
+                { Constants.CODE_OGIS_SECTION, new() },
+                { Constants.CODE_BEHAVIOURS_SECTION, new() },
+                { Constants.CODE_SOUND_EFFECTS_SECTION, new() }
             };
             string[] archivePaths = System.IO.Directory.GetFiles(System.IO.Path.Combine(DiscContentPathPS2, "Crash6"), "*.BD", System.IO.SearchOption.TopDirectoryOnly);
             PS2BD archive = new PS2BD(archivePaths[0].Replace(".BD", ".BH"), "");
@@ -325,18 +325,18 @@ namespace TT_Lab.Project
                             (assets, code, codeCheck, Constants.CODE_ANIMATIONS_SECTION, animationsFolder);
                         ReadSectionItems<OGI, PS2AnyOGIsSection, PS2AnyOGI>
                             (assets, code, codeCheck, Constants.CODE_OGIS_SECTION, ogisFolder);
-                        ReadSectionItems<BehaviourCommandsSequence, PS2AnyCodeModelsSection, PS2AnyBehaviourCommandsSequence>
-                            (assets, code, codeCheck, Constants.CODE_CODE_MODELS_SECTION, codeModelsFolder);
-                        // Scripts are kinda special because they are ID oddity dependent
-                        var items = code.GetItem<PS2AnyScriptsSection>(Constants.CODE_SCRIPTS_SECTION);
+                        ReadSectionItems<BehaviourCommandsSequence, PS2AnyBehaviourCommandsSequencesSection, PS2AnyBehaviourCommandsSequence>
+                            (assets, code, codeCheck, Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION, codeModelsFolder);
+                        // Behaviours are special because they are ID oddity dependent
+                        var items = code.GetItem<PS2AnyBehavioursSection>(Constants.CODE_BEHAVIOURS_SECTION);
                         for (var i = 0; i < items.GetItemsAmount(); ++i)
                         {
                             var asset = items.GetItem<PS2BehaviourWrapper>(items.GetItem(i).GetID());
-                            if (codeCheck[Constants.CODE_SCRIPTS_SECTION].Contains(asset.GetID())) continue;
-                            codeCheck[Constants.CODE_SCRIPTS_SECTION].Add(asset.GetID());
+                            if (codeCheck[Constants.CODE_BEHAVIOURS_SECTION].Contains(asset.GetHash())) continue;
+                            codeCheck[Constants.CODE_BEHAVIOURS_SECTION].Add(asset.GetHash());
                             var isHeader = asset.GetID() % 2 == 0;
-                            var metaAsset = (IAsset)Activator.CreateInstance(isHeader ? typeof(BehaviourStarter) : typeof(BehaviourGraph),
-                                asset.GetID(), asset.GetName(), asset);
+                            var metaAsset = (IAsset?)Activator.CreateInstance(isHeader ? typeof(BehaviourStarter) : typeof(BehaviourGraph),
+                                "base", "PS2", null, asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                             if (!isHeader)
                             {
                                 scriptsFolder.AddChild(metaAsset);
@@ -364,13 +364,14 @@ namespace TT_Lab.Project
                     var chunkName = System.IO.Path.GetFileNameWithoutExtension(pathLow);
                     var otherFolders = pathLow.Split(System.IO.Path.DirectorySeparatorChar);
                     Folder prevFolder = chunksFolder;
+                    var folders = new Dictionary<LabURI, Folder>();
                     // Create chunk folder hierarchy
                     for (var i = 1; i < otherFolders.Length; ++i)
                     {
-                        var existFolder = ((FolderData)prevFolder.GetData()).Children.FirstOrDefault(c => AssetManager.GetAsset<Folder>(c)?.Name == otherFolders[i], LabURI.Empty);
+                        var existFolder = ((FolderData)prevFolder.GetData()).Children.FirstOrDefault(c => folders.ContainsKey(c) && folders[c]?.Name == otherFolders[i], LabURI.Empty);
                         if (existFolder != LabURI.Empty)
                         {
-                            prevFolder = AssetManager.GetAsset<Folder>(existFolder);
+                            prevFolder = folders[existFolder];
                             continue;
                         }
                         Folder nextFolder;
@@ -382,6 +383,7 @@ namespace TT_Lab.Project
                         {
                             nextFolder = new ChunkFolder("base", "PS2", otherFolders[i], prevFolder);
                         }
+                        folders.Add(nextFolder.URI, nextFolder);
                         assets.Add(nextFolder.UUID, nextFolder);
                         prevFolder = nextFolder;
                     }
@@ -464,11 +466,20 @@ namespace TT_Lab.Project
                 }
             }
             AssetManager = new AssetManager(assets);
+            // Add any additional assets that are stored internally and generate additional URIs that AssetManager needs to know about
+            foreach (var uri in codeModelsFolder.GetData().To<FolderData>().Children)
+            { 
+                var cm = AssetManager.GetAsset<BehaviourCommandsSequence>(uri);
+                foreach (var sequence in cm.BehaviourGraphLinks)
+                {
+                    AssetManager.AddAsset(sequence.Value, cm);
+                }
+            }
         }
 
         public void UnpackAssetsXbox()
         {
-            if (DiscContentPathXbox == null)
+            if (DiscContentPathXbox == null || DiscContentPathXbox.Length == 0)
             {
                 Log.WriteLine("No XBox assets provided skipping...");
                 return;
@@ -485,16 +496,16 @@ namespace TT_Lab.Project
         /// <param name="fromSection">Which section to read from</param>
         /// <param name="globalCheck">Dictionary of global resources to check against</param>
         /// <param name="secId">Subsection ID where game asset is stored at</param>
-        private void ReadSectionItems<T, S, I>(Dictionary<Guid, IAsset> assets, ITwinSection fromSection, Dictionary<uint, List<uint>> globalCheck, uint secId, Folder folder)
+        private void ReadSectionItems<T, S, I>(Dictionary<Guid, IAsset> assets, ITwinSection fromSection, Dictionary<uint, List<String>> globalCheck, uint secId, Folder folder)
             where T : IAsset where S : ITwinSection where I : ITwinItem
         {
             var items = fromSection.GetItem<S>(secId);
             for (var i = 0; i < items.GetItemsAmount(); ++i)
             {
                 var asset = items.GetItem<I>(items.GetItem(i).GetID());
-                if (globalCheck[secId].Contains(asset.GetID())) continue;
-                globalCheck[secId].Add(asset.GetID());
-                var metaAsset = (T?)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
+                if (globalCheck[secId].Contains(asset.GetHash())) continue;
+                globalCheck[secId].Add(asset.GetHash());
+                var metaAsset = (T?)Activator.CreateInstance(typeof(T), "base", "PS2", null, asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                 folder.AddChild(metaAsset);
                 assets.Add(metaAsset.UUID, metaAsset);
             }
@@ -518,7 +529,7 @@ namespace TT_Lab.Project
                 for (var i = 0; i < items.GetItemsAmount(); ++i)
                 {
                     var asset = items.GetItem<I>(items.GetItem(i).GetID());
-                    var metaAsset = (T?)Activator.CreateInstance(typeof(T), asset.GetID(), asset.GetName(), chunkName, layId, asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
+                    var metaAsset = (T?)Activator.CreateInstance(typeof(T), "base", "PS2", asset.GetID(), asset.GetName(), chunkName, layId, asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                     folder.AddChild(metaAsset);
                     assets.Add(metaAsset.UUID, metaAsset);
                 }

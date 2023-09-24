@@ -9,7 +9,7 @@ namespace TT_Lab.Assets.Code
     {
         public GameObject() { }
 
-        public GameObject(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyObject @object) : base(id, name, package, subpackage, variant)
+        public GameObject(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyObject @object) : base(id, Name, package, subpackage, variant)
         {
             assetData = new GameObjectData(@object);
         }

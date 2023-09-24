@@ -14,12 +14,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SharpHash" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="AgentLabDefs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TextureDescriptionHelper.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TwinsanityInterchange\Implementations\Xbox\" />
   </ItemGroup>
 
 </Project>

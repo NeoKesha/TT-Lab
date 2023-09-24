@@ -23,7 +23,7 @@ namespace TT_Lab.AssetData.Code
         public GameObjectData(String path) => Load(path);
 
         [JsonProperty(Required = Required.Always)]
-        public Byte Type { get; set; }
+        public PS2AnyObject.ObjectType Type { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte UnkTypeValue { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -80,8 +80,8 @@ namespace TT_Lab.AssetData.Code
             PS2AnyObject gameObject = GetTwinItem<PS2AnyObject>();
             Type = gameObject.Type;
             UnkTypeValue = gameObject.UnkTypeValue;
-            UnkOGIArraySize = gameObject.UnkOgiArraySize;
-            OGIType2ArraySize = gameObject.OgiType2ArraySize;
+            UnkOGIArraySize = gameObject.ReactJointAmount;
+            OGIType2ArraySize = gameObject.ExitPointAmount;
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
             TriggerScripts = CloneUtils.CloneList(gameObject.TriggerScripts);
@@ -101,7 +101,7 @@ namespace TT_Lab.AssetData.Code
                 var found = false;
                 foreach (var cm in gameObject.RefCodeModels)
                 {
-                    BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, subpackage, typeof(BehaviourCommandsSequence).Name, variant, e);
+                    BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, subpackage, typeof(BehaviourCommandsSequence).Name, variant, cm);
                     LabURI subGuid = AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, cmGuid.ID.ToString(), e);
                     if (!subGuid.Equals(LabURI.Empty))
                     {

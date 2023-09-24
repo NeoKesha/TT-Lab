@@ -16,31 +16,31 @@ namespace TT_Lab.Assets
             assetData = new FolderData();
         }
 
-        public static Folder CreatePS2Folder(String name, String? variant = null)
+        public static Folder CreatePS2Folder(String Name, String? variant = null)
         {
-            return new Folder("base", "PS2", name, variant);
+            return new Folder("base", "PS2", Name, variant);
         }
 
-        public static Folder CreatePS2Folder(String name, Folder parent, String? variant = null)
+        public static Folder CreatePS2Folder(String Name, Folder parent, String? variant = null)
         {
-            return new Folder("base", "PS2", name, variant, parent);
+            return new Folder("base", "PS2", Name, variant, parent);
         }
 
-        public static Folder CreateXboxFolder(String name, String? variant = null)
+        public static Folder CreateXboxFolder(String Name, String? variant = null)
         {
-            return new Folder("base", "XBox", name, variant);
+            return new Folder("base", "XBox", Name, variant);
         }
 
-        public static Folder CreateXboxFolder(String name, Folder parent, String? variant = null)
+        public static Folder CreateXboxFolder(String Name, Folder parent, String? variant = null)
         {
-            return new Folder("base", "XBox", name, variant, parent);
+            return new Folder("base", "XBox", Name, variant, parent);
         }
 
-        public Folder(String package, String subpackage, String name, String? variant = null) : this(package, subpackage, name, variant, null)
+        public Folder(String package, String subpackage, String Name, String? variant = null) : this(package, subpackage, Name, variant, null)
         {
         }
 
-        public Folder(String package, String subpackage, String name, String? variant = null, Folder? parent = null) : this(package, subpackage, variant, (UInt32)Guid.NewGuid().ToByteArray().Sum(b => b), name)
+        public Folder(String package, String subpackage, String Name, String? variant = null, Folder? parent = null) : this(package, subpackage, variant, (UInt32)Guid.NewGuid().ToByteArray().Sum(b => b), Name)
         {
             if (parent != null)
             {
@@ -53,7 +53,7 @@ namespace TT_Lab.Assets
             }
         }
 
-        protected Folder(String package, String subpackage, String? variant, UInt32 id, String name) : base(id, name, package, subpackage, variant)
+        protected Folder(String package, String subpackage, String? variant, UInt32 id, String Name) : base(id, Name, package, subpackage, variant)
         {
             IsLoaded = true;
             assetData = new FolderData();

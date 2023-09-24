@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Code
 
         public OGI() { }
 
-        public OGI(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyOGI ogi) : base(id, name, package, subpackage, variant)
+        public OGI(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyOGI ogi) : base(id, Name, package, subpackage, variant)
         {
             assetData = new OGIData(ogi);
         }

@@ -9,7 +9,7 @@ namespace TT_Lab.Assets.Graphics
     {
         public BlendSkin() { }
 
-        public BlendSkin(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyBlendSkin blendSkin) : base(id, name, package, subpackage, variant)
+        public BlendSkin(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyBlendSkin blendSkin) : base(id, Name, package, subpackage, variant)
         {
             assetData = new BlendSkinData(blendSkin);
         }

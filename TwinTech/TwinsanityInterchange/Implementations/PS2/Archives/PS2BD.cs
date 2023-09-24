@@ -30,8 +30,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 
         public void Read(BinaryReader reader, Int32 length)
         {
-            using (FileStream headerStream = new FileStream(headerPath, FileMode.Open, FileAccess.Read))
-            using (BinaryReader headerReader = new BinaryReader(headerStream))
+            using (FileStream headerStream = new(headerPath, FileMode.Open, FileAccess.Read))
+            using (BinaryReader headerReader = new(headerStream))
             {
                 Header.Read(headerReader, (Int32)headerStream.Length);
             }

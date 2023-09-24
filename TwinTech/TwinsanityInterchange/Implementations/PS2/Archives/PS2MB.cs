@@ -30,11 +30,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             Header.Records.RemoveAt(id);
         }
 
-        public void AddRecord(RecordType type, String name, Byte[] data, Int32 sampleRate)
+        public void AddRecord(RecordType type, String Name, Byte[] data, Int32 sampleRate)
         {
-            if (name == "undefined")
+            if (Name == "undefined")
             {
-                throw new ArgumentException("Argument can not be 'undefined' because it is reserved!", "name");
+                throw new ArgumentException("Argument can not be 'undefined' because it is reserved!", "Name");
             }
             var newHeadRec = new MHRecord
             {
@@ -49,7 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             {
                 TrackData = data,
                 SampleRate = sampleRate,
-                Name = new String(name.ToCharArray(0, Math.Min(name.Length, 0x10)))
+                Name = new String(Name.ToCharArray(0, Math.Min(Name.Length, 0x10)))
             };
             if (newRec.Name.Length != 0x10)
             {

@@ -5,7 +5,7 @@
         /// <summary>
         /// Performs the command
         /// </summary>
-        /// <param name="parameter">Optional parameter</param>
+        /// <param Name="parameter">Optional parameter</param>
         new void Execute(object? parameter = null);
 
         /// <summary>

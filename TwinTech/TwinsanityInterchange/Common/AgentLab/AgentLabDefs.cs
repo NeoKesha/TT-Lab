@@ -5,12 +5,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
     public class AgentLabDefs
     {
-        public Dictionary<String, String> condition_map { get; set; }
-        public Dictionary<String, AgentLabCommandDef> command_map { get; set; }
+        public Dictionary<String, String> ConditionMap { get; set; }
+        public Dictionary<String, AgentLabCommandDef> CommandMap { get; set; }
     }
     public class AgentLabCommandDef
     {
-        public String name { get; set; }
-        public List<String> arguments { get; set; }
+        public String Name { get; set; }
+        public List<String> Arguments { get; set; }
     }
 }

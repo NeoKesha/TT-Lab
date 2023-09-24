@@ -50,6 +50,17 @@ namespace TT_Lab.AssetData
             return (T)twinRef;
         }
 
+        /// <summary>
+        /// Casts the data to a specific data type
+        /// </summary>
+        /// <typeparam name="T">Type of desired data</typeparam>
+        /// <returns>Asset data of a specific type</returns>
+        public T To<T>() where T : AbstractAssetData
+        {
+            Debug.Assert(GetType().IsAssignableFrom(typeof(T)), $"Attempted to cast to an illegal type {typeof(T).Name}");
+            return (T)this;
+        }
+
         public abstract void Import(String package, String subpackage, String? variant);
 
         public virtual ITwinItem Export()

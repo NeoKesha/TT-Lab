@@ -97,9 +97,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         private string MapCommand(UInt32 index, AgentLabDefs defs)
         {
             string str_index = index.ToString();
-            if (defs.command_map.ContainsKey(str_index))
+            if (defs.CommandMap.ContainsKey(str_index))
             {
-                return defs.command_map[str_index].name;
+                return defs.CommandMap[str_index].Name;
             }
             else
             {
@@ -111,9 +111,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         {
             string type = "hex";
             string str_index = index.ToString();
-            if (defs.command_map.ContainsKey(str_index.ToString()))
+            if (defs.CommandMap.ContainsKey(str_index.ToString()))
             {
-                List<string> types = defs.command_map[str_index].arguments;
+                List<string> types = defs.CommandMap[str_index].Arguments;
                 if (pos < types.Count)
                 {
                     type = types[pos].ToLower();
@@ -136,9 +136,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             String type = "hex";
             if (!arg.StartsWith("0x"))
             {
-                if (pos < defs.command_map[index.ToString()].arguments.Count)
+                if (pos < defs.CommandMap[index.ToString()].Arguments.Count)
                 {
-                    type = defs.command_map[index.ToString()].arguments[pos];
+                    type = defs.CommandMap[index.ToString()].Arguments[pos];
                 }
             }
             switch (type)
@@ -189,8 +189,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             else
             {
-                String cmd_name = StringUtils.GetStringBefore(line, "(");
-                CommandIndex = UInt16.Parse((defs.command_map.FirstOrDefault(x => x.Value.name == cmd_name).Key));
+                String cmd_Name = StringUtils.GetStringBefore(line, "(");
+                CommandIndex = UInt16.Parse((defs.CommandMap.FirstOrDefault(x => x.Value.Name == cmd_Name).Key));
             }
             String[] args = StringUtils.GetStringInBetween(line, "(", ")").Split(',');
             for (Int32 i = 0; i < args.Length; ++i)

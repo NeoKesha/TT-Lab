@@ -7,7 +7,7 @@ namespace TT_Lab.Assets.Code
 
         public Behaviour() { }
 
-        public Behaviour(String package, String subpackage, String? variant, UInt32 id, String name) : base(id, name, package, subpackage, variant)
+        public Behaviour(String package, String subpackage, String? variant, UInt32 id, String Name) : base(id, Name, package, subpackage, variant)
         {
         }
     }

@@ -9,10 +9,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2
         public PS2AnyCodeSection() : base()
         {
             idToClassDictionary.Add(Constants.CODE_GAME_OBJECTS_SECTION, typeof(PS2AnyGameObjectSection));
-            idToClassDictionary.Add(Constants.CODE_SCRIPTS_SECTION, typeof(PS2AnyScriptsSection));
+            idToClassDictionary.Add(Constants.CODE_BEHAVIOURS_SECTION, typeof(PS2AnyBehavioursSection));
             idToClassDictionary.Add(Constants.CODE_ANIMATIONS_SECTION, typeof(PS2AnyAnimationsSection));
             idToClassDictionary.Add(Constants.CODE_OGIS_SECTION, typeof(PS2AnyOGIsSection));
-            idToClassDictionary.Add(Constants.CODE_CODE_MODELS_SECTION, typeof(PS2AnyCodeModelsSection));
+            idToClassDictionary.Add(Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION, typeof(PS2AnyBehaviourCommandsSequencesSection));
             idToClassDictionary.Add(Constants.CODE_UNK_ITEM, typeof(BaseTwinItem));
             idToClassDictionary.Add(Constants.CODE_SOUND_EFFECTS_SECTION, typeof(PS2AnySoundsSection));
             idToClassDictionary.Add(Constants.CODE_LANG_ENG_SECTION, typeof(PS2AnySoundsSection));

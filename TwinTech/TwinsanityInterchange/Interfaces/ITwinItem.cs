@@ -18,6 +18,9 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
          */
         String GetName();
 
+        String GetHash();
+        void ComputeHash(Stream stream);
+        void ComputeHash(Stream stream, UInt32 length);
         bool GetIsLoaded();
         void SetIsLazy(bool isLazy);
         ITwinItem GetRoot();

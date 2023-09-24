@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Instance
 {
     public class Camera : SerializableInstance
     {
-        public Camera(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyCamera camera) : base(package, subpackage, id, name, chunk, layId)
+        public Camera(String package, String subpackage, UInt32 id, String Name, String chunk, Int32 layId, PS2AnyCamera camera) : base(package, subpackage, id, Name, chunk, layId)
         {
             assetData = new CameraData(camera);
             Parameters = new Dictionary<string, object?>

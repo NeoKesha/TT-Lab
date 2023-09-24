@@ -23,11 +23,11 @@ namespace TT_Lab.Controls
             InitializeComponent();
         }
 
-        public ClosableTab(string name, TabControl container, object tabParent) : this()
+        public ClosableTab(string Name, TabControl container, object tabParent) : this()
         {
             Container = container;
             TabParent = tabParent;
-            TabName.Content = name;
+            TabName.Content = Name;
             var closeBinding = new CommandBinding(CloseCommand, CloseExecuted);
             CommandBindings.Add(closeBinding);
             CloseButton.Command = closeBinding.Command;

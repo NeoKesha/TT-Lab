@@ -1,6 +1,6 @@
 ﻿namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
 {
-    interface ITwinRigidModel : ITwinItem
+    public interface ITwinRigidModel : ITwinItem
     {
     }
 }

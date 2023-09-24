@@ -1,6 +1,6 @@
 ﻿namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
 {
-    interface ITwinDynamicScenery : ITwinItem
+    public interface ITwinDynamicScenery : ITwinItem
     {
     }
 }

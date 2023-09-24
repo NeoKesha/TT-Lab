@@ -19,8 +19,25 @@ namespace TT_Lab.Assets
 
             foreach (var ass in assets)
             {
+                // Unlike AddAsset we allow duplicate keys and instead generate a Variation for the asset
+                if (_assets.ContainsKey(ass.Value.URI))
+                {
+                    ass.Value.Variation = ass.Value.UUID.ToString();
+                    ass.Value.RegenerateURI();
+                }
                 _assets.Add(ass.Value.URI, ass.Value);
             }
+        }
+
+        public void AddAsset(LabURI uri, IAsset asset)
+        {
+            if (_assets.ContainsKey(uri))
+            {
+                Log.WriteLine($"WARNING: Attempted to add already existing asset at {uri}! The asset was not added.");
+                return;
+            }
+
+            _assets.Add(uri, asset);
         }
 
         public void AddAsset(IAsset asset)
@@ -57,11 +74,11 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Obtain a URI explicitly by specifying the package, subpackage, folder, variant and id
         /// </summary>
-        /// <param name="package">Package</param>
-        /// <param name="subpackage">Subpackage</param>
-        /// <param name="folder">Folder</param>
-        /// <param name="variant">Variant if present</param>
-        /// <param name="id">ID</param>
+        /// <param Name="package">Package</param>
+        /// <param Name="subpackage">Subpackage</param>
+        /// <param Name="folder">Folder</param>
+        /// <param Name="variant">Variant if present</param>
+        /// <param Name="id">ID</param>
         /// <returns>Returns a URI</returns>
         public LabURI GetUri(String package, String subpackage, String folder, String? variant, uint id)
         {
@@ -83,7 +100,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Gets URI by asset's GUID
         /// </summary>
-        /// <param name="assetID">Asset's unique GUID</param>
+        /// <param Name="assetID">Asset's unique GUID</param>
         /// <returns>Asset's URI</returns>
         public LabURI GetUri(Guid assetID)
         {
@@ -93,11 +110,11 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Get asset by its package, subpackage, folder, variant(if needed) and id
         /// </summary>
-        /// <param name="package"></param>
-        /// <param name="subpackage"></param>
-        /// <param name="folder"></param>
-        /// <param name="variant"></param>
-        /// <param name="id"></param>
+        /// <param Name="package"></param>
+        /// <param Name="subpackage"></param>
+        /// <param Name="folder"></param>
+        /// <param Name="variant"></param>
+        /// <param Name="id"></param>
         /// <returns>Any asset</returns>
         public IAsset GetAsset(String package, String subpackage, String folder, String? variant, uint id)
         {
@@ -107,7 +124,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Get asset by URI
         /// </summary>
-        /// <param name="labURI">Asset's URI</param>
+        /// <param Name="labURI">Asset's URI</param>
         /// <returns>Any asset</returns>
         public IAsset GetAsset(LabURI labURI)
         {
@@ -117,7 +134,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Get asset by GUID
         /// </summary>
-        /// <param name="assetID">Asset's unique GUID</param>
+        /// <param Name="assetID">Asset's unique GUID</param>
         /// <returns>Any asset</returns>
         public IAsset GetAsset(Guid assetID)
         {
@@ -127,12 +144,12 @@ namespace TT_Lab.Assets
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T">Specific asset type</typeparam>
-        /// <param name="package"></param>
-        /// <param name="subpackage"></param>
-        /// <param name="folder"></param>
-        /// <param name="variant"></param>
-        /// <param name="id"></param>
+        /// <typeparam Name="T">Specific asset type</typeparam>
+        /// <param Name="package"></param>
+        /// <param Name="subpackage"></param>
+        /// <param Name="folder"></param>
+        /// <param Name="variant"></param>
+        /// <param Name="id"></param>
         /// <returns>Asset of a specific type</returns>
         /// <seealso cref="GetAsset(string, string, string, string?, uint)"/>
         public T GetAsset<T>(String package, String subpackage, String folder, String? variant, uint id) where T : IAsset
@@ -143,8 +160,8 @@ namespace TT_Lab.Assets
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T">Specific asset type</typeparam>
-        /// <param name="labURI"></param>
+        /// <typeparam Name="T">Specific asset type</typeparam>
+        /// <param Name="labURI"></param>
         /// <returns>Asset of a specific type</returns>
         /// <seealso cref="GetAsset(LabURI)"/>
         public T GetAsset<T>(LabURI labURI) where T : IAsset
@@ -155,8 +172,8 @@ namespace TT_Lab.Assets
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T">Specific asset type</typeparam>
-        /// <param name="assetID"></param>
+        /// <typeparam Name="T">Specific asset type</typeparam>
+        /// <param Name="assetID"></param>
         /// <returns>Asset of a specific type</returns>
         /// <seealso cref="GetAsset(Guid)"/>
         public T GetAsset<T>(Guid assetID) where T : IAsset
@@ -167,12 +184,12 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Get asset data by its package, subpackage, folder, variant(if needed) and id
         /// </summary>
-        /// <typeparam name="T">Specific asset data type</typeparam>
-        /// <param name="package"></param>
-        /// <param name="subpackage"></param>
-        /// <param name="folder"></param>
-        /// <param name="variant"></param>
-        /// <param name="id"></param>
+        /// <typeparam Name="T">Specific asset data type</typeparam>
+        /// <param Name="package"></param>
+        /// <param Name="subpackage"></param>
+        /// <param Name="folder"></param>
+        /// <param Name="variant"></param>
+        /// <param Name="id"></param>
         /// <returns>Data of the asset of a specified type</returns>
         public T GetAssetData<T>(String package, String subpackage, String folder, String? variant, uint id) where T : AbstractAssetData
         {
@@ -182,8 +199,8 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Get asset data by its URI
         /// </summary>
-        /// <typeparam name="T">Specific asset data type</typeparam>
-        /// <param name="labURI"></param>
+        /// <typeparam Name="T">Specific asset data type</typeparam>
+        /// <param Name="labURI"></param>
         /// <returns>Data of the asset of a specified type</returns>
         public T GetAssetData<T>(LabURI labURI) where T : AbstractAssetData
         {
@@ -193,8 +210,8 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Get asset data by its unique GUID
         /// </summary>
-        /// <typeparam name="T">Specific asset data type</typeparam>
-        /// <param name="assetID"></param>
+        /// <typeparam Name="T">Specific asset data type</typeparam>
+        /// <param Name="assetID"></param>
         /// <returns>Data of the asset of a specified type</returns>
         public T GetAssetData<T>(Guid assetID) where T : AbstractAssetData
         {

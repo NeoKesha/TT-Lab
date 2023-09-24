@@ -22,7 +22,7 @@ namespace TT_Lab.Project
         Guid UUID { get; }
 
         /// <summary>
-        /// Project's name
+        /// Project's Name
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         string Name { get; set; }

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SharpHash.Base;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
@@ -70,6 +72,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             if (length > 0)
             {
+                ComputeHash(reader.BaseStream);
                 Int64 baseOffset = reader.BaseStream.Position;
                 magicNumber = reader.ReadUInt32();
                 UInt32 itemsCount = reader.ReadUInt32();
@@ -84,7 +87,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 Items.Clear();
                 for (int i = 0; i < itemsCount; ++i)
                 {
-                    ITwinItem item = null;
+                    ITwinItem item;
                     UInt32 mapperId = ProcessId(records[i].ItemId);
                     if (idToClassDictionary.ContainsKey(mapperId))
                     {
@@ -97,6 +100,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                     }
                     reader.BaseStream.Position = records[i].Offset + baseOffset;
                     item.SetID(records[i].ItemId);
+                    item.ComputeHash(reader.BaseStream, records[i].Size);
                     item.Read(reader, (Int32)records[i].Size);
                     Items.Add(item);
                 }

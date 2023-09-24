@@ -33,8 +33,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         {
             Header = reader.ReadUInt64();
             DmaChainIndex = reader.ReadUInt32();
-            Int32 nameLen = reader.ReadInt32();
-            Name = new string(reader.ReadChars(nameLen));
+            Int32 NameLen = reader.ReadInt32();
+            Name = new string(reader.ReadChars(NameLen));
             Int32 shaderCount = reader.ReadInt32();
             Shaders.Clear();
             for (int i = 0; i < shaderCount; ++i)

@@ -26,7 +26,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             TotalFrames = reader.ReadUInt16();
             var modelSettings = (dataPacker & 0x7F);
             var staticTransformations = (dataPacker >> 0x9 & 0x1FFC) / 4;
-            var animatedTransformations = (dataPacker >> 0x16) * TotalFrames;
+            var animatedTransformations = (dataPacker >> 0x16);
 
             ModelSettings.Clear();
             ModelSettings.Capacity = (Int32)modelSettings;

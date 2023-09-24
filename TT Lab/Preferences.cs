@@ -18,7 +18,7 @@ namespace TT_Lab
         private static readonly string PrefFileName = "settings.json";
         private static readonly string PrefFilePath;
 
-        // List of named settings
+        // List of Named settings
         public static readonly string TranslucencyMethod = "TranslucencyMethod";
 
         static Preferences()

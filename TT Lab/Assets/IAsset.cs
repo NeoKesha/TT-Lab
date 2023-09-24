@@ -143,10 +143,18 @@ namespace TT_Lab.Assets
             return (T)GetViewModel(parent);
         }
 
+        /// <summary>
+        /// Disposes of the contained data if it was loaded
+        /// </summary>
         void DisposeData()
         {
             GetData().Dispose();
         }
+
+        /// <summary>
+        /// Regenerates the URI if package, subpackage or variation was changed
+        /// </summary>
+        void RegenerateURI();
 
         /// <summary>
         /// Dump on disk in JSON format

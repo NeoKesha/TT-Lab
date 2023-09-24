@@ -10,7 +10,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
-    public class PS2AnyBehaviourCommandsSequence : BaseTwinItem, ITwinCodeModel
+    public class PS2AnyBehaviourCommandsSequence : BaseTwinItem, ITwinBehaviourCommandsSequence
     {
         public Int32 Header;
         public List<KeyValuePair<UInt16, BehaviourCommandPack>> BehaviourPacks;
@@ -124,15 +124,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         }
         public override String ToString()
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                StreamWriter writer = new StreamWriter(stream);
-                StreamReader reader = new StreamReader(stream);
-                WriteText(writer);
-                writer.Flush();
-                stream.Position = 0;
-                return reader.ReadToEnd();
-            }
+            using MemoryStream stream = new();
+            StreamWriter writer = new(stream);
+            StreamReader reader = new(stream);
+            WriteText(writer);
+            writer.Flush();
+            stream.Position = 0;
+            return reader.ReadToEnd();
         }
 
         public override String GetName()

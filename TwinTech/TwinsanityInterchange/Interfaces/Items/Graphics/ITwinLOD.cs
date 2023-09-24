@@ -1,6 +1,6 @@
 ﻿namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
 {
-    interface ITwinLOD : ITwinItem
+    public interface ITwinLOD : ITwinItem
     {
     }
 }

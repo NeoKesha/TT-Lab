@@ -37,10 +37,10 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public const Int32 GRAPHICS_SKYDOMES_SECTION = 8;
         //Code section level constants
         public const Int32 CODE_GAME_OBJECTS_SECTION = 0;
-        public const Int32 CODE_SCRIPTS_SECTION = 1;
+        public const Int32 CODE_BEHAVIOURS_SECTION = 1;
         public const Int32 CODE_ANIMATIONS_SECTION = 2;
         public const Int32 CODE_OGIS_SECTION = 3;
-        public const Int32 CODE_CODE_MODELS_SECTION = 4;
+        public const Int32 CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION = 4;
         public const Int32 CODE_UNK_ITEM = 5; // Unused by the game
         public const Int32 CODE_SOUND_EFFECTS_SECTION = 6;
         public const Int32 CODE_LANG_ENG_SECTION = 7;

@@ -6,7 +6,7 @@ namespace TT_Lab.Assets.Instance
     {
         protected override String SavePath => $"Instance\\{Chunk}\\{Type}";
 
-        public SerializableInstance(String package, String subpackage, UInt32 id, String name, String chunk, Int32? layId) : base(id, name, package, subpackage, chunk)
+        public SerializableInstance(String package, String subpackage, UInt32 id, String Name, String chunk, Int32? layId) : base(id, Name, package, subpackage, chunk)
         {
             Chunk = chunk;
             LayoutID = layId;

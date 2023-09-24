@@ -54,8 +54,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public override void Read(BinaryReader reader, int length)
         {
             base.Read(reader, length);
-            var nameLen = reader.ReadInt32();
-            Name = new String(reader.ReadChars(nameLen));
+            var NameLen = reader.ReadInt32();
+            Name = new String(reader.ReadChars(NameLen));
             var statesAmt = reader.ReadInt32();
             UnkInt = reader.ReadInt32();
             ScriptStates.Clear();
@@ -166,15 +166,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         }
         public override String ToString()
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                StreamWriter writer = new StreamWriter(stream);
-                StreamReader reader = new StreamReader(stream);
-                WriteText(writer);
-                writer.Flush();
-                stream.Position = 0;
-                return reader.ReadToEnd();
-            }
+            using MemoryStream stream = new();
+            StreamWriter writer = new(stream);
+            StreamReader reader = new(stream);
+            WriteText(writer);
+            writer.Flush();
+            stream.Position = 0;
+            return reader.ReadToEnd();
         }
     }
 }

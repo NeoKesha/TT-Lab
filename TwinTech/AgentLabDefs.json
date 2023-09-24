@@ -1,5 +1,5 @@
 {
-	"condition_map": {
+	"ConditionMap": {
 		"0": "Always",
 		"2": "DefaultCase",
 		"3": "GetRandomFloat",
@@ -44,354 +44,354 @@
 		"639": "GlobalProgression",
 		"641": "IsMoviePlaying"
 	},
-	"command_map": {
+	"CommandMap": {
 		"0": {
-			"name": "Error",
-			"arguments": []
+			"Name": "Error",
+			"Arguments": []
 		},
 		"1": {
-			"name": "SpecialEffects",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SpecialEffects",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"3": {
-			"name": "SetPosition",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetPosition",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"8": {
-			"name": "SpawnGlobalObject",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SpawnGlobalObject",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"9": {
-			"name": "PlayAnimation",
-			"arguments": [ "int32", "single", "int32", "int32", "int32", "int32" ]
+			"Name": "PlayAnimation",
+			"Arguments": [ "int32", "single", "int32", "int32", "int32", "int32" ]
 		},
 		"10": {
-			"name": "SpawnParticle",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SpawnParticle",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"11": {
-			"name": "PlaySound",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "PlaySound",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"12": {
-			"name": "SetObjectMovement",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetObjectMovement",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"29": {
-			"name": "SetRotation",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetRotation",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"34": {
-			"name": "SetPersistentFlag",
-			"arguments": [ "hex" ]
+			"Name": "SetPersistentFlag",
+			"Arguments": [ "hex" ]
 		},
 		"47": {
-			"name": "AttachLink",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "AttachLink",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"54": {
-			"name": "TriggerSignal",
-			"arguments": [ "hex", "hex", "hex", "hex" ]
+			"Name": "TriggerSignal",
+			"Arguments": [ "hex", "hex", "hex", "hex" ]
 		},
 		"60": {
-			"name": "AI_FindNode",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "AI_FindNode",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"61": {
-			"name": "StopMoving",
-			"arguments": []
+			"Name": "StopMoving",
+			"Arguments": []
 		},
 		"63": {
-			"name": "ResetObject",
-			"arguments": []
+			"Name": "ResetObject",
+			"Arguments": []
 		},
 		"64": {
-			"name": "AttachLink_Duplicate",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "AttachLink_Duplicate",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"65": {
-			"name": "TriggerSignal_Duplicate",
-			"arguments": [ "hex", "hex", "hex", "hex" ]
+			"Name": "TriggerSignal_Duplicate",
+			"Arguments": [ "hex", "hex", "hex", "hex" ]
 		},
 		"82": {
-			"name": "SetPhysics2",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetPhysics2",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"83": {
-			"name": "SetPhysics",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetPhysics",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"85": {
-			"name": "DestroyHost",
-			"arguments": [ "hex" ]
+			"Name": "DestroyHost",
+			"Arguments": [ "hex" ]
 		},
 		"86": {
-			"name": "PlayGlobalSound",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "PlayGlobalSound",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"88": {
-			"name": "PlayGlobalSound2",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "PlayGlobalSound2",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"92": {
-			"name": "AddLives",
-			"arguments": [ "hex" ]
+			"Name": "AddLives",
+			"Arguments": [ "hex" ]
 		},
 		"93": {
-			"name": "AddLives_Duplicate2",
-			"arguments": [ "hex" ]
+			"Name": "AddLives_Duplicate2",
+			"Arguments": [ "hex" ]
 		},
 		"105": {
-			"name": "SetRotation2",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetRotation2",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"111": {
-			"name": "CacheLinkedInstance",
-			"arguments": []
+			"Name": "CacheLinkedInstance",
+			"Arguments": []
 		},
 		"112": {
-			"name": "SpawnCachedObject",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SpawnCachedObject",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"120": {
-			"name": "PhysicsResetVelocity",
-			"arguments": []
+			"Name": "PhysicsResetVelocity",
+			"Arguments": []
 		},
 		"187": {
-			"name": "SetShadow",
-			"arguments": [ "hex", "hex", "hex", "hex" ]
+			"Name": "SetShadow",
+			"Arguments": [ "hex", "hex", "hex", "hex" ]
 		},
 		"188": {
-			"name": "SetShadowCircle",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetShadowCircle",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"189": {
-			"name": "SetShadowMesh",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetShadowMesh",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"190": {
-			"name": "SetShadowRectangle",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SetShadowRectangle",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"512": {
-			"name": "SpawnObject",
-			"arguments": [ "hex", "hex" ]
+			"Name": "SpawnObject",
+			"Arguments": [ "hex", "hex" ]
 		},
 		"513": {
-			"name": "AddWumpa",
-			"arguments": [ "hex" ]
+			"Name": "AddWumpa",
+			"Arguments": [ "hex" ]
 		},
 		"514": {
-			"name": "CreateDamageZone",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "CreateDamageZone",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"515": {
-			"name": "ToggleActive",
-			"arguments": [ "hex" ]
+			"Name": "ToggleActive",
+			"Arguments": [ "hex" ]
 		},
 		"516": {
-			"name": "SetCheckpoint",
-			"arguments": [ "hex" ]
+			"Name": "SetCheckpoint",
+			"Arguments": [ "hex" ]
 		},
 		"517": {
-			"name": "RestartFromCheckpoint",
-			"arguments": []
+			"Name": "RestartFromCheckpoint",
+			"Arguments": []
 		},
 		"518": {
-			"name": "SetWumpaContained",
-			"arguments": [ "hex", "hex" ]
+			"Name": "SetWumpaContained",
+			"Arguments": [ "hex", "hex" ]
 		},
 		"519": {
-			"name": "CrateUnsupport",
-			"arguments": []
+			"Name": "CrateUnsupport",
+			"Arguments": []
 		},
 		"520": {
-			"name": "AddHealth",
-			"arguments": []
+			"Name": "AddHealth",
+			"Arguments": []
 		},
 		"521": {
-			"name": "ToggleActiveAndState",
-			"arguments": [ "hex", "hex" ]
+			"Name": "ToggleActiveAndState",
+			"Arguments": [ "hex", "hex" ]
 		},
 		"522": {
-			"name": "NitroSwitchCrateTriggered",
-			"arguments": []
+			"Name": "NitroSwitchCrateTriggered",
+			"Arguments": []
 		},
 		"523": {
-			"name": "PropelPlayer",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "PropelPlayer",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"528": {
-			"name": "DamageHealth",
-			"arguments": [ "hex" ]
+			"Name": "DamageHealth",
+			"Arguments": [ "hex" ]
 		},
 		"529": {
-			"name": "SetHealth",
-			"arguments": [ "hex" ]
+			"Name": "SetHealth",
+			"Arguments": [ "hex" ]
 		},
 		"531": {
-			"name": "ResetObject_Duplicate",
-			"arguments": []
+			"Name": "ResetObject_Duplicate",
+			"Arguments": []
 		},
 		"533": {
-			"name": "ForceLand",
-			"arguments": [ "hex" ]
+			"Name": "ForceLand",
+			"Arguments": [ "hex" ]
 		},
 		"534": {
-			"name": "SetGlobalProgression",
-			"arguments": [ "hex", "hex" ]
+			"Name": "SetGlobalProgression",
+			"Arguments": [ "hex", "hex" ]
 		},
 		"535": {
-			"name": "AddCrystal",
-			"arguments": []
+			"Name": "AddCrystal",
+			"Arguments": []
 		},
 		"537": {
-			"name": "AddGem",
-			"arguments": [ "hex" ]
+			"Name": "AddGem",
+			"Arguments": [ "hex" ]
 		},
 		"541": {
-			"name": "SpecialEffects_Duplicate",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SpecialEffects_Duplicate",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"542": {
-			"name": "Command_2_Duplicate",
-			"arguments": []
+			"Name": "Command_2_Duplicate",
+			"Arguments": []
 		},
 		"543": {
-			"name": "PlayAnimation_Duplicate",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "PlayAnimation_Duplicate",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"544": {
-			"name": "SpawnParticle_Duplicate",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SpawnParticle_Duplicate",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"545": {
-			"name": "PlaySound_Duplicate",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "PlaySound_Duplicate",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"546": {
-			"name": "CreateDamageZone_Duplicate",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "CreateDamageZone_Duplicate",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"548": {
-			"name": "SpawnGlobalObject_Projectile",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "SpawnGlobalObject_Projectile",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"555": {
-			"name": "SetVehicleHumiliskate",
-			"arguments": [ "hex", "hex", "hex" ]
+			"Name": "SetVehicleHumiliskate",
+			"Arguments": [ "hex", "hex", "hex" ]
 		},
 		"569": {
-			"name": "ExitVehicleMode",
-			"arguments": [ "hex" ]
+			"Name": "ExitVehicleMode",
+			"Arguments": [ "hex" ]
 		},
 		"570": {
-			"name": "SetVehicleRollerbrawl",
-			"arguments": [ "hex" ]
+			"Name": "SetVehicleRollerbrawl",
+			"Arguments": [ "hex" ]
 		},
 		"571": {
-			"name": "SetVehicleHoverboard",
-			"arguments": [ "hex" ]
+			"Name": "SetVehicleHoverboard",
+			"Arguments": [ "hex" ]
 		},
 		"585": {
-			"name": "AddLives_Duplicate",
-			"arguments": [ "hex" ]
+			"Name": "AddLives_Duplicate",
+			"Arguments": [ "hex" ]
 		},
 		"589": {
-			"name": "CutsceneStart",
-			"arguments": [ "hex" ]
+			"Name": "CutsceneStart",
+			"Arguments": [ "hex" ]
 		},
 		"590": {
-			"name": "CutsceneEnd",
-			"arguments": [ "hex" ]
+			"Name": "CutsceneEnd",
+			"Arguments": [ "hex" ]
 		},
 		"596": {
-			"name": "StartWhackaworm",
-			"arguments": [ "hex", "hex", "hex" ]
+			"Name": "StartWhackaworm",
+			"Arguments": [ "hex", "hex", "hex" ]
 		},
 		"597": {
-			"name": "ProgressWhackaworm",
-			"arguments": [ "hex" ]
+			"Name": "ProgressWhackaworm",
+			"Arguments": [ "hex" ]
 		},
 		"598": {
-			"name": "EndWhackaworm",
-			"arguments": []
+			"Name": "EndWhackaworm",
+			"Arguments": []
 		},
 		"602": {
-			"name": "FadeoutScreen",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "FadeoutScreen",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"603": {
-			"name": "DisplayBottomText",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "DisplayBottomText",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"606": {
-			"name": "CameraFocusObject",
-			"arguments": []
+			"Name": "CameraFocusObject",
+			"Arguments": []
 		},
 		"607": {
-			"name": "CameraStopFocusObject",
-			"arguments": []
+			"Name": "CameraStopFocusObject",
+			"Arguments": []
 		},
 		"618": {
-			"name": "ForceGameOver",
-			"arguments": []
+			"Name": "ForceGameOver",
+			"Arguments": []
 		},
 		"619": {
-			"name": "ShowBottomText",
-			"arguments": [ "hex" ]
+			"Name": "ShowBottomText",
+			"Arguments": [ "hex" ]
 		},
 		"620": {
-			"name": "HideBottomText",
-			"arguments": [ "hex" ]
+			"Name": "HideBottomText",
+			"Arguments": [ "hex" ]
 		},
 		"625": {
-			"name": "SwitchCharacter",
-			"arguments": [ "hex", "hex" ]
+			"Name": "SwitchCharacter",
+			"Arguments": [ "hex", "hex" ]
 		},
 		"633": {
-			"name": "SetPlayerMode",
-			"arguments": [ "hex", "hex", "hex" ]
+			"Name": "SetPlayerMode",
+			"Arguments": [ "hex", "hex", "hex" ]
 		},
 		"634": {
-			"name": "PlayMovie",
-			"arguments": [ "hex", "hex" ]
+			"Name": "PlayMovie",
+			"Arguments": [ "hex", "hex" ]
 		},
 		"636": {
-			"name": "AddAmmo",
-			"arguments": [ "hex" ]
+			"Name": "AddAmmo",
+			"Arguments": [ "hex" ]
 		},
 		"638": {
-			"name": "EnableBossMode",
-			"arguments": [ "hex", "hex", "hex" ]
+			"Name": "EnableBossMode",
+			"Arguments": [ "hex", "hex", "hex" ]
 		},
 		"639": {
-			"name": "DamageBoss",
-			"arguments": [ "hex" ]
+			"Name": "DamageBoss",
+			"Arguments": [ "hex" ]
 		},
 		"640": {
-			"name": "ExitBossMode",
-			"arguments": []
+			"Name": "ExitBossMode",
+			"Arguments": []
 		},
 		"647": {
-			"name": "SetGlobalProgression2",
-			"arguments": [ "hex", "hex" ]
+			"Name": "SetGlobalProgression2",
+			"Arguments": [ "hex", "hex" ]
 		},
 		"652": {
-			"name": "CameraTopdownMode",
-			"arguments": []
+			"Name": "CameraTopdownMode",
+			"Arguments": []
 		},
 		"654": {
-			"name": "PlayCredits",
-			"arguments": []
+			"Name": "PlayCredits",
+			"Arguments": []
 		},
 		"657": {
-			"name": "DisplayBottomTextInstance",
-			"arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
+			"Name": "DisplayBottomTextInstance",
+			"Arguments": [ "hex", "hex", "hex", "hex", "hex", "hex" ]
 		},
 		"662": {
-			"name": "ResetCamera",
-			"arguments": []
+			"Name": "ResetCamera",
+			"Arguments": []
 		}
 	}
 }

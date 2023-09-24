@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public DynamicScenery(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyDynamicScenery dynamicScenery) : base(package, subpackage, id, name, chunk, null)
+        public DynamicScenery(String package, String subpackage, UInt32 id, String Name, String chunk, PS2AnyDynamicScenery dynamicScenery) : base(package, subpackage, id, Name, chunk, null)
         {
             assetData = new DynamicSceneryData(dynamicScenery);
         }

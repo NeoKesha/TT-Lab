@@ -68,7 +68,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             else
             {
                 AgentLabDefs defs = PS2BehaviourGraph.GetAgentLabDefs();
-                ConditionIndex = UInt16.Parse((defs.condition_map.FirstOrDefault(x => x.Value == condName).Key));
+                ConditionIndex = UInt16.Parse((defs.ConditionMap.FirstOrDefault(x => x.Value == condName).Key));
             }
             while (!line.EndsWith("}"))
             {
@@ -99,9 +99,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         private string MapIndex(UInt32 index, AgentLabDefs defs)
         {
             string str_index = index.ToString();
-            if (defs.condition_map.ContainsKey(str_index))
+            if (defs.ConditionMap.ContainsKey(str_index))
             {
-                return defs.condition_map[str_index];
+                return defs.ConditionMap[str_index];
             }
             else
             {

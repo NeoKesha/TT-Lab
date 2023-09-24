@@ -5,7 +5,7 @@ namespace TT_Lab
 {
     public static class Log
     {
-        private static TextBox logBox;
+        private static TextBox? logBox;
 
         public static void SetLogBox(TextBox log)
         {

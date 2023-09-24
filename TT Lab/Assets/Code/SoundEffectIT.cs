@@ -6,7 +6,7 @@ namespace TT_Lab.Assets.Code
     public class SoundEffectIT : SoundEffect
     {
         public SoundEffectIT() : base() { }
-        public SoundEffectIT(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnySound sound) : base(package, subpackage, variant, id, name, sound)
+        public SoundEffectIT(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnySound sound) : base(package, subpackage, variant, id, Name, sound)
         {
         }
     }

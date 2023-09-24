@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Code
 
         public SoundEffect() { }
 
-        public SoundEffect(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnySound sound) : base(id, name, package, subpackage, variant)
+        public SoundEffect(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnySound sound) : base(id, Name, package, subpackage, variant)
         {
             assetData = new SoundEffectData(sound);
             Raw = false;

@@ -56,16 +56,21 @@ namespace TT_Lab.Assets
             Package = package;
             SubPackage = subpackage;
             Variation = variant;
-            var variantAddition = variant == null ? "" : $"/{Variation}";
-            URI = new LabURI($"res://{Package}/{SubPackage}/{Type.Name}/{id}{variantAddition}");
+            RegenerateURI();
+        }
+
+        public void RegenerateURI()
+        {
+            var variantAddition = Variation == null ? "" : $"/{Variation}";
+            URI = new LabURI($"res://{Package}/{SubPackage}/{Type.Name}/{ID}{variantAddition}");
         }
 
         public virtual void Serialize()
         {
             var path = SavePath;
             System.IO.Directory.CreateDirectory(path);
-            using (System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(path, UUID + ".json"), System.IO.FileMode.Create, System.IO.FileAccess.Write))
-            using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(fs))
+            using (System.IO.FileStream fs = new(System.IO.Path.Combine(path, UUID + ".json"), System.IO.FileMode.Create, System.IO.FileAccess.Write))
+            using (System.IO.BinaryWriter writer = new(fs))
             {
                 writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
             }

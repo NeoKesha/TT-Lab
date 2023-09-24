@@ -5,9 +5,9 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
 {
-    public class PS2AnyScriptsSection : BaseTwinSection
+    public class PS2AnyBehavioursSection : BaseTwinSection
     {
-        public PS2AnyScriptsSection() : base()
+        public PS2AnyBehavioursSection() : base()
         {
             defaultType = typeof(PS2BehaviourWrapper);
             idToClassDictionary[0] = typeof(PS2BehaviourStarter);

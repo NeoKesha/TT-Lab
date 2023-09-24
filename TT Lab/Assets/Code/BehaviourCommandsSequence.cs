@@ -10,11 +10,11 @@ namespace TT_Lab.Assets.Code
     {
         protected override String DataExt => ".lab";
 
-        public Dictionary<UInt32, LabURI> BehaviourGraphLinks = new Dictionary<uint, LabURI>();
+        public Dictionary<UInt32, LabURI> BehaviourGraphLinks = new();
 
         public BehaviourCommandsSequence() { }
 
-        public BehaviourCommandsSequence(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyBehaviourCommandsSequence codeModel) : base(id, name, package, subpackage, variant)
+        public BehaviourCommandsSequence(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyBehaviourCommandsSequence codeModel) : base(id, Name, package, subpackage, variant)
         {
             assetData = new BehaviourCommandsSequenceData(codeModel);
             assetData.Import(package, subpackage, variant);
@@ -55,7 +55,8 @@ namespace TT_Lab.Assets.Code
             var cm = (BehaviourCommandsSequenceData)assetData;
             foreach (var e in cm.BehaviourGraphIds)
             {
-                BehaviourGraphLinks.Add(e, new LabURI($"res://{package}/{subpackage}/{typeof(BehaviourGraph).Name}/{e}"));
+                var uri = new LabURI($"res://{package}/{subpackage}/{typeof(BehaviourGraph).Name}/{e}/{ID}");
+                BehaviourGraphLinks.Add(e, uri);
             }
         }
     }

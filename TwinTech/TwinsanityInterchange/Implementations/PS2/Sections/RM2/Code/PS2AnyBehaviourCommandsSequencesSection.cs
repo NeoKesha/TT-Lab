@@ -3,9 +3,9 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
 {
-    public class PS2AnyCodeModelsSection : BaseTwinSection
+    public class PS2AnyBehaviourCommandsSequencesSection : BaseTwinSection
     {
-        public PS2AnyCodeModelsSection() : base()
+        public PS2AnyBehaviourCommandsSequencesSection() : base()
         {
             defaultType = typeof(PS2AnyBehaviourCommandsSequence);
         }

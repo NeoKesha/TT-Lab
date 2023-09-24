@@ -1,6 +1,6 @@
 ﻿namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM
 {
-    interface ITwinPatricle : ITwinItem
+    public interface ITwinPatricle : ITwinItem
     {
     }
 }

@@ -16,13 +16,13 @@ namespace TT_Lab.AssetData.Code
         {
             SetTwinItem(codeModel);
         }
-        public String BehaviourName { get; set; }
+        public String Code { get; set; }
         public List<UInt32> BehaviourGraphIds { get; set; }
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             using FileStream fs = new(dataPath, FileMode.Create, FileAccess.Write);
             using BinaryWriter writer = new(fs);
-            writer.Write(BehaviourName.ToCharArray());
+            writer.Write(Code.ToCharArray());
         }
 
         public override void Load(String dataPath, JsonSerializerSettings? settings = null)
@@ -31,7 +31,7 @@ namespace TT_Lab.AssetData.Code
             using StreamReader reader = new(fs);
             var cm = new PS2AnyBehaviourCommandsSequence();
             cm.ReadText(reader);
-            BehaviourName = cm.ToString();
+            Code = cm.ToString();
             GenerateBehaviourGraphIdsList(cm);
             SetTwinItem(cm);
         }
@@ -43,7 +43,7 @@ namespace TT_Lab.AssetData.Code
         public override void Import(String package, String subpackage, String? variant)
         {
             PS2AnyBehaviourCommandsSequence codeModel = GetTwinItem<PS2AnyBehaviourCommandsSequence>();
-            BehaviourName = codeModel.ToString();
+            Code = codeModel.ToString();
             GenerateBehaviourGraphIdsList(codeModel);
         }
 

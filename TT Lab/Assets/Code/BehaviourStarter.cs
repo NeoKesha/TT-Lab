@@ -15,6 +15,7 @@ namespace TT_Lab.Assets.Code
         public BehaviourStarter(String package, String subpackage, String? variant, UInt32 id, String name, PS2BehaviourStarter script) : base(package, subpackage, variant, id, name)
         {
             assetData = new BehaviourStarterData(script);
+            RegenerateURI();
         }
 
         public override Byte[] ToFormat()

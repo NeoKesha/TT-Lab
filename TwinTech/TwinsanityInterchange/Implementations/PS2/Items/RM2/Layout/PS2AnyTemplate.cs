@@ -37,8 +37,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override void Read(BinaryReader reader, int length)
         {
-            Int32 nameLen = reader.ReadInt32();
-            Name = new string(reader.ReadChars(nameLen));
+            Int32 NameLen = reader.ReadInt32();
+            Name = new string(reader.ReadChars(NameLen));
             ObjectId = reader.ReadUInt16();
             UnkByte1 = reader.ReadByte();
             UnkByte2 = reader.ReadByte();
