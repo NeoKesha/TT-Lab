@@ -96,7 +96,7 @@ namespace TT_Lab.AssetData.Instance
             Sceneries = new List<SceneryBaseData>();
             foreach (var sc in scenery.Sceneries)
             {
-                Sceneries.Add((SceneryBaseData)Activator.CreateInstance(scIndexToType[sc.GetObjectIndex()], sc)!);
+                Sceneries.Add((SceneryBaseData)Activator.CreateInstance(scIndexToType[sc.GetObjectIndex()], package, subpackage, variant, sc)!);
             }
         }
     }

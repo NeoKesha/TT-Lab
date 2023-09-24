@@ -38,8 +38,8 @@ namespace TT_Lab.Assets.Code
             base.Import();
             // Generate better Alias for header scripts
             var data = (BehaviourStarterData)assetData;
-            var mainScrAlias = AssetManager.Get().GetAsset<BehaviourStarter>(data.Pairs[0].Key).Alias;
-            Alias = $"Header Script {ID:X} - {mainScrAlias}";
+            var mainScrAlias = AssetManager.Get().GetAsset(data.Pairs[0].Key).Alias;
+            Alias = $"Behaviour Starter {ID:X} - {mainScrAlias}";
         }
 
         public override AssetViewModel GetViewModel(AssetViewModel? parent = null)

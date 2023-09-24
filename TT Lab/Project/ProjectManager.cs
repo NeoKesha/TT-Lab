@@ -277,7 +277,7 @@ namespace TT_Lab.Project
                     Log.WriteLine($"Converting assets...");
                     foreach (var asset in OpenedProject.AssetManager.GetAssets())
                     {
-                        asset.Value.Import();
+                        asset.Import();
                     }
 
                     Log.WriteLine("Serializing assets...");
@@ -367,7 +367,7 @@ namespace TT_Lab.Project
 
         private void BuildProjectTree()
         {
-            ProjectTree = (from asset in OpenedProject.AssetManager.GetAssets().Values
+            ProjectTree = (from asset in OpenedProject.AssetManager.GetAssets()
                            where asset.Type == typeof(Folder)
                            let folder = asset as Folder
                            where ((FolderData)folder.GetData()).Parent == null

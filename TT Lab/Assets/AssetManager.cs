@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using TT_Lab.AssetData;
 using TT_Lab.Project;
 
@@ -222,8 +224,7 @@ namespace TT_Lab.Assets
         /// 
         /// </summary>
         /// <returns>All the currently stored assets</returns>
-        /// <remarks>DO NOT MODIFY THE STORAGE. Only use explicit AssetManager interface to add/delete assets</remarks>
-        public AssetStorage GetAssets() { return _assets; }
+        public ImmutableList<IAsset> GetAssets() { return _assets.Values.Distinct().ToImmutableList(); }
 
         private class GuidManager
         {

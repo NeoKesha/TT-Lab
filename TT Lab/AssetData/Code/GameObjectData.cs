@@ -88,12 +88,12 @@ namespace TT_Lab.AssetData.Code
             OGISlots = new List<LabURI>();
             foreach (var e in gameObject.OGISlots)
             {
-                OGISlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(OGI).Name, variant, e));
+                OGISlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(OGI).Name, null, e));
             }
             AnimationSlots = new List<LabURI>();
             foreach (var e in gameObject.AnimationSlots)
             {
-                AnimationSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(Animation).Name, variant, e));
+                AnimationSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(Animation).Name, null, e));
             }
             BehaviourSlots = new List<LabURI>();
             foreach (var e in gameObject.ScriptSlots)
@@ -101,7 +101,7 @@ namespace TT_Lab.AssetData.Code
                 var found = false;
                 foreach (var cm in gameObject.RefCodeModels)
                 {
-                    BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, subpackage, typeof(BehaviourCommandsSequence).Name, variant, cm);
+                    BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, subpackage, typeof(BehaviourCommandsSequence).Name, null, cm);
                     LabURI subGuid = AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, cmGuid.ID.ToString(), e);
                     if (!subGuid.Equals(LabURI.Empty))
                     {
@@ -112,46 +112,46 @@ namespace TT_Lab.AssetData.Code
                 }
                 if (!found)
                 {
-                    BehaviourSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, variant, e));
+                    BehaviourSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, null, e));
                 }
             }
             ObjectSlots = new List<LabURI>();
             foreach (var e in gameObject.ObjectSlots)
             {
-                ObjectSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, e));
+                ObjectSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, null, e));
             }
             SoundSlots = new List<LabURI>();
             foreach (var e in gameObject.SoundSlots)
             {
-                var list = CollectMulti5Uri(package, subpackage, variant, e);
+                var list = CollectMulti5Uri(package, subpackage, null, e);
                 if (list.Count != 0)
                 {
                     SoundSlots.AddRange(list);
                 }
                 else
                 {
-                    SoundSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, e));
+                    SoundSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, null, e));
                 }
             }
             RefObjects = new List<LabURI>();
             foreach (var e in gameObject.RefObjects)
             {
-                RefObjects.Add(AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, e));
+                RefObjects.Add(AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, null, e));
             }
             RefOGIs = new List<LabURI>();
             foreach (var e in gameObject.RefOGIs)
             {
-                RefOGIs.Add(AssetManager.Get().GetUri(package, subpackage, typeof(OGI).Name, variant, e));
+                RefOGIs.Add(AssetManager.Get().GetUri(package, subpackage, typeof(OGI).Name, null, e));
             }
             RefAnimations = new List<LabURI>();
             foreach (var e in gameObject.RefAnimations)
             {
-                RefAnimations.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Animation).Name, variant, e));
+                RefAnimations.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Animation).Name, null, e));
             }
             RefBehaviourCommandsSequences = new List<LabURI>();
             foreach (var e in gameObject.RefCodeModels)
             {
-                RefBehaviourCommandsSequences.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourCommandsSequence).Name, variant, e));
+                RefBehaviourCommandsSequences.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourCommandsSequence).Name, null, e));
             }
             RefBehaviours = new List<LabURI>();
             foreach (var e in gameObject.RefScripts)
@@ -173,21 +173,21 @@ namespace TT_Lab.AssetData.Code
                 {
                     if (e % 2 == 0)
                     {
-                        RefBehaviours.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, variant, e));
+                        RefBehaviours.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, null, e));
                     }
                     else
                     {
-                        RefBehaviours.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, variant, e));
+                        RefBehaviours.Add(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, null, e));
                     }
                 }
             }
             RefSounds = new List<LabURI>();
             foreach (var e in gameObject.RefSounds)
             {
-                var sndGuid = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, e);
+                var sndGuid = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, null, e);
                 if (sndGuid == LabURI.Empty)
                 {
-                    var multi5 = CollectMulti5Uri(package, subpackage, variant, e);
+                    var multi5 = CollectMulti5Uri(package, subpackage, null, e);
                     foreach (var snd in multi5)
                     {
                         RefSounds.Add(snd);

@@ -35,6 +35,7 @@ namespace TT_Lab.AssetData.Code
             GenerateBehaviourGraphIdsList(cm);
             SetTwinItem(cm);
         }
+
         protected override void Dispose(Boolean disposing)
         {
             return;

@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Code
                 }
                 else
                 {
-                    Pairs.Add(new KeyValuePair<LabURI, uint>(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, variant, pair.Value), pair.Value));
+                    Pairs.Add(new KeyValuePair<LabURI, uint>(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, variant, (UInt32)pair.Key - 1), pair.Value));
                 }
             }
         }

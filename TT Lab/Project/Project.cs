@@ -95,7 +95,7 @@ namespace TT_Lab.Project
             // Serialize all the assets
             System.IO.Directory.SetCurrentDirectory("assets");
             var query = from asset in AssetManager.GetAssets()
-                        group asset by asset.Value.Type;
+                        group asset by asset.Type;
             var tasks = new Task[query.Count()];
             var index = 0;
             DateTime startAsset = DateTime.Now;
@@ -109,7 +109,7 @@ namespace TT_Lab.Project
                     {
                         foreach (var asset in group)
                         {
-                            asset.Value.Serialize();
+                            asset.Serialize();
                         }
                     }
                     catch (Exception ex)
