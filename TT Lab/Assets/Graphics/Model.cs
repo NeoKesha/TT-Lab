@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".dae";
 
-        public Model(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyModel model) : base(id, Name, package, subpackage, variant)
+        public Model(LabURI package, String? variant, UInt32 id, String Name, PS2AnyModel model) : base(id, Name, package, variant)
         {
             assetData = new ModelData(model);
             Raw = false;

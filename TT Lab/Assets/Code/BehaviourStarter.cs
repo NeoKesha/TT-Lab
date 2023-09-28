@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Code
         protected override String DataExt => ".data";
         public BehaviourStarter() { }
 
-        public BehaviourStarter(String package, String subpackage, String? variant, UInt32 id, String name, PS2BehaviourStarter script) : base(package, subpackage, variant, id, name)
+        public BehaviourStarter(LabURI package, String? variant, UInt32 id, String name, PS2BehaviourStarter script) : base(package, variant, id, name)
         {
             assetData = new BehaviourStarterData(script);
             RegenerateURI();

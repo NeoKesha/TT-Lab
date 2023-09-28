@@ -9,7 +9,7 @@ namespace TT_Lab.Assets.Code
     {
         public Animation() { }
 
-        public Animation(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyAnimation animation) : base(id, Name, package, subpackage, variant)
+        public Animation(LabURI package, String? variant, UInt32 id, String Name, PS2AnyAnimation animation) : base(id, Name, package, variant)
         {
             assetData = new AnimationData(animation);
         }

@@ -34,7 +34,6 @@ namespace TT_Lab.Rendering
         private mat4 projectionMat;
         private mat4 viewMat;
         private mat4 modelMat;
-        private mat3 normalMat;
         private vec3 cameraPosition = new vec3(0.0f, 0.0f, 0.0f);
         private vec3 cameraDirection = new vec3(0, 0, -1);
         private vec3 cameraUp = new vec3(0, 1, 0);
@@ -69,8 +68,6 @@ namespace TT_Lab.Rendering
             projectionMat = glm.perspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
             modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
-            var modelView = viewMat * modelMat;
-            normalMat = modelView.to_mat3();
 
             this.libShader = libShader;
             ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
@@ -144,7 +141,6 @@ namespace TT_Lab.Rendering
             program.SetUniformMatrix4("Projection", projectionMat.to_array());
             program.SetUniformMatrix4("View", viewMat.to_array());
             program.SetUniformMatrix4("Model", modelMat.to_array());
-            program.SetUniformMatrix3("NormalMatrix", normalMat.to_array());
         }
 
         public void SetResolution(float width, float height)
@@ -314,8 +310,6 @@ namespace TT_Lab.Rendering
         {
             projectionMat = glm.perspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-            var modelView = viewMat * modelMat;
-            normalMat = modelView.to_mat3();
         }
 
         private void ReallocateFramebuffer(int width, int height)

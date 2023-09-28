@@ -33,7 +33,7 @@ namespace TT_Lab.Editors.Instance
             {
                 AcceptNewPropValuePredicate.Add(pair.Key, pair.Value);
             }
-            var vm = (AIPositionViewModel)AssetViewModel;
+            var vm = GetViewModel<AIPositionViewModel>();
             AcceptNewPropValuePredicate[nameof(vm.Argument)] = (n, o) =>
             {
                 var nStr = (string)n;
@@ -51,7 +51,7 @@ namespace TT_Lab.Editors.Instance
         private void AiNavPositionEditor_Loaded(Object sender, RoutedEventArgs e)
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            var vm = (AIPositionViewModel)AssetViewModel;
+            var vm = GetViewModel<AIPositionViewModel>();
             chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
         }
     }

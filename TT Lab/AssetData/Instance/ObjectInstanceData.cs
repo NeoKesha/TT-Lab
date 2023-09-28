@@ -68,7 +68,7 @@ namespace TT_Lab.AssetData.Instance
             ParamList3.Clear();
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyInstance instance = GetTwinItem<PS2AnyInstance>();
             Position = CloneUtils.Clone(instance.Position);
@@ -81,9 +81,9 @@ namespace TT_Lab.AssetData.Instance
             Positions = CloneUtils.CloneList(instance.Positions);
             PathsRelated = instance.PathsRelated;
             Paths = CloneUtils.CloneList(instance.Paths);
-            ObjectId = AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, instance.ObjectId);
+            ObjectId = AssetManager.Get().GetUri(package, typeof(GameObject).Name, null, instance.ObjectId);
             RefListIndex = instance.RefListIndex;
-            OnSpawnScriptId = AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourStarter).Name, variant, instance.OnSpawnHeaderScriptID);
+            OnSpawnScriptId = AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, null, instance.OnSpawnHeaderScriptID);
             StateFlags = instance.StateFlags;
             ParamList1 = CloneUtils.CloneList(instance.ParamList1);
             ParamList2 = CloneUtils.CloneList(instance.ParamList2);

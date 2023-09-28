@@ -70,14 +70,14 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public enum TriggerActivatorObjects
         {
             PlayableCharacter = 1 << 0,
-            Collectibles = 1 << 1,
+            Pickups = 1 << 1,
             Crates = 1 << 2,
-            Type3Objects = 1 << 3,
-            Type4Objects = 1 << 4,
-            Type5Objects = 1 << 5,
-            Type6Objects = 1 << 6,
-            Type7Objects = 1 << 7,
-            PlayerProjectiles = 1 << 8
+            Creatures = 1 << 3,
+            GenericObjects = 1 << 4,
+            Grabbables = 1 << 5,
+            PayGates = 1 << 6,
+            Graples = 1 << 7,
+            Projectiles = 1 << 8
         }
     }
 }

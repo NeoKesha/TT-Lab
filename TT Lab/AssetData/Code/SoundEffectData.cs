@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using TT_Lab.Assets;
 using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
@@ -38,7 +39,7 @@ namespace TT_Lab.AssetData.Code
             PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnySound sound = GetTwinItem<PS2AnySound>();
             Frequency = sound.GetFreq();

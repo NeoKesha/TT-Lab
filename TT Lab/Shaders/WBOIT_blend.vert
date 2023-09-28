@@ -14,16 +14,17 @@ out float Depth;
 uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Model;
-uniform mat3 NormalMatrix;
 
-vec3 ShadeVertex(mat3 normalMat, vec3 vertex, vec3 normal);
+vec3 ShadeVertex(mat4 normalMat, vec3 vertex, vec3 normal);
 
 void main()
 {
-	gl_Position = Projection * View * Model * vec4(in_Position, 1.0);
+	mat4 viewModel = View * Model;
+	gl_Position = Projection * viewModel * vec4(in_Position, 1.0);
 	Texpos = in_Texpos;
-	Diffuse = ShadeVertex(NormalMatrix, in_Position, in_Normal);
-	EyespaceNormal = NormalMatrix * in_Normal;
+	mat4 normalMat = transpose(inverse(viewModel));
+	Diffuse = ShadeVertex(normalMat, in_Position, in_Normal);
+	EyespaceNormal = normalize(normalMat * vec4(in_Normal, 0.0)).xyz;
 	Color = in_Color;
 	Depth = in_Position.z;
 }

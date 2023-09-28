@@ -12,7 +12,7 @@ namespace TT_Lab.AssetData.Instance
 {
     public class SceneryData : AbstractAssetData
     {
-        private readonly static Dictionary<Int32, Type> scIndexToType = new Dictionary<Int32, Type>();
+        private readonly static Dictionary<Int32, Type> scIndexToType = new();
 
         static SceneryData()
         {
@@ -78,7 +78,7 @@ namespace TT_Lab.AssetData.Instance
             base.Load(dataPath, settings);
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyScenery scenery = GetTwinItem<PS2AnyScenery>();
             SceneryName = scenery.Name[..];
@@ -86,7 +86,7 @@ namespace TT_Lab.AssetData.Instance
             UnkByte = scenery.UnkByte;
             if (scenery.SkydomeID != 0)
             {
-                SkydomeID = AssetManager.Get().GetUri(package, subpackage, typeof(Skydome).Name, variant, scenery.SkydomeID);
+                SkydomeID = AssetManager.Get().GetUri(package, typeof(Skydome).Name, variant, scenery.SkydomeID);
             }
             UnkLightFlags = CloneUtils.CloneArray(scenery.UnkLightFlags);
             AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
@@ -96,7 +96,7 @@ namespace TT_Lab.AssetData.Instance
             Sceneries = new List<SceneryBaseData>();
             foreach (var sc in scenery.Sceneries)
             {
-                Sceneries.Add((SceneryBaseData)Activator.CreateInstance(scIndexToType[sc.GetObjectIndex()], package, subpackage, variant, sc)!);
+                Sceneries.Add((SceneryBaseData)Activator.CreateInstance(scIndexToType[sc.GetObjectIndex()], package, variant, sc)!);
             }
         }
     }

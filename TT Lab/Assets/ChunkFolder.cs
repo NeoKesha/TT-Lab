@@ -11,15 +11,15 @@ namespace TT_Lab.Assets
         {
         }
 
-        public ChunkFolder(String package, String subpackage, String Name) : base(package, subpackage, Name: Name, variant: Name)
+        public ChunkFolder(LabURI package, String Name) : base(package, Name: Name, variant: Name)
         {
         }
 
-        public ChunkFolder(String package, String subpackage, String Name, Folder parent) : base(package, subpackage, Name: Name, variant: Name, parent)
+        public ChunkFolder(LabURI package, String Name, Folder parent) : base(package, Name: Name, variant: Name, parent)
         {
         }
 
-        protected ChunkFolder(String package, String subpackage, UInt32 id, String Name) : base(package, subpackage, variant: Name, id, Name: Name)
+        protected ChunkFolder(LabURI package, UInt32 id, String Name) : base(package, variant: Name, id, Name: Name)
         {
         }
 

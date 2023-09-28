@@ -40,8 +40,8 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var skinData = GetAssetData<SkinData>();
-            var skin = (Assets.Graphics.Skin)GetAsset();
-            Skin model = new Skin(skinData, skin.Materials);
+            var skin = GetAsset<Assets.Graphics.Skin>();
+            Skin model = new(skinData, skin.Materials);
             SceneRenderer.Scene.AddRender(model, false);
         }
 
@@ -54,7 +54,7 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
 
-            var skin = (Assets.Graphics.Skin)GetAsset();
+            var skin = GetAsset<Assets.Graphics.Skin>();
             var matData = AssetManager.Get().GetAsset(skin.Materials[selectedMaterial]).GetData<MaterialData>();
             MaterialName.Text = matData.Name;
             var texPlane = new Plane(matData);
@@ -64,7 +64,7 @@ namespace TT_Lab.Editors.Graphics
         private void PrevMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial--;
-            var skin = (Assets.Graphics.Skin)GetAsset();
+            var skin = GetAsset<Assets.Graphics.Skin>();
             if (selectedMaterial < 0)
             {
                 selectedMaterial = skin.Materials.Count - 1;
@@ -75,7 +75,7 @@ namespace TT_Lab.Editors.Graphics
         private void NextMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial++;
-            var skin = (Assets.Graphics.Skin)GetAsset();
+            var skin = GetAsset<Assets.Graphics.Skin>();
             if (selectedMaterial >= skin.Materials.Count)
             {
                 selectedMaterial = 0;

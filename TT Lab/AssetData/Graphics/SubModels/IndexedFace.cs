@@ -19,8 +19,8 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         {
             Debug.Assert(Indexes != null, "Indexes must be created at this point of time");
 
-            StringBuilder builder = new StringBuilder();
-            builder.Append(Indexes.Length.ToString());
+            StringBuilder builder = new();
+            builder.Append(Indexes.Length);
             foreach (var index in Indexes)
             {
                 builder.Append($" {index}");

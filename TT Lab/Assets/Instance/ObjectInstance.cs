@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Instance
 {
     public class ObjectInstance : SerializableInstance
     {
-        public ObjectInstance(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyInstance instance) : base(package, subpackage, id, name, chunk, layId)
+        public ObjectInstance(LabURI package, UInt32 id, String name, String chunk, Int32 layId, PS2AnyInstance instance) : base(package, id, name, chunk, layId)
         {
             assetData = new ObjectInstanceData(instance);
         }

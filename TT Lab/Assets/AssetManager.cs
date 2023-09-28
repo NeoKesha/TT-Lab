@@ -15,22 +15,52 @@ namespace TT_Lab.Assets
         private AssetStorage _assets = new();
         private GuidManager _guidManager = new();
 
+        public AssetManager() { }
+
         public AssetManager(Dictionary<Guid, IAsset> assets)
+        {
+            AddAllAssets(assets);
+        }
+
+        public void AddAllAssets(Dictionary<Guid, IAsset> assets)
         {
             _guidManager.InitMappers(assets);
 
             foreach (var ass in assets)
             {
-                // Unlike AddAsset we allow duplicate keys and instead generate a Variation for the asset
-                if (_assets.ContainsKey(ass.Value.URI))
-                {
-                    ass.Value.Variation = ass.Value.UUID.ToString();
-                    ass.Value.RegenerateURI();
-                }
                 _assets.Add(ass.Value.URI, ass.Value);
             }
         }
 
+        /// <summary>
+        /// Adds the asset to the manager with a specified URI
+        /// </summary>
+        /// <param name="uri">Asset's unique resource identifier</param>
+        /// <param name="asset">Asset to add</param>
+        /// <remarks>
+        /// THIS METHOD SHOULD ONLY BE USED WHEN YOU ARE SURE THAT DUPLICATES ARE SKIPPED INTENTIONALLY.
+        /// AS THIS SKIPS LOGGING A WARNING INTO A LOG CONSOLE OF TT Lab
+        /// </remarks>
+        public void AddAssetUnsafe(LabURI uri, IAsset asset)
+        {
+            if (_assets.ContainsKey(uri))
+            {
+                return;
+            }
+
+            _assets.Add(uri, asset);
+
+            // Asset variants as well as assets that have the same UUID are allowed to be duplicated in _assets
+            if (_guidManager.GuidToLabUri.ContainsKey(asset.UUID)) return;
+
+            _guidManager.AddMapping(asset);
+        }
+
+        /// <summary>
+        /// Adds the asset to the manager with a specified URI
+        /// </summary>
+        /// <param name="uri">Asset's unique resource identifier</param>
+        /// <param name="asset">Asset to add</param>
         public void AddAsset(LabURI uri, IAsset asset)
         {
             if (_assets.ContainsKey(uri))
@@ -40,8 +70,17 @@ namespace TT_Lab.Assets
             }
 
             _assets.Add(uri, asset);
+
+            // Asset variants as well as assets that have the same UUID are allowed to be duplicated in _assets
+            if (_guidManager.GuidToLabUri.ContainsKey(asset.UUID)) return;
+
+            _guidManager.AddMapping(asset);
         }
 
+        /// <summary>
+        /// Adds the asset to the manager
+        /// </summary>
+        /// <param name="asset">Asset to add</param>
         public void AddAsset(IAsset asset)
         {
             if (_assets.ContainsKey(asset.URI))
@@ -51,8 +90,17 @@ namespace TT_Lab.Assets
             }
 
             _assets.Add(asset.URI, asset);
+
+            // Asset variants as well as assets that have the same UUID are allowed to be duplicated in _assets
+            if (_guidManager.GuidToLabUri.ContainsKey(asset.UUID)) return;
+
+            _guidManager.AddMapping(asset);
         }
 
+        /// <summary>
+        /// Removes the asset from the manager
+        /// </summary>
+        /// <param name="uri">Asset's unique resource identifier</param>
         public void RemoveAsset(LabURI uri)
         {
             if (!_assets.ContainsKey(uri))
@@ -61,6 +109,7 @@ namespace TT_Lab.Assets
                 return;
             }
 
+            _guidManager.RemoveMapping(GetAsset(uri));
             _assets.Remove(uri);
         }
 
@@ -82,21 +131,20 @@ namespace TT_Lab.Assets
         /// <param Name="variant">Variant if present</param>
         /// <param Name="id">ID</param>
         /// <returns>Returns a URI</returns>
-        public LabURI GetUri(String package, String subpackage, String folder, String? variant, uint id)
+        public LabURI GetUri(LabURI package, String folder, String? variant, uint id)
         {
             var variantString = "";
             if (variant != null)
             {
                 variantString = $"/{variant}";
             }
-            return GetUri($"{package}/{subpackage}/{folder}/{id}{variantString}");
+            return GetUri($"{package}/{folder}/{id}{variantString}");
         }
 
         // Disallow obtaining URIs by pure strings
         private LabURI GetUri(string uri)
         {
-            var uriPath = $"res://{uri}";
-            return _assets.ContainsKey((LabURI)uriPath) ? _assets[(LabURI)uriPath].URI : LabURI.Empty;
+            return _assets.ContainsKey((LabURI)uri) ? _assets[(LabURI)uri].URI : LabURI.Empty;
         }
 
         /// <summary>
@@ -118,9 +166,9 @@ namespace TT_Lab.Assets
         /// <param Name="variant"></param>
         /// <param Name="id"></param>
         /// <returns>Any asset</returns>
-        public IAsset GetAsset(String package, String subpackage, String folder, String? variant, uint id)
+        public IAsset GetAsset(LabURI package, String folder, String? variant, uint id)
         {
-            return _assets[GetUri(package, subpackage, folder, variant, id)];
+            return _assets[GetUri(package, folder, variant, id)];
         }
 
         /// <summary>
@@ -154,9 +202,9 @@ namespace TT_Lab.Assets
         /// <param Name="id"></param>
         /// <returns>Asset of a specific type</returns>
         /// <seealso cref="GetAsset(string, string, string, string?, uint)"/>
-        public T GetAsset<T>(String package, String subpackage, String folder, String? variant, uint id) where T : IAsset
+        public T GetAsset<T>(LabURI package, String folder, String? variant, uint id) where T : IAsset
         {
-            return (T)GetAsset(package, subpackage, folder, variant, id);
+            return (T)GetAsset(package, folder, variant, id);
         }
 
         /// <summary>
@@ -193,9 +241,9 @@ namespace TT_Lab.Assets
         /// <param Name="variant"></param>
         /// <param Name="id"></param>
         /// <returns>Data of the asset of a specified type</returns>
-        public T GetAssetData<T>(String package, String subpackage, String folder, String? variant, uint id) where T : AbstractAssetData
+        public T GetAssetData<T>(LabURI package, String folder, String? variant, uint id) where T : AbstractAssetData
         {
-            return GetAsset(package, subpackage, folder, variant, id).GetData<T>();
+            return GetAsset(package, folder, variant, id).GetData<T>();
         }
 
         /// <summary>
@@ -245,6 +293,16 @@ namespace TT_Lab.Assets
                         Log.WriteLine($"Error initializing mapper: {ex.Message} for {asset.Type} ID {asset.ID}");
                     }
                 }
+            }
+
+            public void RemoveMapping(IAsset asset)
+            {
+                GuidToLabUri.Remove(asset.UUID);
+            }
+
+            public void AddMapping(IAsset asset)
+            {
+                GuidToLabUri.Add(asset.UUID, asset.URI);
             }
 
             public LabURI GetLabUriByGuid(Guid id) { return GuidToLabUri.ContainsKey(id) ? GuidToLabUri[id] : LabURI.Empty; }

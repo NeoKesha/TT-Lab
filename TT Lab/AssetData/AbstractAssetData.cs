@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData
@@ -61,7 +62,7 @@ namespace TT_Lab.AssetData
             return (T)this;
         }
 
-        public abstract void Import(String package, String subpackage, String? variant);
+        public abstract void Import(LabURI package, String? variant);
 
         public virtual ITwinItem Export()
         {

@@ -35,7 +35,7 @@ namespace TT_Lab.Editors.Instance
 
         private void ObjectInstanceEditor_Loaded(Object sender, RoutedEventArgs e)
         {
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             var chunkEditor = (ChunkEditor)ParentEditor!;
             chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
             vm.PropertyChanged += ObjectInstanceViewModel_PropertyChanged;
@@ -110,7 +110,7 @@ namespace TT_Lab.Editors.Instance
         private void Paths_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             var pathVMs = new List<PathViewModel>();
             var tree = chunkEditor!.ChunkTree;
             var positions = tree.Find(avm => avm.Asset.Name == "Paths");
@@ -125,7 +125,7 @@ namespace TT_Lab.Editors.Instance
         private void Positions_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             var posVMs = new List<PositionViewModel>();
             var tree = chunkEditor!.ChunkTree;
             var positions = tree.Find(avm => avm.Asset.Name == "Positions");
@@ -140,7 +140,7 @@ namespace TT_Lab.Editors.Instance
         private void Instances_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             var instVMs = new List<ObjectInstanceViewModel>();
             var tree = chunkEditor!.ChunkTree;
             var instances = tree.Find(avm => avm.Asset.Name == "Instances");
@@ -168,7 +168,7 @@ namespace TT_Lab.Editors.Instance
             {
                 AcceptNewPropValuePredicate.Add(rule.Key, rule.Value);
             }
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             AcceptNewPropValuePredicate[nameof(vm.StateFlags)] = (n, o) =>
             {
                 var nStr = (string)n;
@@ -201,7 +201,7 @@ namespace TT_Lab.Editors.Instance
         {
             if (IntPropsList.SelectedIndex == -1) return;
 
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             vm.DeleteIntParamCommand.Index = IntPropsList.SelectedIndex;
             vm.IntIndex = IntPropsList.SelectedIndex;
         }
@@ -210,7 +210,7 @@ namespace TT_Lab.Editors.Instance
         {
             if (FlagPropsList.SelectedIndex == -1) return;
 
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             vm.DeleteFlagParamCommand.Index = FlagPropsList.SelectedIndex;
             vm.FlagIndex = FlagPropsList.SelectedIndex;
         }
@@ -219,7 +219,7 @@ namespace TT_Lab.Editors.Instance
         {
             if (FloatPropsList.SelectedIndex == -1) return;
 
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             vm.DeleteFloatParamCommand.Index = FloatPropsList.SelectedIndex;
             vm.FloatIndex = FloatPropsList.SelectedIndex;
         }
@@ -233,7 +233,7 @@ namespace TT_Lab.Editors.Instance
             var chunkEditor = (ChunkEditor)ParentEditor!;
             var tree = chunkEditor!.ChunkTree;
             var instances = tree.Find(avm => avm.Alias == "Instances");
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             var fitInstances = instances!.Children.Where((i) =>
             {
                 return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Instances.Contains((UInt16)i.Asset.ID);
@@ -279,7 +279,7 @@ namespace TT_Lab.Editors.Instance
             var chunkEditor = (ChunkEditor)ParentEditor!;
             var tree = chunkEditor!.ChunkTree;
             var paths = tree.Find(avm => avm.Alias == "Paths");
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             var fitPaths = paths!.Children.Where((i) =>
             {
                 return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Paths.Contains((UInt16)i.Asset.ID);
@@ -325,7 +325,7 @@ namespace TT_Lab.Editors.Instance
             var chunkEditor = (ChunkEditor)ParentEditor!;
             var tree = chunkEditor!.ChunkTree;
             var positions = tree.Find(avm => avm.Alias == "Positions");
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             var fitPositions = positions!.Children.Where((i) =>
             {
                 return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Positions.Contains((UInt16)i.Asset.ID);
@@ -365,19 +365,19 @@ namespace TT_Lab.Editors.Instance
 
         private void LinkedInstancesList_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             vm.DeleteLinkedInstanceCommand.Index = LinkedInstancesList.SelectedIndex;
         }
 
         private void LinkedPositionsList_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             vm.DeleteLinkedPositionCommand.Index = LinkedPositionsList.SelectedIndex;
         }
 
         private void LinkedPathsList_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
-            var vm = (ObjectInstanceViewModel)AssetViewModel;
+            var vm = GetViewModel<ObjectInstanceViewModel>();
             vm.DeleteLinkedPathCommand.Index = LinkedPathsList.SelectedIndex;
         }
     }

@@ -18,33 +18,33 @@ namespace TT_Lab.Assets
 
         public static Folder CreatePS2Folder(String Name, String? variant = null)
         {
-            return new Folder("base", "PS2", Name, variant);
+            return new Folder((LabURI)"res://PS2", Name, variant);
         }
 
         public static Folder CreatePS2Folder(String Name, Folder parent, String? variant = null)
         {
-            return new Folder("base", "PS2", Name, variant, parent);
+            return new Folder((LabURI)"res://PS2", Name, variant, parent);
         }
 
         public static Folder CreateXboxFolder(String Name, String? variant = null)
         {
-            return new Folder("base", "XBox", Name, variant);
+            return new Folder((LabURI)"res://XBOX", Name, variant);
         }
 
         public static Folder CreateXboxFolder(String Name, Folder parent, String? variant = null)
         {
-            return new Folder("base", "XBox", Name, variant, parent);
+            return new Folder((LabURI)"res://XBOX", Name, variant, parent);
         }
 
-        public Folder(String package, String subpackage, String Name, String? variant = null) : this(package, subpackage, Name, variant, null)
+        public Folder(LabURI package, String Name, String? variant = null) : this(package, Name, variant, null)
         {
         }
 
-        public Folder(String package, String subpackage, String Name, String? variant = null, Folder? parent = null) : this(package, subpackage, variant, (UInt32)Guid.NewGuid().ToByteArray().Sum(b => b), Name)
+        public Folder(LabURI package, String Name, String? variant = null, Folder? parent = null) : this(package, variant, (UInt32)Guid.NewGuid().GetHashCode(), Name)
         {
             if (parent != null)
             {
-                ((FolderData)GetData()).Parent = parent.URI;
+                GetData().To<FolderData>().Parent = parent.URI;
                 parent.AddChild(this);
             }
             else
@@ -53,7 +53,7 @@ namespace TT_Lab.Assets
             }
         }
 
-        protected Folder(String package, String subpackage, String? variant, UInt32 id, String Name) : base(id, Name, package, subpackage, variant)
+        protected Folder(LabURI package, String? variant, UInt32 id, String Name) : base(id, Name, package, variant)
         {
             IsLoaded = true;
             assetData = new FolderData();
@@ -61,7 +61,7 @@ namespace TT_Lab.Assets
 
         public void AddChild(IAsset asset)
         {
-            ((FolderData)GetData()).Children.Add(asset.URI);
+            GetData().To<FolderData>().Children.Add(asset.URI);
             asset.Order = GetOrder();
         }
 

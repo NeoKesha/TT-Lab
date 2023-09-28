@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using TT_Lab.Assets;
 
 namespace TT_Lab.Project
@@ -14,6 +15,14 @@ namespace TT_Lab.Project
         /// Project's collection of assets
         /// </summary>
         AssetManager AssetManager { get; }
+
+        Folder Packages { get; }
+
+        Package BasePackage { get; }
+
+        Package Ps2Package { get; }
+
+        Package XboxPackage { get; }
 
         /// <summary>
         /// Project's UUID
@@ -61,6 +70,8 @@ namespace TT_Lab.Project
         /// Project's root file path
         /// </summary>
         string ProjectPath { get; }
+
+        void CreateBasePackages();
 
         /// <summary>
         /// Unpacks PS2 assets data into project readable format

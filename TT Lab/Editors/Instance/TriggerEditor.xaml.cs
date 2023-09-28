@@ -56,7 +56,7 @@ namespace TT_Lab.Editors.Instance
         private void TriggerEditor_Loaded(Object sender, System.Windows.RoutedEventArgs e)
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            var vm = (TriggerViewModel)AssetViewModel;
+            var vm = GetViewModel<TriggerViewModel>();
             vm.Instances.CollectionChanged += Instances_CollectionChanged;
             vm.PropertyChanged += TriggerViewModel_Changed;
             chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
@@ -75,13 +75,13 @@ namespace TT_Lab.Editors.Instance
         private void Instances_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            var vm = (TriggerViewModel)AssetViewModel;
+            var vm = GetViewModel<TriggerViewModel>();
             var instVMs = new List<ObjectInstanceViewModel>();
             var tree = chunkEditor!.ChunkTree;
             var instances = tree.Find(avm => avm.Asset.Name == "Instances");
             foreach (var item in vm.Instances)
             {
-                instVMs.Add((ObjectInstanceViewModel)instances!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.ID == item));
+                instVMs.Add((ObjectInstanceViewModel)instances!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.URI == item));
             }
             InstancesList.ItemsSource = instVMs;
             UpdateAddInstancesMenu();
@@ -104,10 +104,10 @@ namespace TT_Lab.Editors.Instance
             var chunkEditor = (ChunkEditor)ParentEditor!;
             var tree = chunkEditor!.ChunkTree;
             var instances = tree.Find(avm => avm.Alias == "Instances");
-            var vm = (TriggerViewModel)AssetViewModel;
+            var vm = GetViewModel<TriggerViewModel>();
             var fitInstances = instances!.Children.Where((i) =>
             {
-                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Instances.Contains((UInt16)i.Asset.ID);
+                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Instances.Contains(i.Asset.URI);
             }).ToList();
             if (fitInstances.Any())
             {
@@ -122,11 +122,11 @@ namespace TT_Lab.Editors.Instance
                         {
                             var rc = new RelayCommand(new GenerateCommand(() =>
                             {
-                                vm.Instances.Add((UInt16)inst.Asset.ID);
+                                vm.Instances.Add(inst.Asset.URI);
                             },
                             () =>
                             {
-                                vm.Instances.Remove((UInt16)inst.Asset.ID);
+                                vm.Instances.Remove(inst.Asset.URI);
                             }), CommandManager);
                             rc.Execute();
                         })
@@ -147,7 +147,7 @@ namespace TT_Lab.Editors.Instance
             {
                 AcceptNewPropValuePredicate.Add(pair.Key, pair.Value);
             }
-            var vm = (TriggerViewModel)AssetViewModel;
+            var vm = GetViewModel<TriggerViewModel>();
             AcceptNewPropValuePredicate[nameof(vm.UnkFloat)] = AcceptNewPropValuePredicate["X"];
             AcceptNewPropValuePredicate[nameof(vm.Header)] = (n, o) =>
             {
@@ -165,7 +165,7 @@ namespace TT_Lab.Editors.Instance
 
         private void InstancesList_SelectionChanged(Object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            var viewModel = (TriggerViewModel)AssetViewModel;
+            var viewModel = GetViewModel<TriggerViewModel>();
             viewModel.DeleteInstanceFromListCommand.Index = InstancesList.SelectedIndex;
         }
     }

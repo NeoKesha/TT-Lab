@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 
 namespace TT_Lab.AssetData.Code
@@ -37,7 +38,7 @@ namespace TT_Lab.AssetData.Code
             Script = reader.ReadToEnd();
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2BehaviourGraph graph = GetTwinItem<PS2BehaviourGraph>();
             Script = graph.ToString();

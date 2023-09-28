@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using static Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics.PS2AnyTexture;
@@ -41,7 +42,7 @@ namespace TT_Lab.AssetData.Graphics
             Bitmap = new Bitmap(Bitmap.FromFile(dataPath));
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             {
                 PS2AnyTexture texture = GetTwinItem<PS2AnyTexture>();

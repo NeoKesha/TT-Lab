@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Code
 
         public BehaviourGraph() { }
 
-        public BehaviourGraph(String package, String subpackage, String? variant, UInt32 id, String Name, PS2BehaviourGraph script) : base(package, subpackage, variant, id, Name)
+        public BehaviourGraph(LabURI package, String? variant, UInt32 id, String Name, PS2BehaviourGraph script) : base(package, variant, id, Name)
         {
             assetData = new BehaviourGraphData(script);
             RegenerateURI();

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 
@@ -12,7 +13,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryRootData() { }
 
-        public SceneryRootData(String package, String subpackage, String? variant, SceneryBaseType baseType) : base(package, subpackage, variant, baseType)
+        public SceneryRootData(LabURI package, String? variant, SceneryBaseType baseType) : base(package, variant, baseType)
         {
             var root = (SceneryRoot)baseType;
             UnkUInt = root.UnkUInt;

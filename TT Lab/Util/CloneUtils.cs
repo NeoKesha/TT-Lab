@@ -118,7 +118,7 @@ namespace TT_Lab.Util
             return newArray;
         }
         /// <summary>
-        /// Unsafe List clone. Use when Clone in not is aplicable for T, but CloneUnsafe is
+        /// Unsafe List clone. Use when Clone in not is applicable for T, but CloneUnsafe is
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="originalList"></param>

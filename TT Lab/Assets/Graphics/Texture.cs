@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".png";
 
-        public Texture(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyTexture texture) : base(id, name, package, subpackage, variant)
+        public Texture(LabURI package, String? variant, UInt32 id, String name, PS2AnyTexture texture) : base(id, name, package, variant)
         {
             assetData = new TextureData(texture);
             Raw = false;

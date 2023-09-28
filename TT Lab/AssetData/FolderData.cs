@@ -20,7 +20,7 @@ namespace TT_Lab.AssetData
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
         }
     }

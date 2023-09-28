@@ -13,7 +13,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public ChunkLinks(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyLink links) : base(package, subpackage, id, name, chunk, null)
+        public ChunkLinks(LabURI package, UInt32 id, String name, String chunk, PS2AnyLink links) : base(package, id, name, chunk, null)
         {
             assetData = new ChunkLinksData(links);
         }

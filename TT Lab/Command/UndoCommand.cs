@@ -4,7 +4,7 @@ namespace TT_Lab.Command
 {
     public class UndoCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         private CommandManager _comManager;
 
@@ -13,12 +13,12 @@ namespace TT_Lab.Command
             _comManager = comManager;
         }
 
-        public Boolean CanExecute(Object parameter)
+        public Boolean CanExecute(Object? parameter)
         {
             return _comManager.CanUndo;
         }
 
-        public void Execute(Object parameter = null)
+        public void Execute(Object? parameter = null)
         {
             _comManager.Undo();
         }

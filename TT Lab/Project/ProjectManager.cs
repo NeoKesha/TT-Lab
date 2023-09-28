@@ -48,7 +48,7 @@ namespace TT_Lab.Project
             BindingOperations.EnableCollectionSynchronization(_projectTree, _treeLock);
         }
 
-        public IProject OpenedProject
+        public IProject? OpenedProject
         {
             get
             {
@@ -120,7 +120,7 @@ namespace TT_Lab.Project
             {
                 foreach (var e in _internalTree)
                 {
-                    if (e.Asset.Type == typeof(Folder))
+                    if (e.Asset.Type == typeof(Folder) || e.Asset.Type == typeof(Package))
                     {
                         lock (_treeLock)
                         {
@@ -149,7 +149,7 @@ namespace TT_Lab.Project
             else
             {
                 var foundChild = false;
-                foreach (var c in asset.GetInternalChildren())
+                foreach (var c in asset.GetInternalChildren()!)
                 {
                     var child = FilterAsset(c, filter);
                     if (child != null)
@@ -269,6 +269,8 @@ namespace TT_Lab.Project
             {
                 try
                 {
+                    Log.WriteLine("Creating base packages...");
+                    OpenedProject.CreateBasePackages();
                     Log.WriteLine("Unpacking PS2 assets...");
                     OpenedProject.UnpackAssetsPS2();
                     Log.WriteLine("Unpacking XBox assets...");
@@ -368,9 +370,9 @@ namespace TT_Lab.Project
         private void BuildProjectTree()
         {
             ProjectTree = (from asset in OpenedProject.AssetManager.GetAssets()
-                           where asset.Type == typeof(Folder)
-                           let folder = asset as Folder
-                           where ((FolderData)folder.GetData()).Parent == null
+                           where asset is Folder
+                           let folder = (Folder)asset
+                           where folder.GetData().To<FolderData>().Parent == null
                            orderby folder.Order
                            select folder.GetViewModel()).ToList();
             _internalTree.AddRange(ProjectTree);

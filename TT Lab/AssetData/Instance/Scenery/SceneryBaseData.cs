@@ -36,17 +36,17 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryBaseData() { }
 
-        public SceneryBaseData(String package, String subpackage, String? variant, SceneryBaseType baseType)
+        public SceneryBaseData(LabURI package, String? variant, SceneryBaseType baseType)
         {
             MeshIDs = new List<LabURI>();
             foreach (var m in baseType.MeshIDs)
             {
-                MeshIDs.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Mesh).Name, variant, m));
+                MeshIDs.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, variant, m));
             }
             LodIDs = new List<LabURI>();
             foreach (var l in baseType.LodIDs)
             {
-                LodIDs.Add(AssetManager.Get().GetUri(package, subpackage, typeof(LodModel).Name, variant, l));
+                LodIDs.Add(AssetManager.Get().GetUri(package, typeof(LodModel).Name, variant, l));
             }
             BoundingBoxes = new List<Vector4[]>();
             foreach (var bb in baseType.BoundingBoxes)

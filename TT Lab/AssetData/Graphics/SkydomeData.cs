@@ -28,14 +28,14 @@ namespace TT_Lab.AssetData.Graphics
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnySkydome skydome = GetTwinItem<PS2AnySkydome>();
             Header = skydome.Header;
             Meshes = new List<LabURI>();
             foreach (var mesh in skydome.Meshes)
             {
-                Meshes.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Mesh).Name, variant, mesh));
+                Meshes.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, variant, mesh));
             }
         }
     }

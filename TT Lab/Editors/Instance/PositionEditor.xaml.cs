@@ -32,7 +32,7 @@ namespace TT_Lab.Editors.Instance
         private void PositionEditor_Loaded(Object sender, RoutedEventArgs e)
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            var vm = (PositionViewModel)AssetViewModel;
+            var vm = GetViewModel<PositionViewModel>();
             chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
         }
 

@@ -14,20 +14,20 @@ namespace TT_Lab.ViewModels.Instance
         private Vector4ViewModel _position;
         private Vector4ViewModel _rotation;
         private Vector4ViewModel _scale;
-        private ObservableCollection<UInt16> _instances;
+        private ObservableCollection<LabURI> _instances;
         private UInt32 _header;
         private Single _unkFloat;
         private Enums.Layouts _layId;
-        private UInt16 _arg1;
-        private UInt16 _arg2;
-        private UInt16 _arg3;
-        private UInt16 _arg4;
+        private LabURI _triggerScript1;
+        private LabURI _triggerScript2;
+        private LabURI _triggerScript3;
+        private LabURI _triggerScript4;
 
         public TriggerViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
             var data = _asset.GetData<TriggerData>();
             _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
-            _instances = new ObservableCollection<UInt16>();
+            _instances = new ObservableCollection<LabURI>();
             foreach (var inst in data.Instances)
             {
                 _instances.Add(inst);
@@ -40,10 +40,10 @@ namespace TT_Lab.ViewModels.Instance
             _scale.PropertyChanged += _vector_PropertyChanged;
             _header = data.Header;
             _unkFloat = data.UnkFloat;
-            _arg1 = data.Arg1;
-            _arg2 = data.Arg2;
-            _arg3 = data.Arg3;
-            _arg4 = data.Arg4;
+            _triggerScript1 = data.TriggerScript1;
+            _triggerScript2 = data.TriggerScript2;
+            _triggerScript3 = data.TriggerScript3;
+            _triggerScript4 = data.TriggerScript4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
@@ -51,7 +51,7 @@ namespace TT_Lab.ViewModels.Instance
         public TriggerViewModel(LabURI asset, AssetViewModel? parent, TriggerData data) : base(asset, parent)
         {
             _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
-            _instances = new ObservableCollection<UInt16>();
+            _instances = new ObservableCollection<LabURI>();
             _instances.CollectionChanged += _instances_CollectionChanged;
             foreach (var inst in data.Instances)
             {
@@ -65,10 +65,10 @@ namespace TT_Lab.ViewModels.Instance
             _scale.PropertyChanged += _vector_PropertyChanged;
             _header = data.Header;
             _unkFloat = data.UnkFloat;
-            _arg1 = data.Arg1;
-            _arg2 = data.Arg2;
-            _arg3 = data.Arg3;
-            _arg4 = data.Arg4;
+            _triggerScript1 = data.TriggerScript1;
+            _triggerScript2 = data.TriggerScript2;
+            _triggerScript3 = data.TriggerScript3;
+            _triggerScript4 = data.TriggerScript4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
@@ -93,10 +93,10 @@ namespace TT_Lab.ViewModels.Instance
             {
                 data.Instances.Add(inst);
             }
-            data.Arg1 = Arg1;
-            data.Arg2 = Arg2;
-            data.Arg3 = Arg3;
-            data.Arg4 = Arg4;
+            data.TriggerScript1 = TriggerScript1;
+            data.TriggerScript2 = TriggerScript2;
+            data.TriggerScript3 = TriggerScript3;
+            data.TriggerScript4 = TriggerScript4;
         }
 
         private void _vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -154,14 +154,14 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean ActivateByCollectibles
+        public Boolean ActivateByPickups
         {
-            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Collectibles);
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Pickups);
             set
             {
-                if (value != ActivateByCollectibles)
+                if (value != ActivateByPickups)
                 {
-                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Collectibles, value);
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Pickups, value);
                     IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(ObjectActivatorMask));
@@ -182,84 +182,84 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean ActivateByType3
+        public Boolean ActivateByCreatures
         {
-            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type3Objects);
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Creatures);
             set
             {
-                if (value != ActivateByType3)
+                if (value != ActivateByCreatures)
                 {
-                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type3Objects, value);
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Creatures, value);
                     IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
-        public Boolean ActivateByType4
+        public Boolean ActivateByGenericObjects
         {
-            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type4Objects);
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.GenericObjects);
             set
             {
-                if (value != ActivateByType4)
+                if (value != ActivateByGenericObjects)
                 {
-                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type4Objects, value);
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.GenericObjects, value);
                     IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
-        public Boolean ActivateByType5
+        public Boolean ActivateByGrabbables
         {
-            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type5Objects);
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Grabbables);
             set
             {
-                if (value != ActivateByType5)
+                if (value != ActivateByGrabbables)
                 {
-                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type5Objects, value);
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Grabbables, value);
                     IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
-        public Boolean ActivateByType6
+        public Boolean ActivateByPayGates
         {
-            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type6Objects);
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.PayGates);
             set
             {
-                if (value != ActivateByType6)
+                if (value != ActivateByPayGates)
                 {
-                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type6Objects, value);
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.PayGates, value);
                     IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
-        public Boolean ActivateByType7
+        public Boolean ActivateByGraples
         {
-            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Type7Objects);
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Graples);
             set
             {
-                if (value != ActivateByType7)
+                if (value != ActivateByGraples)
                 {
-                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Type7Objects, value);
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Graples, value);
                     IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
-        public Boolean ActivateByPlayerProjectiles
+        public Boolean ActivateByProjectiles
         {
-            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.PlayerProjectiles);
+            get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Projectiles);
             set
             {
-                if (value != ActivateByPlayerProjectiles)
+                if (value != ActivateByProjectiles)
                 {
-                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.PlayerProjectiles, value);
+                    _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Projectiles, value);
                     IsDirty = true;
                     NotifyChange();
                     NotifyChange(nameof(ObjectActivatorMask));
@@ -305,7 +305,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public ObservableCollection<UInt16> Instances
+        public ObservableCollection<LabURI> Instances
         {
             get => _instances;
             private set
@@ -327,12 +327,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean Arg1Enabled
+        public Boolean TriggerScript1Enabled
         {
             get => (_header >> 0xB & 0x1) != 0;
             set
             {
-                if (value != Arg1Enabled)
+                if (value != TriggerScript1Enabled)
                 {
                     if (value)
                     {
@@ -349,12 +349,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean Arg2Enabled
+        public Boolean TriggerScript2Enabled
         {
             get => (_header >> 0x8 & 0x1) != 0;
             set
             {
-                if (value != Arg2Enabled)
+                if (value != TriggerScript2Enabled)
                 {
                     if (value)
                     {
@@ -371,12 +371,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean Arg3Enabled
+        public Boolean TriggerScript3Enabled
         {
             get => (_header >> 0x9 & 0x1) != 0;
             set
             {
-                if (value != Arg3Enabled)
+                if (value != TriggerScript3Enabled)
                 {
                     if (value)
                     {
@@ -393,12 +393,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean Arg4Enabled
+        public Boolean TriggerScript4Enabled
         {
             get => (_header >> 0xA & 0x1) != 0;
             set
             {
-                if (value != Arg4Enabled)
+                if (value != TriggerScript4Enabled)
                 {
                     if (value)
                     {
@@ -428,53 +428,53 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt16 Arg1
+        public LabURI TriggerScript1
         {
-            get => _arg1;
+            get => _triggerScript1;
             set
             {
-                if (value != _arg1)
+                if (value != _triggerScript1)
                 {
-                    _arg1 = value;
+                    _triggerScript1 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public UInt16 Arg2
+        public LabURI TriggerScript2
         {
-            get => _arg2;
+            get => _triggerScript2;
             set
             {
-                if (value != _arg2)
+                if (value != _triggerScript2)
                 {
-                    _arg2 = value;
+                    _triggerScript2 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public UInt16 Arg3
+        public LabURI TriggerScript3
         {
-            get => _arg3;
+            get => _triggerScript3;
             set
             {
-                if (value != _arg3)
+                if (value != _triggerScript3)
                 {
-                    _arg3 = value;
+                    _triggerScript3 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public UInt16 Arg4
+        public LabURI TriggerScript4
         {
-            get => _arg4;
+            get => _triggerScript4;
             set
             {
-                if (value != _arg4)
+                if (value != _triggerScript4)
                 {
-                    _arg4 = value;
+                    _triggerScript4 = value;
                     IsDirty = true;
                     NotifyChange();
                 }

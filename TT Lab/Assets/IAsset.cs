@@ -31,13 +31,7 @@ namespace TT_Lab.Assets
         /// The main package the asset belongs to
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        string Package { get; set; }
-
-        /// <summary>
-        /// The subpackage the asset belongs to
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        string SubPackage { get; set; }
+        LabURI Package { get; set; }
 
         /// <summary>
         /// In case of Twinsanity ID collisions the distinct category asset belongs to

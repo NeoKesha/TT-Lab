@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public Particles(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyParticleData particleData) : base(package, subpackage, id, name, chunk, null)
+        public Particles(LabURI package, UInt32 id, String name, String chunk, PS2AnyParticleData particleData) : base(package, id, name, chunk, null)
         {
             assetData = new ParticlesData(particleData);
         }

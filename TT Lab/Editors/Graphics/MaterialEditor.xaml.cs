@@ -4,12 +4,14 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Command;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
+using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
 
 namespace TT_Lab.Editors.Graphics
@@ -65,8 +67,8 @@ namespace TT_Lab.Editors.Graphics
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TwinmaterialPass.frag" });
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
-            var viewModel = (MaterialViewModel)AssetViewModel;
-            List<Bitmap> textures = new List<Bitmap>();
+            var viewModel = GetViewModel<MaterialViewModel>();
+            List<Bitmap> textures = new();
             for (var i = 0; i < viewModel.Shaders.Count; ++i)
             {
                 var tex = viewModel.Shaders[i].TexID;
@@ -76,11 +78,11 @@ namespace TT_Lab.Editors.Graphics
                 }
                 else
                 {
-                    var texData = (TextureData)AssetManager.Get().GetAsset<Texture>(tex).GetData();
+                    var texData = AssetManager.Get().GetAsset<Texture>(tex).GetData().To<TextureData>();
                     textures.Add(texData.Bitmap);
                 }
             }
-            TwinMaterialPlane plane = new TwinMaterialPlane(MaterialViewer.Scene.Renderer.RenderProgram, textures.ToArray(), viewModel.Shaders.ToArray(), viewModel.Shaders.Count);
+            TwinMaterialPlane plane = new(MaterialViewer.Scene.Renderer.RenderProgram, textures.ToArray(), viewModel.Shaders.ToArray(), viewModel.Shaders.Count);
             MaterialViewer.Scene.AddRender(plane);
         }
 
@@ -126,7 +128,7 @@ namespace TT_Lab.Editors.Graphics
             {
                 ShaderSettingsBox.Content = null;
             }
-            var viewModel = (MaterialViewModel)AssetViewModel;
+            var viewModel = GetViewModel<MaterialViewModel>();
             viewModel.DeleteShaderCommand.Index = ShaderList.Items.IndexOf(ShaderList.SelectedItem);
             viewModel.CloneShaderCommand.Item = ShaderList.SelectedItem;
             ShaderSettingsBox.Content = new ShaderEditor((LabShaderViewModel)ShaderList.SelectedItem, this);

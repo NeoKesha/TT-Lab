@@ -30,16 +30,16 @@ namespace TT_Lab.AssetData.Graphics
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyRigidModel rigidModel = GetTwinItem<PS2AnyRigidModel>();
             Header = rigidModel.Header;
             Materials = new List<LabURI>();
             foreach (var mat in rigidModel.Materials)
             {
-                Materials.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Material).Name, variant, mat)/*GuidManager.GetGuidByTwinId(mat, typeof(Material))*/);
+                Materials.Add(AssetManager.Get().GetUri(package, typeof(Material).Name, variant, mat)/*GuidManager.GetGuidByTwinId(mat, typeof(Material))*/);
             }
-            Model = AssetManager.Get().GetUri(package, subpackage, typeof(Model).Name, variant, rigidModel.Model);//GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(Model));
+            Model = AssetManager.Get().GetUri(package, typeof(Model).Name, variant, rigidModel.Model);//GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(Model));
         }
     }
 }

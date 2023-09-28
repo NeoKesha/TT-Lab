@@ -9,7 +9,7 @@ namespace TT_Lab.Assets.Graphics
     public class RigidModel : SerializableAsset
     {
 
-        public RigidModel(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyRigidModel rigidModel) : base(id, Name, package, subpackage, variant)
+        public RigidModel(LabURI package, String? variant, UInt32 id, String Name, PS2AnyRigidModel rigidModel) : base(id, Name, package, variant)
         {
             assetData = new RigidModelData(rigidModel);
         }

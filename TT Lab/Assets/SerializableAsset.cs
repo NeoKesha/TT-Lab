@@ -30,8 +30,7 @@ namespace TT_Lab.Assets
 
         public Dictionary<String, Object?> Parameters { get; set; } = new();
         public LabURI URI { get; set; }
-        public String Package { get; set; }
-        public String SubPackage { get; set; }
+        public LabURI Package { get; set; }
         public String? Variation { get; set; }
 
         public SerializableAsset()
@@ -51,10 +50,9 @@ namespace TT_Lab.Assets
             Type = GetType();
         }
 
-        public SerializableAsset(UInt32 id, String name, String package, String subpackage, String? variant) : this(id, name)
+        public SerializableAsset(UInt32 id, String name, LabURI package, String? variant) : this(id, name)
         {
             Package = package;
-            SubPackage = subpackage;
             Variation = variant;
             RegenerateURI();
         }
@@ -62,7 +60,7 @@ namespace TT_Lab.Assets
         public void RegenerateURI()
         {
             var variantAddition = Variation == null ? "" : $"/{Variation}";
-            URI = new LabURI($"res://{Package}/{SubPackage}/{Type.Name}/{ID}{variantAddition}");
+            URI = new LabURI($"{Package}/{Type.Name}/{ID}{variantAddition}");
         }
 
         public virtual void Serialize()
@@ -94,7 +92,7 @@ namespace TT_Lab.Assets
         public abstract AbstractAssetData GetData();
         public virtual void Import()
         {
-            assetData.Import(Package, SubPackage, Variation);
+            assetData.Import(Package, Variation);
             assetData.NullifyReference();
         }
 

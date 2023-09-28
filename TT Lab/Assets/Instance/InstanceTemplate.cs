@@ -7,7 +7,7 @@ namespace TT_Lab.Assets.Instance
 {
     public class InstanceTemplate : SerializableInstance
     {
-        public InstanceTemplate(String package, String subpackage, UInt32 id, String Name, String chunk, Int32 layId, PS2AnyTemplate template) : base(package, subpackage, id, Name, chunk, layId)
+        public InstanceTemplate(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, PS2AnyTemplate template) : base(package, id, Name, chunk, layId)
         {
             assetData = new InstanceTemplateData(template);
         }

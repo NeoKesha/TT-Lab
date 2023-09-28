@@ -116,7 +116,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             };
         }
 
-        public LabShader(String package, String subpackage, String? variant, TwinShader twinShader)
+        public LabShader(LabURI package, String? variant, TwinShader twinShader)
         {
             ShaderType = (Type)twinShader.ShaderType;
             IntParam = twinShader.IntParam;
@@ -146,7 +146,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             ZValueDrawingMask = twinShader.ZValueDrawingMask;
             LodParamK = twinShader.LodParamK;
             LodParamL = twinShader.LodParamL;
-            TextureId = (twinShader.TextureId == 0) ? LabURI.Empty : AssetManager.Get().GetUri(package, subpackage, typeof(Texture).Name, variant, twinShader.TextureId);
+            TextureId = (twinShader.TextureId == 0) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(Texture).Name, variant, twinShader.TextureId);
             UnkVal1 = twinShader.UnkVal1;
             UnkVal2 = twinShader.UnkVal2;
             UnkVal3 = twinShader.UnkVal3;

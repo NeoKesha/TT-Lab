@@ -44,10 +44,10 @@ namespace TT_Lab.ViewModels
             _asset = AssetManager.Get().GetAsset(asset);
             _parent = parent;
             // Personally, I am against ever using type checks but in this situation it's acceptable
-            if (_asset is Folder)
+            if (_asset is Folder folder)
             {
                 // Build the tree
-                var myChildren = ((FolderData)(_asset as Folder)!.GetData()).Children;
+                var myChildren = folder.GetData().To<FolderData>().Children;
                 var cList = (from child in myChildren
                              orderby _asset.Order
                              let c = AssetManager.Get().GetAsset(child)
@@ -74,7 +74,7 @@ namespace TT_Lab.ViewModels
             Directory.SetCurrentDirectory("assets");
             _asset.Serialize();
             IsDirty = false;
-            Directory.SetCurrentDirectory(ProjectManagerSingleton.PM.OpenedProject.ProjectPath);
+            Directory.SetCurrentDirectory(ProjectManagerSingleton.PM.OpenedProject!.ProjectPath);
             if (_internalChildren != null)
             {
                 foreach (var c in _internalChildren)
@@ -168,7 +168,7 @@ namespace TT_Lab.ViewModels
             _editor = null;
         }
 
-        public ObservableCollection<AssetViewModel> Children
+        public ObservableCollection<AssetViewModel>? Children
         {
             get
             {
@@ -207,7 +207,7 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public List<AssetViewModel> GetInternalChildren()
+        public List<AssetViewModel>? GetInternalChildren()
         {
             if (Children != null)
             {
@@ -297,6 +297,11 @@ namespace TT_Lab.ViewModels
             {
                 return _asset;
             }
+        }
+
+        public T GetAsset<T>() where T : IAsset
+        {
+            return (T)_asset;
         }
     }
 }

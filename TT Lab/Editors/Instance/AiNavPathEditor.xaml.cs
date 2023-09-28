@@ -36,7 +36,7 @@ namespace TT_Lab.Editors.Instance
             }
             DataContext = new
             {
-                ViewModel = (AiPathViewModel)AssetViewModel,
+                ViewModel = GetViewModel<AiPathViewModel>(),
                 Layers = Util.Layers,
                 Positions = positions
             };
@@ -44,7 +44,7 @@ namespace TT_Lab.Editors.Instance
 
         private void InitValidators()
         {
-            var vm = (AiPathViewModel)AssetViewModel;
+            var vm = GetViewModel<AiPathViewModel>();
             AcceptNewPropValuePredicate[nameof(vm.Arg1)] = (n, o) =>
             {
                 var nStr = (string)n;

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData.Graphics.SubModels;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 
@@ -106,7 +107,7 @@ namespace TT_Lab.AssetData.Graphics
             context.Dispose();
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyModel model = GetTwinItem<PS2AnyModel>();
             Vertexes = new List<List<Vertex>>();

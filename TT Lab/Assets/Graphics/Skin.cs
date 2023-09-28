@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Graphics
     public class Skin : SerializableAsset
     {
         protected override String DataExt => ".dae";
-        public Skin(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnySkin skin) : base(id, name, package, subpackage, variant)
+        public Skin(LabURI package, String? variant, UInt32 id, String name, PS2AnySkin skin) : base(id, name, package, variant)
         {
             assetData = new SkinData(skin);
             Raw = false;
@@ -47,7 +47,7 @@ namespace TT_Lab.Assets.Graphics
             var skin = skinData.GetRef();
             foreach (var e in skin.SubSkins)
             {
-                Materials.Add(AssetManager.Get().GetUri(Package, SubPackage, typeof(Material).Name, Variation, e.Material));
+                Materials.Add(AssetManager.Get().GetUri(Package, typeof(Material).Name, Variation, e.Material));
             }
             base.Import();
         }

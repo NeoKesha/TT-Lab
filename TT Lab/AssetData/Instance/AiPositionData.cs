@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
@@ -27,7 +28,7 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyAIPosition aiPosition = GetTwinItem<PS2AnyAIPosition>();
             Coords = CloneUtils.Clone(aiPosition.Position);

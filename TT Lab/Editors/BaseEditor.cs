@@ -14,7 +14,12 @@ namespace TT_Lab.Editors
     {
         protected object viewModel;
         internal Command.CommandManager CommandManager = new Command.CommandManager();
-        protected Dictionary<string, Func<object, object, object?>> AcceptNewPropValuePredicate = new Dictionary<string, Func<object, object, object?>>();
+        protected Dictionary<string, Func<object, object, object?>> AcceptNewPropValuePredicate = new();
+
+        private AssetViewModel AssetViewModel
+        {
+            get => (AssetViewModel)viewModel;
+        }
 
         public BaseEditor? ParentEditor { get; set; }
 
@@ -30,24 +35,24 @@ namespace TT_Lab.Editors
             DataContext = asset;
         }
 
-        protected AssetViewModel AssetViewModel
-        {
-            get => (AssetViewModel)viewModel;
-        }
-
         public BaseEditor(object asset, Command.CommandManager commandManager) : this(asset)
         {
             CommandManager = commandManager;
         }
 
+        protected T GetViewModel<T>() where T : AssetViewModel
+        {
+            return (T)viewModel;
+        }
+
+        protected T GetAsset<T>() where T : IAsset
+        {
+            return (T)AssetViewModel.Asset;
+        }
+
         protected T GetAssetData<T>() where T : AbstractAssetData
         {
             return AssetViewModel.Asset.GetData<T>();
-        }
-
-        protected IAsset GetAsset()
-        {
-            return AssetViewModel.Asset;
         }
 
         public void UndoExecuted(Object? sender, EventArgs e)

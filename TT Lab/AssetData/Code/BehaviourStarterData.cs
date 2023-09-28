@@ -26,7 +26,7 @@ namespace TT_Lab.AssetData.Code
             Pairs.Clear();
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2BehaviourStarter behaviourStarter = GetTwinItem<PS2BehaviourStarter>();
             foreach (var pair in behaviourStarter.Pairs)
@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Code
                 }
                 else
                 {
-                    Pairs.Add(new KeyValuePair<LabURI, uint>(AssetManager.Get().GetUri(package, subpackage, typeof(BehaviourGraph).Name, variant, (UInt32)pair.Key - 1), pair.Value));
+                    Pairs.Add(new KeyValuePair<LabURI, uint>(AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, (UInt32)pair.Key - 1), pair.Value));
                 }
             }
         }

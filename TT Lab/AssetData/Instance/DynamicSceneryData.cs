@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 
 namespace TT_Lab.AssetData.Instance
@@ -23,7 +24,7 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyDynamicScenery dynamicScenery = GetTwinItem<PS2AnyDynamicScenery>();
             UnkInt = dynamicScenery.UnkInt;

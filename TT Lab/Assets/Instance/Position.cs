@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Instance
 {
     public class Position : SerializableInstance
     {
-        public Position(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyPosition position) : base(package, subpackage, id, name, chunk, layId)
+        public Position(LabURI package, UInt32 id, String name, String chunk, Int32 layId, PS2AnyPosition position) : base(package, id, name, chunk, layId)
         {
             assetData = new PositionData(position);
         }

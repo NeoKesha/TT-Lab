@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
 namespace TT_Lab.AssetData.Code
@@ -41,7 +42,7 @@ namespace TT_Lab.AssetData.Code
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyBehaviourCommandsSequence codeModel = GetTwinItem<PS2AnyBehaviourCommandsSequence>();
             Code = codeModel.ToString();

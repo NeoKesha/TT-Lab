@@ -17,6 +17,10 @@ namespace TT_Lab.Assets
 
         public void Add(LabURI key, IAsset asset)
         {
+            if (_storage.ContainsKey(key))
+            {
+                throw new InvalidOperationException($"Tried to add existing URI {key} for asset {asset.Name}");
+            }
             _storage.Add(key, asset);
         }
 

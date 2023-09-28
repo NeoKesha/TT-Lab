@@ -16,7 +16,7 @@ namespace TT_Lab.Assets.Instance
             Parameters = new Dictionary<string, object?>();
         }
 
-        public Scenery(String package, String subpackage, UInt32 id, String name, String chunk, PS2AnyScenery scenery) : base(package, subpackage, id, name, chunk, null)
+        public Scenery(LabURI package, UInt32 id, String name, String chunk, PS2AnyScenery scenery) : base(package, id, name, chunk, null)
         {
             assetData = new SceneryData(scenery);
         }

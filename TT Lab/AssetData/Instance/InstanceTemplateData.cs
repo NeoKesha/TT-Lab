@@ -52,11 +52,11 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyTemplate template = GetTwinItem<PS2AnyTemplate>();
             TemplateName = new String(template.Name.ToCharArray());
-            ObjectId = AssetManager.Get().GetUri(package, subpackage, typeof(GameObject).Name, variant, template.ObjectId);
+            ObjectId = AssetManager.Get().GetUri(package, typeof(GameObject).Name, null, template.ObjectId);
             UnkByte1 = template.UnkByte1;
             UnkByte2 = template.UnkByte2;
             UnkByte3 = template.UnkByte3;

@@ -35,7 +35,7 @@ namespace TT_Lab.AssetData.Graphics
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyLOD lod = GetTwinItem<PS2AnyLOD>();
             Type = lod.Type;
@@ -45,7 +45,7 @@ namespace TT_Lab.AssetData.Graphics
             Meshes = new List<LabURI>();
             foreach (var mesh in lod.Meshes)
             {
-                Meshes.Add(AssetManager.Get().GetUri(package, subpackage, typeof(Mesh).Name, variant, mesh));
+                Meshes.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, variant, mesh));
             }
         }
     }

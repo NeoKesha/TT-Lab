@@ -1,4 +1,5 @@
 ﻿using System;
+using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Code
@@ -19,7 +20,7 @@ namespace TT_Lab.AssetData.Code
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
         }
     }

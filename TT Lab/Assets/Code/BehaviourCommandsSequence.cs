@@ -14,12 +14,12 @@ namespace TT_Lab.Assets.Code
 
         public BehaviourCommandsSequence() { }
 
-        public BehaviourCommandsSequence(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyBehaviourCommandsSequence codeModel) : base(id, Name, package, subpackage, variant)
+        public BehaviourCommandsSequence(LabURI package, String? variant, UInt32 id, String Name, PS2AnyBehaviourCommandsSequence codeModel) : base(id, Name, package, variant)
         {
             assetData = new BehaviourCommandsSequenceData(codeModel);
-            assetData.Import(package, subpackage, variant);
+            assetData.Import(package, variant);
             Parameters.Add("behaviour_graph_links", BehaviourGraphLinks);
-            GenerateBehaviourGraphLinks(package, subpackage, variant);
+            GenerateBehaviourGraphLinks(package, variant);
         }
 
         public override Byte[] ToFormat()
@@ -49,13 +49,13 @@ namespace TT_Lab.Assets.Code
             return assetData;
         }
 
-        private void GenerateBehaviourGraphLinks(String package, String subpackage, String? variant)
+        private void GenerateBehaviourGraphLinks(LabURI package, String? variant)
         {
             BehaviourGraphLinks.Clear();
             var cm = (BehaviourCommandsSequenceData)assetData;
             foreach (var e in cm.BehaviourGraphIds)
             {
-                var uri = new LabURI($"res://{package}/{subpackage}/{typeof(BehaviourGraph).Name}/{e}/{ID}");
+                var uri = new LabURI($"{package}/{typeof(BehaviourGraph).Name}/{e}/{ID}");
                 BehaviourGraphLinks.Add(e, uri);
             }
         }

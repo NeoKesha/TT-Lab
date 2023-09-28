@@ -9,7 +9,7 @@ namespace TT_Lab.Assets.Graphics
 
         public Mesh() { }
 
-        public Mesh(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyMesh mesh) : base(package, subpackage, variant, id, Name, mesh)
+        public Mesh(LabURI package, String? variant, UInt32 id, String Name, PS2AnyMesh mesh) : base(package, variant, id, Name, mesh)
         {
             assetData = new MeshData(mesh);
         }

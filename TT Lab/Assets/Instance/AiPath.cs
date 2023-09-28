@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Instance
 {
     public class AiPath : SerializableInstance
     {
-        public AiPath(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(package, subpackage, id, name, chunk, layId)
+        public AiPath(LabURI package, UInt32 id, String name, String chunk, Int32 layId, PS2AnyAIPath path) : base(package, id, name, chunk, layId)
         {
             assetData = new AiPathData(path);
         }

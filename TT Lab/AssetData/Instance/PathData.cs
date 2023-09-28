@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
@@ -28,7 +29,7 @@ namespace TT_Lab.AssetData.Instance
             Points.Clear();
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyPath path = GetTwinItem<PS2AnyPath>();
             Points = CloneUtils.CloneList(path.PointList);

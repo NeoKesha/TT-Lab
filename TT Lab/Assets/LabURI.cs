@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Security.Policy;
 
 namespace TT_Lab.Assets
 {
@@ -21,6 +22,37 @@ namespace TT_Lab.Assets
 
         public static LabURI Empty { get; } = new LabURI("res://EMPTY");
 
+        public static Boolean operator==(LabURI? labURI, LabURI? other)
+        {
+            if (labURI is null && other is null) return true;
+            if (labURI is null) return false;
+            if (other is null) return false;
+            return labURI.Equals(other);
+        }
+
+        public static Boolean operator!=(LabURI? labURI, LabURI? other)
+        {
+            return !(labURI == other);
+        }
+
+        public override Boolean Equals(Object? obj)
+        {
+            return Equals(obj as LabURI);
+        }
+
+        public Boolean Equals(LabURI? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            if (GetType() != other.GetType()) return false;
+            return other._uri == _uri;
+        }
+
         public string GetUri() { return _uri; }
+
+        public override int GetHashCode()
+        {
+            return _uri.GetHashCode();
+        }
     }
 }

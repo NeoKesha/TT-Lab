@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
@@ -94,10 +95,10 @@ namespace TT_Lab.AssetData.Instance
         {
             Trigger.Dispose();
         }
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyCamera camera = GetTwinItem<PS2AnyCamera>();
-            Trigger = new TriggerData(camera.CamTrigger);
+            Trigger = new TriggerData(package, variant, camera.CamTrigger);
             CameraHeader = camera.CameraHeader;
             UnkShort = camera.UnkShort;
             UnkFloat1 = camera.UnkFloat1;

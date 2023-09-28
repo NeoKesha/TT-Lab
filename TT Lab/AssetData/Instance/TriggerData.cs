@@ -1,6 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
+using TT_Lab.Assets;
+using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
@@ -18,16 +22,24 @@ namespace TT_Lab.AssetData.Instance
             SetTwinItem(trigger);
         }
 
-        public TriggerData(TwinTrigger trigger) : this()
+        public TriggerData(LabURI package, String? variant, TwinTrigger trigger) : this()
         {
             ObjectActivatorMask = trigger.ObjectActivatorMask;
             Position = CloneUtils.Clone(trigger.Position);
             Rotation = CloneUtils.Clone(trigger.Rotation);
             Scale = CloneUtils.Clone(trigger.Scale);
-            Instances = CloneUtils.CloneList(trigger.Instances);
+            Instances = new(trigger.Instances.Count);
+            foreach (var inst in trigger.Instances)
+            {
+                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, inst));
+            }
             Header = trigger.Header;
             UnkFloat = trigger.UnkFloat;
             InstanceExtensionValue = trigger.InstanceExtensionValue;
+            TriggerScript1 = LabURI.Empty;
+            TriggerScript2 = LabURI.Empty;
+            TriggerScript3 = LabURI.Empty;
+            TriggerScript4 = LabURI.Empty;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -39,7 +51,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Vector4 Scale { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> Instances { get; set; }
+        public List<LabURI> Instances { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 Header { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -47,34 +59,38 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 InstanceExtensionValue { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 Arg1 { get; set; }
+        public LabURI TriggerScript1 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 Arg2 { get; set; }
+        public LabURI TriggerScript2 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 Arg3 { get; set; }
+        public LabURI TriggerScript3 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 Arg4 { get; set; }
+        public LabURI TriggerScript4 { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             Instances.Clear();
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyTrigger trigger = GetTwinItem<PS2AnyTrigger>();
             ObjectActivatorMask = trigger.Trigger.ObjectActivatorMask;
             Position = CloneUtils.Clone(trigger.Trigger.Position);
             Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);
             Scale = CloneUtils.Clone(trigger.Trigger.Scale);
-            Instances = CloneUtils.CloneList(trigger.Trigger.Instances);
+            Instances = new(trigger.Trigger.Instances.Count);
+            foreach (var inst in trigger.Trigger.Instances)
+            {
+                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, inst));
+            }
             Header = trigger.Trigger.Header;
             UnkFloat = trigger.Trigger.UnkFloat;
             InstanceExtensionValue = trigger.Trigger.InstanceExtensionValue;
-            Arg1 = trigger.Arguments[0];
-            Arg2 = trigger.Arguments[1];
-            Arg3 = trigger.Arguments[2];
-            Arg4 = trigger.Arguments[3];
+            TriggerScript1 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[0]);
+            TriggerScript2 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[1]);
+            TriggerScript3 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[2]);
+            TriggerScript4 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[3]);
         }
     }
 }

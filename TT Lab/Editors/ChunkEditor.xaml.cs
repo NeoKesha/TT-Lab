@@ -25,8 +25,8 @@ namespace TT_Lab.Editors
 
         public ChunkEditor(AssetViewModel chunkAss) : base(chunkAss)
         {
-            var chunk = (ChunkFolder)chunkAss.Asset;
-            foreach (var item in ((FolderData)chunk.GetData()).Children)
+            var chunk = chunkAss.GetAsset<ChunkFolder>();
+            foreach (var item in chunk.GetData().To<FolderData>().Children)
             {
                 chunkTree.Add(AssetManager.Get().GetAsset(item).GetViewModel());
             }

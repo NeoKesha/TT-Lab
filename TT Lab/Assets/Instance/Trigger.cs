@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Instance
 {
     public class Trigger : SerializableInstance
     {
-        public Trigger(String package, String subpackage, UInt32 id, String name, String chunk, Int32 layId, PS2AnyTrigger trigger) : base(package, subpackage, id, name, chunk, layId)
+        public Trigger(LabURI package, UInt32 id, String name, String chunk, Int32 layId, PS2AnyTrigger trigger) : base(package, id, name, chunk, layId)
         {
             assetData = new TriggerData(trigger);
         }

@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Graphics
     public class Material : SerializableAsset
     {
 
-        public Material(String package, String subpackage, String? variant, UInt32 id, String name, PS2AnyMaterial material) : base(id, name, package, subpackage, variant)
+        public Material(LabURI package, String? variant, UInt32 id, String name, PS2AnyMaterial material) : base(id, name, package, variant)
         {
             assetData = new MaterialData(material);
         }

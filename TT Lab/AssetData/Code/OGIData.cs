@@ -23,19 +23,19 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public Vector4[] BoundingBox { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Joint> Type1List { get; set; }
+        public List<Joint> Joints { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<ExitPoint> Type2List { get; set; }
+        public List<ExitPoint> ExitPoints { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Byte> RigidRelatedList { get; set; }
+        public List<Byte> JointIndices { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> RigidModelIds { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Matrix4> Type1RelatedMatrix { get; set; }
+        public List<Matrix4> SkinInverseMatrices { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 SkinID { get; set; }
+        public LabURI Skin { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 BlendSkinID { get; set; }
+        public LabURI BlendSkin { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<BoundingBoxBuilder> BoundingBoxBuilders { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -43,30 +43,32 @@ namespace TT_Lab.AssetData.Code
 
         protected override void Dispose(Boolean disposing)
         {
-            Type1List.Clear();
-            Type2List.Clear();
-            RigidRelatedList.Clear();
+            Joints.Clear();
+            ExitPoints.Clear();
+            JointIndices.Clear();
             RigidModelIds.Clear();
-            Type1RelatedMatrix.Clear();
+            SkinInverseMatrices.Clear();
             BoundingBoxBuilders.Clear();
             BuilderMatrixIndex.Clear();
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyOGI ogi = GetTwinItem<PS2AnyOGI>();
             BoundingBox = CloneUtils.CloneArray(ogi.BoundingBox);
-            RigidRelatedList = CloneUtils.CloneList(ogi.JointIndices);
+            JointIndices = CloneUtils.CloneList(ogi.JointIndices);
             RigidModelIds = new List<LabURI>();
             foreach (var model in ogi.RigidModelIds)
             {
-                RigidModelIds.Add(AssetManager.Get().GetUri(package, subpackage, typeof(RigidModel).Name, variant, model));
+                RigidModelIds.Add(AssetManager.Get().GetUri(package, typeof(RigidModel).Name, null, model));
             }
             BuilderMatrixIndex = CloneUtils.CloneList(ogi.CollisionJointIndices);
-            Type1List = CloneUtils.DeepClone(ogi.Joints);
-            Type2List = CloneUtils.DeepClone(ogi.ExitPoints);
+            Joints = CloneUtils.DeepClone(ogi.Joints);
+            ExitPoints = CloneUtils.DeepClone(ogi.ExitPoints);
             BoundingBoxBuilders = CloneUtils.DeepClone(ogi.Collisions);
-            Type1RelatedMatrix = CloneUtils.CloneListUnsafe(ogi.SkinInverseBindMatrices);
+            SkinInverseMatrices = CloneUtils.CloneListUnsafe(ogi.SkinInverseBindMatrices);
+            Skin = ogi.SkinID != 0 ? AssetManager.Get().GetUri(package, typeof(Skin).Name, null, ogi.SkinID) : LabURI.Empty;
+            BlendSkin = ogi.BlendSkinID != 0 ? AssetManager.Get().GetUri(package, typeof(BlendSkin).Name, null, ogi.BlendSkinID) : LabURI.Empty;
         }
     }
 }

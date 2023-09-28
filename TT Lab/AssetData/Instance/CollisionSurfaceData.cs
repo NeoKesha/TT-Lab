@@ -55,7 +55,7 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import(String package, String subpackage, String? variant)
+        public override void Import(LabURI package, String? variant)
         {
             PS2AnyCollisionSurface collisionSurface = GetTwinItem<PS2AnyCollisionSurface>();
             SurfaceID = collisionSurface.SurfaceId;
@@ -67,23 +67,23 @@ namespace TT_Lab.AssetData.Instance
             UnkSoundId = LabURI.Empty;
             if (collisionSurface.StepSoundId1 != 0xFFFF)
             {
-                StepSoundId1 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.StepSoundId1);
+                StepSoundId1 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.StepSoundId1);
             }
             if (collisionSurface.StepSoundId2 != 0xFFFF)
             {
-                StepSoundId2 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.StepSoundId2);
+                StepSoundId2 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.StepSoundId2);
             }
             if (collisionSurface.LandSoundId1 != 0xFFFF)
             {
-                LandSoundId1 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.LandSoundId1);
+                LandSoundId1 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.LandSoundId1);
             }
             if (collisionSurface.LandSoundId2 != 0xFFFF)
             {
-                LandSoundId2 = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.LandSoundId2);
+                LandSoundId2 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.LandSoundId2);
             }
             if (collisionSurface.UnkSoundId != 0xFFFF)
             {
-                UnkSoundId = AssetManager.Get().GetUri(package, subpackage, typeof(SoundEffect).Name, variant, collisionSurface.UnkSoundId);
+                UnkSoundId = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.UnkSoundId);
             }
             UnkId1 = collisionSurface.UnkId1;
             UnkId2 = collisionSurface.UnkId2;

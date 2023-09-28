@@ -8,7 +8,7 @@ namespace TT_Lab.Assets.Graphics
     public class Skydome : SerializableAsset
     {
 
-        public Skydome(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnySkydome skydome) : base(id, Name, package, subpackage, variant)
+        public Skydome(LabURI package, String? variant, UInt32 id, String Name, PS2AnySkydome skydome) : base(id, Name, package, variant)
         {
             assetData = new SkydomeData(skydome);
         }

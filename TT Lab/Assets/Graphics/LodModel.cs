@@ -8,7 +8,7 @@ namespace TT_Lab.Assets.Graphics
     public class LodModel : SerializableAsset
     {
 
-        public LodModel(String package, String subpackage, String? variant, UInt32 id, String Name, PS2AnyLOD lod) : base(id, Name, package, subpackage, variant)
+        public LodModel(LabURI package, String? variant, UInt32 id, String Name, PS2AnyLOD lod) : base(id, Name, package, variant)
         {
             assetData = new LodModelData(lod);
         }
