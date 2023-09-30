@@ -9,7 +9,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
 {
     public interface ITwinSubModel : ITwinSerializable
     {
-        Byte[] UnusedBlob { get; set; }
         List<Vector4> Vertexes { get; set; }
         List<Vector4> UVW { get; set; }
         List<Color> Colors { get; set; }
