@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 
@@ -16,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
         {
             base.Read(reader, length);
             var offset = 0;
-            foreach (PS2AnySound item in Items)
+            foreach (PS2AnySound item in Items.Cast<PS2AnySound>())
             {
                 Array.Copy(extraData, offset, item.Sound, 0, item.Sound.Length);
                 offset += item.Sound.Length;
@@ -25,17 +26,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
 
         protected override void PreprocessWrite()
         {
-            using (var newExtraData = new MemoryStream())
+            using var newExtraData = new MemoryStream();
+            var offset = 0;
+            foreach (PS2AnySound item in Items.Cast<PS2AnySound>())
             {
-                var offset = 0;
-                foreach (PS2AnySound item in Items)
-                {
-                    newExtraData.Write(item.Sound, 0, item.Sound.Length);
-                    item.offset = offset;
-                    offset += item.Sound.Length;
-                }
-                extraData = newExtraData.ToArray();
+                newExtraData.Write(item.Sound, 0, item.Sound.Length);
+                item.offset = offset;
+                offset += item.Sound.Length;
             }
+            extraData = newExtraData.ToArray();
         }
     }
 }

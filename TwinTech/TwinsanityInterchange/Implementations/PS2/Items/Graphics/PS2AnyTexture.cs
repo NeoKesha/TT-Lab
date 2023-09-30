@@ -41,13 +41,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             if (TextureDescriptorHelper == null)
             {
                 string codeBase = Assembly.GetExecutingAssembly().Location;
-                UriBuilder uri = new UriBuilder(codeBase);
+                UriBuilder uri = new(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
-                using (FileStream stream = new FileStream(Path.Combine(Path.GetDirectoryName(path), @"TextureDescriptionHelper.json"), FileMode.Open, FileAccess.Read))
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    TextureDescriptorHelper = JsonSerializer.Deserialize<Dictionary<string, TextureDescriptor>>(reader.ReadToEnd());
-                }
+                using FileStream stream = new(Path.Combine(Path.GetDirectoryName(path), @"TextureDescriptionHelper.json"), FileMode.Open, FileAccess.Read);
+                using StreamReader reader = new(stream);
+                TextureDescriptorHelper = JsonSerializer.Deserialize<Dictionary<string, TextureDescriptor>>(reader.ReadToEnd());
             }
             UnusedMetadata = new byte[32];
             HeaderSignature = 0xbbcccdcd;

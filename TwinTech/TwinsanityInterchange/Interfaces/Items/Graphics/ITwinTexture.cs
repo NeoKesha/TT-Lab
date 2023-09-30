@@ -46,7 +46,10 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
             PSMZ32 = 0b110000,
             PSMZ24 = 0b110001,
             PSMZ16 = 0b110010,
-            PSMZ16S = 0b111010
+            PSMZ16S = 0b111010,
+            // XBox specific
+            DXT5 = 0xb111110,
+            Raw = 0xb111111,
         }
         enum TextureColorComponent
         {

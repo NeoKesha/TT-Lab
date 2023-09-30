@@ -20,19 +20,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public int GetLength()
         {
-            return 8 + Models.Sum((type1) => type1.GetLength());
+            return 8 + Models.Sum((model) => model.GetLength());
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            var type1s = reader.ReadInt32();
+            var modelsAmount = reader.ReadInt32();
             Material = reader.ReadUInt32();
-            for (int i = 0; i < type1s; ++i)
+            for (int i = 0; i < modelsAmount; ++i)
             {
-                var type1 = new PS2BlendSkinModel();
-                type1.BlendsAmount = BlendsAmount;
-                type1.Read(reader, length);
-                Models.Add(type1);
+                var model = new PS2BlendSkinModel();
+                model.BlendsAmount = BlendsAmount;
+                model.Read(reader, length);
+                Models.Add(model);
             }
         }
 
@@ -40,9 +40,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         {
             writer.Write(Models.Count);
             writer.Write(Material);
-            foreach (ITwinSerializable type1 in Models)
+            foreach (ITwinSerializable model in Models)
             {
-                type1.Write(writer);
+                model.Write(writer);
             }
         }
     }

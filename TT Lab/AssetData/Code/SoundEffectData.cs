@@ -20,6 +20,7 @@ namespace TT_Lab.AssetData.Code
         {
             SetTwinItem(sound);
         }
+
         Byte[] PCM;
         UInt32 Frequency;
         Int16 Channels;
@@ -28,6 +29,7 @@ namespace TT_Lab.AssetData.Code
         {
             return;
         }
+
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             using FileStream fs = new(dataPath, FileMode.Create, FileAccess.Write);
@@ -47,11 +49,11 @@ namespace TT_Lab.AssetData.Code
             ITwinSound sound = GetTwinItem<ITwinSound>();
             Frequency = sound.GetFreq();
             Channels = 1;
-            ADPCM adpcm = new ADPCM();
+            ADPCM adpcm = new();
             using MemoryStream input = new(sound.Sound);
             using MemoryStream output = new();
-            BinaryReader reader = new BinaryReader(input);
-            BinaryWriter writer = new BinaryWriter(output);
+            BinaryReader reader = new(input);
+            BinaryWriter writer = new(output);
             adpcm.ToPCMMono(reader, writer);
             PCM = output.ToArray();
         }

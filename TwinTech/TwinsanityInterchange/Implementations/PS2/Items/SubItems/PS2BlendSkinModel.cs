@@ -12,11 +12,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 {
     public class PS2BlendSkinModel : ITwinBlendSkinModel
     {
+        Byte[] vifCode;
+
         public Int32 BlendsAmount { get; set; }
         public Int32 VertexesAmount { get; set; }
-        public Byte[] VifCode { get; set; }
         public Vector3 BlendShape { get; set; }
-        public List<PS2BlendSkinFace> Faces { get; set; }
+        public List<ITwinBlendSkinFace> Faces { get; set; }
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
         public List<Vector4> Colors { get; set; }
@@ -24,14 +25,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public int GetLength()
         {
-            return 20 + VifCode.Length + Faces.Sum(f => f.GetLength());
+            return 20 + vifCode.Length + Faces.Sum(f => f.GetLength());
         }
 
         public void Read(BinaryReader reader, int length)
         {
             var blobLen = reader.ReadInt32();
             VertexesAmount = reader.ReadInt32();
-            VifCode = reader.ReadBytes(blobLen);
+            vifCode = reader.ReadBytes(blobLen);
             BlendShape = new();
             BlendShape.Read(reader, Constants.SIZE_VECTOR3);
             for (int i = 0; i < BlendsAmount; ++i)
@@ -43,7 +44,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public void CalculateData()
         {
-            var interpreter = VIFInterpreter.InterpretCode(VifCode);
+            var interpreter = VIFInterpreter.InterpretCode(vifCode);
             var data = interpreter.GetMem();
 
             Vertexes = new List<Vector4>();
@@ -57,9 +58,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 var verts = data[i][0].GetBinaryX() & 0xFF;
                 var fields = (data[i + 1][0].GetBinaryX() & 0xFF) / verts;
                 var scaleVec = data[i + 2][0];
-                Console.WriteLine($"Verts in this subskin block {verts}");
-                Console.WriteLine($"Fields in this subskin block {fields}");
-                Console.WriteLine($"Scale vector for this subskin block ({scaleVec.X};{scaleVec.Y})");
                 var vertex_batch_1 = data[i + VERT_DATA_INDEX];
                 var vertex_batch_2 = data[i + VERT_DATA_INDEX + 1];
                 var vertex_batch_3 = data[i + VERT_DATA_INDEX + 3];
@@ -155,9 +153,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(VifCode.Length);
+            writer.Write(vifCode.Length);
             writer.Write(VertexesAmount);
-            writer.Write(VifCode);
+            writer.Write(vifCode);
             BlendShape.Write(writer);
             foreach (var face in Faces)
             {

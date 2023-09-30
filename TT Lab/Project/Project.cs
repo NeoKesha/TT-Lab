@@ -351,7 +351,7 @@ namespace TT_Lab.Project
                     var code = chunk.GetItem<PS2AnyCodeSection>(Constants.LEVEL_CODE_SECTION);
                     if (code != null)
                     {
-                        ReadSectionItems<GameObject, PS2AnyGameObjectSection, PS2AnyObject>
+                        ReadSectionItems<GameObject, PS2AnyGameObjectsSection, PS2AnyObject>
                             (assets, code, chunkPath, codeCheck, Constants.CODE_GAME_OBJECTS_SECTION, gameObjectsFolder);
                         ReadSectionItems<Animation, PS2AnyAnimationsSection, PS2AnyAnimation>
                             (assets, code, chunkPath, codeCheck, Constants.CODE_ANIMATIONS_SECTION, animationsFolder);

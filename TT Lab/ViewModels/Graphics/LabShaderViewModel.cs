@@ -50,7 +50,7 @@ namespace TT_Lab.ViewModels.Graphics
 
         public LabShaderViewModel()
         {
-            Type = LabShader.Type.SHADER_1;
+            Type = LabShader.Type.StandardUnlit;
             _floatParam = new Single[4];
             _unkVec1 = new Vector4ViewModel();
             _unkVec2 = new Vector4ViewModel();
@@ -116,7 +116,7 @@ namespace TT_Lab.ViewModels.Graphics
         }
         public Boolean HasIntParam
         {
-            get => _type == LabShader.Type.SHADER_23 || _type == LabShader.Type.SHADER_26;
+            get => _type == LabShader.Type.UnlitClothDeformation || _type == LabShader.Type.UnlitClothDeformation2;
         }
         public Boolean HasFloatParam1
         {
@@ -124,7 +124,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.SHADER_16 or LabShader.Type.SHADER_17 or LabShader.Type.SHADER_23 or LabShader.Type.SHADER_26 => true,
+                    LabShader.Type.LitReflectionSurface or LabShader.Type.SHADER_17 or LabShader.Type.UnlitClothDeformation or LabShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }
@@ -135,7 +135,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.SHADER_23 or LabShader.Type.SHADER_26 => true,
+                    LabShader.Type.UnlitClothDeformation or LabShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }
@@ -146,7 +146,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.SHADER_26 => true,
+                    LabShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }
@@ -157,7 +157,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.SHADER_26 => true,
+                    LabShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }

@@ -12,9 +12,8 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
     {
         Int32 BlendsAmount { get; set; }
         Int32 VertexesAmount { get; set; }
-        Byte[] VifCode { get; set; }
         Vector3 BlendShape { get; set; }
-        List<PS2BlendSkinFace> Faces { get; set; }
+        List<ITwinBlendSkinFace> Faces { get; set; }
         List<Vector4> Vertexes { get; set; }
         List<Vector4> UVW { get; set; }
         List<Vector4> Colors { get; set; }

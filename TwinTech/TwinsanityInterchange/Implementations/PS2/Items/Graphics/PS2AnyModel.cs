@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -19,12 +20,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public override Int32 GetLength()
         {
-            Int32 totalLength = 4;
-            foreach (ITwinSerializable e in SubModels)
-            {
-                totalLength += e.GetLength();
-            }
-            return totalLength;
+            return 4 + SubModels.Sum(s => s.GetLength());
         }
 
         public override void Read(BinaryReader reader, Int32 length)

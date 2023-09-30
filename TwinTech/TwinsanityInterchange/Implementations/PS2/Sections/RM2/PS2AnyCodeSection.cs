@@ -8,7 +8,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2
     {
         public PS2AnyCodeSection() : base()
         {
-            idToClassDictionary.Add(Constants.CODE_GAME_OBJECTS_SECTION, typeof(PS2AnyGameObjectSection));
+            idToClassDictionary.Add(Constants.CODE_GAME_OBJECTS_SECTION, typeof(PS2AnyGameObjectsSection));
             idToClassDictionary.Add(Constants.CODE_BEHAVIOURS_SECTION, typeof(PS2AnyBehavioursSection));
             idToClassDictionary.Add(Constants.CODE_ANIMATIONS_SECTION, typeof(PS2AnyAnimationsSection));
             idToClassDictionary.Add(Constants.CODE_OGIS_SECTION, typeof(PS2AnyOGIsSection));
