@@ -3,10 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using static Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics.PS2AnyTexture;
 
 namespace TT_Lab.AssetData.Graphics
@@ -17,7 +20,7 @@ namespace TT_Lab.AssetData.Graphics
         {
         }
 
-        public TextureData(PS2AnyTexture texture) : this()
+        public TextureData(ITwinTexture texture) : this()
         {
             SetTwinItem(texture);
         }
@@ -44,68 +47,67 @@ namespace TT_Lab.AssetData.Graphics
 
         public override void Import(LabURI package, String? variant)
         {
+            ITwinTexture texture = GetTwinItem<ITwinTexture>();
+            if (texture.TextureFormat == ITwinTexture.TexturePixelFormat.PSMCT32 || texture.TextureFormat == ITwinTexture.TexturePixelFormat.PSMT8)
             {
-                PS2AnyTexture texture = GetTwinItem<PS2AnyTexture>();
-                if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
+                Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
+                Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
+                texture.CalculateData();
+
+                var Bits = new UInt32[width * height];
+                var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+                var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+
+                for (var x = 0; x < width; ++x)
                 {
-                    Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
-                    Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
-                    texture.CalculateData();
-
-                    var Bits = new UInt32[width * height];
-                    var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
-                    var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
-
-                    for (var x = 0; x < width; ++x)
+                    for (var y = 0; y < height; ++y)
                     {
-                        for (var y = 0; y < height; ++y)
-                        {
-                            var dstx = x;
-                            var dsty = height - 1 - y;
-                            Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
-                        }
+                        var dstx = x;
+                        var dsty = height - 1 - y;
+                        Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
                     }
-
-                    Bitmap = new Bitmap(tmpBmp);
-                    tmpBmp.Dispose();
-                    BitsHandle.Free();
                 }
+
+                Bitmap = new Bitmap(tmpBmp);
+                tmpBmp.Dispose();
+                BitsHandle.Free();
             }
-            SetTwinItem(Export());
-            {
-                PS2AnyTexture texture = GetTwinItem<PS2AnyTexture>();
-                if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
-                {
-                    Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
-                    Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
-                    texture.CalculateData();
+            //}
+            //SetTwinItem(Export());
+            //{
+            //    PS2AnyTexture texture = GetTwinItem<PS2AnyTexture>();
+            //    if (texture.TextureFormat == TexturePixelFormat.PSMCT32 || texture.TextureFormat == TexturePixelFormat.PSMT8)
+            //    {
+            //        Int32 width = (Int32)Math.Pow(2, texture.ImageWidthPower);
+            //        Int32 height = (Int32)Math.Pow(2, texture.ImageHeightPower);
+            //        texture.CalculateData();
 
-                    var Bits = new UInt32[width * height];
-                    var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
-                    var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+            //        var Bits = new UInt32[width * height];
+            //        var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+            //        var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
 
-                    for (var x = 0; x < width; ++x)
-                    {
-                        for (var y = 0; y < height; ++y)
-                        {
-                            var dstx = x;
-                            var dsty = height - 1 - y;
-                            Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
-                        }
-                    }
+            //        for (var x = 0; x < width; ++x)
+            //        {
+            //            for (var y = 0; y < height; ++y)
+            //            {
+            //                var dstx = x;
+            //                var dsty = height - 1 - y;
+            //                Bits[dstx + dsty * width] = texture.Colors[x + y * width].ToARGB();
+            //            }
+            //        }
 
-                    Bitmap = new Bitmap(tmpBmp);
-                    tmpBmp.Dispose();
-                    BitsHandle.Free();
-                }
-            }
+            //        Bitmap = new Bitmap(tmpBmp);
+            //        tmpBmp.Dispose();
+            //        BitsHandle.Free();
+            //    }
+            //}
         }
 
-        public override ITwinItem Export()
+        public override ITwinItem Export(ITwinItemFactory factory)
         {
-            PS2AnyTexture texture = new PS2AnyTexture();
-            var fun = TextureFunction.MODULATE;
-            var format = (Bitmap.Width == 256) ? TexturePixelFormat.PSMCT32 : TexturePixelFormat.PSMT8;
+            ITwinTexture texture = factory.GenerateTexture(new MemoryStream());
+            var fun = ITwinTexture.TextureFunction.MODULATE;
+            var format = (Bitmap.Width == 256) ? ITwinTexture.TexturePixelFormat.PSMCT32 : ITwinTexture.TexturePixelFormat.PSMT8;
             var tex = new List<Twinsanity.TwinsanityInterchange.Common.Color>();
             var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             unsafe

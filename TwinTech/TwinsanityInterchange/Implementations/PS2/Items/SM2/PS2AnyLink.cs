@@ -10,7 +10,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 {
     public class PS2AnyLink : BaseTwinItem, ITwinLink
     {
-        public List<TwinChunkLink> LinksList;
+        public List<TwinChunkLink> LinksList { get; set; }
 
         public PS2AnyLink()
         {

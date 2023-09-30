@@ -3,8 +3,11 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -14,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public InstanceTemplateData(PS2AnyTemplate template) : this()
+        public InstanceTemplateData(ITwinTemplate template) : this()
         {
             SetTwinItem(template);
         }
@@ -54,7 +57,7 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyTemplate template = GetTwinItem<PS2AnyTemplate>();
+            ITwinTemplate template = GetTwinItem<ITwinTemplate>();
             TemplateName = new String(template.Name.ToCharArray());
             ObjectId = AssetManager.Get().GetUri(package, typeof(GameObject).Name, null, template.ObjectId);
             UnkByte1 = template.UnkByte1;
@@ -69,6 +72,11 @@ namespace TT_Lab.AssetData.Instance
             Flags = CloneUtils.CloneList(template.Flags);
             Floats = CloneUtils.CloneList(template.Floats);
             Ints = CloneUtils.CloneList(template.Ints);
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

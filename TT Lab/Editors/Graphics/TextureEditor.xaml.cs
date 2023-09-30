@@ -8,6 +8,7 @@ using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Editors.Graphics
 {
@@ -29,8 +30,8 @@ namespace TT_Lab.Editors.Graphics
             DataContext = new
             {
                 ViewModel = viewModel,
-                TexFuns = new ObservableCollection<object>(Enum.GetValues(typeof(PS2AnyTexture.TextureFunction)).Cast<object>()),
-                PixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(PS2AnyTexture.TexturePixelFormat)).Cast<object>())
+                TexFuns = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TextureFunction)).Cast<object>()),
+                PixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TexturePixelFormat)).Cast<object>())
             };
             InitializeComponent();
             TextureViewer_RendererInit();

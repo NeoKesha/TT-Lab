@@ -2,10 +2,13 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -15,7 +18,7 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public OGIData(PS2AnyOGI ogi) : this()
+        public OGIData(ITwinOGI ogi) : this()
         {
             SetTwinItem(ogi);
         }
@@ -23,9 +26,9 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public Vector4[] BoundingBox { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Joint> Joints { get; set; }
+        public List<TwinJoint> Joints { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<ExitPoint> ExitPoints { get; set; }
+        public List<TwinExitPoint> ExitPoints { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<Byte> JointIndices { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -37,7 +40,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public LabURI BlendSkin { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<BoundingBoxBuilder> BoundingBoxBuilders { get; set; }
+        public List<TwinBoundingBoxBuilder> BoundingBoxBuilders { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<Byte> BuilderMatrixIndex { get; set; }
 
@@ -54,7 +57,7 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyOGI ogi = GetTwinItem<PS2AnyOGI>();
+            ITwinOGI ogi = GetTwinItem<ITwinOGI>();
             BoundingBox = CloneUtils.CloneArray(ogi.BoundingBox);
             JointIndices = CloneUtils.CloneList(ogi.JointIndices);
             RigidModelIds = new List<LabURI>();
@@ -69,6 +72,11 @@ namespace TT_Lab.AssetData.Code
             SkinInverseMatrices = CloneUtils.CloneListUnsafe(ogi.SkinInverseBindMatrices);
             Skin = ogi.SkinID != 0 ? AssetManager.Get().GetUri(package, typeof(Skin).Name, null, ogi.SkinID) : LabURI.Empty;
             BlendSkin = ogi.BlendSkinID != 0 ? AssetManager.Get().GetUri(package, typeof(BlendSkin).Name, null, ogi.BlendSkinID) : LabURI.Empty;
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

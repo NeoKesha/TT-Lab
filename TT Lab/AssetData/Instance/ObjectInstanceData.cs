@@ -3,9 +3,12 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -18,7 +21,7 @@ namespace TT_Lab.AssetData.Instance
             PositionsRelated = 10;
         }
 
-        public ObjectInstanceData(PS2AnyInstance instance) : this()
+        public ObjectInstanceData(ITwinInstance instance) : this()
         {
             SetTwinItem(instance);
         }
@@ -70,7 +73,7 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyInstance instance = GetTwinItem<PS2AnyInstance>();
+            ITwinInstance instance = GetTwinItem<ITwinInstance>();
             Position = CloneUtils.Clone(instance.Position);
             RotationX = CloneUtils.Clone(instance.RotationX);
             RotationY = CloneUtils.Clone(instance.RotationY);
@@ -88,6 +91,11 @@ namespace TT_Lab.AssetData.Instance
             ParamList1 = CloneUtils.CloneList(instance.ParamList1);
             ParamList2 = CloneUtils.CloneList(instance.ParamList2);
             ParamList3 = CloneUtils.CloneList(instance.ParamList3);
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

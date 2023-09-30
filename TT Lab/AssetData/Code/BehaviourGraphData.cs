@@ -2,7 +2,9 @@
 using System;
 using System.IO;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -12,7 +14,7 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public BehaviourGraphData(PS2BehaviourGraph mainScript) : base(mainScript)
+        public BehaviourGraphData(TwinBehaviourGraph mainScript) : base(mainScript)
         {
             SetTwinItem(mainScript);
         }
@@ -40,8 +42,13 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2BehaviourGraph graph = GetTwinItem<PS2BehaviourGraph>();
+            TwinBehaviourGraph graph = GetTwinItem<TwinBehaviourGraph>();
             Script = graph.ToString();
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

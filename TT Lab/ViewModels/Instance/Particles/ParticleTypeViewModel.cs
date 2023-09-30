@@ -80,7 +80,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
         private Vector4ViewModel unkVec3 = new Vector4ViewModel();
 
         public ParticleTypeViewModel() { }
-        public ParticleTypeViewModel(ParticleType pt)
+        public ParticleTypeViewModel(TwinParticleType pt)
         {
             version = pt.Version;
             name = new String(pt.Name);
@@ -161,7 +161,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
 
         public override void Save(Object? o = null)
         {
-            var pt = (ParticleType)o!;
+            var pt = (TwinParticleType)o!;
             pt.Version = Version;
             pt.Name = Name.ToCharArray();
             pt.UnkByte1 = UnkByte1;

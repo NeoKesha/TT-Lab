@@ -5,12 +5,13 @@ using TT_Lab.Editors.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
     public class ObjectInstance : SerializableInstance
     {
-        public ObjectInstance(LabURI package, UInt32 id, String name, String chunk, Int32 layId, PS2AnyInstance instance) : base(package, id, name, chunk, layId)
+        public ObjectInstance(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinInstance instance) : base(package, id, name, chunk, layId)
         {
             assetData = new ObjectInstanceData(instance);
         }

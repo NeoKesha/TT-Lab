@@ -6,16 +6,17 @@ using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnySkin : BaseTwinItem, ITwinSkin
     {
-        public List<SubSkin> SubSkins { get; set; }
+        public List<ITwinSubSkin> SubSkins { get; set; }
 
         public PS2AnySkin()
         {
-            SubSkins = new List<SubSkin>();
+            SubSkins = new List<ITwinSubSkin>();
         }
 
         public override int GetLength()
@@ -28,7 +29,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             var subSkins = reader.ReadInt32();
             for (int i = 0; i < subSkins; ++i)
             {
-                var subSkin = new SubSkin();
+                var subSkin = new PS2SubSkin();
                 subSkin.Read(reader, length);
                 SubSkins.Add(subSkin);
             }

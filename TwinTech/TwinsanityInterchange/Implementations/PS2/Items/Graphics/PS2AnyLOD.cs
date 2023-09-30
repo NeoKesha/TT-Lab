@@ -9,11 +9,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyLOD : BaseTwinItem, ITwinLOD
     {
-        public Int32 Type;
-        public Int32 MinDrawDistance;
-        public Int32 MaxDrawDistance;
-        public Int32[] ModelsDrawDistances;
-        public List<UInt32> Meshes;
+        public Int32 Type { get; set; }
+        public Int32 MinDrawDistance { get; set; }
+        public Int32 MaxDrawDistance { get; set; }
+        public Int32[] ModelsDrawDistances { get; set; }
+        public List<UInt32> Meshes { get; set; }
 
         public PS2AnyLOD()
         {

@@ -3,13 +3,14 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class RigidModel : SerializableAsset
     {
 
-        public RigidModel(LabURI package, String? variant, UInt32 id, String Name, PS2AnyRigidModel rigidModel) : base(id, Name, package, variant)
+        public RigidModel(LabURI package, String? variant, UInt32 id, String Name, ITwinRigidModel rigidModel) : base(id, Name, package, variant)
         {
             assetData = new RigidModelData(rigidModel);
         }

@@ -4,14 +4,15 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.ViewModels.Graphics
 {
     public class TextureViewModel : AssetViewModel
     {
         private Bitmap? _texture;
-        private PS2AnyTexture.TextureFunction _texFun;
-        private PS2AnyTexture.TexturePixelFormat _pixelFormat;
+        private ITwinTexture.TextureFunction _texFun;
+        private ITwinTexture.TexturePixelFormat _pixelFormat;
 
         public TextureViewModel(LabURI asset) : base(asset)
         {
@@ -20,8 +21,8 @@ namespace TT_Lab.ViewModels.Graphics
         public TextureViewModel(LabURI asset, AssetViewModel parent) : base(asset, parent)
         {
             Debug.Assert(Asset.Parameters["pixel_storage_format"] != null && Asset.Parameters["texture_function"] != null, "Texture parameters must be filled in");
-            _pixelFormat = MiscUtils.ConvertEnum<PS2AnyTexture.TexturePixelFormat>(Asset.Parameters["pixel_storage_format"]!);
-            _texFun = MiscUtils.ConvertEnum<PS2AnyTexture.TextureFunction>(Asset.Parameters["texture_function"]!);
+            _pixelFormat = MiscUtils.ConvertEnum<ITwinTexture.TexturePixelFormat>(Asset.Parameters["pixel_storage_format"]!);
+            _texFun = MiscUtils.ConvertEnum<ITwinTexture.TextureFunction>(Asset.Parameters["texture_function"]!);
         }
 
         public override void Save(object? o)
@@ -55,7 +56,7 @@ namespace TT_Lab.ViewModels.Graphics
             }
         }
 
-        public PS2AnyTexture.TextureFunction TextureFunction
+        public ITwinTexture.TextureFunction TextureFunction
         {
             get
             {
@@ -72,7 +73,7 @@ namespace TT_Lab.ViewModels.Graphics
             }
         }
 
-        public PS2AnyTexture.TexturePixelFormat PixelStorageFormat
+        public ITwinTexture.TexturePixelFormat PixelStorageFormat
         {
             get
             {

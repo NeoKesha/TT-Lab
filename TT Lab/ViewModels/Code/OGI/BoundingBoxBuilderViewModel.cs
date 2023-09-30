@@ -22,7 +22,7 @@ namespace TT_Lab.ViewModels.Code.OGI
                 new Vector4ViewModel(1, 1, 1, 1),
             };
         }
-        public BoundingBoxBuilderViewModel(BoundingBoxBuilder bb)
+        public BoundingBoxBuilderViewModel(TwinBoundingBoxBuilder bb)
         {
             bbPoints = new ObservableCollection<Vector4ViewModel>();
             foreach (var p in bb.BoundingBoxPoints)
@@ -32,7 +32,7 @@ namespace TT_Lab.ViewModels.Code.OGI
         }
         public override void Save(Object? o = null)
         {
-            var builder = (BoundingBoxBuilder)o!;
+            var builder = (TwinBoundingBoxBuilder)o!;
             builder.Header[0] = (UInt16)BoundingBoxPoints.Count;
             builder.BoundingBoxPoints.Clear();
             foreach (var v in BoundingBoxPoints)

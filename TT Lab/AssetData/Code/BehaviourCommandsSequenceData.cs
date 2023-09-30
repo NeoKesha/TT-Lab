@@ -3,7 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -13,7 +17,7 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public BehaviourCommandsSequenceData(PS2AnyBehaviourCommandsSequence codeModel) : this()
+        public BehaviourCommandsSequenceData(TwinBehaviourCommandsSequence codeModel) : this()
         {
             SetTwinItem(codeModel);
         }
@@ -28,9 +32,9 @@ namespace TT_Lab.AssetData.Code
 
         public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
-            using FileStream fs = new(dataPath, System.IO.FileMode.Open, FileAccess.Read);
+            using FileStream fs = new(dataPath, FileMode.Open, FileAccess.Read);
             using StreamReader reader = new(fs);
-            var cm = new PS2AnyBehaviourCommandsSequence();
+            var cm = new TwinBehaviourCommandsSequence();
             cm.ReadText(reader);
             Code = cm.ToString();
             GenerateBehaviourGraphIdsList(cm);
@@ -44,12 +48,17 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyBehaviourCommandsSequence codeModel = GetTwinItem<PS2AnyBehaviourCommandsSequence>();
+            TwinBehaviourCommandsSequence codeModel = GetTwinItem<TwinBehaviourCommandsSequence>();
             Code = codeModel.ToString();
             GenerateBehaviourGraphIdsList(codeModel);
         }
 
-        private void GenerateBehaviourGraphIdsList(PS2AnyBehaviourCommandsSequence cm)
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GenerateBehaviourGraphIdsList(TwinBehaviourCommandsSequence cm)
         {
             BehaviourGraphIds = new List<uint>();
             foreach (var e in cm.BehaviourPacks)

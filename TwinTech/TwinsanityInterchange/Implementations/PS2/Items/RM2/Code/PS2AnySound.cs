@@ -9,14 +9,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
     {
         internal Int32 offset;
 
-        public UInt32 Header;
-        public Byte UnkFlag;
-        public Byte FreqFac;
-        public UInt16 Param1;
-        public UInt16 Param2;
-        public UInt16 Param3;
-        public UInt16 Param4;
-        public Byte[] Sound;
+        public UInt32 Header { get; set; }
+        public Byte UnkFlag { get; set; }
+        public Byte FreqFac { get; set; }
+        public UInt16 Param1 { get; set; }
+        public UInt16 Param2 { get; set; }
+        public UInt16 Param3 { get; set; }
+        public UInt16 Param4 { get; set; }
+        public Byte[] Sound { get; set; }
 
         public override Int32 GetLength()
         {

@@ -1,5 +1,5 @@
-﻿using Twinsanity.TwinsanityInterchange.Implementations.Base;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+﻿using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
 {
@@ -7,7 +7,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
     {
         public PS2AnyBehaviourCommandsSequencesSection() : base()
         {
-            defaultType = typeof(PS2AnyBehaviourCommandsSequence);
+            defaultType = typeof(TwinBehaviourCommandsSequence);
         }
     }
 }

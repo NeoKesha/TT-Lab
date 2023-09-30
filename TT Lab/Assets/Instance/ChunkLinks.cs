@@ -4,6 +4,7 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.Assets.Instance
 {
@@ -13,7 +14,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public ChunkLinks(LabURI package, UInt32 id, String name, String chunk, PS2AnyLink links) : base(package, id, name, chunk, null)
+        public ChunkLinks(LabURI package, UInt32 id, String name, String chunk, ITwinLink links) : base(package, id, name, chunk, null)
         {
             assetData = new ChunkLinksData(links);
         }

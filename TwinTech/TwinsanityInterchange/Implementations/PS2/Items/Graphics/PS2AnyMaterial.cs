@@ -13,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public UInt64 Header { get; set; }
         public UInt32 DmaChainIndex { get; set; }
         public String Name { get; set; }
-        public List<TwinShader> Shaders { get; }
+        public List<TwinShader> Shaders { get; set; }
         public PS2AnyMaterial()
         {
             Shaders = new List<TwinShader>();

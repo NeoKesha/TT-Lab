@@ -5,6 +5,7 @@ using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
@@ -42,7 +43,7 @@ namespace TT_Lab.Assets.Instance
             new Color(255,  0,255,127),
         };
         public static Color DefaultColor = new Color(127, 127, 127);
-        public CollisionSurface(LabURI package, UInt32 id, String name, String chunk, Int32 layId, PS2AnyCollisionSurface surface) : base(package, id, name, chunk, layId)
+        public CollisionSurface(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinSurface surface) : base(package, id, name, chunk, layId)
         {
             assetData = new CollisionSurfaceData(surface);
             if (id < DefaultColors.Length)

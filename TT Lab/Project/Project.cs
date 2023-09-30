@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Assets.Instance;
+using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
@@ -191,7 +193,7 @@ namespace TT_Lab.Project
         {
             if (DiscContentPathPS2 == null)
             {
-                Log.WriteLine("No PS2 assets provided skipping...");
+                Log.WriteLine("No PS2 assets provided, skipped...");
                 return;
             }
 
@@ -355,14 +357,14 @@ namespace TT_Lab.Project
                             (assets, code, chunkPath, codeCheck, Constants.CODE_ANIMATIONS_SECTION, animationsFolder);
                         ReadSectionItems<OGI, PS2AnyOGIsSection, PS2AnyOGI>
                             (assets, code, chunkPath, codeCheck, Constants.CODE_OGIS_SECTION, ogisFolder);
-                        ReadSectionItems<BehaviourCommandsSequence, PS2AnyBehaviourCommandsSequencesSection, PS2AnyBehaviourCommandsSequence>
+                        ReadSectionItems<BehaviourCommandsSequence, PS2AnyBehaviourCommandsSequencesSection, TwinBehaviourCommandsSequence>
                             (assets, code, chunkPath, codeCheck, Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION, codeModelsFolder);
 
                         // Behaviours are special because they are ID oddity dependent
                         var items = code.GetItem<PS2AnyBehavioursSection>(Constants.CODE_BEHAVIOURS_SECTION);
                         for (var i = 0; i < items.GetItemsAmount(); ++i)
                         {
-                            var asset = items.GetItem<PS2BehaviourWrapper>(items.GetItem(i).GetID());
+                            var asset = items.GetItem<TwinBehaviourWrapper>(items.GetItem(i).GetID());
                             var behaviourChecker = codeCheck[Constants.CODE_BEHAVIOURS_SECTION];
                             if (behaviourChecker.ContainsKey(asset.GetHash())) continue;
                             behaviourChecker.Add(asset.GetHash(), asset.GetID());

@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -13,7 +16,7 @@ namespace TT_Lab.AssetData.Graphics
         {
         }
 
-        public MaterialData(PS2AnyMaterial material) : this()
+        public MaterialData(ITwinMaterial material) : this()
         {
             SetTwinItem(material);
         }
@@ -34,7 +37,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyMaterial material = GetTwinItem<PS2AnyMaterial>();
+            ITwinMaterial material = GetTwinItem<ITwinMaterial>();
             Header = material.Header;
             DmaChainIndex = material.DmaChainIndex;
             Name = new string(material.Name.ToCharArray());
@@ -43,6 +46,11 @@ namespace TT_Lab.AssetData.Graphics
             {
                 Shaders.Add(new LabShader(package, variant, shader));
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -14,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public CollisionData(PS2AnyCollisionData collision) : this()
+        public CollisionData(ITwinCollision collision) : this()
         {
             SetTwinItem(collision);
         }
@@ -40,7 +43,7 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyCollisionData collision = GetTwinItem<PS2AnyCollisionData>();
+            ITwinCollision collision = GetTwinItem<ITwinCollision>();
             UnkInt = collision.UnkInt;
             foreach (var trigger in collision.Triggers)
             {
@@ -56,6 +59,11 @@ namespace TT_Lab.AssetData.Instance
             }
             // Clone the vectors instead of reference copying
             Vectors = CloneUtils.CloneList(collision.Vectors);
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

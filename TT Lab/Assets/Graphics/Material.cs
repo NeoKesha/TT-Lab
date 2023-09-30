@@ -5,13 +5,14 @@ using TT_Lab.Editors.Graphics;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class Material : SerializableAsset
     {
 
-        public Material(LabURI package, String? variant, UInt32 id, String name, PS2AnyMaterial material) : base(id, name, package, variant)
+        public Material(LabURI package, String? variant, UInt32 id, String name, ITwinMaterial material) : base(id, name, package, variant)
         {
             assetData = new MaterialData(material);
         }

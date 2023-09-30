@@ -12,17 +12,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
 {
     public class PS2AnyCollisionData : BaseTwinItem, ITwinCollision
     {
-        public UInt32 UnkInt;
-        public List<CollisionTrigger> Triggers;
-        public List<GroupInformation> Groups;
-        public List<CollisionTriangle> Triangles;
-        public List<Vector4> Vectors;
+        public UInt32 UnkInt { get; set; }
+        public List<TwinCollisionTrigger> Triggers { get; set; }
+        public List<TwinGroupInformation> Groups { get; set; }
+        public List<TwinCollisionTriangle> Triangles { get; set; }
+        public List<Vector4> Vectors { get; set; }
 
         public PS2AnyCollisionData()
         {
-            Triggers = new List<CollisionTrigger>();
-            Groups = new List<GroupInformation>();
-            Triangles = new List<CollisionTriangle>();
+            Triggers = new List<TwinCollisionTrigger>();
+            Groups = new List<TwinGroupInformation>();
+            Triangles = new List<TwinCollisionTriangle>();
             Vectors = new List<Vector4>();
         }
 
@@ -45,19 +45,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             Vectors.Clear();
             for (var i = 0; i < trgAmt; ++i)
             {
-                var trg = new CollisionTrigger();
+                var trg = new TwinCollisionTrigger();
                 trg.Read(reader, trg.GetLength());
                 Triggers.Add(trg);
             }
             for (var i = 0; i < grpAmt; ++i)
             {
-                var grp = new GroupInformation();
+                var grp = new TwinGroupInformation();
                 grp.Read(reader, grp.GetLength());
                 Groups.Add(grp);
             }
             for (var i = 0; i < triAmt; ++i)
             {
-                var tri = new CollisionTriangle();
+                var tri = new TwinCollisionTriangle();
                 tri.Read(reader, tri.GetLength());
                 Triangles.Add(tri);
             }

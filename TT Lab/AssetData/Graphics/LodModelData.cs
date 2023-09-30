@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -14,7 +17,7 @@ namespace TT_Lab.AssetData.Graphics
         {
         }
 
-        public LodModelData(PS2AnyLOD lod) : this()
+        public LodModelData(ITwinLOD lod) : this()
         {
             SetTwinItem(lod);
         }
@@ -37,7 +40,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyLOD lod = GetTwinItem<PS2AnyLOD>();
+            ITwinLOD lod = GetTwinItem<ITwinLOD>();
             Type = lod.Type;
             MinDrawDistance = lod.MinDrawDistance;
             MaxDrawDistance = lod.MaxDrawDistance;
@@ -47,6 +50,11 @@ namespace TT_Lab.AssetData.Graphics
             {
                 Meshes.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, variant, mesh));
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

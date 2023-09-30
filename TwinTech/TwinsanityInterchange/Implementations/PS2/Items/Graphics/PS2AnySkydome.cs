@@ -10,8 +10,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
     public class PS2AnySkydome : BaseTwinItem, ITwinSkydome
     {
 
-        public Int32 Header; // Unused by the game
-        public List<UInt32> Meshes;
+        public Int32 Header { get; set; } // Unused by the game
+        public List<UInt32> Meshes { get; set; }
 
         public PS2AnySkydome()
         {

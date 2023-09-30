@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -11,7 +14,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public DynamicSceneryData(PS2AnyDynamicScenery dynamicScenery) : this()
+        public DynamicSceneryData(ITwinDynamicScenery dynamicScenery) : this()
         {
             SetTwinItem(dynamicScenery);
         }
@@ -26,8 +29,13 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyDynamicScenery dynamicScenery = GetTwinItem<PS2AnyDynamicScenery>();
+            ITwinDynamicScenery dynamicScenery = GetTwinItem<ITwinDynamicScenery>();
             UnkInt = dynamicScenery.UnkInt;
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

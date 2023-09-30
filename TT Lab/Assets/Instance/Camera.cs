@@ -5,12 +5,13 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
     public class Camera : SerializableInstance
     {
-        public Camera(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, PS2AnyCamera camera) : base(package, id, Name, chunk, layId)
+        public Camera(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, ITwinCamera camera) : base(package, id, Name, chunk, layId)
         {
             assetData = new CameraData(camera);
             Parameters = new Dictionary<string, object?>

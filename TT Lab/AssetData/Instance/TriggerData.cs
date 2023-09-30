@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.IO.Packaging;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -17,7 +20,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public TriggerData(PS2AnyTrigger trigger) : this()
+        public TriggerData(ITwinTrigger trigger) : this()
         {
             SetTwinItem(trigger);
         }
@@ -74,7 +77,7 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyTrigger trigger = GetTwinItem<PS2AnyTrigger>();
+            ITwinTrigger trigger = GetTwinItem<ITwinTrigger>();
             ObjectActivatorMask = trigger.Trigger.ObjectActivatorMask;
             Position = CloneUtils.Clone(trigger.Trigger.Position);
             Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);
@@ -91,6 +94,11 @@ namespace TT_Lab.AssetData.Instance
             TriggerScript2 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[1]);
             TriggerScript3 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[2]);
             TriggerScript4 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[3]);
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

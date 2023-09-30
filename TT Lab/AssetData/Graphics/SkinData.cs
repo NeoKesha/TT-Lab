@@ -4,8 +4,11 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -17,7 +20,7 @@ namespace TT_Lab.AssetData.Graphics
             Faces = new List<List<IndexedFace>>();
         }
 
-        public SkinData(PS2AnySkin skin) : this()
+        public SkinData(ITwinSkin skin) : this()
         {
             SetTwinItem(skin);
         }
@@ -101,14 +104,14 @@ namespace TT_Lab.AssetData.Graphics
             context.Dispose();
         }
 
-        public PS2AnySkin GetRef()
+        public ITwinSkin GetRef()
         {
-            return GetTwinItem<PS2AnySkin>();
+            return GetTwinItem<ITwinSkin>();
         }
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnySkin skin = GetTwinItem<PS2AnySkin>();
+            ITwinSkin skin = GetTwinItem<ITwinSkin>();
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
 
@@ -144,6 +147,11 @@ namespace TT_Lab.AssetData.Graphics
                 //offset += e.Vertexes.Count;
                 refIndex += 2;
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

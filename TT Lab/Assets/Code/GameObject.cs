@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {
@@ -9,7 +10,7 @@ namespace TT_Lab.Assets.Code
     {
         public GameObject() { }
 
-        public GameObject(LabURI package, String? variant, UInt32 id, String Name, PS2AnyObject @object) : base(id, Name, package, variant)
+        public GameObject(LabURI package, String? variant, UInt32 id, String Name, ITwinObject @object) : base(id, Name, package, variant)
         {
             assetData = new GameObjectData(@object);
         }

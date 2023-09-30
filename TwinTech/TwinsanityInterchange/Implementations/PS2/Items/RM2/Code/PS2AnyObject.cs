@@ -11,60 +11,36 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
     public class PS2AnyObject : BaseTwinItem, ITwinObject
     {
-        [Flags]
-        public enum ResourcesBitfield
-        {
-            OBJECTS = 1 << 0,
-            OGIS = 1 << 1,
-            ANIMATIONS = 1 << 2,
-            CODE_MODELS = 1 << 3,
-            SCRIPTS = 1 << 4,
-            UNKNOWN = 1 << 5,
-            SOUNDS = 1 << 6,
-        }
-
-        public enum ObjectType
-        {
-            Character,
-            Pickup,
-            Crate,
-            Creature,
-            GenericObject, // aka Furniture, internal name by Twinsanity's engine
-            Grabbable, // aka ChiChiGrass
-            PayGate,   // Unused by all the objects included in the game
-            Graple,    // aka Nina's Hand/Foofie in Evolution
-            Projectile
-        }
 
         Byte type;
-        public ObjectType Type
+        public ITwinObject.ObjectType Type
         {
-            get => (ObjectType)type;
+            get => (ITwinObject.ObjectType)type;
             set => type = (Byte)value;
         }
-        public Byte UnkTypeValue;
-        public Byte ReactJointAmount;
-        public Byte ExitPointAmount;
-        public Byte[] SlotsMap;
-        public String Name;
-        public List<UInt32> TriggerScripts;
-        public List<UInt16> OGISlots;
-        public List<UInt16> AnimationSlots;
-        public List<UInt16> ScriptSlots;
-        public List<UInt16> ObjectSlots;
-        public List<UInt16> SoundSlots;
-        public UInt32 InstanceStateFlags;
-        public List<UInt32> InstFlags;
-        public List<Single> InstFloats;
-        public List<UInt32> InstIntegers;
-        public List<UInt16> RefObjects;
-        public List<UInt16> RefOGIs;
-        public List<UInt16> RefAnimations;
-        public List<UInt16> RefCodeModels;
-        public List<UInt16> RefScripts;
-        public List<UInt16> RefUnknowns;
-        public List<UInt16> RefSounds;
-        public BehaviourCommandPack ScriptPack;
+        public Byte UnkTypeValue { get; set; }
+        public Byte ReactJointAmount { get; set; }
+        public Byte ExitPointAmount { get; set; }
+        public Byte[] SlotsMap { get; set; }
+        public String Name { get; set; }
+        public List<UInt32> TriggerScripts { get; set; }
+        public List<UInt16> OGISlots { get; set; }
+        public List<UInt16> AnimationSlots { get; set; }
+        public List<UInt16> ScriptSlots { get; set; }
+        public List<UInt16> ObjectSlots { get; set; }
+        public List<UInt16> SoundSlots { get; set; }
+        public UInt32 InstanceStateFlags { get; set; }
+        public List<UInt32> InstFlags { get; set; }
+        public List<Single> InstFloats { get; set; }
+        public List<UInt32> InstIntegers { get; set; }
+        public List<UInt16> RefObjects { get; set; }
+        public List<UInt16> RefOGIs { get; set; }
+        public List<UInt16> RefAnimations { get; set; }
+        public List<UInt16> RefCodeModels { get; set; }
+        public List<UInt16> RefScripts { get; set; }
+        public List<UInt16> RefUnknowns { get; set; }
+        public List<UInt16> RefSounds { get; set; }
+        public TwinBehaviourCommandPack ScriptPack { get; set; }
 
         public bool HasInstanceProperties
         {
@@ -197,37 +173,37 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
             if (refRes)
             {
-                var resources = (ResourcesBitfield)reader.ReadUInt32();
-                if (resources.HasFlag(ResourcesBitfield.OBJECTS))
+                var resources = (ITwinObject.ResourcesBitfield)reader.ReadUInt32();
+                if (resources.HasFlag(ITwinObject.ResourcesBitfield.OBJECTS))
                 {
                     FillResourceList(reader, RefObjects);
                 }
-                if (resources.HasFlag(ResourcesBitfield.OGIS))
+                if (resources.HasFlag(ITwinObject.ResourcesBitfield.OGIS))
                 {
                     FillResourceList(reader, RefOGIs);
                 }
-                if (resources.HasFlag(ResourcesBitfield.ANIMATIONS))
+                if (resources.HasFlag(ITwinObject.ResourcesBitfield.ANIMATIONS))
                 {
                     FillResourceList(reader, RefAnimations);
                 }
-                if (resources.HasFlag(ResourcesBitfield.CODE_MODELS))
+                if (resources.HasFlag(ITwinObject.ResourcesBitfield.CODE_MODELS))
                 {
                     FillResourceList(reader, RefCodeModels);
                 }
-                if (resources.HasFlag(ResourcesBitfield.SCRIPTS))
+                if (resources.HasFlag(ITwinObject.ResourcesBitfield.SCRIPTS))
                 {
                     FillResourceList(reader, RefScripts);
                 }
-                if (resources.HasFlag(ResourcesBitfield.UNKNOWN))
+                if (resources.HasFlag(ITwinObject.ResourcesBitfield.UNKNOWN))
                 {
                     FillResourceList(reader, RefUnknowns);
                 }
-                if (resources.HasFlag(ResourcesBitfield.SOUNDS))
+                if (resources.HasFlag(ITwinObject.ResourcesBitfield.SOUNDS))
                 {
                     FillResourceList(reader, RefSounds);
                 }
             }
-            ScriptPack = new BehaviourCommandPack();
+            ScriptPack = new TwinBehaviourCommandPack();
             ScriptPack.Read(reader, length);
         }
 
@@ -278,34 +254,34 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
             if (ReferencesResources)
             {
-                ResourcesBitfield newResources = new ResourcesBitfield();
+                ITwinObject.ResourcesBitfield newResources = new ITwinObject.ResourcesBitfield();
                 if (RefObjects.Count > 0)
                 {
-                    newResources |= ResourcesBitfield.OBJECTS;
+                    newResources |= ITwinObject.ResourcesBitfield.OBJECTS;
                 }
                 if (RefOGIs.Count > 0)
                 {
-                    newResources |= ResourcesBitfield.OGIS;
+                    newResources |= ITwinObject.ResourcesBitfield.OGIS;
                 }
                 if (RefAnimations.Count > 0)
                 {
-                    newResources |= ResourcesBitfield.ANIMATIONS;
+                    newResources |= ITwinObject.ResourcesBitfield.ANIMATIONS;
                 }
                 if (RefCodeModels.Count > 0)
                 {
-                    newResources |= ResourcesBitfield.CODE_MODELS;
+                    newResources |= ITwinObject.ResourcesBitfield.CODE_MODELS;
                 }
                 if (RefScripts.Count > 0)
                 {
-                    newResources |= ResourcesBitfield.SCRIPTS;
+                    newResources |= ITwinObject.ResourcesBitfield.SCRIPTS;
                 }
                 if (RefUnknowns.Count > 0)
                 {
-                    newResources |= ResourcesBitfield.UNKNOWN;
+                    newResources |= ITwinObject.ResourcesBitfield.UNKNOWN;
                 }
                 if (RefSounds.Count > 0)
                 {
-                    newResources |= ResourcesBitfield.SOUNDS;
+                    newResources |= ITwinObject.ResourcesBitfield.SOUNDS;
                 }
                 writer.Write((UInt32)newResources);
                 if (RefObjects.Count > 0)

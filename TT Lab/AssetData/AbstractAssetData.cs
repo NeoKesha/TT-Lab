@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData
@@ -64,10 +65,7 @@ namespace TT_Lab.AssetData
 
         public abstract void Import(LabURI package, String? variant);
 
-        public virtual ITwinItem Export()
-        {
-            return null;
-        }
+        public abstract ITwinItem Export(ITwinItemFactory factory);
 
         public void NullifyReference()
         {

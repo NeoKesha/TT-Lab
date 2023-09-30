@@ -5,15 +5,16 @@ using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyModel : BaseTwinItem, ITwinModel
     {
-        public List<SubModel> SubModels { get; set; }
+        public List<ITwinSubModel> SubModels { get; set; }
         public PS2AnyModel()
         {
-            SubModels = new List<SubModel>();
+            SubModels = new List<ITwinSubModel>();
         }
 
         public override Int32 GetLength()
@@ -32,7 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             SubModels.Clear();
             for (int i = 0; i < subCnt; ++i)
             {
-                SubModel model = new SubModel();
+                PS2SubModel model = new PS2SubModel();
                 model.Read(reader, length);
                 SubModels.Add(model);
             }

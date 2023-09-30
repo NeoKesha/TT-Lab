@@ -36,7 +36,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryBaseData() { }
 
-        public SceneryBaseData(LabURI package, String? variant, SceneryBaseType baseType)
+        public SceneryBaseData(LabURI package, String? variant, TwinSceneryBaseType baseType)
         {
             MeshIDs = new List<LabURI>();
             foreach (var m in baseType.MeshIDs)

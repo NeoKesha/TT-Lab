@@ -285,11 +285,10 @@ namespace TT_Lab.Project
                     Log.WriteLine("Serializing assets...");
                     OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
 
-                    AddRecentlyOpened(OpenedProject.ProjectPath);
-
                     Log.WriteLine("Building project tree...");
                     BuildProjectTree();
 
+                    AddRecentlyOpened(OpenedProject.ProjectPath);
                     WorkableProject = true;
                     NotifyChange("ProjectOpened");
                     NotifyChange("ProjectTitle");
@@ -337,9 +336,14 @@ namespace TT_Lab.Project
             catch (Exception ex)
             {
                 RemoveRecentlyOpened(path);
-                throw ex;
+                throw;
             }
             AddRecentlyOpened(path);
+        }
+
+        public void BuildPs2Project()
+        {
+
         }
 
         public void CloseProject()
@@ -369,7 +373,7 @@ namespace TT_Lab.Project
 
         private void BuildProjectTree()
         {
-            ProjectTree = (from asset in OpenedProject.AssetManager.GetAssets()
+            ProjectTree = (from asset in OpenedProject!.AssetManager.GetAssets()
                            where asset is Folder
                            let folder = (Folder)asset
                            where folder.GetData().To<FolderData>().Parent == null

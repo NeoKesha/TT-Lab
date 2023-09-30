@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.Assets.Instance
 {
@@ -11,7 +12,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public DynamicScenery(LabURI package, UInt32 id, String Name, String chunk, PS2AnyDynamicScenery dynamicScenery) : base(package, id, Name, chunk, null)
+        public DynamicScenery(LabURI package, UInt32 id, String Name, String chunk, ITwinDynamicScenery dynamicScenery) : base(package, id, Name, chunk, null)
         {
             assetData = new DynamicSceneryData(dynamicScenery);
         }

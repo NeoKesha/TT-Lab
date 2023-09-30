@@ -9,8 +9,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyTrigger : BaseTwinItem, ITwinTrigger
     {
-        public TwinTrigger Trigger { get; }
-        public UInt16[] TriggerScripts { get; }
+        public TwinTrigger Trigger { get; set; }
+        public UInt16[] TriggerScripts { get; set; }
         public PS2AnyTrigger()
         {
             TriggerScripts = new UInt16[4];

@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -14,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
 
         }
 
-        public PositionData(PS2AnyPosition position)
+        public PositionData(ITwinPosition position)
         {
             SetTwinItem(position);
         }
@@ -29,8 +32,13 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyPosition position = GetTwinItem<PS2AnyPosition>();
+            ITwinPosition position = GetTwinItem<ITwinPosition>();
             Coords = CloneUtils.Clone(position.Position);
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

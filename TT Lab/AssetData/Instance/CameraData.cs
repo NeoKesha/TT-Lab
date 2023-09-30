@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -26,7 +29,7 @@ namespace TT_Lab.AssetData.Instance
             }
         }
 
-        public CameraData(PS2AnyCamera camera) : this()
+        public CameraData(ITwinCamera camera) : this()
         {
             SetTwinItem(camera);
         }
@@ -97,7 +100,7 @@ namespace TT_Lab.AssetData.Instance
         }
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyCamera camera = GetTwinItem<PS2AnyCamera>();
+            ITwinCamera camera = GetTwinItem<ITwinCamera>();
             Trigger = new TriggerData(package, variant, camera.CamTrigger);
             CameraHeader = camera.CameraHeader;
             UnkShort = camera.UnkShort;
@@ -131,6 +134,11 @@ namespace TT_Lab.AssetData.Instance
             {
                 MainCamera2 = (CameraSubBase)CloneUtils.DeepClone(camera.MainCamera2, camera.MainCamera2.GetType());
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

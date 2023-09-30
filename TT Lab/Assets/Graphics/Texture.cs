@@ -5,6 +5,7 @@ using TT_Lab.Editors.Graphics;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
@@ -12,7 +13,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".png";
 
-        public Texture(LabURI package, String? variant, UInt32 id, String name, PS2AnyTexture texture) : base(id, name, package, variant)
+        public Texture(LabURI package, String? variant, UInt32 id, String name, ITwinTexture texture) : base(id, name, package, variant)
         {
             assetData = new TextureData(texture);
             Raw = false;

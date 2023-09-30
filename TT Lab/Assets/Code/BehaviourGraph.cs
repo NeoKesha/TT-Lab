@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {
@@ -12,7 +13,7 @@ namespace TT_Lab.Assets.Code
 
         public BehaviourGraph() { }
 
-        public BehaviourGraph(LabURI package, String? variant, UInt32 id, String Name, PS2BehaviourGraph script) : base(package, variant, id, Name)
+        public BehaviourGraph(LabURI package, String? variant, UInt32 id, String Name, TwinBehaviourGraph script) : base(package, variant, id, Name)
         {
             assetData = new BehaviourGraphData(script);
             RegenerateURI();

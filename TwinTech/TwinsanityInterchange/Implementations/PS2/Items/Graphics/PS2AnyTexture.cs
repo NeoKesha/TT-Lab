@@ -14,23 +14,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
     public class PS2AnyTexture : BaseTwinItem, ITwinTexture
     {
         static Dictionary<string, TextureDescriptor> TextureDescriptorHelper;
+        public List<Color> Colors { get; set; } = new List<Color>();
         public UInt32 HeaderSignature { get; set; }
         public UInt16 ImageWidthPower { get; set; }
         public UInt16 ImageHeightPower { get; set; }
         public Byte MipLevels { get; set; }
-        public TexturePixelFormat TextureFormat { get; set; }
-        public TexturePixelFormat DestinationTextureFormat { get; set; }
-        public TextureColorComponent ColorComponent;
-        public Byte UnkByte;
-        public TextureFunction TexFun;
-        public Byte[] UnkBytes1;
+        public ITwinTexture.TexturePixelFormat TextureFormat { get; set; }
+        public ITwinTexture.TexturePixelFormat DestinationTextureFormat { get; set; }
+        public ITwinTexture.TextureColorComponent ColorComponent { get; set; }
+        public Byte UnkByte  { get; set; }
+        public ITwinTexture.TextureFunction TexFun  { get; set; }
+        public Byte[] UnkBytes1  { get; set; }
         public Int32 TextureBasePointer { get; set; }
         public Int32[] MipLevelsTBP { get; set; }
         public Int32 TextureBufferWidth { get; set; }
         public Int32[] MipLevelsTBW { get; set; }
         public Int32 ClutBufferBasePointer { get; set; }
-        public Byte[] UnkBytes2;
-        public Byte[] UnkBytes3;
+        public Byte[] UnkBytes2  { get; set; }
+        public Byte[] UnkBytes3  { get; set; }
         public Byte[] UnusedMetadata { get; set; }
         public Byte[] TextureData { get; set; }
 
@@ -50,8 +51,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
             UnusedMetadata = new byte[32];
             HeaderSignature = 0xbbcccdcd;
-            DestinationTextureFormat = TexturePixelFormat.PSMCT32;
-            ColorComponent = TextureColorComponent.RGBA;
+            DestinationTextureFormat = ITwinTexture.TexturePixelFormat.PSMCT32;
+            ColorComponent = ITwinTexture.TextureColorComponent.RGBA;
             UnkByte = 0;
             TextureBasePointer = 0;
             MipLevelsTBP = new int[6];
@@ -81,11 +82,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             ImageWidthPower = reader.ReadUInt16();
             ImageHeightPower = reader.ReadUInt16();
             MipLevels = reader.ReadByte();
-            TextureFormat = (TexturePixelFormat)reader.ReadByte();
-            DestinationTextureFormat = (TexturePixelFormat)reader.ReadByte();
-            ColorComponent = (TextureColorComponent)reader.ReadByte();
+            TextureFormat = (ITwinTexture.TexturePixelFormat)reader.ReadByte();
+            DestinationTextureFormat = (ITwinTexture.TexturePixelFormat)reader.ReadByte();
+            ColorComponent = (ITwinTexture.TextureColorComponent)reader.ReadByte();
             UnkByte = reader.ReadByte();
-            TexFun = (TextureFunction)reader.ReadByte();
+            TexFun = (ITwinTexture.TextureFunction)reader.ReadByte();
             UnkBytes1 = reader.ReadBytes(2);
             TextureBasePointer = reader.ReadInt32();
             MipLevelsTBP = new int[6];
@@ -149,14 +150,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             Colors.Clear();
             switch (TextureFormat)
             {
-                case TexturePixelFormat.PSMCT32:
+                case ITwinTexture.TexturePixelFormat.PSMCT32:
                     EzSwizzle.TagToColors(data[1], Colors);
                     foreach (var c in Colors)
                     {
                         c.ScaleAlphaUp();
                     }
                     break;
-                case TexturePixelFormat.PSMT8:
+                case ITwinTexture.TexturePixelFormat.PSMT8:
                     byte[] gifData = EzSwizzle.TagToBytes(data[1]);
                     int RRW = (int)((data[0].Data[1].Output >> 0) & 0xFFFFFFFF);
                     int RRH = (int)((data[0].Data[1].Output >> 32) & 0xFFFFFFFF);
@@ -188,7 +189,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format)
+        public void FromBitmap(List<Color> image, Int32 width, ITwinTexture.TextureFunction fun, ITwinTexture.TexturePixelFormat format)
         {
             int height = image.Count / width;
             TexFun = fun;
@@ -235,7 +236,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             headerTag.Data.Add(head2);
             headerTag.Data.Add(head3);
             GIFTag tag;
-            if (format == TexturePixelFormat.PSMCT32)
+            if (format == ITwinTexture.TexturePixelFormat.PSMCT32)
             {
                 foreach (var c in image)
                 {
@@ -332,42 +333,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 TextureData = stream.ToArray();
             }
         }
-        public List<Color> Colors { get; set; } = new List<Color>();
+        
         public override String GetName()
         {
             return $"Texture {id:X}";
         }
-
-        #region Enums
-        public enum TexturePixelFormat
-        {
-            PSMCT32 = 0b000000,
-            PSMCT24 = 0b000001,
-            PSMCT16 = 0b000010,
-            PSMCT16S = 0b001010,
-            PSMT8 = 0b010011,
-            PSMT4 = 0b010100,
-            PSMT8H = 0b011011,
-            PSMT4HL = 0b100100,
-            PSMT4HH = 0b101100,
-            PSMZ32 = 0b110000,
-            PSMZ24 = 0b110001,
-            PSMZ16 = 0b110010,
-            PSMZ16S = 0b111010
-        }
-        public enum TextureColorComponent
-        {
-            RGB = 0,
-            RGBA = 1
-        }
-        public enum TextureFunction
-        {
-            MODULATE = 0b00,
-            DECAL = 0b01,
-            HIGHLIGHT = 0b10,
-            HIGHLIGHT2 = 0b11
-        }
-        #endregion
 
         public struct TextureDescriptor
         {

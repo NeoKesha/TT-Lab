@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -14,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public PathData(PS2AnyPath path) : this()
+        public PathData(ITwinPath path) : this()
         {
             SetTwinItem(path);
         }
@@ -31,9 +34,14 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyPath path = GetTwinItem<PS2AnyPath>();
+            ITwinPath path = GetTwinItem<ITwinPath>();
             Points = CloneUtils.CloneList(path.PointList);
             Parameters = CloneUtils.CloneList(path.ParameterList);
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

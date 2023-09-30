@@ -192,5 +192,10 @@ namespace TT_Lab
                 DragDrop.DoDragDrop(ProjectTree, data, DragDropEffects.Copy);
             }
         }
+
+        private void BuildPs2_Click(Object sender, RoutedEventArgs e)
+        {
+            ProjectManagerSingleton.PM.BuildPs2Project();
+        }
     }
 }

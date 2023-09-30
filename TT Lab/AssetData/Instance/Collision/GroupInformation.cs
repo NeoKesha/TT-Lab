@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using Twinsanity.TwinsanityInterchange.Common.Collision;
 
 namespace TT_Lab.AssetData.Instance.Collision
 {
@@ -12,7 +13,7 @@ namespace TT_Lab.AssetData.Instance.Collision
 
         public GroupInformation() { }
 
-        public GroupInformation(Twinsanity.TwinsanityInterchange.Common.Collision.GroupInformation group)
+        public GroupInformation(TwinGroupInformation group)
         {
             Size = group.Size;
             Offset = group.Offset;

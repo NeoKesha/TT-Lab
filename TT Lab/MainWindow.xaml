@@ -330,7 +330,12 @@
                 <MenuItem x:Name="SaveProject" Header="Save all" InputGestureText="Ctrl+Shift+S" IsEnabled="{Binding ProjectOpened}"/>
                 <MenuItem x:Name="CloseProject" Header="Close Project" Click="CloseProject_Click" IsEnabled="{Binding ProjectOpened}"/>
             </MenuItem>
-            <MenuItem x:Name="ToolsSubmenu" Header="Tools" HorizontalAlignment="Center" IsEnabled="False"/>
+            <MenuItem x:Name="BuildSubMenu" Header="Build" IsEnabled="{Binding ProjectOpened}">
+                <MenuItem x:Name="BuildPs2" Header="Build PS2 ISO" Click="BuildPs2_Click"/>
+                <MenuItem x:Name="BuildXbox" Header="Build XBox ISO" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem x:Name="ToolsSubMenu" Header="Tools" HorizontalAlignment="Center" IsEnabled="False"/>
+            <MenuItem x:Name="PreferencesMenu" Header="Preferences" IsEnabled="False"/>
             <MenuItem x:Name="About" Header="About" HorizontalAlignment="Center"/>
         </Menu>
 

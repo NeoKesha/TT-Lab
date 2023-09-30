@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace TT_Lab.Assets.Instance
 {
@@ -12,7 +13,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public Collision(LabURI package, UInt32 id, String Name, String chunk, PS2AnyCollisionData collisionData) : base(package, id, Name, chunk, null)
+        public Collision(LabURI package, UInt32 id, String Name, String chunk, ITwinCollision collisionData) : base(package, id, Name, chunk, null)
         {
             assetData = new CollisionData(collisionData);
         }

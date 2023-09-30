@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -11,7 +14,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public AiPathData(PS2AnyAIPath aiPath) : this()
+        public AiPathData(ITwinAIPath aiPath) : this()
         {
             SetTwinItem(aiPath);
         }
@@ -30,10 +33,15 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyAIPath aiPath = GetTwinItem<PS2AnyAIPath>();
+            ITwinAIPath aiPath = GetTwinItem<ITwinAIPath>();
             PathBegin = aiPath.Args[0];
             PathEnd = aiPath.Args[1];
             Args = new UInt16[] { aiPath.Args[2], aiPath.Args[3], aiPath.Args[4] };
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.DynamicScenery;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -11,12 +11,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
     public class PS2AnyDynamicScenery : BaseTwinItem, ITwinDynamicScenery
     {
 
-        public Int32 UnkInt;
-        public List<DynamicSceneryModel> DynamicModels;
+        public Int32 UnkInt { get; set; }
+        public List<TwinDynamicSceneryModel> DynamicModels { get; set; }
 
         public PS2AnyDynamicScenery()
         {
-            DynamicModels = new List<DynamicSceneryModel>();
+            DynamicModels = new List<TwinDynamicSceneryModel>();
         }
 
         public override Int32 GetLength()
@@ -30,7 +30,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             var models = reader.ReadInt16();
             for (var i = 0; i < models; ++i)
             {
-                var m = new DynamicSceneryModel();
+                var m = new TwinDynamicSceneryModel();
                 DynamicModels.Add(m);
                 m.Read(reader, length);
             }

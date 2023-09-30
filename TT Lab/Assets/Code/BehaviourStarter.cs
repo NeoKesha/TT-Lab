@@ -4,6 +4,7 @@ using TT_Lab.AssetData.Code;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Code;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {
@@ -12,7 +13,7 @@ namespace TT_Lab.Assets.Code
         protected override String DataExt => ".data";
         public BehaviourStarter() { }
 
-        public BehaviourStarter(LabURI package, String? variant, UInt32 id, String name, PS2BehaviourStarter script) : base(package, variant, id, name)
+        public BehaviourStarter(LabURI package, String? variant, UInt32 id, String name, TwinBehaviourStarter script) : base(package, variant, id, name)
         {
             assetData = new BehaviourStarterData(script);
             RegenerateURI();

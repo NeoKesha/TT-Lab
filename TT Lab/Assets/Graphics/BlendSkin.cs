@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
@@ -9,7 +10,7 @@ namespace TT_Lab.Assets.Graphics
     {
         public BlendSkin() { }
 
-        public BlendSkin(LabURI package, String? variant, UInt32 id, String Name, PS2AnyBlendSkin blendSkin) : base(id, Name, package, variant)
+        public BlendSkin(LabURI package, String? variant, UInt32 id, String Name, ITwinBlendSkin blendSkin) : base(id, Name, package, variant)
         {
             assetData = new BlendSkinData(blendSkin);
         }

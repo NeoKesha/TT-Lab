@@ -2,12 +2,13 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
     public class InstanceTemplate : SerializableInstance
     {
-        public InstanceTemplate(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, PS2AnyTemplate template) : base(package, id, Name, chunk, layId)
+        public InstanceTemplate(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, ITwinTemplate template) : base(package, id, Name, chunk, layId)
         {
             assetData = new InstanceTemplateData(template);
         }

@@ -5,12 +5,13 @@ using TT_Lab.Editors.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
     public class Trigger : SerializableInstance
     {
-        public Trigger(LabURI package, UInt32 id, String name, String chunk, Int32 layId, PS2AnyTrigger trigger) : base(package, id, name, chunk, layId)
+        public Trigger(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinTrigger trigger) : base(package, id, name, chunk, layId)
         {
             assetData = new TriggerData(trigger);
         }

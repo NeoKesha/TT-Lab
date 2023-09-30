@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
 {
-    public class PS2DefaultParticleData : PS2AnyParticleData
+    public class PS2DefaultParticleData : PS2AnyParticleData, ITwinDefaultParticle
     {
-        public UInt32[] TextureIDs;
-        public UInt32[] MaterialIDs;
-        public UInt32 DecalTextureID;
-        public UInt32 DecalMaterialID;
-        public Byte[] UnkData;
-        public Byte[] UnkBlob;
-        public Int32[] UnkInts;
-        public List<Byte[]> UnkBlobs;
+        public UInt32[] TextureIDs { get; set; }
+        public UInt32[] MaterialIDs { get; set; }
+        public UInt32 DecalTextureID { get; set; }
+        public UInt32 DecalMaterialID { get; set; }
+        public Byte[] UnkData { get; set; }
+        public Byte[] UnkBlob { get; set; }
+        public Int32[] UnkInts { get; set; }
+        public List<Byte[]> UnkBlobs { get; set; }
 
         public PS2DefaultParticleData() : base()
         {
@@ -45,7 +46,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             var typesAmt = reader.ReadInt32();
             for (var i = 0; i < typesAmt; ++i)
             {
-                var type = new ParticleType(Version);
+                var type = new TwinParticleType(Version);
                 type.Read(reader, length);
                 ParticleTypes.Add(type);
             }

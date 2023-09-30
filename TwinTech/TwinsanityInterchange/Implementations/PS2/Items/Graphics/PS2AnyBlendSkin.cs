@@ -7,17 +7,18 @@ using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyBlendSkin : BaseTwinItem, ITwinBlendSkin
     {
         Int32 blendsAmount;
-        public List<SubBlendSkin> SubBlends;
+        public List<ITwinSubBlendSkin> SubBlends { get; set; }
 
         public PS2AnyBlendSkin()
         {
-            SubBlends = new List<SubBlendSkin>();
+            SubBlends = new List<ITwinSubBlendSkin>();
         }
 
         public override Int32 GetLength()
@@ -31,7 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             blendsAmount = reader.ReadInt32();
             for (int i = 0; i < subBlends; ++i)
             {
-                var subBlend = new SubBlendSkin();
+                var subBlend = new PS2SubBlendSkin();
                 subBlend.BlendsAmount = blendsAmount;
                 subBlend.Read(reader, length);
                 SubBlends.Add(subBlend);

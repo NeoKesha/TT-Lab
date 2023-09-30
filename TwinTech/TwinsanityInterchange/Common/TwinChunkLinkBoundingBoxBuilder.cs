@@ -7,11 +7,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
     public class TwinChunkLinkBoundingBoxBuilder : ITwinSerializable
     {
         public Int32 Type;
-        public BoundingBoxBuilder BondingBoxBuilder;
+        public TwinBoundingBoxBuilder BondingBoxBuilder;
 
         public TwinChunkLinkBoundingBoxBuilder()
         {
-            BondingBoxBuilder = new BoundingBoxBuilder();
+            BondingBoxBuilder = new TwinBoundingBoxBuilder();
         }
 
         public Int32 GetLength()

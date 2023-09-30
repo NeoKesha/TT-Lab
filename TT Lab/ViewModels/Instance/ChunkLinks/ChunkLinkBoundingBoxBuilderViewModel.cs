@@ -11,7 +11,7 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
 
         public ChunkLinkBoundingBoxBuilderViewModel()
         {
-            boundingBoxBuilder = new BoundingBoxBuilderViewModel(new BoundingBoxBuilder());
+            boundingBoxBuilder = new BoundingBoxBuilderViewModel(new TwinBoundingBoxBuilder());
         }
         public ChunkLinkBoundingBoxBuilderViewModel(TwinChunkLinkBoundingBoxBuilder linkBuilder)
         {

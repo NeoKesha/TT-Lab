@@ -3,6 +3,7 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace TT_Lab.Assets.Instance
 {
@@ -12,9 +13,9 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public Particles(LabURI package, UInt32 id, String name, String chunk, PS2AnyParticleData particleData) : base(package, id, name, chunk, null)
+        public Particles(LabURI package, UInt32 id, String name, String chunk, ITwinParticle particleData) : base(package, id, name, chunk, null)
         {
-            assetData = new ParticlesData(particleData);
+            assetData = new ParticleData(particleData);
         }
 
         public override Byte[] ToFormat()
@@ -42,7 +43,7 @@ namespace TT_Lab.Assets.Instance
         {
             if (!IsLoaded || assetData.Disposed)
             {
-                assetData = new ParticlesData();
+                assetData = new ParticleData();
                 assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
                 IsLoaded = true;
             }

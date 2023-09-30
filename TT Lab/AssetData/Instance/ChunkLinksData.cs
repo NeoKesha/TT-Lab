@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -12,7 +15,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public ChunkLinksData(PS2AnyLink link) : this()
+        public ChunkLinksData(ITwinLink link) : this()
         {
             SetTwinItem(link);
         }
@@ -27,11 +30,16 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyLink link = GetTwinItem<PS2AnyLink>();
+            ITwinLink link = GetTwinItem<ITwinLink>();
             foreach (var l in link.LinksList)
             {
                 Links.Add(new ChunkLink(l));
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

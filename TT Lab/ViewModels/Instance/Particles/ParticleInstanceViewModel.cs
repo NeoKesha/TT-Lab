@@ -24,7 +24,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
         private Int16 unkShort8;
 
         public ParticleInstanceViewModel() { }
-        public ParticleInstanceViewModel(ParticleInstance pi)
+        public ParticleInstanceViewModel(TwinParticleInstance pi)
         {
             version = pi.Version;
             name = new String(pi.Name);
@@ -47,7 +47,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
 
         public override void Save(Object? o = null)
         {
-            var pi = (ParticleInstance)o!;
+            var pi = (TwinParticleInstance)o!;
             pi.Version = Version;
             pi.Name = Name.ToCharArray();
             pi.Position = new Vector3

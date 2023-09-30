@@ -16,12 +16,24 @@ namespace TT_Lab.Project
         /// </summary>
         AssetManager AssetManager { get; }
 
+        /// <summary>
+        /// Project's packages enabled or disabled
+        /// </summary>
         Folder Packages { get; }
 
+        /// <summary>
+        /// Base package required for all projects
+        /// </summary>
         Package BasePackage { get; }
 
+        /// <summary>
+        /// PS2 assets package [optional]
+        /// </summary>
         Package Ps2Package { get; }
 
+        /// <summary>
+        /// XBOX assets package [optional]
+        /// </summary>
         Package XboxPackage { get; }
 
         /// <summary>

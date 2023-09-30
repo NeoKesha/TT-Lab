@@ -11,18 +11,18 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 {
     public class PS2AnyScenery : BaseTwinItem, ITwinScenery
     {
-        public UInt32 Flags;
-        public String Name;
-        public UInt32 UnkUInt;
-        public Byte UnkByte;
-        public UInt32 SkydomeID;
-        public Boolean[] UnkLightFlags;
-        public Byte[] ReservedBlob;
-        public List<AmbientLight> AmbientLights;
-        public List<DirectionalLight> DirectionalLights;
-        public List<PointLight> PointLights;
-        public List<NegativeLight> NegativeLights;
-        public List<SceneryBaseType> Sceneries;
+        public UInt32 Flags { get; set; }
+        public String Name { get; set; }
+        public UInt32 UnkUInt { get; set; }
+        public Byte UnkByte { get; set; }
+        public UInt32 SkydomeID { get; set; }
+        public Boolean[] UnkLightFlags { get; set; }
+        public Byte[] ReservedBlob { get; set; }
+        public List<AmbientLight> AmbientLights { get; set; }
+        public List<DirectionalLight> DirectionalLights { get; set; }
+        public List<PointLight> PointLights { get; set; }
+        public List<NegativeLight> NegativeLights { get; set; }
+        public List<TwinSceneryBaseType> Sceneries { get; set; }
 
         public PS2AnyScenery()
         {
@@ -31,7 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             DirectionalLights = new List<DirectionalLight>();
             PointLights = new List<PointLight>();
             NegativeLights = new List<NegativeLight>();
-            Sceneries = new List<SceneryBaseType>();
+            Sceneries = new List<TwinSceneryBaseType>();
         }
 
         public override Int32 GetLength()
@@ -96,7 +96,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
             if (sceneryType == 0x160A)
             {
-                var root = new SceneryRoot();
+                var root = new TwinSceneryRoot();
                 Sceneries.Add(root);
                 root.Read(reader, length, Sceneries);
             }

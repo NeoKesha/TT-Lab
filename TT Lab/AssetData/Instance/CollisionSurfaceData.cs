@@ -2,9 +2,12 @@
 using System;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -14,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public CollisionSurfaceData(PS2AnyCollisionSurface collisionSurface) : this()
+        public CollisionSurfaceData(ITwinSurface collisionSurface) : this()
         {
             SetTwinItem(collisionSurface);
         }
@@ -57,7 +60,7 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyCollisionSurface collisionSurface = GetTwinItem<PS2AnyCollisionSurface>();
+            ITwinSurface collisionSurface = GetTwinItem<ITwinSurface>();
             SurfaceID = collisionSurface.SurfaceId;
             Flags = collisionSurface.Flags;
             StepSoundId1 = LabURI.Empty;
@@ -97,6 +100,11 @@ namespace TT_Lab.AssetData.Instance
             {
                 UnkBoundingBox[i] = CloneUtils.Clone(collisionSurface.UnkBoundingBox[i]);
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,13 +2,14 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class LodModel : SerializableAsset
     {
 
-        public LodModel(LabURI package, String? variant, UInt32 id, String Name, PS2AnyLOD lod) : base(id, Name, package, variant)
+        public LodModel(LabURI package, String? variant, UInt32 id, String Name, ITwinLOD lod) : base(id, Name, package, variant)
         {
             assetData = new LodModelData(lod);
         }

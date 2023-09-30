@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using TT_Lab.AssetData.Graphics.SubModels;
+using Twinsanity.TwinsanityInterchange.Common.Collision;
 
 namespace TT_Lab.AssetData.Instance.Collision
 {
@@ -14,7 +15,7 @@ namespace TT_Lab.AssetData.Instance.Collision
 
         public CollisionTriangle() { }
 
-        public CollisionTriangle(Twinsanity.TwinsanityInterchange.Common.Collision.CollisionTriangle triangle)
+        public CollisionTriangle(TwinCollisionTriangle triangle)
         {
             Face = new IndexedFace(new int[] { triangle.Vector1Index, triangle.Vector2Index, triangle.Vector3Index });
             SurfaceIndex = triangle.SurfaceIndex;

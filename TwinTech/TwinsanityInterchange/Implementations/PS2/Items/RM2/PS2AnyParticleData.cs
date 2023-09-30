@@ -8,17 +8,17 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
 {
-    public class PS2AnyParticleData : BaseTwinItem, ITwinPatricle
+    public class PS2AnyParticleData : BaseTwinItem, ITwinParticle
     {
-        public UInt32 Version;
-        public List<ParticleType> ParticleTypes;
-        public List<ParticleInstance> ParticleInstances;
+        public UInt32 Version { get; set; }
+        public List<TwinParticleType> ParticleTypes { get; set; }
+        public List<TwinParticleInstance> ParticleInstances { get; set; }
 
         public PS2AnyParticleData()
         {
             Version = 0x1E;
-            ParticleTypes = new List<ParticleType>();
-            ParticleInstances = new List<ParticleInstance>();
+            ParticleTypes = new List<TwinParticleType>();
+            ParticleInstances = new List<TwinParticleInstance>();
         }
 
         public override Int32 GetLength()
@@ -36,14 +36,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             var typesAmt = reader.ReadInt32();
             for (var i = 0; i < typesAmt; ++i)
             {
-                var type = new ParticleType(Version);
+                var type = new TwinParticleType(Version);
                 type.Read(reader, length);
                 ParticleTypes.Add(type);
             }
             var instAmt = reader.ReadInt32();
             for (var i = 0; i < instAmt; ++i)
             {
-                var inst = new ParticleInstance(Version);
+                var inst = new TwinParticleInstance(Version);
                 inst.Read(reader, length);
                 ParticleInstances.Add(inst);
             }

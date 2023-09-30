@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {
@@ -10,7 +11,7 @@ namespace TT_Lab.Assets.Code
 
         public OGI() { }
 
-        public OGI(LabURI package, String? variant, UInt32 id, String Name, PS2AnyOGI ogi) : base(id, Name, package, variant)
+        public OGI(LabURI package, String? variant, UInt32 id, String Name, ITwinOGI ogi) : base(id, Name, package, variant)
         {
             assetData = new OGIData(ogi);
         }

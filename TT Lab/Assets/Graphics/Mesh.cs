@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
@@ -9,7 +10,7 @@ namespace TT_Lab.Assets.Graphics
 
         public Mesh() { }
 
-        public Mesh(LabURI package, String? variant, UInt32 id, String Name, PS2AnyMesh mesh) : base(package, variant, id, Name, mesh)
+        public Mesh(LabURI package, String? variant, UInt32 id, String Name, ITwinMesh mesh) : base(package, variant, id, Name, mesh)
         {
             assetData = new MeshData(mesh);
         }

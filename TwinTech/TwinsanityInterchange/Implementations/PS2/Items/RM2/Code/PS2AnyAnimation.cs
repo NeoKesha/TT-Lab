@@ -13,8 +13,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public Boolean HasFacialAnimationData { get; set; }
         public UInt16 TotalFrames { get; set; }
         public Byte DefaultFPS { get; set; }
-        public TwinAnimation MainAnimation;
-        public TwinAnimation FacialAnimation;
+        public TwinAnimation MainAnimation { get; set; }
+        public TwinAnimation FacialAnimation { get; set; }
 
         public PS2AnyAnimation()
         {

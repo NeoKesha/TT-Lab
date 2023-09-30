@@ -1,4 +1,5 @@
 ﻿using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -8,7 +9,7 @@ namespace TT_Lab.AssetData.Graphics
         {
         }
 
-        public MeshData(PS2AnyMesh mesh) : base(mesh)
+        public MeshData(ITwinMesh mesh) : base(mesh)
         {
         }
     }

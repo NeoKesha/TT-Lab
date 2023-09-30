@@ -3,10 +3,13 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData.Instance.Scenery;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -25,7 +28,7 @@ namespace TT_Lab.AssetData.Instance
         {
         }
 
-        public SceneryData(PS2AnyScenery scenery) : this()
+        public SceneryData(ITwinScenery scenery) : this()
         {
             SetTwinItem(scenery);
         }
@@ -80,7 +83,7 @@ namespace TT_Lab.AssetData.Instance
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyScenery scenery = GetTwinItem<PS2AnyScenery>();
+            ITwinScenery scenery = GetTwinItem<ITwinScenery>();
             SceneryName = scenery.Name[..];
             UnkUInt = scenery.UnkUInt;
             UnkByte = scenery.UnkByte;
@@ -98,6 +101,11 @@ namespace TT_Lab.AssetData.Instance
             {
                 Sceneries.Add((SceneryBaseData)Activator.CreateInstance(scIndexToType[sc.GetObjectIndex()], package, variant, sc)!);
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

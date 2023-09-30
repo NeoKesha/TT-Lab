@@ -2,8 +2,11 @@
 using System;
 using System.IO;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -13,7 +16,7 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public SoundEffectData(PS2AnySound sound) : this()
+        public SoundEffectData(ITwinSound sound) : this()
         {
             SetTwinItem(sound);
         }
@@ -41,7 +44,7 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnySound sound = GetTwinItem<PS2AnySound>();
+            ITwinSound sound = GetTwinItem<ITwinSound>();
             Frequency = sound.GetFreq();
             Channels = 1;
             ADPCM adpcm = new ADPCM();
@@ -51,6 +54,11 @@ namespace TT_Lab.AssetData.Code
             BinaryWriter writer = new BinaryWriter(output);
             adpcm.ToPCMMono(reader, writer);
             PCM = output.ToArray();
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

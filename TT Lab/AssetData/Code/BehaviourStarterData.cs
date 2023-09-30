@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -13,7 +15,7 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public BehaviourStarterData(PS2BehaviourStarter headerScript) : base(headerScript)
+        public BehaviourStarterData(TwinBehaviourStarter headerScript) : base(headerScript)
         {
             SetTwinItem(headerScript);
         }
@@ -28,7 +30,7 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2BehaviourStarter behaviourStarter = GetTwinItem<PS2BehaviourStarter>();
+            TwinBehaviourStarter behaviourStarter = GetTwinItem<TwinBehaviourStarter>();
             foreach (var pair in behaviourStarter.Pairs)
             {
                 if (pair.Key - 1 == -1)
@@ -40,6 +42,11 @@ namespace TT_Lab.AssetData.Code
                     Pairs.Add(new KeyValuePair<LabURI, uint>(AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, (UInt32)pair.Key - 1), pair.Value));
                 }
             }
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

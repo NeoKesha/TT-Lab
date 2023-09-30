@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {
@@ -11,7 +12,7 @@ namespace TT_Lab.Assets.Code
 
         public SoundEffect() { }
 
-        public SoundEffect(LabURI package, String? variant, UInt32 id, String Name, PS2AnySound sound) : base(id, Name, package, variant)
+        public SoundEffect(LabURI package, String? variant, UInt32 id, String Name, ITwinSound sound) : base(id, Name, package, variant)
         {
             assetData = new SoundEffectData(sound);
             Raw = false;

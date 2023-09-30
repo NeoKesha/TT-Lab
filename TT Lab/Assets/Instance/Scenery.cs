@@ -5,6 +5,7 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.Assets.Instance
 {
@@ -16,7 +17,7 @@ namespace TT_Lab.Assets.Instance
             Parameters = new Dictionary<string, object?>();
         }
 
-        public Scenery(LabURI package, UInt32 id, String name, String chunk, PS2AnyScenery scenery) : base(package, id, name, chunk, null)
+        public Scenery(LabURI package, UInt32 id, String name, String chunk, ITwinScenery scenery) : base(package, id, name, chunk, null)
         {
             assetData = new SceneryData(scenery);
         }

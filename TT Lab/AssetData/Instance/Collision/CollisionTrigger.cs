@@ -2,6 +2,7 @@
 using System;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Collision;
 
 namespace TT_Lab.AssetData.Instance.Collision
 {
@@ -18,7 +19,7 @@ namespace TT_Lab.AssetData.Instance.Collision
 
         public CollisionTrigger() { }
 
-        public CollisionTrigger(Twinsanity.TwinsanityInterchange.Common.Collision.CollisionTrigger trigger)
+        public CollisionTrigger(TwinCollisionTrigger trigger)
         {
             V1 = CloneUtils.Clone(trigger.V1);
             V2 = CloneUtils.Clone(trigger.V2);

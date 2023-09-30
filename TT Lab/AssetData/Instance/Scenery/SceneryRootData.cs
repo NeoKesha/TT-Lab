@@ -13,9 +13,9 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryRootData() { }
 
-        public SceneryRootData(LabURI package, String? variant, SceneryBaseType baseType) : base(package, variant, baseType)
+        public SceneryRootData(LabURI package, String? variant, TwinSceneryBaseType baseType) : base(package, variant, baseType)
         {
-            var root = (SceneryRoot)baseType;
+            var root = (TwinSceneryRoot)baseType;
             UnkUInt = root.UnkUInt;
         }
 

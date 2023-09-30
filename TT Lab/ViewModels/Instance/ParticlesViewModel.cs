@@ -15,7 +15,7 @@ namespace TT_Lab.ViewModels.Instance
         {
             ParticleTypes = new ObservableCollection<ParticleTypeViewModel>();
             ParticleInstances = new ObservableCollection<ParticleInstanceViewModel>();
-            var data = _asset.GetData<ParticlesData>();
+            var data = _asset.GetData<ParticleData>();
             foreach (var type in data.ParticleTypes)
             {
                 ParticleTypes.Add(new ParticleTypeViewModel(type));
@@ -28,19 +28,19 @@ namespace TT_Lab.ViewModels.Instance
 
         public override void Save(Object? o)
         {
-            var data = _asset.GetData<ParticlesData>();
+            var data = _asset.GetData<ParticleData>();
             data.Version = Version;
             data.ParticleTypes.Clear();
             foreach (var type in ParticleTypes)
             {
-                var t = new ParticleType();
+                var t = new TwinParticleType();
                 type.Save(t);
                 data.ParticleTypes.Add(t);
             }
             data.ParticleInstances.Clear();
             foreach (var inst in ParticleInstances)
             {
-                var i = new ParticleInstance();
+                var i = new TwinParticleInstance();
                 inst.Save(i);
                 data.ParticleInstances.Add(i);
             }

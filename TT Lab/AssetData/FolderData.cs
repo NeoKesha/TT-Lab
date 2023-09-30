@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData
 {
@@ -22,6 +24,11 @@ namespace TT_Lab.AssetData
 
         public override void Import(LabURI package, String? variant)
         {
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            return null;
         }
     }
 }

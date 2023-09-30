@@ -6,16 +6,19 @@ using System.IO;
 using System.Linq;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Code
 {
     public class GameObjectData : AbstractAssetData
     {
 
-        public GameObjectData(PS2AnyObject gameObject)
+        public GameObjectData(ITwinObject gameObject)
         {
             SetTwinItem(gameObject);
         }
@@ -23,7 +26,7 @@ namespace TT_Lab.AssetData.Code
         public GameObjectData(String path) => Load(path);
 
         [JsonProperty(Required = Required.Always)]
-        public PS2AnyObject.ObjectType Type { get; set; }
+        public ITwinObject.ObjectType Type { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte UnkTypeValue { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -68,7 +71,7 @@ namespace TT_Lab.AssetData.Code
         public List<LabURI> RefSounds { get; set; }
         [JsonProperty(Required = Required.Always)]
         [JsonConverter(typeof(ScriptPackConverter))]
-        public BehaviourCommandPack ScriptPack { get; set; }
+        public TwinBehaviourCommandPack ScriptPack { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -77,7 +80,7 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyObject gameObject = GetTwinItem<PS2AnyObject>();
+            ITwinObject gameObject = GetTwinItem<ITwinObject>();
             Type = gameObject.Type;
             UnkTypeValue = gameObject.UnkTypeValue;
             UnkOGIArraySize = gameObject.ReactJointAmount;
@@ -203,6 +206,11 @@ namespace TT_Lab.AssetData.Code
             ScriptPack = gameObject.ScriptPack;
         }
 
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
+        }
+
         private static List<LabURI> CollectMulti5Uri(LabURI package, String? variant, UInt16 id)
         {
             var result = new List<LabURI>();
@@ -241,11 +249,11 @@ namespace TT_Lab.AssetData.Code
             return result;
         }
     }
-    class ScriptPackConverter : JsonConverter<BehaviourCommandPack>
+    class ScriptPackConverter : JsonConverter<TwinBehaviourCommandPack>
     {
-        public override BehaviourCommandPack ReadJson(JsonReader reader, Type objectType, BehaviourCommandPack? existingValue, Boolean hasExistingValue, JsonSerializer serializer)
+        public override TwinBehaviourCommandPack ReadJson(JsonReader reader, Type objectType, TwinBehaviourCommandPack? existingValue, Boolean hasExistingValue, JsonSerializer serializer)
         {
-            existingValue ??= new BehaviourCommandPack();
+            existingValue ??= new TwinBehaviourCommandPack();
             String? str = reader.ReadAsString();
             using (var stream = new MemoryStream())
             using (var _writer = new StreamWriter(stream))
@@ -261,7 +269,7 @@ namespace TT_Lab.AssetData.Code
             return existingValue;
         }
 
-        public override void WriteJson(JsonWriter writer, BehaviourCommandPack? value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, TwinBehaviourCommandPack? value, JsonSerializer serializer)
         {
             JToken t = JToken.FromObject(value!.ToString());
 

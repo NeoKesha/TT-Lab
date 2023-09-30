@@ -5,13 +5,14 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class Skin : SerializableAsset
     {
         protected override String DataExt => ".dae";
-        public Skin(LabURI package, String? variant, UInt32 id, String name, PS2AnySkin skin) : base(id, name, package, variant)
+        public Skin(LabURI package, String? variant, UInt32 id, String name, ITwinSkin skin) : base(id, name, package, variant)
         {
             assetData = new SkinData(skin);
             Raw = false;

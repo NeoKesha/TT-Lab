@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -13,7 +16,7 @@ namespace TT_Lab.AssetData.Graphics
         {
         }
 
-        public RigidModelData(PS2AnyRigidModel rigidModel) : this()
+        public RigidModelData(ITwinRigidModel rigidModel) : this()
         {
             SetTwinItem(rigidModel);
         }
@@ -32,7 +35,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override void Import(LabURI package, String? variant)
         {
-            PS2AnyRigidModel rigidModel = GetTwinItem<PS2AnyRigidModel>();
+            ITwinRigidModel rigidModel = GetTwinItem<ITwinRigidModel>();
             Header = rigidModel.Header;
             Materials = new List<LabURI>();
             foreach (var mat in rigidModel.Materials)
@@ -40,6 +43,11 @@ namespace TT_Lab.AssetData.Graphics
                 Materials.Add(AssetManager.Get().GetUri(package, typeof(Material).Name, variant, mat)/*GuidManager.GetGuidByTwinId(mat, typeof(Material))*/);
             }
             Model = AssetManager.Get().GetUri(package, typeof(Model).Name, variant, rigidModel.Model);//GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(Model));
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            throw new NotImplementedException();
         }
     }
 }
