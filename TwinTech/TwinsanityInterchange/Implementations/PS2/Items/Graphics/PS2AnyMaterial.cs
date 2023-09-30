@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -21,12 +22,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public override int GetLength()
         {
-            Int32 shaderLength = 0;
-            foreach (ITwinSerializable shader in Shaders)
-            {
-                shaderLength += shader.GetLength();
-            }
-            return 20 + Name.Length + shaderLength;
+            return 20 + Name.Length + Shaders.Sum(s => s.GetLength());
         }
 
         public override void Read(BinaryReader reader, int length)
@@ -39,7 +35,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             Shaders.Clear();
             for (int i = 0; i < shaderCount; ++i)
             {
-                TwinShader shader = new TwinShader();
+                TwinShader shader = new();
                 shader.Read(reader, 0);
                 Shaders.Add(shader);
             }

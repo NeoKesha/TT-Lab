@@ -4,7 +4,6 @@ using TT_Lab.AssetData.Code;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Code;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
-using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {

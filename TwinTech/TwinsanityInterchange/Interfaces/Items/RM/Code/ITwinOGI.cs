@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
@@ -16,7 +16,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
             HAS_BLEND_SKIN = 7,
             COLLISIONS_AMOUNT = 8,
         }
-     
+
         List<TwinJoint> Joints { get; set; }
         List<TwinExitPoint> ExitPoints { get; set; }
         Vector4[] BoundingBox { get; set; }

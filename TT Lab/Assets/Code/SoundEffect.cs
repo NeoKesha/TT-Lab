@@ -1,7 +1,6 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code

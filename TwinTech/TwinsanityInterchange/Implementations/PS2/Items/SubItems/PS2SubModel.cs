@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems

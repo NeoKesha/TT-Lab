@@ -514,7 +514,7 @@ namespace TT_Lab.Project
             AssetManager.AddAllAssets(assets);
             // Add any additional assets that are stored internally and generate additional URIs that AssetManager needs to know about
             foreach (var uri in codeModelsFolder.GetData().To<FolderData>().Children)
-            { 
+            {
                 var cm = AssetManager.GetAsset<BehaviourCommandsSequence>(uri);
                 foreach (var sequence in cm.BehaviourGraphLinks)
                 {

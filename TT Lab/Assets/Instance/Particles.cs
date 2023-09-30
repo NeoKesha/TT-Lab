@@ -2,7 +2,6 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace TT_Lab.Assets.Instance

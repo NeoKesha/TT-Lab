@@ -1,5 +1,4 @@
-﻿using static Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics.PS2AnyTexture;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Twinsanity.TwinsanityInterchange.Common;
 
@@ -15,16 +14,16 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
         TexturePixelFormat TextureFormat { get; set; }
         TexturePixelFormat DestinationTextureFormat { get; set; }
         TextureColorComponent ColorComponent { get; set; }
-        Byte UnkByte  { get; set; }
-        TextureFunction TexFun  { get; set; }
-        Byte[] UnkBytes1  { get; set; }
+        Byte UnkByte { get; set; }
+        TextureFunction TexFun { get; set; }
+        Byte[] UnkBytes1 { get; set; }
         Int32 TextureBasePointer { get; set; }
         Int32[] MipLevelsTBP { get; set; }
         Int32 TextureBufferWidth { get; set; }
         Int32[] MipLevelsTBW { get; set; }
         Int32 ClutBufferBasePointer { get; set; }
-        Byte[] UnkBytes2  { get; set; }
-        Byte[] UnkBytes3  { get; set; }
+        Byte[] UnkBytes2 { get; set; }
+        Byte[] UnkBytes3 { get; set; }
         Byte[] UnusedMetadata { get; set; }
         Byte[] TextureData { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿using System;
-using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
 {

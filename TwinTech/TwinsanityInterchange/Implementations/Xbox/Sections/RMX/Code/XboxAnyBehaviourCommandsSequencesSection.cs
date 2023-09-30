@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Sections.RMX.Code
 {
-    public class XboxAnyBehaviourCommandsSequencesSection
+    public class XboxAnyBehaviourCommandsSequencesSection : BaseTwinSection
     {
+        public XboxAnyBehaviourCommandsSequencesSection() : base()
+        {
+            defaultType = typeof(TwinBehaviourCommandsSequence);
+        }
     }
 }

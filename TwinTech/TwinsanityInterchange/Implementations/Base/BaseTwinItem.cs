@@ -1,5 +1,4 @@
-﻿using SharpHash.Base;
-using System;
+﻿using System;
 using System.IO;
 using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces;

@@ -4,14 +4,12 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Command;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
-using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
 
 namespace TT_Lab.Editors.Graphics

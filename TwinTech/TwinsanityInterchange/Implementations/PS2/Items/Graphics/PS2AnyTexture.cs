@@ -22,16 +22,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public ITwinTexture.TexturePixelFormat TextureFormat { get; set; }
         public ITwinTexture.TexturePixelFormat DestinationTextureFormat { get; set; }
         public ITwinTexture.TextureColorComponent ColorComponent { get; set; }
-        public Byte UnkByte  { get; set; }
-        public ITwinTexture.TextureFunction TexFun  { get; set; }
-        public Byte[] UnkBytes1  { get; set; }
+        public Byte UnkByte { get; set; }
+        public ITwinTexture.TextureFunction TexFun { get; set; }
+        public Byte[] UnkBytes1 { get; set; }
         public Int32 TextureBasePointer { get; set; }
         public Int32[] MipLevelsTBP { get; set; }
         public Int32 TextureBufferWidth { get; set; }
         public Int32[] MipLevelsTBW { get; set; }
         public Int32 ClutBufferBasePointer { get; set; }
-        public Byte[] UnkBytes2  { get; set; }
-        public Byte[] UnkBytes3  { get; set; }
+        public Byte[] UnkBytes2 { get; set; }
+        public Byte[] UnkBytes3 { get; set; }
         public Byte[] UnusedMetadata { get; set; }
         public Byte[] TextureData { get; set; }
 
@@ -331,7 +331,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 TextureData = stream.ToArray();
             }
         }
-        
+
         public override String GetName()
         {
             return $"Texture {id:X}";

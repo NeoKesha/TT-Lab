@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Sections.RMX.Code
 {
-    public class XboxAnyGameObjectsSection
+    public class XboxAnyGameObjectsSection : BaseTwinSection
     {
+        public XboxAnyGameObjectsSection() : base()
+        {
+            defaultType = typeof(XboxAnyObject);
+        }
     }
 }

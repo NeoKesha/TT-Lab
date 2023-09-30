@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System;
-using Twinsanity.TwinsanityInterchange.Common.Collision;
+﻿using System;
+using System.Collections.Generic;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Collision;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM
 {
