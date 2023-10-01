@@ -15,7 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public Byte[] UnusedBlob { get; set; }
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
-        public List<Color> Colors { get; set; }
+        public List<Vector4> Colors { get; set; }
         public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Normals { get; set; }
         public List<bool> Connection { get; set; }
@@ -54,7 +54,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             UVW = new List<Vector4>();
             EmitColor = new List<Vector4>();
             Normals = new List<Vector4>();
-            Colors = new List<Color>();
+            Colors = new List<Vector4>();
             Connection = new List<bool>();
             var index = 0;
             for (var i = 0; i < data.Count;)
@@ -102,7 +102,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         var a = (e.GetBinaryW() & 0xFF) << 1;
 
                         Color col = new Color((byte)r, (byte)g, (byte)b, (byte)a);
-                        Colors.Add(col);
+                        Colors.Add(Vector4.FromColor(col));
 
                         Vector4 uv = new Vector4(e);
                         uv.SetBinaryX(uv.GetBinaryX() & 0xFFFFFF00);
@@ -138,6 +138,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 i += fields + 2;
                 TrimList(UVW, Vertexes.Count);
                 TrimList(EmitColor, Vertexes.Count);
+                TrimList(Colors, Vertexes.Count);
                 TrimList(Normals, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
@@ -149,14 +150,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             TrimList(UVW, (Int32)VertexesCount);
             TrimList(EmitColor, (Int32)VertexesCount);
             TrimList(Normals, (Int32)VertexesCount, new Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+            TrimList(Colors, (Int32)VertexesCount, new Vector4());
             var data = new List<List<Vector4>>();
             data.Add(new List<Vector4>() { unkVec1 });
             data.Add(new List<Vector4>() { unkVec2 });
             data.Add(Vertexes);
             data.Add(UVW);
-            data.Add(EmitColor);
             data.Add(Normals);
-            data.Add(Colors.ConvertAll(Vector4.FromColor));
+            data.Add(EmitColor);
+            data.Add(Colors);
             //TODO: Pack data to VIF
             writer.Write(VertexesCount);
             writer.Write(VertexData.Length);

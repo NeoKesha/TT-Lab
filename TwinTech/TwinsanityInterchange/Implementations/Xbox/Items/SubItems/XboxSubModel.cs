@@ -12,7 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
 
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
-        public List<Color> Colors { get; set; }
+        public List<Vector4> Colors { get; set; }
         public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Normals { get; set; }
         public List<Boolean> Connection { get; set; }
@@ -53,9 +53,28 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
                     W = 1.0f
                 });
                 var packedNormal = reader.ReadUInt32();
-                var nx = (Int32)(packedNormal & 0xFFF);
-                var ny = (Int32)(packedNormal >> 11 & 0xFFF);
-                var nz = (Int32)(packedNormal >> 22 & 0x7FF);
+                var nx = ((Int32)packedNormal & 0x7FF);
+                var ny = ((Int32)packedNormal >> 11 & 0x7FF);
+                var nz = ((Int32)packedNormal >> 22 & 0x3FF);
+                // Because the actual ints should be packed in bits, explicitly check the sign bit
+                if ((nx >> 10) == 1)
+                {
+                    int mask = 1 << 10;
+                    nx &= ~mask;
+                    nx = -nx;
+                }
+                if ((ny >> 10) == 1)
+                {
+                    int mask = 1 << 10;
+                    ny &= ~mask;
+                    ny = -ny;
+                }
+                if ((nz >> 9) == 1)
+                {
+                    int mask = 1 << 9;
+                    nz &= ~mask;
+                    nz = -nz;
+                }
                 Normals.Add(new Vector4
                 {
                     X = PackedIntToFloat(nx, 1023f, 1024f),
@@ -65,7 +84,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
                 });
                 var color = new Color();
                 color.Read(reader, 4);
-                Colors.Add(color);
+                Colors.Add(Vector4.FromColor(color));
                 EmitColor.Add(new Vector4());
                 UVW.Add(new Vector4
                 {
@@ -96,7 +115,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
                 var nx = FloatToPackedInt(Normals[i].X, 1023, 1024);
                 var ny = FloatToPackedInt(Normals[i].Y, 1023, 1024);
                 var nz = FloatToPackedInt(Normals[i].Z, 511, 512);
-                var packedNormal = (UInt32)((nz & 0x7FF << 22) | (ny & 0xFFF << 11) | (nx & 0xFFF));
+                var packedNormal = (UInt32)(((UInt32)nz & 0x3FF << 22) | ((UInt32)ny & 0x7FF << 11) | ((UInt32)nx & 0x7FF));
                 writer.Write(packedNormal);
                 Colors[i].Write(writer);
                 writer.Write(UVW[i].X);
@@ -105,7 +124,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             writer.Write(0U);
         }
 
-        private float PackedIntToFloat(Int32 value, Single posFactor, Single negFactor)
+        private Single PackedIntToFloat(Int32 value, Single posFactor, Single negFactor)
         {
             if (value >= 0)
             {

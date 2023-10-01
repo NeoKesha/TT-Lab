@@ -115,8 +115,7 @@ namespace TT_Lab.AssetData.Graphics
             ITwinModel model = GetTwinItem<ITwinModel>();
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
-            var refIndex = 0;
-            var offset = 0;
+            Int32 refIndex;
             foreach (var e in model.SubModels)
             {
                 var vertList = new List<Vertex>();
@@ -129,7 +128,7 @@ namespace TT_Lab.AssetData.Graphics
                     {
                         if (e.Connection[j + 2])
                         {
-                            if ((/*offset +*/ j) % 2 == 0)
+                            if (j % 2 == 0)
                             {
                                 faceList.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
                             }
@@ -140,7 +139,7 @@ namespace TT_Lab.AssetData.Graphics
                         }
                         ++refIndex;
                     }
-                    var ver = new Vertex(e.Vertexes[j], new Vector4(1.0f, 1.0f, 1.0f, 1.0f), e.UVW[j], e.EmitColor[j])
+                    var ver = new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j])
                     {
                         Normal = new Vector4(e.Normals[j].X, e.Normals[j].Y, e.Normals[j].Z, e.Normals[j].W)
                     };
