@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -47,11 +48,26 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public Vector4 Multiply(float value)
         {
-            var resVec = new Vector4();
-            resVec.X = X * value;
-            resVec.Y = Y * value;
-            resVec.Z = Z * value;
-            resVec.W = W * value;
+            var resVec = new Vector4
+            {
+                X = X * value,
+                Y = Y * value,
+                Z = Z * value,
+                W = W * value
+            };
+            return resVec;
+        }
+
+        public Vector4 Divide(float value)
+        {
+            Debug.Assert(Math.Abs(value) > 0.000001f, "Division value can't be 0");
+            var resVec = new Vector4()
+            {
+                X = X / value,
+                Y = Y / value,
+                Z = Z / value,
+                W = W / value
+            };
             return resVec;
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Twinsanity.PS2Hardware
@@ -9,10 +10,12 @@ namespace Twinsanity.PS2Hardware
         public VIFCodeEnum OP { get; set; }
         public Byte Amount { get; set; }
         public UInt16 Immediate { get; set; }
+
         public void Read(BinaryReader reader)
         {
             SetVIF(reader.ReadUInt32());
         }
+
         public void Write(BinaryWriter writer)
         {
             writer.Write(GetVIF());
@@ -24,8 +27,9 @@ namespace Twinsanity.PS2Hardware
             Amount = (Byte)((cmd & 0x00FF0000) >> 16);
             Immediate = (UInt16)((cmd & 0x0000FFFF) >> 0);
             OP = (VIFCodeEnum)(CMD & 0b01111111);
-            Interrupt = ((CMD & 0b10000000) != 0) ? true : false;
+            Interrupt = ((CMD & 0b10000000) != 0);
         }
+
         public UInt32 GetVIF()
         {
             Byte CMD = (Byte)OP;
@@ -35,9 +39,50 @@ namespace Twinsanity.PS2Hardware
             }
             return (UInt32)CMD << 24 | (UInt32)Amount << 16 | (UInt32)Immediate << 0;
         }
-        public bool isUnpack()
+
+        public bool IsUnpack()
         {
             return (OP & VIFCodeEnum.UNPACK) == VIFCodeEnum.UNPACK;
+        }
+
+        public UInt32 GetLength()
+        {
+            UInt32 packet_length;
+            if (IsUnpack())
+            {
+                Byte cmd = (Byte)OP;
+                Byte vn = (Byte)((cmd & 0b1100) >> 2);
+                Byte vl = (Byte)((cmd & 0b0011) >> 0);
+                Byte amount = Amount;
+                UInt32 dimensions = (UInt32)(vn + 1);
+
+                // Twinsanity always uses non filling mode so we don't need to know the state of the VIF and know which mode we are in
+                UInt32 a = (UInt32)(32 >> vl);
+                UInt32 b = dimensions;
+                Single c = (Single)(a * b * amount);
+                Single d = c / 32.0f;
+                Single e = (Single)Math.Ceiling(d);
+                UInt32 f = (UInt32)e;
+                packet_length = (1 + f) * 4;
+            }
+            else
+            {
+                packet_length = OP switch
+                {
+                    VIFCodeEnum.STMASK => 8,
+                    VIFCodeEnum.STROW or VIFCodeEnum.STCOL => 20,
+                    _ => 4,
+                };
+            }
+
+            return packet_length;
+        }
+
+        public void SetUnpackFormat(PackFormat format)
+        {
+            Debug.Assert(IsUnpack(), "Can not set unpack format for OP that isn't UNPACK");
+            var newOp = (UInt32)OP | (UInt32)format;
+            OP = (VIFCodeEnum)newOp;
         }
     }
     public enum VIFCodeEnum

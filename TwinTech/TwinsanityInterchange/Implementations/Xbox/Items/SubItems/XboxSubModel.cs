@@ -20,6 +20,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         public void CalculateData()
         {
             // Data needs no decompression as it is already presented decompressed on read
+            // TODO: Figure out the indexing
         }
 
         public Int32 GetLength()

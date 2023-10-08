@@ -41,9 +41,21 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         }
         public Vector3 Position { get; set; }
         public Vector4 Color { get; set; }
-        public Vector4 Normal { get; set; }
+        public Vector4 Normal
+        {
+            get => _normal;
+            set
+            {
+                _normal = value;
+                HasNormals = true;
+            }
+        }
         public Vector4 EmitColor { get; set; }
         public Vector3 UV { get; set; }
+
+        public bool HasNormals { get; private set; }
+
+        private Vector4 _normal;
 
         public override String ToString()
         {

@@ -55,6 +55,10 @@ namespace TT_Lab.AssetData.Graphics
                         mesh.Vertices.Add(new Vector3D(ver.Position.X, ver.Position.Y, ver.Position.Z));
                         mesh.TextureCoordinateChannels[0].Add(new Vector3D(ver.UV.X, ver.UV.Y, 1.0f));
                         mesh.VertexColorChannels[0].Add(new Color4D(ver.Color.X, ver.Color.Y, ver.Color.Z, ver.Color.W));
+                        if (ver.HasNormals)
+                        {
+                            mesh.Normals.Add(new Vector3D(ver.Normal.X, ver.Normal.Y, ver.Normal.Z));
+                        }
                     }
                     foreach (var face in faces)
                     {
@@ -85,18 +89,23 @@ namespace TT_Lab.AssetData.Graphics
         {
             Vertexes.Clear();
             Faces.Clear();
-            AssimpContext context = new AssimpContext();
+            AssimpContext context = new();
             var scene = context.ImportFile(dataPath);
             foreach (var mesh in scene.Meshes)
             {
                 var submodel = new List<Vertex>();
                 for (var i = 0; i < mesh.VertexCount; ++i)
                 {
-                    submodel.Add(new Vertex(
+                    var ver = new Vertex(
                         new Vector4(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z, 0.0f),
                         new Vector4(mesh.VertexColorChannels[0][i].R, mesh.VertexColorChannels[0][i].G, mesh.VertexColorChannels[0][i].B, mesh.VertexColorChannels[0][i].A),
                         new Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, 1.0f, 0.0f)
-                        ));
+                    );
+                    if (mesh.Normals.Count == mesh.Vertices.Count)
+                    {
+                        ver.Normal = new Vector4(mesh.Normals[i].X, mesh.Normals[i].Y, mesh.Normals[i].Z, 1.0f);
+                    }
+                    submodel.Add(ver);
                 }
 
                 var faces = new List<IndexedFace>();
@@ -139,15 +148,19 @@ namespace TT_Lab.AssetData.Graphics
                         }
                         ++refIndex;
                     }
-                    var ver = new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j], e.EmitColor[j])
+                    var ver = new Vertex(e.Vertexes[j], e.Colors[j], e.UVW[j]);
+                    if (e.EmitColor.Count == e.Vertexes.Count)
                     {
-                        Normal = new Vector4(e.Normals[j].X, e.Normals[j].Y, e.Normals[j].Z, e.Normals[j].W)
-                    };
+                        ver.EmitColor = new Vector4(e.EmitColor[j].X, e.EmitColor[j].Y, e.EmitColor[j].Z, e.EmitColor[j].W);
+                    }
+                    if (e.Normals.Count == e.Vertexes.Count)
+                    {
+                        ver.Normal = new Vector4(e.Normals[j].X, e.Normals[j].Y, e.Normals[j].Z, e.Normals[j].W);
+                    }
                     vertList.Add(ver);
                 }
                 Vertexes.Add(vertList);
                 Faces.Add(faceList);
-                //offset += e.Vertexes.Count;
                 refIndex += 2;
             }
         }

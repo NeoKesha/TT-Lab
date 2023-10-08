@@ -31,35 +31,26 @@ namespace Twinsanity.PS2Hardware
         // Wrapper function for generating Interpreter instances
         public static VIFInterpreter InterpretCode(BinaryReader reader)
         {
-            DMATag tag = new DMATag();
+            DMATag tag = new();
             tag.Read(reader);
-            using (var mem = new MemoryStream())
-            using (var writer = new BinaryWriter(mem))
-            {
-                // Transfer tag's extra data and its QWC data to VIF
-                writer.Write(tag.Extra);
-                writer.Write(reader.ReadBytes(tag.QWC * 0x10));
-                mem.Position = 0;
-                using (var vifReader = new BinaryReader(mem))
-                {
-                    var vifCode = new VIFInterpreter();
-                    vifCode.Execute(vifReader);
-                    return vifCode;
-                }
-            }
+            using var mem = new MemoryStream();
+            using var writer = new BinaryWriter(mem);
+            // Transfer tag's extra data and its QWC data to VIF
+            writer.Write(tag.Extra);
+            writer.Write(reader.ReadBytes(tag.QWC * 0x10));
+            mem.Position = 0;
+            using var vifReader = new BinaryReader(mem);
+            var vifCode = new VIFInterpreter();
+            vifCode.Execute(vifReader);
+            return vifCode;
         }
 
         // Wrapper function for generating Interpreter instances using pure bytecode
         public static VIFInterpreter InterpretCode(Byte[] code)
         {
-            using (MemoryStream codeStr = new MemoryStream(code))
-            {
-                using (BinaryReader codeReader = new BinaryReader(codeStr))
-                {
-                    return InterpretCode(codeReader);
-                }
-            }
-
+            using MemoryStream codeStr = new(code);
+            using BinaryReader codeReader = new(codeStr);
+            return InterpretCode(codeReader);
         }
 
         public List<List<Vector4>> GetMem()
@@ -86,9 +77,9 @@ namespace Twinsanity.PS2Hardware
         {
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
-                VIFCode vif = new VIFCode();
+                VIFCode vif = new();
                 vif.Read(reader);
-                if (vif.isUnpack())
+                if (vif.IsUnpack())
                 {
                     Byte cmd = (Byte)vif.OP;
                     Byte vn = (Byte)((cmd & 0b1100) >> 2);
@@ -103,8 +94,8 @@ namespace Twinsanity.PS2Hardware
                     UInt32 dimensions = (UInt32)(vn + 1);
                     UInt32 packet_length = 0;
                     Boolean fill = WL > CL;
-                    Console.WriteLine($"Total cycle specifier {CL}");
-                    Console.WriteLine($"Write cycle specifier {WL}");
+                    Console.WriteLine($"Total per cycle {CL}");
+                    Console.WriteLine($"Write per cycle {WL}");
                     if (!fill)
                     {
                         UInt32 a = (UInt32)(32 >> vl);
@@ -217,7 +208,7 @@ namespace Twinsanity.PS2Hardware
                             int len = 0;
                             do
                             {
-                                GIFTag tag = new GIFTag();
+                                GIFTag tag = new();
                                 tag.Read(reader);
                                 GifBuffer.Add(tag);
                                 flag = tag.EOP != 1;
@@ -243,7 +234,7 @@ namespace Twinsanity.PS2Hardware
             n = ((n & 0x80) != 0) ? n | 0xFFFFFF00 : n;
         }
 
-        private void Unpack(List<UInt32> src, List<Vector4> dst, PackFormat fmt, Byte amount, Byte unsigned, Boolean fill, Byte write, Byte cycle, UInt16 addr)
+        public void Unpack(List<UInt32> src, List<Vector4> dst, PackFormat fmt, Byte amount, Byte unsigned, Boolean fill, Byte write, Byte cycle, UInt16 addr)
         {
             var srcIdx = 0;
             switch (fmt)
@@ -558,7 +549,7 @@ namespace Twinsanity.PS2Hardware
             }
         }
 
-        private void Pack(List<Vector4> src, List<UInt32> dst, PackFormat fmt)
+        public void Pack(List<Vector4> src, List<UInt32> dst, PackFormat fmt)
         {
             UInt32 resUInt = 0;
             switch (fmt)
