@@ -266,11 +266,11 @@ namespace Twinsanity.PS2Hardware
                                 // Undo the reversing of UV
                                 uv.Y = 1 - uv.Y;
                                 var compiledVector = new Vector4();
-                                compiledVector.SetBinaryX(uv.GetBinaryX() | color.R);
-                                compiledVector.SetBinaryY(uv.GetBinaryY() | color.G);
+                                compiledVector.SetBinaryX((uv.GetBinaryX() & 0xFFFFFF00) | color.R);
+                                compiledVector.SetBinaryY((uv.GetBinaryY() & 0xFFFFFF00) | color.G);
                                 // Redo it back to make sure we are not modifying the input vector
                                 uv.Y = 1 - uv.Y;
-                                compiledVector.SetBinaryZ(uv.GetBinaryZ() | color.B);
+                                compiledVector.SetBinaryZ((uv.GetBinaryZ() & 0xFFFFFF00) | color.B);
                                 compiledVector.SetBinaryW(color.A | (UInt32)(conns[connIndex++] ? 0x0 : 0x8000));
                                 resultBatch.Add(compiledVector);
                             }

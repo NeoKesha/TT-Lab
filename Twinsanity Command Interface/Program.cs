@@ -111,6 +111,12 @@ namespace Twinsanity_Command_Interface
 
         static void Main(string[] args)
         {
+            if (args.Length != 1)
+            {
+                Console.WriteLine("Must provide a path to the model in the format of FBX. Other formats like OBJ and GLTF aren't tested but could work.");
+                Console.WriteLine("Usage: TwinsanityCommandInterface.exe \"C:/Models/TestModel.fbx");
+                return;
+            }
             String modelPath = args[0];
             var assimp = new AssimpContext();
             var scene = assimp.ImportFile(modelPath);
@@ -178,13 +184,11 @@ namespace Twinsanity_Command_Interface
                     submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
                     submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
                     submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
-              
-                    ++i;  
-                    // What do?
-
                     submodel.Connection.Add(false);
                     submodel.Connection.Add(false);
                     submodel.Connection.Add(true);
+
+                    ++i;
                 }
                 model.SubModels.Add(submodel);
             }
