@@ -549,7 +549,7 @@ namespace Twinsanity.PS2Hardware
 
             // Create new batch
             swizzledVectorBatches = new();
-            for (Int32 i = 0; i < swizzleCount - 1; i++)
+            for (Int32 i = 0; i < swizzleCount; i++)
             {
                 // Create new list for the batch
                 swizzledVectorBatches.Add(new());
@@ -567,8 +567,8 @@ namespace Twinsanity.PS2Hardware
                     {
                         swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
                     }
-                    vertexIndex++;
                 }
+                vertexIndex += swizzleAmount;
             }
 
             // Fill the leftover batch
@@ -589,7 +589,6 @@ namespace Twinsanity.PS2Hardware
                 {
                     swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
                 }
-                vertexIndex++;
             }
         }
     }
