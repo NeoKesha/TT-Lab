@@ -75,7 +75,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             {
                 Vertices.Select(v => v.GetVector4()).ToList()
             };
-            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelType.BlendFace, data, null);
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendFace, data, null);
             faceData = compiler.Compile();
 
             writer.Write(faceData.Length << 4);

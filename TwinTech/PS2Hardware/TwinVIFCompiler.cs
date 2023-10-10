@@ -12,24 +12,26 @@ namespace Twinsanity.PS2Hardware
 {
     using SwizzledVectorData = List<List<List<Vector4>>>;
 
-
+    /// <summary>
+    /// Provides interface for compiling vector data into VIF instructions specifically for Twinsanity's 3d model formats
+    /// </summary>
     public class TwinVIFCompiler
     {
 
-        private readonly ModelType type;
+        private readonly ModelFormat format;
         private readonly List<List<Vector4>> vectorData;
         private readonly List<bool> conns;
         private SwizzledVectorData swizzledVectorBatches;
-        private readonly Dictionary<ModelType, List<UInt16>> outputAddressMap = new()
+        private readonly Dictionary<ModelFormat, List<UInt16>> outputAddressMap = new()
         {
             {
-                ModelType.Model, new List<UInt16> { 0, 1, 3, 4, 5, 6 }
+                ModelFormat.Model, new List<UInt16> { 0, 1, 3, 4, 5, 6 }
             },
             {
-                ModelType.Skin, new List<UInt16> { 0, 1, 2, 3, 4, 6, 5 }
+                ModelFormat.Skin, new List<UInt16> { 0, 1, 2, 3, 4, 6, 5 }
             },
             {
-                ModelType.BlendSkin, new List<UInt16> { 0, 1, 2, 3, 4, 6, 5 }
+                ModelFormat.BlendSkin, new List<UInt16> { 0, 1, 2, 3, 4, 6, 5 }
             }
         };
 
@@ -43,7 +45,7 @@ namespace Twinsanity.PS2Hardware
             JointInfo
         }
 
-        public enum ModelType
+        public enum ModelFormat
         {
             Model,
             Skin,
@@ -51,9 +53,9 @@ namespace Twinsanity.PS2Hardware
             BlendFace
         }
 
-        public TwinVIFCompiler(ModelType type, List<List<Vector4>> data, List<bool> conns)
+        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<bool> conns)
         {
-            this.type = type;
+            this.format = format;
             this.vectorData = data;
             this.conns = conns;
         }
@@ -65,7 +67,7 @@ namespace Twinsanity.PS2Hardware
             using var writer = new BinaryWriter(ms);
 
             // Blend faces are special in that they are pure packed vector data
-            if (type == ModelType.BlendFace)
+            if (format == ModelFormat.BlendFace)
             {
                 var packedFaceData = new List<UInt32>();
                 interpreter.Pack(vectorData[0], packedFaceData, PackFormat.V4_8);
@@ -94,15 +96,14 @@ namespace Twinsanity.PS2Hardware
             var dmaTagPosition = writer.BaseStream.Position; // Return at the end to rewrite the amount of QWC in DMA tag
             dmaTag.Write(writer);
 
-            // After MASK comes a NOP operation for alignment
+            // NOP for later operations for alignment
             VIFCode nop = new()
             {
                 OP = VIFCodeEnum.NOP
             };
-            nop.Write(writer);
 
             // Swizzle the vector data and go over every batch compiling it into its needed format
-            var totalSpaceNeeded = nop.GetLength();
+            var totalSpaceNeeded = 0U;
             var connIndex = 0;
             SwizzleVectorData();
             for (Int32 i = 0; i < swizzledVectorBatches.Count; i++)
@@ -113,7 +114,7 @@ namespace Twinsanity.PS2Hardware
                 VIFCode modelDescriptorCode = new()
                 {
                     OP = VIFCodeEnum.UNPACK,
-                    Immediate = outputAddressMap[type][outAddressIndex++],
+                    Immediate = outputAddressMap[format][outAddressIndex++],
                     Amount = 1
                 };
                 modelDescriptorCode.SetUnpackFormat(PackFormat.V4_32);
@@ -149,7 +150,7 @@ namespace Twinsanity.PS2Hardware
                 VIFCode metaVectorCode = new()
                 {
                     OP = VIFCodeEnum.UNPACK,
-                    Immediate = outputAddressMap[type][outAddressIndex++],
+                    Immediate = outputAddressMap[format][outAddressIndex++],
                     Amount = 1
                 };
                 metaVectorCode.SetUnpackFormat(PackFormat.V2_32);
@@ -174,12 +175,12 @@ namespace Twinsanity.PS2Hardware
                 scaleVector.SetBinaryY(0x3A000000);
 
                 // For skins and blend skins a special scaling vector comes in
-                if (type == ModelType.Skin || type == ModelType.BlendSkin)
+                if (format == ModelFormat.Skin || format == ModelFormat.BlendSkin)
                 {
                     VIFCode scaleVectorCode = new()
                     {
                         OP = VIFCodeEnum.UNPACK,
-                        Immediate = outputAddressMap[type][outAddressIndex++],
+                        Immediate = outputAddressMap[format][outAddressIndex++],
                         Amount = 1
                     };
                     scaleVectorCode.SetUnpackFormat(PackFormat.V2_32);
@@ -228,10 +229,10 @@ namespace Twinsanity.PS2Hardware
                 setCycle.Write(writer);
 
                 // After comes the actual writing of vectors
-                switch (type)
+                switch (format)
                 {
                     // For models there are Vertexes, UVs + Colors + Conns, Normals(optional) and EmitColors(optional)
-                    case ModelType.Model:
+                    case ModelFormat.Model:
                         {
                             var hasNormals = vectorData.Count == 5;
                             var hasEmitColors = vectorData.Count >= 4;
@@ -240,7 +241,7 @@ namespace Twinsanity.PS2Hardware
                             VIFCode vertexCode = new()
                             {
                                 OP = VIFCodeEnum.UNPACK,
-                                Immediate = outputAddressMap[type][outAddressIndex++],
+                                Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Vertex)].Count
                             };
                             vertexCode.SetUnpackFormat(PackFormat.V3_32);
@@ -270,7 +271,7 @@ namespace Twinsanity.PS2Hardware
                                 // Redo it back to make sure we are not modifying the input vector
                                 uv.Y = 1 - uv.Y;
                                 compiledVector.SetBinaryZ(uv.GetBinaryZ() | color.B);
-                                compiledVector.SetBinaryW(color.A | (UInt32)(conns[connIndex++] ? 0x8000 : 0x0));
+                                compiledVector.SetBinaryW(color.A | (UInt32)(conns[connIndex++] ? 0x0 : 0x8000));
                                 resultBatch.Add(compiledVector);
                             }
 
@@ -278,7 +279,7 @@ namespace Twinsanity.PS2Hardware
                             VIFCode uvColorCode = new()
                             {
                                 OP = VIFCodeEnum.UNPACK,
-                                Immediate = outputAddressMap[type][outAddressIndex++],
+                                Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Uv)].Count
                             };
                             uvColorCode.SetUnpackFormat(PackFormat.V4_32);
@@ -297,7 +298,7 @@ namespace Twinsanity.PS2Hardware
                                 VIFCode normalsCode = new()
                                 {
                                     OP = VIFCodeEnum.UNPACK,
-                                    Immediate = outputAddressMap[type][outAddressIndex],
+                                    Immediate = outputAddressMap[format][outAddressIndex],
                                     Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Normal)].Count
                                 };
                                 normalsCode.SetUnpackFormat(PackFormat.V3_32);
@@ -319,7 +320,7 @@ namespace Twinsanity.PS2Hardware
                                 VIFCode emitColorsCode = new()
                                 {
                                     OP = VIFCodeEnum.UNPACK,
-                                    Immediate = outputAddressMap[type][outAddressIndex],
+                                    Immediate = outputAddressMap[format][outAddressIndex],
                                     Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)].Count
                                 };
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
@@ -337,8 +338,8 @@ namespace Twinsanity.PS2Hardware
                         }
                         break;
                     // For skins and blend skins there are Vertexes, UVs, Colors, Joint information + Conns
-                    case ModelType.Skin:
-                    case ModelType.BlendSkin:
+                    case ModelFormat.Skin:
+                    case ModelFormat.BlendSkin:
                         {
                             // Compile vertexes and UVs
                             var compiledPositions = new List<Vector4>(vectorBatch[GetBatchIndex(VectorBatchIndex.Vertex)].Count);
@@ -365,7 +366,7 @@ namespace Twinsanity.PS2Hardware
                             VIFCode vertexCode = new()
                             {
                                 OP = VIFCodeEnum.UNPACK,
-                                Immediate = outputAddressMap[type][outAddressIndex++],
+                                Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Vertex)].Count
                             };
                             vertexCode.SetUnpackFormat(PackFormat.V4_16);
@@ -395,7 +396,7 @@ namespace Twinsanity.PS2Hardware
                             VIFCode uvCode = new()
                             {
                                 OP = VIFCodeEnum.UNPACK,
-                                Immediate = outputAddressMap[type][outAddressIndex++],
+                                Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Uv)].Count
                             };
                             uvCode.SetUnpackFormat(PackFormat.V4_16);
@@ -438,7 +439,7 @@ namespace Twinsanity.PS2Hardware
                             VIFCode colorCode = new()
                             {
                                 OP = VIFCodeEnum.UNPACK,
-                                Immediate = outputAddressMap[type][outAddressIndex++],
+                                Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Color)].Count
                             };
                             colorCode.SetUnpackFormat(PackFormat.V4_8);
@@ -455,7 +456,7 @@ namespace Twinsanity.PS2Hardware
                             VIFCode jointCode = new()
                             {
                                 OP = VIFCodeEnum.UNPACK,
-                                Immediate = outputAddressMap[type][outAddressIndex++],
+                                Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.JointInfo)].Count
                             };
                             jointCode.SetUnpackFormat(PackFormat.V4_32);
@@ -498,11 +499,17 @@ namespace Twinsanity.PS2Hardware
             }
 
             // As a cherry on top tell DMA tag how many QWCs we are gonna transfer
-            dmaTag.QWC = (UInt16)(totalSpaceNeeded / 0x10);
+            /*dmaTag.QWC = (UInt16)(totalSpaceNeeded / 0x10);
             writer.BaseStream.Position = dmaTagPosition;
-            dmaTag.Write(writer);
+            dmaTag.Write(writer);*/
 
             // Finally flush all the operations and return the byte code compiled model
+            writer.Flush();
+            ms.Flush();
+            var result = ms.ToArray();
+            dmaTag.QWC = (UInt16)(result.Length / 0x10 - 1);
+            writer.BaseStream.Position = dmaTagPosition;
+            dmaTag.Write(writer);
             writer.Flush();
             ms.Flush();
             return ms.ToArray();
@@ -510,14 +517,14 @@ namespace Twinsanity.PS2Hardware
 
         private Int32 GetBatchIndex(VectorBatchIndex index)
         {
-            return type switch
+            return format switch
             {
-                ModelType.Model => index switch
+                ModelFormat.Model => index switch
                 {
                     VectorBatchIndex.JointInfo => throw new NotImplementedException(),
                     _ => (Int32)index
                 },
-                ModelType.Skin or ModelType.BlendSkin => index switch
+                ModelFormat.Skin or ModelFormat.BlendSkin => index switch
                 {
                     VectorBatchIndex.Vertex => (Int32)index,
                     VectorBatchIndex.Color => 2,
@@ -538,10 +545,11 @@ namespace Twinsanity.PS2Hardware
             var vertexIndex = 0;
             var leftOver = vertexAmount % swizzleAmount;
             var swizzleCount = vertexAmount / swizzleAmount;
+            Debug.Assert(swizzleCount * swizzleAmount + leftOver == vertexAmount, "Didn't properly calculate the proper amount of batches");
 
             // Create new batch
             swizzledVectorBatches = new();
-            for (Int32 i = 0; i < swizzleCount; i++)
+            for (Int32 i = 0; i < swizzleCount - 1; i++)
             {
                 // Create new list for the batch
                 swizzledVectorBatches.Add(new());
@@ -564,26 +572,24 @@ namespace Twinsanity.PS2Hardware
             }
 
             // Fill the leftover batch
-            for (Int32 i = 0; i < leftOver; ++i)
+
+            // Create new list for the batch
+            swizzledVectorBatches.Add(new());
+
+            // Create new list for each type of vertex data
+            for (Int32 j = 0; j < vectorData.Count; j++)
             {
-                // Create new list for the batch
-                swizzledVectorBatches.Add(new());
+                swizzledVectorBatches[^1].Add(new());
+            }
 
-                // Create new list for each type of vertex data
-                for (Int32 j = 0; j < vectorData.Count; j++)
+            // Fill the batch with each vertex type
+            for (Int32 j = 0; j < leftOver; j++)
+            {
+                for (Int32 k = 0; k < vectorData.Count; k++)
                 {
-                    swizzledVectorBatches[^1].Add(new());
+                    swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
                 }
-
-                // Fill the batch with each vertex type
-                for (Int32 j = 0; j < swizzleAmount; j++)
-                {
-                    for (Int32 k = 0; k < vectorData.Count; k++)
-                    {
-                        swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
-                    }
-                    vertexIndex++;
-                }
+                vertexIndex++;
             }
         }
     }

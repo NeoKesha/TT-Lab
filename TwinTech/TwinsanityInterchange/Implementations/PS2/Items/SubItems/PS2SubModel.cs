@@ -163,7 +163,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             {
                 data.Add(EmitColor);
             }
-            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelType.Model, data, Connection);
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Model, data, Connection);
             VertexData = compiler.Compile();
 
             writer.Write(VertexesCount);

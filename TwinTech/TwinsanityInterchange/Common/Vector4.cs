@@ -26,6 +26,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
             this.Z = Z;
             this.W = W;
         }
+
+        public Vector4(Vector3 pos, float W)
+        {
+            this.X = pos.X;
+            this.Y = pos.Y;
+            this.Z = pos.Z;
+            this.W = W;
+        }
+
         public Vector4(Vector4 other)
         {
             X = other.X;

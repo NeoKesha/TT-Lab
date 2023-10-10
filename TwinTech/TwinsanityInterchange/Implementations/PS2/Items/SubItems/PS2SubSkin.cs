@@ -141,7 +141,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 Colors,
                 SkinJoints.Select(j => j.GetVector4()).ToList()
             };
-            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelType.Skin, data, null);
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Skin, data, null);
             VifCode = compiler.Compile();
             writer.Write(Material);
             writer.Write(VifCode.Length);
