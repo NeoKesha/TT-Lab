@@ -40,6 +40,18 @@ namespace Twinsanity.PS2Hardware
             return (UInt32)CMD << 24 | (UInt32)Amount << 16 | (UInt32)Immediate << 0;
         }
 
+        public void SetUnpackAddressMode(bool set)
+        {
+            Debug.Assert(IsUnpack(), "VIF Code must be in unpack mode for this operation");
+            if (set)
+            {
+                Immediate |= (1 << 15);
+                return;
+            }
+
+            Immediate &= unchecked((UInt16)(~(1U << 15)));
+        }
+
         public bool IsUnpack()
         {
             return (OP & VIFCodeEnum.UNPACK) == VIFCodeEnum.UNPACK;

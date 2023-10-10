@@ -117,6 +117,7 @@ namespace Twinsanity.PS2Hardware
                     Immediate = outputAddressMap[format][outAddressIndex++],
                     Amount = 1
                 };
+                modelDescriptorCode.SetUnpackAddressMode(true);
                 modelDescriptorCode.SetUnpackFormat(PackFormat.V4_32);
                 modelDescriptorCode.Write(writer);
                 var packedMetaVector = new List<UInt32>();
@@ -153,6 +154,7 @@ namespace Twinsanity.PS2Hardware
                     Immediate = outputAddressMap[format][outAddressIndex++],
                     Amount = 1
                 };
+                metaVectorCode.SetUnpackAddressMode(true);
                 metaVectorCode.SetUnpackFormat(PackFormat.V2_32);
                 metaVectorCode.Write(writer);
                 packedMetaVector.Clear();
@@ -183,6 +185,7 @@ namespace Twinsanity.PS2Hardware
                         Immediate = outputAddressMap[format][outAddressIndex++],
                         Amount = 1
                     };
+                    scaleVectorCode.SetUnpackAddressMode(true);
                     scaleVectorCode.SetUnpackFormat(PackFormat.V2_32);
                     scaleVectorCode.Write(writer);
                     var packedScaleVector = new List<UInt32>();
@@ -227,6 +230,7 @@ namespace Twinsanity.PS2Hardware
                     Immediate = 0x0104
                 };
                 setCycle.Write(writer);
+                totalSpaceNeeded += setCycle.GetLength();
 
                 // After comes the actual writing of vectors
                 switch (format)
@@ -244,6 +248,7 @@ namespace Twinsanity.PS2Hardware
                                 Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Vertex)].Count
                             };
+                            vertexCode.SetUnpackAddressMode(true);
                             vertexCode.SetUnpackFormat(PackFormat.V3_32);
                             vertexCode.Write(writer);
                             var packedVertexData = new List<UInt32>();
@@ -282,6 +287,7 @@ namespace Twinsanity.PS2Hardware
                                 Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Uv)].Count
                             };
+                            uvColorCode.SetUnpackAddressMode(true);
                             uvColorCode.SetUnpackFormat(PackFormat.V4_32);
                             uvColorCode.Write(writer);
                             var packedUvColorData = new List<UInt32>();
@@ -301,6 +307,7 @@ namespace Twinsanity.PS2Hardware
                                     Immediate = outputAddressMap[format][outAddressIndex],
                                     Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Normal)].Count
                                 };
+                                normalsCode.SetUnpackAddressMode(true);
                                 normalsCode.SetUnpackFormat(PackFormat.V3_32);
                                 normalsCode.Write(writer);
                                 var packedNormals = new List<UInt32>();
@@ -323,6 +330,7 @@ namespace Twinsanity.PS2Hardware
                                     Immediate = outputAddressMap[format][outAddressIndex],
                                     Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)].Count
                                 };
+                                emitColorsCode.SetUnpackAddressMode(true);
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
@@ -369,6 +377,7 @@ namespace Twinsanity.PS2Hardware
                                 Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Vertex)].Count
                             };
+                            vertexCode.SetUnpackAddressMode(true);
                             vertexCode.SetUnpackFormat(PackFormat.V4_16);
                             vertexCode.Write(writer);
                             var packedVertexData = new List<UInt32>();
@@ -399,6 +408,7 @@ namespace Twinsanity.PS2Hardware
                                 Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Uv)].Count
                             };
+                            uvCode.SetUnpackAddressMode(true);
                             uvCode.SetUnpackFormat(PackFormat.V4_16);
                             uvCode.Write(writer);
                             var packedUvData = new List<UInt32>();
@@ -442,6 +452,7 @@ namespace Twinsanity.PS2Hardware
                                 Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.Color)].Count
                             };
+                            colorCode.SetUnpackAddressMode(true);
                             colorCode.SetUnpackFormat(PackFormat.V4_8);
                             colorCode.Write(writer);
                             var packedColorsData = new List<UInt32>();
@@ -459,6 +470,7 @@ namespace Twinsanity.PS2Hardware
                                 Immediate = outputAddressMap[format][outAddressIndex++],
                                 Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.JointInfo)].Count
                             };
+                            jointCode.SetUnpackAddressMode(true);
                             jointCode.SetUnpackFormat(PackFormat.V4_32);
                             jointCode.Write(writer);
                             var packedJointData = new List<UInt32>();
@@ -541,7 +553,7 @@ namespace Twinsanity.PS2Hardware
             var vertexAmount = vectorData[0].Count;
             Debug.Assert(vectorData.All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
             // TODO: Better swizzling heuristic
-            var swizzleAmount = 37;
+            var swizzleAmount = 28;
             var vertexIndex = 0;
             var leftOver = vertexAmount % swizzleAmount;
             var swizzleCount = vertexAmount / swizzleAmount;
@@ -573,21 +585,24 @@ namespace Twinsanity.PS2Hardware
 
             // Fill the leftover batch
 
-            // Create new list for the batch
-            swizzledVectorBatches.Add(new());
-
-            // Create new list for each type of vertex data
-            for (Int32 j = 0; j < vectorData.Count; j++)
+            if (leftOver != 0)
             {
-                swizzledVectorBatches[^1].Add(new());
-            }
+                // Create new list for the batch
+                swizzledVectorBatches.Add(new());
 
-            // Fill the batch with each vertex type
-            for (Int32 j = 0; j < leftOver; j++)
-            {
-                for (Int32 k = 0; k < vectorData.Count; k++)
+                // Create new list for each type of vertex data
+                for (Int32 j = 0; j < vectorData.Count; j++)
                 {
-                    swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
+                    swizzledVectorBatches[^1].Add(new());
+                }
+
+                // Fill the batch with each vertex type
+                for (Int32 j = 0; j < leftOver; j++)
+                {
+                    for (Int32 k = 0; k < vectorData.Count; k++)
+                    {
+                        swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
+                    }
                 }
             }
         }
