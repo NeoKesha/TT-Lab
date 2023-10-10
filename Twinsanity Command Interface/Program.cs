@@ -158,24 +158,30 @@ namespace Twinsanity_Command_Interface
                     Connection = new()
                 };
                 var vertexBatch = totalVertexes[vertexBatchIndex++];
+                var i = 0;
                 foreach (var face in faces)
                 {
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[0]].Position, 1f));
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[1]].Position, 1f));
+                    var idx0 = (i % 2 == 0) ? 0 : 1;
+                    var idx1 = (i % 2 == 0) ? 1 : 0;
+                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
+                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
                     submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[0]].UV, 0f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[1]].UV, 0f));
+                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
+                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
                     submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                    submodel.Colors.Add(vertexBatch[face.Indexes[0]].Color);
-                    submodel.Colors.Add(vertexBatch[face.Indexes[1]].Color);
+                    submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
+                    submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
                     submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                    submodel.Normals.Add(vertexBatch[face.Indexes[0]].Normal);
-                    submodel.Normals.Add(vertexBatch[face.Indexes[1]].Normal);
+                    submodel.Normals.Add(vertexBatch[face.Indexes[idx0]].Normal);
+                    submodel.Normals.Add(vertexBatch[face.Indexes[idx1]].Normal);
                     submodel.Normals.Add(vertexBatch[face.Indexes[2]].Normal);
-                    submodel.EmitColor.Add(vertexBatch[face.Indexes[0]].EmitColor);
-                    submodel.EmitColor.Add(vertexBatch[face.Indexes[1]].EmitColor);
+                    submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
+                    submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
                     submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
+              
+                    ++i;  
                     // What do?
+
                     submodel.Connection.Add(false);
                     submodel.Connection.Add(false);
                     submodel.Connection.Add(true);
