@@ -45,6 +45,8 @@ namespace Twinsanity.PS2Hardware
             JointInfo
         }
 
+        public static int VertexBatchAmount => 36;
+
         public enum ModelFormat
         {
             Model,
@@ -268,13 +270,9 @@ namespace Twinsanity.PS2Hardware
                                 var color = colors[j];
                                 color.ScaleAlphaDown();
                                 var uv = uvs[j];
-                                // Undo the reversing of UV
-                                uv.Y = 1 - uv.Y;
                                 var compiledVector = new Vector4();
                                 compiledVector.SetBinaryX((uv.GetBinaryX() & 0xFFFFFF00) | color.R);
                                 compiledVector.SetBinaryY((uv.GetBinaryY() & 0xFFFFFF00) | color.G);
-                                // Redo it back to make sure we are not modifying the input vector
-                                uv.Y = 1 - uv.Y;
                                 compiledVector.SetBinaryZ((uv.GetBinaryZ() & 0xFFFFFF00) | color.B);
                                 compiledVector.SetBinaryW(color.A | (UInt32)(conns[connIndex++] ? 0x0 : 0x8000));
                                 resultBatch.Add(compiledVector);
@@ -334,7 +332,22 @@ namespace Twinsanity.PS2Hardware
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
-                                interpreter.Pack(vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)], packedEmits, PackFormat.V4_8);
+                                var emitColors = vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)].Select(c => c.GetColor()).Select(c =>
+                                {
+                                    c.ScaleAlphaDown();
+                                    return c;
+                                }).ToList();
+                                var compiledColors = new List<Vector4>(emitColors.Count);
+                                foreach (var c in emitColors)
+                                {
+                                    var compiledColor = new Vector4();
+                                    compiledColor.SetBinaryX(c.R);
+                                    compiledColor.SetBinaryY(c.G);
+                                    compiledColor.SetBinaryZ(c.B);
+                                    compiledColor.SetBinaryW(c.A);
+                                    compiledColors.Add(compiledColor);
+                                }
+                                interpreter.Pack(compiledColors, packedEmits, PackFormat.V4_8);
                                 foreach (var emits in packedEmits)
                                 {
                                     writer.Write(emits);
@@ -553,7 +566,7 @@ namespace Twinsanity.PS2Hardware
             var vertexAmount = vectorData[0].Count;
             Debug.Assert(vectorData.All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
             // TODO: Better swizzling heuristic
-            var swizzleAmount = 28;
+            var swizzleAmount = VertexBatchAmount;
             var vertexIndex = 0;
             var leftOver = vertexAmount % swizzleAmount;
             var swizzleCount = vertexAmount / swizzleAmount;

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
@@ -134,7 +135,8 @@ namespace Twinsanity_Command_Interface
                         new Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, 1.0f, 0.0f)
                         )
                     {
-                        Normal = new Vector4(-mesh.Normals[i].X, mesh.Normals[i].Y, mesh.Normals[i].Z, 0f)
+                        Normal = new Vector4(-mesh.Normals[i].X, mesh.Normals[i].Y, mesh.Normals[i].Z, 0f),
+                        EmitColor = new Vector4(1f, 1f, 1f, 1f)
                     };
                     submodel.Add(vertex);
                 }
@@ -167,6 +169,8 @@ namespace Twinsanity_Command_Interface
                 var i = 0;
                 foreach (var face in faces)
                 {
+                    i %= TwinVIFCompiler.VertexBatchAmount;
+
                     var idx0 = (i % 2 == 0) ? 0 : 1;
                     var idx1 = (i % 2 == 0) ? 1 : 0;
                     submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
