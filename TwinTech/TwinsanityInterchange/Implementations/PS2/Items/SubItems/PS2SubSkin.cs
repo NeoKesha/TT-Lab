@@ -134,6 +134,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         }
         public void Write(BinaryWriter writer)
         {
+            VertexAmount = Vertexes.Count;
             var data = new List<List<Vector4>>()
             {
                 Vertexes,

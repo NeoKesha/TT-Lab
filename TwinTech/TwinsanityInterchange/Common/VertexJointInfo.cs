@@ -36,7 +36,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             v.SetBinaryX(xComp);
             v.SetBinaryY(yComp);
             v.SetBinaryZ(zComp);
-            UInt32 wComp = Connection ? 0 : (0x80U << 8);
+            UInt32 wComp = Connection ? 0 : 0x8000U;
             var weightCount = 1;
             var totalWeight = Weight1 + Weight2;
             if (totalWeight < 1)

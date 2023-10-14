@@ -371,14 +371,14 @@ namespace Twinsanity.PS2Hardware
                                 var uv = vectorBatch[GetBatchIndex(VectorBatchIndex.Uv)][j];
                                 var compiledPosition = position.Divide(scaleVector.X);
                                 var compiledUv = uv.Divide(scaleVector.Y);
-                                compiledPosition.SetBinaryX((UInt32)((Int32)compiledPosition.X));
-                                compiledPosition.SetBinaryY((UInt32)((Int32)compiledPosition.Y));
-                                compiledPosition.SetBinaryZ((UInt32)((Int32)compiledPosition.Z));
-                                compiledPosition.SetBinaryW((UInt32)((Int32)compiledPosition.W));
-                                compiledUv.SetBinaryX((UInt32)((Int32)compiledUv.X));
-                                compiledUv.SetBinaryY((UInt32)((Int32)compiledUv.Y));
-                                compiledUv.SetBinaryZ((UInt32)((Int32)compiledUv.Z));
-                                compiledUv.SetBinaryW((UInt32)((Int32)compiledUv.W));
+                                compiledPosition.SetBinaryX((UInt32)((Int16)compiledPosition.X));
+                                compiledPosition.SetBinaryY((UInt32)((Int16)compiledPosition.Y));
+                                compiledPosition.SetBinaryZ((UInt32)((Int16)compiledPosition.Z));
+                                compiledPosition.SetBinaryW((UInt32)((Int16)compiledPosition.W));
+                                compiledUv.SetBinaryX((UInt32)((Int16)compiledUv.X));
+                                compiledUv.SetBinaryY((UInt32)((Int16)compiledUv.Y));
+                                compiledUv.SetBinaryZ((UInt32)((Int16)compiledUv.Z));
+                                compiledUv.SetBinaryW((UInt32)((Int16)compiledUv.W));
                                 compiledPositions.Add(compiledPosition);
                                 compiledUvs.Add(compiledUv);
                             }
