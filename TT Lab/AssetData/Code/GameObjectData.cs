@@ -158,7 +158,7 @@ namespace TT_Lab.AssetData.Code
             RefBehaviours = new List<LabURI>();
             foreach (var e in gameObject.RefScripts)
             {
-                // Range reserved for CodeModel script IDs
+                // Range reserved for CodeModel(Command sequences) script IDs
                 if (e > 500 && e < 616)
                 {
                     foreach (var cm in RefBehaviourCommandsSequences)

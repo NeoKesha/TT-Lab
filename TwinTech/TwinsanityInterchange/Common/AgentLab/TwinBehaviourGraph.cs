@@ -19,7 +19,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 string codeBase = Assembly.GetExecutingAssembly().Location;
                 UriBuilder uri = new(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
-                using FileStream stream = new(Path.Combine(Path.GetDirectoryName(path), @"AgentLabDefs.json"), FileMode.Open, FileAccess.Read);
+                // TODO: Determine console properly
+                using FileStream stream = new(Path.Combine(Path.GetDirectoryName(path), @"AgentLabDefsPS2.json"), FileMode.Open, FileAccess.Read);
                 using StreamReader reader = new(stream);
                 AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
             }
