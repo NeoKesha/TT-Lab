@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
-namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
+namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.AgentLab
 {
-    public class TwinBehaviourCommandsSequence : BaseTwinItem
+    public class XboxBehaviourCommandsSequence : BaseTwinItem, ITwinBehaviourCommandsSequence
     {
         public Int32 Header { get; set; }
-        public List<KeyValuePair<UInt16, TwinBehaviourCommandPack>> BehaviourPacks { get; set; }
-        public List<TwinBehaviourCommand> Commands { get; set; }
+        public List<KeyValuePair<UInt16, ITwinBehaviourCommandPack>> BehaviourPacks { get; set; }
+        public List<ITwinBehaviourCommand> Commands { get; set; }
 
-        public TwinBehaviourCommandsSequence()
+        Boolean ITwinBehaviourCommandsSequence.HasNext { get; set; }
+
+        public XboxBehaviourCommandsSequence()
         {
-            BehaviourPacks = new List<KeyValuePair<UInt16, TwinBehaviourCommandPack>>();
-            Commands = new List<TwinBehaviourCommand>();
+            BehaviourPacks = new List<KeyValuePair<UInt16, ITwinBehaviourCommandPack>>();
+            Commands = new List<ITwinBehaviourCommand>();
         }
 
         public override int GetLength()
@@ -32,14 +36,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             var packs = (Byte)(Header >> 16 & 0xFF);
             for (var i = 0; i < packs; ++i)
             {
-                var pack = new TwinBehaviourCommandPack();
+                var pack = new XboxBehaviourCommandPack();
                 pack.Read(reader, length);
                 var scriptId = reader.ReadUInt16();
-                var pair = new KeyValuePair<UInt16, TwinBehaviourCommandPack>(scriptId, pack);
+                var pair = new KeyValuePair<UInt16, ITwinBehaviourCommandPack>(scriptId, pack);
                 BehaviourPacks.Add(pair);
             }
             Commands.Clear();
-            var com = new TwinBehaviourCommand();
+            var com = new XboxBehaviourCommand();
             Commands.Add(com);
             com.Read(reader, length, Commands);
         }
@@ -56,13 +60,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             foreach (var com in Commands)
             {
-                com.hasNext = !Commands.Last().Equals(com);
+                com.HasNext = !Commands.Last().Equals(com);
                 com.Write(writer);
             }
         }
 
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
+            StringUtils.WriteLineTabulated(writer, "@Xbox sequence", tabs);
             StringUtils.WriteLineTabulated(writer, $"BehaviourCommandsSequence({Header}) {"{"}", tabs);
             foreach (var packPair in BehaviourPacks)
             {
@@ -70,7 +75,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 packPair.Value.WriteText(writer, tabs + 2);
                 StringUtils.WriteLineTabulated(writer, "}", tabs + 1);
             }
-            foreach (TwinBehaviourCommand cmd in Commands)
+            foreach (var cmd in Commands)
             {
                 cmd.WriteText(writer, tabs + 1);
             }
@@ -78,9 +83,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         }
         public void ReadText(StreamReader reader)
         {
-            String line = "";
+            String line = reader.ReadLine().Trim();
             BehaviourPacks.Clear();
             Commands.Clear();
+            Debug.Assert(line == "@Xbox sequence", "Trying to parse XBox commands sequence as different version");
             while (!line.StartsWith("BehaviourCommandsSequence"))
             {
                 line = reader.ReadLine().Trim();
@@ -100,8 +106,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 if (line.StartsWith("Pack"))
                 {
                     UInt16 arg = ushort.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
-                    TwinBehaviourCommandPack pack = new TwinBehaviourCommandPack();
-                    BehaviourPacks.Add(new KeyValuePair<UInt16, TwinBehaviourCommandPack>(arg, pack));
+                    XboxBehaviourCommandPack pack = new();
+                    BehaviourPacks.Add(new KeyValuePair<UInt16, ITwinBehaviourCommandPack>(arg, pack));
                     while (!line.EndsWith("{"))
                     {
                         line = reader.ReadLine().Trim();
@@ -114,7 +120,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 }
                 else
                 {
-                    TwinBehaviourCommand cmd = new TwinBehaviourCommand();
+                    XboxBehaviourCommand cmd = new();
                     Commands.Add(cmd);
                     cmd.ReadText(line);
                 }
@@ -123,8 +129,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public override String ToString()
         {
             using MemoryStream stream = new();
-            StreamWriter writer = new(stream);
-            StreamReader reader = new(stream);
+            using StreamWriter writer = new(stream);
+            using StreamReader reader = new(stream);
             WriteText(writer);
             writer.Flush();
             stream.Position = 0;

@@ -8,9 +8,11 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
-using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -70,7 +72,7 @@ namespace TT_Lab.AssetData.Code
         public List<LabURI> RefSounds { get; set; }
         [JsonProperty(Required = Required.Always)]
         [JsonConverter(typeof(ScriptPackConverter))]
-        public TwinBehaviourCommandPack ScriptPack { get; set; }
+        public ITwinBehaviourCommandPack ScriptPack { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -248,11 +250,12 @@ namespace TT_Lab.AssetData.Code
             return result;
         }
     }
-    class ScriptPackConverter : JsonConverter<TwinBehaviourCommandPack>
+    class ScriptPackConverter : JsonConverter<ITwinBehaviourCommandPack>
     {
-        public override TwinBehaviourCommandPack ReadJson(JsonReader reader, Type objectType, TwinBehaviourCommandPack? existingValue, Boolean hasExistingValue, JsonSerializer serializer)
+        public override ITwinBehaviourCommandPack ReadJson(JsonReader reader, Type objectType, ITwinBehaviourCommandPack? existingValue, Boolean hasExistingValue, JsonSerializer serializer)
         {
-            existingValue ??= new TwinBehaviourCommandPack();
+            // By default create PS2 behaviour command pack
+            existingValue ??= new PS2BehaviourCommandPack();
             String? str = reader.ReadAsString();
             using (var stream = new MemoryStream())
             using (var _writer = new StreamWriter(stream))
@@ -262,13 +265,23 @@ namespace TT_Lab.AssetData.Code
                 stream.Position = 0;
                 if (_reader.BaseStream.Length != 0)
                 {
+                    var version = _reader.ReadLine()!.Trim();
+                    if (version == "@PS2 Pack")
+                    {
+                        existingValue ??= new PS2BehaviourCommandPack();
+                    }
+                    else if (version == "@Xbox Pack")
+                    {
+                        existingValue ??= new XboxBehaviourCommandPack();
+                    }
+                    _reader.BaseStream.Position = 0;
                     existingValue.ReadText(_reader);
                 }
             }
             return existingValue;
         }
 
-        public override void WriteJson(JsonWriter writer, TwinBehaviourCommandPack? value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, ITwinBehaviourCommandPack? value, JsonSerializer serializer)
         {
             JToken t = JToken.FromObject(value!.ToString());
 

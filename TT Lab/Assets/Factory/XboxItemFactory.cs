@@ -4,6 +4,7 @@ using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -31,12 +32,12 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public TwinBehaviourCommandsSequence GenerateBehaviourCommandsSequence(Stream stream)
+        public ITwinBehaviourCommandsSequence GenerateBehaviourCommandsSequence(Stream stream)
         {
             throw new NotImplementedException();
         }
 
-        public TwinBehaviourGraph GenerateBehaviourGraph(Stream stream)
+        public ITwinBehaviourGraph GenerateBehaviourGraph(Stream stream)
         {
             throw new NotImplementedException();
         }

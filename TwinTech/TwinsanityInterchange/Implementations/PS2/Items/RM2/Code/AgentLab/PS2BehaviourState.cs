@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Twinsanity.Libraries;
+using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
-namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab
 {
-    public class TwinBehaviourState : ITwinSerializable
+    public class PS2BehaviourState : ITwinBehaviourState
     {
-        public UInt16 Bitfield;
-        public Int16 ScriptIndexOrSlot;
-        public TwinBehaviourControlPacket ControlPacket;
-        public List<TwinBehaviourStateBody> Bodies;
+        public UInt16 Bitfield { get; set; }
+        public Int16 ScriptIndexOrSlot { get; set; }
+        public TwinBehaviourControlPacket ControlPacket { get; set; }
+        public List<ITwinBehaviourStateBody> Bodies { get; set; }
 
-        internal bool hasNext;
+        bool ITwinBehaviourState.HasNext { get; set; }
 
-        public TwinBehaviourState()
+        public PS2BehaviourState()
         {
-            Bodies = new List<TwinBehaviourStateBody>(0x1F);
+            Bodies = new List<ITwinBehaviourStateBody>(0x1F);
         }
 
         public int GetLength()
@@ -37,13 +39,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
         }
 
-        public void Read(BinaryReader reader, int length, IList<TwinBehaviourState> scriptStates)
+        public void Read(BinaryReader reader, int length, IList<ITwinBehaviourState> scriptStates)
         {
             Read(reader, length);
             var hasNext = (Bitfield & 0x8000) != 0;
             if (hasNext)
             {
-                var state = new TwinBehaviourState();
+                var state = new PS2BehaviourState();
                 scriptStates.Add(state);
                 state.Read(reader, length, scriptStates);
             }
@@ -56,7 +58,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             {
                 newBitfield |= 0x4000;
             }
-            if (hasNext)
+            ITwinBehaviourState downCast = this;
+            if (downCast.HasNext)
             {
                 newBitfield |= 0x8000;
             }
@@ -97,7 +100,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
@@ -112,7 +115,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 }
                 if (line.StartsWith("Body"))
                 {
-                    TwinBehaviourStateBody body = new TwinBehaviourStateBody();
+                    PS2BehaviourStateBody body = new();
                     while (!line.EndsWith("{"))
                     {
                         line = reader.ReadLine().Trim();

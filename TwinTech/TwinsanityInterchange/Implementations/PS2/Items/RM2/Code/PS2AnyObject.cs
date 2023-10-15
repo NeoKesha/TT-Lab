@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 {
@@ -40,7 +41,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public List<UInt16> RefScripts { get; set; }
         public List<UInt16> RefUnknowns { get; set; }
         public List<UInt16> RefSounds { get; set; }
-        public TwinBehaviourCommandPack ScriptPack { get; set; }
+        public ITwinBehaviourCommandPack ScriptPack { get; set; }
 
         public bool HasInstanceProperties
         {
@@ -203,7 +204,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                     FillResourceList(reader, RefSounds);
                 }
             }
-            ScriptPack = new TwinBehaviourCommandPack();
+            ScriptPack = new PS2BehaviourCommandPack();
             ScriptPack.Read(reader, length);
         }
 

@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Twinsanity.Libraries;
+using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
-namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab
 {
-    public class TwinBehaviourStateBody : ITwinSerializable
+    public class PS2BehaviourStateBody : ITwinBehaviourStateBody
     {
-        public UInt32 Bitfield;
-        public Boolean HasStateJump;
-        public Int32 JumpToState;
-        public TwinBehaviourCondition Condition;
-        public List<TwinBehaviourCommand> Commands;
+        public UInt32 Bitfield { get; set; }
+        public Boolean HasStateJump { get; set; }
+        public Int32 JumpToState { get; set; }
+        public TwinBehaviourCondition Condition { get; set; }
+        public List<ITwinBehaviourCommand> Commands { get; set; }
 
-        internal bool hasNext;
+        bool ITwinBehaviourStateBody.HasNext { get; set; }
 
-        public TwinBehaviourStateBody()
+        public PS2BehaviourStateBody()
         {
-            Commands = new List<TwinBehaviourCommand>();
+            Commands = new List<ITwinBehaviourCommand>();
         }
 
         public int GetLength()
@@ -33,7 +35,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             Bitfield = reader.ReadUInt32();
             var hasStateJump = (Bitfield & 0x400) != 0;
             var hasCondition = (Bitfield & 0x200) != 0;
-            var commandsAmt = (Bitfield & 0xFF);
+            var commandsAmt = Bitfield & 0xFF;
             HasStateJump = hasStateJump;
             if (HasStateJump)
             {
@@ -47,7 +49,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             Commands.Clear();
             for (var i = 0; i < commandsAmt; ++i)
             {
-                var com = new TwinBehaviourCommand();
+                var com = new PS2BehaviourCommand();
                 Commands.Add(com);
                 com.Read(reader, length);
             }
@@ -56,7 +58,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public void Write(BinaryWriter writer)
         {
             UInt32 newBitfield = (UInt32)Commands.Count;
-            if (hasNext)
+            ITwinBehaviourStateBody downCast = this;
+            if (downCast.HasNext)
             {
                 newBitfield |= 0x800;
             }
@@ -68,7 +71,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             {
                 newBitfield |= 0x200;
             }
-            newBitfield |= (Bitfield & 0xFFFF0100);
+            newBitfield |= Bitfield & 0xFFFF0100;
             writer.Write(newBitfield);
             if (HasStateJump)
             {
@@ -80,7 +83,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             foreach (var com in Commands)
             {
-                com.hasNext = !(Commands.Last().Equals(com));
+                com.HasNext = !Commands.Last().Equals(com);
                 com.Write(writer);
             };
         }
@@ -110,19 +113,19 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
                 if (line.StartsWith("next_state "))
                 {
-                    JumpToState = Int32.Parse(StringUtils.GetStringAfter(line, "="));
+                    JumpToState = int.Parse(StringUtils.GetStringAfter(line, "="));
                 }
                 else if (line.StartsWith("Condition"))
                 {
                     Condition = new TwinBehaviourCondition();
                     String condName = StringUtils.GetStringInBetween(line, "Condition ", "(").Trim();
-                    Condition.Parameter = UInt16.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                    Condition.Parameter = ushort.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
                     while (!line.EndsWith("{"))
                     {
                         line = reader.ReadLine().Trim();
@@ -131,7 +134,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 }
                 else if (!line.StartsWith("}"))
                 {
-                    TwinBehaviourCommand cmd = new TwinBehaviourCommand();
+                    PS2BehaviourCommand cmd = new PS2BehaviourCommand();
                     cmd.ReadText(line);
                     Commands.Add(cmd);
                 }

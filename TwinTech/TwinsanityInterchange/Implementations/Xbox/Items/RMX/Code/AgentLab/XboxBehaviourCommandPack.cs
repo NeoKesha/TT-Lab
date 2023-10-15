@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
-namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
+namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.AgentLab
 {
-    public class TwinBehaviourCommandPack : ITwinSerializable
+    public class XboxBehaviourCommandPack : ITwinBehaviourCommandPack
     {
-        public List<TwinBehaviourCommand> Commands;
+        public List<ITwinBehaviourCommand> Commands { get; set; }
 
-        public TwinBehaviourCommandPack()
+        public XboxBehaviourCommandPack()
         {
-            Commands = new List<TwinBehaviourCommand>();
+            Commands = new List<ITwinBehaviourCommand>();
         }
 
         public int GetLength()
@@ -26,7 +28,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             Commands.Clear();
             for (var i = 0; i < amt; ++i)
             {
-                var com = new TwinBehaviourCommand();
+                var com = new XboxBehaviourCommand();
                 Commands.Add(com);
                 com.Read(reader, length);
             }
@@ -37,43 +39,43 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(Commands.Count);
             foreach (var com in Commands)
             {
-                com.hasNext = !(Commands.Last().Equals(com));
+                com.HasNext = !Commands.Last().Equals(com);
                 com.Write(writer);
             }
         }
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            foreach (TwinBehaviourCommand cmd in Commands)
+            writer.WriteLine("@Xbox Pack");
+            foreach (var cmd in Commands)
             {
                 cmd.WriteText(writer, tabs);
             }
         }
         public void ReadText(StreamReader reader)
         {
-            String line = "";
+            String line = reader.ReadLine().Trim();
+            Debug.Assert(line == "@Xbox Pack", "Attepting to parse XBox command pack as a different version");
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
-                TwinBehaviourCommand cmd = new TwinBehaviourCommand();
+                XboxBehaviourCommand cmd = new();
                 cmd.ReadText(line);
                 Commands.Add(cmd);
             }
         }
         public override String ToString()
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                StreamWriter writer = new StreamWriter(stream);
-                StreamReader reader = new StreamReader(stream);
-                WriteText(writer);
-                writer.Flush();
-                stream.Position = 0;
-                return reader.ReadToEnd();
-            }
+            using MemoryStream stream = new();
+            using StreamWriter writer = new(stream);
+            using StreamReader reader = new(stream);
+            WriteText(writer);
+            writer.Flush();
+            stream.Position = 0;
+            return reader.ReadToEnd();
         }
     }
 }

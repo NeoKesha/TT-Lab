@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Twinsanity.Libraries;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
@@ -50,7 +51,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            AgentLabDefs defs = TwinBehaviourGraph.GetAgentLabDefs();
+            AgentLabDefs defs = PS2BehaviourGraph.GetAgentLabDefs();
             StringUtils.WriteLineTabulated(writer, $"Condition {MapIndex(ConditionIndex, defs)}({Parameter}) {"{"}", tabs);
             StringUtils.WriteLineTabulated(writer, $"({Modifier.ToString(CultureInfo.InvariantCulture)}, " +
                 $"{ReturnCheck.ToString(CultureInfo.InvariantCulture)}, " +
@@ -67,7 +68,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             else
             {
-                AgentLabDefs defs = TwinBehaviourGraph.GetAgentLabDefs();
+                AgentLabDefs defs = PS2BehaviourGraph.GetAgentLabDefs();
                 ConditionIndex = UInt16.Parse((defs.ConditionMap.FirstOrDefault(x => x.Value == condName).Key));
             }
             while (!line.EndsWith("}"))

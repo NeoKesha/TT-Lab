@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
-using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -15,12 +17,14 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public BehaviourCommandsSequenceData(TwinBehaviourCommandsSequence codeModel) : this()
+        public BehaviourCommandsSequenceData(ITwinBehaviourCommandsSequence codeModel) : this()
         {
             SetTwinItem(codeModel);
         }
+
         public String Code { get; set; }
         public List<UInt32> BehaviourGraphIds { get; set; }
+
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             using FileStream fs = new(dataPath, FileMode.Create, FileAccess.Write);
@@ -32,7 +36,19 @@ namespace TT_Lab.AssetData.Code
         {
             using FileStream fs = new(dataPath, FileMode.Open, FileAccess.Read);
             using StreamReader reader = new(fs);
-            var cm = new TwinBehaviourCommandsSequence();
+            var line = reader.ReadLine()!.Trim();
+            ITwinBehaviourCommandsSequence cm;
+
+            if (line == "@Xbox sequence")
+            {
+                cm = new XboxBehaviourCommandsSequence();
+            }
+            else
+            {
+                cm = new PS2BehaviourCommandsSequence();
+            }
+
+            reader.BaseStream.Position = 0;
             cm.ReadText(reader);
             Code = cm.ToString();
             GenerateBehaviourGraphIdsList(cm);
@@ -46,7 +62,7 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            TwinBehaviourCommandsSequence codeModel = GetTwinItem<TwinBehaviourCommandsSequence>();
+            var codeModel = GetTwinItem<ITwinBehaviourCommandsSequence>();
             Code = codeModel.ToString();
             GenerateBehaviourGraphIdsList(codeModel);
         }
@@ -56,7 +72,7 @@ namespace TT_Lab.AssetData.Code
             throw new NotImplementedException();
         }
 
-        private void GenerateBehaviourGraphIdsList(TwinBehaviourCommandsSequence cm)
+        private void GenerateBehaviourGraphIdsList(ITwinBehaviourCommandsSequence cm)
         {
             BehaviourGraphIds = new List<uint>();
             foreach (var e in cm.BehaviourPacks)

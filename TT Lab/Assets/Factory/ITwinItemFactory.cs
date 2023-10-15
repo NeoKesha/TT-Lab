@@ -3,6 +3,7 @@ using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -21,8 +22,8 @@ namespace TT_Lab.Assets.Factory
         ITwinTexture GenerateTexture(Stream stream);
         ITwinAnimation GenerateAnimation(Stream stream);
         TwinBehaviourStarter GenerateBehaviourStarter(Stream stream);
-        TwinBehaviourGraph GenerateBehaviourGraph(Stream stream);
-        TwinBehaviourCommandsSequence GenerateBehaviourCommandsSequence(Stream stream);
+        ITwinBehaviourGraph GenerateBehaviourGraph(Stream stream);
+        ITwinBehaviourCommandsSequence GenerateBehaviourCommandsSequence(Stream stream);
         ITwinObject GenerateObject(Stream stream);
         ITwinOGI GenerateOGI(Stream stream);
         ITwinSound GenerateSound(Stream stream);

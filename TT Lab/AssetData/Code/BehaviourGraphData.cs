@@ -3,8 +3,8 @@ using System;
 using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
-using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace TT_Lab.AssetData.Code
 {
@@ -14,7 +14,7 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public BehaviourGraphData(TwinBehaviourGraph mainScript) : base(mainScript)
+        public BehaviourGraphData(ITwinBehaviourGraph mainScript) : base(mainScript)
         {
             SetTwinItem(mainScript);
         }
@@ -42,7 +42,7 @@ namespace TT_Lab.AssetData.Code
 
         public override void Import(LabURI package, String? variant)
         {
-            TwinBehaviourGraph graph = GetTwinItem<TwinBehaviourGraph>();
+            var graph = GetTwinItem<ITwinBehaviourGraph>();
             Script = graph.ToString();
         }
 

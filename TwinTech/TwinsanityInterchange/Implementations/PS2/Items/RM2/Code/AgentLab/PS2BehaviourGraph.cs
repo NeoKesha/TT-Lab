@@ -5,10 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using Twinsanity.Libraries;
+using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
-namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
+namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab
 {
-    public class TwinBehaviourGraph : TwinBehaviourWrapper
+    public class PS2BehaviourGraph : TwinBehaviourWrapper, ITwinBehaviourGraph
     {
         private static AgentLabDefs AgentLabDefs = null;
 
@@ -19,7 +21,6 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 string codeBase = Assembly.GetExecutingAssembly().Location;
                 UriBuilder uri = new(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
-                // TODO: Determine console properly
                 using FileStream stream = new(Path.Combine(Path.GetDirectoryName(path), @"AgentLabDefsPS2.json"), FileMode.Open, FileAccess.Read);
                 using StreamReader reader = new(stream);
                 AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
@@ -27,13 +28,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             return AgentLabDefs;
         }
 
-        public String Name;
-        public Int32 UnkInt;
-        public List<TwinBehaviourState> ScriptStates;
+        public String Name { get; set; }
+        public Int32 UnkInt { get; set; }
+        public List<ITwinBehaviourState> ScriptStates { get; set; }
 
-        public TwinBehaviourGraph()
+        public PS2BehaviourGraph()
         {
-            ScriptStates = new List<TwinBehaviourState>();
+            ScriptStates = new List<ITwinBehaviourState>();
         }
 
         public override int GetLength()
@@ -59,17 +60,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             ScriptStates.Clear();
             for (int i = 0; i < statesAmt; ++i)
             {
-                TwinBehaviourState state = new TwinBehaviourState();
+                PS2BehaviourState state = new();
                 state.Read(reader, length);
                 ScriptStates.Add(state);
             }
             foreach (var state in ScriptStates)
             {
                 state.Bodies.Clear();
-                var bodiesAmt = (state.Bitfield & 0x1F);
+                var bodiesAmt = state.Bitfield & 0x1F;
                 for (var i = 0; i < bodiesAmt; ++i)
                 {
-                    var stateBody = new TwinBehaviourStateBody();
+                    PS2BehaviourStateBody stateBody = new();
                     state.Bodies.Add(stateBody);
                     stateBody.Read(reader, length);
                 }
@@ -85,14 +86,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(UnkInt);
             foreach (var state in ScriptStates)
             {
-                state.hasNext = !(ScriptStates.Last().Equals(state));
+                state.HasNext = !ScriptStates.Last().Equals(state);
                 state.Write(writer);
             }
             foreach (var state in ScriptStates)
             {
                 foreach (var body in state.Bodies)
                 {
-                    body.hasNext = !(state.Bodies.Last().Equals(body));
+                    body.HasNext = !state.Bodies.Last().Equals(body);
                     body.Write(writer);
                 }
             }
@@ -128,30 +129,30 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
                 if (line.StartsWith("bitfield"))
                 {
-                    UnkInt = Int32.Parse(StringUtils.GetStringAfter(line, "="));
+                    UnkInt = int.Parse(StringUtils.GetStringAfter(line, "="));
                 }
                 if (line.StartsWith("State_"))
                 {
                     String arg = StringUtils.GetStringInBetween(line, "(", ")");
-                    Int32 index = Int32.Parse(StringUtils.GetStringInBetween(line, "_", "("));
+                    Int32 index = int.Parse(StringUtils.GetStringInBetween(line, "_", "("));
                     while (ScriptStates.Count <= index)
                     {
-                        ScriptStates.Add(new TwinBehaviourState());
+                        ScriptStates.Add(new PS2BehaviourState());
                     }
-                    TwinBehaviourState state = ScriptStates[index];
-                    if (String.IsNullOrWhiteSpace(arg))
+                    var state = ScriptStates[index];
+                    if (string.IsNullOrWhiteSpace(arg))
                     {
                         state.ScriptIndexOrSlot = -1;
                     }
                     else
                     {
-                        state.ScriptIndexOrSlot = Int16.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                        state.ScriptIndexOrSlot = short.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
                     }
                     while (!line.EndsWith("{"))
                     {

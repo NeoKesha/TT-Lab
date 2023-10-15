@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
 {
@@ -53,7 +54,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         List<UInt16> RefScripts { get; set; }
         List<UInt16> RefUnknowns { get; set; }
         List<UInt16> RefSounds { get; set; }
-        TwinBehaviourCommandPack ScriptPack { get; set; }
+        ITwinBehaviourCommandPack ScriptPack { get; set; }
 
         bool HasInstanceProperties { get; }
 

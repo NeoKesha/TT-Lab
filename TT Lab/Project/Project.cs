@@ -16,6 +16,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
@@ -357,7 +358,7 @@ namespace TT_Lab.Project
                             (assets, code, chunkPath, codeCheck, Constants.CODE_ANIMATIONS_SECTION, animationsFolder);
                         ReadSectionItems<OGI, PS2AnyOGIsSection, PS2AnyOGI>
                             (assets, code, chunkPath, codeCheck, Constants.CODE_OGIS_SECTION, ogisFolder);
-                        ReadSectionItems<BehaviourCommandsSequence, PS2AnyBehaviourCommandsSequencesSection, TwinBehaviourCommandsSequence>
+                        ReadSectionItems<BehaviourCommandsSequence, PS2AnyBehaviourCommandsSequencesSection, PS2BehaviourCommandsSequence>
                             (assets, code, chunkPath, codeCheck, Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION, codeModelsFolder);
 
                         // Behaviours are special because they are ID oddity dependent

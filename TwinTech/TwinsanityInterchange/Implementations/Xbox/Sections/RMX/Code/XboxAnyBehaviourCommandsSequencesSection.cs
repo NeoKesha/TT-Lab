@@ -1,5 +1,5 @@
-﻿using Twinsanity.TwinsanityInterchange.Common.AgentLab;
-using Twinsanity.TwinsanityInterchange.Implementations.Base;
+﻿using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.AgentLab;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Sections.RMX.Code
 {
@@ -7,7 +7,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Sections.RMX.Cod
     {
         public XboxAnyBehaviourCommandsSequencesSection() : base()
         {
-            defaultType = typeof(TwinBehaviourCommandsSequence);
+            defaultType = typeof(XboxBehaviourCommandsSequence);
         }
     }
 }
