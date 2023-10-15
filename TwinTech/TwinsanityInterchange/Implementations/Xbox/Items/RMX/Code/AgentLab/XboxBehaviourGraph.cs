@@ -23,7 +23,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
                 string path = Uri.UnescapeDataString(uri.Path);
                 using FileStream stream = new(Path.Combine(Path.GetDirectoryName(path), @"AgentLabDefsXbox.json"), FileMode.Open, FileAccess.Read);
                 using StreamReader reader = new(stream);
-                AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
+                JsonSerializerOptions options = new()
+                {
+                    ReadCommentHandling = JsonCommentHandling.Skip
+                };
+                AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd(), options);
             }
             return AgentLabDefs;
         }

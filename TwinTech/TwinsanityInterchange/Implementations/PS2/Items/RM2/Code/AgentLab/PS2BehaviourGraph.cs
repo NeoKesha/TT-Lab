@@ -23,7 +23,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 string path = Uri.UnescapeDataString(uri.Path);
                 using FileStream stream = new(Path.Combine(Path.GetDirectoryName(path), @"AgentLabDefsPS2.json"), FileMode.Open, FileAccess.Read);
                 using StreamReader reader = new(stream);
-                AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd());
+                JsonSerializerOptions options = new()
+                {
+                    ReadCommentHandling = JsonCommentHandling.Skip
+                };
+                AgentLabDefs = JsonSerializer.Deserialize<AgentLabDefs>(reader.ReadToEnd(), options);
             }
             return AgentLabDefs;
         }
