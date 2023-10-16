@@ -6,13 +6,13 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
 {
-    public class PS2PSM : ITwinSerializable
+    public class PS2PSM : ITwinPSM
     {
-        public List<PS2PTC> PTCs;
+        public List<ITwinPTC> PTCs { get; set; }
 
         public PS2PSM()
         {
-            PTCs = new List<PS2PTC>();
+            PTCs = new List<ITwinPTC>();
         }
 
         public Int32 GetLength()

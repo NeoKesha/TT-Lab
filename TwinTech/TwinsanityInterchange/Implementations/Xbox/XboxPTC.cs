@@ -2,15 +2,16 @@
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
 {
-    public class XboxPTC : ITwinSerializable
+    public class XboxPTC : ITwinPTC
     {
-        public UInt32 TexID;
-        public UInt32 MatID;
-        public XboxAnyTexture Texture;
-        public XboxAnyMaterial Material;
+        public UInt32 TexID { get; set; }
+        public UInt32 MatID { get; set; }
+        public ITwinTexture Texture { get; set; }
+        public ITwinMaterial Material { get; set; }
 
         public Int32 GetLength()
         {

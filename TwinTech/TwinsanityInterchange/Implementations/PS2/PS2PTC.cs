@@ -2,15 +2,16 @@
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
 {
-    public class PS2PTC : ITwinSerializable
+    public class PS2PTC : ITwinPTC
     {
-        public UInt32 TexID;
-        public UInt32 MatID;
-        public PS2AnyTexture Texture;
-        public PS2AnyMaterial Material;
+        public UInt32 TexID { get; set; }
+        public UInt32 MatID { get; set; }
+        public ITwinTexture Texture { get; set; }
+        public ITwinMaterial Material { get; set; }
 
         public Int32 GetLength()
         {

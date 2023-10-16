@@ -8,11 +8,11 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
 {
-    public class XboxPSF : ITwinSerializable
+    public class XboxPSF : ITwinPSF
     {
-        public List<XboxPTC> FontPages;
-        public List<Vector4> UnkVecs;
-        public Int32 UnkInt;
+        public List<ITwinPTC> FontPages { get; set; }
+        public List<Vector4> UnkVecs { get; set; }
+        public Int32 UnkInt { get; set; }
 
         public Int32 GetLength()
         {

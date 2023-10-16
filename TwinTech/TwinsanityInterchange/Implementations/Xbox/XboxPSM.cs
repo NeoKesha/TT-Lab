@@ -6,13 +6,13 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
 {
-    public class XboxPSM : ITwinSerializable
+    public class XboxPSM : ITwinPSM
     {
-        public List<XboxPTC> PTCs;
+        public List<ITwinPTC> PTCs { get; set; }
 
         public XboxPSM()
         {
-            PTCs = new List<XboxPTC>();
+            PTCs = new List<ITwinPTC>();
         }
 
         public Int32 GetLength()
