@@ -13,7 +13,7 @@ namespace TT_Lab
     {
         public static event EventHandler<PreferenceChangedArgs>? PreferenceChanged;
 
-        private static readonly Dictionary<string, object> Settings = new Dictionary<string, object>();
+        private static readonly Dictionary<string, object> Settings = new();
         private static readonly string ExePath = ManifestResourceLoader.GetPathInExe("");
         private static readonly string PrefFileName = "settings.json";
         private static readonly string PrefFilePath;
@@ -30,7 +30,7 @@ namespace TT_Lab
         public static void Save()
         {
             using FileStream settings = File.Create(PrefFilePath);
-            using BinaryWriter writer = new BinaryWriter(settings);
+            using BinaryWriter writer = new(settings);
             writer.Write(JsonConvert.SerializeObject(Settings, Formatting.Indented).ToCharArray());
         }
 
@@ -38,13 +38,13 @@ namespace TT_Lab
         {
             if (File.Exists(PrefFilePath))
             {
-                using FileStream settings = new FileStream(PrefFilePath, FileMode.Open, FileAccess.Read);
-                using StreamReader reader = new StreamReader(settings);
+                using FileStream settings = new(PrefFilePath, FileMode.Open, FileAccess.Read);
+                using StreamReader reader = new(settings);
                 JsonConvert.PopulateObject(reader.ReadToEnd(), Settings);
             }
         }
 
-        public static void SetPreference(string prefName, object value)
+        public static void SetPreference<T>(string prefName, T value) where T : class
         {
             Settings[prefName] = value;
             PreferenceChanged?.Invoke(null, new PreferenceChangedArgs { PreferenceName = prefName });
