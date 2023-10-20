@@ -1,12 +1,18 @@
-﻿using System;
+﻿using Assimp;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
+using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -24,6 +30,7 @@ namespace Twinsanity_Command_Interface
                 UV = new Vector3();
                 Normal = new Vector4();
                 EmitColor = new Vector4();
+                JointInfo = new VertexJointInfo();
             }
             public Vertex(Vector4 pos) : this()
             {
@@ -53,9 +60,22 @@ namespace Twinsanity_Command_Interface
             }
             public Vector3 Position { get; set; }
             public Vector4 Color { get; set; }
-            public Vector4 Normal { get; set; }
+            public Vector4 Normal
+            {
+                get => _normal;
+                set
+                {
+                    _normal = value;
+                    HasNormals = true;
+                }
+            }
             public Vector4 EmitColor { get; set; }
             public Vector3 UV { get; set; }
+            public VertexJointInfo JointInfo { get; set; }
+
+            public bool HasNormals { get; private set; }
+
+            private Vector4 _normal;
 
             public override String ToString()
             {
@@ -67,246 +87,250 @@ namespace Twinsanity_Command_Interface
             }
         }
 
+        private class IndexedFace
+        {
+            public Int32[] Indexes { get; set; }
+            public IndexedFace()
+            {
+                Indexes = null;
+            }
+            public IndexedFace(Int32[] indexes)
+            {
+                Indexes = indexes;
+            }
+            public override String ToString()
+            {
+                Debug.Assert(Indexes != null, "Indexes must be created at this point of time");
+
+                StringBuilder builder = new();
+                builder.Append(Indexes.Length);
+                foreach (var index in Indexes)
+                {
+                    builder.Append($" {index}");
+                }
+                return builder.ToString();
+            }
+        }
+
         static void Main(string[] args)
         {
-            String readArchives = args[0];
-            String testPath = args[1];
-            String testSavePath = args[2];
-            if (readArchives == "Y")
+            if (args.Length != 2)
             {
-                testPath += @"\Crash6\";
-                String[] archivePaths = System.IO.Directory.GetFiles(testPath, "*.BD", System.IO.SearchOption.TopDirectoryOnly);
-                archivePaths = archivePaths.Concat(System.IO.Directory.GetFiles(testPath, "*.MB", System.IO.SearchOption.TopDirectoryOnly)).ToArray();
-                List<ITwinSerializable> archives = new List<ITwinSerializable>();
-                foreach (var path in archivePaths)
+                Console.WriteLine("Must provide a path to the model in the format of FBX and model type (0 for static models, 1 for rigged models). Other formats like OBJ and GLTF aren't tested but could work.");
+                Console.WriteLine("Usage: TwinsanityCommandInterface.exe \"C:/Models/TestModel.fbx\"");
+                return;
+            }
+            String modelPath = args[0];
+            using var assimp = new AssimpContext();
+            var scene = assimp.ImportFile(modelPath);
+            var modelType = Int32.Parse(args[1]);
+            if (modelType == 0)
+            {
+                List<List<Vertex>> totalVertexes = new();
+                List<List<IndexedFace>> totalFaces = new();
+                PS2AnyModel model = new();
+                foreach (var mesh in scene.Meshes)
                 {
-                    var headerPath = String.Empty;
-                    ITwinSerializable archive = null;
-                    if (path.EndsWith("MB") || path.EndsWith("mb"))
+                    var submodel = new List<Vertex>();
+                    for (Int32 i = 0; i < mesh.VertexCount; i++)
                     {
-                        headerPath = path.Replace(".MB", ".MH");
-                        if (headerPath == path)
+                        var vertex = new Vertex(
+                            new Vector4(-mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z, 0.0f),
+                            new Vector4(1f, 1f, 1f, 1f),
+                            new Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, 1.0f, 0.0f)
+                            )
                         {
-                            headerPath = path.Replace(".mb", ".mh");
-                        }
-                        archive = new PS2MB(headerPath, System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(headerPath)));
+                            Normal = new Vector4(-mesh.Normals[i].X, mesh.Normals[i].Y, mesh.Normals[i].Z, 0f),
+                            EmitColor = new Vector4(1f, 1f, 1f, 1f)
+                        };
+                        submodel.Add(vertex);
                     }
-                    else if (path.EndsWith("BD"))
+
+                    var faces = new List<IndexedFace>();
+                    for (var i = 0; i < mesh.FaceCount; ++i)
                     {
-                        headerPath = path.Replace(".BD", ".BH");
-                        archive = new PS2BD(headerPath, System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(headerPath)));
+                        faces.Add(new IndexedFace(mesh.Faces[i].Indices.ToArray()));
                     }
-                    using (System.IO.FileStream stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-                    using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
-                    {
-                        archive.Read(reader, (Int32)reader.BaseStream.Length);
-                        archives.Add(archive);
-                    }
-                    using (System.IO.FileStream stream = new System.IO.FileStream(System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(path)),
-                        System.IO.FileMode.Create, System.IO.FileAccess.Write))
-                    using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(stream))
-                    {
-                        archive.Write(writer);
-                    }
+
+                    totalVertexes.Add(submodel);
+                    totalFaces.Add(faces);
                 }
-                Console.WriteLine("Done");
+
+                var vertexBatchIndex = 0;
+                foreach (var faces in totalFaces)
+                {
+                    var submodel = new PS2SubModel
+                    {
+                        UnusedBlob = Array.Empty<Byte>(),
+                        Vertexes = new(),
+                        UVW = new(),
+                        Colors = new(),
+                        EmitColor = new(),
+                        Normals = new(),
+                        Connection = new()
+                    };
+                    var vertexBatch = totalVertexes[vertexBatchIndex++];
+                    var i = 0;
+                    foreach (var face in faces)
+                    {
+                        i %= TwinVIFCompiler.VertexBatchAmount;
+
+                        var idx0 = (i % 2 == 0) ? 0 : 1;
+                        var idx1 = (i % 2 == 0) ? 1 : 0;
+                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
+                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
+                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
+                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
+                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
+                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
+                        submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
+                        submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
+                        submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
+                        submodel.Normals.Add(vertexBatch[face.Indexes[idx0]].Normal);
+                        submodel.Normals.Add(vertexBatch[face.Indexes[idx1]].Normal);
+                        submodel.Normals.Add(vertexBatch[face.Indexes[2]].Normal);
+                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
+                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
+                        submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
+                        submodel.Connection.Add(false);
+                        submodel.Connection.Add(false);
+                        submodel.Connection.Add(true);
+
+                        ++i;
+                    }
+                    model.SubModels.Add(submodel);
+                }
+
+                using var ps2Model = File.Create(Directory.GetCurrentDirectory() + "/compiled_ps2_model");
+                using var writer = new BinaryWriter(ps2Model);
+                model.Write(writer);
+                writer.Flush();
+                ps2Model.Flush();
+                writer.Close();
             }
             else
             {
-                String[] levelsPaths = System.IO.Directory.GetFiles(testPath, "*.rm2", System.IO.SearchOption.AllDirectories);
-                levelsPaths = levelsPaths.Concat(System.IO.Directory.GetFiles(testPath, "*.sm2", System.IO.SearchOption.AllDirectories)).ToArray();
-                List<ITwinSection> levels = new List<ITwinSection>();
-                foreach (String levelPath in levelsPaths)
+                List<List<Vertex>> totalVertexes = new();
+                List<List<IndexedFace>> totalFaces = new();
+                PS2AnySkin skin = new();
+
+                foreach (var mesh in scene.Meshes)
                 {
-                    ITwinSection twinLevel = null;
-                    if (levelPath.EndsWith("Default.rm2"))
+                    var submodel = new List<Vertex>();
+
+                    // Convert bone -> vertex index to vertex -> bone id
+                    List<Dictionary<int, Tuple<int, float>>> vertexToBone = new();
+                    for (Int32 i = 0; i < mesh.Bones.Count; i++)
                     {
-                        twinLevel = new PS2Default();
-                    }
-                    else if (levelPath.EndsWith("rm2"))
-                    {
-                        twinLevel = new PS2AnyTwinsanityRM2();
-                    }
-                    else if (levelPath.EndsWith("sm2"))
-                    {
-                        twinLevel = new PS2AnyTwinsanitySM2();
-                    }
-                    else
-                    {
-                        twinLevel = new BaseTwinSection();
-                    }
-                    using (System.IO.FileStream stream = new System.IO.FileStream(levelPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-                    using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
-                    {
-                        twinLevel.Read(reader, (Int32)reader.BaseStream.Length);
-                        levels.Add(twinLevel);
-                    }
-                    if (twinLevel is PS2AnyTwinsanityRM2)
-                    {
-                        if (!System.IO.Directory.Exists(System.IO.Path.Combine(testSavePath, "skins")))
+                        var bone = mesh.Bones[i];
+                        vertexToBone.Add(new());
+                        foreach (var vertexWeight in bone.VertexWeights)
                         {
-                            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(testSavePath, "skins"));
-                        }
-                        var graph = twinLevel.GetItem<PS2AnyGraphicsSection>(Constants.LEVEL_GRAPHICS_SECTION).GetItem<PS2AnySkinsSection>(Constants.GRAPHICS_SKINS_SECTION);
-                        for (var i = 0; i < graph.GetItemsAmount(); ++i)
-                        {
-                            var skin = graph.GetItem(i) as PS2AnySkin;
-                            var Vertexes = new List<List<Vertex>>();
-                            var Faces = new List<List<int[]>>();
-                            //var SubBlendIndex = new List<int>();
-                            var refIndex = 0;
-                            var offset = 0;
-                            var fullSkinData = new List<List<Vector4>>();
-                            //var subIndex = 0;
-                            foreach (var e in skin.SubSkins)
-                            {
-                                var vertList = new List<Vertex>();
-                                var faceList = new List<int[]>();
-                                refIndex = 0;
-                                try
-                                {
-                                    e.CalculateData();
-                                }
-                                catch (NullReferenceException ex)
-                                {
-                                    Console.WriteLine($"Failed to calculate blend skin vertex data for skin {skin.GetID():x}: {ex.Message}");
-                                    fullSkinData.Clear();
-                                    break;
-                                }
-
-                                //foreach (var list in e.Vertexes)
-                                {
-                                    //fullSkinData.Add(e.DecompressedData);
-                                }
-                                /*for (var j = 0; j < e.Vertexes.Count; ++j)
-                                {
-                                    if (j < e.Vertexes.Count - 2)
-                                    {
-                                        if (e.Connection[j + 2])
-                                        {
-                                            if ((offset + j) % 2 == 0)
-                                            {
-                                                faceList.Add(new int[] { refIndex, refIndex + 1, refIndex + 2 });
-                                            }
-                                            else
-                                            {
-                                                faceList.Add(new int[] { refIndex + 1, refIndex, refIndex + 2 });
-                                            }
-                                        }
-                                        ++refIndex;
-                                    }
-                                    vertList.Add(new Vertex(e.Vertexes[j], e.Normals[j], e.UVW[j], e.EmitColor[j]));
-                                }
-                                Vertexes.Add(vertList);
-                                Faces.Add(faceList);
-                                offset += e.Vertexes.Count;
-                                refIndex += 2;*/
-                                //SubBlendIndex.Add(subIndex);
-                            }
-                            var skinPath = System.IO.Path.Combine(System.IO.Path.Combine(testSavePath, "skins"), skin.GetName()) + ".bin";
-                            using (System.IO.FileStream skinFile = new System.IO.FileStream(skinPath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-                            {
-                                foreach (var list in fullSkinData)
-                                {
-                                    foreach (var v in list)
-                                    {
-                                        if (v == null)
-                                            break;
-                                        skinFile.Write(BitConverter.GetBytes(v.GetBinaryX()));
-                                        skinFile.Write(BitConverter.GetBytes(v.GetBinaryY()));
-                                        skinFile.Write(BitConverter.GetBytes(v.GetBinaryZ()));
-                                        skinFile.Write(BitConverter.GetBytes(v.GetBinaryW()));
-                                    }
-                                }
-                            }
-                            // Import
-                            /*Scene scene = new Scene
-                            {
-                                RootNode = new Node("Root")
-                            };*/
-
-                            for (var j = 0; j < Vertexes.Count; ++j)
-                            {
-                                /*var submodel = Vertexes[j];
-                                var faces = Faces[j];
-                                Mesh mesh = new Mesh(PrimitiveType.Triangle);
-                                foreach (var ver in submodel)
-                                {
-                                    var pos = new Vector4(ver.Position.X, ver.Position.Y, ver.Position.Z, 1.0f);
-                                    var adjustment = ver.Color;
-                                    var emCol = ver.EmitColor;
-                                    var uv = ver.UV;
-                                    mesh.Vertices.Add(new Vector3D(pos.X, pos.Y, pos.Z));
-                                    mesh.VertexColorChannels[0].Add(new Color4D(emCol.X, emCol.Y, emCol.Z, emCol.W));
-                                    mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, 1.0f));
-                                }
-                                foreach (var face in faces)
-                                {
-                                    mesh.Faces.Add(new Face(new int[] { face[0], face[1], face[2] }));
-                                }
-                                mesh.MaterialIndex = 0;
-                                scene.Meshes.Add(mesh);
-                                scene.RootNode.MeshIndices.Add(j);*/
-
-                                /*var graphSec = twinLevel.GetItem<PS2AnyGraphicsSection>(Constants.LEVEL_GRAPHICS_SECTION);
-                                var twinMat = graphSec.GetItem<PS2AnyMaterialsSection>(Constants.GRAPHICS_MATERIALS_SECTION).GetItem<PS2AnyMaterial>(skin.SubBlends[SubBlendIndex[j]].Material);
-                                if (twinMat.Shaders[0].TxtMapping != TwinShader.TextureMapping.OFF)
-                                {
-                                    var twinTex = graphSec.GetItem<PS2AnyTexturesSection>(Constants.GRAPHICS_TEXTURES_SECTION).GetItem<PS2AnyTexture>(twinMat.Shaders[0].TextureId);
-                                    twinTex.CalculateData();
-                                    Int32 width = (Int32)Math.Pow(2, twinTex.ImageWidthPower);
-                                    Int32 height = (Int32)Math.Pow(2, twinTex.ImageHeightPower);
-
-                                    var Bits = new UInt32[width * height];
-                                    var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
-                                    var tmpBmp = new Bitmap(width, height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
-
-                                    for (var x = 0; x < width; ++x)
-                                    {
-                                        for (var y = 0; y < height; ++y)
-                                        {
-                                            var dstx = x;
-                                            var dsty = height - 1 - y;
-                                            Bits[dstx + dsty * width] = twinTex.Colors[x + y * width].ToARGB();
-                                        }
-                                    }
-
-                                    var bmp = new Bitmap(tmpBmp);
-                                    var texturePath = System.IO.Path.Combine(System.IO.Path.Combine(testSavePath, "skins"), skin.GetName()) + $"{j}.png";
-                                    bmp.Save(texturePath, System.Drawing.Imaging.ImageFormat.Png);
-                                    tmpBmp.Dispose();
-                                    BitsHandle.Free();
-
-                                    Material mat = new Material
-                                    {
-                                        Name = twinMat.Name
-                                    };
-                                    mat.PBR.TextureBaseColor = new TextureSlot(texturePath, TextureType.BaseColor, j, TextureMapping.FromUV, 0, 1.0f,
-                                            TextureOperation.Multiply, TextureWrapMode.Wrap, TextureWrapMode.Wrap, 0);
-                                    scene.Materials.Add(mat);
-                                }*/
-
-                            }
-
-                            /*Material mat = new Material
-                            {
-                                Name = "Default"
-                            };
-
-                            scene.Materials.Add(mat);
-
-                            AssimpContext context = new AssimpContext();
-                            var dataPath = System.IO.Path.Combine(System.IO.Path.Combine(testSavePath, "models"), skin.GetName()) + ".dae";
-                            context.ExportFile(scene, dataPath, "collada");*/
+                            vertexToBone[^1].Add(vertexWeight.VertexID, new(i, vertexWeight.Weight));
                         }
                     }
-                    using (System.IO.FileStream stream = new System.IO.FileStream(System.IO.Path.Combine(testSavePath, System.IO.Path.GetFileName(levelPath)),
-                        System.IO.FileMode.Create, System.IO.FileAccess.Write))
-                    using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(stream))
+
+                    for (Int32 i = 0; i < mesh.VertexCount; i++)
                     {
-                        twinLevel.Write(writer);
+                        var vertex = new Vertex(
+                            new Vector4(-mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z, 0.0f),
+                            new Vector4(1f, 1f, 1f, 1f),
+                            new Vector4(mesh.TextureCoordinateChannels[0][i].X, mesh.TextureCoordinateChannels[0][i].Y, 1.0f, 0.0f)
+                            )
+                        {
+                            JointInfo = new VertexJointInfo()
+                            {
+                                Connection = false
+                            }
+                        };
+
+                        List<Tuple<int, float>> joints = new();
+                        foreach (var vertexMap in vertexToBone)
+                        {
+                            if (vertexMap.ContainsKey(i))
+                            {
+                                joints.Add(vertexMap[i]);
+                            }
+                        }
+                        if (joints.Count == 0)
+                        {
+                            Console.WriteLine("Vertex must be connected to at least 1 joint");
+                            return;
+                        }
+                        if (joints.Count > 3)
+                        {
+                            Console.WriteLine("Vertex can only have up to 3 joints connected to it");
+                            return;
+                        }
+                        vertex.JointInfo.JointIndex1 = joints[0].Item1;
+                        vertex.JointInfo.Weight1 = joints[0].Item2;
+                        if (joints.Count >= 2)
+                        {
+                            vertex.JointInfo.JointIndex2 = joints[1].Item1;
+                            vertex.JointInfo.Weight2 = joints[1].Item2;
+                        }
+                        if (joints.Count == 3)
+                        {
+                            vertex.JointInfo.JointIndex3 = joints[2].Item1;
+                            vertex.JointInfo.Weight3 = joints[2].Item2;
+                        }
+                        submodel.Add(vertex);
                     }
+
+                    var faces = new List<IndexedFace>();
+                    for (var i = 0; i < mesh.FaceCount; ++i)
+                    {
+                        faces.Add(new IndexedFace(mesh.Faces[i].Indices.ToArray()));
+                    }
+
+                    totalVertexes.Add(submodel);
+                    totalFaces.Add(faces);
                 }
+
+                var vertexBatchIndex = 0;
+                foreach (var faces in totalFaces)
+                {
+                    var subskin = new PS2SubSkin
+                    {
+                        Vertexes = new(),
+                        UVW = new(),
+                        Colors = new(),
+                        SkinJoints = new(),
+                        Material = 0xB37BBFB3,
+                    };
+                    var vertexBatch = totalVertexes[vertexBatchIndex++];
+                    var i = 0;
+                    foreach (var face in faces)
+                    {
+                        i %= TwinVIFCompiler.VertexBatchAmount;
+
+                        var idx0 = (i % 2 == 0) ? 0 : 1;
+                        var idx1 = (i % 2 == 0) ? 1 : 0;
+                        subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
+                        subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
+                        subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
+                        subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
+                        subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
+                        subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
+                        subskin.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
+                        subskin.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
+                        subskin.Colors.Add(vertexBatch[face.Indexes[2]].Color);
+                        subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx0]].JointInfo);
+                        subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx1]].JointInfo);
+                        vertexBatch[face.Indexes[2]].JointInfo.Connection = true;
+                        subskin.SkinJoints.Add(vertexBatch[face.Indexes[2]].JointInfo);
+
+                        ++i;
+                    }
+                    skin.SubSkins.Add(subskin);
+                }
+
+                using var ps2Skin = File.Create(Directory.GetCurrentDirectory() + "/compiled_ps2_skin");
+                using var writer = new BinaryWriter(ps2Skin);
+                skin.Write(writer);
+                writer.Flush();
+                ps2Skin.Flush();
+                writer.Close();
             }
         }
     }

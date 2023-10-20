@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -14,17 +17,26 @@ namespace TT_Lab.Assets.Factory
     {
         public ITwinAIPath GenerateAIPath(Stream stream)
         {
-            throw new NotImplementedException();
+            var aiPath = new PS2AnyAIPath();
+            using var reader = new BinaryReader(stream);
+            aiPath.Read(reader, (Int32)stream.Length);
+            return aiPath;
         }
 
         public ITwinAIPosition GenerateAIPosition(Stream stream)
         {
-            throw new NotImplementedException();
+            var aiPosition = new PS2AnyAIPosition();
+            using var reader = new BinaryReader(stream);
+            aiPosition.Read(reader, (Int32)stream.Length);
+            return aiPosition;
         }
 
         public ITwinAnimation GenerateAnimation(Stream stream)
         {
-            throw new NotImplementedException();
+            var animation = new PS2AnyAnimation();
+            using var reader = new BinaryReader(stream);
+            animation.Read(reader, (Int32)stream.Length);
+            return animation;
         }
 
         public ITwinBehaviour GenerateBehaviour(Stream stream)
@@ -69,7 +81,10 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinInstance GenerateInstance(Stream stream)
         {
-            throw new NotImplementedException();
+            var instance = new PS2AnyInstance();
+            using var reader = new BinaryReader(stream);
+            instance.Read(reader, (Int32)stream.Length);
+            return instance;
         }
 
         public ITwinLink GenerateLink(Stream stream)
@@ -79,17 +94,26 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinLOD GenerateLOD(Stream stream)
         {
-            throw new NotImplementedException();
+            var lod = new PS2AnyLOD();
+            using var reader = new BinaryReader(stream);
+            lod.Read(reader, (Int32)stream.Length);
+            return lod;
         }
 
         public ITwinMaterial GenerateMaterial(Stream stream)
         {
-            throw new NotImplementedException();
+            var material = new PS2AnyMaterial();
+            using var reader = new BinaryReader(stream);
+            material.Read(reader, (Int32)stream.Length);
+            return material;
         }
 
         public ITwinMesh GenerateMesh(Stream stream)
         {
-            throw new NotImplementedException();
+            var mesh = new PS2AnyMesh();
+            using var reader = new BinaryReader(stream);
+            mesh.Read(reader, (Int32)stream.Length);
+            return mesh;
         }
 
         public ITwinModel GenerateModel(Stream stream)
@@ -114,17 +138,26 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinPath GeneratePath(Stream stream)
         {
-            throw new NotImplementedException();
+            var path = new PS2AnyPath();
+            using var reader = new BinaryReader(stream);
+            path.Read(reader, (Int32)stream.Length);
+            return path;
         }
 
         public ITwinPosition GeneratePosition(Stream stream)
         {
-            throw new NotImplementedException();
+            var position = new PS2AnyPosition();
+            using var reader = new BinaryReader(stream);
+            position.Read(reader, (Int32)stream.Length);
+            return position;
         }
 
         public ITwinRigidModel GenerateRigidModel(Stream stream)
         {
-            throw new NotImplementedException();
+            var rigidModel = new PS2AnyRigidModel();
+            using var reader = new BinaryReader(stream);
+            rigidModel.Read(reader, (Int32)stream.Length);
+            return rigidModel;
         }
 
         public ITwinScenery GenerateScenery(Stream stream)
@@ -139,7 +172,10 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinSkydome GenerateSkydome(Stream stream)
         {
-            throw new NotImplementedException();
+            var skydome = new PS2AnySkydome();
+            using var reader = new BinaryReader(stream);
+            skydome.Read(reader, (Int32)stream.Length);
+            return skydome;
         }
 
         public ITwinSound GenerateSound(Stream stream)
@@ -149,12 +185,18 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinSurface GenerateSurface(Stream stream)
         {
-            throw new NotImplementedException();
+            var surface = new PS2AnyCollisionSurface();
+            using var reader = new BinaryReader(stream);
+            surface.Read(reader, (Int32)stream.Length);
+            return surface;
         }
 
         public ITwinTemplate GenerateTemplate(Stream stream)
         {
-            throw new NotImplementedException();
+            var template = new PS2AnyTemplate();
+            using var reader = new BinaryReader(stream);
+            template.Read(reader, (Int32)stream.Length);
+            return template;
         }
 
         public ITwinTexture GenerateTexture(Stream stream)
@@ -164,7 +206,10 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinTrigger GenerateTrigger(Stream stream)
         {
-            throw new NotImplementedException();
+            var trigger = new PS2AnyTrigger();
+            using var reader = new BinaryReader(stream);
+            trigger.Read(reader, (Int32)stream.Length);
+            return trigger;
         }
     }
 }

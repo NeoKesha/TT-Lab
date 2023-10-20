@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
@@ -50,15 +51,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             using var reader = new BinaryReader(ms);
             var interpreter = VIFInterpreter.InterpretCode(reader);
             var data = interpreter.GetMem();
-            Vertices = new((int)VertexesAmount);
+            Vertices = new((Int32)VertexesAmount);
             for (Int32 i = 0; i < VertexesAmount; i++)
             {
                 var vec = data[0][i + 1];
-                var xComp = (int)vec.GetBinaryX();
-                var yComp = (int)vec.GetBinaryY();
-                var zComp = (int)vec.GetBinaryZ();
+                var xComp = (Int32)vec.GetBinaryX();
+                var yComp = (Int32)vec.GetBinaryY();
+                var zComp = (Int32)vec.GetBinaryZ();
                 Vertices.Add(new VertexBlendShape
                 {
+                    BlendShape = blendShape,
                     Offset = new Vector4(xComp * blendShape.X, yComp * blendShape.Y, zComp * blendShape.Z, 1.0f)
                 });
             }
@@ -66,6 +68,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public void Write(BinaryWriter writer)
         {
+            var vertexData = Vertices.Select(v => v.GetVector4()).ToList();
+            // Add pad vertex
+            vertexData.Insert(0, new Vector4());
+            var data = new List<List<Vector4>>()
+            {
+                Vertices.Select(v => v.GetVector4()).ToList()
+            };
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendFace, data, null);
+            faceData = compiler.Compile();
+
             writer.Write(faceData.Length << 4);
             writer.Write(VertexesAmount);
             writer.Write(faceData);

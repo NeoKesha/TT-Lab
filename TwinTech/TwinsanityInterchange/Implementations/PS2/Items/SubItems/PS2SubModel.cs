@@ -12,6 +12,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
     {
         private UInt32 VertexesCount { get; set; }
         private Byte[] VertexData { get; set; }
+
+
         public Byte[] UnusedBlob { get; set; }
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
@@ -101,10 +103,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         var b = Math.Min(e.GetBinaryZ() & 0xFF, 255);
                         var a = (e.GetBinaryW() & 0xFF) << 1;
 
-                        Color col = new Color((byte)r, (byte)g, (byte)b, (byte)a);
+                        Color col = new((byte)r, (byte)g, (byte)b, (byte)a);
                         Colors.Add(Vector4.FromColor(col));
 
-                        Vector4 uv = new Vector4(e);
+                        Vector4 uv = new(e);
                         uv.SetBinaryX(uv.GetBinaryX() & 0xFFFFFF00);
                         uv.SetBinaryY(uv.GetBinaryY() & 0xFFFFFF00);
                         uv.SetBinaryZ(uv.GetBinaryZ() & 0xFFFFFF00);
@@ -127,7 +129,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     {
                         if (e == null)
                             break;
-                        Vector4 emit = new Vector4(e);
+                        Vector4 emit = new(e);
                         emit.X = emit.GetBinaryX() & 0xFF;// / 256.0f;
                         emit.Y = emit.GetBinaryY() & 0xFF;// / 256.0f;
                         emit.Z = emit.GetBinaryZ() & 0xFF;// / 256.0f;
@@ -137,29 +139,33 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 }
                 i += fields + 2;
                 TrimList(UVW, Vertexes.Count);
-                TrimList(EmitColor, Vertexes.Count);
                 TrimList(Colors, Vertexes.Count);
-                TrimList(Normals, Vertexes.Count, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
         public void Write(BinaryWriter writer)
         {
-            //TODO: uncomment VertixesCount = (UInt32)Vertixes.Count();
-            var unkVec1 = new Vector4();
-            var unkVec2 = new Vector4();
+            VertexesCount = (UInt32)Vertexes.Count;
             TrimList(UVW, (Int32)VertexesCount);
-            TrimList(EmitColor, (Int32)VertexesCount);
-            TrimList(Normals, (Int32)VertexesCount, new Vector4(0.5f, 0.5f, 0.5f, 0.5f));
             TrimList(Colors, (Int32)VertexesCount, new Vector4());
-            var data = new List<List<Vector4>>();
-            data.Add(new List<Vector4>() { unkVec1 });
-            data.Add(new List<Vector4>() { unkVec2 });
-            data.Add(Vertexes);
-            data.Add(UVW);
-            data.Add(Normals);
-            data.Add(EmitColor);
-            data.Add(Colors);
-            //TODO: Pack data to VIF
+            var data = new List<List<Vector4>>
+            {
+                Vertexes,
+                Colors,
+                UVW
+            };
+            // Normals are optional
+            if (Normals.Count == Vertexes.Count)
+            {
+                data.Add(Normals);
+            }
+            // Emit colors are optional
+            if (EmitColor.Count == Vertexes.Count)
+            {
+                data.Add(EmitColor);
+            }
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Model, data, Connection);
+            VertexData = compiler.Compile();
+
             writer.Write(VertexesCount);
             writer.Write(VertexData.Length);
             writer.Write(VertexData);
@@ -167,7 +173,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             writer.Write(UnusedBlob);
         }
 
-        private void TrimList(List<Vector4> list, Int32 desiredLength, Vector4 defaultValue = null)
+        private static void TrimList(List<Vector4> list, Int32 desiredLength, Vector4 defaultValue = null)
         {
             if (list != null)
             {
