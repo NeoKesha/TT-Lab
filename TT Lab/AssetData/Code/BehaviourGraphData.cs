@@ -23,7 +23,7 @@ namespace TT_Lab.AssetData.Code
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Script = "";
         }
 
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)

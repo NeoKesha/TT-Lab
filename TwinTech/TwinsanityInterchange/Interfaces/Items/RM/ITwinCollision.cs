@@ -7,6 +7,9 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM
 {
     public interface ITwinCollision : ITwinItem
     {
+        /// <summary>
+        /// Unknown integer parameter
+        /// </summary>
         UInt32 UnkInt { get; set; }
         List<TwinCollisionTrigger> Triggers { get; set; }
         List<TwinGroupInformation> Groups { get; set; }

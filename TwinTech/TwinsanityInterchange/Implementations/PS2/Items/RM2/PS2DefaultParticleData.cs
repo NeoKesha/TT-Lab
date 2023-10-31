@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Particles;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
@@ -28,7 +29,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
 
         public override Int32 GetLength()
         {
-            return 24 + 8 + ParticleTypes.Sum(t => t.GetLength()) + 12 + 0x420 + 0x40 + UnkBlobs.Sum(b => 0x890);
+            return 24 + 8 + ParticleSystems.Sum(t => t.GetLength()) + 12 + 0x420 + 0x40 + UnkBlobs.Sum(b => 0x890);
         }
 
         public override void Read(BinaryReader reader, Int32 length)
@@ -46,9 +47,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             var typesAmt = reader.ReadInt32();
             for (var i = 0; i < typesAmt; ++i)
             {
-                var type = new TwinParticleType(Version);
+                var type = new TwinParticleSystem(Version);
                 type.Read(reader, length);
-                ParticleTypes.Add(type);
+                ParticleSystems.Add(type);
             }
             DecalTextureID = reader.ReadUInt32();
             DecalMaterialID = reader.ReadUInt32();

@@ -48,13 +48,7 @@ namespace TT_Lab.AssetData.Code
             ITwinSound sound = GetTwinItem<ITwinSound>();
             Frequency = sound.GetFreq();
             Channels = 1;
-            ADPCM adpcm = new();
-            using MemoryStream input = new(sound.Sound);
-            using MemoryStream output = new();
-            BinaryReader reader = new(input);
-            BinaryWriter writer = new(output);
-            adpcm.ToPCMMono(reader, writer);
-            PCM = output.ToArray();
+            PCM = sound.ToPCM();
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)

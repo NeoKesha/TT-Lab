@@ -6,7 +6,13 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
 {
     public interface ITwinCamera : ITwinItem
     {
+        /// <summary>
+        /// Trigger that makes the camera active
+        /// </summary>
         TwinTrigger CamTrigger { get; set; }
+        /// <summary>
+        /// Header value
+        /// </summary>
         UInt32 CameraHeader { get; set; }
         UInt16 UnkShort { get; set; }
         Single UnkFloat1 { get; set; } // 10

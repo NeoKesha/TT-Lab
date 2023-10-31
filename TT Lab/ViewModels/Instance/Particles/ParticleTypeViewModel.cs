@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Particles;
 
 namespace TT_Lab.ViewModels.Instance.Particles
 {
@@ -80,7 +81,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
         private Vector4ViewModel unkVec3 = new Vector4ViewModel();
 
         public ParticleTypeViewModel() { }
-        public ParticleTypeViewModel(TwinParticleType pt)
+        public ParticleTypeViewModel(TwinParticleSystem pt)
         {
             version = pt.Version;
             name = new String(pt.Name);
@@ -161,7 +162,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
 
         public override void Save(Object? o = null)
         {
-            var pt = (TwinParticleType)o!;
+            var pt = (TwinParticleSystem)o!;
             pt.Version = Version;
             pt.Name = Name.ToCharArray();
             pt.UnkByte1 = UnkByte1;

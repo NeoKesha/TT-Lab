@@ -47,11 +47,26 @@ namespace Twinsanity.PS2Hardware
 
         public static int VertexBatchAmount => 36;
 
+        /// <summary>
+        /// Twinsanity's model formats
+        /// </summary>
         public enum ModelFormat
         {
+            /// <summary>
+            /// Standard static model without bones
+            /// </summary>
             Model,
+            /// <summary>
+            /// Model with bone data
+            /// </summary>
             Skin,
+            /// <summary>
+            /// Model with bone data and per vertex animations capabilities
+            /// </summary>
             BlendSkin,
+            /// <summary>
+            /// The final positions of the vertexes per face
+            /// </summary>
             BlendFace
         }
 

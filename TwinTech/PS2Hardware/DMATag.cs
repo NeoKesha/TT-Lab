@@ -5,12 +5,27 @@ namespace Twinsanity.PS2Hardware
 {
     public class DMATag
     {
+        /// <summary>
+        /// Amount of quad words to transfer to VIF or GS
+        /// </summary>
         public UInt16 QWC;
         public Byte PCE;
+        /// <summary>
+        /// Where the data is stored
+        /// </summary>
         public IdType ID;
         public Byte IRQ;
+        /// <summary>
+        /// Address of where the data is stored
+        /// </summary>
         public UInt32 ADDR;
+        /// <summary>
+        /// The scratchpad/stack data
+        /// </summary>
         public Byte SPR;
+        /// <summary>
+        /// Any extra additional data
+        /// </summary>
         public UInt64 Extra;
         public void Read(BinaryReader reader)
         {

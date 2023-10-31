@@ -19,14 +19,20 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public enum ObjectType
         {
             PLAYABLE_CHARACTER,
-            TYPE_1,
-            TYPE_2,
-            TYPE_3,
-            TYPE_4,
-            TYPE_5,
-            TYPE_6,
-            TYPE_7,
-            TYPE_8
+            PICKUP,
+            CRATE,
+            CREATURE,
+            GENERIC_OBJECT,
+            GRABBABLE,
+            PAY_GATE,
+            GRAPLE,
+            PROJECTILE
+        }
+
+        public enum LodType
+        {
+            FULL = 0x1001,
+            COMPRESSED = 0x1002
         }
 
         [Flags]

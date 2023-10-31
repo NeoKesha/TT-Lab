@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -157,9 +158,9 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinTexture GenerateTexture(Stream stream)
+        public ITwinTexture GenerateTexture()
         {
-            throw new NotImplementedException();
+            return new XboxAnyTexture();
         }
 
         public ITwinTrigger GenerateTrigger(Stream stream)

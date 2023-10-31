@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
 {
+    /// <summary>
+    /// Seems to be in-engine exclusive. Only encountered in Default
+    /// </summary>
     public interface ITwinTemplate : ITwinItem
     {
         String Name { get; set; }

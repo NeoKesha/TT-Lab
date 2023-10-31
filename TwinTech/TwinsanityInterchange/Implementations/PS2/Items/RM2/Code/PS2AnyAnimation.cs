@@ -46,8 +46,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             var hasFacialAnimationData = HasFacialAnimationData ? 1 : 0;
             UInt32 newBitfield = (UInt32)hasAnimationData;
             newBitfield |= (UInt32)(hasFacialAnimationData << 1);
-            newBitfield |= (UInt32)(TotalFrames << 0x2 & 0xFFFF);
-            newBitfield |= (UInt32)(DefaultFPS << 0x11 & 0x1F);
+            newBitfield |= (UInt32)(TotalFrames & 0xFFFF << 0x2);
+            newBitfield |= (UInt32)(DefaultFPS & 0x1F << 0x11);
             bitfield = newBitfield;
 
             writer.Write(bitfield);

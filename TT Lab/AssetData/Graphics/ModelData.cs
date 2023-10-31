@@ -124,12 +124,11 @@ namespace TT_Lab.AssetData.Graphics
             ITwinModel model = GetTwinItem<ITwinModel>();
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
-            Int32 refIndex;
             foreach (var e in model.SubModels)
             {
                 var vertList = new List<Vertex>();
                 var faceList = new List<IndexedFace>();
-                refIndex = 0;
+                Int32 refIndex = 0;
                 e.CalculateData();
                 for (var j = 0; j < e.Vertexes.Count; ++j)
                 {
@@ -161,7 +160,6 @@ namespace TT_Lab.AssetData.Graphics
                 }
                 Vertexes.Add(vertList);
                 Faces.Add(faceList);
-                refIndex += 2;
             }
         }
 

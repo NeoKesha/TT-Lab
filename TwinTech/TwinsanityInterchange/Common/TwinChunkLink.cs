@@ -9,12 +9,48 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class TwinChunkLink : ITwinSerializable
     {
-        public UInt32 Type { get; set; }
+        UInt32 type;
+        UInt32 flags;
+
+        /// <summary>
+        /// Unknown flag which is related to how chunk is loaded
+        /// </summary>
+        public Boolean UnkFlag { get; set; }
+        /// <summary>
+        /// Path to the linked chunk
+        /// </summary>
         public String Path { get; set; }
-        public UInt32 Flags { get; set; }
+        /// <summary>
+        /// Marks if the linked chunk should be rendered
+        /// </summary>
+        public Boolean IsRendered { get; set; }
+        /// <summary>
+        /// Purpose currently unknown. Only 6 bits are used
+        /// </summary>
+        public Byte UnkNum { get; set; }
+        /// <summary>
+        /// Marks if the load wall is collidable, when turned off the linked chunk can not be transitioned into and only the scenery of the linked chunk will be rendered
+        /// </summary>
+        public Boolean IsLoadWallActive { get; set; }
+        /// <summary>
+        /// Marks whether the chunk should be preloaded/kept in memory. Used for chunks that are not directly linked and are seperated by another chunk
+        /// </summary>
+        public Boolean KeepLoaded { get; set; }
+        /// <summary>
+        /// How object is translated when crossing the load wall as well as how camera occlussion culling is calculated
+        /// </summary>
         public Matrix4 ObjectMatrix { get; set; }
+        /// <summary>
+        /// How linked chunk is rendered before crossing the load wall
+        /// </summary>
         public Matrix4 ChunkMatrix { get; set; }
+        /// <summary>
+        /// How load wall is positioned, touching it will move you into the linked chunk
+        /// </summary>
         public Matrix4 LoadingWall { get; set; }
+        /// <summary>
+        /// Loading bounding boxes. When set will create a bounding box that the playable must be in for the chunk to start loading/be loaded.
+        /// </summary>
         public List<TwinChunkLinkBoundingBoxBuilder> ChunkLinksCollisionData { get; set; }
 
         public TwinChunkLink()
@@ -33,18 +69,27 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Read(BinaryReader reader, int length)
         {
-            Type = reader.ReadUInt32();
+            type = reader.ReadUInt32();
+            {
+                UnkFlag = (type & 0x2) == 1;
+            }
             int pathLen = reader.ReadInt32();
             Path = new String(reader.ReadChars(pathLen));
-            Flags = reader.ReadUInt32();
+            flags = reader.ReadUInt32();
+            {
+                IsRendered = (flags & 0x1) == 1;
+                UnkNum = (Byte)(flags >> 0x1 & 0x3F);
+                KeepLoaded = (flags & 0x80) == 1;
+                IsLoadWallActive = (flags & 0x100) == 1;
+            }
             ObjectMatrix.Read(reader, Constants.SIZE_MATRIX4);
             ChunkMatrix.Read(reader, Constants.SIZE_MATRIX4);
-            if ((Flags & 0x80000) != 0)
+            if ((flags & 0x80000) != 0)
             {
                 LoadingWall = new Matrix4();
                 LoadingWall.Read(reader, Constants.SIZE_MATRIX4);
             }
-            if ((Type & 0x1) != 0)
+            if ((type & 0x1) != 0)
             {
                 var clOgi3 = new TwinChunkLinkBoundingBoxBuilder();
                 Boolean hasNext;
@@ -63,27 +108,40 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Write(BinaryWriter writer)
         {
-            Flags &= ~(uint)0x80000;
-            Type &= ~(uint)0x1;
+            flags = ((UInt32)UnkNum & 0x3F << 1);
+            type = 0;
+            if (IsRendered)
+            {
+                flags |= 0x1;
+            }
+            if (KeepLoaded)
+            {
+                flags |= 0x80;
+            }
+            if (IsLoadWallActive)
+            {
+                flags |= 0x100;
+            }
             if (LoadingWall != null)
             {
-                Flags |= 0x80000;
+                flags |= 0x80000;
             }
             if (ChunkLinksCollisionData.Count != 0)
             {
-                Type |= 0x1;
+                type |= 0x1;
             }
-            writer.Write(Type);
+            if (UnkFlag)
+            {
+                type |= 0x2;
+            }
+            writer.Write(type);
             writer.Write(Path.Length);
             writer.Write(Path.ToCharArray());
-            writer.Write(Flags);
+            writer.Write(flags);
             ObjectMatrix.Write(writer);
             ChunkMatrix.Write(writer);
-            if (LoadingWall != null)
-            {
-                LoadingWall.Write(writer);
-            }
-            if ((Type & 0x1) != 0)
+            LoadingWall?.Write(writer);
+            if ((type & 0x1) != 0)
             {
                 foreach (var colData in ChunkLinksCollisionData)
                 {

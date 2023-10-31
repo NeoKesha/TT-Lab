@@ -113,14 +113,11 @@ namespace TT_Lab.AssetData.Graphics
             ITwinSkin skin = GetTwinItem<ITwinSkin>();
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
-
-            var refIndex = 0;
-            var offset = 0;
             foreach (var e in skin.SubSkins)
             {
                 var vertList = new List<Vertex>();
                 var faceList = new List<IndexedFace>();
-                refIndex = 0;
+                Int32 refIndex = 0;
                 e.CalculateData();
                 for (var j = 0; j < e.Vertexes.Count; ++j)
                 {
@@ -128,7 +125,7 @@ namespace TT_Lab.AssetData.Graphics
                     {
                         if (e.SkinJoints[j + 2].Connection)
                         {
-                            if ((/*offset +*/ j) % 2 == 0)
+                            if (j % 2 == 0)
                             {
                                 faceList.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
                             }
@@ -143,8 +140,6 @@ namespace TT_Lab.AssetData.Graphics
                 }
                 Vertexes.Add(vertList);
                 Faces.Add(faceList);
-                //offset += e.Vertexes.Count;
-                refIndex += 2;
             }
         }
 

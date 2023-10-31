@@ -8,7 +8,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
     public class XboxAnySound : BaseTwinItem, ITwinSound
     {
         UInt32 frequency;
-        Byte[] headBytes;
         UInt32 unkInt;
 
         public UInt32 Header { get; set; }
@@ -20,6 +19,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
         public UInt16 Param4 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Byte[] Sound { get; set; }
 
+        static readonly byte[] headerStatic1 = new byte[] { 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00 };
+        static readonly byte[] headerStatic2 = new byte[] { 0x02, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
         public override Int32 GetLength()
         {
             return 0x50 + Sound.Length;
@@ -29,7 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
         {
             Header = reader.ReadUInt32();
             frequency = reader.ReadUInt32();
-            headBytes = reader.ReadBytes(0x38);
+            reader.ReadBytes(headerStatic1.Length + headerStatic2.Length + 8);
             var soundSize = reader.ReadInt32();
             unkInt = reader.ReadUInt32();
             soundSize -= 4;
@@ -41,7 +43,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
         {
             writer.Write(Header);
             writer.Write(frequency);
-            writer.Write(headBytes);
+            writer.Write(headerStatic1);
+            writer.Write(frequency);
+            writer.Write(frequency * 2);
+            writer.Write(headerStatic2);
             writer.Write(Sound.Length + 4);
             writer.Write(unkInt);
             writer.Write(Sound);
@@ -52,6 +57,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
         public UInt16 GetFreq()
         {
             return (UInt16)frequency;
+        }
+
+        public Byte[] ToPCM()
+        {
+            return Sound;
         }
 
         public override String GetName()

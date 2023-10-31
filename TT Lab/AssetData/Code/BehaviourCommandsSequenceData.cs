@@ -57,7 +57,8 @@ namespace TT_Lab.AssetData.Code
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            BehaviourGraphIds.Clear();
+            Code = "";
         }
 
         public override void Import(LabURI package, String? variant)
@@ -74,7 +75,7 @@ namespace TT_Lab.AssetData.Code
 
         private void GenerateBehaviourGraphIdsList(ITwinBehaviourCommandsSequence cm)
         {
-            BehaviourGraphIds = new List<uint>();
+            BehaviourGraphIds = new List<UInt32>();
             foreach (var e in cm.BehaviourPacks)
             {
                 BehaviourGraphIds.Add(e.Key);

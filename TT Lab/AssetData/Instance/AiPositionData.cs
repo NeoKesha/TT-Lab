@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
@@ -39,7 +40,12 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            Coords.Write(writer);
+            writer.Write(Arg);
+
+            return factory.GenerateAIPosition(ms);
         }
     }
 }

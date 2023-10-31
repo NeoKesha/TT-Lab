@@ -1,5 +1,6 @@
 ﻿using System;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Particles;
 
 namespace TT_Lab.ViewModels.Instance.Particles
 {
@@ -24,7 +25,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
         private Int16 unkShort8;
 
         public ParticleInstanceViewModel() { }
-        public ParticleInstanceViewModel(TwinParticleInstance pi)
+        public ParticleInstanceViewModel(TwinParticleEmitter pi)
         {
             version = pi.Version;
             name = new String(pi.Name);
@@ -47,7 +48,7 @@ namespace TT_Lab.ViewModels.Instance.Particles
 
         public override void Save(Object? o = null)
         {
-            var pi = (TwinParticleInstance)o!;
+            var pi = (TwinParticleEmitter)o!;
             pi.Version = Version;
             pi.Name = Name.ToCharArray();
             pi.Position = new Vector3

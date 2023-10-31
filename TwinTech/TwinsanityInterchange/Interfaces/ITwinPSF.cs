@@ -6,8 +6,17 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
     public interface ITwinPSF : ITwinSerializable
     {
+        /// <summary>
+        /// Font pages
+        /// </summary>
         public List<ITwinPTC> FontPages { get; set; }
+        /// <summary>
+        /// Purpose currently unknown
+        /// </summary>
         public List<Vector4> UnkVecs { get; set; }
+        /// <summary>
+        /// Purpose currently unknown
+        /// </summary>
         public Int32 UnkInt { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -40,7 +41,16 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(PathBegin);
+            writer.Write(PathEnd);
+            foreach (var arg in Args)
+            {
+                writer.Write(arg);
+            }
+
+            return factory.GenerateAIPath(ms);
         }
     }
 }

@@ -103,7 +103,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            ITwinTexture texture = factory.GenerateTexture(new MemoryStream());
+            ITwinTexture texture = factory.GenerateTexture();
             var fun = ITwinTexture.TextureFunction.MODULATE;
             var format = (Bitmap.Width == 256) ? ITwinTexture.TexturePixelFormat.PSMCT32 : ITwinTexture.TexturePixelFormat.PSMT8;
             var tex = new List<Twinsanity.TwinsanityInterchange.Common.Color>();

@@ -5,6 +5,9 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
 {
     public interface ITwinModel : ITwinItem
     {
+        /// <summary>
+        /// Submodels the model consists of
+        /// </summary>
         List<ITwinSubModel> SubModels { get; set; }
     }
 }

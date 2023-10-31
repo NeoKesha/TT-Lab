@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
@@ -69,6 +70,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 0x10 => 48000,
                 _ => throw new ArgumentException($"Unhandled sfx frequency. Value was: {FreqFac}", "freq"),
             };
+        }
+
+        public Byte[] ToPCM()
+        {
+            ADPCM adpcm = new();
+            using MemoryStream input = new(Sound);
+            using MemoryStream output = new();
+            BinaryReader reader = new(input);
+            BinaryWriter writer = new(output);
+            adpcm.ToPCMMono(reader, writer);
+            return output.ToArray();
         }
     }
 }

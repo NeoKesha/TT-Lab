@@ -7,6 +7,7 @@ using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -22,7 +23,7 @@ namespace TT_Lab.AssetData.Graphics
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Int32 Type { get; set; }
+        public LodType Type { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Int32 MinDrawDistance { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -34,7 +35,7 @@ namespace TT_Lab.AssetData.Graphics
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Meshes.Clear();
         }
 
         public override void Import(LabURI package, String? variant)

@@ -5,17 +5,21 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
     public interface ITwinSerializable
     {
-        /**
-         * Deserialize item from stream
-         */
+        /// <summary>
+        /// Deserialize item from stream
+        /// </summary>
+        /// <param name="reader">Data to read from</param>
+        /// <param name="length">Length of the data</param>
         void Read(BinaryReader reader, Int32 length);
-        /**
-         * Serialize item
-         */
+        /// <summary>
+        /// Serialize item
+        /// </summary>
+        /// <param name="writer">Destination of the data</param>
         void Write(BinaryWriter writer);
-        /**
-         * Get length of item
-         */
+        /// <summary>
+        /// Get length of item
+        /// </summary>
+        /// <returns></returns>
         Int32 GetLength();
     }
 }

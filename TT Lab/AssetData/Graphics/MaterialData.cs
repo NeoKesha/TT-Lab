@@ -31,7 +31,7 @@ namespace TT_Lab.AssetData.Graphics
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            Shaders.Clear();
         }
 
         public override void Import(LabURI package, String? variant)

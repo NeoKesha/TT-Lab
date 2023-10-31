@@ -7,13 +7,16 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
 {
     public class LinkViewModel : SaveableViewModel
     {
-        public UInt32 type;
-        public String path;
-        public UInt32 flags;
-        public Matrix4ViewModel objectMatrix;
-        public Matrix4ViewModel chunkMatrix;
-        public Matrix4ViewModel? loadingWall;
-        public ObservableCollection<ChunkLinkBoundingBoxBuilderViewModel> boundingBoxBuilders;
+        private Boolean unkFlag;
+        private String path;
+        private Boolean isRendered;
+        private Byte unkNum;
+        private Boolean isLoadWallActive;
+        private Boolean keepLoaded;
+        private Matrix4ViewModel objectMatrix;
+        private Matrix4ViewModel chunkMatrix;
+        private Matrix4ViewModel? loadingWall;
+        private ObservableCollection<ChunkLinkBoundingBoxBuilderViewModel> boundingBoxBuilders;
 
         public LinkViewModel()
         {
@@ -27,9 +30,12 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
         }
         public LinkViewModel(ChunkLink link)
         {
-            type = link.Type;
+            unkFlag = link.UnkFlag;
             path = link.Path;
-            flags = link.Flags;
+            isRendered = link.IsRendered;
+            unkNum = link.UnkNum;
+            isLoadWallActive = link.IsLoadWallActive;
+            keepLoaded = link.KeepLoaded;
             objectMatrix = new Matrix4ViewModel(link.ObjectMatrix);
             chunkMatrix = new Matrix4ViewModel(link.ChunkMatrix);
             if (link.LoadingWall != null)
@@ -45,9 +51,12 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
         public override void Save(Object? o = null)
         {
             var link = (ChunkLink)o!;
-            link.Type = Type;
+            link.UnkFlag = UnkFlag;
             link.Path = Path;
-            link.Flags = Flags;
+            link.IsRendered = IsRendered;
+            link.UnkNum = UnkNum;
+            link.IsLoadWallActive = IsLoadWallActive;
+            link.KeepLoaded = KeepLoaded;
             ObjectMatrix.Save(link.ObjectMatrix);
             ChunkMatrix.Save(link.ChunkMatrix);
             link.LoadingWall = null;
@@ -65,14 +74,14 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
             }
         }
 
-        public UInt32 Type
+        public Boolean UnkFlag
         {
-            get => type;
+            get => unkFlag;
             set
             {
-                if (value != type)
+                if (value != unkFlag)
                 {
-                    type = value;
+                    unkFlag = value;
                     NotifyChange();
                 }
             }
@@ -92,17 +101,62 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
                 }
             }
         }
-        public UInt32 Flags
+        public Boolean IsRendered
         {
             get
             {
-                return flags;
+                return isRendered;
             }
             set
             {
-                if (value != flags)
+                if (value != isRendered)
                 {
-                    flags = value;
+                    isRendered = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Byte UnkNum
+        {
+            get
+            {
+                return unkNum;
+            }
+            set
+            {
+                if (value != unkNum)
+                {
+                    unkNum = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Boolean IsLoadWallActive
+        {
+            get
+            {
+                return isLoadWallActive;
+            }
+            set
+            {
+                if (value != isLoadWallActive)
+                {
+                    isLoadWallActive = value;
+                    NotifyChange();
+                }
+            }
+        }
+        public Boolean KeepLoaded
+        {
+            get
+            {
+                return keepLoaded;
+            }
+            set
+            {
+                if (value != keepLoaded)
+                {
+                    keepLoaded = value;
                     NotifyChange();
                 }
             }

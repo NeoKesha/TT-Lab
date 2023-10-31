@@ -33,7 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
         }
 
         public String Name { get; set; }
-        public Int32 UnkInt { get; set; }
+        public Int32 StartUnit { get; set; }
         public List<ITwinBehaviourState> ScriptStates { get; set; }
 
         public XboxBehaviourGraph()
@@ -60,7 +60,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
             var NameLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(NameLen));
             var statesAmt = reader.ReadInt32();
-            UnkInt = reader.ReadInt32();
+            StartUnit = reader.ReadInt32();
             ScriptStates.Clear();
             for (int i = 0; i < statesAmt; ++i)
             {
@@ -87,7 +87,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
             writer.Write(ScriptStates.Count);
-            writer.Write(UnkInt);
+            writer.Write(StartUnit);
             foreach (var state in ScriptStates)
             {
                 state.HasNext = !ScriptStates.Last().Equals(state);
@@ -106,7 +106,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
             StringUtils.WriteLineTabulated(writer, $"Script({Name}) {"{"}", tabs);
-            StringUtils.WriteLineTabulated(writer, $"bitfield = {UnkInt}", tabs + 1);
+            StringUtils.WriteLineTabulated(writer, $"bitfield = {StartUnit}", tabs + 1);
             int i = 0;
             foreach (var state in ScriptStates)
             {
@@ -139,7 +139,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
                 }
                 if (line.StartsWith("bitfield"))
                 {
-                    UnkInt = int.Parse(StringUtils.GetStringAfter(line, "="));
+                    StartUnit = int.Parse(StringUtils.GetStringAfter(line, "="));
                 }
                 if (line.StartsWith("State_"))
                 {

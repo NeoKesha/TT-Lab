@@ -4,29 +4,39 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
     public interface ITwinSection : ITwinItem
     {
-        /**
-         * Get length of payload
-         */
+        /// <summary>
+        /// Get length of payload
+        /// </summary>
+        /// <returns></returns>
         Int32 GetContentLength();
-        /**
-         * Gets item by collection's id
-         */
+        /// <summary>
+        /// Gets item by collection's id
+        /// </summary>
+        /// <param name="index">Item's ID</param>
+        /// <returns></returns>
         ITwinItem GetItem(Int32 index);
-        /**
-         * Gets item by its id
-         */
+        /// <summary>
+        /// Gets item by its id
+        /// </summary>
+        /// <typeparam name="T">Specific item's type</typeparam>
+        /// <param name="id">Item's ID</param>
+        /// <returns></returns>
         T GetItem<T>(UInt32 id) where T : ITwinItem;
-        /**
-         * Remove item by ID
-         */
+        /// <summary>
+        /// Remove item by ID
+        /// </summary>
+        /// <typeparam name="T">Specific item's type</typeparam>
+        /// <param name="id">Item's ID</param>
         void RemoveItem<T>(UInt32 id) where T : ITwinItem;
-        /**
-         * Add new item. 
-         */
+        /// <summary>
+        /// Add new item
+        /// </summary>
+        /// <param name="item"></param>
         void AddItem(ITwinItem item);
-        /**
-         * Get amount of stored items
-         */
+        /// <summary>
+        /// Get amount of stored items
+        /// </summary>
+        /// <returns></returns>
         Int32 GetItemsAmount();
     }
 }

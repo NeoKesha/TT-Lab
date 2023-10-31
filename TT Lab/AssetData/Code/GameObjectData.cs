@@ -8,6 +8,7 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -39,7 +40,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt32> TriggerScripts { get; set; }
+        public List<TwinObjectTriggerScript> TriggerScripts { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> OGISlots { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -76,7 +77,21 @@ namespace TT_Lab.AssetData.Code
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            TriggerScripts.Clear();
+            OGISlots.Clear();
+            AnimationSlots.Clear();
+            BehaviourSlots.Clear();
+            ObjectSlots.Clear();
+            SoundSlots.Clear();
+            InstFlags.Clear();
+            InstFloats.Clear();
+            InstIntegers.Clear();
+            RefObjects.Clear();
+            RefOGIs.Clear();
+            RefAnimations.Clear();
+            RefBehaviourCommandsSequences.Clear();
+            RefBehaviours.Clear();
+            RefSounds.Clear();
         }
 
         public override void Import(LabURI package, String? variant)
@@ -88,7 +103,7 @@ namespace TT_Lab.AssetData.Code
             OGIType2ArraySize = gameObject.ExitPointAmount;
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
-            TriggerScripts = CloneUtils.CloneList(gameObject.TriggerScripts);
+            TriggerScripts = CloneUtils.CloneList(gameObject.TriggerScripts, (e) => new(e.Compress()));
             OGISlots = new List<LabURI>();
             foreach (var e in gameObject.OGISlots)
             {

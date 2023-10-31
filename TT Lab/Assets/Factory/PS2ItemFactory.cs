@@ -35,7 +35,14 @@ namespace TT_Lab.Assets.Factory
         {
             var animation = new PS2AnyAnimation();
             using var reader = new BinaryReader(stream);
-            animation.Read(reader, (Int32)stream.Length);
+            animation.TotalFrames = reader.ReadUInt16();
+            animation.DefaultFPS = reader.ReadByte();
+            animation.MainAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinAnimation();
+            animation.MainAnimation.Read(reader, (Int32)stream.Length);
+            animation.FacialAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinAnimation();
+            animation.FacialAnimation.Read(reader, (Int32)stream.Length);
+            animation.HasAnimationData = true;
+            animation.HasFacialAnimationData = animation.FacialAnimation.TotalFrames != 0;
             return animation;
         }
 
@@ -199,9 +206,9 @@ namespace TT_Lab.Assets.Factory
             return template;
         }
 
-        public ITwinTexture GenerateTexture(Stream stream)
+        public ITwinTexture GenerateTexture()
         {
-            throw new NotImplementedException();
+            return new PS2AnyTexture();
         }
 
         public ITwinTrigger GenerateTrigger(Stream stream)

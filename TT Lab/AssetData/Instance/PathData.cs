@@ -29,6 +29,7 @@ namespace TT_Lab.AssetData.Instance
         protected override void Dispose(Boolean disposing)
         {
             Points.Clear();
+            Parameters.Clear();
         }
 
         public override void Import(LabURI package, String? variant)

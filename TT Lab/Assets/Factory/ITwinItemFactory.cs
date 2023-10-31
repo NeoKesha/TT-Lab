@@ -19,7 +19,7 @@ namespace TT_Lab.Assets.Factory
         ITwinRigidModel GenerateRigidModel(Stream stream);
         ITwinSkin GenerateSkin(Stream stream);
         ITwinSkydome GenerateSkydome(Stream stream);
-        ITwinTexture GenerateTexture(Stream stream);
+        ITwinTexture GenerateTexture();
         ITwinAnimation GenerateAnimation(Stream stream);
         TwinBehaviourStarter GenerateBehaviourStarter(Stream stream);
         ITwinBehaviourGraph GenerateBehaviourGraph(Stream stream);

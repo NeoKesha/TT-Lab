@@ -12,10 +12,10 @@ namespace TT_Lab.AssetData.Code
 
         protected BehaviourData(ITwinBehaviour script) : this()
         {
-            Mask = script.Mask;
+            Priority = script.Priority;
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Byte Mask { get; set; }
+        public Byte Priority { get; set; }
     }
 }

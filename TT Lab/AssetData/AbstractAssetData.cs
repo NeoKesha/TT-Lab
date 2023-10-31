@@ -16,7 +16,7 @@ namespace TT_Lab.AssetData
 
         ITwinItem? twinRef = null;
 
-        public virtual void Load(string dataPath, JsonSerializerSettings? settings = null)
+        public virtual void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
             using System.IO.FileStream fs = new(dataPath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             using System.IO.StreamReader reader = new(fs);
@@ -24,7 +24,7 @@ namespace TT_Lab.AssetData
             disposedValue = false;
         }
 
-        public virtual void Save(string dataPath, JsonSerializerSettings? settings = null)
+        public virtual void Save(String dataPath, JsonSerializerSettings? settings = null)
         {
             using System.IO.FileStream fs = new(dataPath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using System.IO.BinaryWriter writer = new(fs);
@@ -36,6 +36,8 @@ namespace TT_Lab.AssetData
         public void Dispose()
         {
             // DO NOT change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            if (disposedValue) return;
+
             Dispose(disposing: true);
             disposedValue = true;
             GC.SuppressFinalize(this);

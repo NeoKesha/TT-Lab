@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
@@ -24,7 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public Byte ExitPointAmount { get; set; }
         public Byte[] SlotsMap { get; set; }
         public String Name { get; set; }
-        public List<UInt32> TriggerScripts { get; set; }
+        public List<TwinObjectTriggerScript> TriggerScripts { get; set; }
         public List<UInt16> OGISlots { get; set; }
         public List<UInt16> AnimationSlots { get; set; }
         public List<UInt16> ScriptSlots { get; set; }
@@ -64,7 +65,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public PS2AnyObject()
         {
             SlotsMap = new Byte[8];
-            TriggerScripts = new List<UInt32>();
+            TriggerScripts = new List<TwinObjectTriggerScript>();
             OGISlots = new List<UInt16>();
             AnimationSlots = new List<UInt16>();
             ScriptSlots = new List<UInt16>();
@@ -150,7 +151,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             var strLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(strLen));
 
-            FillResourceList(reader, TriggerScripts, true);
+            // Read trigger scripts
+            {
+                var amount = reader.ReadInt32();
+                TriggerScripts.Clear();
+                for (var i = 0; i < amount; ++i)
+                {
+                    TriggerScripts.Add(new TwinObjectTriggerScript(reader.ReadUInt32()));
+                }
+            }
             FillResourceList(reader, OGISlots);
             FillResourceList(reader, AnimationSlots);
             FillResourceList(reader, ScriptSlots);

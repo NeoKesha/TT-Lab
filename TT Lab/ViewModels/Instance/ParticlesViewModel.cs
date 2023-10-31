@@ -4,6 +4,7 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Particles;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Particles;
 
 namespace TT_Lab.ViewModels.Instance
 {
@@ -16,11 +17,11 @@ namespace TT_Lab.ViewModels.Instance
             ParticleTypes = new ObservableCollection<ParticleTypeViewModel>();
             ParticleInstances = new ObservableCollection<ParticleInstanceViewModel>();
             var data = _asset.GetData<ParticleData>();
-            foreach (var type in data.ParticleTypes)
+            foreach (var type in data.ParticleSystems)
             {
                 ParticleTypes.Add(new ParticleTypeViewModel(type));
             }
-            foreach (var inst in data.ParticleInstances)
+            foreach (var inst in data.ParticleEmitters)
             {
                 ParticleInstances.Add(new ParticleInstanceViewModel(inst));
             }
@@ -30,19 +31,19 @@ namespace TT_Lab.ViewModels.Instance
         {
             var data = _asset.GetData<ParticleData>();
             data.Version = Version;
-            data.ParticleTypes.Clear();
+            data.ParticleSystems.Clear();
             foreach (var type in ParticleTypes)
             {
-                var t = new TwinParticleType();
+                var t = new TwinParticleSystem();
                 type.Save(t);
-                data.ParticleTypes.Add(t);
+                data.ParticleSystems.Add(t);
             }
-            data.ParticleInstances.Clear();
+            data.ParticleEmitters.Clear();
             foreach (var inst in ParticleInstances)
             {
-                var i = new TwinParticleInstance();
+                var i = new TwinParticleEmitter();
                 inst.Save(i);
-                data.ParticleInstances.Add(i);
+                data.ParticleEmitters.Add(i);
             }
             base.Save(o);
         }

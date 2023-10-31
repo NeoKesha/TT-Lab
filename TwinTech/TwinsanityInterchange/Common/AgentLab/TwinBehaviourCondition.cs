@@ -8,14 +8,34 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
+    /// <summary>
+    /// Behaviour conditions allowing to jump to different states in the behaviours
+    /// </summary>
     public class TwinBehaviourCondition : ITwinSerializable
     {
-        public Int32 Bitfield;
+        /// <summary>
+        /// Condition identified/delegate index in the game's table
+        /// </summary>
         public UInt16 ConditionIndex;
+        /// <summary>
+        /// Some parameter
+        /// </summary>
         public UInt16 Parameter;
+        /// <summary>
+        /// If the result should be inversed
+        /// </summary>
         public Boolean NotGate;
+        /// <summary>
+        /// Special multiplied
+        /// </summary>
         public Single Modifier;
+        /// <summary>
+        /// The expected value to pass the check
+        /// </summary>
         public Single ReturnCheck;
+        /// <summary>
+        /// Priority of the condition
+        /// </summary>
         public Single ConditionPowerMultiplier;
 
         public Int32 GetLength()
@@ -25,10 +45,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 
         public void Read(BinaryReader reader, Int32 length)
         {
-            Bitfield = reader.ReadInt32();
-            ConditionIndex = (UInt16)(Bitfield & 0xFFFF);
-            Parameter = (UInt16)((Bitfield & 0xFFFF0000) >> 17);
-            NotGate = (Bitfield & 0x10000) != 0;
+            var bitfield = reader.ReadInt32();
+            ConditionIndex = (UInt16)(bitfield & 0xFFFF);
+            Parameter = (UInt16)((bitfield & 0xFFFF0000) >> 17);
+            NotGate = (bitfield & 0x10000) != 0;
             Modifier = reader.ReadSingle();
             ReturnCheck = reader.ReadSingle();
             ConditionPowerMultiplier = reader.ReadSingle();
@@ -42,7 +62,6 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             {
                 newBitfield |= 0x10000;
             }
-            newBitfield |= (Int32)(Bitfield & 0xFFFE0000);
             writer.Write(newBitfield);
             writer.Write(Modifier);
             writer.Write(ReturnCheck);

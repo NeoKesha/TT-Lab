@@ -4,9 +4,9 @@ using System.IO;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
-namespace Twinsanity.TwinsanityInterchange.Common
+namespace Twinsanity.TwinsanityInterchange.Common.Particles
 {
-    public class TwinParticleType : ITwinSerializable
+    public class TwinParticleSystem : ITwinSerializable
     {
         public UInt32 Version;
         public Char[] Name;
@@ -83,7 +83,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Vector4 UnkVec3;
 
         private readonly Dictionary<UInt32, Int32> versionSizeMap = new();
-        public TwinParticleType()
+        public TwinParticleSystem()
         {
             Name = new Char[16];
             UnkVec1 = new Vector3();
@@ -100,7 +100,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkVec3 = new Vector4();
             Version = 0x1E;
         }
-        public TwinParticleType(UInt32 ver) : this()
+        public TwinParticleSystem(UInt32 ver) : this()
         {
             Version = ver;
         }

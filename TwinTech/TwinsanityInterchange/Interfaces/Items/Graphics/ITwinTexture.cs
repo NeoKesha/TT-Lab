@@ -6,28 +6,98 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
 {
     public interface ITwinTexture : ITwinItem
     {
+        /// <summary>
+        /// Color of each pixel
+        /// </summary>
         List<Color> Colors { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         UInt32 HeaderSignature { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         UInt16 ImageWidthPower { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         UInt16 ImageHeightPower { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Byte MipLevels { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         TexturePixelFormat TextureFormat { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         TexturePixelFormat DestinationTextureFormat { get; set; }
+        /// <summary>
+        /// Whether RGB or RBGA is used for the texture's pixels
+        /// </summary>
         TextureColorComponent ColorComponent { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Byte UnkByte { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         TextureFunction TexFun { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Byte[] UnkBytes1 { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Int32 TextureBasePointer { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Int32[] MipLevelsTBP { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Int32 TextureBufferWidth { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Int32[] MipLevelsTBW { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Int32 ClutBufferBasePointer { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Byte[] UnkBytes2 { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Byte[] UnkBytes3 { get; set; }
+        /// <summary>
+        /// DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Byte[] UnusedMetadata { get; set; }
+        /// <summary>
+        /// Texture's raw compressed data. DO NOT EDIT. Prefer using FromBitmap function
+        /// </summary>
         Byte[] TextureData { get; set; }
 
+        /// <summary>
+        /// Converts compressed texture data to its bitmap variant
+        /// </summary>
         void CalculateData();
+        /// <summary>
+        /// Converts bitmap to compressed texture data
+        /// </summary>
+        /// <param name="image">Pixel colors</param>
+        /// <param name="width">Width of the image (height is calculated automatically)</param>
+        /// <param name="fun">GS function to use when rendering the texture</param>
+        /// <param name="format">Texture's pixel format</param>
         void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format);
 
         #region Enums

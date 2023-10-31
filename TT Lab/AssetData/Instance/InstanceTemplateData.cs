@@ -51,7 +51,10 @@ namespace TT_Lab.AssetData.Instance
         public List<UInt32> Ints { get; set; }
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            UnkIds.Clear();
+            Flags.Clear();
+            Floats.Clear();
+            Ints.Clear();
         }
 
         public override void Import(LabURI package, String? variant)

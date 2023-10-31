@@ -7,7 +7,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 {
     public class TwinShader : ITwinSerializable
     {
-        public UInt32 ShaderType { get; set; }
+        public Type ShaderType { get; set; }
         public UInt32 IntParam { get; set; }
         public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending;
@@ -57,32 +57,32 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public int GetLength()
         {
             int blobLen = (Blob != null) ? Blob.GetLength() : 0;
-            int paramLen = (ShaderType == 23) ? 12 :
-                            (ShaderType == 26) ? 20 :
-                            (ShaderType == 16 || ShaderType == 17) ? 4 :
+            int paramLen = (ShaderType == Type.UnlitClothDeformation) ? 12 :
+                            (ShaderType == Type.UnlitClothDeformation2) ? 20 :
+                            (ShaderType == Type.LitReflectionSurface || ShaderType == Type.SHADER_17) ? 4 :
                             0;
             return 4 + paramLen + 30 + 4 + Constants.SIZE_VECTOR4 * 3 + 8 + blobLen;
         }
 
         public void Read(BinaryReader reader, int length)
         {
-            ShaderType = reader.ReadUInt32();
+            ShaderType = (Type)reader.ReadUInt32();
             switch (ShaderType)
             {
-                case 23:
+                case Type.UnlitClothDeformation:
                     IntParam = reader.ReadUInt32();
                     FloatParam[0] = reader.ReadSingle();
                     FloatParam[1] = reader.ReadSingle();
                     break;
-                case 26:
+                case Type.UnlitClothDeformation2:
                     IntParam = reader.ReadUInt32();
                     FloatParam[0] = reader.ReadSingle();
                     FloatParam[1] = reader.ReadSingle();
                     FloatParam[2] = reader.ReadSingle();
                     FloatParam[3] = reader.ReadSingle();
                     break;
-                case 16:
-                case 17:
+                case Type.LitReflectionSurface:
+                case Type.SHADER_17:
                     FloatParam[0] = reader.ReadSingle();
                     break;
                 default:
@@ -134,23 +134,23 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(ShaderType);
+            writer.Write((UInt32)ShaderType);
             switch (ShaderType)
             {
-                case 23:
+                case Type.UnlitClothDeformation:
                     writer.Write(IntParam);
                     writer.Write(FloatParam[0]);
                     writer.Write(FloatParam[1]);
                     break;
-                case 26:
+                case Type.UnlitClothDeformation2:
                     writer.Write(IntParam);
                     writer.Write(FloatParam[0]);
                     writer.Write(FloatParam[1]);
                     writer.Write(FloatParam[2]);
                     writer.Write(FloatParam[3]);
                     break;
-                case 16:
-                case 17:
+                case Type.LitReflectionSurface:
+                case Type.SHADER_17:
                     writer.Write(FloatParam[0]);
                     break;
                 default:
@@ -192,15 +192,37 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkVector2.Write(writer);
             UnkVector3.Write(writer);
             writer.Write(TextureId);
-            writer.Write(ShaderType);
-            if (Blob != null)
-            {
-                Blob.Write(writer);
-            }
+            writer.Write((UInt32)ShaderType);
+            Blob?.Write(writer);
         }
 
         // These are mostly helper enums to help keep stuff type safe
         #region Enums
+        public enum Type
+        {
+            StandardUnlit = 1,
+            StandardLit = 2,
+            LitSkinnedModel = 4,
+            UnlitSkydome = 10,
+            ColorOnly = 11,
+            LitEnvironmentMap = 12,
+            UiShader = 13,
+            LitMetallic = 15,
+            LitReflectionSurface = 16,
+            SHADER_17 = 17,
+            Particle = 18,
+            Decal = 19,
+            SHADER_20 = 20,
+            UnlitGlossy = 21,
+            UnlitEnvironmentMap = 22,
+            UnlitClothDeformation = 23,
+            SHADER_25 = 25,
+            UnlitClothDeformation2 = 26,
+            UnlitBillboard = 27,
+            SHADER_30 = 30,
+            SHADER_31 = 31,
+            SHADER_32 = 32,
+        }
         public enum AlphaBlending
         {
             OFF,
