@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Animation;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -41,8 +42,8 @@ namespace TT_Lab.AssetData.Code
             var twinAnimation = GetTwinItem<ITwinAnimation>();
             TotalFrames = twinAnimation.TotalFrames;
             DefaultFPS = twinAnimation.DefaultFPS;
-            MainAnimation = twinAnimation.MainAnimation;
-            FacialAnimation = twinAnimation.FacialAnimation;
+            MainAnimation = CloneUtils.DeepClone(twinAnimation.MainAnimation);
+            FacialAnimation = CloneUtils.DeepClone(twinAnimation.FacialAnimation);
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
