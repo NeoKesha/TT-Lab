@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
 {
@@ -30,6 +31,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             writer.Write(UnkInt);
             writer.Write(UnkFloat1);
             writer.Write(UnkFloat2);
+        }
+
+        public virtual ITwinCamera.CameraType GetCameraType()
+        {
+            return ITwinCamera.CameraType.Null;
         }
     }
 }

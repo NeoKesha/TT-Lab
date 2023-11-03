@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.Agent
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
-namespace TT_Lab.AssetData.Code
+namespace TT_Lab.AssetData.Code.Behaviour
 {
     public class BehaviourCommandsSequenceData : AbstractAssetData
     {

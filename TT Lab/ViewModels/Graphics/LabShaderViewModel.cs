@@ -9,7 +9,7 @@ namespace TT_Lab.ViewModels.Graphics
     public class LabShaderViewModel : ObservableObject
     {
         private String _name = "Shader";
-        private LabShader.Type _type;
+        private TwinShader.Type _type;
         private UInt32 _intParam;
         private Single[] _floatParam;
         private AlphaBlending _alphaBlending;
@@ -50,7 +50,7 @@ namespace TT_Lab.ViewModels.Graphics
 
         public LabShaderViewModel()
         {
-            Type = LabShader.Type.StandardUnlit;
+            Type = TwinShader.Type.StandardUnlit;
             _floatParam = new Single[4];
             _unkVec1 = new Vector4ViewModel();
             _unkVec2 = new Vector4ViewModel();
@@ -116,7 +116,7 @@ namespace TT_Lab.ViewModels.Graphics
         }
         public Boolean HasIntParam
         {
-            get => _type == LabShader.Type.UnlitClothDeformation || _type == LabShader.Type.UnlitClothDeformation2;
+            get => _type == TwinShader.Type.UnlitClothDeformation || _type == TwinShader.Type.UnlitClothDeformation2;
         }
         public Boolean HasFloatParam1
         {
@@ -124,7 +124,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.LitReflectionSurface or LabShader.Type.SHADER_17 or LabShader.Type.UnlitClothDeformation or LabShader.Type.UnlitClothDeformation2 => true,
+                    TwinShader.Type.LitReflectionSurface or TwinShader.Type.SHADER_17 or TwinShader.Type.UnlitClothDeformation or TwinShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }
@@ -135,7 +135,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.UnlitClothDeformation or LabShader.Type.UnlitClothDeformation2 => true,
+                    TwinShader.Type.UnlitClothDeformation or TwinShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }
@@ -146,7 +146,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.UnlitClothDeformation2 => true,
+                    TwinShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }
@@ -157,7 +157,7 @@ namespace TT_Lab.ViewModels.Graphics
             {
                 return _type switch
                 {
-                    LabShader.Type.UnlitClothDeformation2 => true,
+                    TwinShader.Type.UnlitClothDeformation2 => true,
                     _ => false,
                 };
             }
@@ -166,7 +166,7 @@ namespace TT_Lab.ViewModels.Graphics
         {
             get => !UsePresetAlphaRegSettings && AlphaBlending;
         }
-        public LabShader.Type Type
+        public TwinShader.Type Type
         {
             get => _type;
             set

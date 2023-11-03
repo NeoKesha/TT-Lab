@@ -1,6 +1,6 @@
 ﻿using System;
 using TT_Lab.AssetData;
-using TT_Lab.AssetData.Code;
+using TT_Lab.AssetData.Code.Behaviour;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Code;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
@@ -38,13 +38,13 @@ namespace TT_Lab.Assets.Code
             base.Import();
             // Generate better Alias for header scripts
             var data = (BehaviourStarterData)assetData;
-            var mainScrAlias = AssetManager.Get().GetAsset(data.Pairs[0].Key).Alias;
+            var mainScrAlias = AssetManager.Get().GetAsset(data.Assigners[0].Behaviour).Alias;
             Alias = $"Behaviour Starter {ID:X} - {mainScrAlias}";
         }
 
         public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
         {
-            viewModel ??= new HeaderScriptViewModel(URI, parent);
+            viewModel ??= new BehaviourStarterViewModel(URI, parent);
             return base.GetViewModel(parent);
         }
 

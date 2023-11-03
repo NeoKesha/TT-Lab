@@ -6,7 +6,7 @@ using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
-namespace TT_Lab.AssetData.Code
+namespace TT_Lab.AssetData.Code.Behaviour
 {
     public class BehaviourGraphData : BehaviourData
     {

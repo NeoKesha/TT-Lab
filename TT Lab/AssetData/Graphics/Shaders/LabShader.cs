@@ -10,7 +10,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
 {
     public class LabShader
     {
-        public Type ShaderType { get; set; }
+        public TwinShader.Type ShaderType { get; set; }
         public UInt32 IntParam { get; set; }
         public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending { get; set; }
@@ -118,7 +118,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
 
         public LabShader(LabURI package, String? variant, TwinShader twinShader)
         {
-            ShaderType = (Type)twinShader.ShaderType;
+            ShaderType = twinShader.ShaderType;
             IntParam = twinShader.IntParam;
             FloatParam = twinShader.FloatParam;
             ABlending = twinShader.ABlending;
@@ -157,32 +157,6 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             UnkVector2 = CloneUtils.Clone(twinShader.UnkVector2);
             UnkVector3 = CloneUtils.Clone(twinShader.UnkVector3);
             Blob = CloneUtils.DeepClone(twinShader.Blob);
-        }
-
-        public enum Type
-        {
-            StandardUnlit = 1,
-            StandardLit = 2,
-            LitSkinnedModel = 4,
-            UnlitSkydome = 10,
-            ColorOnly = 11,
-            LitEnvironmentMap = 12,
-            UiShader = 13,
-            LitMetallic = 15,
-            LitReflectionSurface = 16,
-            SHADER_17 = 17,
-            Particle = 18,
-            Decal = 19,
-            SHADER_20 = 20,
-            UnlitGlossy = 21,
-            UnlitEnvironmentMap = 22,
-            UnlitClothDeformation = 23,
-            SHADER_25 = 25,
-            UnlitClothDeformation2 = 26,
-            UnlitBillboard = 27,
-            SHADER_30 = 30,
-            SHADER_31 = 31,
-            SHADER_32 = 32,
         }
     }
 }

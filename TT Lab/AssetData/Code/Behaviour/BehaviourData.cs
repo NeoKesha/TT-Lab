@@ -2,7 +2,7 @@
 using System;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
-namespace TT_Lab.AssetData.Code
+namespace TT_Lab.AssetData.Code.Behaviour
 {
     public abstract class BehaviourData : AbstractAssetData
     {

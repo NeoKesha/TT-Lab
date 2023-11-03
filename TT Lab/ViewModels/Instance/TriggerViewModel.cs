@@ -82,7 +82,7 @@ namespace TT_Lab.ViewModels.Instance
         }
         public void Save(TriggerData data)
         {
-            data.ObjectActivatorMask = (UInt32)ObjectActivatorMask;
+            data.ObjectActivatorMask = ObjectActivatorMask;
             data.Header = Header;
             data.UnkFloat = UnkFloat;
             Position.Save(data.Position);

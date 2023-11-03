@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Graphics
         }
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
-            Scene scene = new Scene
+            Scene scene = new()
             {
                 RootNode = new Node("Root")
             };
@@ -46,7 +46,7 @@ namespace TT_Lab.AssetData.Graphics
             {
                 var submodel = Vertexes[i];
                 var faces = Faces[i];
-                Mesh mesh = new Mesh(PrimitiveType.Triangle);
+                Mesh mesh = new(PrimitiveType.Triangle);
                 foreach (var ver in submodel)
                 {
                     var pos = new Vector4(ver.Position.X, ver.Position.Y, ver.Position.Z, 1.0f);

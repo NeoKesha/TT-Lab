@@ -11,6 +11,7 @@ using TT_Lab.Command;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Graphics;
+using Twinsanity.TwinsanityInterchange.Common;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.Editors.Graphics
@@ -33,7 +34,7 @@ namespace TT_Lab.Editors.Graphics
             {
                 ViewModel = shaderViewModel,
                 MaterialEditor = materialEditor,
-                ShaderTypes = new ObservableCollection<object>(Enum.GetValues(typeof(LabShader.Type)).Cast<object>()),
+                ShaderTypes = new ObservableCollection<object>(Enum.GetValues(typeof(TwinShader.Type)).Cast<object>()),
                 AlphaTestMethods = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaTestMethod)).Cast<object>()),
                 ProcessAfterFailed = new ObservableCollection<object>(Enum.GetValues(typeof(ProcessAfterAlphaTestFailed)).Cast<object>()),
                 DestinationAlphaTest = new ObservableCollection<object>(Enum.GetValues(typeof(DestinationAlphaTestMode)).Cast<object>()),
@@ -79,7 +80,7 @@ namespace TT_Lab.Editors.Graphics
                 var data = e.Data.Data as ViewModels.AssetViewModel;
                 if (data.Asset.Type.Name == "Texture")
                 {
-                    SetData("TexID", data.Asset.UUID, viewModel);
+                    SetData("TexID", data.Asset.URI, viewModel);
                 }
             }
         }

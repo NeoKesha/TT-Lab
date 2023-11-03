@@ -44,11 +44,6 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             base.Save(cam);
         }
 
-        public override UInt32 GetIndex()
-        {
-            return 0x1C03;
-        }
-
         public Vector4ViewModel LineStart
         {
             get => lineStart;

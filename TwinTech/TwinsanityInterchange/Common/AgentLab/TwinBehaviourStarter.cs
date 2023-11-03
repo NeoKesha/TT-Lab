@@ -7,16 +7,16 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
 {
     public class TwinBehaviourStarter : TwinBehaviourWrapper
     {
-        public List<KeyValuePair<Int32, UInt32>> Pairs;
+        public List<TwinBehaviourAssigner> Assigners;
 
         public TwinBehaviourStarter()
         {
-            Pairs = new List<KeyValuePair<Int32, UInt32>>();
+            Assigners = new List<TwinBehaviourAssigner>();
         }
 
         public override int GetLength()
         {
-            return base.GetLength() + 4 + Pairs.Count * (Constants.SIZE_UINT32 + Constants.SIZE_UINT32);
+            return base.GetLength() + 4 + Assigners.Count * (Constants.SIZE_UINT32 + Constants.SIZE_UINT32);
         }
 
         public override String GetName()
@@ -30,18 +30,19 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             var amount = reader.ReadUInt32();
             for (var i = 0; i < amount; ++i)
             {
-                Pairs.Add(new KeyValuePair<Int32, UInt32>(reader.ReadInt32(), reader.ReadUInt32()));
+                var assigner = new TwinBehaviourAssigner();
+                assigner.Read(reader, length);
+                Assigners.Add(assigner);
             }
         }
 
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(Pairs.Count);
-            foreach (var pair in Pairs)
+            writer.Write(Assigners.Count);
+            foreach (var assigner in Assigners)
             {
-                writer.Write(pair.Key);
-                writer.Write(pair.Value);
+                assigner.Write(writer);
             }
         }
     }

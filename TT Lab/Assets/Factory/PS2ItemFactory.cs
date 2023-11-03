@@ -73,7 +73,10 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinCamera GenerateCamera(Stream stream)
         {
-            throw new NotImplementedException();
+            var camera = new PS2AnyCamera();
+            using var reader = new BinaryReader(stream);
+            camera.Read(reader, (Int32)stream.Length);
+            return camera;
         }
 
         public ITwinCollision GenerateCollision(Stream stream)

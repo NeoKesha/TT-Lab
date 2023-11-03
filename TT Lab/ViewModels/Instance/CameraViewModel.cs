@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Cameras;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Instance
 {
     public class CameraViewModel : AssetViewModel
     {
-        private static readonly Dictionary<UInt32, Type> subIdToCamVM = new Dictionary<uint, Type>();
+        private static readonly Dictionary<ITwinCamera.CameraType, Type> subIdToCamVM = new Dictionary<ITwinCamera.CameraType, Type>();
 
         private TriggerViewModel trigger;
         private UInt32 cameraHeader;
@@ -63,14 +64,14 @@ namespace TT_Lab.ViewModels.Instance
             unkInt8 = data.UnkInt8;
             unkFloat8 = data.UnkFloat8;
             unkByte = data.UnkByte;
-            if (subIdToCamVM.ContainsKey(data.TypeIndex1))
+            if (data.MainCamera1 != null && subIdToCamVM.ContainsKey(data.MainCamera1.GetCameraType()))
             {
-                mainCamera1 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.TypeIndex1], data.MainCamera1)!;
+                mainCamera1 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera1.GetCameraType()], data.MainCamera1)!;
                 mainCamera1.PropertyChanged += MainCamera1_PropertyChanged;
             }
-            if (subIdToCamVM.ContainsKey(data.TypeIndex2))
+            if (data.MainCamera2 != null && subIdToCamVM.ContainsKey(data.MainCamera2.GetCameraType()))
             {
-                mainCamera2 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.TypeIndex2], data.MainCamera2)!;
+                mainCamera2 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera2.GetCameraType()], data.MainCamera2)!;
                 mainCamera2.PropertyChanged += MainCamera2_PropertyChanged;
             }
         }
@@ -89,14 +90,14 @@ namespace TT_Lab.ViewModels.Instance
 
         static CameraViewModel()
         {
-            subIdToCamVM.Add(0xA19, typeof(BossCameraViewModel));
-            subIdToCamVM.Add(0x1C02, typeof(CameraPointViewModel));
-            subIdToCamVM.Add(0x1C03, typeof(CameraLineViewModel));
-            subIdToCamVM.Add(0x1C04, typeof(CameraPathViewModel));
-            subIdToCamVM.Add(0x1C06, typeof(CameraSplineViewModel));
-            subIdToCamVM.Add(0x1C0B, typeof(CameraPoint2ViewModel));
-            subIdToCamVM.Add(0x1C0D, typeof(CameraLine2ViewModel));
-            subIdToCamVM.Add(0x1C0F, typeof(CameraZoneViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.BossCamera, typeof(BossCameraViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.CameraPoint, typeof(CameraPointViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.CameraLine, typeof(CameraLineViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.CameraPath, typeof(CameraPathViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.CameraSpline, typeof(CameraSplineViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.CameraPoint2, typeof(CameraPoint2ViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.CameraLine2, typeof(CameraLine2ViewModel));
+            subIdToCamVM.Add(ITwinCamera.CameraType.CameraZone, typeof(CameraZoneViewModel));
         }
 
         private void Trigger_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -152,22 +153,18 @@ namespace TT_Lab.ViewModels.Instance
             data.UnkByte = UnkByte;
             if (MainCamera1 != null)
             {
-                data.TypeIndex1 = MainCamera1.GetIndex();
                 MainCamera1.Save(data.MainCamera1);
             }
             else
             {
-                data.TypeIndex1 = 3;
                 data.MainCamera1 = null;
             }
             if (MainCamera2 != null)
             {
-                data.TypeIndex2 = MainCamera2.GetIndex();
                 MainCamera2.Save(data.MainCamera2);
             }
             else
             {
-                data.TypeIndex2 = 3;
                 data.MainCamera2 = null;
             }
             base.Save(o);

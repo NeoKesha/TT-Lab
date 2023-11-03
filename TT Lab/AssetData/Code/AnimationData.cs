@@ -55,6 +55,7 @@ namespace TT_Lab.AssetData.Code
             MainAnimation.Write(writer);
             FacialAnimation.Write(writer);
 
+            ms.Position = 0;
             return factory.GenerateAnimation(ms);
         }
     }

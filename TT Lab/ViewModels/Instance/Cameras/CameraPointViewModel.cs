@@ -33,11 +33,6 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             base.Save(cam);
         }
 
-        public override UInt32 GetIndex()
-        {
-            return 0x1C02;
-        }
-
         public Vector4ViewModel Point
         {
             get => point;

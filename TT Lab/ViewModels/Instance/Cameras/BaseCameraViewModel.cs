@@ -23,11 +23,6 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             cam.UnkFloat2 = UnkFloat2;
         }
 
-        public virtual UInt32 GetIndex()
-        {
-            return 3;
-        }
-
         public UInt32 UnkInt
         {
             get => unkInt;

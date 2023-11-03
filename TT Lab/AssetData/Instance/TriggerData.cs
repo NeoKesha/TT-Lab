@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -9,6 +10,7 @@ using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -44,7 +46,7 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt32 ObjectActivatorMask { get; set; }
+        public TriggerActivatorObjects ObjectActivatorMask { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Vector4 Position { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -96,7 +98,32 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            var trigger = new TwinTrigger
+            {
+                Header = Header,
+                ObjectActivatorMask = ObjectActivatorMask,
+                UnkFloat = UnkFloat,
+                Position = Position,
+                Rotation = Rotation,
+                Scale = Scale,
+                InstanceExtensionValue = InstanceExtensionValue
+            };
+            foreach (var instance in Instances)
+            {
+                trigger.Instances.Add((UInt16)assetManager.GetAsset(instance).ID);
+            }
+            trigger.Write(writer);
+            writer.Write(TriggerScript1 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript1).ID);
+            writer.Write(TriggerScript2 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript2).ID);
+            writer.Write(TriggerScript3 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript3).ID);
+            writer.Write(TriggerScript4 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript4).ID);
+
+            ms.Position = 0;
+            return factory.GenerateTrigger(ms);
         }
     }
 }

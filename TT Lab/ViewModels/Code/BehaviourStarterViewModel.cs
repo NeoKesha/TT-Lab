@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using TT_Lab.AssetData.Code;
+using TT_Lab.AssetData.Code.Behaviour;
 using TT_Lab.Assets;
 
 namespace TT_Lab.ViewModels.Code
 {
-    public class HeaderScriptViewModel : AssetViewModel
+    public class BehaviourStarterViewModel : AssetViewModel
     {
         private LabURI attachedScript;
-        private ObservableCollection<UInt32> callConventions;
+        private ObservableCollection<BehaviourAssignerViewModel> assigners;
 
-        public HeaderScriptViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
+        public BehaviourStarterViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
-            callConventions = new ObservableCollection<UInt32>();
+            attachedScript = LabURI.Empty;
+            assigners = new ObservableCollection<BehaviourAssignerViewModel>();
         }
 
         protected override void LoadData()
         {
             var data = _asset.GetData<BehaviourStarterData>();
-            attachedScript = data.Pairs[0].Key;
-            callConventions.Clear();
-            foreach (var pair in data.Pairs)
+            attachedScript = data.Assigners[0].Behaviour;
+            assigners.Clear();
+            foreach (var assigner in data.Assigners)
             {
-                callConventions.Add(pair.Value);
+                assigners.Add(new BehaviourAssignerViewModel(assigner));
             }
             base.LoadData();
         }
@@ -40,9 +41,9 @@ namespace TT_Lab.ViewModels.Code
                 }
             }
         }
-        public ObservableCollection<UInt32> CallConventions
+        public ObservableCollection<BehaviourAssignerViewModel> CallConventions
         {
-            get => callConventions;
+            get => assigners;
         }
     }
 }

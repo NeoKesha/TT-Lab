@@ -74,11 +74,6 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             base.Save(cam);
         }
 
-        public override UInt32 GetIndex()
-        {
-            return 0xA19;
-        }
-
         private void Vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             NotifyChange(nameof(UnkMatrix1));

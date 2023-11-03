@@ -11,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyCamera : BaseTwinItem, ITwinCamera
     {
-        public static readonly Dictionary<UInt32, Type> subCamIdToCamera = new Dictionary<UInt32, Type>();
+        public static readonly Dictionary<ITwinCamera.CameraType, Type> subCamIdToCamera = new();
 
         public TwinTrigger CamTrigger { get; set; }
         public UInt32 CameraHeader { get; set; }
@@ -35,8 +35,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public UInt32 UnkInt8 { get; set; } // 98
         public UInt32 UnkInt9 { get; set; }
         public Single UnkFloat8 { get; set; } // 106
-        public UInt32 TypeIndex1 { get; set; }
-        public UInt32 TypeIndex2 { get; set; } // 114
+        public ITwinCamera.CameraType TypeIndex1 { get; set; }
+        public ITwinCamera.CameraType TypeIndex2 { get; set; } // 114
         public Byte UnkByte { get; set; } // 115
         public CameraSubBase MainCamera1 { get; set; }
         public CameraSubBase MainCamera2 { get; set; }
@@ -49,16 +49,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         static PS2AnyCamera()
         {
-            subCamIdToCamera.Add(0xA19, typeof(BossCamera));
-            subCamIdToCamera.Add(0x1C02, typeof(CameraPoint));
-            subCamIdToCamera.Add(0x1C03, typeof(CameraLine));
-            subCamIdToCamera.Add(0x1C04, typeof(CameraPath));
-            subCamIdToCamera.Add(0x1C06, typeof(CameraSpline));
-            subCamIdToCamera.Add(0x1C09, typeof(CameraSub1C09));
-            subCamIdToCamera.Add(0x1C0B, typeof(CameraPoint2));
-            subCamIdToCamera.Add(0x1C0C, typeof(CameraSub1C0C));
-            subCamIdToCamera.Add(0x1C0D, typeof(CameraLine2));
-            subCamIdToCamera.Add(0x1C0F, typeof(CameraZone));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.BossCamera, typeof(BossCamera));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraPoint, typeof(CameraPoint));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraLine, typeof(CameraLine));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraPath, typeof(CameraPath));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraSpline, typeof(CameraSpline));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraSub1C09, typeof(CameraSub1C09));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraPoint2, typeof(CameraPoint2));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraSub1C0C, typeof(CameraSub1C0C));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraLine2, typeof(CameraLine2));
+            subCamIdToCamera.Add(ITwinCamera.CameraType.CameraZone, typeof(CameraZone));
         }
 
         public override int GetLength()
@@ -70,20 +70,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override void Read(BinaryReader reader, int length)
         {
-            CamTrigger.Header = reader.ReadUInt32();
-            CamTrigger.ObjectActivatorMask = reader.ReadUInt32();
-            CamTrigger.UnkFloat = reader.ReadSingle();
-            CamTrigger.Rotation.Read(reader, Constants.SIZE_VECTOR4);
-            CamTrigger.Position.Read(reader, Constants.SIZE_VECTOR4);
-            CamTrigger.Scale.Read(reader, Constants.SIZE_VECTOR4);
-            reader.ReadUInt32();
-            UInt32 instances_cnt = reader.ReadUInt32();
-            CamTrigger.InstanceExtensionValue = reader.ReadUInt32();
-            CamTrigger.Instances.Clear();
-            for (int i = 0; i < instances_cnt; ++i)
-            {
-                CamTrigger.Instances.Add(reader.ReadUInt16());
-            }
+            CamTrigger.Read(reader, length);
             // Camera
             CameraHeader = reader.ReadUInt32();
             UnkShort = reader.ReadUInt16();
@@ -106,15 +93,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             UnkInt8 = reader.ReadUInt32();
             UnkInt9 = reader.ReadUInt32();
             UnkFloat8 = reader.ReadSingle();
-            TypeIndex1 = reader.ReadUInt32();
-            TypeIndex2 = reader.ReadUInt32();
+            TypeIndex1 = (ITwinCamera.CameraType)reader.ReadUInt32();
+            TypeIndex2 = (ITwinCamera.CameraType)reader.ReadUInt32();
             UnkByte = reader.ReadByte();
-            if (TypeIndex1 != 3 && subCamIdToCamera.ContainsKey(TypeIndex1))
+            if (TypeIndex1 != ITwinCamera.CameraType.Null && subCamIdToCamera.ContainsKey(TypeIndex1))
             {
                 MainCamera1 = (CameraSubBase)Activator.CreateInstance(subCamIdToCamera[TypeIndex1]);
                 MainCamera1.Read(reader, length);
             }
-            if (TypeIndex2 != 3 && subCamIdToCamera.ContainsKey(TypeIndex2))
+            if (TypeIndex2 != ITwinCamera.CameraType.Null && subCamIdToCamera.ContainsKey(TypeIndex2))
             {
                 MainCamera2 = (CameraSubBase)Activator.CreateInstance(subCamIdToCamera[TypeIndex2]);
                 MainCamera2.Read(reader, length);
@@ -123,19 +110,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(CamTrigger.Header);
-            writer.Write(CamTrigger.ObjectActivatorMask);
-            writer.Write(CamTrigger.UnkFloat);
-            CamTrigger.Rotation.Write(writer);
-            CamTrigger.Position.Write(writer);
-            CamTrigger.Scale.Write(writer);
-            writer.Write(CamTrigger.Instances.Count);
-            writer.Write(CamTrigger.Instances.Count);
-            writer.Write(CamTrigger.InstanceExtensionValue);
-            for (int i = 0; i < CamTrigger.Instances.Count; ++i)
-            {
-                writer.Write(CamTrigger.Instances[i]);
-            }
+            CamTrigger.Write(writer);
             //
             writer.Write(CameraHeader);
             writer.Write(UnkShort);
@@ -158,17 +133,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             writer.Write(UnkInt8);
             writer.Write(UnkInt9);
             writer.Write(UnkFloat8);
-            writer.Write(TypeIndex1);
-            writer.Write(TypeIndex2);
+            writer.Write((UInt32)TypeIndex1);
+            writer.Write((UInt32)TypeIndex2);
             writer.Write(UnkByte);
-            if (MainCamera1 != null)
-            {
-                MainCamera1.Write(writer);
-            }
-            if (MainCamera2 != null)
-            {
-                MainCamera2.Write(writer);
-            }
+            MainCamera1?.Write(writer);
+            MainCamera2?.Write(writer);
         }
 
         public override String GetName()

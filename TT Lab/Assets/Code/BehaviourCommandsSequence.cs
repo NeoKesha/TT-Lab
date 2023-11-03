@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData;
-using TT_Lab.AssetData.Code;
+using TT_Lab.AssetData.Code.Behaviour;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 
 namespace TT_Lab.Assets.Code

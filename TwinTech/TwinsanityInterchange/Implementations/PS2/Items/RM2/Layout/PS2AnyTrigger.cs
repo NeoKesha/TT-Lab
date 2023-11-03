@@ -4,6 +4,7 @@ using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
@@ -24,20 +25,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override void Read(BinaryReader reader, int length)
         {
-            Trigger.Header = reader.ReadUInt32();
-            Trigger.ObjectActivatorMask = reader.ReadUInt32();
-            Trigger.UnkFloat = reader.ReadSingle();
-            Trigger.Rotation.Read(reader, Constants.SIZE_VECTOR4);
-            Trigger.Position.Read(reader, Constants.SIZE_VECTOR4);
-            Trigger.Scale.Read(reader, Constants.SIZE_VECTOR4);
-            reader.ReadUInt32();
-            UInt32 instances_cnt = reader.ReadUInt32();
-            Trigger.InstanceExtensionValue = reader.ReadUInt32();
-            Trigger.Instances.Clear();
-            for (int i = 0; i < instances_cnt; ++i)
-            {
-                Trigger.Instances.Add(reader.ReadUInt16());
-            }
+            Trigger.Read(reader, length);
             for (int i = 0; i < 4; ++i)
             {
                 TriggerScripts[i] = reader.ReadUInt16();
@@ -46,19 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Trigger.Header);
-            writer.Write(Trigger.ObjectActivatorMask);
-            writer.Write(Trigger.UnkFloat);
-            Trigger.Rotation.Write(writer);
-            Trigger.Position.Write(writer);
-            Trigger.Scale.Write(writer);
-            writer.Write(Trigger.Instances.Count);
-            writer.Write(Trigger.Instances.Count);
-            writer.Write(Trigger.InstanceExtensionValue);
-            for (int i = 0; i < Trigger.Instances.Count; ++i)
-            {
-                writer.Write(Trigger.Instances[i]);
-            }
+            Trigger.Write(writer);
             for (int i = 0; i < 4; ++i)
             {
                 writer.Write(TriggerScripts[i]);

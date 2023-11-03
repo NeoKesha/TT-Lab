@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
@@ -78,10 +79,6 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public Single UnkFloat8 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 TypeIndex1 { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 TypeIndex2 { get; set; }
-        [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public CameraSubBase? MainCamera1 { get; set; }
@@ -122,8 +119,6 @@ namespace TT_Lab.AssetData.Instance
             UnkInt8 = camera.UnkInt8;
             UnkInt9 = camera.UnkInt9;
             UnkFloat8 = camera.UnkFloat8;
-            TypeIndex1 = camera.TypeIndex1;
-            TypeIndex2 = camera.TypeIndex2;
             UnkByte = camera.UnkByte;
             if (camera.MainCamera1 != null)
             {
@@ -137,7 +132,42 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            var trigger = Trigger.Export(factory);
+            trigger.Write(writer);
+            // Reposition to where TriggerScripts start since they do not exist for the camera
+            ms.Position -= 2 * 4;
+            writer.Write(CameraHeader);
+            writer.Write(UnkShort);
+            writer.Write(UnkFloat1);
+            UnkVector1.Write(writer);
+            UnkVector2.Write(writer);
+            writer.Write(UnkFloat2);
+            writer.Write(UnkFloat3);
+            writer.Write(UnkInt1);
+            writer.Write(UnkInt2);
+            writer.Write(UnkInt3);
+            writer.Write(UnkInt4);
+            writer.Write(UnkInt5);
+            writer.Write(UnkInt6);
+            writer.Write(UnkFloat4);
+            writer.Write(UnkFloat5);
+            writer.Write(UnkFloat6);
+            writer.Write(UnkFloat7);
+            writer.Write(UnkInt7);
+            writer.Write(UnkInt8);
+            writer.Write(UnkInt9);
+            writer.Write(UnkFloat8);
+            writer.Write((UInt32)(MainCamera1 == null ? ITwinCamera.CameraType.Null : MainCamera1.GetCameraType()));
+            writer.Write((UInt32)(MainCamera2 == null ? ITwinCamera.CameraType.Null : MainCamera2.GetCameraType()));
+            writer.Write(UnkByte);
+            MainCamera1?.Write(writer);
+            MainCamera2?.Write(writer);
+
+            ms.Position = 0;
+            return factory.GenerateCamera(ms);
         }
     }
 }

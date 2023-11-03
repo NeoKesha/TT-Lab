@@ -7,7 +7,7 @@ using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
-namespace TT_Lab.AssetData.Code
+namespace TT_Lab.AssetData.Code.Behaviour
 {
     public class BehaviourStarterData : BehaviourData
     {
@@ -15,32 +15,25 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
-        public BehaviourStarterData(TwinBehaviourStarter headerScript) : base(headerScript)
+        public BehaviourStarterData(TwinBehaviourStarter behaviourStarter) : base(behaviourStarter)
         {
-            SetTwinItem(headerScript);
+            SetTwinItem(behaviourStarter);
         }
 
         [JsonProperty(Required = Required.Always)]
-        public List<KeyValuePair<LabURI, UInt32>> Pairs { get; set; } = new();
+        public List<BehaviourAssignerData> Assigners { get; set; } = new();
 
         protected override void Dispose(Boolean disposing)
         {
-            Pairs.Clear();
+            Assigners.Clear();
         }
 
         public override void Import(LabURI package, String? variant)
         {
             TwinBehaviourStarter behaviourStarter = GetTwinItem<TwinBehaviourStarter>();
-            foreach (var pair in behaviourStarter.Pairs)
+            foreach (var assigner in behaviourStarter.Assigners)
             {
-                if (pair.Key - 1 == -1)
-                {
-                    Pairs.Add(new KeyValuePair<LabURI, uint>(LabURI.Empty, pair.Value));
-                }
-                else
-                {
-                    Pairs.Add(new KeyValuePair<LabURI, uint>(AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, (UInt32)pair.Key - 1), pair.Value));
-                }
+                Assigners.Add(new BehaviourAssignerData(package, variant, assigner));
             }
         }
 

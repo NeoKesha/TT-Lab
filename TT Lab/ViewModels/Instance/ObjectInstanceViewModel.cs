@@ -229,13 +229,13 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public HeaderScriptViewModel? OnSpawnScript
+        public BehaviourStarterViewModel? OnSpawnScript
         {
             get
             {
                 if (onSpawnScriptId != LabURI.Empty)
                 {
-                    return AssetManager.Get().GetAsset(onSpawnScriptId).GetViewModel<HeaderScriptViewModel>();
+                    return AssetManager.Get().GetAsset(onSpawnScriptId).GetViewModel<BehaviourStarterViewModel>();
                 }
                 return null;
             }
