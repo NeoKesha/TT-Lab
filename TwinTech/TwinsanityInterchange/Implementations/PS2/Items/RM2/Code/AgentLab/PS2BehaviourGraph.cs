@@ -106,7 +106,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
             StringUtils.WriteLineTabulated(writer, $"Script({Name}) {"{"}", tabs);
-            StringUtils.WriteLineTabulated(writer, $"bitfield = {StartUnit}", tabs + 1);
+            StringUtils.WriteLineTabulated(writer, $"StartUnit = {StartUnit}", tabs + 1);
             int i = 0;
             foreach (var state in ScriptStates)
             {
@@ -137,7 +137,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 {
                     continue;
                 }
-                if (line.StartsWith("bitfield"))
+                if (line.StartsWith("StartUnit"))
                 {
                     StartUnit = int.Parse(StringUtils.GetStringAfter(line, "="));
                 }

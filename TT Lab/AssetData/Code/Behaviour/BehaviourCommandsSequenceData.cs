@@ -70,7 +70,12 @@ namespace TT_Lab.AssetData.Code.Behaviour
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new StreamWriter(ms);
+            writer.Write(Code);
+
+            ms.Position = 0;
+            return factory.GenerateBehaviourCommandsSequence(ms);
         }
 
         private void GenerateBehaviourGraphIdsList(ITwinBehaviourCommandsSequence cm)

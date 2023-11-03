@@ -125,7 +125,28 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         }
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            StringUtils.WriteLineTabulated(writer, $"Head {"{"}", tabs);
+            StringUtils.WriteLineTabulated(writer, $"ControlPacket {"{"}", tabs);
+            StringUtils.WriteLineTabulated(writer, "settings = {", tabs + 1);
+            {
+                StringUtils.WriteLineTabulated(writer, $"SpaceType = {Space}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"MotionType = {Motion}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"AccelerationFunction = {AccelerationFunction}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesTranslate = {Translates}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesRotate = {Rotates}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesTranslationContinue = {TranslationContinues}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesInterpolateAngles = {InterpolatesAngles}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesYawFaces = {YawFaces}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesPitchFaces = {PitchFaces}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesOrientPredicts = {OrientsPredicts}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"KeyIsLocal = {KeyIsLocal}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"UsesRotator = {UsesRotator}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"UsesInterpolator = {UsesInterpolator}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"UsesPhysics = {UsesPhysics}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"ContinuouslyRotatesInWorldSpace = {ContinuouslyRotatesInWorldSpace}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"Axes = {Axes}", tabs + 2);
+                StringUtils.WriteLineTabulated(writer, $"DoesStall = {Stalls}", tabs + 2);
+            }
+            StringUtils.WriteLineTabulated(writer, "}", tabs + 1);
             StringUtils.WriteTabulated(writer, "bytes = [", tabs + 1);
             for (var i = 0; i < Bytes.Count; ++i)
             {
@@ -154,6 +175,87 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             String line = "";
             Bytes.Clear();
             Floats.Clear();
+
+            // Read settings
+            while (!line.EndsWith("}"))
+            {
+                line = reader.ReadLine().Trim();
+                if (String.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                var valueString = StringUtils.GetStringAfter(line, "=");
+                if (line.StartsWith("SpaceType"))
+                {
+                    Space = Enum.Parse<SpaceType>(valueString);
+                }
+                else if (line.StartsWith("MotionType"))
+                {
+                    Motion = Enum.Parse<MotionType>(valueString);
+                }
+                else if (line.StartsWith("AccelerationFunction"))
+                {
+                    AccelerationFunction = Enum.Parse<AccelFunction>(valueString);
+                }
+                else if (line.StartsWith("DoesTranslate"))
+                {
+                    Translates = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("DoesRotate"))
+                {
+                    Rotates = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("DoesTranslationContinue"))
+                {
+                    TranslationContinues = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("DoesInterpolateAngles"))
+                {
+                    InterpolatesAngles = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("DoesYawFaces"))
+                {
+                    YawFaces = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("DoesPitchFaces"))
+                {
+                    PitchFaces = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("DoesOrientPredicts"))
+                {
+                    OrientsPredicts = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("KeyIsLocal"))
+                {
+                    KeyIsLocal = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("UsesRotator"))
+                {
+                    UsesRotator = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("UsesInterpolator"))
+                {
+                    UsesInterpolator = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("UsesPhysics"))
+                {
+                    UsesPhysics = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("ContinuouslyRotatesInWorldSpace"))
+                {
+                    ContinuouslyRotatesInWorldSpace = Boolean.Parse(valueString);
+                }
+                else if (line.StartsWith("Axes"))
+                {
+                    Axes = Enum.Parse<NaturalAxes>(valueString);
+                }
+                else if (line.StartsWith("DoesStall"))
+                {
+                    Stalls = Boolean.Parse(valueString);
+                }
+            }
+
+            // Read bytes and floats
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
@@ -169,7 +271,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                         Bytes.Add(Byte.Parse(str));
                     }
                 }
-                if (line.StartsWith("floats"))
+                else if (line.StartsWith("floats"))
                 {
                     String[] str_floats = StringUtils.GetStringInBetween(line, "[", "]").Split(',');
                     foreach (var str in str_floats)

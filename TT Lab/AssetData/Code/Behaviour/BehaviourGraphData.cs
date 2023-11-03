@@ -19,36 +19,41 @@ namespace TT_Lab.AssetData.Code.Behaviour
             SetTwinItem(mainScript);
         }
 
-        public String Script { get; set; }
+        public String Graph { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
-            Script = "";
+            Graph = "";
         }
 
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
         {
             using var fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write);
             using var writer = new BinaryWriter(fs);
-            writer.Write(Script.ToCharArray());
+            writer.Write(Graph.ToCharArray());
         }
 
         public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
             using var fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read);
             using var reader = new StreamReader(fs);
-            Script = reader.ReadToEnd();
+            Graph = reader.ReadToEnd();
         }
 
         public override void Import(LabURI package, String? variant)
         {
             var graph = GetTwinItem<ITwinBehaviourGraph>();
-            Script = graph.ToString();
+            Graph = graph.ToString();
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new StreamWriter(ms);
+            writer.Write(Graph);
+
+            ms.Position = 0;
+            return factory.GenerateBehaviourGraph(ms);
         }
     }
 }

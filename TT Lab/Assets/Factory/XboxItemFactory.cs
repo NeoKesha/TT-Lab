@@ -28,11 +28,6 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinBehaviour GenerateBehaviour(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
         public ITwinBehaviourCommandsSequence GenerateBehaviourCommandsSequence(Stream stream)
         {
             throw new NotImplementedException();

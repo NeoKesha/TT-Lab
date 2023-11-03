@@ -12,9 +12,12 @@ namespace TT_Lab.AssetData.Code.Behaviour
 
         protected BehaviourData(ITwinBehaviour script) : this()
         {
+            ID = script.GetID();
             Priority = script.Priority;
         }
 
+        [JsonProperty(Required = Required.Always)]
+        public UInt32 ID { get; private set; }
         [JsonProperty(Required = Required.Always)]
         public Byte Priority { get; set; }
     }

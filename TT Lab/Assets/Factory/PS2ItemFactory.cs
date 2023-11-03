@@ -3,6 +3,7 @@ using System.IO;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
@@ -10,6 +11,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
+using static Twinsanity.TwinsanityInterchange.Common.AgentLab.TwinBehaviourAssigner;
 
 namespace TT_Lab.Assets.Factory
 {
@@ -46,24 +48,43 @@ namespace TT_Lab.Assets.Factory
             return animation;
         }
 
-        public ITwinBehaviour GenerateBehaviour(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
         public ITwinBehaviourCommandsSequence GenerateBehaviourCommandsSequence(Stream stream)
         {
-            throw new NotImplementedException();
+            var sequence = new PS2BehaviourCommandsSequence();
+            using var reader = new StreamReader(stream);
+            sequence.ReadText(reader);
+            return sequence;
         }
 
         public ITwinBehaviourGraph GenerateBehaviourGraph(Stream stream)
         {
-            throw new NotImplementedException();
+            var graph = new PS2BehaviourGraph();
+            using var reader = new StreamReader(stream);
+            graph.ReadText(reader);
+            return graph;
         }
 
         public TwinBehaviourStarter GenerateBehaviourStarter(Stream stream)
         {
-            throw new NotImplementedException();
+            var starter = new TwinBehaviourStarter();
+            using var reader = new BinaryReader(stream);
+            // HACK: Read the internal TwinBehaviourWrapper
+            starter.Read(reader, (Int32)stream.Length);
+            stream.Position = 4;
+
+            starter.Assigners.Clear();
+            var assignersAmount = reader.ReadUInt32();
+            for (Int32 i = 0; i < assignersAmount; i++)
+            {
+                var assigner = new TwinBehaviourAssigner();
+                assigner.Behaviour = reader.ReadInt32();
+                assigner.Object = reader.ReadUInt16();
+                assigner.AssignType = (AssignTypeID)reader.ReadUInt32();
+                assigner.AssignLocality = (AssignLocalityID)reader.ReadUInt32();
+                assigner.AssignStatus = (AssignStatusID)reader.ReadUInt32();
+                assigner.AssignPreference = (AssignPreferenceID)reader.ReadUInt32();
+            }
+            return starter;
         }
 
         public ITwinBlendSkin GenerateBlendSkin(Stream stream)
