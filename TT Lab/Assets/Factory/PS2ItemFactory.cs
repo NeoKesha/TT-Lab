@@ -5,6 +5,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -107,7 +108,10 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinDynamicScenery GenerateDynamicScenery(Stream stream)
         {
-            throw new NotImplementedException();
+            var dynamicScenery = new PS2AnyDynamicScenery();
+            using var reader = new BinaryReader(stream);
+            dynamicScenery.Read(reader, (Int32)stream.Length);
+            return dynamicScenery;
         }
 
         public ITwinInstance GenerateInstance(Stream stream)

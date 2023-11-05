@@ -9,13 +9,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 {
     public class TwinDynamicSceneryModel : ITwinSerializable
     {
-        public Int32 UnkInt1;
-        public List<TwinBoundingBoxBuilder> BoundingBoxBuilders;
-        public Int32 AnimatedFrames;
-        public TwinDynamicSceneryAnimation Animation;
-        public Byte LodFlag;
-        public UInt32 ID;
-        public Vector4[] BoundingBox;
+        public Int32 UnkInt { get; set; }
+        public List<TwinBoundingBoxBuilder> BoundingBoxBuilders { get; set; }
+        public Int32 AnimatedFrames { get; set; }
+        public TwinDynamicSceneryAnimation Animation { get; set; }
+        public Byte LodFlag { get; set; }
+        public UInt32 MeshID { get; set; }
+        public Vector4[] BoundingBox { get; set; }
 
         public TwinDynamicSceneryModel()
         {
@@ -31,7 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 
         public void Read(BinaryReader reader, Int32 length)
         {
-            UnkInt1 = reader.ReadInt32();
+            UnkInt = reader.ReadInt32();
             var bbBuildersAmount = reader.ReadInt32();
             if (bbBuildersAmount != 0)
             {
@@ -45,7 +45,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             AnimatedFrames = reader.ReadInt32();
             Animation.Read(reader, length);
             LodFlag = reader.ReadByte();
-            ID = reader.ReadUInt32();
+            MeshID = reader.ReadUInt32();
             for (var i = 0; i < 2; ++i)
             {
                 BoundingBox[i] = new Vector4();
@@ -55,7 +55,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(UnkInt1);
+            writer.Write(UnkInt);
             writer.Write(BoundingBoxBuilders.Count);
             foreach (var bbBuilder in BoundingBoxBuilders)
             {
@@ -64,7 +64,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             writer.Write(AnimatedFrames);
             Animation.Write(writer);
             writer.Write(LodFlag);
-            writer.Write(ID);
+            writer.Write(MeshID);
             foreach (var v in BoundingBox)
             {
                 v.Write(writer);

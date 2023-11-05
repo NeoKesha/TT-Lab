@@ -1,7 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using TT_Lab.AssetData.Instance.DynamicScenery;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Common.DynamicScenery;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -11,6 +16,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public DynamicSceneryData()
         {
+            DynamicModels = new();
         }
 
         public DynamicSceneryData(ITwinDynamicScenery dynamicScenery) : this()
@@ -19,22 +25,39 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public Int32 UnkInt;
+        public Int32 UnkInt { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public List<DynamicSceneryModelData> DynamicModels { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            DynamicModels.Clear();
         }
 
         public override void Import(LabURI package, String? variant)
         {
             ITwinDynamicScenery dynamicScenery = GetTwinItem<ITwinDynamicScenery>();
             UnkInt = dynamicScenery.UnkInt;
+            DynamicModels.Clear();
+            foreach (var model in dynamicScenery.DynamicModels)
+            {
+                DynamicModels.Add(new DynamicSceneryModelData(package, variant, model));
+            }
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(UnkInt);
+            writer.Write((Int16)DynamicModels.Count);
+            foreach (var model in DynamicModels)
+            {
+                model.Write(writer);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateDynamicScenery(ms);
         }
     }
 }
