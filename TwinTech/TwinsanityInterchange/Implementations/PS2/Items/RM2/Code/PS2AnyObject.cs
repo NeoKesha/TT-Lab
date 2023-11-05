@@ -25,10 +25,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public Byte ExitPointAmount { get; set; }
         public Byte[] SlotsMap { get; set; }
         public String Name { get; set; }
-        public List<TwinObjectTriggerScript> TriggerScripts { get; set; }
+        public List<TwinObjectTriggerBehaviour> TriggerBehaviours { get; set; }
         public List<UInt16> OGISlots { get; set; }
         public List<UInt16> AnimationSlots { get; set; }
-        public List<UInt16> ScriptSlots { get; set; }
+        public List<UInt16> BehaviourSlots { get; set; }
         public List<UInt16> ObjectSlots { get; set; }
         public List<UInt16> SoundSlots { get; set; }
         public UInt32 InstanceStateFlags { get; set; }
@@ -39,10 +39,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public List<UInt16> RefOGIs { get; set; }
         public List<UInt16> RefAnimations { get; set; }
         public List<UInt16> RefCodeModels { get; set; }
-        public List<UInt16> RefScripts { get; set; }
+        public List<UInt16> RefBehaviours { get; set; }
         public List<UInt16> RefUnknowns { get; set; }
         public List<UInt16> RefSounds { get; set; }
-        public ITwinBehaviourCommandPack ScriptPack { get; set; }
+        public ITwinBehaviourCommandPack BehaviourPack { get; set; }
 
         public bool HasInstanceProperties
         {
@@ -57,7 +57,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             get
             {
                 return RefObjects.Count > 0 || RefOGIs.Count > 0 || RefAnimations.Count > 0 ||
-                    RefCodeModels.Count > 0 || RefScripts.Count > 0 || RefUnknowns.Count > 0 ||
+                    RefCodeModels.Count > 0 || RefBehaviours.Count > 0 || RefUnknowns.Count > 0 ||
                     RefSounds.Count > 0;
             }
         }
@@ -65,10 +65,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public PS2AnyObject()
         {
             SlotsMap = new Byte[8];
-            TriggerScripts = new List<TwinObjectTriggerScript>();
+            TriggerBehaviours = new List<TwinObjectTriggerBehaviour>();
             OGISlots = new List<UInt16>();
             AnimationSlots = new List<UInt16>();
-            ScriptSlots = new List<UInt16>();
+            BehaviourSlots = new List<UInt16>();
             ObjectSlots = new List<UInt16>();
             SoundSlots = new List<UInt16>();
             InstFlags = new List<UInt32>();
@@ -78,7 +78,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             RefOGIs = new List<UInt16>();
             RefAnimations = new List<UInt16>();
             RefCodeModels = new List<UInt16>();
-            RefScripts = new List<UInt16>();
+            RefBehaviours = new List<UInt16>();
             RefUnknowns = new List<UInt16>();
             RefSounds = new List<UInt16>();
         }
@@ -109,10 +109,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                     resourcesLength += 4;
                     resourcesLength += RefCodeModels.Count * Constants.SIZE_UINT16;
                 }
-                if (RefScripts.Count > 0)
+                if (RefBehaviours.Count > 0)
                 {
                     resourcesLength += 4;
-                    resourcesLength += RefScripts.Count * Constants.SIZE_UINT16;
+                    resourcesLength += RefBehaviours.Count * Constants.SIZE_UINT16;
                 }
                 if (RefUnknowns.Count > 0)
                 {
@@ -127,11 +127,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
             // Truly a bruh moment
             return 16 + Name.Length + 24 +
-                TriggerScripts.Count * Constants.SIZE_UINT32 + OGISlots.Count * Constants.SIZE_UINT16 +
-                AnimationSlots.Count * Constants.SIZE_UINT16 + ScriptSlots.Count * Constants.SIZE_UINT16 +
+                TriggerBehaviours.Count * Constants.SIZE_UINT32 + OGISlots.Count * Constants.SIZE_UINT16 +
+                AnimationSlots.Count * Constants.SIZE_UINT16 + BehaviourSlots.Count * Constants.SIZE_UINT16 +
                 ObjectSlots.Count * Constants.SIZE_UINT16 + SoundSlots.Count * Constants.SIZE_UINT16 +
                 (HasInstanceProperties ? 20 + InstFlags.Count * Constants.SIZE_UINT32 + InstFloats.Count * 4 +
-                InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + ScriptPack.GetLength();
+                InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + BehaviourPack.GetLength();
         }
 
         public override void Read(BinaryReader reader, int length)
@@ -151,18 +151,18 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             var strLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(strLen));
 
-            // Read trigger scripts
+            // Read trigger behaviours
             {
                 var amount = reader.ReadInt32();
-                TriggerScripts.Clear();
+                TriggerBehaviours.Clear();
                 for (var i = 0; i < amount; ++i)
                 {
-                    TriggerScripts.Add(new TwinObjectTriggerScript(reader.ReadUInt32()));
+                    TriggerBehaviours.Add(new TwinObjectTriggerBehaviour(reader.ReadUInt32()));
                 }
             }
             FillResourceList(reader, OGISlots);
             FillResourceList(reader, AnimationSlots);
-            FillResourceList(reader, ScriptSlots);
+            FillResourceList(reader, BehaviourSlots);
             FillResourceList(reader, ObjectSlots);
             FillResourceList(reader, SoundSlots);
 
@@ -202,7 +202,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 }
                 if (resources.HasFlag(ITwinObject.ResourcesBitfield.SCRIPTS))
                 {
-                    FillResourceList(reader, RefScripts);
+                    FillResourceList(reader, RefBehaviours);
                 }
                 if (resources.HasFlag(ITwinObject.ResourcesBitfield.UNKNOWN))
                 {
@@ -213,8 +213,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                     FillResourceList(reader, RefSounds);
                 }
             }
-            ScriptPack = new PS2BehaviourCommandPack();
-            ScriptPack.Read(reader, length);
+            BehaviourPack = new PS2BehaviourCommandPack();
+            BehaviourPack.Read(reader, length);
         }
 
         public override void Write(BinaryWriter writer)
@@ -230,7 +230,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
             UInt32 objType = (UInt32)(type << 0x14);
             UInt32 objTypeRelVal = (UInt32)(UnkTypeValue << 0xC);
-            UInt32 unkOgiArraySize = (UInt32)(ReactJointAmount << 0x6);
+            UInt32 unkOgiArraySize = (UInt32)(ReactJointAmount & 0x3F << 0x6);
             newBitfield |= objType;
             newBitfield |= objTypeRelVal;
             newBitfield |= unkOgiArraySize;
@@ -239,10 +239,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray(), 0, Name.Length);
 
-            WriteResourceList(writer, TriggerScripts, true);
+            WriteResourceList(writer, TriggerBehaviours, true);
             WriteResourceList(writer, OGISlots);
             WriteResourceList(writer, AnimationSlots);
-            WriteResourceList(writer, ScriptSlots);
+            WriteResourceList(writer, BehaviourSlots);
             WriteResourceList(writer, ObjectSlots);
             WriteResourceList(writer, SoundSlots);
 
@@ -281,7 +281,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 {
                     newResources |= ITwinObject.ResourcesBitfield.CODE_MODELS;
                 }
-                if (RefScripts.Count > 0)
+                if (RefBehaviours.Count > 0)
                 {
                     newResources |= ITwinObject.ResourcesBitfield.SCRIPTS;
                 }
@@ -310,9 +310,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 {
                     WriteResourceList(writer, RefCodeModels);
                 }
-                if (RefScripts.Count > 0)
+                if (RefBehaviours.Count > 0)
                 {
-                    WriteResourceList(writer, RefScripts);
+                    WriteResourceList(writer, RefBehaviours);
                 }
                 if (RefUnknowns.Count > 0)
                 {
@@ -323,7 +323,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                     WriteResourceList(writer, RefSounds);
                 }
             }
-            ScriptPack.Write(writer);
+            BehaviourPack.Write(writer);
         }
 
         private void FillResourceList(BinaryReader reader, IList list, bool UI32 = false)

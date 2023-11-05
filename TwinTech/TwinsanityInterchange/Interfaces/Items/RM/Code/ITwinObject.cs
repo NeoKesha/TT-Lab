@@ -77,7 +77,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// <summary>
         /// Scripts/behaviours that trigger when a certain condition is met
         /// </summary>
-        List<TwinObjectTriggerScript> TriggerScripts { get; set; }
+        List<TwinObjectTriggerBehaviour> TriggerBehaviours { get; set; }
         /// <summary>
         /// Slotted OGIs/Skeletons
         /// </summary>
@@ -89,7 +89,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// <summary>
         /// Slotted scripts/behaviours
         /// </summary>
-        List<UInt16> ScriptSlots { get; set; }
+        List<UInt16> BehaviourSlots { get; set; }
         /// <summary>
         /// Slotted objects
         /// </summary>
@@ -133,7 +133,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// <summary>
         /// Scripts/Behaviours referenced by this object
         /// </summary>
-        List<UInt16> RefScripts { get; set; }
+        List<UInt16> RefBehaviours { get; set; }
         /// <summary>
         /// Unknown item referenced by this object. UNUSED BY THE GAME. SECTION ALSO COMPLETELY UNUSED
         /// </summary>
@@ -145,7 +145,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// <summary>
         /// Script/Behaviour pack for this object. Command chain executed when creating an instance of this object
         /// </summary>
-        ITwinBehaviourCommandPack ScriptPack { get; set; }
+        ITwinBehaviourCommandPack BehaviourPack { get; set; }
         /// <summary>
         /// If object has default properties for its instance
         /// </summary>

@@ -69,14 +69,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             Joints.Clear();
             for (int i = 0; i < jointAmount; ++i)
             {
-                TwinJoint joint = new TwinJoint();
+                TwinJoint joint = new();
                 joint.Read(reader, joint.GetLength());
                 Joints.Add(joint);
             }
             ExitPoints.Clear();
             for (int i = 0; i < exitPointAmount; ++i)
             {
-                TwinExitPoint exitPoint = new TwinExitPoint();
+                TwinExitPoint exitPoint = new();
                 exitPoint.Read(reader, exitPoint.GetLength());
                 ExitPoints.Add(exitPoint);
             }
@@ -93,7 +93,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             SkinInverseBindMatrices.Clear();
             for (int i = 0; i < jointAmount; ++i)
             {
-                Matrix4 m = new Matrix4();
+                Matrix4 m = new();
                 m.Read(reader, m.GetLength());
                 SkinInverseBindMatrices.Add(m);
             }
@@ -102,7 +102,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             Collisions.Clear();
             for (int i = 0; i < collidersAmount; ++i)
             {
-                TwinBoundingBoxBuilder bbBuilder = new TwinBoundingBoxBuilder();
+                TwinBoundingBoxBuilder bbBuilder = new();
                 bbBuilder.Read(reader, bbBuilder.GetLength());
                 Collisions.Add(bbBuilder);
             }

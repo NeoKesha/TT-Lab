@@ -40,7 +40,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<TwinObjectTriggerScript> TriggerScripts { get; set; }
+        public List<TwinObjectTriggerBehaviour> TriggerBehaviours { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> OGISlots { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -77,7 +77,7 @@ namespace TT_Lab.AssetData.Code
 
         protected override void Dispose(Boolean disposing)
         {
-            TriggerScripts.Clear();
+            TriggerBehaviours.Clear();
             OGISlots.Clear();
             AnimationSlots.Clear();
             BehaviourSlots.Clear();
@@ -103,7 +103,7 @@ namespace TT_Lab.AssetData.Code
             OGIType2ArraySize = gameObject.ExitPointAmount;
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
-            TriggerScripts = CloneUtils.CloneList(gameObject.TriggerScripts, (e) => new(e.Compress()));
+            TriggerBehaviours = CloneUtils.CloneList(gameObject.TriggerBehaviours, (e) => new(e.Compress()));
             OGISlots = new List<LabURI>();
             foreach (var e in gameObject.OGISlots)
             {
@@ -115,7 +115,7 @@ namespace TT_Lab.AssetData.Code
                 AnimationSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(Animation).Name, null, e));
             }
             BehaviourSlots = new List<LabURI>();
-            foreach (var e in gameObject.ScriptSlots)
+            foreach (var e in gameObject.BehaviourSlots)
             {
                 var found = false;
                 foreach (var cm in gameObject.RefCodeModels)
@@ -173,7 +173,7 @@ namespace TT_Lab.AssetData.Code
                 RefBehaviourCommandsSequences.Add(AssetManager.Get().GetUri(package, typeof(BehaviourCommandsSequence).Name, null, e));
             }
             RefBehaviours = new List<LabURI>();
-            foreach (var e in gameObject.RefScripts)
+            foreach (var e in gameObject.RefBehaviours)
             {
                 // Range reserved for CodeModel(Command sequences) script IDs
                 if (e > 500 && e < 616)
@@ -219,7 +219,7 @@ namespace TT_Lab.AssetData.Code
             InstFlags = CloneUtils.CloneList(gameObject.InstFlags);
             InstFloats = CloneUtils.CloneList(gameObject.InstFloats);
             InstIntegers = CloneUtils.CloneList(gameObject.InstIntegers);
-            ScriptPack = gameObject.ScriptPack;
+            ScriptPack = gameObject.BehaviourPack;
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
