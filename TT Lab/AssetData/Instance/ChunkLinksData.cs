@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Rendering.Renderers;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -38,7 +41,30 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(Links.Count);
+            foreach (var link in Links)
+            {
+                writer.Write(link.UnkFlag);
+                writer.Write(link.Path);
+                writer.Write(link.IsRendered);
+                writer.Write(link.UnkNum);
+                writer.Write(link.IsLoadWallActive);
+                writer.Write(link.KeepLoaded);
+                link.ObjectMatrix.Write(writer);
+                link.ChunkMatrix.Write(writer);
+                writer.Write(link.LoadingWall != null);
+                link.LoadingWall?.Write(writer);
+                writer.Write(link.ChunkLinksCollisionData.Count);
+                foreach (var collisionData in link.ChunkLinksCollisionData)
+                {
+                    collisionData.Write(writer);
+                }
+            }
+
+            ms.Position = 0;
+            return factory.GenerateLink(ms);
         }
     }
 }

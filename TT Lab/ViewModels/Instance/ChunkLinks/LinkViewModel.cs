@@ -43,7 +43,7 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
                 loadingWall = new Matrix4ViewModel(link.LoadingWall);
             }
             boundingBoxBuilders = new ObservableCollection<ChunkLinkBoundingBoxBuilderViewModel>();
-            foreach (var builder in link.BoundingBoxBuilders)
+            foreach (var builder in link.ChunkLinksCollisionData)
             {
                 boundingBoxBuilders.Add(new ChunkLinkBoundingBoxBuilderViewModel(builder));
             }
@@ -65,12 +65,12 @@ namespace TT_Lab.ViewModels.Instance.ChunkLinks
                 link.LoadingWall = new Matrix4();
                 LoadingWall.Save(link.LoadingWall);
             }
-            link.BoundingBoxBuilders.Clear();
+            link.ChunkLinksCollisionData.Clear();
             foreach (var builder in BoundingBoxBuilders)
             {
                 var bbb = new TwinChunkLinkBoundingBoxBuilder();
                 builder.Save(bbb);
-                link.BoundingBoxBuilders.Add(bbb);
+                link.ChunkLinksCollisionData.Add(bbb);
             }
         }
 

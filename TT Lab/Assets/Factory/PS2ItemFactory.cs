@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -124,7 +125,34 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinLink GenerateLink(Stream stream)
         {
-            throw new NotImplementedException();
+            var link = new PS2AnyLink();
+            using var reader = new BinaryReader(stream);
+            var linkAmount = reader.ReadInt32();
+            for (Int32 i = 0; i < linkAmount; i++)
+            {
+                TwinChunkLink chunkLink = new();
+                chunkLink.UnkFlag = reader.ReadBoolean();
+                chunkLink.Path = reader.ReadString();
+                chunkLink.IsRendered = reader.ReadBoolean();
+                chunkLink.UnkNum = reader.ReadByte();
+                chunkLink.IsLoadWallActive = reader.ReadBoolean();
+                chunkLink.KeepLoaded = reader.ReadBoolean();
+                chunkLink.ObjectMatrix.Read(reader, 0);
+                chunkLink.ChunkMatrix.Read(reader, 0);
+                if (reader.ReadBoolean())
+                {
+                    chunkLink.LoadingWall = new Matrix4();
+                    chunkLink.LoadingWall.Read(reader, 0);
+                }
+                var buildersAmount = reader.ReadInt32();
+                for (Int32 j = 0; j < buildersAmount; j++)
+                {
+                    var builder = new TwinChunkLinkBoundingBoxBuilder();
+                    builder.Read(reader, 0);
+                    chunkLink.ChunkLinksCollisionData.Add(builder);
+                }
+            }
+            return link;
         }
 
         public ITwinLOD GenerateLOD(Stream stream)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -19,12 +20,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 
         public override int GetLength()
         {
-            int linksSize = 0;
-            foreach (ITwinSerializable e in LinksList)
-            {
-                linksSize += e.GetLength();
-            }
-            return 4 + linksSize;
+            return 4 + LinksList.Sum(l => l.GetLength());
         }
 
         public override void Read(BinaryReader reader, int length)
@@ -33,7 +29,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             LinksList.Clear();
             for (int i = 0; i < links; ++i)
             {
-                TwinChunkLink link = new TwinChunkLink();
+                TwinChunkLink link = new();
                 link.Read(reader, length);
                 LinksList.Add(link);
             }
