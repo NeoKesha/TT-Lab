@@ -76,7 +76,15 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             Floats.Clear();
             for (var i = 0; i < floatsCnt; ++i)
             {
-                Floats.Add(reader.ReadSingle());
+                var packet = (ControlPacketData)i;
+                if (IsIntegerPacket(packet))
+                {
+                    Floats.Add(reader.ReadUInt32());
+                }
+                else
+                {
+                    Floats.Add(reader.ReadSingle());
+                }
             }
             Bytes.Clear();
             for (var i = 0; i < bytesCnt; ++i)
@@ -114,9 +122,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 newPacketSettings |= BoolToUInt32(Stalls) << 0x1F;
             }
             writer.Write(newPacketSettings);
-            foreach (var f in Floats)
+            for (var i = 0; i < Floats.Count; ++i)
             {
-                writer.Write(f);
+                var packet = (ControlPacketData)i;
+                if (IsIntegerPacket(packet))
+                {
+                    writer.Write((UInt32)Floats[i]);
+                }
+                else
+                {
+                    writer.Write(Floats[i]);
+                }
             }
             foreach (var b in Bytes)
             {
@@ -147,26 +163,26 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 StringUtils.WriteLineTabulated(writer, $"DoesStall = {Stalls}", tabs + 2);
             }
             StringUtils.WriteLineTabulated(writer, "}", tabs + 1);
-            StringUtils.WriteTabulated(writer, "bytes = [", tabs + 1);
-            for (var i = 0; i < Bytes.Count; ++i)
+            StringUtils.WriteLineTabulated(writer, "data = {", tabs + 1);
             {
-                writer.Write($"{Bytes[i]}");
-                if (i < Bytes.Count - 1)
+                for (var i = 0; i < Bytes.Count; ++i)
                 {
-                    writer.Write(", ");
+                    if (Bytes[i] == 0xFF)
+                    {
+                        continue;
+                    }
+                    var packet = (ControlPacketData)i;
+                    if (IsIntegerPacket(packet))
+                    {
+                        StringUtils.WriteLineTabulated(writer, $"{(ControlPacketData)i} = {(UInt32)Floats[Bytes[i]]}", tabs + 2);
+                    }
+                    else
+                    {
+                        StringUtils.WriteLineTabulated(writer, $"{(ControlPacketData)i} = {Floats[Bytes[i]]}", tabs + 2);
+                    }
                 }
             }
-            writer.WriteLine($"]");
-            StringUtils.WriteTabulated(writer, "floats = [", tabs + 1);
-            for (var i = 0; i < Floats.Count; ++i)
-            {
-                writer.Write($"{Floats[i].ToString(CultureInfo.InvariantCulture)}");
-                if (i < Floats.Count - 1)
-                {
-                    writer.Write(", ");
-                }
-            }
-            writer.WriteLine($"]");
+            StringUtils.WriteLineTabulated(writer, "}", tabs + 1);
             StringUtils.WriteLineTabulated(writer, "}", tabs);
         }
 
@@ -184,7 +200,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 {
                     continue;
                 }
-                var valueString = StringUtils.GetStringAfter(line, "=");
+                var valueString = StringUtils.GetStringAfter(line, "=").Trim();
                 if (line.StartsWith("SpaceType"))
                 {
                     Space = Enum.Parse<SpaceType>(valueString);
@@ -256,30 +272,93 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
 
             // Read bytes and floats
+            for (var i = 0; i < PacketDataLength; i++)
+            {
+                Bytes.Add(0xFF);
+                Floats.Add(0.0f);
+            }
+            var maxPacketIndex = -1;
+            Byte floatIdx = 0;
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line))
+                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("data"))
                 {
                     continue;
                 }
-                if (line.StartsWith("bytes"))
+                var packetName = StringUtils.GetStringBefore(line, "=").Trim();
+                var valueString = StringUtils.GetStringAfter(line, "=").Trim();
+                var packet = Enum.Parse<ControlPacketData>(packetName);
+                if ((Int32)packet > maxPacketIndex)
                 {
-                    String[] str_bytes = StringUtils.GetStringInBetween(line, "[", "]").Split(',');
-                    foreach (var str in str_bytes)
-                    {
-                        Bytes.Add(Byte.Parse(str));
-                    }
+                    maxPacketIndex = (Int32)packet;
                 }
-                else if (line.StartsWith("floats"))
+
+                Bytes[(Int32)packet] = floatIdx;
+                if (IsIntegerPacket(packet))
                 {
-                    String[] str_floats = StringUtils.GetStringInBetween(line, "[", "]").Split(',');
-                    foreach (var str in str_floats)
-                    {
-                        Floats.Add(Single.Parse(str, CultureInfo.InvariantCulture));
-                    }
+                    var value = UInt32.Parse(valueString, CultureInfo.InvariantCulture);
+                    Floats[floatIdx++] = value;
+                }
+                else
+                {
+                    var value = Single.Parse(valueString, CultureInfo.InvariantCulture);
+                    Floats[floatIdx++] = value;
                 }
             }
+            Bytes.RemoveRange(maxPacketIndex, PacketDataLength - maxPacketIndex);
+            Floats.RemoveRange(floatIdx - 1, PacketDataLength - (floatIdx - 1));
+        }
+
+        public static bool IsIntegerPacket(ControlPacketData packet)
+        {
+            return packet == ControlPacketData.SELECTOR || packet == ControlPacketData.KEY_INDEX || packet == ControlPacketData.SYNC_UNIT || packet == ControlPacketData.JOINT_INDEX;
+        }
+
+        public const Int32 PacketDataLength = 23;
+        public enum ControlPacketData
+        {
+            SELECTOR,
+            SYNC_INDEX = SELECTOR,
+            KEY_INDEX,
+            FOCUS_DATA = KEY_INDEX,
+            MOVE_SPEED,
+            RISE_HEIGHT = MOVE_SPEED,
+            TURN_SPEED,
+            RAWPOS_X,
+            RAWPOS_Y,
+            RAWPOS_Z,
+            PITCH,
+            RAWANGS_X = PITCH,
+            YAW,
+            RAWANGS_Y = YAW,
+            ROLL,
+            RAWANGS_Z = ROLL,
+            DELAY,
+            DURATION,
+            CURVY = DURATION,
+            HOMEPOWER = DURATION,
+            TUMBLE_DATA,
+            SPIN_DATA,
+            TWIST_DATA,
+            RANDRANGE,
+            SQR_TOLERANCE = RANDRANGE,
+            POWER,
+            GRAVITY = POWER,
+            BANKING = POWER,
+            DAMPING,
+            SPEEDLIM = DAMPING,
+            BRAKING = DAMPING,
+            AC_DIST,
+            RT_OPT = AC_DIST,
+            SHIFT_FREQ = AC_DIST,
+            DEC_DIST,
+            PHYS_OPT = DEC_DIST,
+            SHIFT = DEC_DIST,
+            BOUNCE,
+            BANK_LIMIT = BOUNCE,
+            SYNC_UNIT,
+            JOINT_INDEX
         }
 
         public enum SpaceType
@@ -288,7 +367,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             INITIAL_SPACE,
             CURRENT_SPACE,
             TARGET_SPACE,
-            PARENT_SPACE, // or CHASE_SPACE
+            PARENT_SPACE,
+            CHASE_SPACE = PARENT_SPACE,
             INITIAL_POS,
             CURRENT_POS,
             STORED_SPACE,

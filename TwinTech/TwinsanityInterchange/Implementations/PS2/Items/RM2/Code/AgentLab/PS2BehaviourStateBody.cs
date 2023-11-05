@@ -77,10 +77,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             {
                 writer.Write(JumpToState);
             }
-            if (Condition != null)
-            {
-                Condition.Write(writer);
-            }
+            Condition?.Write(writer);
             foreach (var com in Commands)
             {
                 com.HasNext = !Commands.Last().Equals(com);
@@ -94,10 +91,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             {
                 StringUtils.WriteLineTabulated(writer, $"next_state = {JumpToState}", tabs + 1);
             }
-            if (Condition != null)
-            {
-                Condition.WriteText(writer, tabs + 1);
-            }
+            Condition?.WriteText(writer, tabs + 1);
             foreach (var cmd in Commands)
             {
                 cmd.WriteText(writer, tabs + 1);
@@ -134,7 +128,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 }
                 else if (!line.StartsWith("}"))
                 {
-                    PS2BehaviourCommand cmd = new PS2BehaviourCommand();
+                    PS2BehaviourCommand cmd = new();
                     cmd.ReadText(line);
                     Commands.Add(cmd);
                 }

@@ -33,7 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         }
 
         public String Name { get; set; }
-        public Int32 StartUnit { get; set; }
+        public Int32 StartState { get; set; }
         public List<ITwinBehaviourState> ScriptStates { get; set; }
 
         public PS2BehaviourGraph()
@@ -60,7 +60,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             var NameLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(NameLen));
             var statesAmt = reader.ReadInt32();
-            StartUnit = reader.ReadInt32();
+            StartState = reader.ReadInt32();
             ScriptStates.Clear();
             for (int i = 0; i < statesAmt; ++i)
             {
@@ -87,7 +87,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
             writer.Write(ScriptStates.Count);
-            writer.Write(StartUnit);
+            writer.Write(StartState);
             foreach (var state in ScriptStates)
             {
                 state.HasNext = !ScriptStates.Last().Equals(state);
@@ -106,7 +106,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
             StringUtils.WriteLineTabulated(writer, $"Script({Name}) {"{"}", tabs);
-            StringUtils.WriteLineTabulated(writer, $"StartUnit = {StartUnit}", tabs + 1);
+            StringUtils.WriteLineTabulated(writer, $"StartState = {StartState}", tabs + 1);
             int i = 0;
             foreach (var state in ScriptStates)
             {
@@ -137,9 +137,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 {
                     continue;
                 }
-                if (line.StartsWith("StartUnit"))
+                if (line.StartsWith("StartState"))
                 {
-                    StartUnit = int.Parse(StringUtils.GetStringAfter(line, "="));
+                    StartState = int.Parse(StringUtils.GetStringAfter(line, "="));
                 }
                 if (line.StartsWith("State_"))
                 {
@@ -152,11 +152,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                     var state = ScriptStates[index];
                     if (string.IsNullOrWhiteSpace(arg))
                     {
-                        state.ScriptIndexOrSlot = -1;
+                        state.BehaviourIndexOrSlot = -1;
                     }
                     else
                     {
-                        state.ScriptIndexOrSlot = short.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
+                        state.BehaviourIndexOrSlot = short.Parse(StringUtils.GetStringInBetween(line, "(", ")"));
                     }
                     while (!line.EndsWith("{"))
                     {

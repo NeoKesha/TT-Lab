@@ -18,7 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab
         /// <summary>
         /// Starting state of the graph
         /// </summary>
-        public Int32 StartUnit { get; set; }
+        public Int32 StartState { get; set; }
         /// <summary>
         /// States to jump between
         /// </summary>

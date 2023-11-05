@@ -12,7 +12,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
     public class XboxBehaviourState : ITwinBehaviourState
     {
         public UInt16 Bitfield { get; set; }
-        public Int16 ScriptIndexOrSlot { get; set; }
+        public Int16 BehaviourIndexOrSlot { get; set; }
+        public Boolean SkipsFirstStateBody { get; set; }
+        public Boolean UsesObjectSlot { get; set; }
         public TwinBehaviourControlPacket ControlPacket { get; set; }
         public List<ITwinBehaviourStateBody> Bodies { get; set; }
 
@@ -31,7 +33,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt16();
-            ScriptIndexOrSlot = reader.ReadInt16();
+            BehaviourIndexOrSlot = reader.ReadInt16();
             if ((Bitfield & 0x4000) != 0)
             {
                 ControlPacket = new TwinBehaviourControlPacket();
@@ -65,14 +67,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
             }
             newBitfield |= Bitfield;
             writer.Write(newBitfield);
-            writer.Write(ScriptIndexOrSlot);
+            writer.Write(BehaviourIndexOrSlot);
             ControlPacket?.Write(writer);
         }
         public void WriteText(StreamWriter writer, Int32 i, Int32 tabs = 0)
         {
-            if (ScriptIndexOrSlot != -1)
+            if (BehaviourIndexOrSlot != -1)
             {
-                StringUtils.WriteLineTabulated(writer, $"State_{i}({ScriptIndexOrSlot}) {"{"}", tabs);
+                StringUtils.WriteLineTabulated(writer, $"State_{i}({BehaviourIndexOrSlot}) {"{"}", tabs);
                 writer.WriteLine();
             }
             else
@@ -104,7 +106,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
                 {
                     continue;
                 }
-                if (line.StartsWith("Head"))
+                if (line.StartsWith("ControlPacket"))
                 {
                     ControlPacket = new TwinBehaviourControlPacket();
                     while (!line.EndsWith("{"))

@@ -11,13 +11,21 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab
     public interface ITwinBehaviourState : ITwinSerializable
     {
         /// <summary>
-        /// Unknown bitfield
+        /// Packages unsolved flags
         /// </summary>
         public UInt16 Bitfield { get; set; }
         /// <summary>
-        /// This can be a script index or point to a slot(event) in the object
+        /// This can be a behaviour index or point to a slot(event) in the object
         /// </summary>
-        public Int16 ScriptIndexOrSlot { get; set; }
+        public Int16 BehaviourIndexOrSlot { get; set; }
+        /// <summary>
+        /// If the first state body should be skipped and the next one it points to used
+        /// </summary>
+        public Boolean SkipsFirstStateBody { get; set; }
+        /// <summary>
+        /// If the behaviour index points to a behaviour index or to a slot(event) in the object
+        /// </summary>
+        public Boolean UsesObjectSlot { get; set; }
         /// <summary>
         /// Control packet for manipulation position, speed, etc. of the object executing the behaviour
         /// </summary>

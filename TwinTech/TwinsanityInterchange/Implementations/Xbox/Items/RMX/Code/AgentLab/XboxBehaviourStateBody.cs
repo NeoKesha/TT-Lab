@@ -77,10 +77,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
             {
                 writer.Write(JumpToState);
             }
-            if (Condition != null)
-            {
-                Condition.Write(writer);
-            }
+            Condition?.Write(writer);
             foreach (var com in Commands)
             {
                 com.HasNext = !Commands.Last().Equals(com);
@@ -94,10 +91,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
             {
                 StringUtils.WriteLineTabulated(writer, $"next_state = {JumpToState}", tabs + 1);
             }
-            if (Condition != null)
-            {
-                Condition.WriteText(writer, tabs + 1);
-            }
+            Condition?.WriteText(writer, tabs + 1);
             foreach (var cmd in Commands)
             {
                 cmd.WriteText(writer, tabs + 1);

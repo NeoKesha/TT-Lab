@@ -12,7 +12,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
     public class PS2BehaviourState : ITwinBehaviourState
     {
         public UInt16 Bitfield { get; set; }
-        public Int16 ScriptIndexOrSlot { get; set; }
+        public Int16 BehaviourIndexOrSlot { get; set; }
+        public Boolean SkipsFirstStateBody { get; set; }
+        public Boolean UsesObjectSlot { get; set; }
         public TwinBehaviourControlPacket ControlPacket { get; set; }
         public List<ITwinBehaviourStateBody> Bodies { get; set; }
 
@@ -31,7 +33,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt16();
-            ScriptIndexOrSlot = reader.ReadInt16();
+            SkipsFirstStateBody = (Bitfield & 0x400) == 1;
+            UsesObjectSlot = (Bitfield & 0x1000) == 1;
+            BehaviourIndexOrSlot = reader.ReadInt16();
             if ((Bitfield & 0x4000) != 0)
             {
                 ControlPacket = new TwinBehaviourControlPacket();
@@ -51,9 +55,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             }
         }
 
+        private const UInt16 KnownFlagsMask = 0x8000 | 0x4000 | 0x1000 | 0x400;
         public void Write(BinaryWriter writer)
         {
-            UInt16 newBitfield = (UInt16)Bodies.Count;
+            Bitfield &= unchecked((UInt16)~KnownFlagsMask);
+            UInt16 newBitfield = (UInt16)(Bodies.Count & 0x1F);
+            if (SkipsFirstStateBody)
+            {
+                newBitfield |= 0x400;
+            }
+            if (UsesObjectSlot)
+            {
+                newBitfield |= 0x1000;
+            }
             if (ControlPacket != null)
             {
                 newBitfield |= 0x4000;
@@ -65,14 +79,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             }
             newBitfield |= Bitfield;
             writer.Write(newBitfield);
-            writer.Write(ScriptIndexOrSlot);
+            writer.Write(BehaviourIndexOrSlot);
             ControlPacket?.Write(writer);
         }
         public void WriteText(StreamWriter writer, Int32 i, Int32 tabs = 0)
         {
-            if (ScriptIndexOrSlot != -1)
+            if (BehaviourIndexOrSlot != -1)
             {
-                StringUtils.WriteLineTabulated(writer, $"State_{i}({ScriptIndexOrSlot}) {"{"}", tabs);
+                StringUtils.WriteLineTabulated(writer, $"State_{i}({BehaviourIndexOrSlot}) {"{"}", tabs);
                 writer.WriteLine();
             }
             else
@@ -80,10 +94,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 StringUtils.WriteLineTabulated(writer, $"State_{i}() {"{"}", tabs);
                 writer.WriteLine();
             }
-            if (ControlPacket != null)
-            {
-                ControlPacket.WriteText(writer, tabs + 1);
-            }
+            ControlPacket?.WriteText(writer, tabs + 1);
             foreach (var body in Bodies)
             {
                 body.WriteText(writer, tabs + 1);
@@ -104,7 +115,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 {
                     continue;
                 }
-                if (line.StartsWith("Head"))
+                if (line.StartsWith("ControlPacket"))
                 {
                     ControlPacket = new TwinBehaviourControlPacket();
                     while (!line.EndsWith("{"))
