@@ -1,4 +1,8 @@
-﻿using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+﻿using System.IO;
+using TT_Lab.Assets.Factory;
+using TT_Lab.Assets;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -10,6 +14,23 @@ namespace TT_Lab.AssetData.Graphics
 
         public MeshData(ITwinMesh mesh) : base(mesh)
         {
+        }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(260); // Unused header
+            writer.Write(Materials.Count);
+            foreach (var mat in Materials)
+            {
+                writer.Write(assetManager.GetAsset(mat).ID);
+            }
+            writer.Write(assetManager.GetAsset(Model).ID);
+
+            ms.Position = 0;
+            return factory.GenerateMesh(ms);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
@@ -49,7 +50,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public Vector4 UnkVector1 { get; set; }
         public Vector4 UnkVector2 { get; set; }
         public Vector4 UnkVector3 { get; set; }
-        public TwinShaderAnimation Animation { get; set; }
+        public TwinShaderAnimation? Animation { get; set; }
 
         public LabShader() { }
 
@@ -158,6 +159,70 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             UnkVector2 = CloneUtils.Clone(twinShader.UnkVector2);
             UnkVector3 = CloneUtils.Clone(twinShader.UnkVector3);
             Animation = CloneUtils.DeepClone(twinShader.Animation);
+        }
+
+        public void Write(BinaryWriter writer)
+        {
+            writer.Write((UInt32)ShaderType);
+            switch (ShaderType)
+            {
+                case TwinShader.Type.UnlitClothDeformation:
+                    writer.Write(IntParam);
+                    writer.Write(FloatParam[0]);
+                    writer.Write(FloatParam[1]);
+                    break;
+                case TwinShader.Type.UnlitClothDeformation2:
+                    writer.Write(IntParam);
+                    writer.Write(FloatParam[0]);
+                    writer.Write(FloatParam[1]);
+                    writer.Write(FloatParam[2]);
+                    writer.Write(FloatParam[3]);
+                    break;
+                case TwinShader.Type.LitReflectionSurface:
+                case TwinShader.Type.SHADER_17:
+                    writer.Write(FloatParam[0]);
+                    break;
+                default:
+                    break;
+            }
+            writer.Write((byte)ABlending);
+            writer.Write(AlphaRegSettingsIndex);
+            writer.Write((byte)ATest);
+            writer.Write((byte)ATestMethod);
+            writer.Write(AlphaValueToBeComparedTo);
+            writer.Write((byte)ProcessMethodWhenAlphaTestFailed);
+            writer.Write((byte)DAlphaTest);
+            writer.Write((byte)DAlphaTestMode);
+            writer.Write((byte)DepthTest);
+            writer.Write(UnkVal1);
+            writer.Write((byte)ShdMethod);
+            writer.Write((byte)TxtMapping);
+            writer.Write((byte)MethodOfSpecifyingTextureCoordinates);
+            writer.Write((byte)Fog);
+            writer.Write((byte)ContextNum);
+            writer.Write(UnkVal2);
+            writer.Write(UnkVal3);
+            writer.Write(UsePresetAlphaRegSettings);
+            writer.Write((byte)SpecOfColA);
+            writer.Write((byte)SpecOfColB);
+            writer.Write((byte)SpecOfAlphaC);
+            writer.Write((byte)SpecOfColD);
+            writer.Write(FixedAlphaValue);
+            writer.Write((byte)TextureFilterWhenTextureIsExpanded);
+            writer.Write(AlphaCorrectionValue);
+            writer.Write(UnkFlag1);
+            writer.Write(UnkFlag2);
+            writer.Write((byte)ZValueDrawingMask);
+            writer.Write(UnkFlag3);
+            writer.Write(Animation != null);
+            writer.Write(LodParamK);
+            writer.Write(LodParamL);
+            UnkVector1.Write(writer);
+            UnkVector2.Write(writer);
+            UnkVector3.Write(writer);
+            writer.Write(TextureId == LabURI.Empty ? 0U : AssetManager.Get().GetAsset(TextureId).ID);
+            writer.Write((UInt32)ShaderType);
+            Animation?.Write(writer);
         }
     }
 }

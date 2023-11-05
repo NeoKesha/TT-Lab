@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
@@ -21,8 +22,6 @@ namespace TT_Lab.AssetData.Graphics
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Header { get; set; }
-        [JsonProperty(Required = Required.Always)]
         public List<LabURI> Materials { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI Model { get; set; }
@@ -35,18 +34,29 @@ namespace TT_Lab.AssetData.Graphics
         public override void Import(LabURI package, String? variant)
         {
             ITwinRigidModel rigidModel = GetTwinItem<ITwinRigidModel>();
-            Header = rigidModel.Header;
             Materials = new List<LabURI>();
             foreach (var mat in rigidModel.Materials)
             {
-                Materials.Add(AssetManager.Get().GetUri(package, typeof(Material).Name, variant, mat)/*GuidManager.GetGuidByTwinId(mat, typeof(Material))*/);
+                Materials.Add(AssetManager.Get().GetUri(package, typeof(Material).Name, variant, mat));
             }
-            Model = AssetManager.Get().GetUri(package, typeof(Model).Name, variant, rigidModel.Model);//GuidManager.GetGuidByTwinId(rigidModel.Model, typeof(Model));
+            Model = AssetManager.Get().GetUri(package, typeof(Model).Name, variant, rigidModel.Model);
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(257); // Unused header
+            writer.Write(Materials.Count);
+            foreach (var mat in Materials)
+            {
+                writer.Write(assetManager.GetAsset(mat).ID);
+            }
+            writer.Write(assetManager.GetAsset(Model).ID);
+
+            ms.Position = 0;
+            return factory.GenerateRigidModel(ms);
         }
     }
 }

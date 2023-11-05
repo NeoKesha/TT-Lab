@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
@@ -13,6 +14,7 @@ namespace TT_Lab.AssetData.Graphics
     {
         public SkydomeData()
         {
+            Meshes = new();
         }
 
         public SkydomeData(ITwinSkydome skydome) : this()
@@ -20,8 +22,6 @@ namespace TT_Lab.AssetData.Graphics
             SetTwinItem(skydome);
         }
 
-        [JsonProperty(Required = Required.Always)]
-        public Int32 Header { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> Meshes { get; set; }
 
@@ -33,7 +33,6 @@ namespace TT_Lab.AssetData.Graphics
         public override void Import(LabURI package, String? variant)
         {
             ITwinSkydome skydome = GetTwinItem<ITwinSkydome>();
-            Header = skydome.Header;
             Meshes = new List<LabURI>();
             foreach (var mesh in skydome.Meshes)
             {
@@ -43,7 +42,18 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(20480); // Unused header
+            writer.Write(Meshes.Count);
+            foreach (var mesh in Meshes)
+            {
+                writer.Write(assetManager.GetAsset(mesh).ID);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateMesh(ms);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
@@ -14,6 +15,8 @@ namespace TT_Lab.AssetData.Graphics
     {
         public MaterialData()
         {
+            Shaders = new();
+            Name = "NewMaterial";
         }
 
         public MaterialData(ITwinMaterial material) : this()
@@ -50,7 +53,20 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write((UInt64)ActivatedShaders);
+            writer.Write(DmaChainIndex);
+            writer.Write(Name.Length);
+            writer.Write(Name.ToCharArray());
+            writer.Write(Shaders.Count);
+            foreach (var shader in Shaders)
+            {
+                shader.Write(writer);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateMaterial(ms);
         }
     }
 }

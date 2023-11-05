@@ -40,7 +40,7 @@ namespace TT_Lab.AssetData.Graphics
         {
             try
             {
-                Scene scene = new Scene
+                Scene scene = new()
                 {
                     RootNode = new Node("Root")
                 };
@@ -69,13 +69,13 @@ namespace TT_Lab.AssetData.Graphics
                     scene.RootNode.MeshIndices.Add(i);
                 }
 
-                Material mat = new Material
+                Material mat = new()
                 {
                     Name = "Default"
                 };
                 scene.Materials.Add(mat);
 
-                AssimpContext context = new AssimpContext();
+                AssimpContext context = new();
                 context.ExportFile(scene, dataPath, "collada");
                 context.Dispose();
             }

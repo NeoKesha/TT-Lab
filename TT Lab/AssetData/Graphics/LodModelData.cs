@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
@@ -15,6 +16,8 @@ namespace TT_Lab.AssetData.Graphics
     {
         public LodModelData()
         {
+            ModelsDrawDistances = new Int32[3];
+            Meshes = new();
         }
 
         public LodModelData(ITwinLOD lod) : this()
@@ -54,7 +57,43 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write((Int32)Type);
+            switch (Type)
+            {
+                case LodType.FULL:
+                    writer.Write(Meshes.Count & 0xFF);
+                    writer.Write(MinDrawDistance);
+                    writer.Write(MaxDrawDistance);
+                    foreach (var dist in ModelsDrawDistances)
+                    {
+                        writer.Write(dist);
+                    }
+                    writer.Write(0); // Unused value
+                    foreach (var mesh in Meshes)
+                    {
+                        writer.Write(assetManager.GetAsset(mesh).ID);
+                    }
+                    break;
+                case LodType.COMPRESSED:
+                    writer.Write((Byte)Meshes.Count);
+                    writer.Write(MinDrawDistance);
+                    writer.Write(MaxDrawDistance);
+                    foreach (var dist in ModelsDrawDistances)
+                    {
+                        writer.Write(dist);
+                    }
+                    foreach (var mesh in Meshes)
+                    {
+                        writer.Write(assetManager.GetAsset(mesh).ID);
+                    }
+                    break;
+            }
+
+            ms.Position = 0;
+            return factory.GenerateLOD(ms);
         }
     }
 }
