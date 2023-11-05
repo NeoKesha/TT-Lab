@@ -4,6 +4,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
+    [Obsolete("Legacy type for Animation and shader animation packed data. Currently they are known so this is unused. Use those types' respected data types")]
     public class TwinBlob : ITwinSerializable
     {
         UInt32 BlockSizePacked;
