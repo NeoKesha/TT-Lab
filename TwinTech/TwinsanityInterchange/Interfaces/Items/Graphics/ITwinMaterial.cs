@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Twinsanity.TwinsanityInterchange.Common;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
 {
@@ -9,7 +10,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
         /// <summary>
         /// Bitmap of the activated shaders
         /// </summary>
-        UInt64 Header { get; set; }
+        AppliedShaders ActivatedShaders { get; set; }
         /// <summary>
         /// Special DMA index in game's DMA chain manager
         /// </summary>

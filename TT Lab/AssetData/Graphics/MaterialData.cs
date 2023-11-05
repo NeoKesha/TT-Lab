@@ -6,6 +6,7 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -21,7 +22,7 @@ namespace TT_Lab.AssetData.Graphics
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt64 Header { get; set; }
+        public AppliedShaders ActivatedShaders { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 DmaChainIndex { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -37,7 +38,7 @@ namespace TT_Lab.AssetData.Graphics
         public override void Import(LabURI package, String? variant)
         {
             ITwinMaterial material = GetTwinItem<ITwinMaterial>();
-            Header = material.Header;
+            ActivatedShaders = material.ActivatedShaders;
             DmaChainIndex = material.DmaChainIndex;
             Name = new string(material.Name.ToCharArray());
             Shaders = new List<LabShader>();

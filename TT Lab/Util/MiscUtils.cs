@@ -9,14 +9,18 @@ namespace TT_Lab.Util
     {
         private static Bitmap _boatguy;
 
-        public static object ConvertEnum(Type t, object o)
+        public static object? ConvertEnum(Type t, object? o)
         {
-            return Enum.Parse(t, o.ToString());
+            if (o == null)
+            {
+                return null;
+            }
+            return Enum.Parse(t, o.ToString()!);
         }
 
-        public static T ConvertEnum<T>(object o)
+        public static T? ConvertEnum<T>(object? o)
         {
-            return (T)ConvertEnum(typeof(T), o);
+            return (T?)ConvertEnum(typeof(T), o);
         }
 
         public static Bitmap GetBoatGuy()

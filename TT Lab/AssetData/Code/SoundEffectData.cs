@@ -53,7 +53,11 @@ namespace TT_Lab.AssetData.Code
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var sound = factory.GenerateSound();
+            sound.SetDataFromPCM(PCM);
+            sound.SetFreq((UInt16)Frequency);
+
+            return sound;
         }
     }
 }

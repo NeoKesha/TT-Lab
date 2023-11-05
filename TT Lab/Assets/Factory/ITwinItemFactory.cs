@@ -26,7 +26,7 @@ namespace TT_Lab.Assets.Factory
         ITwinBehaviourCommandsSequence GenerateBehaviourCommandsSequence(Stream stream);
         ITwinObject GenerateObject(Stream stream);
         ITwinOGI GenerateOGI(Stream stream);
-        ITwinSound GenerateSound(Stream stream);
+        ITwinSound GenerateSound();
         ITwinAIPath GenerateAIPath(Stream stream);
         ITwinAIPosition GenerateAIPosition(Stream stream);
         ITwinCamera GenerateCamera(Stream stream);

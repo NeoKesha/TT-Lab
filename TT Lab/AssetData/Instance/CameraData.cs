@@ -132,7 +132,6 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            var assetManager = AssetManager.Get();
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
             var trigger = Trigger.Export(factory);

@@ -2,6 +2,7 @@
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -138,9 +139,9 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinSound GenerateSound(Stream stream)
+        public ITwinSound GenerateSound()
         {
-            throw new NotImplementedException();
+            return new XboxAnySound();
         }
 
         public ITwinSurface GenerateSurface(Stream stream)

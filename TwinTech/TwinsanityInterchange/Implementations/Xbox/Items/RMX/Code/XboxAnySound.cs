@@ -11,12 +11,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
         UInt32 unkInt;
 
         public UInt32 Header { get; set; }
-        public Byte UnkFlag { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Byte FreqFac { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public UInt16 Param1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public UInt16 Param2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public UInt16 Param3 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public UInt16 Param4 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Byte UnkFlag { get; set; }
+        public Byte FreqFac { get; set; }
+        public UInt16 Param1 { get; set; }
+        public UInt16 Param2 { get; set; }
+        public UInt16 Param3 { get; set; }
+        public UInt16 Param4 { get; set; }
         public Byte[] Sound { get; set; }
 
         static readonly byte[] headerStatic1 = new byte[] { 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00 };
@@ -54,6 +54,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
             writer.Write(0U);
         }
 
+        public void SetFreq(UInt16 freq)
+        {
+            frequency = freq;
+        }
+
         public UInt16 GetFreq()
         {
             return (UInt16)frequency;
@@ -62,6 +67,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code
         public Byte[] ToPCM()
         {
             return Sound;
+        }
+
+        public void SetDataFromPCM(Byte[] data)
+        {
+            Sound = data;
         }
 
         public override String GetName()

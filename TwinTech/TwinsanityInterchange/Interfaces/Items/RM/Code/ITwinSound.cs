@@ -17,27 +17,27 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// </summary>
         UInt32 Header { get; set; }
         /// <summary>
-        /// Unknown flag
+        /// Unknown flag. Unused for XBox sounds
         /// </summary>
         Byte UnkFlag { get; set; }
         /// <summary>
-        /// Frequence factor.
+        /// Frequency factor. Unused for XBox sounds use GetFreq()/SetFreq()
         /// </summary>
         Byte FreqFac { get; set; }
         /// <summary>
-        /// Unknown param1
+        /// Unknown param1. Unused for XBox sounds
         /// </summary>
         UInt16 Param1 { get; set; }
         /// <summary>
-        /// Unknown param2
+        /// Unknown param2. Unused for XBox sounds
         /// </summary>
         UInt16 Param2 { get; set; }
         /// <summary>
-        /// Unknown param3
+        /// Unknown param3. Unused for XBox sounds
         /// </summary>
         UInt16 Param3 { get; set; }
         /// <summary>
-        /// Unknown param4
+        /// Unknown param4. Unused for XBox sounds
         /// </summary>
         UInt16 Param4 { get; set; }
         /// <summary>
@@ -46,14 +46,25 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         Byte[] Sound { get; set; }
 
         /// <summary>
+        /// Set the internal frequency value or factor
+        /// </summary>
+        /// <param name="freq">Frequency amount</param>
+        void SetFreq(UInt16 freq);
+        /// <summary>
         /// 
         /// </summary>
-        /// <returns>Frequence of the sound</returns>
+        /// <returns>Frequency of the sound</returns>
         UInt16 GetFreq();
         /// <summary>
         /// Converts raw sound data to its PCM format
         /// </summary>
         /// <returns></returns>
         Byte[] ToPCM();
+        /// <summary>
+        /// Converts PCM format to raw sound data and sets it
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        void SetDataFromPCM(Byte[] data);
     }
 }

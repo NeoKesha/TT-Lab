@@ -1,55 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common.Animation
 {
     public class AnimatedTransformation : ITwinSerializable
     {
-        List<Int16> transformValues;
+        List<Transformation> transformValues;
 
         public Int32 Count { get => transformValues.Count; }
 
         public AnimatedTransformation(UInt16 amount)
         {
-            transformValues = new List<Int16>(amount);
+            transformValues = new List<Transformation>(amount);
         }
 
-        public Int16 this[int key]
+        public Transformation this[int key]
         {
             get { return transformValues[key]; }
             set { transformValues[key] = value; }
         }
 
-        public float GetFloat(int key)
-        {
-            return this[key] / 4096f;
-        }
-
-        public void SetFloat(int key, float value)
-        {
-            this[key] = (Int16)(value * 4096);
-        }
-
         public Int32 GetLength()
         {
-            return transformValues.Count * 2;
+            return transformValues.Sum(t => t.GetLength());
         }
 
         public void Read(BinaryReader reader, Int32 length)
         {
             for (Int32 i = 0; i < transformValues.Capacity; i++)
             {
-                transformValues.Add(reader.ReadInt16());
+                var transformation = new Transformation();
+                transformation.Read(reader, length);
+                transformValues.Add(transformation);
             }
         }
 
         public void Write(BinaryWriter writer)
         {
-            foreach (var offset in transformValues)
+            foreach (var transformation in transformValues)
             {
-                writer.Write(offset);
+                transformation.Write(writer);
             }
         }
     }

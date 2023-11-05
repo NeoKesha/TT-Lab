@@ -4,6 +4,7 @@ using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.ShaderAnimation;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.AssetData.Graphics.Shaders
@@ -48,7 +49,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public Vector4 UnkVector1 { get; set; }
         public Vector4 UnkVector2 { get; set; }
         public Vector4 UnkVector3 { get; set; }
-        public TwinBlob Blob { get; set; }
+        public TwinShaderAnimation Animation { get; set; }
 
         public LabShader() { }
 
@@ -156,7 +157,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             UnkVector1 = CloneUtils.Clone(twinShader.UnkVector1);
             UnkVector2 = CloneUtils.Clone(twinShader.UnkVector2);
             UnkVector3 = CloneUtils.Clone(twinShader.UnkVector3);
-            Blob = CloneUtils.DeepClone(twinShader.Blob);
+            Animation = CloneUtils.DeepClone(twinShader.Animation);
         }
     }
 }

@@ -52,11 +52,10 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 
             UInt16 newTransformationChoice = (UInt16)TranslateX;
             newTransformationChoice |= (UInt16)((UInt16)TranslateY << 0x1);
-            newTransformationChoice |= (UInt16)((UInt16)TranslateY << 0x2);
-            newTransformationChoice |= (UInt16)((UInt16)TranslateZ << 0x3);
-            newTransformationChoice |= (UInt16)((UInt16)RotateX << 0x4);
-            newTransformationChoice |= (UInt16)((UInt16)RotateY << 0x5);
-            newTransformationChoice |= (UInt16)((UInt16)RotateZ << 0x6);
+            newTransformationChoice |= (UInt16)((UInt16)TranslateZ << 0x2);
+            newTransformationChoice |= (UInt16)((UInt16)RotateX << 0x3);
+            newTransformationChoice |= (UInt16)((UInt16)RotateY << 0x4);
+            newTransformationChoice |= (UInt16)((UInt16)RotateZ << 0x5);
             transformationChoice = newTransformationChoice;
             writer.Write(transformationChoice);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Twinsanity.TwinsanityInterchange.Common.ShaderAnimation;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
@@ -45,18 +46,18 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Vector4 UnkVector2 { get; set; }
         public Vector4 UnkVector3 { get; set; }
         public UInt32 TextureId { get; set; }
-        public TwinBlob Blob { get; set; }
+        public TwinShaderAnimation Animation { get; set; }
         public TwinShader()
         {
             FloatParam = new float[4];
             UnkVector1 = new Vector4();
             UnkVector2 = new Vector4();
             UnkVector3 = new Vector4();
-            Blob = null;
+            Animation = null;
         }
         public int GetLength()
         {
-            int blobLen = (Blob != null) ? Blob.GetLength() : 0;
+            int blobLen = (Animation != null) ? Animation.GetLength() : 0;
             int paramLen = (ShaderType == Type.UnlitClothDeformation) ? 12 :
                             (ShaderType == Type.UnlitClothDeformation2) ? 20 :
                             (ShaderType == Type.LitReflectionSurface || ShaderType == Type.SHADER_17) ? 4 :
@@ -117,7 +118,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkFlag2 = reader.ReadBoolean();
             ZValueDrawingMask = (ZValueDrawMask)reader.ReadByte();
             UnkFlag3 = reader.ReadBoolean();
-            var hasBlob = reader.ReadBoolean();
+            var hasAnimation = reader.ReadBoolean();
             LodParamK = reader.ReadUInt16();
             LodParamL = reader.ReadUInt16();
             UnkVector1.Read(reader, Constants.SIZE_VECTOR4);
@@ -125,10 +126,10 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkVector3.Read(reader, Constants.SIZE_VECTOR4);
             TextureId = reader.ReadUInt32();
             reader.ReadUInt32(); // ShaderType
-            if (hasBlob)
+            if (hasAnimation)
             {
-                Blob = new TwinBlob();
-                Blob.Read(reader, 0);
+                Animation = new TwinShaderAnimation();
+                Animation.Read(reader, 0);
             }
         }
 
@@ -185,7 +186,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(UnkFlag2);
             writer.Write((byte)ZValueDrawingMask);
             writer.Write(UnkFlag3);
-            writer.Write(Blob != null);
+            writer.Write(Animation != null);
             writer.Write(LodParamK);
             writer.Write(LodParamL);
             UnkVector1.Write(writer);
@@ -193,7 +194,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             UnkVector3.Write(writer);
             writer.Write(TextureId);
             writer.Write((UInt32)ShaderType);
-            Blob?.Write(writer);
+            Animation?.Write(writer);
         }
 
         // These are mostly helper enums to help keep stuff type safe

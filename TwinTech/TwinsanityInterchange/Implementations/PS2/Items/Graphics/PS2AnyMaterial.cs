@@ -6,12 +6,13 @@ using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyMaterial : BaseTwinItem, ITwinMaterial
     {
-        public UInt64 Header { get; set; }
+        public AppliedShaders ActivatedShaders { get; set; }
         public UInt32 DmaChainIndex { get; set; }
         public String Name { get; set; }
         public List<TwinShader> Shaders { get; set; }
@@ -27,7 +28,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public override void Read(BinaryReader reader, int length)
         {
-            Header = reader.ReadUInt64();
+            ActivatedShaders = (AppliedShaders)reader.ReadUInt64();
             DmaChainIndex = reader.ReadUInt32();
             Int32 NameLen = reader.ReadInt32();
             Name = new string(reader.ReadChars(NameLen));
@@ -43,7 +44,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Header);
+            writer.Write((UInt64)ActivatedShaders);
             writer.Write(DmaChainIndex);
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());

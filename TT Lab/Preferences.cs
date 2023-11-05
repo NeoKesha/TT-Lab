@@ -55,7 +55,7 @@ namespace TT_Lab
             var retT = typeof(T);
             if (retT.IsEnum)
             {
-                return MiscUtils.ConvertEnum<T>(Settings[prefName]);
+                return MiscUtils.ConvertEnum<T>(Settings[prefName])!;
             }
             return (T)Settings[prefName];
         }

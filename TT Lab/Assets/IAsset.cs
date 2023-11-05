@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData;
+using TT_Lab.Util;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Assets
@@ -143,6 +144,33 @@ namespace TT_Lab.Assets
         void DisposeData()
         {
             GetData().Dispose();
+        }
+
+        /// <summary>
+        /// Sets or creates the parameter
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        void SetParameter<T>(String key, T value)
+        {
+            Parameters[key] = value;
+        }
+
+        /// <summary>
+        /// Gets the parameter as a specific type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        T? GetParameter<T>(String key)
+        {
+            var retT = typeof(T);
+            if (retT.IsEnum)
+            {
+                return MiscUtils.ConvertEnum<T?>(Parameters[key]);
+            }
+            return (T?)Parameters[key];
         }
 
         /// <summary>

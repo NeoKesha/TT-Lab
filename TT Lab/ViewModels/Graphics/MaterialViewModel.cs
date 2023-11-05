@@ -5,6 +5,7 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Command;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.ViewModels.Graphics
 {
@@ -12,7 +13,7 @@ namespace TT_Lab.ViewModels.Graphics
     {
         public event EventHandler<System.ComponentModel.PropertyChangedEventArgs>? PropChanged;
 
-        private UInt64 _header;
+        private AppliedShaders _activatedShaders;
         private UInt32 _dmaChainIndex;
         private String _name;
         private ObservableCollection<LabShaderViewModel> _shaders;
@@ -24,7 +25,7 @@ namespace TT_Lab.ViewModels.Graphics
         public MaterialViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
             var _matData = _asset.GetData<MaterialData>();
-            _header = _matData.Header;
+            _activatedShaders = _matData.ActivatedShaders;
             _dmaChainIndex = _matData.DmaChainIndex;
             _name = _matData.Name[..];
             _shaders = new ObservableCollection<LabShaderViewModel>();
@@ -43,7 +44,7 @@ namespace TT_Lab.ViewModels.Graphics
         public override void Save(object? o)
         {
             var data = Asset.GetData<MaterialData>();
-            data.Header = Header;
+            data.ActivatedShaders = ActivatedShaders;
             data.DmaChainIndex = DmaChainIndex;
             data.Name = Name;
             data.Shaders.Clear();
@@ -58,14 +59,14 @@ namespace TT_Lab.ViewModels.Graphics
         public AddItemToListCommand<LabShaderViewModel> AddShaderCommand { private set; get; }
         public DeleteItemFromListCommand DeleteShaderCommand { private set; get; }
         public CloneItemIntoCollectionCommand<LabShaderViewModel> CloneShaderCommand { private set; get; }
-        public UInt64 Header
+        public AppliedShaders ActivatedShaders
         {
-            get => _header;
+            get => _activatedShaders;
             set
             {
-                if (value != _header)
+                if (value != _activatedShaders)
                 {
-                    _header = value;
+                    _activatedShaders = value;
                     IsDirty = true;
                     NotifyChange();
                 }

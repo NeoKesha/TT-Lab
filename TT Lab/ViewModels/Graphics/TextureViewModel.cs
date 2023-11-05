@@ -19,17 +19,19 @@ namespace TT_Lab.ViewModels.Graphics
 
         public TextureViewModel(LabURI asset, AssetViewModel parent) : base(asset, parent)
         {
-            Debug.Assert(Asset.Parameters["pixel_storage_format"] != null && Asset.Parameters["texture_function"] != null, "Texture parameters must be filled in");
-            _pixelFormat = MiscUtils.ConvertEnum<ITwinTexture.TexturePixelFormat>(Asset.Parameters["pixel_storage_format"]!);
-            _texFun = MiscUtils.ConvertEnum<ITwinTexture.TextureFunction>(Asset.Parameters["texture_function"]!);
+            var pixelFormat = Asset.GetParameter<ITwinTexture.TexturePixelFormat?>("pixel_storage_format");
+            var texFun = Asset.GetParameter<ITwinTexture.TextureFunction?>("texture_function");
+            Debug.Assert(pixelFormat != null && texFun != null, "Texture parameters must be filled in");
+            _pixelFormat = (ITwinTexture.TexturePixelFormat)pixelFormat;
+            _texFun = (ITwinTexture.TextureFunction)texFun;
         }
 
         public override void Save(object? o)
         {
             var data = Asset.GetData<TextureData>();
             data.Bitmap = Texture;
-            Asset.Parameters["pixel_storage_format"] = PixelStorageFormat;
-            Asset.Parameters["texture_function"] = TextureFunction;
+            Asset.SetParameter("pixel_storage_format", PixelStorageFormat);
+            Asset.SetParameter("texture_function", TextureFunction);
             base.Save(o);
         }
 

@@ -55,7 +55,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             return $"Sound {id:X}";
         }
 
-        public ushort GetFreq()
+        public void SetFreq(UInt16 freq)
+        {
+            FreqFac = freq switch
+            {
+                8000 => 0x2,
+                10000 => 0x3,
+                11025 => 0x4,
+                16000 => 0x5,
+                18000 => 0x6,
+                22050 => 0x7,
+                32000 => 0xA,
+                44100 => 0xE,
+                48000 => 0x10,
+                _ => throw new ArgumentException($"Unsupported sfx frequency. Value was: {freq}", nameof(freq))
+            };
+        }
+
+        public UInt16 GetFreq()
         {
             return FreqFac switch
             {
@@ -81,6 +98,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             BinaryWriter writer = new(output);
             adpcm.ToPCMMono(reader, writer);
             return output.ToArray();
+        }
+
+        public void SetDataFromPCM(Byte[] data)
+        {
+            Sound = Array.Empty<Byte>();
         }
     }
 }

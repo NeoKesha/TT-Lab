@@ -85,5 +85,26 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
             Graples = 1 << 7,
             Projectiles = 1 << 8
         }
+
+        [Flags]
+        public enum AppliedShaders : UInt64
+        {
+            LitSkinnedModel = 0x2,
+            StandardLit = 0x4,
+            StandardUnlit = 0x8,
+            UnlitBillboard = StandardUnlit,
+            UnlitSkydome = 0x10,
+            ColorOnly = 0x20,
+            LitEnvironmentMap = 0x40,
+            LitMetallic = 0x200,
+            LitReflectionSurface = 0x400,
+            Particle = 0x1000,
+            Decal = 0x2000,
+            UnlitGlossy = 0x4000,
+            UnlitEnvironmentMap = 0x8000,
+            UnlitClothDeformation = 0x10000,
+            UnlitClothDeformation2 = 0x80000,
+            UiShader = 0x10000000,
+        }
     }
 }

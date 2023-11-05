@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData;
 using TT_Lab.ViewModels;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
@@ -94,6 +95,10 @@ namespace TT_Lab.Assets
         {
             assetData.Import(Package, Variation);
             assetData.NullifyReference();
+        }
+        public virtual ITwinItem Export(Factory.ITwinItemFactory factory)
+        {
+            return assetData.Export(factory);
         }
 
         public virtual AssetViewModel GetViewModel(AssetViewModel? parent = null)

@@ -209,9 +209,9 @@ namespace TT_Lab.Assets.Factory
             return skydome;
         }
 
-        public ITwinSound GenerateSound(Stream stream)
+        public ITwinSound GenerateSound()
         {
-            throw new NotImplementedException();
+            return new PS2AnySound();
         }
 
         public ITwinSurface GenerateSurface(Stream stream)
