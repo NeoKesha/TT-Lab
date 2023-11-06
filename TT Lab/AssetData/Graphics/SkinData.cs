@@ -68,6 +68,7 @@ namespace TT_Lab.AssetData.Graphics
                     {
                         bones[jointInfo.JointIndex3].Add((vertexIndex, jointInfo.Weight3));
                     }
+                    vertexIndex++;
                 }
 
                 foreach (var boneMap in bones)
