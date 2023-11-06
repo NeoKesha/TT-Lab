@@ -69,7 +69,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
                 reservedBlob[i] = 0xCD;
             }
         }
-        
+
         static Byte[] GetReservedBlob()
         {
             return reservedBlob;

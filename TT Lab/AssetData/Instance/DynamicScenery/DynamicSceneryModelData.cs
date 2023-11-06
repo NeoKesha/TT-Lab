@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twinsanity.TwinsanityInterchange.Common.DynamicScenery;
-using Twinsanity.TwinsanityInterchange.Common;
-using TT_Lab.Assets;
-using TT_Lab.Util;
-using TT_Lab.Assets.Graphics;
 using System.IO;
+using TT_Lab.Assets;
+using TT_Lab.Assets.Graphics;
+using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.DynamicScenery;
 
 namespace TT_Lab.AssetData.Instance.DynamicScenery
 {

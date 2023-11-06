@@ -81,9 +81,8 @@ namespace TT_Lab.AssetData.Graphics
                 };
                 scene.Materials.Add(mat);
 
-                AssimpContext context = new();
+                using AssimpContext context = new();
                 context.ExportFile(scene, dataPath, "collada");
-                context.Dispose();
             }
             catch (Exception ex)
             {
@@ -95,7 +94,7 @@ namespace TT_Lab.AssetData.Graphics
         {
             Vertexes.Clear();
             Faces.Clear();
-            AssimpContext context = new();
+            using AssimpContext context = new();
             var scene = context.ImportFile(dataPath);
             foreach (var mesh in scene.Meshes)
             {
@@ -126,7 +125,6 @@ namespace TT_Lab.AssetData.Graphics
                 Vertexes.Add(submodel);
                 Faces.Add(faces);
             }
-            context.Dispose();
         }
 
         public override void Import(LabURI package, String? variant)

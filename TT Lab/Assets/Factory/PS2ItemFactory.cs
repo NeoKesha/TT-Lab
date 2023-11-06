@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Documents;
 using TT_Lab.AssetData.Graphics.SubModels;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -362,9 +361,47 @@ namespace TT_Lab.Assets.Factory
             return scenery;
         }
 
-        public ITwinSkin GenerateSkin(Stream stream)
+        public ITwinSkin GenerateSkin(List<SubSkinData> subskins)
         {
-            throw new NotImplementedException();
+            PS2AnySkin skin = new();
+
+            foreach (var subskin in subskins)
+            {
+                var ps2Subskin = new PS2SubSkin
+                {
+                    Vertexes = new(),
+                    UVW = new(),
+                    Colors = new(),
+                    SkinJoints = new(),
+                    Material = AssetManager.Get().GetAsset(subskin.Material).ID,
+                };
+                var vertexBatch = subskin.Vertexes;
+                var i = 0;
+                foreach (var face in subskin.Faces)
+                {
+                    i %= TwinVIFCompiler.VertexBatchAmount;
+
+                    var idx0 = (i % 2 == 0) ? 0 : 1;
+                    var idx1 = (i % 2 == 0) ? 1 : 0;
+                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
+                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
+                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
+                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
+                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
+                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
+                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
+                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
+                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[2]].Color);
+                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx0]].JointInfo);
+                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx1]].JointInfo);
+                    vertexBatch[face.Indexes[2]].JointInfo.Connection = true;
+                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[2]].JointInfo);
+
+                    ++i;
+                }
+                skin.SubSkins.Add(ps2Subskin);
+            }
+            return skin;
         }
 
         public ITwinSkydome GenerateSkydome(Stream stream)

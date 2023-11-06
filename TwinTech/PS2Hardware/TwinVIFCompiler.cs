@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twinsanity.TwinsanityInterchange.Common;
 
 
@@ -20,7 +18,9 @@ namespace Twinsanity.PS2Hardware
 
         private readonly ModelFormat format;
         private readonly List<List<Vector4>> vectorData;
-        private readonly List<bool> conns;
+        private readonly List<Boolean> conns;
+        private readonly Boolean hasNormals;
+        private readonly Boolean hasEmitColors;
         private SwizzledVectorData swizzledVectorBatches;
         private readonly Dictionary<ModelFormat, List<UInt16>> outputAddressMap = new()
         {
@@ -70,11 +70,20 @@ namespace Twinsanity.PS2Hardware
             BlendFace
         }
 
-        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<bool> conns)
+        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<Boolean> conns)
         {
             this.format = format;
             this.vectorData = data;
             this.conns = conns;
+        }
+
+        /// <summary>
+        /// Special constructor for compiling models to indicate if normals or emit colors are missing
+        /// </summary>
+        public TwinVIFCompiler(List<List<Vector4>> data, List<Boolean> conns, Boolean hasNormals, Boolean hasEmitColors) : this(ModelFormat.Model, data, conns)
+        {
+            this.hasNormals = hasNormals;
+            this.hasEmitColors = hasEmitColors;
         }
 
         public Byte[] Compile()
@@ -92,7 +101,8 @@ namespace Twinsanity.PS2Hardware
                 {
                     writer.Write(packedFace);
                 }
-                var spaceNeeded = packedFaceData.Sum(_ => 4);
+
+                var spaceNeeded = packedFaceData.Count * 4;
                 while (spaceNeeded % 0x10 != 0)
                 {
                     writer.Write(0U);
@@ -103,7 +113,7 @@ namespace Twinsanity.PS2Hardware
                 ms.Flush();
                 return ms.ToArray();
             }
-            
+
             var dmaTag = new DMATag
             {
                 ID = DMATag.IdType.RET // Indicates that all transfered data is right next to the DMA tag
@@ -190,8 +200,8 @@ namespace Twinsanity.PS2Hardware
                 // Scale vector for Twinsanity's skins and blend skins
                 // This is mostly correct and what most skins use in Twinsanity but maybe there is some magic to figure this out?
                 var scaleVector = new Vector4();
-                scaleVector.SetBinaryX(0x38C03F4D);
-                scaleVector.SetBinaryY(0x3A000000);
+                scaleVector.SetBinaryX(0x38C03F4D); // Vertex position scale
+                scaleVector.SetBinaryY(0x3A000000); // UV scale
 
                 // For skins and blend skins a special scaling vector comes in
                 if (format == ModelFormat.Skin || format == ModelFormat.BlendSkin)
@@ -255,9 +265,6 @@ namespace Twinsanity.PS2Hardware
                     // For models there are Vertexes, UVs + Colors + Conns, Normals(optional) and EmitColors(optional)
                     case ModelFormat.Model:
                         {
-                            var hasNormals = vectorData.Count == 5;
-                            var hasEmitColors = vectorData.Count >= 4;
-
                             // Write vertexes
                             VIFCode vertexCode = new()
                             {
@@ -579,7 +586,7 @@ namespace Twinsanity.PS2Hardware
         private void SwizzleVectorData()
         {
             var vertexAmount = vectorData[0].Count;
-            Debug.Assert(vectorData.All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
+            Debug.Assert(vectorData.Skip(1).All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
             // TODO: Better swizzling heuristic
             var swizzleAmount = VertexBatchAmount;
             var vertexIndex = 0;
@@ -611,8 +618,7 @@ namespace Twinsanity.PS2Hardware
                 vertexIndex += swizzleAmount;
             }
 
-            // Fill the leftover batch
-
+            // Fill the leftover batch if any
             if (leftOver != 0)
             {
                 // Create new list for the batch

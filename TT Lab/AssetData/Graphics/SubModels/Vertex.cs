@@ -12,6 +12,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             UV = new Vector3();
             _normal = new Vector4();
             _emitColor = new Vector4();
+            JointInfo = new VertexJointInfo();
         }
         public Vertex(Vector4 pos) : this()
         {
@@ -60,6 +61,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             }
         }
         public Vector3 UV { get; set; }
+        public VertexJointInfo JointInfo { get; set; }
 
         public bool HasNormals { get; private set; }
         public bool HasEmitColor { get; private set; }

@@ -134,7 +134,7 @@ namespace TT_Lab.AssetData.Instance
                 {
                     writer.Write(UnkLightFlags[i]);
                 }
-                
+
                 writer.Write(AmbientLights.Count);
                 foreach (var ambient in AmbientLights)
                 {

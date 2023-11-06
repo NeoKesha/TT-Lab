@@ -19,7 +19,7 @@ namespace TT_Lab.Assets.Factory
         ITwinMesh GenerateMesh(Stream stream);
         ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces);
         ITwinRigidModel GenerateRigidModel(Stream stream);
-        ITwinSkin GenerateSkin(Stream stream);
+        ITwinSkin GenerateSkin(List<SubSkinData> subskins);
         ITwinSkydome GenerateSkydome(Stream stream);
         ITwinTexture GenerateTexture();
         ITwinAnimation GenerateAnimation(Stream stream);

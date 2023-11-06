@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Particles;
-using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.Particles;
 
 namespace TT_Lab.ViewModels.Instance

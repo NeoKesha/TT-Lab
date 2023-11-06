@@ -10,9 +10,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 {
     public class PS2SubSkin : ITwinSubSkin
     {
-        private Int32 BlobSize;
-        private Int32 VertexAmount;
-        private Byte[] VifCode;
+        private Int32 vifCodeSize;
+        private Int32 vertexAmount;
+        private Byte[] vifCode;
+
         public UInt32 Material { get; set; }
         public List<Vector4> Vertexes { get; set; }
         public List<Vector4> UVW { get; set; }
@@ -21,19 +22,20 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public int GetLength()
         {
-            return 12 + VifCode.Length;
+            return 12 + vifCode.Length;
         }
 
         public void Read(BinaryReader reader, int length)
         {
             Material = reader.ReadUInt32();
-            BlobSize = reader.ReadInt32();
-            VertexAmount = reader.ReadInt32();
-            VifCode = reader.ReadBytes(BlobSize);
+            vifCodeSize = reader.ReadInt32();
+            vertexAmount = reader.ReadInt32();
+            vifCode = reader.ReadBytes(vifCodeSize);
         }
+
         public void CalculateData()
         {
-            var interpreter = VIFInterpreter.InterpretCode(VifCode);
+            var interpreter = VIFInterpreter.InterpretCode(vifCode);
             var data = interpreter.GetMem();
 
             Vertexes = new List<Vector4>();
@@ -132,9 +134,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 i += (Int32)fields + 3;
             }
         }
+
         public void Write(BinaryWriter writer)
         {
-            VertexAmount = Vertexes.Count;
+            vertexAmount = Vertexes.Count;
             var data = new List<List<Vector4>>()
             {
                 Vertexes,
@@ -143,11 +146,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 SkinJoints.Select(j => j.GetVector4()).ToList()
             };
             var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Skin, data, null);
-            VifCode = compiler.Compile();
+            vifCode = compiler.Compile();
             writer.Write(Material);
-            writer.Write(VifCode.Length);
-            writer.Write(VertexAmount);
-            writer.Write(VifCode);
+            writer.Write(vifCode.Length);
+            writer.Write(vertexAmount);
+            writer.Write(vifCode);
         }
     }
 }

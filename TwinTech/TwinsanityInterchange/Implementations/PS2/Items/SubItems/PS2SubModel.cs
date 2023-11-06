@@ -153,17 +153,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 Colors,
                 UVW
             };
+            var hasNormals = Normals.Count == Vertexes.Count;
+            var hasEmitColors = EmitColor.Count == Vertexes.Count;
             // Normals are optional
-            if (Normals.Count == Vertexes.Count)
+            if (hasNormals)
             {
                 data.Add(Normals);
             }
             // Emit colors are optional
-            if (EmitColor.Count == Vertexes.Count)
+            if (hasEmitColors)
             {
                 data.Add(EmitColor);
             }
-            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Model, data, Connection);
+            var compiler = new TwinVIFCompiler(data, Connection, hasNormals, hasEmitColors);
             VertexData = compiler.Compile();
 
             writer.Write(VertexesCount);

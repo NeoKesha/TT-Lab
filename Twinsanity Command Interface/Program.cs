@@ -3,19 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
-using Twinsanity.TwinsanityInterchange.Enumerations;
-using Twinsanity.TwinsanityInterchange.Implementations.Base;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
-using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity_Command_Interface
 {
@@ -219,7 +211,7 @@ namespace Twinsanity_Command_Interface
                     var submodel = new List<Vertex>();
 
                     // Convert bone -> vertex index to vertex -> bone id
-                    List<Dictionary<int, Tuple<int, float>>> vertexToBone = new();
+                    List<Dictionary<int, (int, float)>> vertexToBone = new();
                     for (Int32 i = 0; i < mesh.Bones.Count; i++)
                     {
                         var bone = mesh.Bones[i];
@@ -244,7 +236,7 @@ namespace Twinsanity_Command_Interface
                             }
                         };
 
-                        List<Tuple<int, float>> joints = new();
+                        List<(int, float)> joints = new();
                         foreach (var vertexMap in vertexToBone)
                         {
                             if (vertexMap.ContainsKey(i))

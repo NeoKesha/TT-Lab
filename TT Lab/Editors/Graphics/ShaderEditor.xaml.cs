@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Rendering.Objects;

@@ -20,26 +20,27 @@ namespace TT_Lab.Rendering.Objects
 
         public Skin(SkinData skin, List<LabURI> materials)
         {
-            for (var i = 0; i < skin.Vertexes.Count; ++i)
+            var materialIndex = 0;
+            foreach (var subSkin in skin.SubSkins)
             {
-                var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[i]);
-                if (matData.Shaders.Any(s => s.TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON))
+                var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[materialIndex++]);
+                if (matData.Shaders.Any(s => s.TxtMapping == TwinShader.TextureMapping.ON))
                 {
-                    modelBuffers.Add(BufferGeneration.GetModelBuffer(skin.Vertexes[i].Select(v => v.Position).ToList(), skin.Faces[i],
-                        skin.Vertexes[i].Select((v) =>
+                    modelBuffers.Add(BufferGeneration.GetModelBuffer(subSkin.Vertexes.Select(v => v.Position).ToList(), subSkin.Faces,
+                        subSkin.Vertexes.Select((v) =>
                         {
                             var col = v.Color.GetColor();
                             return System.Drawing.Color.FromArgb((int)col.ToARGB());
                         }).ToList(),
-                        skin.Vertexes[i].Select(v => new Vector3(v.UV.X, 1 - v.UV.Y, v.UV.Z)).ToList(),
-                        skin.Vertexes[i].Select(v => v.Normal).ToList()));
+                        subSkin.Vertexes.Select(v => new Vector3(v.UV.X, 1 - v.UV.Y, v.UV.Z)).ToList(),
+                        subSkin.Vertexes.Select(v => v.Normal).ToList()));
                     var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[0].TextureId);
                     textureBuffers.Add(new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
                 }
                 else
                 {
-                    modelBuffers.Add(BufferGeneration.GetModelBuffer(skin.Vertexes[i].Select(v => v.Position).ToList(), skin.Faces[i],
-                        skin.Vertexes[i].Select((v) =>
+                    modelBuffers.Add(BufferGeneration.GetModelBuffer(subSkin.Vertexes.Select(v => v.Position).ToList(), subSkin.Faces,
+                        subSkin.Vertexes.Select((v) =>
                         {
                             var col = v.Color.GetColor();
                             return System.Drawing.Color.FromArgb((int)col.ToARGB());

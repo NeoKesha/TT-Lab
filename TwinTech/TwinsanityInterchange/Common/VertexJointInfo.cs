@@ -21,6 +21,22 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return Constants.SIZE_VECTOR4;
         }
 
+        public Int32 GetJointConnectionsAmount()
+        {
+            var jointConnectionsAmount = 1;
+            var totalWeight = Weight1 + Weight2;
+            if (totalWeight < 1)
+            {
+                jointConnectionsAmount++;
+            }
+            if (totalWeight + Weight3 <= 1)
+            {
+                jointConnectionsAmount++;
+            }
+
+            return jointConnectionsAmount;
+        }
+
         public Vector4 GetVector4()
         {
             Debug.Assert(Math.Abs(Weight1 + Weight2 + Weight3 - 1.0f) < 0.000001f, "Weights must sum up to 1");

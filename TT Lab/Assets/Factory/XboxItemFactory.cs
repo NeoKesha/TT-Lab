@@ -131,7 +131,7 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinSkin GenerateSkin(Stream stream)
+        public ITwinSkin GenerateSkin(List<SubSkinData> subskins)
         {
             throw new NotImplementedException();
         }

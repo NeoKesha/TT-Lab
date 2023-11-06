@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
