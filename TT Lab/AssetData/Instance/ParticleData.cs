@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
@@ -15,7 +16,8 @@ namespace TT_Lab.AssetData.Instance
     {
         public ParticleData()
         {
-            Version = 0x1E;
+            ParticleSystems = new();
+            ParticleEmitters = new();
         }
 
         public ParticleData(ITwinParticle particleData) : this()
@@ -23,8 +25,6 @@ namespace TT_Lab.AssetData.Instance
             SetTwinItem(particleData);
         }
 
-        [JsonProperty(Required = Required.Always)]
-        public UInt32 Version { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<TwinParticleSystem> ParticleSystems { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -39,14 +39,28 @@ namespace TT_Lab.AssetData.Instance
         public override void Import(LabURI package, String? variant)
         {
             ITwinParticle particleData = GetTwinItem<ITwinParticle>();
-            Version = particleData.Version;
             ParticleSystems = CloneUtils.DeepClone(particleData.ParticleSystems);
             ParticleEmitters = CloneUtils.DeepClone(particleData.ParticleEmitters);
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(0x1E);
+            writer.Write(ParticleSystems.Count);
+            foreach (var system in ParticleSystems)
+            {
+                system.Write(writer);
+            }
+
+            writer.Write(ParticleEmitters.Count);
+            foreach (var emitter in ParticleEmitters)
+            {
+                emitter.Write(writer);
+            }
+
+            return factory.GenerateParticle(ms);
         }
     }
 }

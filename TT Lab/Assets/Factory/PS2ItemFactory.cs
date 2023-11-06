@@ -3,6 +3,7 @@ using System.IO;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
@@ -196,7 +197,10 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinParticle GenerateParticle(Stream stream)
         {
-            throw new NotImplementedException();
+            var particles = new PS2AnyParticleData();
+            using var reader = new BinaryReader(stream);
+            particles.Read(reader, (Int32)stream.Length);
+            return particles;
         }
 
         public ITwinPath GeneratePath(Stream stream)
