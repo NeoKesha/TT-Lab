@@ -10,8 +10,6 @@ namespace TT_Lab.ViewModels.Instance
 {
     public class ParticlesViewModel : AssetViewModel
     {
-        private UInt32 version;
-
         public ParticlesViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
             ParticleTypes = new ObservableCollection<ParticleTypeViewModel>();
@@ -30,7 +28,6 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(Object? o)
         {
             var data = _asset.GetData<ParticleData>();
-            data.Version = Version;
             data.ParticleSystems.Clear();
             foreach (var type in ParticleTypes)
             {
@@ -48,21 +45,6 @@ namespace TT_Lab.ViewModels.Instance
             base.Save(o);
         }
 
-        public UInt32 Version
-        {
-            get
-            {
-                return version;
-            }
-            set
-            {
-                if (value != version)
-                {
-                    version = value;
-                    NotifyChange();
-                }
-            }
-        }
         public ObservableCollection<ParticleTypeViewModel> ParticleTypes
         {
             get;

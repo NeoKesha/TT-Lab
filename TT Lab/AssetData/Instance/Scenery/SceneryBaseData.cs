@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
@@ -8,6 +9,7 @@ using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance.Scenery
 {
@@ -208,6 +210,52 @@ namespace TT_Lab.AssetData.Instance.Scenery
                 Z = vm.UnkVec5.Z,
                 W = vm.UnkVec5.W,
             };
+        }
+
+        public virtual ITwinScenery.SceneryType GetSceneryType()
+        {
+            return ITwinScenery.SceneryType.Leaf;
+        }
+
+        public virtual void Write(BinaryWriter writer)
+        {
+            var assetManager = AssetManager.Get();
+            writer.Write(MeshIDs.Count);
+            foreach (var mesh in MeshIDs)
+            {
+                writer.Write(assetManager.GetAsset(mesh).ID);
+            }
+
+            writer.Write(LodIDs.Count);
+            foreach (var lod in LodIDs)
+            {
+                writer.Write(assetManager.GetAsset(lod).ID);
+            }
+
+            writer.Write(BoundingBoxes.Count);
+            foreach (var bb in BoundingBoxes)
+            {
+                bb[0].Write(writer);
+                bb[1].Write(writer);
+            }
+
+            writer.Write(MeshModelMatrices.Count);
+            foreach (var mat in MeshModelMatrices)
+            {
+                mat.Write(writer);
+            }
+
+            writer.Write(LodModelMatrices.Count);
+            foreach (var mat in LodModelMatrices)
+            {
+                mat.Write(writer);
+            }
+
+            UnkVec1.Write(writer);
+            UnkVec2.Write(writer);
+            UnkVec3.Write(writer);
+            UnkVec4.Write(writer);
+            UnkVec5.Write(writer);
         }
     }
 }

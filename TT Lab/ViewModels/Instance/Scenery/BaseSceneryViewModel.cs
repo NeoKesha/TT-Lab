@@ -65,8 +65,8 @@ namespace TT_Lab.ViewModels.Instance.Scenery
 
         public override void Save(object? o)
         {
-            var baseD = (SceneryBaseData)o!;
-
+            // All the saving is handled by SceneryViewModel class
+            return;
         }
 
         public ObservableCollection<LabURI> Meshes { get => meshes; set => meshes = value; }

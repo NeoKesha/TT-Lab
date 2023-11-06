@@ -8,9 +8,9 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
     public interface ITwinScenery : ITwinItem
     {
         /// <summary>
-        /// Flags
+        /// Whether the scenery has lighting enabled
         /// </summary>
-        UInt32 Flags { get; set; }
+        Boolean HasLighting { get; set; }
         /// <summary>
         /// Name of the scenery
         /// </summary>
@@ -32,10 +32,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         /// </summary>
         Boolean[] UnkLightFlags { get; set; }
         /// <summary>
-        /// Reserved binary data. DO NOT EDIT
-        /// </summary>
-        Byte[] ReservedBlob { get; set; }
-        /// <summary>
         /// Ambient lights present in the scenery
         /// </summary>
         List<AmbientLight> AmbientLights { get; set; }
@@ -55,5 +51,28 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         /// Scenery tree
         /// </summary>
         List<TwinSceneryBaseType> Sceneries { get; set; }
+
+        enum SceneryType
+        {
+            None = 0x3,
+            Node = 0x1600,
+            Leaf = 0x1605,
+            Root = 0x160A,
+        }
+
+        private static readonly Byte[] reservedBlob;
+        static ITwinScenery()
+        {
+            reservedBlob = new Byte[0x3E8];
+            for (Int32 i = 0; i < reservedBlob.Length; i++)
+            {
+                reservedBlob[i] = 0xCD;
+            }
+        }
+        
+        static Byte[] GetReservedBlob()
+        {
+            return reservedBlob;
+        }
     }
 }

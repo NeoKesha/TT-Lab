@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TT_Lab.AssetData.Instance.Scenery;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.ViewModels.Instance.Scenery
 {
@@ -21,7 +22,7 @@ namespace TT_Lab.ViewModels.Instance.Scenery
         {
             foreach (var sc in SceneryTypes)
             {
-                if (sc == 0x1600)
+                if (sc == ITwinScenery.SceneryType.Node)
                 {
                     var node = baseTree[0];
                     baseTree = baseTree.Skip(1).ToList();
@@ -29,7 +30,7 @@ namespace TT_Lab.ViewModels.Instance.Scenery
                     Children.Add(newNode);
                     newNode.BuildTree(ref baseTree);
                 }
-                else if (sc == 0x1605)
+                else if (sc == ITwinScenery.SceneryType.Leaf)
                 {
                     var leaf = baseTree[0];
                     baseTree = baseTree.Skip(1).ToList();

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.AssetData.Instance.Scenery;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
@@ -14,17 +15,26 @@ namespace TT_Lab.AssetData.Instance
 {
     public class SceneryData : AbstractAssetData
     {
-        private readonly static Dictionary<Int32, Type> scIndexToType = new();
+        private readonly static Dictionary<ITwinScenery.SceneryType, Type> scIndexToType = new();
 
         static SceneryData()
         {
-            scIndexToType.Add(0x160A, typeof(SceneryRootData));
-            scIndexToType.Add(0x1605, typeof(SceneryLeafData));
-            scIndexToType.Add(0x1600, typeof(SceneryNodeData));
+            scIndexToType.Add(ITwinScenery.SceneryType.Root, typeof(SceneryRootData));
+            scIndexToType.Add(ITwinScenery.SceneryType.Leaf, typeof(SceneryLeafData));
+            scIndexToType.Add(ITwinScenery.SceneryType.Node, typeof(SceneryNodeData));
         }
 
         public SceneryData()
         {
+            ChunkPath = "levels\\earth\\hub\\beach";
+            SkydomeID = LabURI.Empty;
+            HasLighting = false;
+            UnkLightFlags = new Boolean[6];
+            AmbientLights = new();
+            DirectionalLights = new();
+            PointLights = new();
+            NegativeLights = new();
+            Sceneries = new();
         }
 
         public SceneryData(ITwinScenery scenery) : this()
@@ -33,13 +43,15 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public String SceneryName { get; set; }
+        public String ChunkPath { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 UnkUInt { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
-        [JsonProperty(Required = Required.AllowNull)]
+        [JsonProperty(Required = Required.Always)]
         public LabURI SkydomeID { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Boolean HasLighting { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public Boolean[] UnkLightFlags { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
@@ -83,18 +95,22 @@ namespace TT_Lab.AssetData.Instance
         public override void Import(LabURI package, String? variant)
         {
             ITwinScenery scenery = GetTwinItem<ITwinScenery>();
-            SceneryName = scenery.Name[..];
+            ChunkPath = scenery.Name[..];
             UnkUInt = scenery.UnkUInt;
             UnkByte = scenery.UnkByte;
             if (scenery.SkydomeID != 0)
             {
                 SkydomeID = AssetManager.Get().GetUri(package, typeof(Skydome).Name, variant, scenery.SkydomeID);
             }
-            UnkLightFlags = CloneUtils.CloneArray(scenery.UnkLightFlags);
-            AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
-            DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
-            PointLights = CloneUtils.DeepClone(scenery.PointLights);
-            NegativeLights = CloneUtils.DeepClone(scenery.NegativeLights);
+            HasLighting = scenery.HasLighting;
+            if (HasLighting)
+            {
+                UnkLightFlags = CloneUtils.CloneArray(scenery.UnkLightFlags);
+                AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
+                DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
+                PointLights = CloneUtils.DeepClone(scenery.PointLights);
+                NegativeLights = CloneUtils.DeepClone(scenery.NegativeLights);
+            }
             Sceneries = new List<SceneryBaseData>();
             foreach (var sc in scenery.Sceneries)
             {
@@ -104,7 +120,54 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(ChunkPath);
+            writer.Write(UnkUInt);
+            writer.Write(UnkByte);
+            writer.Write(SkydomeID == LabURI.Empty ? 0 : assetManager.GetAsset(SkydomeID).ID);
+            writer.Write(HasLighting);
+            if (HasLighting)
+            {
+                for (var i = 0; i < UnkLightFlags.Length; ++i)
+                {
+                    writer.Write(UnkLightFlags[i]);
+                }
+                
+                writer.Write(AmbientLights.Count);
+                foreach (var ambient in AmbientLights)
+                {
+                    ambient.Write(writer);
+                }
+
+                writer.Write(DirectionalLights.Count);
+                foreach (var directional in DirectionalLights)
+                {
+                    directional.Write(writer);
+                }
+
+                writer.Write(PointLights.Count);
+                foreach (var point in PointLights)
+                {
+                    point.Write(writer);
+                }
+
+                writer.Write(NegativeLights.Count);
+                foreach (var negative in NegativeLights)
+                {
+                    negative.Write(writer);
+                }
+            }
+            writer.Write(Sceneries.Count);
+            foreach (var scenery in Sceneries)
+            {
+                writer.Write((Int32)scenery.GetSceneryType());
+                scenery.Write(writer);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateScenery(ms);
         }
     }
 }

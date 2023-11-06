@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 {
@@ -127,9 +128,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             UnkVec5.Write(writer);
         }
 
-        public virtual Int32 GetObjectIndex()
+        public virtual ITwinScenery.SceneryType GetObjectIndex()
         {
-            return 0x1605;
+            return ITwinScenery.SceneryType.Leaf;
         }
     }
 }

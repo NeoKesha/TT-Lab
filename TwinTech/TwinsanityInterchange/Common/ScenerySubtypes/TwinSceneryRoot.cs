@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 {
@@ -30,9 +31,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             base.Write(writer);
         }
 
-        public override Int32 GetObjectIndex()
+        public override ITwinScenery.SceneryType GetObjectIndex()
         {
-            return 0x160A;
+            return ITwinScenery.SceneryType.Root;
         }
     }
 }

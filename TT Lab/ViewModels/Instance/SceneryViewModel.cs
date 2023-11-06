@@ -26,7 +26,7 @@ namespace TT_Lab.ViewModels.Instance
         public SceneryViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
             var data = _asset.GetData<SceneryData>();
-            sceneryName = data.SceneryName[..];
+            sceneryName = data.ChunkPath[..];
             unkUInt = data.UnkUInt;
             unkByte = data.UnkByte;
             skydome = data.SkydomeID;
@@ -46,7 +46,7 @@ namespace TT_Lab.ViewModels.Instance
         public override void Save(object? o)
         {
             var data = _asset.GetData<SceneryData>();
-            data.SceneryName = sceneryName;
+            data.ChunkPath = sceneryName;
             data.UnkUInt = UnkUInt;
             data.UnkByte = UnkByte;
             data.SkydomeID = Skydome;

@@ -2,6 +2,8 @@
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Common.Lights;
+using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -229,7 +231,78 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinScenery GenerateScenery(Stream stream)
         {
-            throw new NotImplementedException();
+            var scenery = new PS2AnyScenery();
+            using var reader = new BinaryReader(stream);
+            scenery.Name = reader.ReadString();
+            scenery.UnkUInt = reader.ReadUInt32();
+            scenery.UnkByte = reader.ReadByte();
+            scenery.SkydomeID = reader.ReadUInt32();
+            scenery.HasLighting = reader.ReadBoolean();
+            if (scenery.HasLighting)
+            {
+                for (Int32 i = 0; i < scenery.UnkLightFlags.Length; i++)
+                {
+                    scenery.UnkLightFlags[i] = reader.ReadBoolean();
+                }
+
+                var ambientLights = reader.ReadInt32();
+                for (var i = 0; i < ambientLights; ++i)
+                {
+                    var ambient = new AmbientLight();
+                    ambient.Read(reader, ambient.GetLength());
+                    scenery.AmbientLights.Add(ambient);
+                }
+
+                var dirLights = reader.ReadInt32();
+                for (var i = 0; i < dirLights; ++i)
+                {
+                    var directional = new DirectionalLight();
+                    directional.Read(reader, directional.GetLength());
+                    scenery.DirectionalLights.Add(directional);
+                }
+
+                var pointLights = reader.ReadInt32();
+                for (var i = 0; i < pointLights; ++i)
+                {
+                    var point = new PointLight();
+                    point.Read(reader, point.GetLength());
+                    scenery.PointLights.Add(point);
+                }
+
+                var negativeLights = reader.ReadInt32();
+                for (var i = 0; i < negativeLights; ++i)
+                {
+                    var negative = new NegativeLight();
+                    negative.Read(reader, negative.GetLength());
+                    scenery.NegativeLights.Add(negative);
+                }
+            }
+
+            var sceneries = reader.ReadInt32();
+            for (Int32 i = 0; i < sceneries; i++)
+            {
+                var type = (ITwinScenery.SceneryType)reader.ReadInt32();
+                switch (type)
+                {
+                    case ITwinScenery.SceneryType.Root:
+                        var root = new TwinSceneryRoot();
+                        root.Read(reader, 0);
+                        scenery.Sceneries.Add(root);
+                        break;
+                    case ITwinScenery.SceneryType.Node:
+                        var node = new TwinSceneryNode();
+                        node.Read(reader, 0);
+                        scenery.Sceneries.Add(node);
+                        break;
+                    case ITwinScenery.SceneryType.Leaf:
+                        var leaf = new TwinSceneryLeaf();
+                        leaf.Read(reader, 0);
+                        scenery.Sceneries.Add(leaf);
+                        break;
+                }
+            }
+
+            return scenery;
         }
 
         public ITwinSkin GenerateSkin(Stream stream)

@@ -4,12 +4,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using TT_Lab.AssetData.Instance.Scenery;
 using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.ViewModels.Instance.Scenery
 {
     public class SceneryNodeViewModel : BaseSceneryViewModel
     {
-        private Int32[] sceneryTypes;
+        private ITwinScenery.SceneryType[] sceneryTypes;
         private ObservableCollection<BaseSceneryViewModel> children;
 
         public SceneryNodeViewModel(SceneryBaseData data) : base(data)
@@ -23,7 +24,7 @@ namespace TT_Lab.ViewModels.Instance.Scenery
         {
             foreach (var sc in sceneryTypes)
             {
-                if (sc == 0x1600)
+                if (sc == ITwinScenery.SceneryType.Node)
                 {
                     var node = sceneryTree[0];
                     sceneryTree = sceneryTree.Skip(1).ToList();
@@ -31,7 +32,7 @@ namespace TT_Lab.ViewModels.Instance.Scenery
                     children.Add(newNode);
                     newNode.BuildTree(ref sceneryTree);
                 }
-                else if (sc == 0x1605)
+                else if (sc == ITwinScenery.SceneryType.Leaf)
                 {
                     var leaf = sceneryTree[0];
                     sceneryTree = sceneryTree.Skip(1).ToList();
@@ -58,7 +59,7 @@ namespace TT_Lab.ViewModels.Instance.Scenery
             }
         }
 
-        public Int32[] SceneryTypes
+        public ITwinScenery.SceneryType[] SceneryTypes
         {
             get => sceneryTypes;
         }

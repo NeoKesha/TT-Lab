@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
 {
     public class TwinSceneryNode : TwinSceneryBaseType
     {
-        public Int32[] SceneryTypes;
+        public ITwinScenery.SceneryType[] SceneryTypes;
 
         public TwinSceneryNode()
         {
-            SceneryTypes = new Int32[8];
+            SceneryTypes = new ITwinScenery.SceneryType[8];
         }
 
         public override Int32 GetLength()
@@ -23,7 +24,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             base.Read(reader, length);
             for (var i = 0; i < SceneryTypes.Length; ++i)
             {
-                SceneryTypes[i] = reader.ReadInt32();
+                SceneryTypes[i] = (ITwinScenery.SceneryType)reader.ReadInt32();
             }
         }
 
@@ -37,13 +38,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
                 // if checks since I don't see it worth the effort to make a mess out of Read
                 // method calls.
                 //                                                                      ~Smartkin
-                if (sceneryType == 0x1600)
+                if (sceneryType == ITwinScenery.SceneryType.Node)
                 {
                     var newSc = new TwinSceneryNode();
                     sceneries.Add(newSc);
                     newSc.Read(reader, length, sceneries);
                 }
-                if (sceneryType == 0x1605)
+                if (sceneryType == ITwinScenery.SceneryType.Leaf)
                 {
                     var newSc = new TwinSceneryLeaf();
                     sceneries.Add(newSc);
@@ -57,13 +58,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             base.Write(writer);
             foreach (var type in SceneryTypes)
             {
-                writer.Write(type);
+                writer.Write((Int32)type);
             }
         }
 
-        public override Int32 GetObjectIndex()
+        public override ITwinScenery.SceneryType GetObjectIndex()
         {
-            return 0x1600;
+            return ITwinScenery.SceneryType.Node;
         }
     }
 }

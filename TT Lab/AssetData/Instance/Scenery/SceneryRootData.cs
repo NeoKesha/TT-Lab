@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
@@ -22,6 +23,12 @@ namespace TT_Lab.AssetData.Instance.Scenery
         public SceneryRootData(SceneryRootViewModel vm) : base(vm)
         {
             UnkUInt = vm.UnkUInt;
+        }
+
+        public override void Write(BinaryWriter writer)
+        {
+            writer.Write(UnkUInt);
+            base.Write(writer);
         }
     }
 }
