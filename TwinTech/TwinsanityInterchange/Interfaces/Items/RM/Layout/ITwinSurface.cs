@@ -1,5 +1,6 @@
 ﻿using System;
 using Twinsanity.TwinsanityInterchange.Common;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
 {
@@ -12,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
         /// <summary>
         /// Surface's ID
         /// </summary>
-        UInt16 SurfaceId { get; set; }
+        SurfaceType SurfaceId { get; set; }
         /// <summary>
         /// Sound/SFX ID to play when stepped on
         /// </summary>

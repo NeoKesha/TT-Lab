@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -7,6 +8,7 @@ using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.AssetData.Instance
 {
@@ -22,7 +24,7 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public UInt16 SurfaceID { get; set; }
+        public SurfaceType SurfaceID { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 Flags { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -103,7 +105,33 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(Flags);
+            writer.Write((UInt16)SurfaceID);
+            writer.Write(StepSoundId1 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(StepSoundId1).ID);
+            writer.Write(StepSoundId2 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(StepSoundId2).ID);
+            writer.Write(UnkId1);
+            writer.Write(UnkId2);
+            writer.Write(LandSoundId1 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(LandSoundId1).ID);
+            writer.Write(UnkId3);
+            writer.Write(UnkId4);
+            writer.Write(LandSoundId2 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(LandSoundId2).ID);
+            writer.Write(UnkSoundId == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(UnkSoundId).ID);
+            writer.Write(UnkId5);
+            foreach (var param in Parameters)
+            {
+                writer.Write(param);
+            }
+            UnkVec.Write(writer);
+            foreach (var vec in UnkBoundingBox)
+            {
+                vec.Write(writer);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateSurface(ms);
         }
     }
 }

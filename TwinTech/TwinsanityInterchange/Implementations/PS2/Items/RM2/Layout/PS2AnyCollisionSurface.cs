@@ -4,13 +4,14 @@ using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 {
     public class PS2AnyCollisionSurface : BaseTwinItem, ITwinSurface
     {
         public UInt32 Flags { get; set; }
-        public UInt16 SurfaceId { get; set; }
+        public SurfaceType SurfaceId { get; set; }
         public UInt16 StepSoundId1 { get; set; }
         public UInt16 StepSoundId2 { get; set; }
         public UInt16 UnkId1 { get; set; }
@@ -40,7 +41,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public override void Read(BinaryReader reader, int length)
         {
             Flags = reader.ReadUInt32();
-            SurfaceId = reader.ReadUInt16();
+            SurfaceId = (SurfaceType)reader.ReadUInt16();
             StepSoundId1 = reader.ReadUInt16();
             StepSoundId2 = reader.ReadUInt16();
             UnkId1 = reader.ReadUInt16();
@@ -66,7 +67,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public override void Write(BinaryWriter writer)
         {
             writer.Write(Flags);
-            writer.Write(SurfaceId);
+            writer.Write((UInt16)SurfaceId);
             writer.Write(StepSoundId1);
             writer.Write(StepSoundId2);
             writer.Write(UnkId1);

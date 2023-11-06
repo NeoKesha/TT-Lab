@@ -107,7 +107,7 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
             UiShader = 0x10000000,
         }
 
-        public enum SurfaceTypes : UInt32
+        public enum SurfaceType : UInt16
         {
             SURF_DEFAULT = 0,
             SURF_GENERIC_SLIGHTLY_SLIPPY = 1,

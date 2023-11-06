@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -78,7 +79,43 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(TemplateName.Length);
+            writer.Write(TemplateName.ToCharArray());
+            writer.Write((UInt16)assetManager.GetAsset(ObjectId).ID);
+            writer.Write(UnkByte1);
+            writer.Write(UnkByte2);
+            writer.Write(UnkIds.Count);
+            writer.Write(Header1);
+            writer.Write(Header2);
+            foreach (var s in UnkIds)
+            {
+                writer.Write(s);
+            }
+            writer.Write(UnkByte3);
+            writer.Write(UnkByte4);
+            writer.Write(InstancePropsHeader);
+            writer.Write(UnkInt1);
+            writer.Write(Flags.Count);
+            foreach (var flag in Flags)
+            {
+                writer.Write(flag);
+            }
+            writer.Write(Floats.Count);
+            foreach (var @float in Floats)
+            {
+                writer.Write(@float);
+            }
+            writer.Write(Ints.Count);
+            foreach (var @int in Ints)
+            {
+                writer.Write(@int);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateTemplate(ms);
         }
     }
 }
