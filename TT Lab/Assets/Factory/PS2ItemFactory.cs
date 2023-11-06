@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Windows.Documents;
+using TT_Lab.AssetData.Graphics.SubModels;
+using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
@@ -10,6 +14,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -182,9 +187,55 @@ namespace TT_Lab.Assets.Factory
             return mesh;
         }
 
-        public ITwinModel GenerateModel(Stream stream)
+        public ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces)
         {
-            throw new NotImplementedException();
+            var model = new PS2AnyModel();
+            var vertexBatchIndex = 0;
+            foreach (var subFaces in faces)
+            {
+                var submodel = new PS2SubModel
+                {
+                    UnusedBlob = Array.Empty<Byte>(),
+                    Vertexes = new(),
+                    UVW = new(),
+                    Colors = new(),
+                    EmitColor = new(),
+                    Normals = new(),
+                    Connection = new()
+                };
+                var vertexBatch = vertexes[vertexBatchIndex++];
+                var i = 0;
+                foreach (var face in subFaces)
+                {
+                    i %= TwinVIFCompiler.VertexBatchAmount;
+
+                    var idx0 = (i % 2 == 0) ? 0 : 1;
+                    var idx1 = (i % 2 == 0) ? 1 : 0;
+                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
+                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
+                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
+                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
+                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
+                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
+                    submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
+                    submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
+                    submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
+                    submodel.Normals.Add(vertexBatch[face.Indexes[idx0]].Normal);
+                    submodel.Normals.Add(vertexBatch[face.Indexes[idx1]].Normal);
+                    submodel.Normals.Add(vertexBatch[face.Indexes[2]].Normal);
+                    submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
+                    submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
+                    submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
+                    submodel.Connection.Add(false);
+                    submodel.Connection.Add(false);
+                    submodel.Connection.Add(true);
+
+                    ++i;
+                }
+                model.SubModels.Add(submodel);
+            }
+
+            return model;
         }
 
         public ITwinObject GenerateObject(Stream stream)

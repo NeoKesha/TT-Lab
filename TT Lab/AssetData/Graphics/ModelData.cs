@@ -24,10 +24,12 @@ namespace TT_Lab.AssetData.Graphics
         {
             SetTwinItem(model);
         }
+
         [JsonProperty(Required = Required.Always)]
         public List<List<Vertex>> Vertexes { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<List<IndexedFace>> Faces { get; set; }
+
         protected override void Dispose(Boolean disposing)
         {
             Vertexes.ForEach(vl => vl.Clear());
@@ -49,7 +51,7 @@ namespace TT_Lab.AssetData.Graphics
                 {
                     var submodel = Vertexes[i];
                     var faces = Faces[i];
-                    Mesh mesh = new Mesh(PrimitiveType.Triangle);
+                    Mesh mesh = new(PrimitiveType.Triangle);
                     foreach (var ver in submodel)
                     {
                         mesh.Vertices.Add(new Vector3D(ver.Position.X, ver.Position.Y, ver.Position.Z));
@@ -165,7 +167,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            return factory.GenerateModel(Vertexes, Faces);
         }
     }
 }

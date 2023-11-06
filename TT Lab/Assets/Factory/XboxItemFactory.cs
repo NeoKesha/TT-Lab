@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using TT_Lab.AssetData.Graphics.SubModels;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code;
@@ -89,7 +91,7 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinModel GenerateModel(Stream stream)
+        public ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces)
         {
             throw new NotImplementedException();
         }

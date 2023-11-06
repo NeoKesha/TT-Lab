@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using TT_Lab.AssetData.Graphics.SubModels;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
@@ -15,7 +17,7 @@ namespace TT_Lab.Assets.Factory
         ITwinLOD GenerateLOD(Stream stream);
         ITwinMaterial GenerateMaterial(Stream stream);
         ITwinMesh GenerateMesh(Stream stream);
-        ITwinModel GenerateModel(Stream stream);
+        ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces);
         ITwinRigidModel GenerateRigidModel(Stream stream);
         ITwinSkin GenerateSkin(Stream stream);
         ITwinSkydome GenerateSkydome(Stream stream);
