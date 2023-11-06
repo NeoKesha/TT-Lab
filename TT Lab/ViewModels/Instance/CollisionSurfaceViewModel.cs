@@ -3,13 +3,14 @@ using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.ViewModels.Instance
 {
     public class CollisionSurfaceViewModel : AssetViewModel
     {
         private Enums.Layouts layId;
-        private UInt16 surfId;
+        private SurfaceType surfId;
         private UInt32 flags;
         private LabURI stepSoundId1;
         private LabURI stepSoundId2;
@@ -113,7 +114,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt16 SurfId
+        public SurfaceType SurfId
         {
             get => surfId;
             set
