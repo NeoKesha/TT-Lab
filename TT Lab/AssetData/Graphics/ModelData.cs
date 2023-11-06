@@ -61,6 +61,10 @@ namespace TT_Lab.AssetData.Graphics
                         {
                             mesh.Normals.Add(new Vector3D(ver.Normal.X, ver.Normal.Y, ver.Normal.Z));
                         }
+                        if (ver.HasEmitColor)
+                        {
+                            mesh.VertexColorChannels[1].Add(new Color4D(ver.EmitColor.X, ver.EmitColor.Y, ver.EmitColor.Z, ver.EmitColor.W));
+                        }
                     }
                     foreach (var face in faces)
                     {
@@ -106,6 +110,10 @@ namespace TT_Lab.AssetData.Graphics
                     if (mesh.Normals.Count == mesh.Vertices.Count)
                     {
                         ver.Normal = new Vector4(mesh.Normals[i].X, mesh.Normals[i].Y, mesh.Normals[i].Z, 1.0f);
+                    }
+                    if (mesh.VertexColorChannels[1].Count == mesh.Vertices.Count)
+                    {
+                        ver.EmitColor = new Vector4(mesh.VertexColorChannels[1][i].R, mesh.VertexColorChannels[1][i].G, mesh.VertexColorChannels[1][i].B, mesh.VertexColorChannels[1][i].A);
                     }
                     submodel.Add(ver);
                 }

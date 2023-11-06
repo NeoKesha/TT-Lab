@@ -220,12 +220,18 @@ namespace TT_Lab.Assets.Factory
                     submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
                     submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
                     submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                    submodel.Normals.Add(vertexBatch[face.Indexes[idx0]].Normal);
-                    submodel.Normals.Add(vertexBatch[face.Indexes[idx1]].Normal);
-                    submodel.Normals.Add(vertexBatch[face.Indexes[2]].Normal);
-                    submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
-                    submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
-                    submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
+                    if (vertexBatch[face.Indexes[idx0]].HasNormals)
+                    {
+                        submodel.Normals.Add(vertexBatch[face.Indexes[idx0]].Normal);
+                        submodel.Normals.Add(vertexBatch[face.Indexes[idx1]].Normal);
+                        submodel.Normals.Add(vertexBatch[face.Indexes[2]].Normal);
+                    }
+                    if (vertexBatch[face.Indexes[idx0]].HasEmitColor)
+                    {
+                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
+                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
+                        submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
+                    }
                     submodel.Connection.Add(false);
                     submodel.Connection.Add(false);
                     submodel.Connection.Add(true);

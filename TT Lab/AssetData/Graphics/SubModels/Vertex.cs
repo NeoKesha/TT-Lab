@@ -10,8 +10,8 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             Position = new Vector3();
             Color = new Vector4();
             UV = new Vector3();
-            Normal = new Vector4();
-            EmitColor = new Vector4();
+            _normal = new Vector4();
+            _emitColor = new Vector4();
         }
         public Vertex(Vector4 pos) : this()
         {
@@ -50,12 +50,22 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                 HasNormals = true;
             }
         }
-        public Vector4 EmitColor { get; set; }
+        public Vector4 EmitColor
+        {
+            get => _emitColor;
+            set
+            {
+                _emitColor = value;
+                HasEmitColor = true;
+            }
+        }
         public Vector3 UV { get; set; }
 
         public bool HasNormals { get; private set; }
+        public bool HasEmitColor { get; private set; }
 
         private Vector4 _normal;
+        private Vector4 _emitColor;
 
         public override String ToString()
         {
