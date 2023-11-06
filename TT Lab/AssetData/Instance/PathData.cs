@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
@@ -41,7 +42,22 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(Points.Count);
+            foreach (var point in Points)
+            {
+                point.Write(writer);
+            }
+
+            writer.Write(Parameters.Count);
+            foreach (var parameter in Parameters)
+            {
+                parameter.Write(writer);
+            }
+
+            ms.Position = 0;
+            return factory.GeneratePath(ms);
         }
     }
 }

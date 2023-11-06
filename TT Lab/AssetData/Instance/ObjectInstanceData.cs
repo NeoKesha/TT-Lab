@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -94,7 +95,69 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            Position.Write(writer);
+            RotationX.Write(writer);
+            RotationY.Write(writer);
+            RotationZ.Write(writer);
+
+            writer.Write(Instances.Count);
+            writer.Write(Instances.Count);
+            writer.Write(InstancesRelated);
+            foreach (var inst in Instances)
+            {
+                writer.Write(inst);
+            }
+
+            writer.Write(Positions.Count);
+            writer.Write(Positions.Count);
+            writer.Write(PositionsRelated);
+            foreach (var pos in Positions)
+            {
+                writer.Write(pos);
+            }
+
+            writer.Write(Paths.Count);
+            writer.Write(Paths.Count);
+            writer.Write(PathsRelated);
+            foreach (var path in Paths)
+            {
+                writer.Write(path);
+            }
+
+            writer.Write((UInt16)assetManager.GetAsset(ObjectId).ID);
+
+            writer.Write(RefListIndex);
+
+            writer.Write(OnSpawnScriptId == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(OnSpawnScriptId).ID);
+            writer.Write((Byte)ParamList1.Count);
+            writer.Write((Byte)ParamList2.Count);
+            writer.Write((Byte)ParamList3.Count);
+            writer.Write((Byte)0);
+            writer.Write(StateFlags);
+
+            writer.Write(ParamList1.Count);
+            foreach (var flag in ParamList1)
+            {
+                writer.Write(flag);
+            }
+
+            writer.Write(ParamList2.Count);
+            foreach (var @float in ParamList2)
+            {
+                writer.Write(@float);
+            }
+
+            writer.Write(ParamList3.Count);
+            foreach (var param in ParamList3)
+            {
+                writer.Write(param);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateInstance(ms);
         }
     }
 }
