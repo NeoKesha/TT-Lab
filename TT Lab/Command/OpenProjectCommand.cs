@@ -21,14 +21,18 @@ namespace TT_Lab.Command
 
         public void Execute(Object? parameter = null)
         {
+#if !DEBUG
             try
             {
+#endif
                 ProjectManagerSingleton.PM.OpenProject(path);
+#if !DEBUG
             }
             catch (Exception ex)
             {
                 Log.WriteLine($"Failed to open project: {ex.Message}");
             }
+#endif
         }
 
         public void Unexecute()

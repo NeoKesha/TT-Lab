@@ -284,14 +284,18 @@ namespace TT_Lab.Assets
                 foreach (var key in Assets.Keys)
                 {
                     IAsset asset = Assets[key];
+#if !DEBUG
                     try
                     {
+#endif
                         GuidToLabUri.Add(key, asset.URI);
+#if !DEBUG
                     }
                     catch (Exception ex)
                     {
                         Log.WriteLine($"Error initializing mapper: {ex.Message} for {asset.Type} ID {asset.ID}");
                     }
+#endif
                 }
             }
 

@@ -267,8 +267,10 @@ namespace TT_Lab.Project
             Directory.SetCurrentDirectory("assets");
             Task.Factory.StartNew(() =>
             {
+#if !DEBUG
                 try
                 {
+#endif
                     Log.WriteLine("Creating base packages...");
                     OpenedProject.CreateBasePackages();
                     Log.WriteLine("Unpacking PS2 assets...");
@@ -293,19 +295,23 @@ namespace TT_Lab.Project
                     NotifyChange("ProjectOpened");
                     NotifyChange("ProjectTitle");
                     Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
+#if !DEBUG
                 }
                 catch (Exception ex)
                 {
                     Log.WriteLine($"Error when working with assets: {ex.Message}\n{ex.StackTrace}");
                 }
+#endif
             });
         }
 
         public void OpenProject(string path)
         {
             Log.Clear();
+#if !DEBUG
             try
             {
+#endif
                 // Check for PS2 and XBox project root files
                 if (Directory.GetFiles(path, "*.tson").Length == 0 && Directory.GetFiles(path, "*.xson").Length == 0)
                 {
@@ -316,8 +322,10 @@ namespace TT_Lab.Project
                     var prFile = Directory.GetFiles(path, "*.tson")[0];
                     Task.Factory.StartNew(() =>
                     {
+#if !DEBUG
                         try
                         {
+#endif
                             Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
                             OpenedProject = Project.Deserialize(prFile);
                             Log.WriteLine($"Building project tree...");
@@ -325,19 +333,23 @@ namespace TT_Lab.Project
                             WorkableProject = true;
                             NotifyChange("ProjectOpened");
                             NotifyChange("ProjectTitle");
+#if !DEBUG
                         }
                         catch (Exception ex)
                         {
                             Log.WriteLine($"Error opening project: {ex.Message}\n{ex.StackTrace}");
                         }
+#endif
                     });
                 }
-            }
+#if !DEBUG
+        }
             catch (Exception ex)
             {
                 RemoveRecentlyOpened(path);
                 throw;
             }
+#endif
             AddRecentlyOpened(path);
         }
 

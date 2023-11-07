@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TT_Lab.AssetData;
@@ -115,21 +116,25 @@ namespace TT_Lab.Project
             {
                 tasks[index++] = Task.Factory.StartNew(() =>
                 {
-                    Log.WriteLine($"Serializing {group.Key}...");
+                    Log.WriteLine($"Serializing {group.Key.Name}...");
                     var now = DateTime.Now;
+#if !DEBUG
                     try
                     {
+#endif
                         foreach (var asset in group)
                         {
                             asset.Serialize();
                         }
+#if !DEBUG
                     }
                     catch (Exception ex)
                     {
                         Log.WriteLine($"Error serializing: {ex.Message}");
                     }
+#endif
                     var span = DateTime.Now - now;
-                    Log.WriteLine($"Finished serializing {group.Key} in {span}");
+                    Log.WriteLine($"Finished serializing {group.Key.Name} in {span}");
                 });
             }
             Task.WaitAll(tasks);
@@ -551,7 +556,14 @@ namespace TT_Lab.Project
             {
                 var asset = items.GetItem<I>(items.GetItem(i).GetID());
                 var checker = globalCheck[secId];
-                if (checker.ContainsKey(asset.GetHash())) continue;
+                if (checker.ContainsKey(asset.GetHash()))
+                {
+                    if (!checker.ContainsValue(asset.GetID()))
+                    {
+                        throw new Exception($"HASH COLLISION FOR ASSET {asset.GetName()} WITH ID {asset.GetID()}");
+                    }
+                    continue;
+                }
                 checker.Add(asset.GetHash(), asset.GetID());
                 // If hash was unique but Twinsanity's ID wasn't then we will mark it with a variant which is gonna be chunk's name
                 var needVariant = checker.Values.Where(e => e == asset.GetID()).Count() > 1;

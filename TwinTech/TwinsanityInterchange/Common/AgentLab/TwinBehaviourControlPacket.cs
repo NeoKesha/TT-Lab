@@ -11,7 +11,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
     public class TwinBehaviourControlPacket : ITwinSerializable
     {
         public List<Byte> Bytes { get; }
-        public List<Single> Floats { get; }
+        public List<UInt32> Floats { get; }
         public SpaceType Space { get; set; }
         public MotionType Motion { get; set; }
         public ContinuousRotate ContRotate { get; set; }
@@ -36,7 +36,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public TwinBehaviourControlPacket()
         {
             Bytes = new List<Byte>();
-            Floats = new List<Single>();
+            Floats = new List<UInt32>();
         }
 
         public int GetLength()
@@ -76,15 +76,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             Floats.Clear();
             for (var i = 0; i < floatsCnt; ++i)
             {
-                var packet = (ControlPacketData)i;
-                if (IsIntegerPacket(packet))
-                {
-                    Floats.Add(reader.ReadUInt32());
-                }
-                else
-                {
-                    Floats.Add(reader.ReadSingle());
-                }
+                Floats.Add(reader.ReadUInt32());
             }
             Bytes.Clear();
             for (var i = 0; i < bytesCnt; ++i)
@@ -124,15 +116,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             writer.Write(newPacketSettings);
             for (var i = 0; i < Floats.Count; ++i)
             {
-                var packet = (ControlPacketData)i;
-                if (IsIntegerPacket(packet))
-                {
-                    writer.Write((UInt32)Floats[i]);
-                }
-                else
-                {
-                    writer.Write(Floats[i]);
-                }
+                writer.Write(Floats[i]);
             }
             foreach (var b in Bytes)
             {
@@ -172,13 +156,18 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                         continue;
                     }
                     var packet = (ControlPacketData)i;
+                    if (Bytes[i] >= 0x80)
+                    {
+                        StringUtils.WriteLineTabulated(writer, $"{(ControlPacketData)i} = instance_float_{Bytes[i] - 128}", tabs + 2);
+                        continue;
+                    }
                     if (IsIntegerPacket(packet))
                     {
                         StringUtils.WriteLineTabulated(writer, $"{(ControlPacketData)i} = {(UInt32)Floats[Bytes[i]]}", tabs + 2);
                     }
                     else
                     {
-                        StringUtils.WriteLineTabulated(writer, $"{(ControlPacketData)i} = {Floats[Bytes[i]]}", tabs + 2);
+                        StringUtils.WriteLineTabulated(writer, $"{(ControlPacketData)i} = {BitConverter.UInt32BitsToSingle(Floats[Bytes[i]]).ToString(CultureInfo.InvariantCulture)}", tabs + 2);
                     }
                 }
             }
@@ -275,7 +264,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             for (var i = 0; i < PacketDataLength; i++)
             {
                 Bytes.Add(0xFF);
-                Floats.Add(0.0f);
+                Floats.Add(0);
             }
             var maxPacketIndex = -1;
             Byte floatIdx = 0;
@@ -294,6 +283,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                     maxPacketIndex = (Int32)packet;
                 }
 
+                if (valueString.StartsWith("instance_float_"))
+                {
+                    var instFloatIdx = Byte.Parse(StringUtils.GetStringAfter(valueString, "instance_float_").Trim(), CultureInfo.InvariantCulture);
+                    Bytes[(Int32)packet] = (Byte)(instFloatIdx + 0x80);
+                    continue;
+                }
+
                 Bytes[(Int32)packet] = floatIdx;
                 if (IsIntegerPacket(packet))
                 {
@@ -303,7 +299,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                 else
                 {
                     var value = Single.Parse(valueString, CultureInfo.InvariantCulture);
-                    Floats[floatIdx++] = value;
+                    Floats[floatIdx++] = BitConverter.SingleToUInt32Bits(value);
                 }
             }
             Bytes.RemoveRange(maxPacketIndex, PacketDataLength - maxPacketIndex);

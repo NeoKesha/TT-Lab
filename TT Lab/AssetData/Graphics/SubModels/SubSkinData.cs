@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
@@ -15,7 +16,13 @@ namespace TT_Lab.AssetData.Graphics.SubModels
 
         public SubSkinData(LabURI package, String? variant, ITwinSubSkin subSkin)
         {
-            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, variant, subSkin.Material);
+            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, null, subSkin.Material);
+            if (Material == LabURI.Empty)
+            {
+                var allMaterials = AssetManager.Get().GetAssets().FindAll(a => a is Material).ConvertAll(a => a.URI);
+                var actuallyHasTheMaterial = allMaterials.FindAll(uri => uri.ToString().Contains(subSkin.Material.ToString()));
+                throw new Exception($"Couldn't find requested material 0x{subSkin.Material:X}!");
+            }
             Vertexes = new List<Vertex>();
             Faces = new List<IndexedFace>();
 

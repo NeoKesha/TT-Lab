@@ -59,13 +59,25 @@ namespace TT_Lab.AssetData.Graphics
                     mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, 1.0f));
 
                     var jointAmount = jointInfo.GetJointConnectionsAmount();
+                    if (!bones.ContainsKey(jointInfo.JointIndex1))
+                    {
+                        bones.Add(jointInfo.JointIndex1, new());
+                    }
                     bones[jointInfo.JointIndex1].Add((vertexIndex, jointInfo.Weight1));
                     if (jointAmount >= 2)
                     {
+                        if (!bones.ContainsKey(jointInfo.JointIndex2))
+                        {
+                            bones.Add(jointInfo.JointIndex2, new());
+                        }
                         bones[jointInfo.JointIndex2].Add((vertexIndex, jointInfo.Weight2));
                     }
                     if (jointAmount == 3)
                     {
+                        if (!bones.ContainsKey(jointInfo.JointIndex3))
+                        {
+                            bones.Add(jointInfo.JointIndex3, new());
+                        }
                         bones[jointInfo.JointIndex3].Add((vertexIndex, jointInfo.Weight3));
                     }
                     vertexIndex++;
@@ -111,9 +123,10 @@ namespace TT_Lab.AssetData.Graphics
                     }
                 };
                 materials.Add(material);
+                scene.Meshes.Add(mesh);
                 scene.RootNode.MeshIndices.Add(materialIndex);
                 mesh.MaterialIndex = materialIndex++;
-                scene.Metadata.Add(material.Name, new Metadata.Entry(MetaDataType.String, AssetManager.Get().GetAsset(subSkin.Material).URI.ToString()));
+                scene.RootNode.Metadata.Add(material.Name, new Metadata.Entry(MetaDataType.String, AssetManager.Get().GetAsset(subSkin.Material).URI.ToString()));
             }
 
             scene.Materials.AddRange(materials);
@@ -190,7 +203,7 @@ namespace TT_Lab.AssetData.Graphics
                     faces.Add(new IndexedFace(mesh.Faces[i].Indices.ToArray()));
                 }
 
-                var material = (LabURI)(String)scene.Metadata[scene.Materials[materialIndex++].Name].Data;
+                var material = (LabURI)(String)scene.RootNode.Metadata[scene.Materials[materialIndex++].Name].Data;
                 SubSkins.Add(new SubSkinData(material, vertexes, faces));
             }
         }

@@ -19,12 +19,12 @@ namespace TT_Lab.AssetData.Instance.Scenery
         public SceneryNodeData(LabURI package, String? variant, TwinSceneryBaseType baseType) : base(package, variant, baseType)
         {
             var node = (TwinSceneryNode)baseType;
-            SceneryTypes = CloneUtils.CloneArray(node.SceneryTypes);
+            SceneryTypes = CloneUtils.DeepClone(node.SceneryTypes);
         }
 
         public SceneryNodeData(SceneryNodeViewModel vm) : base(vm)
         {
-            SceneryTypes = CloneUtils.CloneArray(vm.SceneryTypes);
+            SceneryTypes = CloneUtils.DeepClone(vm.SceneryTypes);
         }
 
         public override void Write(BinaryWriter writer)

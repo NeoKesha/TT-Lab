@@ -18,15 +18,19 @@ namespace TT_Lab
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
+#if !DEBUG
             try
             {
+#endif
                 ProjectManagerSingleton.PM.CreateProject(ProjectName.Text, ProjectPath.Text, PS2DiscContentPath.Text, XboxDiscContentPath.Text);
                 Close();
+#if !DEBUG
             }
             catch (Exception ex)
             {
                 Log.WriteLine($"Error creating project: {ex.Message}");
             }
+#endif
         }
     }
 }

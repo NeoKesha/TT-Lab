@@ -26,11 +26,23 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         public void ComputeHash(Stream stream)
         {
             hash = Hasher.ComputeHash(stream);
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(hash);
+            writer.Write(id);
+            ms.Position = 0;
+            hash = Hasher.ComputeHash(ms);
         }
 
         public void ComputeHash(Stream stream, UInt32 length)
         {
             hash = Hasher.ComputeHash(stream, length);
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(hash);
+            writer.Write(id);
+            ms.Position = 0;
+            hash = Hasher.ComputeHash(ms);
         }
 
         public virtual String GetHash()

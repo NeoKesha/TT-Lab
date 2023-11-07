@@ -15,7 +15,7 @@ namespace TT_Lab.ViewModels.Instance.Scenery
         public SceneryNodeViewModel(SceneryBaseData data) : base(data)
         {
             var nodeData = (SceneryNodeData)data;
-            sceneryTypes = CloneUtils.CloneArray(nodeData.SceneryTypes);
+            sceneryTypes = CloneUtils.DeepClone(nodeData.SceneryTypes);
             children = new ObservableCollection<BaseSceneryViewModel>();
         }
 
