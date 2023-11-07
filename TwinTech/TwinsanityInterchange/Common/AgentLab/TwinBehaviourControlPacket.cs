@@ -167,7 +167,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             {
                 for (var i = 0; i < Bytes.Count; ++i)
                 {
-                    if (Bytes[i] >= 0x80)
+                    if (Bytes[i] == 0xFF)
                     {
                         continue;
                     }
