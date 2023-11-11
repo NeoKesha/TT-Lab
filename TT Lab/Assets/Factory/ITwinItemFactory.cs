@@ -40,6 +40,7 @@ namespace TT_Lab.Assets.Factory
         ITwinTrigger GenerateTrigger(Stream stream);
         ITwinCollision GenerateCollision(Stream stream);
         ITwinParticle GenerateParticle(Stream stream);
+        ITwinDefaultParticle GenerateDefaultParticle(Stream stream);
         ITwinDynamicScenery GenerateDynamicScenery(Stream stream);
         ITwinLink GenerateLink(Stream stream);
         ITwinScenery GenerateScenery(Stream stream);

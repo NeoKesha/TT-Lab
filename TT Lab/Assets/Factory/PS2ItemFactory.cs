@@ -373,6 +373,14 @@ namespace TT_Lab.Assets.Factory
             return particles;
         }
 
+        public ITwinDefaultParticle GenerateDefaultParticle(Stream stream)
+        {
+            var particles = new PS2DefaultParticleData();
+            using var reader = new BinaryReader(stream);
+            particles.Read(reader, (Int32)stream.Length);
+            return particles;
+        }
+
         public ITwinPath GeneratePath(Stream stream)
         {
             var path = new PS2AnyPath();

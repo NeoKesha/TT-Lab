@@ -111,6 +111,11 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
+        public ITwinDefaultParticle GenerateDefaultParticle(Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
         public ITwinPath GeneratePath(Stream stream)
         {
             throw new NotImplementedException();

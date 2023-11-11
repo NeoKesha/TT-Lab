@@ -288,6 +288,7 @@ namespace TT_Lab.AssetData.Code
 
             BehaviourPack.Write(writer);
 
+            ms.Position = 0;
             return factory.GenerateObject(ms);
         }
 

@@ -43,8 +43,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
             {
                 throw new Exception($"Invalid/Deprecated particle data section version: {Version}");
             }
-            var typesAmt = reader.ReadInt32();
-            for (var i = 0; i < typesAmt; ++i)
+            var systemsAmount = reader.ReadInt32();
+            for (var i = 0; i < systemsAmount; ++i)
             {
                 var type = new TwinParticleSystem(Version);
                 type.Read(reader, length);
@@ -74,9 +74,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2
                 writer.Write(TextureIDs[i]);
                 writer.Write(MaterialIDs[i]);
             }
-            // We can do base here because we gonna have 0 particle types, so this is fine
-            // since otherwise base would read a texture ID as the amount of particle instances
+            // We can do base here because we gonna have 0 particle emitters, so this is fine
             base.Write(writer);
+            // Move back because base writes additional particle emitters amount
             writer.BaseStream.Position -= 4;
             writer.Write(DecalTextureID);
             writer.Write(DecalMaterialID);

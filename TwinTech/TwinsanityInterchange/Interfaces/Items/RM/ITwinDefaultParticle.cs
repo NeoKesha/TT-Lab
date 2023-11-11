@@ -6,7 +6,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM
     /// <summary>
     /// Special particle data section only used in Default
     /// </summary>
-    public interface ITwinDefaultParticle
+    public interface ITwinDefaultParticle : ITwinParticle
     {
         /// <summary>
         /// Texture IDs bank

@@ -46,6 +46,14 @@ namespace TT_Lab.AssetData.Instance
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
+
+            WriteExport(writer);
+
+            return factory.GenerateParticle(ms);
+        }
+
+        protected void WriteExport(BinaryWriter writer)
+        {
             writer.Write(0x1E);
             writer.Write(ParticleSystems.Count);
             foreach (var system in ParticleSystems)
@@ -58,8 +66,6 @@ namespace TT_Lab.AssetData.Instance
             {
                 emitter.Write(writer);
             }
-
-            return factory.GenerateParticle(ms);
         }
     }
 }
