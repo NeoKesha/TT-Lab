@@ -239,7 +239,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray(), 0, Name.Length);
 
-            WriteResourceList(writer, TriggerBehaviours, true);
+            {
+                writer.Write(TriggerBehaviours.Count);
+                foreach (var beh in TriggerBehaviours)
+                {
+                    writer.Write(beh.Compress());
+                }
+            }
             WriteResourceList(writer, OGISlots);
             WriteResourceList(writer, AnimationSlots);
             WriteResourceList(writer, BehaviourSlots);
@@ -264,7 +270,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
             if (ReferencesResources)
             {
-                ITwinObject.ResourcesBitfield newResources = new ITwinObject.ResourcesBitfield();
+                ITwinObject.ResourcesBitfield newResources = new();
                 if (RefObjects.Count > 0)
                 {
                     newResources |= ITwinObject.ResourcesBitfield.OBJECTS;

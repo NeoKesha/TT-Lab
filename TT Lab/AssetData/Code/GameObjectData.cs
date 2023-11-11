@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TT_Lab.AssetData.Code.Object;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -32,15 +33,15 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public Byte UnkTypeValue { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Byte UnkOGIArraySize { get; set; }
+        public Byte CameraReactJointAmount { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Byte OGIType2ArraySize { get; set; }
+        public Byte ExitPointAmount { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte[] SlotsMap { get; set; }
         [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<TwinObjectTriggerBehaviour> TriggerBehaviours { get; set; }
+        public List<ObjectTriggerBehaviourData> TriggerBehaviours { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> OGISlots { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -99,11 +100,15 @@ namespace TT_Lab.AssetData.Code
             ITwinObject gameObject = GetTwinItem<ITwinObject>();
             Type = gameObject.Type;
             UnkTypeValue = gameObject.UnkTypeValue;
-            UnkOGIArraySize = gameObject.ReactJointAmount;
-            OGIType2ArraySize = gameObject.ExitPointAmount;
+            CameraReactJointAmount = gameObject.ReactJointAmount;
+            ExitPointAmount = gameObject.ExitPointAmount;
             SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
-            TriggerBehaviours = CloneUtils.CloneList(gameObject.TriggerBehaviours, (e) => new(e.Compress()));
+            TriggerBehaviours = new List<ObjectTriggerBehaviourData>();
+            foreach (var e in gameObject.TriggerBehaviours)
+            {
+                TriggerBehaviours.Add(new ObjectTriggerBehaviourData(package, variant, e));
+            }
             OGISlots = new List<LabURI>();
             foreach (var e in gameObject.OGISlots)
             {

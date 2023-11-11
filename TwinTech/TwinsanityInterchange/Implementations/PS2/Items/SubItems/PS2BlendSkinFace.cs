@@ -12,6 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
     {
         Vector3 blendShape;
         Byte[] faceData;
+
         public UInt32 VertexesAmount { get; set; }
         public List<VertexBlendShape> Vertices { get; set; }
 
