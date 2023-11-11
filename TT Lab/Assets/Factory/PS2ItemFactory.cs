@@ -249,7 +249,57 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinObject GenerateObject(Stream stream)
         {
-            throw new NotImplementedException();
+            var gameObject = new PS2AnyObject();
+            using var reader = new BinaryReader(stream);
+            gameObject.Type = (ITwinObject.ObjectType)reader.ReadInt32();
+            gameObject.UnkTypeValue = reader.ReadByte();
+            gameObject.ReactJointAmount = reader.ReadByte();
+            gameObject.ExitPointAmount = reader.ReadByte();
+            gameObject.SlotsMap = reader.ReadBytes(8);
+            gameObject.Name = reader.ReadString();
+
+            var triggerBehaviours = reader.ReadInt32();
+            for (Int32 i = 0; i < triggerBehaviours; i++)
+            {
+                var triggerBehaviour = new TwinObjectTriggerBehaviour();
+                triggerBehaviour.TriggerBehaviour = reader.ReadUInt16();
+                triggerBehaviour.UnkTriggerValue = reader.ReadUInt16();
+                triggerBehaviour.BehaviourCallerIndex = reader.ReadByte();
+                gameObject.TriggerBehaviours.Add(triggerBehaviour);
+            }
+
+            void fillList<T>(IList<T> list, Func<T> readerFunc)
+            {
+                var amount = reader.ReadInt32();
+                for (Int32 i = 0; i < amount; i++)
+                {
+                    list.Add(readerFunc());
+                }
+            }
+            fillList(gameObject.OGISlots, reader.ReadUInt16);
+            fillList(gameObject.AnimationSlots, reader.ReadUInt16);
+            fillList(gameObject.BehaviourSlots, reader.ReadUInt16);
+            fillList(gameObject.ObjectSlots, reader.ReadUInt16);
+            fillList(gameObject.SoundSlots, reader.ReadUInt16);
+
+            gameObject.InstanceStateFlags = reader.ReadUInt32();
+
+            fillList(gameObject.InstFlags, reader.ReadUInt32);
+            fillList(gameObject.InstFloats, reader.ReadSingle);
+            fillList(gameObject.InstIntegers, reader.ReadUInt32);
+
+            fillList(gameObject.RefObjects, reader.ReadUInt16);
+            fillList(gameObject.RefOGIs, reader.ReadUInt16);
+            fillList(gameObject.RefAnimations, reader.ReadUInt16);
+            fillList(gameObject.RefCodeModels, reader.ReadUInt16);
+            fillList(gameObject.RefBehaviours, reader.ReadUInt16);
+            fillList(gameObject.RefUnknowns, reader.ReadUInt16);
+            fillList(gameObject.RefSounds, reader.ReadUInt16);
+
+            gameObject.BehaviourPack = new PS2BehaviourCommandPack();
+            gameObject.BehaviourPack.Read(reader, (Int32)stream.Length);
+
+            return gameObject;
         }
 
         public ITwinOGI GenerateOGI(Stream stream)

@@ -8,6 +8,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt16 TriggerBehaviour { get; set; }
         public Byte BehaviourCallerIndex { get; set; }
 
+        public TwinObjectTriggerBehaviour() { }
+
         public TwinObjectTriggerBehaviour(UInt32 value)
         {
             UnkTriggerValue = (UInt16)(value & 0x3FF);

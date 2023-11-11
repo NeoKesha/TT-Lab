@@ -74,7 +74,7 @@ namespace TT_Lab.AssetData.Code
         public List<LabURI> RefSounds { get; set; }
         [JsonProperty(Required = Required.Always)]
         [JsonConverter(typeof(ScriptPackConverter))]
-        public ITwinBehaviourCommandPack ScriptPack { get; set; }
+        public ITwinBehaviourCommandPack BehaviourPack { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -224,12 +224,71 @@ namespace TT_Lab.AssetData.Code
             InstFlags = CloneUtils.CloneList(gameObject.InstFlags);
             InstFloats = CloneUtils.CloneList(gameObject.InstFloats);
             InstIntegers = CloneUtils.CloneList(gameObject.InstIntegers);
-            ScriptPack = gameObject.BehaviourPack;
+            BehaviourPack = CloneUtils.DeepClone(gameObject.BehaviourPack);
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write((Int32)Type);
+            writer.Write(UnkTypeValue);
+            writer.Write(CameraReactJointAmount);
+            writer.Write(ExitPointAmount);
+            writer.Write(SlotsMap);
+            writer.Write(Name);
+
+            writer.Write(TriggerBehaviours.Count);
+            foreach (var triggerBehaviour in TriggerBehaviours)
+            {
+                writer.Write((UInt16)assetManager.GetAsset(triggerBehaviour.TriggerBehaviour).ID);
+                writer.Write(triggerBehaviour.UnkTriggerValue);
+                writer.Write(triggerBehaviour.BehaviourCallerIndex);
+            }
+
+            void writeUriList(IList<LabURI> list)
+            {
+                writer.Write(list.Count);
+                foreach (var item in list)
+                {
+                    writer.Write((UInt16)(item == LabURI.Empty ? 65535 : assetManager.GetAsset(item).ID));
+                }
+            }
+            writeUriList(OGISlots);
+            writeUriList(AnimationSlots);
+            writeUriList(BehaviourSlots);
+            writeUriList(ObjectSlots);
+            writeUriList(SoundSlots);
+
+            writer.Write(InstanceStateFlags);
+
+            void writeParamsList<T>(IList<T> list, Action<T> writeFunc)
+            {
+                writer.Write(list.Count);
+                foreach (var item in list)
+                {
+                    writeFunc(item);
+                }
+            }
+            writeParamsList(InstFlags, writer.Write);
+            writeParamsList(InstFloats, writer.Write);
+            writeParamsList(InstIntegers, writer.Write);
+
+            writeUriList(RefObjects);
+            writeUriList(RefOGIs);
+            writeUriList(RefAnimations);
+            writeUriList(RefBehaviourCommandsSequences);
+            writeUriList(RefBehaviours);
+
+            // Write unknowns/unused object refs
+            writer.Write(0);
+
+            writeUriList(RefSounds);
+
+            BehaviourPack.Write(writer);
+
+            return factory.GenerateObject(ms);
         }
 
         private static List<LabURI> CollectMulti5Uri(LabURI package, String? variant, UInt16 id)
