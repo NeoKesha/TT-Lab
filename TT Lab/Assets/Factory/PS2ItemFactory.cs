@@ -214,7 +214,7 @@ namespace TT_Lab.Assets.Factory
 
                     var idx0 = (i % 2 == 0) ? 0 : 1;
                     var idx1 = (i % 2 == 0) ? 1 : 0;
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
+                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
                     submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
                     submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
                     submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
@@ -495,7 +495,7 @@ namespace TT_Lab.Assets.Factory
 
                     var idx0 = (i % 2 == 0) ? 0 : 1;
                     var idx1 = (i % 2 == 0) ? 1 : 0;
-                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx0]].Position, 1f));
+                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
                     ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
                     ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
                     ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));

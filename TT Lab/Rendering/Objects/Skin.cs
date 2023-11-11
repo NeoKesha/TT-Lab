@@ -18,12 +18,11 @@ namespace TT_Lab.Rendering.Objects
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         List<TextureBuffer> textureBuffers = new List<TextureBuffer>();
 
-        public Skin(SkinData skin, List<LabURI> materials)
+        public Skin(SkinData skin)
         {
-            var materialIndex = 0;
             foreach (var subSkin in skin.SubSkins)
             {
-                var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[materialIndex++]);
+                var matData = AssetManager.Get().GetAssetData<MaterialData>(subSkin.Material);
                 if (matData.Shaders.Any(s => s.TxtMapping == TwinShader.TextureMapping.ON))
                 {
                     modelBuffers.Add(BufferGeneration.GetModelBuffer(subSkin.Vertexes.Select(v => v.Position).ToList(), subSkin.Faces,

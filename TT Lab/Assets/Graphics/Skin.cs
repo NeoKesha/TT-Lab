@@ -15,15 +15,6 @@ namespace TT_Lab.Assets.Graphics
         {
             assetData = new SkinData(skin);
             Raw = false;
-            Materials = new();
-        }
-
-        [JsonProperty(Required = Required.Always)]
-        public List<LabURI> Materials { get; set; }
-
-        public Skin()
-        {
-            Materials = new();
         }
 
         public override void ToRaw(Byte[] data)
@@ -39,17 +30,6 @@ namespace TT_Lab.Assets.Graphics
         public override Type GetEditorType()
         {
             return typeof(SkinModelEditor);
-        }
-
-        public override void Import()
-        {
-            var skinData = (SkinData)assetData;
-            var skin = skinData.GetRef();
-            foreach (var e in skin.SubSkins)
-            {
-                Materials.Add(AssetManager.Get().GetUri(Package, typeof(Material).Name, Variation, e.Material));
-            }
-            base.Import();
         }
 
         public override AbstractAssetData GetData()

@@ -40,8 +40,7 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var skinData = GetAssetData<SkinData>();
-            var skin = GetAsset<Assets.Graphics.Skin>();
-            Skin model = new(skinData, skin.Materials);
+            Skin model = new(skinData);
             SceneRenderer.Scene.AddRender(model, false);
         }
 
@@ -54,8 +53,8 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
 
-            var skin = GetAsset<Assets.Graphics.Skin>();
-            var matData = AssetManager.Get().GetAsset(skin.Materials[selectedMaterial]).GetData<MaterialData>();
+            var skinData = GetAssetData<SkinData>();
+            var matData = AssetManager.Get().GetAsset(skinData.SubSkins[selectedMaterial].Material).GetData<MaterialData>();
             MaterialName.Text = matData.Name;
             var texPlane = new Plane(matData);
             MaterialViewer.Scene.AddRender(texPlane);
@@ -64,10 +63,10 @@ namespace TT_Lab.Editors.Graphics
         private void PrevMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial--;
-            var skin = GetAsset<Assets.Graphics.Skin>();
+            var skinData = GetAssetData<SkinData>();
             if (selectedMaterial < 0)
             {
-                selectedMaterial = skin.Materials.Count - 1;
+                selectedMaterial = skinData.SubSkins.Count - 1;
             }
             ResetMaterialViewer();
         }
@@ -75,8 +74,8 @@ namespace TT_Lab.Editors.Graphics
         private void NextMatButton_Click(Object sender, RoutedEventArgs e)
         {
             selectedMaterial++;
-            var skin = GetAsset<Assets.Graphics.Skin>();
-            if (selectedMaterial >= skin.Materials.Count)
+            var skinData = GetAssetData<SkinData>();
+            if (selectedMaterial >= skinData.SubSkins.Count)
             {
                 selectedMaterial = 0;
             }

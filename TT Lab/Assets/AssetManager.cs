@@ -119,11 +119,11 @@ namespace TT_Lab.Assets
         /// <returns>AssetManager for the currently opened project</returns>
         public static AssetManager Get()
         {
-            return ProjectManagerSingleton.PM.OpenedProject.AssetManager;
+            return ProjectManagerSingleton.PM.OpenedProject!.AssetManager;
         }
 
         /// <summary>
-        /// Obtain a URI explicitly by specifying the package, subpackage, folder, variant and id
+        /// Obtain a URI explicitly by specifying the package, folder, variant(if needed) and id
         /// </summary>
         /// <param Name="package">Package</param>
         /// <param Name="subpackage">Subpackage</param>
