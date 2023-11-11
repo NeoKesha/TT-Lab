@@ -43,12 +43,12 @@ namespace TT_Lab.AssetData.Instance.Scenery
             MeshIDs = new List<LabURI>();
             foreach (var m in baseType.MeshIDs)
             {
-                MeshIDs.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, variant, m));
+                MeshIDs.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, null, m));
             }
             LodIDs = new List<LabURI>();
             foreach (var l in baseType.LodIDs)
             {
-                LodIDs.Add(AssetManager.Get().GetUri(package, typeof(LodModel).Name, variant, l));
+                LodIDs.Add(AssetManager.Get().GetUri(package, typeof(LodModel).Name, null, l));
             }
             BoundingBoxes = new List<Vector4[]>();
             foreach (var bb in baseType.BoundingBoxes)

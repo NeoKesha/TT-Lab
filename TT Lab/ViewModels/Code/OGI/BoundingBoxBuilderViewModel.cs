@@ -33,7 +33,6 @@ namespace TT_Lab.ViewModels.Code.OGI
         public override void Save(Object? o = null)
         {
             var builder = (TwinBoundingBoxBuilder)o!;
-            builder.Header[0] = (UInt16)BoundingBoxPoints.Count;
             builder.BoundingBoxPoints.Clear();
             foreach (var v in BoundingBoxPoints)
             {
