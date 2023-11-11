@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Common.Collision;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
@@ -14,6 +16,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public CollisionData()
         {
+            Vectors = new();
         }
 
         public CollisionData(ITwinCollision collision) : this()
@@ -62,7 +65,47 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            writer.Write(UnkInt);
+            writer.Write(Triggers.Count);
+            writer.Write(Groups.Count);
+            writer.Write(Triangles.Count);
+            writer.Write(Vectors.Count);
+
+            foreach (var trigger in Triggers)
+            {
+                trigger.V1.Write(writer);
+                writer.Write(trigger.MinTriggerIndex);
+                trigger.V2.Write(writer);
+                writer.Write(trigger.MaxTriggerIndex);
+            }
+
+            foreach (var group in Groups)
+            {
+                writer.Write(group.Size);
+                writer.Write(group.Offset);
+            }
+
+            foreach (var tri in Triangles)
+            {
+                var twinTri = new TwinCollisionTriangle()
+                {
+                    Vector1Index = tri.Face.Indexes![0],
+                    Vector2Index = tri.Face.Indexes[1],
+                    Vector3Index = tri.Face.Indexes[2],
+                    SurfaceIndex = tri.SurfaceIndex
+                };
+                twinTri.Write(writer);
+            }
+
+            foreach (var vec in Vectors)
+            {
+                vec.Write(writer);
+            }
+
+            ms.Position = 0;
+            return factory.GenerateCollision(ms);
         }
     }
 }

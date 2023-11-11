@@ -13,7 +13,10 @@ namespace TT_Lab.AssetData.Instance.Collision
         [JsonProperty(Required = Required.Always)]
         public Int32 SurfaceIndex { get; set; }
 
-        public CollisionTriangle() { }
+        public CollisionTriangle()
+        {
+            Face = new IndexedFace();
+        }
 
         public CollisionTriangle(TwinCollisionTriangle triangle)
         {

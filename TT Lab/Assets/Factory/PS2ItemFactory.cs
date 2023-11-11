@@ -112,7 +112,10 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinCollision GenerateCollision(Stream stream)
         {
-            throw new NotImplementedException();
+            var collision = new PS2AnyCollisionData();
+            using var reader = new BinaryReader(stream);
+            collision.Read(reader, (Int32)stream.Length);
+            return collision;
         }
 
         public ITwinDynamicScenery GenerateDynamicScenery(Stream stream)
@@ -145,18 +148,18 @@ namespace TT_Lab.Assets.Factory
                 chunkLink.UnkNum = reader.ReadByte();
                 chunkLink.IsLoadWallActive = reader.ReadBoolean();
                 chunkLink.KeepLoaded = reader.ReadBoolean();
-                chunkLink.ObjectMatrix.Read(reader, 0);
-                chunkLink.ChunkMatrix.Read(reader, 0);
+                chunkLink.ObjectMatrix.Read(reader, Constants.SIZE_MATRIX4);
+                chunkLink.ChunkMatrix.Read(reader, Constants.SIZE_MATRIX4);
                 if (reader.ReadBoolean())
                 {
                     chunkLink.LoadingWall = new Matrix4();
-                    chunkLink.LoadingWall.Read(reader, 0);
+                    chunkLink.LoadingWall.Read(reader, Constants.SIZE_MATRIX4);
                 }
                 var buildersAmount = reader.ReadInt32();
                 for (Int32 j = 0; j < buildersAmount; j++)
                 {
                     var builder = new TwinChunkLinkBoundingBoxBuilder();
-                    builder.Read(reader, 0);
+                    builder.Read(reader, (Int32)stream.Length);
                     chunkLink.ChunkLinksCollisionData.Add(builder);
                 }
             }
