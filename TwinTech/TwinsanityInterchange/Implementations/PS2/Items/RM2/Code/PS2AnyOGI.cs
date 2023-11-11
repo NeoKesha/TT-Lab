@@ -103,7 +103,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             for (int i = 0; i < collidersAmount; ++i)
             {
                 TwinBoundingBoxBuilder bbBuilder = new();
-                bbBuilder.Read(reader, bbBuilder.GetLength());
+                bbBuilder.Read(reader, length);
                 Collisions.Add(bbBuilder);
             }
             CollisionJointIndices.Clear();

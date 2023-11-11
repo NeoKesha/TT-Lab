@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
@@ -41,7 +42,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<TwinBoundingBoxBuilder> BoundingBoxBuilders { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Byte> BuilderMatrixIndex { get; set; }
+        public List<Byte> BoundingBoxBuilderToJointIndex { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -51,7 +52,7 @@ namespace TT_Lab.AssetData.Code
             RigidModelIds.Clear();
             SkinInverseMatrices.Clear();
             BoundingBoxBuilders.Clear();
-            BuilderMatrixIndex.Clear();
+            BoundingBoxBuilderToJointIndex.Clear();
         }
 
         public override void Import(LabURI package, String? variant)
@@ -64,7 +65,7 @@ namespace TT_Lab.AssetData.Code
             {
                 RigidModelIds.Add(AssetManager.Get().GetUri(package, typeof(RigidModel).Name, null, model));
             }
-            BuilderMatrixIndex = CloneUtils.CloneList(ogi.CollisionJointIndices);
+            BoundingBoxBuilderToJointIndex = CloneUtils.CloneList(ogi.CollisionJointIndices);
             Joints = CloneUtils.DeepClone(ogi.Joints);
             ExitPoints = CloneUtils.DeepClone(ogi.ExitPoints);
             BoundingBoxBuilders = CloneUtils.DeepClone(ogi.Collisions);
@@ -75,7 +76,61 @@ namespace TT_Lab.AssetData.Code
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            foreach (var vec in BoundingBox)
+            {
+                vec.Write(writer);
+            }
+
+            writer.Write(JointIndices.Count);
+            foreach (var jointIndex in JointIndices)
+            {
+                writer.Write(jointIndex);
+            }
+
+            writer.Write(Joints.Count);
+            foreach (var joint in Joints)
+            {
+                joint.Write(writer);
+            }
+
+            writer.Write(RigidModelIds.Count);
+            foreach (var rigidModel in RigidModelIds)
+            {
+                writer.Write(assetManager.GetAsset(rigidModel).ID);
+            }
+
+            writer.Write(ExitPoints.Count);
+            foreach (var exitPoint in ExitPoints)
+            {
+                exitPoint.Write(writer);
+            }
+
+            writer.Write(SkinInverseMatrices.Count);
+            foreach (var matrix in SkinInverseMatrices)
+            {
+                matrix.Write(writer);
+            }
+
+            writer.Write(BoundingBoxBuilders.Count);
+            foreach (var builder in BoundingBoxBuilders)
+            {
+                builder.Write(writer);
+            }
+
+            writer.Write(BoundingBoxBuilderToJointIndex.Count);
+            foreach (var idx in BoundingBoxBuilderToJointIndex)
+            {
+                writer.Write(idx);
+            }
+
+            writer.Write(Skin == LabURI.Empty ? 0U : assetManager.GetAsset(Skin).ID);
+            writer.Write(BlendSkin == LabURI.Empty ? 0U : assetManager.GetAsset(BlendSkin).ID);
+
+            ms.Position = 0;
+            return factory.GenerateOGI(ms);
         }
     }
 }

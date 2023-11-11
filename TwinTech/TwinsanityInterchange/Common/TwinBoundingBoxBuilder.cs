@@ -20,6 +20,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public TwinBoundingBoxBuilder()
         {
             BoundingBoxPoints = new List<Vector4>();
+            UnkVectors1 = new List<Vector4>();
+            UnkVectors2 = new List<Vector4>();
+            UnkVectors3 = new List<Vector4>();
+            UnkShorts = new List<UInt16>();
+            UnkBytes1 = new List<Byte>();
+            UnkBytes2 = new List<Byte>();
         }
         public int GetLength()
         {

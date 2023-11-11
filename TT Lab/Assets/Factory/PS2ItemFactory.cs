@@ -7,6 +7,7 @@ using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -250,7 +251,65 @@ namespace TT_Lab.Assets.Factory
 
         public ITwinOGI GenerateOGI(Stream stream)
         {
-            throw new NotImplementedException();
+            var ogi = new PS2AnyOGI();
+            using var reader = new BinaryReader(stream);
+            ogi.BoundingBox[0].Read(reader, Constants.SIZE_VECTOR4);
+            ogi.BoundingBox[1].Read(reader, Constants.SIZE_VECTOR4);
+
+            var jointIndices = reader.ReadInt32();
+            for (Int32 i = 0; i < jointIndices; i++)
+            {
+                ogi.JointIndices.Add(reader.ReadByte());
+            }
+
+            var joints = reader.ReadInt32();
+            for (Int32 i = 0; i < joints; i++)
+            {
+                var joint = new TwinJoint();
+                joint.Read(reader, Constants.SIZE_JOINT);
+                ogi.Joints.Add(joint);
+            }
+
+            var rigidModels = reader.ReadInt32();
+            for (Int32 i = 0; i < rigidModels; i++)
+            {
+                ogi.RigidModelIds.Add(reader.ReadUInt32());
+            }
+
+            var exitPoints = reader.ReadInt32();
+            for (Int32 i = 0; i < exitPoints; i++)
+            {
+                var exitPoint = new TwinExitPoint();
+                exitPoint.Read(reader, Constants.SIZE_EXIT_POINT);
+                ogi.ExitPoints.Add(exitPoint);
+            }
+
+            var matrices = reader.ReadInt32();
+            for (Int32 i = 0; i < matrices; i++)
+            {
+                var mat = new Matrix4();
+                mat.Read(reader, Constants.SIZE_MATRIX4);
+                ogi.SkinInverseBindMatrices.Add(mat);
+            }
+
+            var builders = reader.ReadInt32();
+            for (Int32 i = 0; i < builders; i++)
+            {
+                var builder = new TwinBoundingBoxBuilder();
+                builder.Read(reader, (Int32)stream.Length);
+                ogi.Collisions.Add(builder);
+            }
+
+            var jointToBuilders = reader.ReadInt32();
+            for (Int32 i = 0; i < jointToBuilders; i++)
+            {
+                ogi.CollisionJointIndices.Add(reader.ReadByte());
+            }
+
+            ogi.SkinID = reader.ReadUInt32();
+            ogi.BlendSkinID = reader.ReadUInt32();
+
+            return ogi;
         }
 
         public ITwinParticle GenerateParticle(Stream stream)
