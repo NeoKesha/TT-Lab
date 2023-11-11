@@ -102,7 +102,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public void SetDataFromPCM(Byte[] data)
         {
-            Sound = Array.Empty<Byte>();
+            ADPCM adpcm = new();
+            using MemoryStream input = new(data);
+            using MemoryStream output = new();
+            BinaryReader reader = new(input);
+            BinaryWriter writer = new(output);
+            adpcm.ToADPCMMono(reader, writer);
+            Sound = output.ToArray();
         }
     }
 }

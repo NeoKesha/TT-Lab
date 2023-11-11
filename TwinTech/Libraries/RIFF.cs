@@ -27,7 +27,7 @@ namespace Twinsanity.Libraries
             reader.BaseStream.Position = 22;
             channels = reader.ReadInt16();
             samplerate = reader.ReadUInt32();
-            reader.BaseStream.Position += 16;
+            reader.BaseStream.Position += 12;
             var len = reader.ReadInt32();
             return reader.ReadBytes(len);
         }

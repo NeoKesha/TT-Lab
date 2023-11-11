@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Twinsanity.Libraries
 {
@@ -72,6 +74,173 @@ namespace Twinsanity.Libraries
                 }
             }
             return flags;
+        }
+        private SampleLineFlags LineToADPCM(BinaryReader reader, BinaryWriter writer, ref float s0, ref float s1)
+        {
+            SampleLineFlags flags = SampleLineFlags.None;
+            long dataLeft = reader.BaseStream.Length - reader.BaseStream.Position;
+            long dataToProcess = Math.Min(BUFFER_SIZE, dataLeft);
+            long waveCount = dataToProcess / 2; // For 16 bit PCM.
+            long sampleCount = waveCount / 28;
+            Int16[] waves = new short[waveCount];
+            for (int i = 0; i < waveCount; ++i)
+            {
+                waves[i] = reader.ReadInt16();
+            }
+            int predict = 0;
+            int factor = 0;
+            for (int i = 0; i < sampleCount; ++i)
+            {
+                double[] d_samples = new double[28];
+                short[] v_samples = new short[28];
+                FindPredict(waves, i * 28, d_samples, ref predict, ref factor, ref s0, ref s1);
+                PackSamples(d_samples, v_samples, predict, factor);
+                writer.Write((byte)((predict << 4) | factor));
+                writer.Write((byte)0);
+                for (int k = 0; k < 28; k += 2)
+                {
+                    writer.Write((byte)(((v_samples[k + 1] >> 8) & 0xF0) | ((v_samples[k] >> 12) & 0xF)));
+                }
+            }
+            if (dataLeft < 28)
+            {
+                flags = SampleLineFlags.LoopEnd;
+                writer.Write((byte)((predict << 4) | factor));
+                writer.Write((byte)7);
+                for (var i = 0; i < 14; ++i)
+                {
+                    writer.Write((byte)0);
+                }
+            }
+            return flags;
+        }
+
+        private void FindPredict(short[] samples, int sample_off, double[] d_samples, ref int predict, ref int factor, ref float s0, ref float s1)
+        {
+            double[] max = new double[5];
+            double[][] buffer = new double[28][];
+            for (int i = 0; i < 28; ++i)
+                buffer[i] = new double[5];
+            double s_0, s_1 = 0.0, s_2 = 0.0, min = 1e10;
+            for (int i = 0; i < 5; ++i)
+            {
+                max[i] = 0.0;
+                s_1 = s0;
+                s_2 = s1;
+                for (int j = 0; j < 28; ++j)
+                {
+                    s_0 = samples[j + sample_off];
+                    if (s_0 > 30719.0)
+                        s_0 = 30719.0;
+                    else if (s_0 < -30719.0)
+                        s_0 = -30719.0;
+                    double ds = s_0 + s_1 * F[i].Key + s_2 * F[i].Value;
+                    buffer[j][i] = ds;
+                    if (Math.Abs(ds) > max[i])
+                    {
+                        max[i] = Math.Abs(ds);
+                    }
+                    s_2 = s_1;
+                    s_1 = s_0;
+                }
+                if (max[i] < min)
+                {
+                    min = max[i];
+                    predict = i;
+                }
+                if (min <= 7)
+                {
+                    predict = 0;
+                    break;
+                }
+            }
+            s0 = (float)s_1;
+            s1 = (float)s_2;
+            for (int i = 0; i < 28; ++i)
+            {
+                d_samples[i] = buffer[i][predict];
+            }
+            int min2 = (int)min, mask = 0x4000;
+            factor = 0;
+            while (factor < 12)
+            {
+                if ((mask & (min2 + (mask >> 3))) != 0)
+                {
+                    break;
+                }
+                factor++;
+                mask >>= 1;
+            }
+        }
+
+        private void PackSamples(double[] d_samples, short[] v_samples, int predict, int factor)
+        {
+            double s_1 = 0.0, s_2 = 0.0;
+
+            for (int i = 0; i < 28; ++i)
+            {
+                double s_0 = d_samples[i] + s_1 * F[predict].Key + s_2 * F[predict].Value;
+                double ds = s_0 * (1 << factor);
+                int di = (int)(((int)ds + 0x800) & 0xfffff000);
+                if (di > short.MaxValue)
+                    di = short.MaxValue;
+                else if (di < short.MinValue)
+                    di = short.MinValue;
+                v_samples[i] = (short)di;
+                di >>= factor;
+                s_2 = s_1;
+                s_1 = di - s_0;
+            }
+        }
+        public void ToADPCMMono(BinaryReader reader, BinaryWriter writer)
+        {
+            float s0 = 0.0f;
+            float s1 = 0.0f;
+            SampleLineFlags flag = 0;
+            while ((flag & SampleLineFlags.LoopEnd) == 0)
+            {
+                flag = LineToADPCM(reader, writer, ref s0, ref s1);
+            }
+        }
+
+        public void ToADPCMStereo(BinaryReader reader, BinaryWriter writer, int interleave)
+        {
+            throw new NotImplementedException();
+            /*
+            if ((interleave % 16) != 0)
+                throw new ArgumentException("Interleave must be a multiple of 16.");
+            byte[] silence = new byte[interleave];
+            for (int i = 0; i < interleave * 2; ++i)
+                silence[i] = 0;
+            int sample_size = data.Length / 4;
+            byte[] data_l = new byte[sample_size * 2];
+            byte[] data_r = new byte[sample_size * 2];
+            List<byte> vag = new List<byte>();
+            for (int i = 0; i < sample_size; ++i)
+            {
+                data_l[i + 0] = data[i * 4 + 0];
+                data_l[i + 1] = data[i * 4 + 1];
+                data_r[i + 0] = data[i * 4 + 2];
+                data_r[i + 1] = data[i * 4 + 3];
+            }
+            data_l = FromPCMMono(data_l);
+            data_r = FromPCMMono(data_r);
+            for (int i = 0; i < data_l.Length; i += interleave)
+            {
+                vag.AddRange(silence);
+            }
+            var vag_data = vag.ToArray();
+            var ch_size = data_l.Length;
+            int off = 0;
+            while (ch_size > 0)
+            {
+                var size = (ch_size >= interleave) ? interleave : ch_size;
+                Array.Copy(data_l, off, vag_data, off * 2, size);
+                Array.Copy(data_r, off + interleave, vag_data, off * 2 + interleave, size);
+                off += interleave;
+                ch_size -= interleave;
+            }
+            return vag_data;*/
         }
 
         public void ToPCMMono(BinaryReader reader, BinaryWriter writer)
