@@ -46,7 +46,7 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinBlendSkin GenerateBlendSkin(Stream stream)
+        public ITwinBlendSkin GenerateBlendSkin(Int32 blendsAmount, List<SubBlendData> blends)
         {
             throw new NotImplementedException();
         }

@@ -97,9 +97,79 @@ namespace TT_Lab.Assets.Factory
             return starter;
         }
 
-        public ITwinBlendSkin GenerateBlendSkin(Stream stream)
+        public ITwinBlendSkin GenerateBlendSkin(Int32 blendsAmount, List<SubBlendData> blends)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            var blendSkin = new PS2AnyBlendSkin
+            {
+                BlendsAmount = blendsAmount
+            };
+
+            foreach (var blend in blends)
+            {
+                var subBlend = new PS2SubBlendSkin(blendsAmount)
+                {
+                    Material = assetManager.GetAsset(blend.Material).ID
+                };
+
+                foreach (var model in blend.Models)
+                {
+                    var submodel = new PS2BlendSkinModel(blendsAmount)
+                    {
+                        Vertexes = new(),
+                        UVW = new(),
+                        Colors = new(),
+                        SkinJoints = new(),
+                        Faces = new()
+                    };
+                    var vertexBatch = model.Vertexes;
+                    var i = 0;
+                    foreach (var face in model.Faces)
+                    {
+                        i %= TwinVIFCompiler.VertexBatchAmount;
+
+                        var idx0 = (i % 2 == 0) ? 0 : 1;
+                        var idx1 = (i % 2 == 0) ? 1 : 0;
+                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
+                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
+                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
+                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
+                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
+                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
+                        submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
+                        submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
+                        submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
+                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[idx0]].JointInfo);
+                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[idx1]].JointInfo);
+                        vertexBatch[face.Indexes[2]].JointInfo.Connection = true;
+                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[2]].JointInfo);
+
+                        ++i;
+                    }
+
+                    foreach (var blendFace in model.BlendFaces)
+                    {
+                        var ps2BlendFace = new PS2BlendSkinFace(model.BlendShape)
+                        {
+                            VertexesAmount = blendFace.VertexesAmount,
+                            Vertices = new()
+                        };
+                        foreach (var ver in blendFace.BlendShapes)
+                        {
+                            ps2BlendFace.Vertices.Add(new VertexBlendShape
+                            {
+                                BlendShape = model.BlendShape,
+                                Offset = ver.Offset
+                            });
+                        }
+                        submodel.Faces.Add(ps2BlendFace);
+                    }
+
+                    subBlend.Models.Add(submodel);
+                }
+            }
+
+            return blendSkin;
         }
 
         public ITwinCamera GenerateCamera(Stream stream)

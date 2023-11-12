@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using TT_Lab.AssetData.Graphics.SubModels;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
@@ -13,7 +14,7 @@ namespace TT_Lab.Assets.Factory
 {
     public interface ITwinItemFactory
     {
-        ITwinBlendSkin GenerateBlendSkin(Stream stream);
+        ITwinBlendSkin GenerateBlendSkin(Int32 blendsAmount, List<SubBlendData> blends);
         ITwinLOD GenerateLOD(Stream stream);
         ITwinMaterial GenerateMaterial(Stream stream);
         ITwinMesh GenerateMesh(Stream stream);

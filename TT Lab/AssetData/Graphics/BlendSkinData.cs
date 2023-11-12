@@ -182,6 +182,8 @@ namespace TT_Lab.AssetData.Graphics
 
             scene.Materials.AddRange(materials);
 
+            metadata.BlendsAmount = BlendsAmount;
+
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using System.IO.BinaryWriter writer = new(fs);
             writer.Write(JsonConvert.SerializeObject(metadata, Formatting.Indented, settings).ToCharArray());
@@ -200,6 +202,8 @@ namespace TT_Lab.AssetData.Graphics
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Open, System.IO.FileAccess.Read);
             using System.IO.StreamReader reader = new(fs);
             JsonConvert.PopulateObject(value: reader.ReadToEnd(), target: metadata, settings);
+
+            BlendsAmount = metadata.BlendsAmount;
 
             var meshIndex = 0;
             for (var i = 0; i < scene.MaterialCount; i++)
@@ -224,7 +228,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            return factory.GenerateBlendSkin(BlendsAmount, Blends);
         }
 
         [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
@@ -234,6 +238,8 @@ namespace TT_Lab.AssetData.Graphics
             public List<LabURI> Materials { get; set; } = new();
             [JsonProperty(Required = Required.Always)]
             public List<Vector3> BlendShapes { get; set; } = new();
+            [JsonProperty(Required = Required.Always)]
+            public Int32 BlendsAmount { get; set; }
         }
     }
 }
