@@ -25,9 +25,7 @@ namespace TT_Lab.AssetData.Graphics
             SetTwinItem(model);
         }
 
-        [JsonProperty(Required = Required.Always)]
         public List<List<Vertex>> Vertexes { get; set; }
-        [JsonProperty(Required = Required.Always)]
         public List<List<IndexedFace>> Faces { get; set; }
 
         protected override void Dispose(Boolean disposing)

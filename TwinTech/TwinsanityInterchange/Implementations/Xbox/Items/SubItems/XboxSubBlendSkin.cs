@@ -9,13 +9,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
 {
     public class XboxSubBlendSkin : ITwinSubBlendSkin
     {
-        public Int32 BlendsAmount { get; set; }
+        Int32 blendsAmount;
         public UInt32 Material { get; set; }
         public List<ITwinBlendSkinModel> Models { get; set; }
 
-        public XboxSubBlendSkin()
+        public XboxSubBlendSkin(Int32 blendsAmount)
         {
             Models = new();
+            this.blendsAmount = blendsAmount;
         }
 
 
@@ -27,8 +28,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         public void Read(BinaryReader reader, int length)
         {
             Material = reader.ReadUInt32();
-            var model = new XboxBlendSkinModel();
-            model.BlendsAmount = BlendsAmount;
+            var model = new XboxBlendSkinModel(blendsAmount);
             model.Read(reader, length);
             Models.Add(model);
         }

@@ -7,10 +7,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
     public interface ITwinBlendSkinModel : ITwinSerializable
     {
         /// <summary>
-        /// Amount of blends present in the model
-        /// </summary>
-        Int32 BlendsAmount { get; set; }
-        /// <summary>
         /// Total amount of vertexes in the model
         /// </summary>
         Int32 VertexesAmount { get; set; }

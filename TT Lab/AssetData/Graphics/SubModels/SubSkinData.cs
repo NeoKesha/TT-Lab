@@ -23,18 +23,19 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                 var actuallyHasTheMaterial = allMaterials.FindAll(uri => uri.ToString().Contains(subSkin.Material.ToString()));
                 throw new Exception($"Couldn't find requested material 0x{subSkin.Material:X}!");
             }
+
             Vertexes = new List<Vertex>();
             Faces = new List<IndexedFace>();
 
             Int32 refIndex = 0;
             subSkin.CalculateData();
-            for (var j = 0; j < subSkin.Vertexes.Count; ++j)
+            for (var i = 0; i < subSkin.Vertexes.Count; ++i)
             {
-                if (j < subSkin.Vertexes.Count - 2)
+                if (i < subSkin.Vertexes.Count - 2)
                 {
-                    if (subSkin.SkinJoints[j + 2].Connection)
+                    if (subSkin.SkinJoints[i + 2].Connection)
                     {
-                        if (j % 2 == 0)
+                        if (i % 2 == 0)
                         {
                             Faces.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
                         }
@@ -45,9 +46,9 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                     }
                     ++refIndex;
                 }
-                Vertexes.Add(new Vertex(subSkin.Vertexes[j], subSkin.Colors[j], subSkin.UVW[j], subSkin.Colors[j])
+                Vertexes.Add(new Vertex(subSkin.Vertexes[i], subSkin.Colors[i], subSkin.UVW[i], subSkin.Colors[i])
                 {
-                    JointInfo = CloneUtils.Clone(subSkin.SkinJoints[j])
+                    JointInfo = CloneUtils.Clone(subSkin.SkinJoints[i])
                 });
             }
         }

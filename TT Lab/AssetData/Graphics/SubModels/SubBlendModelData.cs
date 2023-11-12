@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
+
+namespace TT_Lab.AssetData.Graphics.SubModels
+{
+    public class SubBlendModelData : IDisposable
+    {
+        public Vector3 BlendShape { get; set; } = new();
+        public List<SubBlendFaceData> BlendFaces { get; set; } = new();
+        public List<IndexedFace> Faces { get; set; } = new();
+        public List<Vertex> Vertexes { get; set; } = new();
+
+        public SubBlendModelData(ITwinBlendSkinModel model)
+        {
+            model.CalculateData();
+
+            BlendShape = CloneUtils.Clone(model.BlendShape);
+            foreach (var blendFace in model.Faces)
+            {
+                BlendFaces.Add(new SubBlendFaceData(blendFace));
+            }
+
+            Int32 refIndex = 0;
+            for (var i = 0; i < model.Vertexes.Count; ++i)
+            {
+                if (i < model.Vertexes.Count - 2)
+                {
+                    if (model.SkinJoints[i + 2].Connection)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            Faces.Add(new IndexedFace(new int[] { refIndex, refIndex + 1, refIndex + 2 }));
+                        }
+                        else
+                        {
+                            Faces.Add(new IndexedFace(new int[] { refIndex + 1, refIndex, refIndex + 2 }));
+                        }
+                    }
+                    ++refIndex;
+                }
+                Vertexes.Add(new Vertex(model.Vertexes[i], model.Colors[i], model.UVW[i], model.Colors[i])
+                {
+                    JointInfo = CloneUtils.Clone(model.SkinJoints[i])
+                });
+            }
+        }
+
+        public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, IEnumerable<Assimp.Animation> animations)
+        {
+            BlendShape = blendShape;
+            Vertexes = vertexes;
+            Faces = faces;
+
+            foreach (var animation in animations)
+            {
+                BlendFaces.Add(new SubBlendFaceData(animation.NodeAnimationChannels[0].PositionKeys));
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var face in BlendFaces)
+            {
+                face.Dispose();
+            }
+            BlendFaces.Clear();
+            Faces.Clear();
+            Vertexes.Clear();
+
+            GC.SuppressFinalize(this);
+        }
+    }
+}

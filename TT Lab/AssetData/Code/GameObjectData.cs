@@ -224,7 +224,7 @@ namespace TT_Lab.AssetData.Code
             InstFlags = CloneUtils.CloneList(gameObject.InstFlags);
             InstFloats = CloneUtils.CloneList(gameObject.InstFloats);
             InstIntegers = CloneUtils.CloneList(gameObject.InstIntegers);
-            BehaviourPack = CloneUtils.DeepClone(gameObject.BehaviourPack);
+            BehaviourPack = gameObject.BehaviourPack;
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)

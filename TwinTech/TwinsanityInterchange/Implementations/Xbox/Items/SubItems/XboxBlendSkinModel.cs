@@ -12,8 +12,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         List<UInt32> groupList = new();
         List<List<UInt32>> groupJoints = new();
         List<UInt32> packedNormals = new();
+        Int32 blendsAmount;
 
-        public Int32 BlendsAmount { get; set; }
         public Int32 VertexesAmount { get; set; }
         public Vector3 BlendShape { get; set; }
         public List<ITwinBlendSkinFace> Faces { get; set; }
@@ -22,8 +22,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         public List<Vector4> Colors { get; set; }
         public List<VertexJointInfo> SkinJoints { get; set; }
 
-        public XboxBlendSkinModel()
+        public XboxBlendSkinModel(Int32 blendsAmount)
         {
+            this.blendsAmount = blendsAmount;
         }
 
         public void CalculateData()
@@ -113,7 +114,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             }
 
             Faces = new();
-            for (Int32 i = 0; i < BlendsAmount; i++)
+            for (Int32 i = 0; i < blendsAmount; i++)
             {
                 var face = new XboxBlendSkinFace((UInt32)vertexAmount);
                 face.Read(reader, length);

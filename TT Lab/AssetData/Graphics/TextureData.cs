@@ -21,7 +21,9 @@ namespace TT_Lab.AssetData.Graphics
         {
             SetTwinItem(texture);
         }
+
         public Bitmap Bitmap;
+        
         protected override void Dispose(Boolean disposing)
         {
             if (Bitmap != null && !Disposed)

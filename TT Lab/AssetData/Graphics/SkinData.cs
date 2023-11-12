@@ -24,12 +24,12 @@ namespace TT_Lab.AssetData.Graphics
             SetTwinItem(skin);
         }
 
-        [JsonProperty(Required = Required.Always)]
         public List<SubSkinData> SubSkins { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             SubSkins.ForEach(s => s.Dispose());
+            SubSkins.Clear();
         }
 
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
@@ -41,6 +41,7 @@ namespace TT_Lab.AssetData.Graphics
 
             var materialIndex = 0;
             var materials = new List<Material>();
+            var materialsUri = new List<LabURI>();
             foreach (var subSkin in SubSkins)
             {
                 Mesh mesh = new(PrimitiveType.Triangle);
@@ -103,7 +104,7 @@ namespace TT_Lab.AssetData.Graphics
 
                 foreach (var face in subSkin.Faces)
                 {
-                    mesh.Faces.Add(new Face(new int[] { face.Indexes[0], face.Indexes[1], face.Indexes[2] }));
+                    mesh.Faces.Add(new Face(new int[] { face.Indexes![0], face.Indexes[1], face.Indexes[2] }));
                 }
 
                 var material = new Material
@@ -126,21 +127,30 @@ namespace TT_Lab.AssetData.Graphics
                 scene.Meshes.Add(mesh);
                 scene.RootNode.MeshIndices.Add(materialIndex);
                 mesh.MaterialIndex = materialIndex++;
-                scene.RootNode.Metadata.Add(material.Name, new Metadata.Entry(MetaDataType.String, AssetManager.Get().GetAsset(subSkin.Material).URI.ToString()));
+                materialsUri.Add(AssetManager.Get().GetAsset(subSkin.Material).URI);
             }
 
-            scene.Materials.AddRange(materials);
+            using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            using System.IO.BinaryWriter writer = new(fs);
+            writer.Write(JsonConvert.SerializeObject(materialsUri, Formatting.Indented, settings).ToCharArray());
 
+            scene.Materials.AddRange(materials);
+          
             using AssimpContext context = new();
             context.ExportFile(scene, dataPath, "collada");
         }
 
         public override void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
-            SubSkins.Clear();
             using AssimpContext context = new();
             var scene = context.ImportFile(dataPath);
             var materialIndex = 0;
+            var materialsUri = new List<LabURI>();
+
+            using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            using System.IO.StreamReader reader = new(fs);
+            JsonConvert.PopulateObject(value: reader.ReadToEnd(), target: materialsUri, settings);
+
             foreach (var mesh in scene.Meshes)
             {
                 var vertexes = new List<Vertex>();
@@ -203,7 +213,7 @@ namespace TT_Lab.AssetData.Graphics
                     faces.Add(new IndexedFace(mesh.Faces[i].Indices.ToArray()));
                 }
 
-                var material = (LabURI)(String)scene.RootNode.Metadata[scene.Materials[materialIndex++].Name].Data;
+                var material = materialsUri[materialIndex++];
                 SubSkins.Add(new SubSkinData(material, vertexes, faces));
             }
         }

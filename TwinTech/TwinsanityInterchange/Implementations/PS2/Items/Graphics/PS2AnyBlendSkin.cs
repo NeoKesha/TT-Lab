@@ -12,7 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyBlendSkin : BaseTwinItem, ITwinBlendSkin
     {
-        Int32 blendsAmount;
+        public Int32 BlendsAmount { get; set; }
         public List<ITwinSubBlendSkin> SubBlends { get; set; }
 
         public PS2AnyBlendSkin()
@@ -28,11 +28,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public override void Read(BinaryReader reader, Int32 length)
         {
             var subBlends = reader.ReadInt32();
-            blendsAmount = reader.ReadInt32();
+            BlendsAmount = reader.ReadInt32();
             for (int i = 0; i < subBlends; ++i)
             {
-                var subBlend = new PS2SubBlendSkin();
-                subBlend.BlendsAmount = blendsAmount;
+                var subBlend = new PS2SubBlendSkin(BlendsAmount);
                 subBlend.Read(reader, length);
                 SubBlends.Add(subBlend);
             }
@@ -41,7 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
         public override void Write(BinaryWriter writer)
         {
             writer.Write(SubBlends.Count);
-            writer.Write(blendsAmount);
+            writer.Write(BlendsAmount);
             foreach (ITwinSerializable subBlend in SubBlends)
             {
                 subBlend.Write(writer);

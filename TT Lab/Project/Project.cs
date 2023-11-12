@@ -447,9 +447,18 @@ namespace TT_Lab.Project
                         }
 
                         // Extract particle data
-                        var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
-                        var partData = new Particles(Ps2Package.URI, particleData.GetID(), particleData.GetName(), pathLow, particleData);
-                        assets.Add(partData.UUID, partData);
+                        if (!isDefault)
+                        {
+                            var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
+                            var partData = new Particles(Ps2Package.URI, particleData.GetID(), particleData.GetName(), pathLow, particleData);
+                            assets.Add(partData.UUID, partData);
+                        }
+                        else
+                        {
+                            var particleData = chunk.GetItem<PS2DefaultParticleData>(Constants.LEVEL_PARTICLES_ITEM);
+                            var partData = new DefaultParticles(Ps2Package.URI, particleData.GetID(), particleData.GetName(), pathLow, particleData);
+                            assets.Add(partData.UUID, partData);
+                        }
                         //chunkFolder.AddChild(partData);
 
                         // Instance layout

@@ -7,6 +7,8 @@ namespace TT_Lab.Assets.Graphics
 {
     public class BlendSkin : SerializableAsset
     {
+        protected override String DataExt => ".dae";
+
         public BlendSkin() { }
 
         public BlendSkin(LabURI package, String? variant, UInt32 id, String Name, ITwinBlendSkin blendSkin) : base(id, Name, package, variant)

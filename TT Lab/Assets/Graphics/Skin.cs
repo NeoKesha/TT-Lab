@@ -11,6 +11,9 @@ namespace TT_Lab.Assets.Graphics
     public class Skin : SerializableAsset
     {
         protected override String DataExt => ".dae";
+
+        public Skin() { }
+
         public Skin(LabURI package, String? variant, UInt32 id, String name, ITwinSkin skin) : base(id, name, package, variant)
         {
             assetData = new SkinData(skin);

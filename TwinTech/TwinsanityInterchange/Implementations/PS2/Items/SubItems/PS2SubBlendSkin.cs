@@ -9,13 +9,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 {
     public class PS2SubBlendSkin : ITwinSubBlendSkin
     {
-        public Int32 BlendsAmount { get; set; }
+        Int32 blendsAmount;
+
         public UInt32 Material { get; set; }
         public List<ITwinBlendSkinModel> Models { get; set; }
 
-        public PS2SubBlendSkin()
+        public PS2SubBlendSkin(Int32 blendsAmount)
         {
             Models = new List<ITwinBlendSkinModel>();
+            this.blendsAmount = blendsAmount;
         }
 
         public int GetLength()
@@ -29,8 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             Material = reader.ReadUInt32();
             for (int i = 0; i < modelsAmount; ++i)
             {
-                var model = new PS2BlendSkinModel();
-                model.BlendsAmount = BlendsAmount;
+                var model = new PS2BlendSkinModel(blendsAmount);
                 model.Read(reader, length);
                 Models.Add(model);
             }

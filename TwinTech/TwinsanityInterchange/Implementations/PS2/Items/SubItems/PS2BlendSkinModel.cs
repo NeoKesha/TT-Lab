@@ -12,8 +12,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
     public class PS2BlendSkinModel : ITwinBlendSkinModel
     {
         Byte[] vifCode;
+        Int32 blendsAmount;
 
-        public Int32 BlendsAmount { get; set; }
         public Int32 VertexesAmount { get; set; }
         public Vector3 BlendShape { get; set; }
         public List<ITwinBlendSkinFace> Faces { get; set; }
@@ -21,6 +21,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public List<Vector4> UVW { get; set; }
         public List<Vector4> Colors { get; set; }
         public List<VertexJointInfo> SkinJoints { get; set; }
+
+        public PS2BlendSkinModel(Int32 blendsAmount)
+        {
+            this.blendsAmount = blendsAmount;
+        }
 
         public int GetLength()
         {
@@ -34,10 +39,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             vifCode = reader.ReadBytes(blobLen);
             BlendShape = new();
             BlendShape.Read(reader, Constants.SIZE_VECTOR3);
-            for (int i = 0; i < BlendsAmount; ++i)
+
+            Faces = new();
+            for (int i = 0; i < blendsAmount; ++i)
             {
                 var face = new PS2BlendSkinFace(BlendShape);
                 face.Read(reader, length);
+                Faces.Add(face);
             }
         }
 
