@@ -13,6 +13,7 @@ namespace TT_Lab.Assets
     public class AssetManager
     {
         private AssetStorage _assets = new();
+        private AssetStorage _importAssets = new();
         private GuidManager _guidManager = new();
 
         public AssetManager() { }
@@ -95,6 +96,11 @@ namespace TT_Lab.Assets
             if (_guidManager.GuidToLabUri.ContainsKey(asset.UUID)) return;
 
             _guidManager.AddMapping(asset);
+        }
+
+        public void AddAssetToImport(IAsset asset)
+        {
+            _importAssets.Add(asset.URI, asset);
         }
 
         /// <summary>
@@ -273,6 +279,8 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <returns>All the currently stored assets</returns>
         public ImmutableList<IAsset> GetAssets() { return _assets.Values.Distinct().ToImmutableList(); }
+
+        public ImmutableList<IAsset> GetAssetsToImport() { var immut = _importAssets.Values.Distinct().ToImmutableList(); _importAssets.Clear(); return immut; }
 
         private class GuidManager
         {

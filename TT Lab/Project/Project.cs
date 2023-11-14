@@ -8,6 +8,7 @@ using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Assets.Global;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Assets.Instance;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
@@ -298,15 +299,66 @@ namespace TT_Lab.Project
                 var isRm2 = pathLow.EndsWith(".rm2");
                 var isSm2 = pathLow.EndsWith(".sm2");
                 var isDefault = pathLow.EndsWith("default.rm2");
-                // TODO: Add these misc formats
                 var isTxt = pathLow.EndsWith(".txt");
+                var isFrontend = pathLow.EndsWith("frontend.bin");
                 var isPsm = pathLow.EndsWith(".psm");
                 var isFont = pathLow.EndsWith(".psf");
                 var isPtc = pathLow.EndsWith(".ptc");
-                var isFrontend = pathLow.EndsWith("frontend.bin");
                 Log.WriteLine($"Unpacking {System.IO.Path.GetFileName(pathLow)}...");
                 using System.IO.MemoryStream ms = new(item.Data);
+
+                // Check for text files
+                if (isTxt)
+                {
+                    using System.IO.StreamReader textReader = new(ms);
+                    var text = textReader.ReadToEnd();
+                    var textFile = new TextFile(BasePackage.URI, null, System.IO.Path.GetFileName(pathLow)[..^4], text);
+                    assets.Add(textFile.UUID, textFile);
+                    continue;
+                }
+
                 using System.IO.BinaryReader reader = new(ms);
+
+                // Check for fonts
+                if (isFont)
+                {
+                    var font = new PS2PSF();
+                    font.Read(reader, (Int32)reader.BaseStream.Length);
+                    var fontAsset = new Font(BasePackage.URI, pathLow, System.IO.Path.GetFileName(pathLow)[..^4], font);
+                    assets.Add(fontAsset.UUID, fontAsset);
+                    continue;
+                }
+
+                // Check for PSM
+                if (isPsm)
+                {
+                    var psm = new PS2PSM();
+                    psm.Read(reader, (Int32)reader.BaseStream.Length);
+                    var psmAsset = new PSM(BasePackage.URI, pathLow, System.IO.Path.GetFileName(pathLow)[..^4], psm);
+                    assets.Add(psmAsset.UUID, psmAsset);
+                    continue;
+                }
+
+                // Check for PTC
+                if (isPtc)
+                {
+                    var ptc = new PS2PTC();
+                    ptc.Read(reader, (Int32)reader.BaseStream.Length);
+                    var ptcAsset = new PTC(BasePackage.URI, pathLow, System.IO.Path.GetFileName(pathLow)[..^4], ptc);
+                    assets.Add(ptcAsset.UUID, ptcAsset);
+                    continue;
+                }
+
+                // Check for frontend (UI sound effects library)
+                if (isFrontend)
+                {
+                    var frontend = new PS2Frontend();
+                    frontend.Read(reader, (Int32)reader.BaseStream.Length);
+                    var uiLibrary = new UiSoundLibrary(BasePackage.URI, null, "UI Sound Library", frontend);
+                    assets.Add(uiLibrary.UUID, uiLibrary);
+                    continue;
+                }
+
                 // Check for chunk file
                 if (isRm2 || isSm2)
                 {

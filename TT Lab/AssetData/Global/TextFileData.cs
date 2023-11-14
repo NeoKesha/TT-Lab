@@ -1,0 +1,58 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
+using Twinsanity.TwinsanityInterchange.Interfaces;
+
+namespace TT_Lab.AssetData.Global
+{
+    public class TextFileData : AbstractAssetData
+    {
+        public TextFileData()
+        {
+            Text = "";
+        }
+
+        public TextFileData(String text) : this()
+        {
+            Text = $"{text}";
+        }
+
+        public string Text { get; set; }
+
+        public override ITwinItem Export(ITwinItemFactory factory)
+        {
+            return new BaseTwinItem();
+        }
+
+        public override void Import(LabURI package, String? variant)
+        {
+            return;
+        }
+
+        public override void Save(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            using var fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write);
+            using var writer = new BinaryWriter(fs);
+            writer.Write(Text.ToCharArray());
+        }
+
+        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            using var fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read);
+            using var reader = new StreamReader(fs);
+            Text = reader.ReadToEnd();
+        }
+
+        protected override void Dispose(Boolean disposing)
+        {
+            Text = "";
+        }
+    }
+}

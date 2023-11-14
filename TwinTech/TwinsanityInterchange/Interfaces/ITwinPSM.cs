@@ -2,7 +2,7 @@
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
-    public interface ITwinPSM : ITwinSerializable
+    public interface ITwinPSM : ITwinItem
     {
         /// <summary>
         /// Parts of the PSM

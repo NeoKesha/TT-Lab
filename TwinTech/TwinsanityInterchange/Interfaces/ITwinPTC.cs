@@ -3,7 +3,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
-    public interface ITwinPTC : ITwinSerializable
+    public interface ITwinPTC : ITwinItem
     {
         /// <summary>
         /// Texture's Twinsanity ID

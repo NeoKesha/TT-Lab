@@ -4,22 +4,23 @@ using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
 {
-    public class XboxPSF : ITwinPSF
+    public class XboxPSF : BaseTwinItem, ITwinPSF
     {
         public List<ITwinPTC> FontPages { get; set; }
         public List<Vector4> UnkVecs { get; set; }
         public Int32 UnkInt { get; set; }
 
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return 4 + FontPages.Sum(f => f.GetLength()) + UnkVecs.Count * Constants.SIZE_VECTOR4;
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             var pages = reader.ReadInt32();
             for (var i = 0; i < pages; ++i)
@@ -38,7 +39,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
             }
         }
 
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             writer.Write(FontPages.Count);
             foreach (var page in FontPages)

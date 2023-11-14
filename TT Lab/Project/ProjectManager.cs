@@ -283,6 +283,16 @@ namespace TT_Lab.Project
                     {
                         asset.Import();
                     }
+                    var assetsToImport = OpenedProject.AssetManager.GetAssetsToImport();
+                    while (!assetsToImport.IsEmpty)
+                    {
+                        foreach (var asset in assetsToImport)
+                        {
+                            asset.Import();
+                            OpenedProject.AssetManager.AddAsset(asset);
+                        }
+                        assetsToImport = OpenedProject.AssetManager.GetAssetsToImport();
+                    }
 
                     Log.WriteLine("Serializing assets...");
                     OpenedProject.Serialize(); // Call to serialize the asset list and chunk list

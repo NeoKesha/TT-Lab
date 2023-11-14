@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
 {
-    public class XboxPSM : ITwinPSM
+    public class XboxPSM : BaseTwinItem, ITwinPSM
     {
         public List<ITwinPTC> PTCs { get; set; }
 
@@ -15,12 +16,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
             PTCs = new List<ITwinPTC>();
         }
 
-        public Int32 GetLength()
+        public override Int32 GetLength()
         {
             return PTCs.Sum(p => p.GetLength());
         }
 
-        public void Read(BinaryReader reader, Int32 length)
+        public override void Read(BinaryReader reader, Int32 length)
         {
             var startPos = reader.BaseStream.Position;
             while (reader.BaseStream.Position < startPos + length)
@@ -31,7 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox
             }
         }
 
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             foreach (var ptc in PTCs)
             {

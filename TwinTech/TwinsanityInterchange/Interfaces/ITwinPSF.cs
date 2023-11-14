@@ -4,7 +4,7 @@ using Twinsanity.TwinsanityInterchange.Common;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces
 {
-    public interface ITwinPSF : ITwinSerializable
+    public interface ITwinPSF : ITwinItem
     {
         /// <summary>
         /// Font pages
