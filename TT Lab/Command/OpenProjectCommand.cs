@@ -25,7 +25,7 @@ namespace TT_Lab.Command
             try
             {
 #endif
-                ProjectManagerSingleton.PM.OpenProject(path);
+            ProjectManagerSingleton.PM.OpenProject(path);
 #if !DEBUG
             }
             catch (Exception ex)

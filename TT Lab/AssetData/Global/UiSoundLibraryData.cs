@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Code;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
@@ -28,7 +25,14 @@ namespace TT_Lab.AssetData.Global
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            var sounds = new List<ITwinSound>();
+            foreach (var sound in UiSounds)
+            {
+                sounds.Add((ITwinSound)(assetManager.GetAssetData<SoundEffectData>(sound).Export(factory)));
+            }
+
+            return factory.GenerateFrontend(sounds);
         }
 
         public override void Import(LabURI package, String? variant)

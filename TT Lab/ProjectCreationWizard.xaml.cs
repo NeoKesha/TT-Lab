@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using TT_Lab.Project;
 using TT_Lab.ViewModels;
 
@@ -22,8 +21,8 @@ namespace TT_Lab
             try
             {
 #endif
-                ProjectManagerSingleton.PM.CreateProject(ProjectName.Text, ProjectPath.Text, PS2DiscContentPath.Text, XboxDiscContentPath.Text);
-                Close();
+            ProjectManagerSingleton.PM.CreateProject(ProjectName.Text, ProjectPath.Text, PS2DiscContentPath.Text, XboxDiscContentPath.Text);
+            Close();
 #if !DEBUG
             }
             catch (Exception ex)

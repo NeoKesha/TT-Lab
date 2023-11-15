@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Global;
@@ -28,7 +25,14 @@ namespace TT_Lab.AssetData.Global
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            var ptcs = new List<ITwinPTC>();
+            foreach (var ptc in PTCs)
+            {
+                ptcs.Add((ITwinPTC)assetManager.GetAssetData<PTCData>(ptc).Export(factory));
+            }
+
+            return factory.GeneratePSM(ptcs);
         }
 
         public override void Import(LabURI package, String? variant)

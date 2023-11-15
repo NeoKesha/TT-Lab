@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Global;
@@ -35,7 +32,14 @@ namespace TT_Lab.AssetData.Global
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+            var pages = new List<ITwinPTC>();
+            foreach (var page in FontPages)
+            {
+                pages.Add((ITwinPTC)assetManager.GetAssetData<PTCData>(page).Export(factory));
+            }
+
+            return factory.GenerateFont(pages, UnkVecs, UnkInt);
         }
 
         public override void Import(LabURI package, String? variant)

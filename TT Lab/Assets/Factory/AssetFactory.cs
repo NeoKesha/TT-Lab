@@ -21,14 +21,12 @@ namespace TT_Lab.Assets.Factory
                 tasks[index++] = Task.Factory.StartNew(() =>
                 {
                     IAsset newAsset;
-                    using (System.IO.FileStream fs = new System.IO.FileStream(str, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-                    using (System.IO.StreamReader reader = new System.IO.StreamReader(fs))
-                    {
-                        var json = reader.ReadToEnd();
-                        var baseAss = JsonConvert.DeserializeObject<BaseAsset>(json)!;
-                        newAsset = (IAsset)Activator.CreateInstance(baseAss.Type)!;
-                        newAsset.Deserialize(json);
-                    }
+                    using System.IO.FileStream fs = new(str, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                    using System.IO.StreamReader reader = new(fs);
+                    var json = reader.ReadToEnd();
+                    var baseAss = JsonConvert.DeserializeObject<BaseAsset>(json)!;
+                    newAsset = (IAsset)Activator.CreateInstance(baseAss.Type)!;
+                    newAsset.Deserialize(json);
                     assetMut.WaitOne();
                     assets.Add(newAsset.UUID, newAsset);
                     assetMut.ReleaseMutex();

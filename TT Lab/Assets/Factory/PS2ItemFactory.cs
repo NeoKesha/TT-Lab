@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.AssetData.Graphics.SubModels;
+using TT_Lab.Util;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code;
@@ -15,6 +17,7 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentL
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -634,6 +637,56 @@ namespace TT_Lab.Assets.Factory
             using var reader = new BinaryReader(stream);
             trigger.Read(reader, (Int32)stream.Length);
             return trigger;
+        }
+
+        public ITwinSection GenerateFrontend(List<ITwinSound> sounds)
+        {
+            var frontend = new PS2Frontend();
+
+            foreach (var sound in sounds)
+            {
+                frontend.AddItem(sound);
+            }
+
+            return frontend;
+        }
+
+        public ITwinPSF GenerateFont(List<ITwinPTC> pages, List<Vector4> unkVecs, Int32 unkInt)
+        {
+            var font = new PS2PSF();
+
+            foreach (var page in pages)
+            {
+                font.FontPages.Add(page);
+            }
+
+            font.UnkVecs = CloneUtils.CloneList(unkVecs);
+            font.UnkInt = unkInt;
+
+            return font;
+        }
+
+        public ITwinPTC GeneratePTC(UInt32 texID, UInt32 matID, ITwinTexture texture, ITwinMaterial material)
+        {
+            var ptc = new PS2PTC
+            {
+                TexID = texID,
+                MatID = matID,
+                Texture = texture,
+                Material = material
+            };
+            return ptc;
+        }
+
+        public ITwinPSM GeneratePSM(List<ITwinPTC> ptcs)
+        {
+            var psm = new PS2PSM();
+            foreach (var ptc in ptcs)
+            {
+                psm.PTCs.Add(ptc);
+            }
+
+            return psm;
         }
     }
 }

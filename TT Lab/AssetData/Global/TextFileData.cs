@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
@@ -24,7 +20,7 @@ namespace TT_Lab.AssetData.Global
             Text = $"{text}";
         }
 
-        public string Text { get; set; }
+        public String Text { get; set; }
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {

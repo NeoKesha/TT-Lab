@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;

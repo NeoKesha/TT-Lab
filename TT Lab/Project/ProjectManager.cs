@@ -271,40 +271,42 @@ namespace TT_Lab.Project
                 try
                 {
 #endif
-                    Log.WriteLine("Creating base packages...");
-                    OpenedProject.CreateBasePackages();
-                    Log.WriteLine("Unpacking PS2 assets...");
-                    OpenedProject.UnpackAssetsPS2();
-                    Log.WriteLine("Unpacking XBox assets...");
-                    OpenedProject.UnpackAssetsXbox();
+                Log.WriteLine("Creating base packages...");
+                OpenedProject.CreateBasePackages();
+                Log.WriteLine("Unpacking PS2 assets...");
+                OpenedProject.UnpackAssetsPS2();
+                Log.WriteLine("Unpacking XBox assets...");
+                OpenedProject.UnpackAssetsXbox();
 
-                    Log.WriteLine($"Converting assets...");
-                    foreach (var asset in OpenedProject.AssetManager.GetAssets())
+                Log.WriteLine($"Converting assets...");
+                foreach (var asset in OpenedProject.AssetManager.GetAssets())
+                {
+                    asset.Import();
+                }
+                var assetsToImport = OpenedProject.AssetManager.GetAssetsToImport();
+                while (!assetsToImport.IsEmpty)
+                {
+                    foreach (var asset in assetsToImport)
                     {
                         asset.Import();
+                        // If asset is embedded it shouldn't be exported during game's build stage because its owner will do it for us
+                        asset.SkipExport = true;
+                        OpenedProject.AssetManager.AddAsset(asset);
                     }
-                    var assetsToImport = OpenedProject.AssetManager.GetAssetsToImport();
-                    while (!assetsToImport.IsEmpty)
-                    {
-                        foreach (var asset in assetsToImport)
-                        {
-                            asset.Import();
-                            OpenedProject.AssetManager.AddAsset(asset);
-                        }
-                        assetsToImport = OpenedProject.AssetManager.GetAssetsToImport();
-                    }
+                    assetsToImport = OpenedProject.AssetManager.GetAssetsToImport();
+                }
 
-                    Log.WriteLine("Serializing assets...");
-                    OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
+                Log.WriteLine("Serializing assets...");
+                OpenedProject.Serialize(); // Call to serialize the asset list and chunk list
 
-                    Log.WriteLine("Building project tree...");
-                    BuildProjectTree();
+                Log.WriteLine("Building project tree...");
+                BuildProjectTree();
 
-                    AddRecentlyOpened(OpenedProject.ProjectPath);
-                    WorkableProject = true;
-                    NotifyChange("ProjectOpened");
-                    NotifyChange("ProjectTitle");
-                    Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
+                AddRecentlyOpened(OpenedProject.ProjectPath);
+                WorkableProject = true;
+                NotifyChange("ProjectOpened");
+                NotifyChange("ProjectTitle");
+                Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
 #if !DEBUG
                 }
                 catch (Exception ex)
@@ -322,27 +324,27 @@ namespace TT_Lab.Project
             try
             {
 #endif
-                // Check for PS2 and XBox project root files
-                if (Directory.GetFiles(path, "*.tson").Length == 0 && Directory.GetFiles(path, "*.xson").Length == 0)
+            // Check for PS2 and XBox project root files
+            if (Directory.GetFiles(path, "*.tson").Length == 0 && Directory.GetFiles(path, "*.xson").Length == 0)
+            {
+                throw new Exception("No project root found!");
+            }
+            if (Directory.GetFiles(path, "*.tson").Length != 0)
+            {
+                var prFile = Directory.GetFiles(path, "*.tson")[0];
+                Task.Factory.StartNew(() =>
                 {
-                    throw new Exception("No project root found!");
-                }
-                if (Directory.GetFiles(path, "*.tson").Length != 0)
-                {
-                    var prFile = Directory.GetFiles(path, "*.tson")[0];
-                    Task.Factory.StartNew(() =>
-                    {
 #if !DEBUG
                         try
                         {
 #endif
-                            Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
-                            OpenedProject = Project.Deserialize(prFile);
-                            Log.WriteLine($"Building project tree...");
-                            BuildProjectTree();
-                            WorkableProject = true;
-                            NotifyChange("ProjectOpened");
-                            NotifyChange("ProjectTitle");
+                    Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
+                    OpenedProject = Project.Deserialize(prFile);
+                    Log.WriteLine($"Building project tree...");
+                    BuildProjectTree();
+                    WorkableProject = true;
+                    NotifyChange("ProjectOpened");
+                    NotifyChange("ProjectTitle");
 #if !DEBUG
                         }
                         catch (Exception ex)
@@ -350,8 +352,8 @@ namespace TT_Lab.Project
                             Log.WriteLine($"Error opening project: {ex.Message}\n{ex.StackTrace}");
                         }
 #endif
-                    });
-                }
+                });
+            }
 #if !DEBUG
         }
             catch (Exception ex)

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.AssetData.Graphics.SubModels;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -45,5 +47,9 @@ namespace TT_Lab.Assets.Factory
         ITwinDynamicScenery GenerateDynamicScenery(Stream stream);
         ITwinLink GenerateLink(Stream stream);
         ITwinScenery GenerateScenery(Stream stream);
+        ITwinSection GenerateFrontend(List<ITwinSound> sounds);
+        ITwinPSF GenerateFont(List<ITwinPTC> pages, List<Vector4> unkVecs, Int32 unkInt);
+        ITwinPTC GeneratePTC(UInt32 texID, UInt32 matID, ITwinTexture texture, ITwinMaterial material);
+        ITwinPSM GeneratePSM(List<ITwinPTC> ptcs);
     }
 }

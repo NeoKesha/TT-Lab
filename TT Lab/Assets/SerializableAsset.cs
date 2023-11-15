@@ -28,6 +28,10 @@ namespace TT_Lab.Assets
         public Int32? LayoutID { get; set; }
         public Boolean IsLoaded { get; protected set; }
         public UInt32 Order { get; set; }
+        /// <summary>
+        /// If asset shouldn't be exported during game's build stage
+        /// </summary>
+        public Boolean SkipExport { get; set; } = false;
 
         public Dictionary<String, Object?> Parameters { get; set; } = new();
         public LabURI URI { get; set; }

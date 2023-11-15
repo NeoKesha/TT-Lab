@@ -93,7 +93,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             StringUtils.WriteLineTabulated(writer, $"Body {"{"}", tabs);
             if (AdditionalFlags != 0)
             {
-                 StringUtils.WriteLineTabulated(writer, $"additional_flags = 0x{Convert.ToString(AdditionalFlags, 16)}", tabs + 1);
+                StringUtils.WriteLineTabulated(writer, $"additional_flags = 0x{Convert.ToString(AdditionalFlags, 16)}", tabs + 1);
             }
             if (HasStateJump)
             {

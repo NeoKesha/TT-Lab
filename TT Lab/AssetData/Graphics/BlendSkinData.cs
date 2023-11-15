@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
@@ -215,7 +214,7 @@ namespace TT_Lab.AssetData.Graphics
                 meshIndex += meshes.Count();
             }
         }
-        
+
         public override void Import(LabURI package, String? variant)
         {
             ITwinBlendSkin blendSkin = GetTwinItem<ITwinBlendSkin>();

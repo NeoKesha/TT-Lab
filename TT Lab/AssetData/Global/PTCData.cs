@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Global
 {
@@ -31,7 +29,12 @@ namespace TT_Lab.AssetData.Global
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            throw new NotImplementedException();
+            var assetManager = AssetManager.Get();
+
+            var texture = (ITwinTexture)assetManager.GetAssetData<TextureData>(TextureID).Export(factory);
+            var material = (ITwinMaterial)assetManager.GetAssetData<MaterialData>(MaterialID).Export(factory);
+
+            return factory.GeneratePTC(assetManager.GetAsset(TextureID).ID, assetManager.GetAsset(MaterialID).ID, texture, material);
         }
 
         public override void Import(LabURI package, String? variant)

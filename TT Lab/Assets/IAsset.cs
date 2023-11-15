@@ -101,6 +101,11 @@ namespace TT_Lab.Assets
         Boolean IsLoaded { get; }
 
         /// <summary>
+        /// If asset shouldn't be exported during game's build stage
+        /// </summary>
+        public Boolean SkipExport { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns>Asset's editor type</returns>

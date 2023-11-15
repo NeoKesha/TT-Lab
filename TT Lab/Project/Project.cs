@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TT_Lab.AssetData;
@@ -123,10 +122,10 @@ namespace TT_Lab.Project
                     try
                     {
 #endif
-                        foreach (var asset in group)
-                        {
-                            asset.Serialize();
-                        }
+                    foreach (var asset in group)
+                    {
+                        asset.Serialize();
+                    }
 #if !DEBUG
                     }
                     catch (Exception ex)

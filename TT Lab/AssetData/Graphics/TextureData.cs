@@ -23,7 +23,7 @@ namespace TT_Lab.AssetData.Graphics
         }
 
         public Bitmap Bitmap;
-        
+
         protected override void Dispose(Boolean disposing)
         {
             if (Bitmap != null && !Disposed)

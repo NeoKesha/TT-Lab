@@ -135,7 +135,7 @@ namespace TT_Lab.AssetData.Graphics
             writer.Write(JsonConvert.SerializeObject(materialsUri, Formatting.Indented, settings).ToCharArray());
 
             scene.Materials.AddRange(materials);
-          
+
             using AssimpContext context = new();
             context.ExportFile(scene, dataPath, "collada");
         }

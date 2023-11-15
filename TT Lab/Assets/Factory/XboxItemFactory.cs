@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.AssetData.Graphics.SubModels;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -167,6 +169,26 @@ namespace TT_Lab.Assets.Factory
         }
 
         public ITwinTrigger GenerateTrigger(Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinSection GenerateFrontend(List<ITwinSound> sounds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinPSF GenerateFont(List<ITwinPTC> pages, List<Vector4> unkVecs, Int32 unkInt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinPTC GeneratePTC(UInt32 texID, UInt32 matID, ITwinTexture texture, ITwinMaterial material)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinPSM GeneratePSM(List<ITwinPTC> ptcs)
         {
             throw new NotImplementedException();
         }

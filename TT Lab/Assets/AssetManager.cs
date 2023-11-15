@@ -98,6 +98,11 @@ namespace TT_Lab.Assets
             _guidManager.AddMapping(asset);
         }
 
+        /// <summary>
+        /// Only use during the project's creation stage to delay import of embedded assets in other assets.
+        /// <para>Adds an asset to delayed import stage</para>
+        /// </summary>
+        /// <param name="asset">Asset to add</param>
         public void AddAssetToImport(IAsset asset)
         {
             _importAssets.Add(asset.URI, asset);
@@ -280,6 +285,10 @@ namespace TT_Lab.Assets
         /// <returns>All the currently stored assets</returns>
         public ImmutableList<IAsset> GetAssets() { return _assets.Values.Distinct().ToImmutableList(); }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>All assets queued for delayed import stage</returns>
         public ImmutableList<IAsset> GetAssetsToImport() { var immut = _importAssets.Values.Distinct().ToImmutableList(); _importAssets.Clear(); return immut; }
 
         private class GuidManager
@@ -296,7 +305,7 @@ namespace TT_Lab.Assets
                     try
                     {
 #endif
-                        GuidToLabUri.Add(key, asset.URI);
+                    GuidToLabUri.Add(key, asset.URI);
 #if !DEBUG
                     }
                     catch (Exception ex)

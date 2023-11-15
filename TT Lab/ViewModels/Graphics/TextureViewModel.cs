@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
