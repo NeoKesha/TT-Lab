@@ -6,28 +6,28 @@
     /// <seealso cref="VertexBufferArray"/>
     public class IndexedBufferArray : IGLObject
     {
-        public VertexBufferArray buffer;
+        public VertexBufferArray Buffer;
         public uint[] Indices;
 
         public IndexedBufferArray()
         {
-            buffer = new VertexBufferArray();
-            Indices = new uint[0];
+            Buffer = new VertexBufferArray();
+            Indices = System.Array.Empty<System.UInt32>();
         }
 
         public void Bind()
         {
-            buffer.Bind();
+            Buffer.Bind();
         }
 
         public void Delete()
         {
-            buffer.Delete();
+            Buffer.Delete();
         }
 
         public void Unbind()
         {
-            buffer.Unbind();
+            Buffer.Unbind();
         }
     }
 }

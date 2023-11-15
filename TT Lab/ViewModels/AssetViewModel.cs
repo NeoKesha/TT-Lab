@@ -120,6 +120,7 @@ namespace TT_Lab.ViewModels
                 };
                 var closableTab = new ClosableTab(Alias, tabContainer, _editor);
                 closableTab.CloseTab += EditorUnload;
+                closableTab.CloseTab += baseEdit.CloseEditor;
                 closableTab.UndoTab += baseEdit.UndoExecuted;
                 closableTab.RedoTab += baseEdit.RedoExecuted;
                 closableTab.SaveTab += baseEdit.SaveExecuted;

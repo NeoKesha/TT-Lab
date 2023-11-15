@@ -28,6 +28,13 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer_RendererInit();
         }
 
+        public override void CloseEditor(Object? sender, EventArgs e)
+        {
+            SceneRenderer.CloseEditor();
+
+            base.CloseEditor(sender, e);
+        }
+
         private void MaterialViewer_RendererInit()
         {
             ResetMaterialViewer();

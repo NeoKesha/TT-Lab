@@ -55,6 +55,11 @@ namespace TT_Lab.Editors
             return AssetViewModel.Asset.GetData<T>();
         }
 
+        public virtual void CloseEditor(Object? sender, EventArgs e)
+        {
+            return;
+        }
+
         public void UndoExecuted(Object? sender, EventArgs e)
         {
             Control_UndoPerformed(sender, e);

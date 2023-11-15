@@ -56,6 +56,13 @@ namespace TT_Lab.Editors
             }
         }
 
+        public override void CloseEditor(Object? sender, EventArgs e)
+        {
+            SceneRenderer.CloseEditor();
+
+            base.CloseEditor(sender, e);
+        }
+
         private void ChunkTree_SelectedItemChanged(Object sender, RoutedPropertyChangedEventArgs<Object> e)
         {
             if (e.NewValue == null) return;

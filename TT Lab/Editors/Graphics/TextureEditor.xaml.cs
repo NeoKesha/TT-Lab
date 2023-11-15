@@ -40,6 +40,13 @@ namespace TT_Lab.Editors.Graphics
             ReplaceButton.Command = repBinding.Command;
         }
 
+        public override void CloseEditor(Object? sender, EventArgs e)
+        {
+            TextureViewer.CloseEditor();
+
+            base.CloseEditor(sender, e);
+        }
+
         private void ReplaceExecuted(Object sender, ExecutedRoutedEventArgs e)
         {
             var file = MiscUtils.GetFileFromDialogue("Image file|*.jpg;*.png;*.bmp");

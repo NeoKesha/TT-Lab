@@ -1,4 +1,5 @@
-﻿using TT_Lab.Rendering;
+﻿using System;
+using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
 
@@ -18,6 +19,13 @@ namespace TT_Lab.Editors.Graphics
         {
             InitializeComponent();
             SceneRenderer_RendererInit();
+        }
+
+        public override void CloseEditor(Object? sender, EventArgs e)
+        {
+            SceneRenderer.CloseEditor();
+
+            base.CloseEditor(sender, e);
         }
 
         private void SceneRenderer_RendererInit()

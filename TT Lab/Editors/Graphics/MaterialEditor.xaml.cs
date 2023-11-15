@@ -48,6 +48,13 @@ namespace TT_Lab.Editors.Graphics
             matViewModel.PropChanged += MatViewModel_PropertyChanged;
         }
 
+        public override void CloseEditor(Object? sender, EventArgs e)
+        {
+            MaterialViewer.CloseEditor();
+
+            base.CloseEditor(sender, e);
+        }
+
         private void MatViewModel_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             ResetViewer();

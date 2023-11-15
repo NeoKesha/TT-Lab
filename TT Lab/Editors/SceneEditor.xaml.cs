@@ -79,6 +79,11 @@ namespace TT_Lab.Editors
             Glcontrol.Start(settings);
         }
 
+        public void CloseEditor()
+        {
+            Scene?.Delete();
+        }
+
         private void Glcontrol_DragDrop(Object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))

@@ -59,6 +59,13 @@ namespace TT_Lab.Editors.Graphics
             shaderViewModel.PropertyChanged += ShaderViewModel_PropertyChanged;
         }
 
+        public override void CloseEditor(Object? sender, EventArgs e)
+        {
+            TextureViewer.CloseEditor();
+
+            base.CloseEditor(sender, e);
+        }
+
         private void ShaderViewModel_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "TexID" || e.PropertyName == "TxtMapping")

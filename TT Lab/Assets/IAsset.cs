@@ -103,6 +103,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// If asset shouldn't be exported during game's build stage
         /// </summary>
+        [JsonProperty(Required = Required.Default)]
         public Boolean SkipExport { get; set; }
 
         /// <summary>

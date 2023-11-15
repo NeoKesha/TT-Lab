@@ -6,6 +6,7 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -14,8 +15,8 @@ namespace TT_Lab.Rendering.Objects
         public Scene? Parent { get; set; }
         public float Opacity { get; set; } = 1.0f;
 
-        List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
-        List<TextureBuffer> textureBuffers = new List<TextureBuffer>();
+        List<IndexedBufferArray> modelBuffers = new();
+        Dictionary<Int32, TextureBuffer> textureBuffers = new();
 
         public RigidModel(RigidModelData rigid)
         {
@@ -24,7 +25,8 @@ namespace TT_Lab.Rendering.Objects
             for (var i = 0; i < model.Vertexes.Count; ++i)
             {
                 var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[i]);
-                if (matData.Shaders.Any(s => s.TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON))
+                var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
+                if (texturedShaderIndex != -1)
                 {
                     modelBuffers.Add(BufferGeneration.GetModelBuffer(model.Vertexes[i].Select(v => v.Position).ToList(), model.Faces[i],
                         model.Vertexes[i].Select((v) =>
@@ -34,8 +36,8 @@ namespace TT_Lab.Rendering.Objects
                         }).ToList(),
                         model.Vertexes[i].Select(v => v.UV).ToList(),
                         model.Vertexes[i].Select(v => v.Normal).ToList()));
-                    var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[0].TextureId);
-                    textureBuffers.Add(new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
+                    var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
+                    textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
                 }
                 else
                 {
@@ -58,7 +60,7 @@ namespace TT_Lab.Rendering.Objects
         {
             foreach (var tex in textureBuffers)
             {
-                tex.Delete();
+                tex.Value.Delete();
             }
             foreach (var model in modelBuffers)
             {
@@ -79,7 +81,7 @@ namespace TT_Lab.Rendering.Objects
             Bind();
             for (var i = 0; i < modelBuffers.Count; ++i)
             {
-                if (textureBuffers.Count != 0)
+                if (textureBuffers.ContainsKey(i))
                 {
                     Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, textureBuffers[i].Buffer, 0);
                 }
