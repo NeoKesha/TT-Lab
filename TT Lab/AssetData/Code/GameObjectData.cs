@@ -25,7 +25,7 @@ namespace TT_Lab.AssetData.Code
             SetTwinItem(gameObject);
         }
 
-        public GameObjectData(String path) => Load(path);
+        public GameObjectData(String path) => LoadInternal(path);
 
         [JsonProperty(Required = Required.Always)]
         public ITwinObject.ObjectType Type { get; set; }

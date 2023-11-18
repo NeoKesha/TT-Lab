@@ -83,13 +83,13 @@ namespace TT_Lab.AssetData.Instance
             base.Save(dataPath, settings);
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             settings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             };
-            base.Load(dataPath, settings);
+            base.LoadInternal(dataPath, settings);
         }
 
         public override void Import(LabURI package, String? variant)

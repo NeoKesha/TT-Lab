@@ -10,7 +10,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
     public class BaseTwinSection : BaseTwinItem, ITwinSection
     {
         protected List<ITwinItem> Items { get; }
-        protected UInt32 magicNumber;
         protected Dictionary<UInt32, Type> idToClassDictionary = new Dictionary<uint, Type>();
         protected Type defaultType = typeof(BaseTwinItem);
         protected bool skip;
@@ -72,7 +71,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             {
                 ComputeHash(reader.BaseStream);
                 Int64 baseOffset = reader.BaseStream.Position;
-                magicNumber = reader.ReadUInt32();
+                var magicNumber = reader.ReadUInt32();
+                if ((magicNumber >> 0x10) >= 2 || (magicNumber & 0xFFFF) != GetMagicNumber())
+                {
+                    throw new Exception("Invalid section!");
+                }
                 UInt32 itemsCount = reader.ReadUInt32();
                 UInt32 streamLength = reader.ReadUInt32();
                 Record[] records = new Record[itemsCount];
@@ -124,12 +127,17 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
 
         }
 
+        protected virtual UInt32 GetMagicNumber()
+        {
+            return 0x1;
+        }
+
         public override void Write(BinaryWriter writer)
         {
             if (!skip)
             {
                 PreprocessWrite();
-                writer.Write(magicNumber);
+                writer.Write(GetMagicNumber() | (0x1 << 0x10));
                 writer.Write(Items.Count);
                 writer.Write(GetContentLength());
                 Record record = new Record();

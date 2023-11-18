@@ -140,7 +140,7 @@ namespace TT_Lab.AssetData.Graphics
             context.ExportFile(scene, dataPath, "collada");
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using AssimpContext context = new();
             var scene = context.ImportFile(dataPath);

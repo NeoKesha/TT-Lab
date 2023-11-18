@@ -7,6 +7,8 @@ namespace TT_Lab.Assets.Global
 {
     public class PTC : SerializableAsset
     {
+        protected override String TwinDataExt => "ptc";
+
         public PTC() { }
 
         public PTC(LabURI package, String? variant, String name, ITwinPTC ptc) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TT_Lab.AssetData;
 using TT_Lab.ViewModels;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -13,6 +14,7 @@ namespace TT_Lab.Assets
 
         protected virtual String SavePath => Type.Name;
         protected virtual String DataExt => ".data";
+        protected virtual String TwinDataExt => "bin";
 
         protected AbstractAssetData assetData;
         protected AssetViewModel viewModel;
@@ -102,7 +104,23 @@ namespace TT_Lab.Assets
         }
         public virtual ITwinItem Export(Factory.ITwinItemFactory factory)
         {
-            return assetData.Export(factory);
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = GetData();
+            }
+            var item = assetData.Export(factory);
+            assetData.Dispose();
+            return item;
+        }
+
+        public void ExportToFile(Factory.ITwinItemFactory factory)
+        {
+            var item = Export(factory);
+            using var mcdonaldsFile = new FileStream($"{Name}.{TwinDataExt}", FileMode.Create, FileAccess.Write);
+            using var binaryWriter = new BinaryWriter(mcdonaldsFile);
+            item.Write(binaryWriter);
+            binaryWriter.Flush();
+            binaryWriter.Close();
         }
 
         public virtual AssetViewModel GetViewModel(AssetViewModel? parent = null)

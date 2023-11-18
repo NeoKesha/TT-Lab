@@ -33,7 +33,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             writer.Write(Graph.ToCharArray());
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using var fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read);
             using var reader = new StreamReader(fs);

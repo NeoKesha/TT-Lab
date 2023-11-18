@@ -9,5 +9,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Sections.Graphic
         {
             defaultType = typeof(XboxAnyModel);
         }
+
+        protected override System.UInt32 GetMagicNumber()
+        {
+            return 0x3;
+        }
     }
 }

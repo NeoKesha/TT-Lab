@@ -7,6 +7,7 @@ namespace TT_Lab.Assets.Global
     public class TextFile : SerializableAsset
     {
         protected override String DataExt => ".txt";
+        protected override String TwinDataExt => ".txt";
 
         public TextFile() { }
 

@@ -7,6 +7,8 @@ namespace TT_Lab.Assets.Global
 {
     public class PSM : SerializableAsset
     {
+        protected override String TwinDataExt => "psm";
+
         public PSM() { }
 
         public PSM(LabURI package, String? variant, String name, ITwinPSM psm) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)

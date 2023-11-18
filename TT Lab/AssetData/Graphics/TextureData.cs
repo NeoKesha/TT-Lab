@@ -39,7 +39,7 @@ namespace TT_Lab.AssetData.Graphics
             }
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             Bitmap = new Bitmap(Bitmap.FromFile(dataPath));
         }
@@ -128,6 +128,7 @@ namespace TT_Lab.AssetData.Graphics
                 }
             }
             texture.FromBitmap(tex, Bitmap.Width, fun, format);
+            Bitmap.UnlockBits(bits);
 
             return texture;
         }

@@ -32,7 +32,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             writer.Write(Code.ToCharArray());
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using FileStream fs = new(dataPath, FileMode.Open, FileAccess.Read);
             using StreamReader reader = new(fs);

@@ -7,6 +7,8 @@ namespace TT_Lab.Assets.Global
 {
     public class Font : SerializableAsset
     {
+        protected override String TwinDataExt => "psf";
+
         public Font() { }
 
         public Font(LabURI package, String? variant, String name, ITwinPSF psf) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)

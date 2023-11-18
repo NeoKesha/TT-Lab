@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using TT_Lab.AssetData;
+using TT_Lab.AssetData.Global;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
+using TT_Lab.Assets.Global;
 using TT_Lab.Command;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
@@ -137,7 +140,7 @@ namespace TT_Lab.Project
             NotifyChange("ProjectTree");
         }
 
-        private AssetViewModel FilterAsset(AssetViewModel asset, String filter)
+        private AssetViewModel? FilterAsset(AssetViewModel asset, String filter)
         {
             if (asset.GetInternalChildren() == null)
             {
@@ -339,7 +342,7 @@ namespace TT_Lab.Project
                         {
 #endif
                             Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
-                            OpenedProject = Project.Deserialize(prFile);
+                            Project.Deserialize(prFile);
                             Log.WriteLine($"Building project tree...");
                             BuildProjectTree();
                             WorkableProject = true;
@@ -367,14 +370,13 @@ namespace TT_Lab.Project
 
         public void BuildPs2Project()
         {
-            var pr = OpenedProject!;
-            Directory.SetCurrentDirectory(pr.ProjectPath);
-
-            if (!pr.GlobalPackagePS2.Enabled)
+            WorkableProject = false;
+            Task.Factory.StartNew(() =>
             {
-                Log.WriteLine("Error: Global PS2 package MUST be enabled to compile the project");
-                return;
-            }
+                var pr = OpenedProject!;
+                pr.PackAssetsPS2();
+                WorkableProject = true;
+            });
         }
 
         public void CloseProject()

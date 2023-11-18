@@ -192,5 +192,20 @@ namespace TT_Lab.Assets.Factory
         {
             throw new NotImplementedException();
         }
+
+        public ITwinSection GenerateDefault()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinSection GenerateRM2()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinSection GenerateSM2()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

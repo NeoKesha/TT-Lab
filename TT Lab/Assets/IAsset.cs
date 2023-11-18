@@ -210,5 +210,12 @@ namespace TT_Lab.Assets
         /// Finishes import on Project Creation stage
         /// </summary>
         void Import();
+
+        /// <summary>
+        /// Exports the item to Twinsanity format during Project Compilation stage
+        /// </summary>
+        Twinsanity.TwinsanityInterchange.Interfaces.ITwinItem Export(Factory.ITwinItemFactory factory);
+
+        void ExportToFile(Factory.ITwinItemFactory factory);
     }
 }

@@ -51,5 +51,8 @@ namespace TT_Lab.Assets.Factory
         ITwinPSF GenerateFont(List<ITwinPTC> pages, List<Vector4> unkVecs, Int32 unkInt);
         ITwinPTC GeneratePTC(UInt32 texID, UInt32 matID, ITwinTexture texture, ITwinMaterial material);
         ITwinPSM GeneratePSM(List<ITwinPTC> ptcs);
+        ITwinSection GenerateDefault();
+        ITwinSection GenerateRM2();
+        ITwinSection GenerateSM2();
     }
 }

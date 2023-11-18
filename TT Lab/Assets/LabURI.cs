@@ -12,6 +12,7 @@ namespace TT_Lab.Assets
         public static implicit operator String(LabURI labURI) => labURI._uri;
         public static explicit operator LabURI(string uri) => new(uri);
 
+        [JsonConstructor]
         public LabURI(string uri)
         {
             _uri = uri;
@@ -19,7 +20,7 @@ namespace TT_Lab.Assets
 
         public override string ToString() => _uri;
 
-        public static LabURI Empty { get; } = new LabURI("res://EMPTY");
+        public static LabURI Empty { get => new("res://EMPTY"); }
 
         public static Boolean operator ==(LabURI? labURI, LabURI? other)
         {

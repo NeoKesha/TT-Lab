@@ -30,11 +30,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 
         public void Read(BinaryReader reader, Int32 length)
         {
-            using (FileStream headerStream = new(headerPath, FileMode.Open, FileAccess.Read))
-            using (BinaryReader headerReader = new(headerStream))
-            {
-                Header.Read(headerReader, (Int32)headerStream.Length);
-            }
+            using FileStream headerStream = new(headerPath, FileMode.Open, FileAccess.Read);
+            using BinaryReader headerReader = new(headerStream);
+            Header.Read(headerReader, (Int32)headerStream.Length);
+
             foreach (var record in Header.Records)
             {
                 reader.BaseStream.Position = record.Offset;
@@ -45,11 +44,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 
         public void Write(BinaryWriter writer)
         {
-            using (FileStream stream = new FileStream(headerWritePath, FileMode.Create, FileAccess.Write))
-            using (BinaryWriter headerWriter = new BinaryWriter(stream))
-            {
-                Header.Write(headerWriter);
-            }
+            using FileStream stream = new(headerWritePath, FileMode.Create, FileAccess.Write);
+            using BinaryWriter headerWriter = new(stream);
+            Header.Write(headerWriter);
+
             foreach (var item in Items)
             {
                 writer.Write(item.Data);

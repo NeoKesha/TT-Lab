@@ -105,6 +105,16 @@ namespace TT_Lab.Project
         void UnpackAssetsXbox();
 
         /// <summary>
+        /// Packs all the assets back into Twinsanity's PS2 format
+        /// </summary>
+        void PackAssetsPS2();
+
+        /// <summary>
+        /// Packs all the assets back into Twinsanity's XBox format
+        /// </summary>
+        void PackAssetsXbox();
+
+        /// <summary>
         /// Dump on disk in JSON format
         /// </summary>
         void Serialize();
