@@ -12,7 +12,18 @@ namespace TT_Lab.Assets
         public Folder()
         {
             IsLoaded = true;
+            SkipExport = true;
             assetData = new FolderData();
+        }
+
+        public static Folder CreatePackageFolder(Package package, String Name, String? variant = null)
+        {
+            return new Folder((LabURI)$"res://{package.Name}", Name, variant, package);
+        }
+
+        public static Folder CreatePackageFolder(Package package, String Name, Folder parent, String? variant = null)
+        {
+            return new Folder((LabURI)$"res://{package.Name}", Name, variant, parent);
         }
 
         public static Folder CreatePS2Folder(String Name, String? variant = null)
@@ -55,6 +66,7 @@ namespace TT_Lab.Assets
         protected Folder(LabURI package, String? variant, UInt32 id, String Name) : base(id, Name, package, variant)
         {
             IsLoaded = true;
+            SkipExport = true;
             assetData = new FolderData();
         }
 

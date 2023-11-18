@@ -338,13 +338,13 @@ namespace TT_Lab.Project
                         try
                         {
 #endif
-                    Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
-                    OpenedProject = Project.Deserialize(prFile);
-                    Log.WriteLine($"Building project tree...");
-                    BuildProjectTree();
-                    WorkableProject = true;
-                    NotifyChange("ProjectOpened");
-                    NotifyChange("ProjectTitle");
+                            Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
+                            OpenedProject = Project.Deserialize(prFile);
+                            Log.WriteLine($"Building project tree...");
+                            BuildProjectTree();
+                            WorkableProject = true;
+                            NotifyChange("ProjectOpened");
+                            NotifyChange("ProjectTitle");
 #if !DEBUG
                         }
                         catch (Exception ex)
@@ -367,13 +367,20 @@ namespace TT_Lab.Project
 
         public void BuildPs2Project()
         {
+            var pr = OpenedProject!;
+            Directory.SetCurrentDirectory(pr.ProjectPath);
 
+            if (!pr.GlobalPackagePS2.Enabled)
+            {
+                Log.WriteLine("Error: Global PS2 package MUST be enabled to compile the project");
+                return;
+            }
         }
 
         public void CloseProject()
         {
             OpenedProject = null;
-            ProjectTree = null;
+            ProjectTree.Clear();
             Log.Clear();
             NotifyChange("ProjectOpened");
             NotifyChange("ProjectTitle");

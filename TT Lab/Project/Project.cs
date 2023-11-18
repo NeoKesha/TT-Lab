@@ -44,6 +44,10 @@ namespace TT_Lab.Project
 
         public Package BasePackage { get; private set; }
 
+        public Package GlobalPackagePS2 { get; private set; }
+
+        public Package GlobalPackageXbox { get; private set; }
+
         public Package Ps2Package { get; private set; }
 
         public Package XboxPackage { get; private set; }
@@ -187,10 +191,16 @@ namespace TT_Lab.Project
             AssetManager.AddAsset(BasePackage);
             Packages = new Folder(BasePackage.URI, "Packages", null, BasePackage);
             AssetManager.AddAsset(Packages);
+            GlobalPackagePS2 = new Package("Global PS2", Packages);
+            GlobalPackageXbox = new Package("Global XBOX", Packages);
             Ps2Package = new Package("PS2", Packages);
             XboxPackage = new Package("XBOX", Packages);
+            AssetManager.AddAsset(GlobalPackagePS2);
+            AssetManager.AddAsset(GlobalPackageXbox);
             AssetManager.AddAsset(Ps2Package);
             AssetManager.AddAsset(XboxPackage);
+            BasePackage.AddDependency(GlobalPackagePS2.URI);
+            BasePackage.AddDependency(GlobalPackageXbox.URI);
             BasePackage.AddDependency(Ps2Package.URI);
             BasePackage.AddDependency(XboxPackage.URI);
         }
@@ -205,6 +215,58 @@ namespace TT_Lab.Project
 
             // Load only unique resources
             Dictionary<Guid, IAsset> assets = new();
+
+            // Create base package folder for user created assets
+            var backPackage = BasePackage;
+            var assetsFolder = Folder.CreatePackageFolder(backPackage, "Assets");
+            var blendSkins = Folder.CreatePackageFolder(backPackage, "Blend Skins", assetsFolder);
+            var skins = Folder.CreatePackageFolder(backPackage, "Skins", assetsFolder);
+            var models = Folder.CreatePackageFolder(backPackage, "Models", assetsFolder);
+            var rigidModels = Folder.CreatePackageFolder(backPackage, "Rigid models", assetsFolder);
+            var meshes = Folder.CreatePackageFolder(backPackage, "Meshes", assetsFolder);
+            var materials = Folder.CreatePackageFolder(backPackage, "Materials", assetsFolder);
+            var lods = Folder.CreatePackageFolder(backPackage, "LODs", assetsFolder);
+            var skydomes = Folder.CreatePackageFolder(backPackage, "Skydomes", assetsFolder);
+            var textures = Folder.CreatePackageFolder(backPackage, "Textures", assetsFolder);
+            var animations = Folder.CreatePackageFolder(backPackage, "Animations", assetsFolder);
+            var codeModels = Folder.CreatePackageFolder(backPackage, "Code models", assetsFolder);
+            var gameObjects = Folder.CreatePackageFolder(backPackage, "Game objects", assetsFolder);
+            var scripts = Folder.CreatePackageFolder(backPackage, "Scripts", assetsFolder);
+            var ogis = Folder.CreatePackageFolder(backPackage, "OGIs/Skeletons", assetsFolder);
+            var sfx = Folder.CreatePackageFolder(backPackage, "Sound Effects", assetsFolder);
+            var en = Folder.CreatePackageFolder(backPackage, "English Sound Effects", assetsFolder);
+            var fr = Folder.CreatePackageFolder(backPackage, "French Sound Effects", assetsFolder);
+            var gr = Folder.CreatePackageFolder(backPackage, "German Sound Effects", assetsFolder);
+            var ita = Folder.CreatePackageFolder(backPackage, "Italian Sound Effects", assetsFolder);
+            var jpn = Folder.CreatePackageFolder(backPackage, "Japanese Sound Effects", assetsFolder);
+            var spa = Folder.CreatePackageFolder(backPackage, "Spanish Sound Effects", assetsFolder);
+            var chunks = Folder.CreatePackageFolder(backPackage, "Chunks", assetsFolder);
+
+            assets.Add(assetsFolder.UUID, assetsFolder);
+            assets.Add(blendSkins.UUID, blendSkins);
+            assets.Add(skins.UUID, skins);
+            assets.Add(models.UUID, models);
+            assets.Add(rigidModels.UUID, rigidModels);
+            assets.Add(meshes.UUID, meshes);
+            assets.Add(materials.UUID, materials);
+            assets.Add(lods.UUID, lods);
+            assets.Add(skydomes.UUID, skydomes);
+            assets.Add(textures.UUID, textures);
+            assets.Add(animations.UUID, animations);
+            assets.Add(codeModels.UUID, codeModels);
+            assets.Add(gameObjects.UUID, gameObjects);
+            assets.Add(scripts.UUID, scripts);
+            assets.Add(ogis.UUID, ogis);
+            assets.Add(sfx.UUID, sfx);
+            assets.Add(en.UUID, en);
+            assets.Add(fr.UUID, fr);
+            assets.Add(gr.UUID, gr);
+            assets.Add(ita.UUID, ita);
+            assets.Add(jpn.UUID, jpn);
+            assets.Add(spa.UUID, spa);
+            assets.Add(chunks.UUID, chunks);
+
+
             // Folder hierarchy when generating chunk folders
             Dictionary<LabURI, Folder> folders = new();
             // Graphics
@@ -306,57 +368,86 @@ namespace TT_Lab.Project
                 Log.WriteLine($"Unpacking {System.IO.Path.GetFileName(pathLow)}...");
                 using System.IO.MemoryStream ms = new(item.Data);
 
-                // Check for text files
-                if (isTxt)
+                if (isTxt || isFont || isPsm || isPtc || isFrontend)
                 {
-                    using System.IO.StreamReader textReader = new(ms);
-                    var text = textReader.ReadToEnd();
-                    var textFile = new TextFile(BasePackage.URI, null, System.IO.Path.GetFileName(pathLow)[..^4], text);
-                    assets.Add(textFile.UUID, textFile);
-                    continue;
+                    var resourceName = System.IO.Path.GetFileName(pathLow)[..^4];
+                    pathLow = pathLow[..^4];
+                    var otherFolders = pathLow.Split(System.IO.Path.DirectorySeparatorChar);
+                    Folder prevFolder = GlobalPackagePS2;
+                    // Create folder hierarchy for global resources
+                    for (var i = 1; i < otherFolders.Length - 1; ++i)
+                    {
+                        var existFolder = prevFolder.GetData().To<FolderData>().Children.FirstOrDefault(c => folders.ContainsKey(c) && folders[c].Name == otherFolders[i], LabURI.Empty);
+                        if (existFolder != LabURI.Empty)
+                        {
+                            prevFolder = folders[existFolder];
+                            continue;
+                        }
+                        Folder nextFolder = Folder.CreatePS2Folder(otherFolders[i], prevFolder);
+                        folders.Add(nextFolder.URI, nextFolder);
+                        assets.Add(nextFolder.UUID, nextFolder);
+                        prevFolder = nextFolder;
+                    }
+
+                    // Check for text files
+                    if (isTxt)
+                    {
+                        using System.IO.StreamReader textReader = new(ms);
+                        var text = textReader.ReadToEnd();
+                        var textFile = new TextFile(GlobalPackagePS2.URI, null, resourceName, text);
+                        assets.Add(textFile.UUID, textFile);
+                        prevFolder.AddChild(textFile);
+                        continue;
+                    }
+
+                    using System.IO.BinaryReader globalReader = new(ms);
+
+                    // Check for fonts
+                    if (isFont)
+                    {
+                        var font = new PS2PSF();
+                        font.Read(globalReader, (Int32)globalReader.BaseStream.Length);
+                        var fontAsset = new Font(GlobalPackagePS2.URI, pathLow, resourceName, font);
+                        assets.Add(fontAsset.UUID, fontAsset);
+                        prevFolder.AddChild(fontAsset);
+                        continue;
+                    }
+
+                    // Check for PSM
+                    if (isPsm)
+                    {
+                        var psm = new PS2PSM();
+                        psm.Read(globalReader, (Int32)globalReader.BaseStream.Length);
+                        var psmAsset = new PSM(GlobalPackagePS2.URI, pathLow, resourceName, psm);
+                        assets.Add(psmAsset.UUID, psmAsset);
+                        prevFolder.AddChild(psmAsset);
+                        continue;
+                    }
+
+                    // Check for PTC
+                    if (isPtc)
+                    {
+                        var ptc = new PS2PTC();
+                        ptc.Read(globalReader, (Int32)globalReader.BaseStream.Length);
+                        var ptcAsset = new PTC(GlobalPackagePS2.URI, pathLow, resourceName, ptc);
+                        assets.Add(ptcAsset.UUID, ptcAsset);
+                        prevFolder.AddChild(ptcAsset);
+                        continue;
+                    }
+
+                    // Check for frontend (UI sound effects library)
+                    if (isFrontend)
+                    {
+                        var frontend = new PS2Frontend();
+                        frontend.Read(globalReader, (Int32)globalReader.BaseStream.Length);
+                        var uiLibrary = new UiSoundLibrary(GlobalPackagePS2.URI, null, "UI Sound Library", frontend);
+                        assets.Add(uiLibrary.UUID, uiLibrary);
+                        prevFolder.AddChild(uiLibrary);
+                        continue;
+                    }
                 }
 
                 using System.IO.BinaryReader reader = new(ms);
-
-                // Check for fonts
-                if (isFont)
-                {
-                    var font = new PS2PSF();
-                    font.Read(reader, (Int32)reader.BaseStream.Length);
-                    var fontAsset = new Font(BasePackage.URI, pathLow, System.IO.Path.GetFileName(pathLow)[..^4], font);
-                    assets.Add(fontAsset.UUID, fontAsset);
-                    continue;
-                }
-
-                // Check for PSM
-                if (isPsm)
-                {
-                    var psm = new PS2PSM();
-                    psm.Read(reader, (Int32)reader.BaseStream.Length);
-                    var psmAsset = new PSM(BasePackage.URI, pathLow, System.IO.Path.GetFileName(pathLow)[..^4], psm);
-                    assets.Add(psmAsset.UUID, psmAsset);
-                    continue;
-                }
-
-                // Check for PTC
-                if (isPtc)
-                {
-                    var ptc = new PS2PTC();
-                    ptc.Read(reader, (Int32)reader.BaseStream.Length);
-                    var ptcAsset = new PTC(BasePackage.URI, pathLow, System.IO.Path.GetFileName(pathLow)[..^4], ptc);
-                    assets.Add(ptcAsset.UUID, ptcAsset);
-                    continue;
-                }
-
-                // Check for frontend (UI sound effects library)
-                if (isFrontend)
-                {
-                    var frontend = new PS2Frontend();
-                    frontend.Read(reader, (Int32)reader.BaseStream.Length);
-                    var uiLibrary = new UiSoundLibrary(BasePackage.URI, null, "UI Sound Library", frontend);
-                    assets.Add(uiLibrary.UUID, uiLibrary);
-                    continue;
-                }
 
                 // Check for chunk file
                 if (isRm2 || isSm2)
@@ -462,26 +553,34 @@ namespace TT_Lab.Project
                     var otherFolders = pathLow.Split(System.IO.Path.DirectorySeparatorChar);
                     Folder prevFolder = chunksFolder;
                     // Create chunk folder hierarchy
-                    for (var i = 1; i < otherFolders.Length; ++i)
+                    if (!isDefault)
                     {
-                        var existFolder = prevFolder.GetData().To<FolderData>().Children.FirstOrDefault(c => folders.ContainsKey(c) && folders[c].Name == otherFolders[i], LabURI.Empty);
-                        if (existFolder != LabURI.Empty)
+                        for (var i = 1; i < otherFolders.Length; ++i)
                         {
-                            prevFolder = folders[existFolder];
-                            continue;
+                            var existFolder = prevFolder.GetData().To<FolderData>().Children.FirstOrDefault(c => folders.ContainsKey(c) && folders[c].Name == otherFolders[i], LabURI.Empty);
+                            if (existFolder != LabURI.Empty)
+                            {
+                                prevFolder = folders[existFolder];
+                                continue;
+                            }
+                            Folder nextFolder;
+                            if (i != otherFolders.Length - 1)
+                            {
+                                nextFolder = Folder.CreatePS2Folder(otherFolders[i], prevFolder);
+                            }
+                            else
+                            {
+                                nextFolder = new ChunkFolder(Ps2Package.URI, otherFolders[i], prevFolder);
+                            }
+                            folders.Add(nextFolder.URI, nextFolder);
+                            assets.Add(nextFolder.UUID, nextFolder);
+                            prevFolder = nextFolder;
                         }
-                        Folder nextFolder;
-                        if (i != otherFolders.Length - 1)
-                        {
-                            nextFolder = Folder.CreatePS2Folder(otherFolders[i], prevFolder);
-                        }
-                        else
-                        {
-                            nextFolder = new ChunkFolder(Ps2Package.URI, otherFolders[i], prevFolder);
-                        }
-                        folders.Add(nextFolder.URI, nextFolder);
-                        assets.Add(nextFolder.UUID, nextFolder);
-                        prevFolder = nextFolder;
+                    }
+                    else
+                    {
+                        prevFolder = new ChunkFolder(GlobalPackagePS2.URI, "Default", GlobalPackagePS2);
+                        assets.Add(prevFolder.UUID, prevFolder);
                     }
                     var chunkFolder = prevFolder;
 
@@ -495,11 +594,7 @@ namespace TT_Lab.Project
                             var colData = new Collision(Ps2Package.URI, collisionData.GetID(), collisionData.GetName(), pathLow, collisionData);
                             assets.Add(colData.UUID, colData);
                             chunkFolder.AddChild(colData);
-                        }
 
-                        // Extract particle data
-                        if (!isDefault)
-                        {
                             var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
                             var partData = new Particles(Ps2Package.URI, particleData.GetID(), particleData.GetName(), pathLow, particleData);
                             assets.Add(partData.UUID, partData);
@@ -507,7 +602,7 @@ namespace TT_Lab.Project
                         else
                         {
                             var particleData = chunk.GetItem<PS2DefaultParticleData>(Constants.LEVEL_PARTICLES_ITEM);
-                            var partData = new DefaultParticles(Ps2Package.URI, particleData.GetID(), particleData.GetName(), pathLow, particleData);
+                            var partData = new DefaultParticles(GlobalPackagePS2.URI, particleData.GetID(), particleData.GetName(), pathLow, particleData);
                             assets.Add(partData.UUID, partData);
                         }
                         //chunkFolder.AddChild(partData);
@@ -632,7 +727,8 @@ namespace TT_Lab.Project
                     //Log.WriteLine($"Found duplicate Twinsanity ID for {typeof(T).Name} {asset.GetName()} in chunk {chunkName}");
                     // TODO: Add dupes addition
                 }
-                var metaAsset = (T?)Activator.CreateInstance(typeof(T), Ps2Package.URI, needVariant ? chunkName : null, asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
+                var package = chunkName.Contains("default") ? GlobalPackagePS2 : Ps2Package;
+                var metaAsset = (T?)Activator.CreateInstance(typeof(T), package.URI, needVariant ? chunkName : null, asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                 folder.AddChild(metaAsset);
                 assets.Add(metaAsset.UUID, metaAsset);
             }
@@ -656,7 +752,8 @@ namespace TT_Lab.Project
                 for (var i = 0; i < items.GetItemsAmount(); ++i)
                 {
                     var asset = items.GetItem<I>(items.GetItem(i).GetID());
-                    var metaAsset = (T?)Activator.CreateInstance(typeof(T), Ps2Package.URI, asset.GetID(), asset.GetName(), chunkName + layId.ToString(), layId, asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
+                    var package = chunkName.Contains("default") ? GlobalPackagePS2 : Ps2Package;
+                    var metaAsset = (T?)Activator.CreateInstance(typeof(T), package.URI, asset.GetID(), asset.GetName(), chunkName + layId.ToString(), layId, asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                     folder.AddChild(metaAsset);
                     assets.Add(metaAsset.UUID, metaAsset);
                 }
