@@ -81,6 +81,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 newBitfield |= 0x200;
             }
             newBitfield |= AdditionalFlags & AdditionalFlagsMask;
+            Bitfield = newBitfield;
             writer.Write(newBitfield);
             if (HasStateJump)
             {
@@ -127,6 +128,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 if (line.StartsWith("next_state "))
                 {
                     JumpToState = int.Parse(StringUtils.GetStringAfter(line, "="));
+                    HasStateJump = true;
                 }
                 else if (line.StartsWith("additional_flags"))
                 {

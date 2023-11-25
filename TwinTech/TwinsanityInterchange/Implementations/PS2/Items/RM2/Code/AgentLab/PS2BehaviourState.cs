@@ -86,6 +86,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 newBitfield |= 0x8000;
             }
             newBitfield |= (UInt16)(AdditionalFlags & AdditionalFlagsMask);
+            Bitfield = newBitfield;
             writer.Write(newBitfield);
             writer.Write(BehaviourIndexOrSlot);
             ControlPacket?.Write(writer);
@@ -105,6 +106,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             if (AdditionalFlags != 0)
             {
                 StringUtils.WriteLineTabulated(writer, $"additional_flags = 0x{Convert.ToString(AdditionalFlags, 16)}", tabs + 1);
+            }
+
+            if (SkipsFirstStateBody)
+            {
+                StringUtils.WriteLineTabulated(writer, "skip_first_state", tabs + 1);
             }
             ControlPacket?.WriteText(writer, tabs + 1);
             foreach (var body in Bodies)
@@ -154,6 +160,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 if (line.StartsWith("additional_flags"))
                 {
                     AdditionalFlags = UInt16.Parse(StringUtils.GetStringAfter(StringUtils.GetStringAfter(line, "=").Trim(), "0x"), System.Globalization.NumberStyles.HexNumber);
+                }
+                if (line.StartsWith("skip_first_state"))
+                {
+                    SkipsFirstStateBody = true;
                 }
             }
         }
