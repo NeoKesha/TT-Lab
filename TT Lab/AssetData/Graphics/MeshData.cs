@@ -30,6 +30,7 @@ namespace TT_Lab.AssetData.Graphics
             }
             writer.Write(assetManager.GetAsset(Model).ID);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateMesh(ms);
         }

@@ -123,6 +123,7 @@ namespace TT_Lab.AssetData.Instance
             writer.Write(TriggerScript3 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript3).ID);
             writer.Write(TriggerScript4 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript4).ID);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateTrigger(ms);
         }

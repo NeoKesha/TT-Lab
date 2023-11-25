@@ -93,6 +93,7 @@ namespace TT_Lab.AssetData.Graphics
                     break;
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateLOD(ms);
         }

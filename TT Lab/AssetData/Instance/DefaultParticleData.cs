@@ -54,6 +54,7 @@ namespace TT_Lab.AssetData.Instance
             }
 
             WriteExport(writer);
+            writer.Flush();
             ms.Position -= 4;
 
             writer.Write(assetManager.GetAsset(DecalTextureID).ID);
@@ -70,6 +71,7 @@ namespace TT_Lab.AssetData.Instance
             {
                 writer.Write(blob);
             }
+            writer.Flush();
 
             ms.Position = 0;
             return factory.GenerateDefaultParticle(ms);

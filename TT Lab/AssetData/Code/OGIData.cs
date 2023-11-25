@@ -130,6 +130,7 @@ namespace TT_Lab.AssetData.Code
             writer.Write(Skin == LabURI.Empty ? 0U : assetManager.GetAsset(Skin).ID);
             writer.Write(BlendSkin == LabURI.Empty ? 0U : assetManager.GetAsset(BlendSkin).ID);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateOGI(ms);
         }

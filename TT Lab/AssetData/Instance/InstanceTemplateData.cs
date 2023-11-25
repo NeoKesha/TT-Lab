@@ -120,6 +120,7 @@ namespace TT_Lab.AssetData.Instance
                 writer.Write(@int);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateTemplate(ms);
         }

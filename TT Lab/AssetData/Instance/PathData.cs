@@ -58,6 +58,7 @@ namespace TT_Lab.AssetData.Instance
                 parameter.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GeneratePath(ms);
         }

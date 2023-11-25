@@ -61,6 +61,7 @@ namespace TT_Lab.AssetData.Instance
                 }
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateLink(ms);
         }

@@ -55,6 +55,7 @@ namespace TT_Lab.AssetData.Instance
                 model.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateDynamicScenery(ms);
         }

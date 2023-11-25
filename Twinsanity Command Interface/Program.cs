@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
 
@@ -106,7 +107,12 @@ namespace Twinsanity_Command_Interface
 
         static void Main(string[] args)
         {
-            if (args.Length != 2)
+            using var defaultFile = new FileStream(args[0], FileMode.Open, FileAccess.Read);
+            using var reader = new BinaryReader(defaultFile);
+            var defaultChunk = new PS2Default();
+            defaultChunk.Read(reader, (Int32)reader.BaseStream.Length);
+            Console.WriteLine("Read the default chunk!");
+            /*if (args.Length != 2)
             {
                 Console.WriteLine("Must provide a path to the model in the format of FBX and model type (0 for static models, 1 for rigged models). Other formats like OBJ and GLTF aren't tested but could work.");
                 Console.WriteLine("Usage: TwinsanityCommandInterface.exe \"C:/Models/TestModel.fbx\"");
@@ -323,7 +329,7 @@ namespace Twinsanity_Command_Interface
                 writer.Flush();
                 ps2Skin.Flush();
                 writer.Close();
-            }
+            }*/
         }
     }
 }

@@ -104,6 +104,7 @@ namespace TT_Lab.AssetData.Instance
                 vec.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateCollision(ms);
         }

@@ -299,6 +299,7 @@ namespace TT_Lab.AssetData.Code
 
             BehaviourPack.Write(writer);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateObject(ms);
         }

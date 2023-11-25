@@ -6,6 +6,7 @@ using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
@@ -124,7 +125,7 @@ namespace TT_Lab.AssetData.Instance
             writer.Write(LandOnParticleSystemId);
             writer.Write(LandSoundId2 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(LandSoundId2).ID);
             writer.Write(UnkSoundId == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(UnkSoundId).ID);
-            writer.Write((UInt16)0); // Unused ID
+            writer.Write((UInt16)0xFFFF); // Unused ID
             foreach (var param in PhysicsParameters)
             {
                 writer.Write(param);
@@ -135,8 +136,42 @@ namespace TT_Lab.AssetData.Instance
                 vec.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateSurface(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var soundSection = section.GetRoot().GetItem<ITwinSection>(Constants.LEVEL_CODE_SECTION).GetItem<ITwinSection>(Constants.CODE_SOUND_EFFECTS_SECTION);
+
+            if (StepSoundId1 != LabURI.Empty)
+            {
+                assetManager.GetAsset(StepSoundId1).ResolveChunkResources(factory, soundSection);
+            }
+
+            if (StepSoundId2 != LabURI.Empty)
+            {
+                assetManager.GetAsset(StepSoundId2).ResolveChunkResources(factory, soundSection);
+            }
+
+            if (LandSoundId1 != LabURI.Empty)
+            {
+                assetManager.GetAsset(LandSoundId1).ResolveChunkResources(factory, soundSection);
+            }
+
+            if (LandSoundId2 != LabURI.Empty)
+            {
+                assetManager.GetAsset(LandSoundId2).ResolveChunkResources(factory, soundSection);
+            }
+
+            if (UnkSoundId != LabURI.Empty)
+            {
+                assetManager.GetAsset(UnkSoundId).ResolveChunkResources(factory, soundSection);
+            }
+
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

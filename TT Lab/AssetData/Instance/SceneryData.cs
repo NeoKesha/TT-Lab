@@ -167,6 +167,7 @@ namespace TT_Lab.AssetData.Instance
                 scenery.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateScenery(ms);
         }

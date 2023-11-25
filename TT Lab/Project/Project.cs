@@ -848,6 +848,8 @@ namespace TT_Lab.Project
             @default.Write(defaultWriter);
             defaultWriter.Flush();
             defaultWriter.Close();
+            Log.WriteLine("Created test Default.rm2 file");
+            return;
 
             Log.WriteLine("Writing Extras...");
             System.IO.Directory.SetCurrentDirectory("Extras");

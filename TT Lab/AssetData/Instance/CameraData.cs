@@ -136,8 +136,11 @@ namespace TT_Lab.AssetData.Instance
             using var writer = new BinaryWriter(ms);
             var trigger = Trigger.Export(factory);
             trigger.Write(writer);
+
             // Reposition to where TriggerScripts start since they do not exist for the camera
+            writer.Flush();
             ms.Position -= 2 * 4;
+
             writer.Write(CameraHeader);
             writer.Write(UnkShort);
             writer.Write(UnkFloat1);
@@ -165,6 +168,7 @@ namespace TT_Lab.AssetData.Instance
             MainCamera1?.Write(writer);
             MainCamera2?.Write(writer);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateCamera(ms);
         }

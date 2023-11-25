@@ -171,6 +171,7 @@ namespace TT_Lab.AssetData.Instance
                 writer.Write(param);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateInstance(ms);
         }

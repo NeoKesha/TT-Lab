@@ -66,6 +66,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
                 writer.Write((UInt32)assigner.AssignPreference);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateBehaviourStarter(ms);
         }

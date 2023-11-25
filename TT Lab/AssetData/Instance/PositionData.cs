@@ -42,6 +42,7 @@ namespace TT_Lab.AssetData.Instance
             using var writer = new BinaryWriter(ms);
             Coords.Write(writer);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GeneratePosition(ms);
         }

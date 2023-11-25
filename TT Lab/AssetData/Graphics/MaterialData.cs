@@ -66,6 +66,7 @@ namespace TT_Lab.AssetData.Graphics
                 shader.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateMaterial(ms);
         }

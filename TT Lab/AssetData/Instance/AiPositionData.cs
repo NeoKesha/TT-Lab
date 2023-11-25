@@ -45,6 +45,7 @@ namespace TT_Lab.AssetData.Instance
             Coords.Write(writer);
             writer.Write(Arg);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateAIPosition(ms);
         }
