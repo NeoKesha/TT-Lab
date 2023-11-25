@@ -7,6 +7,7 @@ using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -42,17 +43,21 @@ namespace TT_Lab.AssetData.Graphics
                 RootNode = new Node("Root")
             };
 
+            Node blendSkinNode = new("BlendSkin");
+            scene.RootNode.Children.Add(blendSkinNode);
+
             var materialIndex = 0;
             var meshIndex = 0;
             var materials = new List<Material>();
             var metadata = new Metadata();
+            var boneNodes = new Dictionary<String, Node>();
             foreach (var blend in Blends)
             {
                 foreach (var subSkin in blend.Models)
                 {
                     Mesh mesh = new(PrimitiveType.Triangle)
                     {
-                        Name = $"Mesh_{meshIndex}"
+                        Name = $"SubSkin_{meshIndex}"
                     };
 
                     // Conversion to jointIndex -> vertex index + weight
@@ -108,6 +113,16 @@ namespace TT_Lab.AssetData.Graphics
                                 Weight = boneInfo.Item2,
                             });
                         }
+                        if (boneNodes.ContainsKey(bone.Name))
+                        {
+                            Node boneNode = new()
+                            {
+                                Name = bone.Name,
+                                Transform = Matrix4x4.Identity
+                            };
+                            boneNodes.Add(bone.Name, boneNode);
+                            blendSkinNode.Children.Add(boneNode);
+                        }
                         mesh.Bones.Add(bone);
                     }
 
@@ -116,38 +131,47 @@ namespace TT_Lab.AssetData.Graphics
                         mesh.Faces.Add(new Face(new int[] { face.Indexes![0], face.Indexes[1], face.Indexes[2] }));
                     }
 
+                    Node meshNode = new(mesh.Name)
+                    {
+                        Transform = Matrix4x4.Identity
+                    };
+                    meshNode.MeshIndices.Add(meshIndex);
+                    blendSkinNode.Children.Add(meshNode);
+
                     var blendFaceIndex = 0;
                     foreach (var blendFace in subSkin.BlendFaces)
                     {
                         Animation animation = new()
                         {
-                            DurationInTicks = 1,
+                            DurationInTicks = blendFace.BlendShapes.Count,
                             TicksPerSecond = 1,
                             Name = $"BlendShape_{materialIndex}_{meshIndex}_{blendFaceIndex++}"
                         };
                         animation.NodeAnimationChannels.Add(new NodeAnimationChannel
                         {
-                            NodeName = "Root"
+                            NodeName = meshNode.Name
                         });
 
+                        var vecIndex = 0;
                         foreach (var vec in blendFace.BlendShapes)
                         {
                             animation.NodeAnimationChannels[0].PositionKeys.Add(new VectorKey
                             {
-                                Time = 0,
+                                Time = vecIndex,
                                 Value = new Vector3D(vec.Offset.X, vec.Offset.Y, vec.Offset.Z)
                             });
+                            animation.NodeAnimationChannels[0].ScalingKeys.Add(new VectorKey
+                            {
+                                Time = vecIndex,
+                                Value = new Vector3D(1.0f)
+                            });
+                            animation.NodeAnimationChannels[0].RotationKeys.Add(new QuaternionKey
+                            {
+                                Time = vecIndex,
+                                Value = new Quaternion(0, 0, 0)
+                            });
+                            vecIndex++;
                         }
-                        animation.NodeAnimationChannels[0].ScalingKeys.Add(new VectorKey
-                        {
-                            Time = 0,
-                            Value = new Vector3D(1.0f)
-                        });
-                        animation.NodeAnimationChannels[0].RotationKeys.Add(new QuaternionKey
-                        {
-                            Time = 0,
-                            Value = new Quaternion(0, 0, 0)
-                        });
 
                         scene.Animations.Add(animation);
                     }
@@ -155,7 +179,6 @@ namespace TT_Lab.AssetData.Graphics
                     metadata.BlendShapes.Add(subSkin.BlendShape);
 
                     scene.Meshes.Add(mesh);
-                    scene.RootNode.MeshIndices.Add(meshIndex++);
                     mesh.MaterialIndex = materialIndex;
                 }
 
@@ -215,7 +238,7 @@ namespace TT_Lab.AssetData.Graphics
             }
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinBlendSkin blendSkin = GetTwinItem<ITwinBlendSkin>();
             BlendsAmount = blendSkin.BlendsAmount;
@@ -228,6 +251,18 @@ namespace TT_Lab.AssetData.Graphics
         public override ITwinItem Export(ITwinItemFactory factory)
         {
             return factory.GenerateBlendSkin(BlendsAmount, Blends);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetParent();
+            var materialsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MATERIALS_SECTION);
+            foreach (var blend in Blends)
+            {
+                assetManager.GetAsset(blend.Material).ResolveChunkResources(factory, materialsSection);
+            }
+            return base.ResolveChunkResouces(factory, section, id);
         }
 
         [JsonObject(MemberSerialization = MemberSerialization.OptIn)]

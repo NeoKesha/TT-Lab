@@ -161,6 +161,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public void Write(BinaryWriter writer)
         {
+            VertexesAmount = Vertexes.Count;
+            writer.Write(vifCode.Length);
+            writer.Write(VertexesAmount);
+            writer.Write(vifCode);
+            BlendShape.Write(writer);
+            foreach (var face in Faces)
+            {
+                face.Write(writer);
+            }
+        }
+
+        public void Compile()
+        {
             var data = new List<List<Vector4>>()
             {
                 Vertexes,
@@ -170,14 +183,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             };
             var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Skin, data, null);
             vifCode = compiler.Compile();
-            VertexesAmount = Vertexes.Count;
-            writer.Write(vifCode.Length);
-            writer.Write(VertexesAmount);
-            writer.Write(vifCode);
-            BlendShape.Write(writer);
             foreach (var face in Faces)
             {
-                face.Write(writer);
+                face.Compile();
             }
         }
     }

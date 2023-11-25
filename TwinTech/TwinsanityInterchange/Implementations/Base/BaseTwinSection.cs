@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
@@ -17,6 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         public BaseTwinSection()
         {
             Items = new List<ITwinItem>();
+            extraData = Array.Empty<Byte>();
             skip = false;
         }
         public void AddItem(ITwinItem item)
@@ -35,9 +37,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return Items[index];
         }
 
-        public T GetItem<T>(uint id) where T : ITwinItem
+        public T GetItem<T>(UInt32 id) where T : ITwinItem
         {
             return (T)Items.Where(item => item.GetID() == id).FirstOrDefault();
+        }
+
+        public bool ContainsItem(UInt32 id)
+        {
+            return (from item in Items
+                    where item.GetID() == id
+                    select item).Any();
         }
 
         public override int GetLength()

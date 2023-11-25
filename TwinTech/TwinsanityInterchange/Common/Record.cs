@@ -15,6 +15,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return Constants.SIZE_RECORD;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             Offset = reader.ReadUInt32();

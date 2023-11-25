@@ -8,6 +8,7 @@ namespace TT_Lab.Assets.Global
     public class PTC : SerializableAsset
     {
         protected override String TwinDataExt => "ptc";
+        public override UInt32 Section => throw new NotImplementedException();
 
         public PTC() { }
 

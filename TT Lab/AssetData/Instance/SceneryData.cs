@@ -8,6 +8,7 @@ using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -92,7 +93,7 @@ namespace TT_Lab.AssetData.Instance
             base.LoadInternal(dataPath, settings);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinScenery scenery = GetTwinItem<ITwinScenery>();
             ChunkPath = scenery.Name[..];
@@ -100,7 +101,7 @@ namespace TT_Lab.AssetData.Instance
             UnkByte = scenery.UnkByte;
             if (scenery.SkydomeID != 0)
             {
-                SkydomeID = AssetManager.Get().GetUri(package, typeof(Skydome).Name, null, scenery.SkydomeID);
+                SkydomeID = AssetManager.Get().GetUri(package, typeof(Skydome).Name, variant, scenery.SkydomeID);
             }
             HasLighting = scenery.HasLighting;
             if (HasLighting)
@@ -168,6 +169,24 @@ namespace TT_Lab.AssetData.Instance
 
             ms.Position = 0;
             return factory.GenerateScenery(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetItem<ITwinSection>(Constants.SCENERY_GRAPHICS_SECTION);
+            var skydomeSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_SKYDOMES_SECTION);
+            if (SkydomeID != LabURI.Empty)
+            {
+                assetManager.GetAsset(SkydomeID).ResolveChunkResources(factory, skydomeSection);
+            }
+
+            foreach (var scenery in Sceneries)
+            {
+                scenery.ResolveChunkResouces(factory, graphicsSection);
+            }
+
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

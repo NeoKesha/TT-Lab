@@ -4,6 +4,7 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
@@ -11,6 +12,7 @@ namespace TT_Lab.Assets.Graphics
     public class Texture : SerializableAsset
     {
         protected override String DataExt => ".png";
+        public override UInt32 Section => Constants.GRAPHICS_TEXTURES_SECTION;
 
         public Texture(LabURI package, String? variant, UInt32 id, String name, ITwinTexture texture) : base(id, name, package, variant)
         {

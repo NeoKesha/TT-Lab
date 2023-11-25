@@ -28,10 +28,6 @@ namespace TT_Lab.AssetData
         {
             using System.IO.FileStream fs = new(dataPath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             using System.IO.StreamReader reader = new(fs);
-            if (dataPath.Contains("d7eb31b3-b93b-4d34-a122-107209036d94"))
-            {
-                Console.WriteLine("DUMBASS");
-            }
             JsonConvert.PopulateObject(value: reader.ReadToEnd(), target: this, settings);
             disposedValue = false;
         }
@@ -77,9 +73,21 @@ namespace TT_Lab.AssetData
             return (T)this;
         }
 
-        public abstract void Import(LabURI package, String? variant);
+        public abstract void Import(LabURI package, String? variant, Int32? layoutId);
 
         public abstract ITwinItem Export(ITwinItemFactory factory);
+
+        public virtual ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            if (section.ContainsItem(id))
+            {
+                return null;
+            }
+
+            var item = Export(factory);
+            section.AddItem(item);
+            return item;
+        }
 
         public void NullifyReference()
         {

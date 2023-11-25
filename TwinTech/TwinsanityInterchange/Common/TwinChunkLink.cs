@@ -67,6 +67,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 + ChunkLinksCollisionData.Sum(l => l.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             type = reader.ReadUInt32();

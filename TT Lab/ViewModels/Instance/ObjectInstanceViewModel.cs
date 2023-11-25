@@ -14,9 +14,9 @@ namespace TT_Lab.ViewModels.Instance
         private Enums.Layouts layoutId;
         private Vector4ViewModel position;
         private Vector3ViewModel rotation;
-        private ObservableCollection<UInt16> instances;
-        private ObservableCollection<UInt16> paths;
-        private ObservableCollection<UInt16> positions;
+        private ObservableCollection<LabURI> instances;
+        private ObservableCollection<LabURI> paths;
+        private ObservableCollection<LabURI> positions;
         private Boolean useOnSpawnScript;
         private LabURI objectId;
         private Int16 refListIndex;
@@ -39,19 +39,19 @@ namespace TT_Lab.ViewModels.Instance
             var rotZ = data.RotationZ.GetRotation();
             rotation = new Vector3ViewModel(rotX, rotY, rotZ);
             rotation.PropertyChanged += Vector_PropertyChanged;
-            instances = new ObservableCollection<UInt16>();
+            instances = new ObservableCollection<LabURI>();
             foreach (var i in data.Instances)
             {
                 instances.Add(i);
             }
             Instances.CollectionChanged += Instances_CollectionChanged;
-            paths = new ObservableCollection<UInt16>();
+            paths = new ObservableCollection<LabURI>();
             foreach (var p in data.Paths)
             {
                 paths.Add(p);
             }
             Paths.CollectionChanged += Paths_CollectionChanged;
-            positions = new ObservableCollection<UInt16>();
+            positions = new ObservableCollection<LabURI>();
             foreach (var p in data.Positions)
             {
                 positions.Add(p);
@@ -294,21 +294,21 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public ObservableCollection<UInt16> Instances
+        public ObservableCollection<LabURI> Instances
         {
             get
             {
                 return instances;
             }
         }
-        public ObservableCollection<UInt16> Positions
+        public ObservableCollection<LabURI> Positions
         {
             get
             {
                 return positions;
             }
         }
-        public ObservableCollection<UInt16> Paths
+        public ObservableCollection<LabURI> Paths
         {
             get
             {

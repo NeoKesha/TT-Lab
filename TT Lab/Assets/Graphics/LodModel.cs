@@ -1,12 +1,14 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class LodModel : SerializableAsset
     {
+        public override UInt32 Section => Constants.GRAPHICS_LODS_SECTION;
 
         public LodModel(LabURI package, String? variant, UInt32 id, String Name, ITwinLOD lod) : base(id, Name, package, variant)
         {

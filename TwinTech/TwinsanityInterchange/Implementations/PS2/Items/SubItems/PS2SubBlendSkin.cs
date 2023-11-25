@@ -46,5 +46,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 model.Write(writer);
             }
         }
+
+        public void Compile()
+        {
+            foreach (var model in Models)
+            {
+                model.Compile();
+            }
+        }
     }
 }

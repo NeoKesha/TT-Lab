@@ -7,6 +7,7 @@ using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -223,7 +224,7 @@ namespace TT_Lab.AssetData.Graphics
             return GetTwinItem<ITwinSkin>();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinSkin skin = GetTwinItem<ITwinSkin>();
             SubSkins = new List<SubSkinData>();
@@ -236,6 +237,18 @@ namespace TT_Lab.AssetData.Graphics
         public override ITwinItem Export(ITwinItemFactory factory)
         {
             return factory.GenerateSkin(SubSkins);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetRoot().GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION);
+            var materialsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MATERIALS_SECTION);
+            foreach (var subSkin in SubSkins)
+            {
+                assetManager.GetAsset(subSkin.Material).ResolveChunkResources(factory, materialsSection);
+            }
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

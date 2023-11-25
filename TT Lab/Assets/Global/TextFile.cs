@@ -8,6 +8,7 @@ namespace TT_Lab.Assets.Global
     {
         protected override String DataExt => ".txt";
         protected override String TwinDataExt => ".txt";
+        public override UInt32 Section => throw new NotImplementedException();
 
         public TextFile() { }
 

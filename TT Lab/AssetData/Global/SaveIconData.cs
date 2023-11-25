@@ -32,7 +32,7 @@ namespace TT_Lab.AssetData.Global
             throw new NotImplementedException();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             return;
         }

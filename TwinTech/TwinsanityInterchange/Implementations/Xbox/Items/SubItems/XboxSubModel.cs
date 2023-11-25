@@ -144,5 +144,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
 
             return (Int32)(value * negFactor);
         }
+
+        public void Compile()
+        {
+            return;
+        }
     }
 }

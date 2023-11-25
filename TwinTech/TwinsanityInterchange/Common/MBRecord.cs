@@ -32,6 +32,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             };
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             switch (RecordHeader.Type)

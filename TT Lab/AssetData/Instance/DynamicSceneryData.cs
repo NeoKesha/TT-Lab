@@ -5,6 +5,7 @@ using System.IO;
 using TT_Lab.AssetData.Instance.DynamicScenery;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -32,7 +33,7 @@ namespace TT_Lab.AssetData.Instance
             DynamicModels.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinDynamicScenery dynamicScenery = GetTwinItem<ITwinDynamicScenery>();
             UnkInt = dynamicScenery.UnkInt;
@@ -56,6 +57,20 @@ namespace TT_Lab.AssetData.Instance
 
             ms.Position = 0;
             return factory.GenerateDynamicScenery(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetItem<ITwinSection>(Constants.SCENERY_GRAPHICS_SECTION);
+            var meshSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MESHES_SECTION);
+
+            foreach (var model in DynamicModels)
+            {
+                assetManager.GetAsset(model.Mesh).ResolveChunkResources(factory, meshSection);
+            }
+
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
 
         public SubSkinData(LabURI package, String? variant, ITwinSubSkin subSkin)
         {
-            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, null, subSkin.Material);
+            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, variant, subSkin.Material);
             if (Material == LabURI.Empty)
             {
                 var allMaterials = AssetManager.Get().GetAssets().FindAll(a => a is Material).ConvertAll(a => a.URI);

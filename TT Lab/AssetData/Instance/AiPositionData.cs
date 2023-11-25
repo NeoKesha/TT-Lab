@@ -31,7 +31,7 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinAIPosition aiPosition = GetTwinItem<ITwinAIPosition>();
             Coords = CloneUtils.Clone(aiPosition.Position);

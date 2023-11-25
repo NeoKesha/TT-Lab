@@ -9,7 +9,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
         /// <summary>
         /// Surface flags
         /// </summary>
-        UInt32 Flags { get; set; }
+        SurfaceFlags Flags { get; set; }
         /// <summary>
         /// Surface's ID
         /// </summary>
@@ -23,13 +23,13 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
         /// </summary>
         UInt16 StepSoundId2 { get; set; }
         /// <summary>
-        /// Unknown ID
+        /// Particle system ID to use when walking on/in
         /// </summary>
-        UInt16 UnkId1 { get; set; }
+        UInt16 WalkOnParticleSystemId { get; set; }
         /// <summary>
-        /// Unknown ID
+        /// Particle system ID to use when walking on/in (2nd variant?)
         /// </summary>
-        UInt16 UnkId2 { get; set; }
+        UInt16 WalkOnParticleSystemId2 { get; set; }
         /// <summary>
         /// Sound/SFX to play when landed on
         /// </summary>
@@ -39,9 +39,9 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
         /// </summary>
         UInt16 UnkId3 { get; set; }
         /// <summary>
-        /// Unknown ID
+        /// Particle system ID to use when landed on/in
         /// </summary>
-        UInt16 UnkId4 { get; set; }
+        UInt16 LandOnParticleSystemId { get; set; }
         /// <summary>
         /// Sound/SFX to play when landed on (2nd variant?)
         /// </summary>
@@ -51,13 +51,9 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
         /// </summary>
         UInt16 UnkSoundId { get; set; }
         /// <summary>
-        /// Unknown ID
-        /// </summary>
-        UInt16 UnkId5 { get; set; }
-        /// <summary>
         /// Float parameters. Slippiness, friction, etc.
         /// </summary>
-        Single[] UnkFloatParams { get; set; }
+        Single[] PhysicsParameters { get; set; }
         /// <summary>
         /// Unknown vector
         /// </summary>

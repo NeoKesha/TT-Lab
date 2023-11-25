@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using TT_Lab.AssetData;
 using TT_Lab.ViewModels;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
@@ -15,6 +16,7 @@ namespace TT_Lab.Assets
         protected virtual String SavePath => Type.Name;
         protected virtual String DataExt => ".data";
         protected virtual String TwinDataExt => "bin";
+        public abstract UInt32 Section { get; }
 
         protected AbstractAssetData assetData;
         protected AssetViewModel viewModel;
@@ -30,9 +32,6 @@ namespace TT_Lab.Assets
         public Int32? LayoutID { get; set; }
         public Boolean IsLoaded { get; protected set; }
         public UInt32 Order { get; set; }
-        /// <summary>
-        /// If asset shouldn't be exported during game's build stage
-        /// </summary>
         public Boolean SkipExport { get; set; } = false;
 
         public Dictionary<String, Object?> Parameters { get; set; } = new();
@@ -52,7 +51,6 @@ namespace TT_Lab.Assets
             Name = name;
             Alias = Name;
             Raw = true;
-            Data = UUID.ToString() + DataExt;
             IsLoaded = true;
             Type = GetType();
         }
@@ -61,28 +59,32 @@ namespace TT_Lab.Assets
         {
             Package = package;
             Variation = variant;
+            var variantPath = Variation == null ? "" : Variation.Replace("\\", "_").Replace("/", "_");
+            Data = $"{Name.Replace("/", "_").Replace("\\", "_")}_{(UInt32)UUID.GetHashCode()}_{variantPath}{DataExt}";
             RegenerateURI();
         }
 
         public void RegenerateURI()
         {
             var variantAddition = Variation == null ? "" : $"/{Variation}";
-            URI = new LabURI($"{Package}/{Type.Name}/{ID}{variantAddition}");
+            var layoutId = LayoutID == null ? "" : $"/{LayoutID}";
+            URI = new LabURI($"{Package}/{Type.Name}/{ID}{variantAddition}{layoutId}");
         }
 
         public virtual void Serialize()
         {
             var path = SavePath;
-            System.IO.Directory.CreateDirectory(path);
-            using (System.IO.FileStream fs = new(System.IO.Path.Combine(path, UUID + ".json"), System.IO.FileMode.Create, System.IO.FileAccess.Write))
-            using (System.IO.BinaryWriter writer = new(fs))
-            {
-                writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
-            }
+            Directory.CreateDirectory(path);
+            var variantPath = Variation == null ? "" : Variation.Replace("\\", "_").Replace("/", "_");
+            var name = Name.Replace("/", "_").Replace("\\", "_");
+            using FileStream fs = new(Path.Combine(path, $"{name}_{(UInt32)UUID.GetHashCode()}_{variantPath}.json"), FileMode.Create, FileAccess.Write);
+            using BinaryWriter writer = new(fs);
+            writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
+
             // Created or loaded data needs to be saved on disk but then disposed of since we are not gonna need it unless user wishes to edit the exact asset
             if (assetData != null)
             {
-                assetData.Save(System.IO.Path.Combine(path, Data));
+                assetData.Save(Path.Combine(path, Data));
                 assetData.Dispose();
             }
         }
@@ -92,6 +94,8 @@ namespace TT_Lab.Assets
             JsonConvert.PopulateObject(json, this);
         }
 
+        public virtual void PostDeserialize() { }
+
         public abstract void ToRaw(Byte[] data);
         public abstract Byte[] ToFormat();
         public abstract Type GetEditorType();
@@ -99,7 +103,7 @@ namespace TT_Lab.Assets
         public abstract AbstractAssetData GetData();
         public virtual void Import()
         {
-            assetData.Import(Package, Variation);
+            assetData.Import(Package, Variation, LayoutID);
             assetData.NullifyReference();
         }
         public virtual ITwinItem Export(Factory.ITwinItemFactory factory)
@@ -116,11 +120,25 @@ namespace TT_Lab.Assets
         public void ExportToFile(Factory.ITwinItemFactory factory)
         {
             var item = Export(factory);
-            using var mcdonaldsFile = new FileStream($"{Name}.{TwinDataExt}", FileMode.Create, FileAccess.Write);
-            using var binaryWriter = new BinaryWriter(mcdonaldsFile);
+            using var itemFile = new FileStream($"{Name}.{TwinDataExt}", FileMode.Create, FileAccess.Write);
+            using var binaryWriter = new BinaryWriter(itemFile);
             item.Write(binaryWriter);
             binaryWriter.Flush();
             binaryWriter.Close();
+        }
+
+        public virtual void ResolveChunkResources(Factory.ITwinItemFactory factory, ITwinSection section)
+        {
+            if (!IsLoaded || assetData.Disposed)
+            {
+                assetData = GetData();
+            }
+            
+            var item = assetData.ResolveChunkResouces(factory, section, ID);
+            item?.SetID(ID);
+            item?.Compile();
+
+            assetData.Dispose();
         }
 
         public virtual AssetViewModel GetViewModel(AssetViewModel? parent = null)

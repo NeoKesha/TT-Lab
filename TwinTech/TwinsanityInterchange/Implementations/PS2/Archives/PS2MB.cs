@@ -66,6 +66,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             return Items.Sum(r => r.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             using (FileStream headerStream = new FileStream(headerPath, FileMode.Open, FileAccess.Read))

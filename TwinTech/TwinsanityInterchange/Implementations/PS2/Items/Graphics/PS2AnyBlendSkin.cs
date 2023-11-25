@@ -47,6 +47,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
+        public override void Compile()
+        {
+            base.Compile();
+            foreach (var subBlend in SubBlends)
+            {
+                subBlend.Compile();
+            }
+        }
+
         public override String GetName()
         {
             return $"Blend Skin {id:X}";

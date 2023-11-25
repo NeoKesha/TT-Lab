@@ -4,15 +4,21 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
-    [Obsolete("Legacy type for Animation and shader animation packed data. Currently they are known so this is unused. Use those types' respected data types")]
+    [Obsolete("Legacy type for Animation and shader animation packed data. Currently they are known so this is unused. Use those types' respective data types")]
     public class TwinBlob : ITwinSerializable
     {
         UInt32 BlockSizePacked;
         UInt16 BlockSizeHelper;
         public Byte[] Blob { get; set; }
+
         public int GetLength()
         {
             return 6 + (Blob != null ? Blob.Length : 0);
+        }
+
+        public void Compile()
+        {
+            return;
         }
 
         public void Read(BinaryReader reader, int length)

@@ -2,12 +2,15 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace TT_Lab.Assets.Instance
 {
     public class Particles : SerializableInstance
     {
+        public override UInt32 Section => Constants.LEVEL_PARTICLES_ITEM;
+
         public Particles()
         {
         }

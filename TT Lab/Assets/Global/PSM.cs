@@ -8,6 +8,7 @@ namespace TT_Lab.Assets.Global
     public class PSM : SerializableAsset
     {
         protected override String TwinDataExt => "psm";
+        public override UInt32 Section => throw new NotImplementedException();
 
         public PSM() { }
 

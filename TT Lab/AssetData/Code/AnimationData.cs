@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Code
             return;
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var twinAnimation = GetTwinItem<ITwinAnimation>();
             TotalFrames = twinAnimation.TotalFrames;

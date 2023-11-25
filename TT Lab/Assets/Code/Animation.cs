@@ -1,12 +1,14 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {
     public class Animation : SerializableAsset
     {
+        public override UInt32 Section => Constants.CODE_ANIMATIONS_SECTION;
         public Animation() { }
 
         public Animation(LabURI package, String? variant, UInt32 id, String Name, ITwinAnimation animation) : base(id, Name, package, variant)

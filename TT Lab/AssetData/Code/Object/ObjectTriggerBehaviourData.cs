@@ -15,9 +15,11 @@ namespace TT_Lab.AssetData.Code.Object
         [JsonProperty(Required = Required.Always)]
         public Byte BehaviourCallerIndex { get; set; }
 
+        public ObjectTriggerBehaviourData() { }
+
         public ObjectTriggerBehaviourData(LabURI package, String? variant, TwinObjectTriggerBehaviour triggerBehaviour)
         {
-            TriggerBehaviour = AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, null, triggerBehaviour.TriggerBehaviour);
+            TriggerBehaviour = AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, variant, triggerBehaviour.TriggerBehaviour);
             UnkTriggerValue = triggerBehaviour.UnkTriggerValue;
             BehaviourCallerIndex = triggerBehaviour.BehaviourCallerIndex;
         }

@@ -16,6 +16,14 @@ namespace TT_Lab.AssetData.Instance
     {
         public CollisionSurfaceData()
         {
+            PhysicsParameters = new float[10];
+            UnkVec = new Vector4();
+            UnkBoundingBox = new Vector4[2];
+            StepSoundId1 = LabURI.Empty;
+            StepSoundId2 = LabURI.Empty;
+            LandSoundId1 = LabURI.Empty;
+            LandSoundId2 = LabURI.Empty;
+            UnkSoundId = LabURI.Empty;
         }
 
         public CollisionSurfaceData(ITwinSurface collisionSurface) : this()
@@ -26,29 +34,27 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public SurfaceType SurfaceID { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 Flags { get; set; }
+        public SurfaceFlags Flags { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI StepSoundId1 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI StepSoundId2 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 UnkId1 { get; set; }
+        public UInt16 WalkOnParticleSystemId1 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 UnkId2 { get; set; }
+        public UInt16 WalkOnParticleSystemId2 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI LandSoundId1 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt16 UnkId3 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 UnkId4 { get; set; }
+        public UInt16 LandOnParticleSystemId { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI LandSoundId2 { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI UnkSoundId { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 UnkId5 { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public Single[] Parameters { get; set; }
+        public Single[] PhysicsParameters { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Vector4 UnkVec { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -59,7 +65,7 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinSurface collisionSurface = GetTwinItem<ITwinSurface>();
             SurfaceID = collisionSurface.SurfaceId;
@@ -71,30 +77,29 @@ namespace TT_Lab.AssetData.Instance
             UnkSoundId = LabURI.Empty;
             if (collisionSurface.StepSoundId1 != 0xFFFF)
             {
-                StepSoundId1 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.StepSoundId1);
+                StepSoundId1 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, variant, collisionSurface.StepSoundId1);
             }
             if (collisionSurface.StepSoundId2 != 0xFFFF)
             {
-                StepSoundId2 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.StepSoundId2);
+                StepSoundId2 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, variant, collisionSurface.StepSoundId2);
             }
             if (collisionSurface.LandSoundId1 != 0xFFFF)
             {
-                LandSoundId1 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.LandSoundId1);
+                LandSoundId1 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, variant, collisionSurface.LandSoundId1);
             }
             if (collisionSurface.LandSoundId2 != 0xFFFF)
             {
-                LandSoundId2 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.LandSoundId2);
+                LandSoundId2 = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, variant, collisionSurface.LandSoundId2);
             }
             if (collisionSurface.UnkSoundId != 0xFFFF)
             {
-                UnkSoundId = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, collisionSurface.UnkSoundId);
+                UnkSoundId = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, variant, collisionSurface.UnkSoundId);
             }
-            UnkId1 = collisionSurface.UnkId1;
-            UnkId2 = collisionSurface.UnkId2;
+            WalkOnParticleSystemId1 = collisionSurface.WalkOnParticleSystemId;
+            WalkOnParticleSystemId2 = collisionSurface.WalkOnParticleSystemId2;
             UnkId3 = collisionSurface.UnkId3;
-            UnkId4 = collisionSurface.UnkId4;
-            UnkId5 = collisionSurface.UnkId5;
-            Parameters = CloneUtils.CloneArray(collisionSurface.UnkFloatParams);
+            LandOnParticleSystemId = collisionSurface.LandOnParticleSystemId;
+            PhysicsParameters = CloneUtils.CloneArray(collisionSurface.PhysicsParameters);
             UnkVec = CloneUtils.Clone(collisionSurface.UnkVec);
             UnkBoundingBox = new Vector4[2];
             for (var i = 0; i < UnkBoundingBox.Length; ++i)
@@ -108,19 +113,19 @@ namespace TT_Lab.AssetData.Instance
             var assetManager = AssetManager.Get();
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
-            writer.Write(Flags);
+            writer.Write((UInt32)Flags);
             writer.Write((UInt16)SurfaceID);
             writer.Write(StepSoundId1 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(StepSoundId1).ID);
             writer.Write(StepSoundId2 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(StepSoundId2).ID);
-            writer.Write(UnkId1);
-            writer.Write(UnkId2);
+            writer.Write(WalkOnParticleSystemId1);
+            writer.Write(WalkOnParticleSystemId2);
             writer.Write(LandSoundId1 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(LandSoundId1).ID);
             writer.Write(UnkId3);
-            writer.Write(UnkId4);
+            writer.Write(LandOnParticleSystemId);
             writer.Write(LandSoundId2 == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(LandSoundId2).ID);
             writer.Write(UnkSoundId == LabURI.Empty ? (UInt16)0xFFFF : (UInt16)assetManager.GetAsset(UnkSoundId).ID);
-            writer.Write(UnkId5);
-            foreach (var param in Parameters)
+            writer.Write((UInt16)0); // Unused ID
+            foreach (var param in PhysicsParameters)
             {
                 writer.Write(param);
             }

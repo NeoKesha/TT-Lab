@@ -1,12 +1,14 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace TT_Lab.Assets.Instance
 {
     public class Collision : SerializableInstance
     {
+        public override UInt32 Section => Constants.LEVEL_COLLISION_ITEM;
 
         public Collision()
         {

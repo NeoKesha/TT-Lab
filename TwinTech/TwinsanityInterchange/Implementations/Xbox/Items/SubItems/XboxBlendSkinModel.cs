@@ -32,6 +32,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             // Data needs no decompression as it is already presented decompressed on read
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public Int32 GetLength()
         {
             var length = 16;

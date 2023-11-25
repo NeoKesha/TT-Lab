@@ -5,6 +5,7 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Code.Behaviour
@@ -28,12 +29,21 @@ namespace TT_Lab.AssetData.Code.Behaviour
             Assigners.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             TwinBehaviourStarter behaviourStarter = GetTwinItem<TwinBehaviourStarter>();
+            var index = 0;
             foreach (var assigner in behaviourStarter.Assigners)
             {
                 Assigners.Add(new BehaviourAssignerData(package, variant, assigner));
+                if (index == 0)
+                {
+                    if (Assigners[0].Behaviour == LabURI.Empty)
+                    {
+                        throw new Exception("SOMETHING WENT WRONG THE STARTER IS NOT REFERENCING ANY GRAPH");
+                    }
+                }
+                index++;
             }
         }
 
@@ -58,6 +68,25 @@ namespace TT_Lab.AssetData.Code.Behaviour
 
             ms.Position = 0;
             return factory.GenerateBehaviourStarter(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var codeSection = section.GetParent();
+            var objectsSection = codeSection.GetItem<ITwinSection>(Constants.CODE_GAME_OBJECTS_SECTION);
+            foreach (var assigner in Assigners)
+            {
+                if (assigner.Object != LabURI.Empty)
+                {
+                    assetManager.GetAsset(assigner.Object).ResolveChunkResources(factory, objectsSection);
+                }
+                if (assigner.Behaviour != LabURI.Empty)
+                {
+                    assetManager.GetAsset(assigner.Behaviour).ResolveChunkResources(factory, section);
+                }
+            }
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

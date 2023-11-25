@@ -69,6 +69,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public void Write(BinaryWriter writer)
         {
+            writer.Write(faceData.Length << 4);
+            writer.Write(VertexesAmount);
+            writer.Write(faceData);
+        }
+
+        public void Compile()
+        {
             var vertexData = Vertices.Select(v => v.GetVector4()).ToList();
             // Add pad vertex
             vertexData.Insert(0, new Vector4());
@@ -78,10 +85,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             };
             var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendFace, data, null);
             faceData = compiler.Compile();
-
-            writer.Write(faceData.Length << 4);
-            writer.Write(VertexesAmount);
-            writer.Write(faceData);
         }
     }
 }

@@ -8,6 +8,7 @@ using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
@@ -75,7 +76,7 @@ namespace TT_Lab.AssetData.Instance
             Instances.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinTrigger trigger = GetTwinItem<ITwinTrigger>();
             ObjectActivatorMask = trigger.Trigger.ObjectActivatorMask;
@@ -85,15 +86,15 @@ namespace TT_Lab.AssetData.Instance
             Instances = new(trigger.Trigger.Instances.Count);
             foreach (var inst in trigger.Trigger.Instances)
             {
-                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, inst));
+                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, layoutId, inst));
             }
             Header = trigger.Trigger.Header;
             UnkFloat = trigger.Trigger.UnkFloat;
             InstanceExtensionValue = trigger.Trigger.InstanceExtensionValue;
-            TriggerScript1 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[0]);
-            TriggerScript2 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[1]);
-            TriggerScript3 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[2]);
-            TriggerScript4 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[3]);
+            TriggerScript1 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, trigger.TriggerScripts[0]);
+            TriggerScript2 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, trigger.TriggerScripts[1]);
+            TriggerScript3 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, trigger.TriggerScripts[2]);
+            TriggerScript4 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, trigger.TriggerScripts[3]);
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
@@ -124,6 +125,34 @@ namespace TT_Lab.AssetData.Instance
 
             ms.Position = 0;
             return factory.GenerateTrigger(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var codeSection = section.GetRoot().GetItem<ITwinSection>(Constants.LEVEL_CODE_SECTION);
+            var behavioursSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOURS_SECTION);
+
+            // Instances will get resolved by themselves anyway
+
+            if (TriggerScript1 != LabURI.Empty)
+            {
+                assetManager.GetAsset(TriggerScript1).ResolveChunkResources(factory, behavioursSection);
+            }
+            if (TriggerScript2 != LabURI.Empty)
+            {
+                assetManager.GetAsset(TriggerScript2).ResolveChunkResources(factory, behavioursSection);
+            }
+            if (TriggerScript3 != LabURI.Empty)
+            {
+                assetManager.GetAsset(TriggerScript3).ResolveChunkResources(factory, behavioursSection);
+            }
+            if (TriggerScript4 != LabURI.Empty)
+            {
+                assetManager.GetAsset(TriggerScript4).ResolveChunkResources(factory, behavioursSection);
+            }
+
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

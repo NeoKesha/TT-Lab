@@ -7,6 +7,7 @@ using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
@@ -55,7 +56,7 @@ namespace TT_Lab.AssetData.Code
             BoundingBoxBuilderToJointIndex.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinOGI ogi = GetTwinItem<ITwinOGI>();
             BoundingBox = CloneUtils.CloneArray(ogi.BoundingBox);
@@ -63,15 +64,15 @@ namespace TT_Lab.AssetData.Code
             RigidModelIds = new List<LabURI>();
             foreach (var model in ogi.RigidModelIds)
             {
-                RigidModelIds.Add(AssetManager.Get().GetUri(package, typeof(RigidModel).Name, null, model));
+                RigidModelIds.Add(AssetManager.Get().GetUri(package, typeof(RigidModel).Name, variant, model));
             }
             BoundingBoxBuilderToJointIndex = CloneUtils.CloneList(ogi.CollisionJointIndices);
             Joints = CloneUtils.DeepClone(ogi.Joints);
             ExitPoints = CloneUtils.DeepClone(ogi.ExitPoints);
             BoundingBoxBuilders = CloneUtils.DeepClone(ogi.Collisions);
             SkinInverseMatrices = CloneUtils.CloneListUnsafe(ogi.SkinInverseBindMatrices);
-            Skin = ogi.SkinID != 0 ? AssetManager.Get().GetUri(package, typeof(Skin).Name, null, ogi.SkinID) : LabURI.Empty;
-            BlendSkin = ogi.BlendSkinID != 0 ? AssetManager.Get().GetUri(package, typeof(BlendSkin).Name, null, ogi.BlendSkinID) : LabURI.Empty;
+            Skin = ogi.SkinID != 0 ? AssetManager.Get().GetUri(package, typeof(Skin).Name, variant, ogi.SkinID) : LabURI.Empty;
+            BlendSkin = ogi.BlendSkinID != 0 ? AssetManager.Get().GetUri(package, typeof(BlendSkin).Name, variant, ogi.BlendSkinID) : LabURI.Empty;
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
@@ -131,6 +132,31 @@ namespace TT_Lab.AssetData.Code
 
             ms.Position = 0;
             return factory.GenerateOGI(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetRoot().GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION);
+            if (RigidModelIds.Count > 0)
+            {
+                var rigidModelSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_RIGID_MODELS_SECTION);
+                foreach (var rigidModel in RigidModelIds)
+                {
+                    assetManager.GetAsset(rigidModel).ResolveChunkResources(factory, rigidModelSection);
+                }
+            }
+            if (Skin != LabURI.Empty)
+            {
+                var skinSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_SKINS_SECTION);
+                assetManager.GetAsset(Skin).ResolveChunkResources(factory, skinSection);
+            }
+            if (BlendSkin != LabURI.Empty)
+            {
+                var blendSkinSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_BLEND_SKINS_SECTION);
+                assetManager.GetAsset(BlendSkin).ResolveChunkResources(factory, blendSkinSection);
+            }
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

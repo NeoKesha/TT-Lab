@@ -40,6 +40,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
                 (MeshIDs.Count != 0 || LodIDs.Count != 0 ? 4 : 0);
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public virtual void Read(BinaryReader reader, Int32 length)
         {
             var hasMeshLods = reader.ReadInt32();

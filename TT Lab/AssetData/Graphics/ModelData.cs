@@ -125,7 +125,7 @@ namespace TT_Lab.AssetData.Graphics
             }
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinModel model = GetTwinItem<ITwinModel>();
             Vertexes = new List<List<Vertex>>();

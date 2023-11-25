@@ -25,10 +25,9 @@ namespace TT_Lab.Assets
 
         public void AddAllAssets(Dictionary<Guid, IAsset> assets)
         {
-            _guidManager.InitMappers(assets);
-
             foreach (var ass in assets)
             {
+                _guidManager.AddMapping(ass.Value);
                 _assets.Add(ass.Value.URI, ass.Value);
             }
         }
@@ -142,14 +141,36 @@ namespace TT_Lab.Assets
         /// <param Name="variant">Variant if present</param>
         /// <param Name="id">ID</param>
         /// <returns>Returns a URI</returns>
-        public LabURI GetUri(LabURI package, String folder, String? variant, uint id)
+        public LabURI GetUri(LabURI package, String folder, String? variant, UInt32 id)
         {
-            var variantString = "";
-            if (variant != null)
+            var variantString = variant != null ? $"/{variant}" : "";
+
+            // If a variant was sent out try to find URI with it as a failsafe also try without variant
+            var withVariant = GetUri($"{package}/{folder}/{id}{variantString}");
+            if (withVariant == LabURI.Empty && variant != null)
             {
-                variantString = $"/{variant}";
+                withVariant = GetUri($"{package}/{folder}/{id}");
             }
-            return GetUri($"{package}/{folder}/{id}{variantString}");
+            return withVariant;
+        }
+
+        /// <summary>
+        /// Obtain a URI explicitly by specifying the package, folder, variant(if needed), layoutId(if needed) and id
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="folder"></param>
+        /// <param name="variant"></param>
+        /// <param name="layoutId"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public LabURI GetUri(LabURI package, String folder, String? variant, Int32? layoutId, UInt32 id)
+        {
+            if (layoutId == null)
+            {
+                return GetUri(package, folder, variant, id);
+            }
+            var resultVariant = variant == null ? $"{layoutId}" : $"{variant}/{layoutId}";
+            return GetUri(package, folder, resultVariant, id);
         }
 
         // Disallow obtaining URIs by pure strings

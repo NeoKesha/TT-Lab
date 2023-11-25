@@ -21,6 +21,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             return 4 + Commands.Sum(com => com.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             var amt = reader.ReadInt32();
@@ -54,10 +59,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         {
             String line = reader.ReadLine().Trim();
             Debug.Assert(line == "@PS2 Pack", "Attepting to parse PS2 command pack as a different version");
-            while (!line.EndsWith("}"))
+            while (!line.EndsWith("}") && reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 line = reader.ReadLine().Trim();
-                if (string.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line) || line == "}")
                 {
                     continue;
                 }

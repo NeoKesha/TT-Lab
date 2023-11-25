@@ -20,6 +20,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             return 6 + ModelSettings.Sum(d => d.GetLength()) + StaticTransformations.Count * 2 + AnimatedTransformations.Sum(r => r.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             dataPacker = reader.ReadUInt32();

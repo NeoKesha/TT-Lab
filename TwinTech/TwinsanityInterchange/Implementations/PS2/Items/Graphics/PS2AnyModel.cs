@@ -44,6 +44,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
+        public override void Compile()
+        {
+            base.Compile();
+            foreach (var subModel in SubModels)
+            {
+                subModel.Compile();
+            }
+        }
+
         public override String GetName()
         {
             return $"Model {id:X}";

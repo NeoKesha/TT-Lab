@@ -5,6 +5,7 @@ using System.IO;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
@@ -38,7 +39,7 @@ namespace TT_Lab.AssetData.Graphics
             Shaders.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinMaterial material = GetTwinItem<ITwinMaterial>();
             ActivatedShaders = material.ActivatedShaders;
@@ -67,6 +68,20 @@ namespace TT_Lab.AssetData.Graphics
 
             ms.Position = 0;
             return factory.GenerateMaterial(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetParent();
+            var texturesSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_TEXTURES_SECTION);
+            foreach (var shader in Shaders)
+            {
+                if (shader.TextureId == LabURI.Empty) continue;
+
+                assetManager.GetAsset(shader.TextureId).ResolveChunkResources(factory, texturesSection);
+            }
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

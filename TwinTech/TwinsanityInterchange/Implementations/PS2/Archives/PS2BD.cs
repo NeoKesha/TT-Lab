@@ -28,6 +28,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             return Items.Sum(i => i.Data.Length);
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             using FileStream headerStream = new(headerPath, FileMode.Open, FileAccess.Read);

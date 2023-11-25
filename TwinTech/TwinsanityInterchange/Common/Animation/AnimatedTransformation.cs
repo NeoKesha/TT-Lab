@@ -28,6 +28,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             return transformValues.Sum(t => t.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             for (Int32 i = 0; i < transformValues.Capacity; i++)

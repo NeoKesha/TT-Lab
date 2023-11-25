@@ -1,12 +1,14 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
 {
     public class OGI : SerializableAsset
     {
+        public override UInt32 Section => Constants.CODE_OGIS_SECTION;
 
         public OGI() { }
 

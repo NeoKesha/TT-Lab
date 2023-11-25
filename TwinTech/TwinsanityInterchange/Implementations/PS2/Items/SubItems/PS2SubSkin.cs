@@ -138,6 +138,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public void Write(BinaryWriter writer)
         {
             vertexAmount = Vertexes.Count;
+            writer.Write(Material);
+            writer.Write(vifCode.Length);
+            writer.Write(vertexAmount);
+            writer.Write(vifCode);
+        }
+
+        public void Compile()
+        {
             var data = new List<List<Vector4>>()
             {
                 Vertexes,
@@ -147,10 +155,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             };
             var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Skin, data, null);
             vifCode = compiler.Compile();
-            writer.Write(Material);
-            writer.Write(vifCode.Length);
-            writer.Write(vertexAmount);
-            writer.Write(vifCode);
         }
     }
 }

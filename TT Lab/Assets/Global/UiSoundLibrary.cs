@@ -7,6 +7,8 @@ namespace TT_Lab.Assets.Global
 {
     public class UiSoundLibrary : SerializableAsset
     {
+        public override UInt32 Section => throw new NotImplementedException();
+
         public UiSoundLibrary() { }
 
         public UiSoundLibrary(LabURI package, String? variant, String name, ITwinSection frontend) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)

@@ -30,6 +30,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return 16 + Position.GetLength() + Rotation.GetLength() + Scale.GetLength() + 8 + Instances.Count * Constants.SIZE_UINT16;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             Header = reader.ReadUInt32();

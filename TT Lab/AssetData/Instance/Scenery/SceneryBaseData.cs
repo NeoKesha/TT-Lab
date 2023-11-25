@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
+using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance.Scenery
@@ -43,12 +46,12 @@ namespace TT_Lab.AssetData.Instance.Scenery
             MeshIDs = new List<LabURI>();
             foreach (var m in baseType.MeshIDs)
             {
-                MeshIDs.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, null, m));
+                MeshIDs.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, variant, m));
             }
             LodIDs = new List<LabURI>();
             foreach (var l in baseType.LodIDs)
             {
-                LodIDs.Add(AssetManager.Get().GetUri(package, typeof(LodModel).Name, null, l));
+                LodIDs.Add(AssetManager.Get().GetUri(package, typeof(LodModel).Name, variant, l));
             }
             BoundingBoxes = new List<Vector4[]>();
             foreach (var bb in baseType.BoundingBoxes)
@@ -256,6 +259,23 @@ namespace TT_Lab.AssetData.Instance.Scenery
             UnkVec3.Write(writer);
             UnkVec4.Write(writer);
             UnkVec5.Write(writer);
+        }
+
+        public void ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section)
+        {
+            var assetManager = AssetManager.Get();
+            var meshSection = section.GetItem<ITwinSection>(Constants.GRAPHICS_MESHES_SECTION);
+            var lodSection = section.GetItem<ITwinSection>(Constants.GRAPHICS_LODS_SECTION);
+
+            foreach (var mesh in MeshIDs)
+            {
+                assetManager.GetAsset(mesh).ResolveChunkResources(factory, meshSection);
+            }
+
+            foreach (var lod in LodIDs)
+            {
+                assetManager.GetAsset(lod).ResolveChunkResources(factory, lodSection);
+            }
         }
     }
 }

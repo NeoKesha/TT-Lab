@@ -7,18 +7,18 @@ namespace TT_Lab.Assets
     public class LabURI
     {
         [JsonProperty(Required = Required.Always)]
-        private readonly string _uri;
+        private readonly String _uri;
 
         public static implicit operator String(LabURI labURI) => labURI._uri;
-        public static explicit operator LabURI(string uri) => new(uri);
+        public static explicit operator LabURI(String uri) => new(uri);
 
         [JsonConstructor]
-        public LabURI(string uri)
+        public LabURI(String uri)
         {
             _uri = uri;
         }
 
-        public override string ToString() => _uri;
+        public override String ToString() => _uri;
 
         public static LabURI Empty { get => new("res://EMPTY"); }
 
@@ -26,7 +26,6 @@ namespace TT_Lab.Assets
         {
             if (labURI is null && other is null) return true;
             if (labURI is null) return false;
-            if (other is null) return false;
             return labURI.Equals(other);
         }
 
@@ -48,9 +47,9 @@ namespace TT_Lab.Assets
             return other._uri == _uri;
         }
 
-        public string GetUri() { return _uri; }
+        public String GetUri() { return _uri; }
 
-        public override int GetHashCode()
+        public override Int32 GetHashCode()
         {
             return _uri.GetHashCode();
         }

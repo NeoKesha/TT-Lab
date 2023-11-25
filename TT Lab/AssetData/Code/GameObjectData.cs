@@ -9,6 +9,7 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -19,13 +20,24 @@ namespace TT_Lab.AssetData.Code
 {
     public class GameObjectData : AbstractAssetData
     {
+        public GameObjectData()
+        {
+
+        }
 
         public GameObjectData(ITwinObject gameObject)
         {
             SetTwinItem(gameObject);
         }
 
-        public GameObjectData(String path) => LoadInternal(path);
+        public GameObjectData(String path) => Load(path, new()
+        {
+            Converters = new List<JsonConverter>()
+            {
+                new ScriptPackConverter()
+            },
+            Formatting = Formatting.Indented
+        });
 
         [JsonProperty(Required = Required.Always)]
         public ITwinObject.ObjectType Type { get; set; }
@@ -94,7 +106,7 @@ namespace TT_Lab.AssetData.Code
             RefSounds.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinObject gameObject = GetTwinItem<ITwinObject>();
             Type = gameObject.Type;
@@ -111,12 +123,12 @@ namespace TT_Lab.AssetData.Code
             OGISlots = new List<LabURI>();
             foreach (var e in gameObject.OGISlots)
             {
-                OGISlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(OGI).Name, null, e));
+                OGISlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(OGI).Name, variant, e));
             }
             AnimationSlots = new List<LabURI>();
             foreach (var e in gameObject.AnimationSlots)
             {
-                AnimationSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(Animation).Name, null, e));
+                AnimationSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(Animation).Name, variant, e));
             }
             BehaviourSlots = new List<LabURI>();
             foreach (var e in gameObject.BehaviourSlots)
@@ -124,7 +136,7 @@ namespace TT_Lab.AssetData.Code
                 var found = false;
                 foreach (var cm in gameObject.RefCodeModels)
                 {
-                    BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, typeof(BehaviourCommandsSequence).Name, null, cm);
+                    BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, typeof(BehaviourCommandsSequence).Name, variant, cm);
                     LabURI subGuid = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, cmGuid.ID.ToString(), e);
                     if (!subGuid.Equals(LabURI.Empty))
                     {
@@ -135,13 +147,13 @@ namespace TT_Lab.AssetData.Code
                 }
                 if (!found)
                 {
-                    BehaviourSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, null, e));
+                    BehaviourSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, variant, e));
                 }
             }
             ObjectSlots = new List<LabURI>();
             foreach (var e in gameObject.ObjectSlots)
             {
-                ObjectSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(GameObject).Name, null, e));
+                ObjectSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(GameObject).Name, variant, e));
             }
             SoundSlots = new List<LabURI>();
             foreach (var e in gameObject.SoundSlots)
@@ -153,33 +165,33 @@ namespace TT_Lab.AssetData.Code
                 }
                 else
                 {
-                    SoundSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, e));
+                    SoundSlots.Add((e == 65535) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, variant, e));
                 }
             }
             RefObjects = new List<LabURI>();
             foreach (var e in gameObject.RefObjects)
             {
-                RefObjects.Add(AssetManager.Get().GetUri(package, typeof(GameObject).Name, null, e));
+                RefObjects.Add(AssetManager.Get().GetUri(package, typeof(GameObject).Name, variant, e));
             }
             RefOGIs = new List<LabURI>();
             foreach (var e in gameObject.RefOGIs)
             {
-                RefOGIs.Add(AssetManager.Get().GetUri(package, typeof(OGI).Name, null, e));
+                RefOGIs.Add(AssetManager.Get().GetUri(package, typeof(OGI).Name, variant, e));
             }
             RefAnimations = new List<LabURI>();
             foreach (var e in gameObject.RefAnimations)
             {
-                RefAnimations.Add(AssetManager.Get().GetUri(package, typeof(Animation).Name, null, e));
+                RefAnimations.Add(AssetManager.Get().GetUri(package, typeof(Animation).Name, variant, e));
             }
             RefBehaviourCommandsSequences = new List<LabURI>();
             foreach (var e in gameObject.RefCodeModels)
             {
-                RefBehaviourCommandsSequences.Add(AssetManager.Get().GetUri(package, typeof(BehaviourCommandsSequence).Name, null, e));
+                RefBehaviourCommandsSequences.Add(AssetManager.Get().GetUri(package, typeof(BehaviourCommandsSequence).Name, variant, e));
             }
             RefBehaviours = new List<LabURI>();
             foreach (var e in gameObject.RefBehaviours)
             {
-                // Range reserved for CodeModel(Command sequences) script IDs
+                // Range reserved for CodeModel(Command sequences) behaviour IDs
                 if (e > 500 && e < 616)
                 {
                     foreach (var cm in RefBehaviourCommandsSequences)
@@ -196,19 +208,19 @@ namespace TT_Lab.AssetData.Code
                 {
                     if (e % 2 == 0)
                     {
-                        RefBehaviours.Add(AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, null, e));
+                        RefBehaviours.Add(AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, variant, e));
                     }
                     else
                     {
-                        RefBehaviours.Add(AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, e));
+                        RefBehaviours.Add(AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, e));
                     }
                 }
             }
             RefSounds = new List<LabURI>();
             foreach (var e in gameObject.RefSounds)
             {
-                var sndGuid = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, null, e);
-                if (sndGuid == LabURI.Empty)
+                var sndUri = AssetManager.Get().GetUri(package, typeof(SoundEffect).Name, variant, e);
+                if (sndUri == LabURI.Empty)
                 {
                     var multi5 = CollectMulti5Uri(package, null, e);
                     foreach (var snd in multi5)
@@ -217,7 +229,7 @@ namespace TT_Lab.AssetData.Code
                     }
                     continue;
                 }
-                RefSounds.Add(sndGuid);
+                RefSounds.Add(sndUri);
             }
             InstanceStateFlags = gameObject.InstanceStateFlags;
             InstFlags = CloneUtils.CloneList(gameObject.InstFlags);
@@ -328,6 +340,45 @@ namespace TT_Lab.AssetData.Code
 
             return result;
         }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var codeSection = section.GetParent();
+            var ogiSection = codeSection.GetItem<ITwinSection>(Constants.CODE_OGIS_SECTION);
+            var animationSection = codeSection.GetItem<ITwinSection>(Constants.CODE_ANIMATIONS_SECTION);
+            var behaviourSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOURS_SECTION);
+            var sequenceSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION);
+
+            foreach (var animation in RefAnimations)
+            {
+                assetManager.GetAsset(animation).ResolveChunkResources(factory, animationSection);
+            }
+
+            foreach (var behaviour in RefBehaviours)
+            {
+                assetManager.GetAsset(behaviour).ResolveChunkResources(factory, behaviourSection);
+            }
+
+            foreach (var sequence in RefBehaviourCommandsSequences)
+            {
+                assetManager.GetAsset(sequence).ResolveChunkResources(factory, sequenceSection);
+            }
+
+            foreach (var ogi in RefOGIs)
+            {
+                assetManager.GetAsset(ogi).ResolveChunkResources(factory, ogiSection);
+            }
+
+            foreach (var sfx in RefSounds)
+            {
+                var sfxAsset = assetManager.GetAsset(sfx);
+                var sfxSection = codeSection.GetItem<ITwinSection>(sfxAsset.Section);
+                sfxAsset.ResolveChunkResources(factory, sfxSection);
+            }
+
+            return base.ResolveChunkResouces(factory, section, id);
+        }
     }
     class ScriptPackConverter : JsonConverter<ITwinBehaviourCommandPack>
     {
@@ -335,27 +386,27 @@ namespace TT_Lab.AssetData.Code
         {
             // By default create PS2 behaviour command pack
             existingValue ??= new PS2BehaviourCommandPack();
-            String? str = reader.ReadAsString();
-            using (var stream = new MemoryStream())
-            using (var _writer = new StreamWriter(stream))
-            using (var _reader = new StreamReader(stream))
+            String? str = reader.Value!.ToString();
+            using var stream = new MemoryStream();
+            using var _writer = new StreamWriter(stream);
+            using var _reader = new StreamReader(stream);
+            _writer.Write(str);
+            _writer.Flush();
+            stream.Position = 0;
+            if (_reader.BaseStream.Length != 0)
             {
-                _writer.Write(str);
-                stream.Position = 0;
-                if (_reader.BaseStream.Length != 0)
+                var version = _reader.ReadLine()!.Trim();
+                if (version == "@PS2 Pack")
                 {
-                    var version = _reader.ReadLine()!.Trim();
-                    if (version == "@PS2 Pack")
-                    {
-                        existingValue ??= new PS2BehaviourCommandPack();
-                    }
-                    else if (version == "@Xbox Pack")
-                    {
-                        existingValue ??= new XboxBehaviourCommandPack();
-                    }
-                    _reader.BaseStream.Position = 0;
-                    existingValue.ReadText(_reader);
+                    existingValue ??= new PS2BehaviourCommandPack();
                 }
+                else if (version == "@Xbox Pack")
+                {
+                    existingValue ??= new XboxBehaviourCommandPack();
+                }
+                stream.Position = 0;
+                using var scriptReader = new StreamReader(stream);
+                existingValue.ReadText(scriptReader);
             }
             return existingValue;
         }

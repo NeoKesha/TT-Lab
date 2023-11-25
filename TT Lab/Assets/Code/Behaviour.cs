@@ -1,9 +1,11 @@
 ﻿using System;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.Assets.Code
 {
     public abstract class Behaviour : SerializableAsset
     {
+        public override UInt32 Section => Constants.CODE_BEHAVIOURS_SECTION;
 
         public Behaviour() { }
 

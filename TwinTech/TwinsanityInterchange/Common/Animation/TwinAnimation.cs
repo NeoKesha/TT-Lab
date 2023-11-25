@@ -20,6 +20,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             return 6 + JointSettings.Sum(d => d.GetLength()) + StaticTransformations.Count * 2 + AnimatedTransformations.Sum(r => r.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             dataPacker = reader.ReadUInt32();

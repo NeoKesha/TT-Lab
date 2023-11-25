@@ -29,6 +29,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             return 4 + 4 + BoundingBoxBuilders.Sum(o => o.GetLength()) + 4 + Animation.GetLength() + 1 + 4 + 2 * Constants.SIZE_VECTOR4;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             UnkInt = reader.ReadInt32();

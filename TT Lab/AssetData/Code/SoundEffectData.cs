@@ -43,7 +43,7 @@ namespace TT_Lab.AssetData.Code
             PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinSound sound = GetTwinItem<ITwinSound>();
             Frequency = sound.GetFreq();

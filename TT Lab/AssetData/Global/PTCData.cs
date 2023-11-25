@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Global
             return factory.GeneratePTC(assetManager.GetAsset(TextureID).ID, assetManager.GetAsset(MaterialID).ID, texture, material);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var assetManager = AssetManager.Get();
             var ptc = GetTwinItem<ITwinPTC>();

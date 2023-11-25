@@ -8,6 +8,7 @@ namespace TT_Lab.Assets.Global
     public class Font : SerializableAsset
     {
         protected override String TwinDataExt => "psf";
+        public override UInt32 Section => throw new NotImplementedException();
 
         public Font() { }
 

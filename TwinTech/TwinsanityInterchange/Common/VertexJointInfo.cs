@@ -39,7 +39,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public Vector4 GetVector4()
         {
-            Debug.Assert(Math.Abs(Weight1 + Weight2 + Weight3 - 1.0f) < 0.000001f, "Weights must sum up to 1");
+            Debug.Assert(Math.Abs(Weight1 + Weight2 + Weight3 - 1.0f) < 0.0001f, "Weights must sum up to 1");
             Vector4 v = new()
             {
                 X = Weight1,
@@ -66,6 +66,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             wComp |= (UInt32)weightCount;
             v.SetBinaryW(wComp);
             return v;
+        }
+
+        public void Compile()
+        {
+            return;
         }
 
         public void Read(BinaryReader reader, Int32 length)

@@ -13,6 +13,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             return Constants.SIZE_UINT32;
         }
+        
+        public void Compile()
+        {
+            return;
+        }
 
         public void Read(BinaryReader reader, int length)
         {

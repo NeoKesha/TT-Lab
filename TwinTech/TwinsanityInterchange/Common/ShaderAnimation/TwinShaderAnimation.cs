@@ -57,6 +57,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ShaderAnimation
             }
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Write(BinaryWriter writer)
         {
             writer.Write(Header);

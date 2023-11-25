@@ -20,6 +20,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ShaderAnimation
 
         public Int32 GetLength() => 8;
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             reader.ReadUInt16(); // Unused flags

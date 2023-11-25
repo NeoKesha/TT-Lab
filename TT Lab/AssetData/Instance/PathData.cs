@@ -15,6 +15,8 @@ namespace TT_Lab.AssetData.Instance
     {
         public PathData()
         {
+            Points = new();
+            Parameters = new();
         }
 
         public PathData(ITwinPath path) : this()
@@ -33,7 +35,7 @@ namespace TT_Lab.AssetData.Instance
             Parameters.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinPath path = GetTwinItem<ITwinPath>();
             Points = CloneUtils.CloneList(path.PointList);

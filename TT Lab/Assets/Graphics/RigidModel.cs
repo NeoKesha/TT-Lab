@@ -2,12 +2,14 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class RigidModel : SerializableAsset
     {
+        public override UInt32 Section => Constants.GRAPHICS_RIGID_MODELS_SECTION;
 
         public RigidModel(LabURI package, String? variant, UInt32 id, String Name, ITwinRigidModel rigidModel) : base(id, Name, package, variant)
         {

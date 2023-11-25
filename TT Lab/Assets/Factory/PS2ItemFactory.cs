@@ -31,6 +31,8 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Layout;
+using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
+using System.Drawing;
 
 namespace TT_Lab.Assets.Factory
 {
@@ -698,336 +700,63 @@ namespace TT_Lab.Assets.Factory
         public ITwinSection GenerateDefault()
         {
             var @default = new PS2Default();
+            @default.SetRoot(@default);
+            @default.SetParent(@default);
+
             var graphics = new PS2AnyGraphicsSection();
             graphics.SetID(Constants.LEVEL_GRAPHICS_SECTION);
-            {
-                var textures = new PS2AnyTexturesSection();
-                textures.SetID(Constants.GRAPHICS_TEXTURES_SECTION);
-                var materials = new PS2AnyMaterialsSection();
-                materials.SetID(Constants.GRAPHICS_MATERIALS_SECTION);
-                var models = new PS2AnyModelsSection();
-                models.SetID(Constants.GRAPHICS_MODELS_SECTION);
-                var rigids = new PS2AnyRigidModelsSection();
-                rigids.SetID(Constants.GRAPHICS_RIGID_MODELS_SECTION);
-                var skins = new PS2AnySkinsSection();
-                skins.SetID(Constants.GRAPHICS_SKINS_SECTION);
-                var blendSkins = new PS2AnyBlendSkinsSection();
-                blendSkins.SetID(Constants.GRAPHICS_BLEND_SKINS_SECTION);
-                var meshes = new PS2AnyMeshesSection();
-                meshes.SetID(Constants.GRAPHICS_MESHES_SECTION);
-                var lods = new PS2AnyLODsSection();
-                lods.SetID(Constants.GRAPHICS_LODS_SECTION);
-                var skydomes = new PS2AnySkydomesSection();
-                skydomes.SetID(Constants.GRAPHICS_SKYDOMES_SECTION);
-                graphics.AddItem(textures);
-                graphics.AddItem(materials);
-                graphics.AddItem(models);
-                graphics.AddItem(rigids);
-                graphics.AddItem(skins);
-                graphics.AddItem(blendSkins);
-                graphics.AddItem(meshes);
-                graphics.AddItem(lods);
-                graphics.AddItem(skydomes);
-            }
+            FillGraphicsSection(graphics, @default);
+
             var code = new PS2AnyCodeSection();
-            code.SetID(Constants.LEVEL_CODE_SECTION);
-            {
-                var objects = new PS2AnyGameObjectsSection();
-                objects.SetID(Constants.CODE_GAME_OBJECTS_SECTION);
-                var behaviours = new PS2AnyBehavioursSection();
-                behaviours.SetID(Constants.CODE_BEHAVIOURS_SECTION);
-                var animations = new PS2AnyAnimationsSection();
-                animations.SetID(Constants.CODE_ANIMATIONS_SECTION);
-                var ogis = new PS2AnyOGIsSection();
-                ogis.SetID(Constants.CODE_OGIS_SECTION);
-                var behaviourSequences = new PS2AnyBehaviourCommandsSequencesSection();
-                behaviourSequences.SetID(Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION);
-                var unknowns = new BaseTwinSection();
-                unknowns.SetID(Constants.CODE_UNK_ITEM);
-                var sfxs = new PS2AnySoundsSection();
-                sfxs.SetID(Constants.CODE_SOUND_EFFECTS_SECTION);
-                var sfxsEn = new PS2AnySoundsSection();
-                sfxsEn.SetID(Constants.CODE_LANG_ENG_SECTION);
-                var sfxsFr = new PS2AnySoundsSection();
-                sfxsFr.SetID(Constants.CODE_LANG_FRE_SECTION);
-                var sfxsGr = new PS2AnySoundsSection();
-                sfxsGr.SetID(Constants.CODE_LANG_GER_SECTION);
-                var sfxsSp = new PS2AnySoundsSection();
-                sfxsSp.SetID(Constants.CODE_LANG_SPA_SECTION);
-                var sfxsIt = new PS2AnySoundsSection();
-                sfxsIt.SetID(Constants.CODE_LANG_ITA_SECTION);
-                var sfxsJp = new PS2AnySoundsSection();
-                sfxsJp.SetID(Constants.CODE_LANG_JPN_SECTION);
-                code.AddItem(objects);
-                code.AddItem(behaviours);
-                code.AddItem(animations);
-                code.AddItem(ogis);
-                code.AddItem(behaviourSequences);
-                code.AddItem(unknowns);
-                code.AddItem(sfxs);
-                code.AddItem(sfxsEn);
-                code.AddItem(sfxsFr);
-                code.AddItem(sfxsGr);
-                code.AddItem(sfxsSp);
-                code.AddItem(sfxsIt);
-                code.AddItem(sfxsJp);
-            }
+            FillCodeSection(code, @default);
+
             var layout1 = new PS2AnyLayoutSection();
             layout1.SetID(Constants.LEVEL_LAYOUT_1_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout1.AddItem(templates);
-                layout1.AddItem(aiPositions);
-                layout1.AddItem(aiPaths);
-                layout1.AddItem(positions);
-                layout1.AddItem(paths);
-                layout1.AddItem(surfaces);
-                layout1.AddItem(instances);
-                layout1.AddItem(triggers);
-                layout1.AddItem(cameras);
-            }
+            FillLayoutSection(layout1, @default);
+
             var layout2 = new PS2AnyLayoutSection();
             layout2.SetID(Constants.LEVEL_LAYOUT_2_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout2.AddItem(templates);
-                layout2.AddItem(aiPositions);
-                layout2.AddItem(aiPaths);
-                layout2.AddItem(positions);
-                layout2.AddItem(paths);
-                layout2.AddItem(surfaces);
-                layout2.AddItem(instances);
-                layout2.AddItem(triggers);
-                layout2.AddItem(cameras);
-            }
+            layout2.SetRoot(@default);
+            layout2.SetParent(@default);
+
             var layout3 = new PS2AnyLayoutSection();
             layout3.SetID(Constants.LEVEL_LAYOUT_3_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout3.AddItem(templates);
-                layout3.AddItem(aiPositions);
-                layout3.AddItem(aiPaths);
-                layout3.AddItem(positions);
-                layout3.AddItem(paths);
-                layout3.AddItem(surfaces);
-                layout3.AddItem(instances);
-                layout3.AddItem(triggers);
-                layout3.AddItem(cameras);
-            }
+            layout3.SetRoot(@default);
+            layout3.SetParent(@default);
+
             var layout4 = new PS2AnyLayoutSection();
             layout4.SetID(Constants.LEVEL_LAYOUT_4_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout4.AddItem(templates);
-                layout4.AddItem(aiPositions);
-                layout4.AddItem(aiPaths);
-                layout4.AddItem(positions);
-                layout4.AddItem(paths);
-                layout4.AddItem(surfaces);
-                layout4.AddItem(instances);
-                layout4.AddItem(triggers);
-                layout4.AddItem(cameras);
-            }
+            layout4.SetRoot(@default);
+            layout4.SetParent(@default);
+
             var layout5 = new PS2AnyLayoutSection();
             layout5.SetID(Constants.LEVEL_LAYOUT_5_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout5.AddItem(templates);
-                layout5.AddItem(aiPositions);
-                layout5.AddItem(aiPaths);
-                layout5.AddItem(positions);
-                layout5.AddItem(paths);
-                layout5.AddItem(surfaces);
-                layout5.AddItem(instances);
-                layout5.AddItem(triggers);
-                layout5.AddItem(cameras);
-            }
+            layout5.SetRoot(@default);
+            layout5.SetParent(@default);
+
             var layout6 = new PS2AnyLayoutSection();
             layout6.SetID(Constants.LEVEL_LAYOUT_6_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout6.AddItem(templates);
-                layout6.AddItem(aiPositions);
-                layout6.AddItem(aiPaths);
-                layout6.AddItem(positions);
-                layout6.AddItem(paths);
-                layout6.AddItem(surfaces);
-                layout6.AddItem(instances);
-                layout6.AddItem(triggers);
-                layout6.AddItem(cameras);
-            }
+            layout6.SetRoot(@default);
+            layout6.SetParent(@default);
+
             var layout7 = new PS2AnyLayoutSection();
             layout7.SetID(Constants.LEVEL_LAYOUT_7_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout7.AddItem(templates);
-                layout7.AddItem(aiPositions);
-                layout7.AddItem(aiPaths);
-                layout7.AddItem(positions);
-                layout7.AddItem(paths);
-                layout7.AddItem(surfaces);
-                layout7.AddItem(instances);
-                layout7.AddItem(triggers);
-                layout7.AddItem(cameras);
-            }
+            layout7.SetRoot(@default);
+            layout7.SetParent(@default);
+
             var layout8 = new PS2AnyLayoutSection();
             layout8.SetID(Constants.LEVEL_LAYOUT_8_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout8.AddItem(templates);
-                layout8.AddItem(aiPositions);
-                layout8.AddItem(aiPaths);
-                layout8.AddItem(positions);
-                layout8.AddItem(paths);
-                layout8.AddItem(surfaces);
-                layout8.AddItem(instances);
-                layout8.AddItem(triggers);
-                layout8.AddItem(cameras);
-            }
-            var particle = new PS2DefaultParticleData();
-            particle.SetID(Constants.LEVEL_PARTICLES_ITEM);
+            FillLayoutSection(layout8, @default);
+
             var collision = new BaseTwinSection();
             collision.SetID(Constants.LEVEL_COLLISION_ITEM);
+            collision.SetRoot(@default);
+            collision.SetParent(@default);
+
+            // Particles are generated and injected later
 
             @default.AddItem(graphics);
             @default.AddItem(code);
-            @default.AddItem(particle);
             @default.AddItem(collision);
             @default.AddItem(layout1);
             @default.AddItem(layout2);
@@ -1045,25 +774,152 @@ namespace TT_Lab.Assets.Factory
             var rm2 = new PS2AnyTwinsanityRM2();
             var graphics = new PS2AnyGraphicsSection();
             graphics.SetID(Constants.LEVEL_GRAPHICS_SECTION);
+            FillGraphicsSection(graphics, rm2);
+
+            var code = new PS2AnyCodeSection();
+            FillCodeSection(code, rm2);
+
+            rm2.AddItem(graphics);
+            rm2.AddItem(code);
+
+            for (UInt32 i = 0; i < 8; ++i)
+            {
+                var layout = new PS2AnyLayoutSection();
+                layout.SetID(Constants.LEVEL_LAYOUT_1_SECTION + i);
+                FillLayoutSection(layout, rm2);
+                rm2.AddItem(layout);
+            }
+
+            // Collision and particles are generated and injected later
+
+            return rm2;
+        }
+
+        public ITwinSection GenerateSM2()
+        {
+            var sm2 = new PS2AnyTwinsanitySM2();
+            var graphics = new PS2AnyGraphicsSection();
+            graphics.SetID(Constants.SCENERY_GRAPHICS_SECTION);
+            FillGraphicsSection(graphics, sm2);
+
+            var unk1 = new BaseTwinItem();
+            unk1.SetID(Constants.SCENERY_UNK_1_ITEM);
+            unk1.SetRoot(sm2);
+            unk1.SetParent(sm2);
+            var unk2 = new BaseTwinItem();
+            unk2.SetID(Constants.SCENERY_UNK_2_ITEM);
+            unk2.SetRoot(sm2);
+            unk2.SetParent(sm2);
+            var unk3 = new BaseTwinItem();
+            unk3.SetID(Constants.SCENERY_UNK_3_ITEM);
+            unk3.SetRoot(sm2);
+            unk3.SetParent(sm2);
+
+            // Scenery, dynamic scenery and chunk links are generated and injected later
+
+            sm2.AddItem(graphics);
+            sm2.AddItem(unk1);
+            sm2.AddItem(unk2);
+            sm2.AddItem(unk3);
+            return sm2;
+        }
+
+        private static void FillLayoutSection(PS2AnyLayoutSection layout, ITwinSection root)
+        {
+            layout.SetRoot(root);
+            layout.SetParent(root);
+            {
+                var templates = new PS2AnyTemplatesSection();
+                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
+                templates.SetRoot(root);
+                templates.SetParent(layout);
+                var aiPositions = new PS2AnyAIPositionsSection();
+                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
+                aiPositions.SetRoot(root);
+                aiPositions.SetParent(layout);
+                var aiPaths = new PS2AnyAIPathsSection();
+                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
+                aiPaths.SetRoot(root);
+                aiPaths.SetParent(layout);
+                var positions = new PS2AnyPositionsSection();
+                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
+                positions.SetRoot(root);
+                positions.SetParent(layout);
+                var paths = new PS2AnyPathsSection();
+                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
+                paths.SetRoot(root);
+                paths.SetParent(layout);
+                var surfaces = new PS2AnySurfacesSection();
+                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
+                surfaces.SetRoot(root);
+                surfaces.SetParent(layout);
+                var instances = new PS2AnyInstancesSection();
+                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
+                instances.SetRoot(root);
+                instances.SetParent(layout);
+                var triggers = new PS2AnyTriggersSection();
+                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
+                triggers.SetRoot(root);
+                triggers.SetParent(layout);
+                var cameras = new PS2AnyCamerasSection();
+                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
+                cameras.SetRoot(root);
+                cameras.SetParent(layout);
+
+                layout.AddItem(templates);
+                layout.AddItem(aiPositions);
+                layout.AddItem(aiPaths);
+                layout.AddItem(positions);
+                layout.AddItem(paths);
+                layout.AddItem(surfaces);
+                layout.AddItem(instances);
+                layout.AddItem(triggers);
+                layout.AddItem(cameras);
+            }
+        }
+
+        private static void FillGraphicsSection(PS2AnyGraphicsSection graphics, ITwinSection root)
+        {
+            graphics.SetRoot(root);
+            graphics.SetParent(root);
             {
                 var textures = new PS2AnyTexturesSection();
                 textures.SetID(Constants.GRAPHICS_TEXTURES_SECTION);
+                textures.SetRoot(root);
+                textures.SetParent(graphics);
                 var materials = new PS2AnyMaterialsSection();
                 materials.SetID(Constants.GRAPHICS_MATERIALS_SECTION);
+                materials.SetRoot(root);
+                materials.SetParent(graphics);
                 var models = new PS2AnyModelsSection();
                 models.SetID(Constants.GRAPHICS_MODELS_SECTION);
+                models.SetRoot(root);
+                models.SetParent(graphics);
                 var rigids = new PS2AnyRigidModelsSection();
                 rigids.SetID(Constants.GRAPHICS_RIGID_MODELS_SECTION);
+                rigids.SetRoot(root);
+                rigids.SetParent(graphics);
                 var skins = new PS2AnySkinsSection();
                 skins.SetID(Constants.GRAPHICS_SKINS_SECTION);
+                skins.SetRoot(root);
+                skins.SetParent(graphics);
                 var blendSkins = new PS2AnyBlendSkinsSection();
                 blendSkins.SetID(Constants.GRAPHICS_BLEND_SKINS_SECTION);
+                blendSkins.SetRoot(root);
+                blendSkins.SetParent(graphics);
                 var meshes = new PS2AnyMeshesSection();
                 meshes.SetID(Constants.GRAPHICS_MESHES_SECTION);
+                meshes.SetRoot(root);
+                meshes.SetParent(graphics);
                 var lods = new PS2AnyLODsSection();
                 lods.SetID(Constants.GRAPHICS_LODS_SECTION);
+                lods.SetRoot(root);
+                lods.SetParent(graphics);
                 var skydomes = new PS2AnySkydomesSection();
                 skydomes.SetID(Constants.GRAPHICS_SKYDOMES_SECTION);
+                skydomes.SetRoot(root);
+                skydomes.SetParent(graphics);
+
                 graphics.AddItem(textures);
                 graphics.AddItem(materials);
                 graphics.AddItem(models);
@@ -1074,35 +930,67 @@ namespace TT_Lab.Assets.Factory
                 graphics.AddItem(lods);
                 graphics.AddItem(skydomes);
             }
-            var code = new PS2AnyCodeSection();
+        }
+
+        private static void FillCodeSection(PS2AnyCodeSection code, ITwinSection root)
+        {
             code.SetID(Constants.LEVEL_CODE_SECTION);
+            code.SetRoot(root);
+            code.SetParent(root);
             {
                 var objects = new PS2AnyGameObjectsSection();
                 objects.SetID(Constants.CODE_GAME_OBJECTS_SECTION);
+                objects.SetRoot(root);
+                objects.SetParent(code);
                 var behaviours = new PS2AnyBehavioursSection();
                 behaviours.SetID(Constants.CODE_BEHAVIOURS_SECTION);
+                behaviours.SetRoot(root);
+                behaviours.SetParent(code);
                 var animations = new PS2AnyAnimationsSection();
                 animations.SetID(Constants.CODE_ANIMATIONS_SECTION);
+                animations.SetRoot(root);
+                animations.SetParent(code);
                 var ogis = new PS2AnyOGIsSection();
                 ogis.SetID(Constants.CODE_OGIS_SECTION);
+                ogis.SetRoot(root);
+                ogis.SetParent(code);
                 var behaviourSequences = new PS2AnyBehaviourCommandsSequencesSection();
                 behaviourSequences.SetID(Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION);
+                behaviourSequences.SetRoot(root);
+                behaviourSequences.SetParent(code);
                 var unknowns = new BaseTwinSection();
                 unknowns.SetID(Constants.CODE_UNK_ITEM);
+                unknowns.SetRoot(root);
+                unknowns.SetParent(code);
                 var sfxs = new PS2AnySoundsSection();
                 sfxs.SetID(Constants.CODE_SOUND_EFFECTS_SECTION);
+                sfxs.SetRoot(root);
+                sfxs.SetParent(code);
                 var sfxsEn = new PS2AnySoundsSection();
                 sfxsEn.SetID(Constants.CODE_LANG_ENG_SECTION);
+                sfxsEn.SetRoot(root);
+                sfxsEn.SetParent(code);
                 var sfxsFr = new PS2AnySoundsSection();
                 sfxsFr.SetID(Constants.CODE_LANG_FRE_SECTION);
+                sfxsFr.SetRoot(root);
+                sfxsFr.SetParent(code);
                 var sfxsGr = new PS2AnySoundsSection();
                 sfxsGr.SetID(Constants.CODE_LANG_GER_SECTION);
+                sfxsGr.SetRoot(root);
+                sfxsGr.SetParent(code);
                 var sfxsSp = new PS2AnySoundsSection();
                 sfxsSp.SetID(Constants.CODE_LANG_SPA_SECTION);
+                sfxsSp.SetRoot(root);
+                sfxsSp.SetParent(code);
                 var sfxsIt = new PS2AnySoundsSection();
                 sfxsIt.SetID(Constants.CODE_LANG_ITA_SECTION);
+                sfxsIt.SetRoot(root);
+                sfxsIt.SetParent(code);
                 var sfxsJp = new PS2AnySoundsSection();
                 sfxsJp.SetID(Constants.CODE_LANG_JPN_SECTION);
+                sfxsJp.SetRoot(root);
+                sfxsJp.SetParent(code);
+
                 code.AddItem(objects);
                 code.AddItem(behaviours);
                 code.AddItem(animations);
@@ -1117,329 +1005,6 @@ namespace TT_Lab.Assets.Factory
                 code.AddItem(sfxsIt);
                 code.AddItem(sfxsJp);
             }
-            var layout1 = new PS2AnyLayoutSection();
-            layout1.SetID(Constants.LEVEL_LAYOUT_1_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout1.AddItem(templates);
-                layout1.AddItem(aiPositions);
-                layout1.AddItem(aiPaths);
-                layout1.AddItem(positions);
-                layout1.AddItem(paths);
-                layout1.AddItem(surfaces);
-                layout1.AddItem(instances);
-                layout1.AddItem(triggers);
-                layout1.AddItem(cameras);
-            }
-            var layout2 = new PS2AnyLayoutSection();
-            layout2.SetID(Constants.LEVEL_LAYOUT_2_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout2.AddItem(templates);
-                layout2.AddItem(aiPositions);
-                layout2.AddItem(aiPaths);
-                layout2.AddItem(positions);
-                layout2.AddItem(paths);
-                layout2.AddItem(surfaces);
-                layout2.AddItem(instances);
-                layout2.AddItem(triggers);
-                layout2.AddItem(cameras);
-            }
-            var layout3 = new PS2AnyLayoutSection();
-            layout3.SetID(Constants.LEVEL_LAYOUT_3_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout3.AddItem(templates);
-                layout3.AddItem(aiPositions);
-                layout3.AddItem(aiPaths);
-                layout3.AddItem(positions);
-                layout3.AddItem(paths);
-                layout3.AddItem(surfaces);
-                layout3.AddItem(instances);
-                layout3.AddItem(triggers);
-                layout3.AddItem(cameras);
-            }
-            var layout4 = new PS2AnyLayoutSection();
-            layout4.SetID(Constants.LEVEL_LAYOUT_4_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout4.AddItem(templates);
-                layout4.AddItem(aiPositions);
-                layout4.AddItem(aiPaths);
-                layout4.AddItem(positions);
-                layout4.AddItem(paths);
-                layout4.AddItem(surfaces);
-                layout4.AddItem(instances);
-                layout4.AddItem(triggers);
-                layout4.AddItem(cameras);
-            }
-            var layout5 = new PS2AnyLayoutSection();
-            layout5.SetID(Constants.LEVEL_LAYOUT_5_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout5.AddItem(templates);
-                layout5.AddItem(aiPositions);
-                layout5.AddItem(aiPaths);
-                layout5.AddItem(positions);
-                layout5.AddItem(paths);
-                layout5.AddItem(surfaces);
-                layout5.AddItem(instances);
-                layout5.AddItem(triggers);
-                layout5.AddItem(cameras);
-            }
-            var layout6 = new PS2AnyLayoutSection();
-            layout6.SetID(Constants.LEVEL_LAYOUT_6_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout6.AddItem(templates);
-                layout6.AddItem(aiPositions);
-                layout6.AddItem(aiPaths);
-                layout6.AddItem(positions);
-                layout6.AddItem(paths);
-                layout6.AddItem(surfaces);
-                layout6.AddItem(instances);
-                layout6.AddItem(triggers);
-                layout6.AddItem(cameras);
-            }
-            var layout7 = new PS2AnyLayoutSection();
-            layout7.SetID(Constants.LEVEL_LAYOUT_7_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout7.AddItem(templates);
-                layout7.AddItem(aiPositions);
-                layout7.AddItem(aiPaths);
-                layout7.AddItem(positions);
-                layout7.AddItem(paths);
-                layout7.AddItem(surfaces);
-                layout7.AddItem(instances);
-                layout7.AddItem(triggers);
-                layout7.AddItem(cameras);
-            }
-            var layout8 = new PS2AnyLayoutSection();
-            layout8.SetID(Constants.LEVEL_LAYOUT_8_SECTION);
-            {
-                var templates = new PS2AnyTemplatesSection();
-                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
-                var aiPositions = new PS2AnyAIPositionsSection();
-                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
-                var aiPaths = new PS2AnyAIPathsSection();
-                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
-                var positions = new PS2AnyPositionsSection();
-                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
-                var paths = new PS2AnyPathsSection();
-                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
-                var surfaces = new PS2AnySurfacesSection();
-                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
-                var instances = new PS2AnyInstancesSection();
-                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
-                var triggers = new PS2AnyTriggersSection();
-                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
-                var cameras = new PS2AnyCamerasSection();
-                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
-                layout8.AddItem(templates);
-                layout8.AddItem(aiPositions);
-                layout8.AddItem(aiPaths);
-                layout8.AddItem(positions);
-                layout8.AddItem(paths);
-                layout8.AddItem(surfaces);
-                layout8.AddItem(instances);
-                layout8.AddItem(triggers);
-                layout8.AddItem(cameras);
-            }
-            var particle = new PS2AnyParticleData();
-            particle.SetID(Constants.LEVEL_PARTICLES_ITEM);
-            var collision = new PS2AnyCollisionData();
-            collision.SetID(Constants.LEVEL_COLLISION_ITEM);
-
-            rm2.AddItem(graphics);
-            rm2.AddItem(code);
-            rm2.AddItem(particle);
-            rm2.AddItem(collision);
-            rm2.AddItem(layout1);
-            rm2.AddItem(layout2);
-            rm2.AddItem(layout3);
-            rm2.AddItem(layout4);
-            rm2.AddItem(layout5);
-            rm2.AddItem(layout6);
-            rm2.AddItem(layout7);
-            rm2.AddItem(layout8);
-            return rm2;
-        }
-
-        public ITwinSection GenerateSM2()
-        {
-            var sm2 = new PS2AnyTwinsanitySM2();
-            var graphics = new PS2AnyGraphicsSection();
-            graphics.SetID(Constants.SCENERY_GRAPHICS_SECTION);
-            {
-                var textures = new PS2AnyTexturesSection();
-                textures.SetID(Constants.GRAPHICS_TEXTURES_SECTION);
-                var materials = new PS2AnyMaterialsSection();
-                materials.SetID(Constants.GRAPHICS_MATERIALS_SECTION);
-                var models = new PS2AnyModelsSection();
-                models.SetID(Constants.GRAPHICS_MODELS_SECTION);
-                var rigids = new PS2AnyRigidModelsSection();
-                rigids.SetID(Constants.GRAPHICS_RIGID_MODELS_SECTION);
-                var skins = new PS2AnySkinsSection();
-                skins.SetID(Constants.GRAPHICS_SKINS_SECTION);
-                var blendSkins = new PS2AnyBlendSkinsSection();
-                blendSkins.SetID(Constants.GRAPHICS_BLEND_SKINS_SECTION);
-                var meshes = new PS2AnyMeshesSection();
-                meshes.SetID(Constants.GRAPHICS_MESHES_SECTION);
-                var lods = new PS2AnyLODsSection();
-                lods.SetID(Constants.GRAPHICS_LODS_SECTION);
-                var skydomes = new PS2AnySkydomesSection();
-                skydomes.SetID(Constants.GRAPHICS_SKYDOMES_SECTION);
-                graphics.AddItem(textures);
-                graphics.AddItem(materials);
-                graphics.AddItem(models);
-                graphics.AddItem(rigids);
-                graphics.AddItem(skins);
-                graphics.AddItem(blendSkins);
-                graphics.AddItem(meshes);
-                graphics.AddItem(lods);
-                graphics.AddItem(skydomes);
-            }
-            var scenery = new PS2AnyScenery();
-            scenery.SetID(Constants.SCENERY_SECENERY_ITEM);
-            var unk1 = new BaseTwinItem();
-            unk1.SetID(Constants.SCENERY_UNK_1_ITEM);
-            var unk2 = new BaseTwinItem();
-            unk2.SetID(Constants.SCENERY_UNK_2_ITEM);
-            var unk3 = new BaseTwinItem();
-            unk3.SetID(Constants.SCENERY_UNK_3_ITEM);
-            var dynamicScenery = new PS2AnyDynamicScenery();
-            dynamicScenery.SetID(Constants.SCENERY_DYNAMIC_SECENERY_ITEM);
-            var links = new PS2AnyLink();
-            links.SetID(Constants.SCENERY_LINK_ITEM);
-
-            sm2.AddItem(graphics);
-            sm2.AddItem(scenery);
-            sm2.AddItem(unk1);
-            sm2.AddItem(unk2);
-            sm2.AddItem(unk3);
-            sm2.AddItem(dynamicScenery);
-            sm2.AddItem(links);
-            return sm2;
         }
     }
 }

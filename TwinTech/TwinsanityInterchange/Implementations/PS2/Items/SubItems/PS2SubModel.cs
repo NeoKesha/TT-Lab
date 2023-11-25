@@ -144,6 +144,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         }
         public void Write(BinaryWriter writer)
         {
+            writer.Write(VertexesCount);
+            writer.Write(VertexData.Length);
+            writer.Write(VertexData);
+            writer.Write(UnusedBlob.Length);
+            writer.Write(UnusedBlob);
+        }
+
+        public void Compile()
+        {
             VertexesCount = (UInt32)Vertexes.Count;
             TrimList(UVW, (Int32)VertexesCount);
             TrimList(Colors, (Int32)VertexesCount, new Vector4());
@@ -167,12 +176,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             }
             var compiler = new TwinVIFCompiler(data, Connection, hasNormals, hasEmitColors);
             VertexData = compiler.Compile();
-
-            writer.Write(VertexesCount);
-            writer.Write(VertexData.Length);
-            writer.Write(VertexData);
-            writer.Write(UnusedBlob.Length);
-            writer.Write(UnusedBlob);
         }
 
         private static void TrimList(List<Vector4> list, Int32 desiredLength, Vector4 defaultValue = null)

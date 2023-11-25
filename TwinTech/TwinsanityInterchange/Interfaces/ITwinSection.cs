@@ -23,6 +23,12 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
         /// <returns></returns>
         T GetItem<T>(UInt32 id) where T : ITwinItem;
         /// <summary>
+        /// Check if a given item exists in the section
+        /// </summary>
+        /// <param name="id">Item's ID</param>
+        /// <returns></returns>
+        bool ContainsItem(UInt32 id);
+        /// <summary>
         /// Remove item by ID
         /// </summary>
         /// <typeparam name="T">Specific item's type</typeparam>

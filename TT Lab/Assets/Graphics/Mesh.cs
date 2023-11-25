@@ -1,11 +1,13 @@
 ﻿using System;
 using TT_Lab.AssetData.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class Mesh : RigidModel
     {
+        public override UInt32 Section => Constants.GRAPHICS_MESHES_SECTION;
 
         public Mesh() { }
 

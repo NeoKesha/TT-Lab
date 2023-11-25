@@ -133,6 +133,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             }
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Write(BinaryWriter writer)
         {
             writer.Write((UInt32)ShaderType);

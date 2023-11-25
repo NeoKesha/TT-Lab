@@ -34,6 +34,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 + UnkBytes1.Count + UnkBytes2.Count;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             var header = new UInt16[11];

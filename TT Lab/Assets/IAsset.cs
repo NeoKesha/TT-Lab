@@ -95,6 +95,8 @@ namespace TT_Lab.Assets
         [JsonProperty(Required = Required.AllowNull)]
         Int32? LayoutID { get; set; }
 
+        UInt32 Section { get; }
+
         /// <summary>
         /// Whether the data for this asset is currently in memory
         /// </summary>
@@ -195,6 +197,11 @@ namespace TT_Lab.Assets
         void Deserialize(string json);
 
         /// <summary>
+        /// Called if asset needs to do anything else after being deserialized
+        /// </summary>
+        void PostDeserialize();
+
+        /// <summary>
         /// Converts given data to raw game's data
         /// </summary>
         /// <param name="data">Data to convert</param>
@@ -216,6 +223,16 @@ namespace TT_Lab.Assets
         /// </summary>
         Twinsanity.TwinsanityInterchange.Interfaces.ITwinItem Export(Factory.ITwinItemFactory factory);
 
+        /// <summary>
+        /// Exports the item to a file in Twinsanity's format
+        /// </summary>
+        /// <param name="factory"></param>
         void ExportToFile(Factory.ITwinItemFactory factory);
+
+        /// <summary>
+        /// Traverses the chunk sections to fill it with all the referenced data
+        /// </summary>
+        /// <param name="section"></param>
+        void ResolveChunkResources(Factory.ITwinItemFactory factory, Twinsanity.TwinsanityInterchange.Interfaces.ITwinSection section);
     }
 }

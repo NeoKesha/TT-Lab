@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
@@ -8,6 +9,7 @@ namespace TT_Lab.Assets.Graphics
     public class BlendSkin : SerializableAsset
     {
         protected override String DataExt => ".dae";
+        public override UInt32 Section => Constants.GRAPHICS_BLEND_SKINS_SECTION;
 
         public BlendSkin() { }
 

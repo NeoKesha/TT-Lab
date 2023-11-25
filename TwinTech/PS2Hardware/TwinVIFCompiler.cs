@@ -344,17 +344,18 @@ namespace Twinsanity.PS2Hardware
                             // Write emit colors if any
                             if (hasEmitColors)
                             {
+                                var batchIndex = hasNormals ? GetBatchIndex(VectorBatchIndex.EmitColor) : GetBatchIndex(VectorBatchIndex.EmitColor) - 1;
                                 VIFCode emitColorsCode = new()
                                 {
                                     OP = VIFCodeEnum.UNPACK,
                                     Immediate = outputAddressMap[format][outAddressIndex],
-                                    Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)].Count
+                                    Amount = (Byte)vectorBatch[batchIndex].Count
                                 };
                                 emitColorsCode.SetUnpackAddressMode(true);
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
-                                var emitColors = vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)].Select(c => c.GetColor()).Select(c =>
+                                var emitColors = vectorBatch[batchIndex].Select(c => c.GetColor()).Select(c =>
                                 {
                                     c.ScaleAlphaDown();
                                     return c;

@@ -43,6 +43,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             return 16;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             var bitfield = reader.ReadInt32();

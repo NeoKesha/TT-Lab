@@ -23,6 +23,12 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             return Column1.GetLength() + Column2.GetLength() + Column3.GetLength() + Column4.GetLength();
         }
+
+        public void Compile()
+        {
+            return;
+        }
+
         public Vector4 this[int key]
         {
             get

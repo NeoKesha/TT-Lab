@@ -44,7 +44,7 @@ namespace TT_Lab.AssetData.Graphics
             Bitmap = new Bitmap(Bitmap.FromFile(dataPath));
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinTexture texture = GetTwinItem<ITwinTexture>();
             if (texture.TextureFormat == ITwinTexture.TexturePixelFormat.PSMCT32 || texture.TextureFormat == ITwinTexture.TexturePixelFormat.PSMT8)

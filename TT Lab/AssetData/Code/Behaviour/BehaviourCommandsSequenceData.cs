@@ -48,8 +48,12 @@ namespace TT_Lab.AssetData.Code.Behaviour
                 cm = new PS2BehaviourCommandsSequence();
             }
 
-            reader.BaseStream.Position = 0;
-            cm.ReadText(reader);
+            reader.Close();
+
+            using FileStream fs2 = new(dataPath, FileMode.Open, FileAccess.Read);
+            using StreamReader reader2 = new(fs2);
+
+            cm.ReadText(reader2);
             Code = cm.ToString();
             GenerateBehaviourGraphIdsList(cm);
             SetTwinItem(cm);
@@ -61,7 +65,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             Code = "";
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var codeModel = GetTwinItem<ITwinBehaviourCommandsSequence>();
             Code = codeModel.ToString();
@@ -73,6 +77,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             using var ms = new MemoryStream();
             using var writer = new StreamWriter(ms);
             writer.Write(Code);
+            writer.Flush();
 
             ms.Position = 0;
             return factory.GenerateBehaviourCommandsSequence(ms);

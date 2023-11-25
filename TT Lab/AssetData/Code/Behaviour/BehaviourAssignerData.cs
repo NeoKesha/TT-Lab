@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
@@ -21,6 +22,8 @@ namespace TT_Lab.AssetData.Code.Behaviour
         public AssignStatusID AssignStatus { get; set; }
         [JsonProperty(Required = Required.Always)]
         public AssignPreferenceID AssignPreference { get; set; }
+
+        public BehaviourAssignerData() { }
 
         public BehaviourAssignerData(LabURI package, String? variant, TwinBehaviourAssigner assigner)
         {

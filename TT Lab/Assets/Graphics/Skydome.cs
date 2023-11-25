@@ -1,12 +1,14 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class Skydome : SerializableAsset
     {
+        public override UInt32 Section => Constants.GRAPHICS_SKYDOMES_SECTION;
 
         public Skydome(LabURI package, String? variant, UInt32 id, String Name, ITwinSkydome skydome) : base(id, Name, package, variant)
         {

@@ -43,6 +43,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Particles
             return versionSizeMap[Version];
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             var basePos = reader.BaseStream.Position;

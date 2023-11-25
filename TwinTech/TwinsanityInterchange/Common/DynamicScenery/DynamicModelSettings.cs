@@ -26,6 +26,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             return 4 * 2;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             flags = reader.ReadUInt16();

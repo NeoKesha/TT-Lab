@@ -18,6 +18,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             return 8;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             Behaviour = reader.ReadInt32();

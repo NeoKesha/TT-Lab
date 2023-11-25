@@ -25,6 +25,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             return 2;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             transformValue = reader.ReadInt16();

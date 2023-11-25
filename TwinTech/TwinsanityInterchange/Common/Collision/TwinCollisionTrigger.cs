@@ -23,6 +23,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Collision
             return Constants.SIZE_VECTOR3 + Constants.SIZE_VECTOR3 + 8;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             V1.Read(reader, Constants.SIZE_VECTOR3);

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.DynamicScenery;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Instance.DynamicScenery
 {
@@ -18,6 +20,8 @@ namespace TT_Lab.AssetData.Instance.DynamicScenery
         public Byte LodFlag { get; set; }
         public LabURI Mesh { get; set; }
         public Vector4[] BoundingBox { get; set; }
+
+        public DynamicSceneryModelData() { }
 
         public DynamicSceneryModelData(LabURI package, String? variant, TwinDynamicSceneryModel model)
         {

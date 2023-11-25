@@ -1,11 +1,13 @@
 ﻿using System;
 using TT_Lab.AssetData;
+using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
     public class Folder : SerializableAsset
     {
-
+        public override UInt32 Section => throw new NotImplementedException();
         private static UInt32 rootOrder = 0;
         private UInt32 order = 0;
 
@@ -97,10 +99,6 @@ namespace TT_Lab.Assets
             throw new NotImplementedException();
         }
 
-        internal UInt32 GetOrder()
-        {
-            return order++;
-        }
         public override AbstractAssetData GetData()
         {
             if (!IsLoaded || assetData.Disposed)
@@ -111,5 +109,21 @@ namespace TT_Lab.Assets
             }
             return assetData;
         }
+
+        public override void ResolveChunkResources(ITwinItemFactory factory, ITwinSection section)
+        {
+            var assetManager = AssetManager.Get();
+            foreach (var item in assetData.To<FolderData>().Children)
+            {
+                assetManager.GetAsset(item).ResolveChunkResources(factory, section);
+            }
+        }
+
+        internal UInt32 GetOrder()
+        {
+            return order++;
+        }
+
+        
     }
 }

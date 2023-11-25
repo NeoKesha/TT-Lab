@@ -40,7 +40,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             Graph = reader.ReadToEnd();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var graph = GetTwinItem<ITwinBehaviourGraph>();
             Graph = graph.ToString();
@@ -51,6 +51,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             using var ms = new MemoryStream();
             using var writer = new StreamWriter(ms);
             writer.Write(Graph);
+            writer.Flush();
 
             ms.Position = 0;
             return factory.GenerateBehaviourGraph(ms);

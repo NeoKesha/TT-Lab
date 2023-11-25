@@ -6,6 +6,7 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
@@ -74,25 +75,25 @@ namespace TT_Lab.AssetData.Instance
             return factory.GenerateDefaultParticle(ms);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
-            base.Import(package, variant);
+            base.Import(package, variant, layoutId);
 
             var assetManager = AssetManager.Get();
             ITwinDefaultParticle particle = GetTwinItem<ITwinDefaultParticle>();
 
             foreach (var texture in particle.TextureIDs)
             {
-                TextureIDs.Add(assetManager.GetUri(package, typeof(Texture).Name, null, texture));
+                TextureIDs.Add(assetManager.GetUri(package, typeof(Texture).Name, variant, texture));
             }
 
             foreach (var material in particle.MaterialIDs)
             {
-                MaterialIDs.Add(assetManager.GetUri(package, typeof(Material).Name, null, material));
+                MaterialIDs.Add(assetManager.GetUri(package, typeof(Material).Name, variant, material));
             }
 
-            DecalTextureID = assetManager.GetUri(package, typeof(Texture).Name, null, particle.DecalTextureID);
-            DecalMaterialID = assetManager.GetUri(package, typeof(Material).Name, null, particle.DecalMaterialID);
+            DecalTextureID = assetManager.GetUri(package, typeof(Texture).Name, variant, particle.DecalTextureID);
+            DecalMaterialID = assetManager.GetUri(package, typeof(Material).Name, variant, particle.DecalMaterialID);
 
             UnkData = CloneUtils.CloneArray(particle.UnkData);
             UnkBlob = CloneUtils.CloneArray(particle.UnkBlob);
@@ -102,6 +103,29 @@ namespace TT_Lab.AssetData.Instance
             {
                 UnkBlobs.Add(CloneUtils.CloneArray(blob));
             }
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION);
+            var texturesSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_TEXTURES_SECTION);
+            var materialsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MATERIALS_SECTION);
+
+            foreach (var texture in TextureIDs)
+            {
+                assetManager.GetAsset(texture).ResolveChunkResources(factory, texturesSection);
+            }
+
+            foreach (var material in MaterialIDs)
+            {
+                assetManager.GetAsset(material).ResolveChunkResources(factory, materialsSection);
+            }
+
+            assetManager.GetAsset(DecalTextureID).ResolveChunkResources(factory, texturesSection);
+            assetManager.GetAsset(DecalMaterialID).ResolveChunkResources(factory, materialsSection);
+
+            return base.ResolveChunkResouces(factory, section, id);
         }
 
         protected override void Dispose(Boolean disposing)
