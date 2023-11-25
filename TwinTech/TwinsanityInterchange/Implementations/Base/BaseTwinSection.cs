@@ -15,12 +15,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         protected Type defaultType = typeof(BaseTwinItem);
         protected bool skip;
         protected Byte[] extraData;
+
         public BaseTwinSection()
         {
             Items = new List<ITwinItem>();
             extraData = Array.Empty<Byte>();
             skip = false;
         }
+
         public void AddItem(ITwinItem item)
         {
             Items.Add(item);
@@ -60,6 +62,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
                 return 12 + Items.Count * 12 + GetContentLength() + extraData.Length;
             }
         }
+
         public int GetContentLength()
         {
             Int32 length = 0;
@@ -74,6 +77,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         {
             return id;
         }
+
         public override void Read(BinaryReader reader, int length)
         {
             if (length > 0)
@@ -141,29 +145,39 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return 0x1;
         }
 
+        protected void PrepareWrite()
+        {
+            foreach (var item in Items.Where(item => item is BaseTwinSection).Cast<BaseTwinSection>())
+            {
+                item.PrepareWrite();
+                item.PreprocessWrite();
+            }
+        }
+
         public override void Write(BinaryWriter writer)
         {
-            if (!skip)
+            if (skip)
             {
-                PreprocessWrite();
-                writer.Write(GetMagicNumber() | (0x1 << 0x10));
-                writer.Write(Items.Count);
-                writer.Write(GetContentLength());
-                Record record = new Record();
-                record.Offset = (UInt32)(12 + Items.Count * 12);
-                foreach (ITwinItem item in Items)
-                {
-                    record.Size = (UInt32)item.GetLength();
-                    record.ItemId = item.GetID();
-                    record.Write(writer);
-                    record.Offset += record.Size;
-                }
-                foreach (ITwinItem item in Items)
-                {
-                    item.Write(writer);
-                }
-                writer.Write(extraData);
+                return;
             }
+
+            writer.Write(GetMagicNumber() | (0x1 << 0x10));
+            writer.Write(Items.Count);
+            writer.Write(GetContentLength());
+            Record record = new Record();
+            record.Offset = (UInt32)(12 + Items.Count * 12);
+            foreach (ITwinItem item in Items)
+            {
+                record.Size = (UInt32)item.GetLength();
+                record.ItemId = item.GetID();
+                record.Write(writer);
+                record.Offset += record.Size;
+            }
+            foreach (ITwinItem item in Items)
+            {
+                item.Write(writer);
+            }
+            writer.Write(extraData);
         }
 
         public Type IdToClass(uint id)

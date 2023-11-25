@@ -172,10 +172,12 @@ namespace TT_Lab.Project
             // Deserialize assets
             foreach (var dir in System.IO.Directory.GetDirectories("assets"))
             {
+                Log.WriteLine($"Opening {dir}...");
                 var assetFiles = System.IO.Directory.GetFiles(dir, "*.json", System.IO.SearchOption.AllDirectories);
                 taskList.Add(AssetFactory.GetAssets(assetFiles));
             }
             Task.WaitAll(taskList.ToArray());
+            Log.WriteLine("Finished opening assets...");
             Dictionary<Guid, IAsset> assets = new();
             pr.AssetManager = new();
             foreach (var assetsList in taskList)
@@ -186,6 +188,7 @@ namespace TT_Lab.Project
                 }
             }
             pr.AssetManager.AddAllAssets(assets);
+            Log.WriteLine("Post processing the assets...");
             foreach (var asset in assets)
             {
                 asset.Value.PostDeserialize();

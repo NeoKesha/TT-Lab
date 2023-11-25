@@ -135,6 +135,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                         line = reader.ReadLine().Trim();
                     }
                     ControlPacket.ReadText(reader);
+                    while (!line.EndsWith("}"))
+                    {
+                        line = reader.ReadLine().Trim();
+                    }
+                    line = reader.ReadLine().Trim();
                 }
                 if (line.StartsWith("Body"))
                 {

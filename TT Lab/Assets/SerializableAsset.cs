@@ -99,13 +99,14 @@ namespace TT_Lab.Assets
         public abstract void ToRaw(Byte[] data);
         public abstract Byte[] ToFormat();
         public abstract Type GetEditorType();
-
         public abstract AbstractAssetData GetData();
+
         public virtual void Import()
         {
             assetData.Import(Package, Variation, LayoutID);
             assetData.NullifyReference();
         }
+
         public virtual ITwinItem Export(Factory.ITwinItemFactory factory)
         {
             if (!IsLoaded || assetData.Disposed)

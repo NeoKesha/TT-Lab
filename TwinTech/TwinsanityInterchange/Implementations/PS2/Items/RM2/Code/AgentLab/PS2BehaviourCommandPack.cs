@@ -55,21 +55,26 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 cmd.WriteText(writer, tabs);
             }
         }
-        public void ReadText(StreamReader reader)
+        public bool ReadText(StreamReader reader)
         {
             String line = reader.ReadLine().Trim();
             Debug.Assert(line == "@PS2 Pack", "Attepting to parse PS2 command pack as a different version");
-            while (!line.EndsWith("}") && reader.BaseStream.Position < reader.BaseStream.Length)
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 line = reader.ReadLine().Trim();
-                if (string.IsNullOrWhiteSpace(line) || line == "}")
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
+                }
+                if (line == "}")
+                {
+                    return false;
                 }
                 PS2BehaviourCommand cmd = new();
                 cmd.ReadText(line);
                 Commands.Add(cmd);
             }
+            return true;
         }
         public override String ToString()
         {

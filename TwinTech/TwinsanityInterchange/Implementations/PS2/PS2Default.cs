@@ -1,4 +1,5 @@
-﻿using Twinsanity.TwinsanityInterchange.Enumerations;
+﻿using System.IO;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
 

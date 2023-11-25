@@ -21,7 +21,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab
         /// Interpret the pack from its text form
         /// </summary>
         /// <param name="reader"></param>
-        public void ReadText(StreamReader reader);
+        public bool ReadText(StreamReader reader);
         public String ToString();
     }
 }

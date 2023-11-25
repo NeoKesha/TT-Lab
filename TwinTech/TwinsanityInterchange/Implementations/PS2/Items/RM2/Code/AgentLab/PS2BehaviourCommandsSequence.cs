@@ -96,10 +96,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             {
                 line = reader.ReadLine().Trim();
             }
-            while (!line.EndsWith("}"))
+            var skipEndCheck = false;
+            while (!line.EndsWith("}") || skipEndCheck)
             {
                 line = reader.ReadLine().Trim();
-                if (string.IsNullOrWhiteSpace(line))
+                if (skipEndCheck)
+                {
+                    line = reader.ReadLine().Trim();
+                    skipEndCheck = false;
+                }
+                if (string.IsNullOrWhiteSpace(line) || line == "}")
                 {
                     continue;
                 }
@@ -112,11 +118,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                     {
                         line = reader.ReadLine().Trim();
                     }
-                    pack.ReadText(reader);
-                    while (!line.EndsWith("}"))
-                    {
-                        line = reader.ReadLine().Trim();
-                    }
+                    skipEndCheck = pack.ReadText(reader);
                 }
                 else
                 {

@@ -290,7 +290,27 @@ namespace TT_Lab.AssetData.Code
             writeUriList(RefOGIs);
             writeUriList(RefAnimations);
             writeUriList(RefBehaviourCommandsSequences);
-            writeUriList(RefBehaviours);
+
+            void writeBehaviourUris(IList<LabURI> uris)
+            {
+                writer.Write(uris.Count);
+                foreach (var uri in uris)
+                {
+                    if (uri != LabURI.Empty && assetManager.GetAsset(uri) is BehaviourCommandsSequence sequence)
+                    {
+                        if (sequence.BehaviourGraphLinks.ContainsValue(uri))
+                        {
+                            var neededId = sequence.BehaviourGraphLinks.Where(pair => pair.Value == uri).First().Key;
+                            writer.Write((UInt16)neededId);
+                        }
+                    }
+                    else
+                    {
+                        writer.Write((UInt16)(uri == LabURI.Empty ? 65535 : assetManager.GetAsset(uri).ID));
+                    }
+                }
+            }
+            writeBehaviourUris(RefBehaviours);
 
             // Write unknowns/unused object refs
             writer.Write(0);
@@ -351,6 +371,11 @@ namespace TT_Lab.AssetData.Code
             var behaviourSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOURS_SECTION);
             var sequenceSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION);
 
+            foreach (var @object in RefObjects)
+            {
+                assetManager.GetAsset(@object).ResolveChunkResources(factory, section);
+            }
+
             foreach (var animation in RefAnimations)
             {
                 assetManager.GetAsset(animation).ResolveChunkResources(factory, animationSection);
@@ -358,6 +383,8 @@ namespace TT_Lab.AssetData.Code
 
             foreach (var behaviour in RefBehaviours)
             {
+                if (assetManager.GetAsset(behaviour) is BehaviourCommandsSequence) continue;
+
                 assetManager.GetAsset(behaviour).ResolveChunkResources(factory, behaviourSection);
             }
 

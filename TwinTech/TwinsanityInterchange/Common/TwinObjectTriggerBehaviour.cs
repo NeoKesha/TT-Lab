@@ -20,8 +20,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt32 Compress()
         {
             UInt32 result = UnkTriggerValue;
-            result |= (UInt32)(TriggerBehaviour & 0x3FFF << 0xA);
-            result |= (UInt32)(BehaviourCallerIndex & 0x1 << 0x18);
+            result |= (UInt32)((TriggerBehaviour & 0x3FFF) << 0xA);
+            result |= (UInt32)((BehaviourCallerIndex & 0x1) << 0x18);
 
             return result;
         }

@@ -34,6 +34,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
                 item.offset = offset;
                 offset += item.Sound.Length;
             }
+            newExtraData.Flush();
             extraData = newExtraData.ToArray();
         }
     }

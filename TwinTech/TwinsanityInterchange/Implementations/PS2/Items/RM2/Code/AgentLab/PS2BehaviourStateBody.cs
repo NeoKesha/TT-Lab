@@ -130,7 +130,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 }
                 else if (line.StartsWith("additional_flags"))
                 {
-                    AdditionalFlags = UInt32.Parse(StringUtils.GetStringAfter(line, "="));
+                    AdditionalFlags = UInt32.Parse(StringUtils.GetStringAfter(StringUtils.GetStringAfter(line, "=").Trim(), "0x"), System.Globalization.NumberStyles.HexNumber);
                 }
                 else if (line.StartsWith("Condition"))
                 {
