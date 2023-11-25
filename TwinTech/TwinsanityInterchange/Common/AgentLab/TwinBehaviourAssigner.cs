@@ -40,7 +40,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
         public void Write(BinaryWriter writer)
         {
             writer.Write(Behaviour);
-            UInt32 newAssigner = (UInt32)(Object & 0xFFFF << 0x10);
+            UInt32 newAssigner = (UInt32)((Object & 0xFFFF) << 0x10);
             newAssigner |= (UInt32)AssignType;
             newAssigner |= (UInt32)AssignLocality << 0x4;
             newAssigner |= (UInt32)AssignStatus << 0x8;

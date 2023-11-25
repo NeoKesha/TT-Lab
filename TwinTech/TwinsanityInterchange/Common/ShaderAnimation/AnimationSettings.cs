@@ -31,11 +31,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.ShaderAnimation
             transformationChoice = reader.ReadUInt16();
             {
                 TranslateX = (TransformType)(transformationChoice & 0x1);
-                TranslateY = (TransformType)(transformationChoice & 0x2);
-                ColorR = (TransformType)(transformationChoice & 0x4);
-                ColorG = (TransformType)(transformationChoice & 0x8);
-                ColorB = (TransformType)(transformationChoice & 0x10);
-                ColorA = (TransformType)(transformationChoice & 0x20);
+                TranslateY = (TransformType)((transformationChoice & 0x2) >> 0x1);
+                ColorR = (TransformType)((transformationChoice & 0x4) >> 0x2);
+                ColorG = (TransformType)((transformationChoice & 0x8) >> 0x3);
+                ColorB = (TransformType)((transformationChoice & 0x10) >> 0x4);
+                ColorA = (TransformType)((transformationChoice & 0x20) >> 0x5);
             }
             StaticTransformationIndex = reader.ReadUInt16();
             AnimationTransformationIndex = reader.ReadUInt16();

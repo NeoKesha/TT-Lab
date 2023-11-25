@@ -40,8 +40,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt16();
-            SkipsFirstStateBody = (Bitfield & 0x400) == 1;
-            UsesObjectSlot = (Bitfield & 0x1000) == 1;
+            SkipsFirstStateBody = (Bitfield & 0x400) != 0;
+            UsesObjectSlot = (Bitfield & 0x1000) != 0;
             AdditionalFlags = (UInt16)(Bitfield & AdditionalFlagsMask);
             BehaviourIndexOrSlot = reader.ReadInt16();
             if ((Bitfield & 0x4000) != 0)

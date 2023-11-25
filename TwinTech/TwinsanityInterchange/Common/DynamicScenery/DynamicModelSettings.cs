@@ -40,11 +40,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             transformationChoice = reader.ReadUInt16();
             {
                 TranslateX = (TransformType)(transformationChoice & 0x1);
-                TranslateY = (TransformType)(transformationChoice & 0x2);
-                TranslateZ = (TransformType)(transformationChoice & 0x4);
-                RotateX = (TransformType)(transformationChoice & 0x8);
-                RotateY = (TransformType)(transformationChoice & 0x10);
-                RotateZ = (TransformType)(transformationChoice & 0x20);
+                TranslateY = (TransformType)((transformationChoice & 0x2) >> 0x1);
+                TranslateZ = (TransformType)((transformationChoice & 0x4) >> 0x2);
+                RotateX = (TransformType)((transformationChoice & 0x8) >> 0x3);
+                RotateY = (TransformType)((transformationChoice & 0x10) >> 0x4);
+                RotateZ = (TransformType)((transformationChoice & 0x20) >> 0x5);
             }
             StaticTransformationIndex = reader.ReadUInt16();
             AnimationTransformationIndex = reader.ReadUInt16();

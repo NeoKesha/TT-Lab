@@ -31,8 +31,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         {
             bitfield = reader.ReadUInt32();
             {
-                HasAnimationData = (bitfield & 0x1) == 1;
-                HasFacialAnimationData = (bitfield & 0x2) == 1;
+                HasAnimationData = (bitfield & 0x1) != 0;
+                HasFacialAnimationData = (bitfield & 0x2) != 0;
                 TotalFrames = (UInt16)(bitfield >> 0x2 & 0xFFFF);
                 DefaultFPS = (Byte)(bitfield >> 0x11 & 0x1F);
             }

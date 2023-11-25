@@ -30,7 +30,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             dataPacker = reader.ReadUInt32();
             TotalFrames = reader.ReadUInt16();
             var jointSettings = (dataPacker & 0x7F);
-            var staticTransformations = (dataPacker >> 0xA & 0xFFE) / 2;
+            var staticTransformations = ((dataPacker >> 0xA) & 0xFFE) / 2;
             var animatedTransformations = (dataPacker >> 0x16);
 
             JointSettings.Clear();
