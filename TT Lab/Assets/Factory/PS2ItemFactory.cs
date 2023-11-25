@@ -782,13 +782,19 @@ namespace TT_Lab.Assets.Factory
             rm2.AddItem(graphics);
             rm2.AddItem(code);
 
-            for (UInt32 i = 0; i < 8; ++i)
+            for (UInt32 i = 0; i < 7; ++i)
             {
                 var layout = new PS2AnyLayoutSection();
                 layout.SetID(Constants.LEVEL_LAYOUT_1_SECTION + i);
                 FillLayoutSection(layout, rm2);
                 rm2.AddItem(layout);
             }
+
+            var layout8 = new PS2AnyLayoutSection();
+            layout8.SetID(Constants.LEVEL_LAYOUT_7_SECTION);
+            layout8.SetRoot(rm2);
+            layout8.SetParent(rm2);
+            rm2.AddItem(layout8);
 
             // Collision and particles are generated and injected later
 

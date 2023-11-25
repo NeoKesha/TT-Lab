@@ -273,10 +273,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             var maxPacketIndex = -1;
             Byte floatIdx = 0;
+            line = reader.ReadLine().Trim(); // Read the start of data
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("data"))
+                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("}"))
                 {
                     continue;
                 }
@@ -310,7 +311,14 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             if (maxPacketIndex != -1)
             {
                 Bytes.RemoveRange(maxPacketIndex, PacketDataLength - maxPacketIndex);
-                Floats.RemoveRange(floatIdx - 1, PacketDataLength - (floatIdx - 1));
+                if (floatIdx > 0)
+                {
+                    Floats.RemoveRange(floatIdx - 1, PacketDataLength - (floatIdx - 1));
+                }
+                else
+                {
+                    Floats.Clear();
+                }
             }
             else
             {

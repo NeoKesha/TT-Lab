@@ -107,6 +107,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         {
             StringUtils.WriteLineTabulated(writer, $"Script({Name}) {"{"}", tabs);
             StringUtils.WriteLineTabulated(writer, $"StartState = {StartState}", tabs + 1);
+            StringUtils.WriteLineTabulated(writer, $"Priority = {Priority}", tabs + 1);
             int i = 0;
             foreach (var state in ScriptStates)
             {
@@ -139,7 +140,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 }
                 if (line.StartsWith("StartState"))
                 {
-                    StartState = int.Parse(StringUtils.GetStringAfter(line, "="));
+                    StartState = Int32.Parse(StringUtils.GetStringAfter(line, "="));
+                }
+                if (line.StartsWith("Priority"))
+                {
+                    Priority = Byte.Parse(StringUtils.GetStringAfter(line, "="));
                 }
                 if (line.StartsWith("State_"))
                 {

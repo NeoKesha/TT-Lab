@@ -15,6 +15,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             return 4;
         }
 
+        public override void Compile()
+        {
+            base.Compile();
+            scriptID = (UInt16)GetID();
+        }
+
         public override void Read(BinaryReader reader, int length)
         {
             scriptID = reader.ReadUInt16();
