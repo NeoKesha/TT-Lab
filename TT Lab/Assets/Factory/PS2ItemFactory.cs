@@ -104,6 +104,7 @@ namespace TT_Lab.Assets.Factory
                 assigner.AssignLocality = (AssignLocalityID)reader.ReadUInt32();
                 assigner.AssignStatus = (AssignStatusID)reader.ReadUInt32();
                 assigner.AssignPreference = (AssignPreferenceID)reader.ReadUInt32();
+                starter.Assigners.Add(assigner);
             }
             return starter;
         }
