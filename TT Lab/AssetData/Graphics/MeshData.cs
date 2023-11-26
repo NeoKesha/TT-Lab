@@ -38,7 +38,7 @@ namespace TT_Lab.AssetData.Graphics
         protected override void ResolveResources(ITwinItemFactory factory, ITwinSection section)
         {
             var assetManager = AssetManager.Get();
-            var graphicsSection = section.GetRoot().GetItem<ITwinSection>(Constants.SCENERY_GRAPHICS_SECTION);
+            var graphicsSection = section.GetParent();
             var materialsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MATERIALS_SECTION);
             var modelsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MODELS_SECTION);
 

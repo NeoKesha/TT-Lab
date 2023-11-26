@@ -34,7 +34,7 @@ namespace TT_Lab.Rendering.Objects
                             var col = v.Color.GetColor();
                             return System.Drawing.Color.FromArgb((int)col.ToARGB());
                         }).ToList(),
-                        model.Vertexes[i].Select(v => v.UV).ToList(),
+                        model.Vertexes[i].Select(v => new Vector3(v.UV.X, 1 - v.UV.Y, v.UV.Z)).ToList(),
                         model.Vertexes[i].Select(v => v.Normal).ToList()));
                     var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
                     textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));

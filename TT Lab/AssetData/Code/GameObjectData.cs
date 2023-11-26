@@ -137,10 +137,9 @@ namespace TT_Lab.AssetData.Code
                 foreach (var cm in gameObject.RefCodeModels)
                 {
                     BehaviourCommandsSequence cmGuid = AssetManager.Get().GetAsset<BehaviourCommandsSequence>(package, typeof(BehaviourCommandsSequence).Name, variant, cm);
-                    LabURI subGuid = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, cmGuid.ID.ToString(), e);
-                    if (!subGuid.Equals(LabURI.Empty))
+                    if (cmGuid.BehaviourGraphLinks.ContainsKey(e))
                     {
-                        BehaviourSlots.Add(subGuid);
+                        BehaviourSlots.Add(cmGuid.BehaviourGraphLinks[e]);
                         found = true;
                         break;
                     }
@@ -266,9 +265,28 @@ namespace TT_Lab.AssetData.Code
                     writer.Write((UInt16)(item == LabURI.Empty ? 65535 : assetManager.GetAsset(item).ID));
                 }
             }
+            void writeBehaviourUris(IList<LabURI> uris)
+            {
+                writer.Write(uris.Count);
+                foreach (var uri in uris)
+                {
+                    if (uri != LabURI.Empty && assetManager.GetAsset(uri) is BehaviourCommandsSequence sequence)
+                    {
+                        if (sequence.BehaviourGraphLinks.ContainsValue(uri))
+                        {
+                            var neededId = sequence.BehaviourGraphLinks.Where(pair => pair.Value == uri).First().Key;
+                            writer.Write((UInt16)neededId);
+                        }
+                    }
+                    else
+                    {
+                        writer.Write((UInt16)(uri == LabURI.Empty ? 65535 : assetManager.GetAsset(uri).ID));
+                    }
+                }
+            }
             writeUriList(OGISlots);
             writeUriList(AnimationSlots);
-            writeUriList(BehaviourSlots);
+            writeBehaviourUris(BehaviourSlots);
             writeUriList(ObjectSlots);
             writeUriList(SoundSlots);
 
@@ -290,26 +308,6 @@ namespace TT_Lab.AssetData.Code
             writeUriList(RefOGIs);
             writeUriList(RefAnimations);
             writeUriList(RefBehaviourCommandsSequences);
-
-            void writeBehaviourUris(IList<LabURI> uris)
-            {
-                writer.Write(uris.Count);
-                foreach (var uri in uris)
-                {
-                    if (uri != LabURI.Empty && assetManager.GetAsset(uri) is BehaviourCommandsSequence sequence)
-                    {
-                        if (sequence.BehaviourGraphLinks.ContainsValue(uri))
-                        {
-                            var neededId = sequence.BehaviourGraphLinks.Where(pair => pair.Value == uri).First().Key;
-                            writer.Write((UInt16)neededId);
-                        }
-                    }
-                    else
-                    {
-                        writer.Write((UInt16)(uri == LabURI.Empty ? 65535 : assetManager.GetAsset(uri).ID));
-                    }
-                }
-            }
             writeBehaviourUris(RefBehaviours);
 
             // Write unknowns/unused object refs

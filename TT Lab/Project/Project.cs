@@ -331,6 +331,7 @@ namespace TT_Lab.Project
             var globalRigidModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Rigid models", globalAssets);
             var globalMaterialsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Materials", globalAssets);
             var globalTexturesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Textures", globalAssets);
+            var globalMeshesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Meshes", globalAssets);
             var globalAnimationsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Animations", globalAssets);
             var globalCodeModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Code models", globalAssets);
             var globalGameObjectsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Game objects", globalAssets);
@@ -351,6 +352,7 @@ namespace TT_Lab.Project
             assets.Add(globalRigidModelsFolder.UUID, globalRigidModelsFolder);
             assets.Add(globalMaterialsFolder.UUID, globalMaterialsFolder);
             assets.Add(globalTexturesFolder.UUID, globalTexturesFolder);
+            assets.Add(globalMeshesFolder.UUID, globalMeshesFolder);
             assets.Add(globalAnimationsFolder.UUID, globalAnimationsFolder);
             assets.Add(globalCodeModelsFolder.UUID, globalCodeModelsFolder);
             assets.Add(globalGameObjectsFolder.UUID, globalGameObjectsFolder);
@@ -547,7 +549,7 @@ namespace TT_Lab.Project
                     var skinsFolder = isDefault ? globalSkinsFolder : ps2SkinsFolder;
                     var modelsFolder = isDefault ? globalModelsFolder : ps2ModelsFolder;
                     var rigidModelsFolder = isDefault ? globalRigidModelsFolder : ps2RigidModelsFolder;
-                    var meshesFolder = ps2MeshesFolder;
+                    var meshesFolder = isDefault ? globalMeshesFolder : ps2MeshesFolder;
                     var materialsFolder = isDefault ? globalMaterialsFolder : ps2MaterialsFolder;
                     var lodsFolder = ps2LodsFolder;
                     var skydomesFolder = ps2SkydomesFolder;
@@ -846,6 +848,17 @@ namespace TT_Lab.Project
 
             var @default = factory.GenerateDefault();
             defaultChunk.ResolveChunkResources(factory, @default);
+            // Default is a special case where we need to put in the meshes even though they are usually exclusive to SM2 files
+            var defaultMeshes = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
+                                 let asset = assetManager.GetAsset(assetUri)
+                                 where asset is Folder
+                                 where asset.Name.Contains("Global Assets")
+                                 from childUri in asset.GetData<FolderData>().Children
+                                 let child = assetManager.GetAsset(childUri)
+                                 where child is Folder
+                                 where child.Name.Contains("Meshes")
+                                 select child).First();
+            defaultMeshes.ResolveChunkResources(factory, @default.GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION).GetItem<ITwinSection>(Constants.GRAPHICS_MESHES_SECTION));
             using var defaultFile = new System.IO.FileStream($"Default.rm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using var defaultWriter = new System.IO.BinaryWriter(defaultFile);
             @default.Write(defaultWriter);

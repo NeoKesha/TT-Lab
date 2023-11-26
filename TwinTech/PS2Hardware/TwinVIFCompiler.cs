@@ -290,7 +290,6 @@ namespace Twinsanity.PS2Hardware
                             for (Int32 j = 0; j < colors.Count; j++)
                             {
                                 var color = colors[j];
-                                color.ScaleAlphaDown();
                                 var uv = uvs[j];
                                 var compiledVector = new Vector4();
                                 compiledVector.SetBinaryX((uv.GetBinaryX() & 0xFFFFFF00) | color.R);
@@ -355,11 +354,7 @@ namespace Twinsanity.PS2Hardware
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
-                                var emitColors = vectorBatch[batchIndex].Select(c => c.GetColor()).Select(c =>
-                                {
-                                    c.ScaleAlphaDown();
-                                    return c;
-                                }).ToList();
+                                var emitColors = vectorBatch[batchIndex].Select(c => c.GetColor()).ToList();
                                 var compiledColors = new List<Vector4>(emitColors.Count);
                                 foreach (var c in emitColors)
                                 {
@@ -465,11 +460,7 @@ namespace Twinsanity.PS2Hardware
                             totalSpaceNeeded += turnOffOffsetCode.GetLength();
 
                             // Compile colors
-                            var colors = vectorBatch[GetBatchIndex(VectorBatchIndex.Color)].Select(c => c.GetColor()).Select(c =>
-                            {
-                                c.ScaleAlphaDown();
-                                return c;
-                            }).ToList();
+                            var colors = vectorBatch[GetBatchIndex(VectorBatchIndex.Color)].Select(c => c.GetColor()).ToList();
                             var compiledColors = new List<Vector4>(colors.Count);
                             foreach (var c in colors)
                             {
