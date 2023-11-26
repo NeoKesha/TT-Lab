@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -23,7 +24,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public Byte UnkTypeValue { get; set; }
         public Byte ReactJointAmount { get; set; }
         public Byte ExitPointAmount { get; set; }
-        public Byte[] SlotsMap { get; set; }
         public String Name { get; set; }
         public List<TwinObjectTriggerBehaviour> TriggerBehaviours { get; set; }
         public List<UInt16> OGISlots { get; set; }
@@ -64,7 +64,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public PS2AnyObject()
         {
-            SlotsMap = new Byte[8];
             TriggerBehaviours = new List<TwinObjectTriggerBehaviour>();
             OGISlots = new List<UInt16>();
             AnimationSlots = new List<UInt16>();
@@ -144,9 +143,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
             var hasInstProps = (bitfield & 0x20000000) != 0;
             var refRes = (bitfield & 0x40000000) != 0;
+            // Slots map skipped
             for (var i = 0; i < 8; ++i)
             {
-                SlotsMap[i] = reader.ReadByte();
+                reader.ReadByte();
             }
             var strLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(strLen));
@@ -235,7 +235,18 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             newBitfield |= objTypeRelVal;
             newBitfield |= unkOgiArraySize;
             writer.Write(newBitfield);
-            writer.Write(SlotsMap);
+            var slotsMap = new Byte[8];
+            Debug.Assert(OGISlots.Count == AnimationSlots.Count, "Amount of slots of OGIs and Animations must be equal");
+            slotsMap[0] = (Byte)OGISlots.Count;
+            slotsMap[1] = (Byte)BehaviourSlots.Count;
+            slotsMap[2] = (Byte)ObjectSlots.Count;
+            slotsMap[3] = (Byte)TriggerBehaviours.Count;
+            slotsMap[4] = (Byte)SoundSlots.Count;
+            slotsMap[5] = 0;
+            slotsMap[6] = 0;
+            slotsMap[7] = 0;
+
+            writer.Write(slotsMap);
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray(), 0, Name.Length);
 

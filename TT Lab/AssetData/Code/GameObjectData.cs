@@ -48,8 +48,6 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public Byte ExitPointAmount { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Byte[] SlotsMap { get; set; }
-        [JsonProperty(Required = Required.Always)]
         public String Name { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<ObjectTriggerBehaviourData> TriggerBehaviours { get; set; }
@@ -113,7 +111,6 @@ namespace TT_Lab.AssetData.Code
             UnkTypeValue = gameObject.UnkTypeValue;
             CameraReactJointAmount = gameObject.ReactJointAmount;
             ExitPointAmount = gameObject.ExitPointAmount;
-            SlotsMap = CloneUtils.CloneArray(gameObject.SlotsMap);
             Name = new String(gameObject.Name.ToCharArray());
             TriggerBehaviours = new List<ObjectTriggerBehaviourData>();
             foreach (var e in gameObject.TriggerBehaviours)
@@ -246,7 +243,6 @@ namespace TT_Lab.AssetData.Code
             writer.Write(UnkTypeValue);
             writer.Write(CameraReactJointAmount);
             writer.Write(ExitPointAmount);
-            writer.Write(SlotsMap);
             writer.Write(Name);
 
             writer.Write(TriggerBehaviours.Count);

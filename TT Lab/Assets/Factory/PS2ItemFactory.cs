@@ -337,7 +337,6 @@ namespace TT_Lab.Assets.Factory
             gameObject.UnkTypeValue = reader.ReadByte();
             gameObject.ReactJointAmount = reader.ReadByte();
             gameObject.ExitPointAmount = reader.ReadByte();
-            gameObject.SlotsMap = reader.ReadBytes(8);
             gameObject.Name = reader.ReadString();
 
             var triggerBehaviours = reader.ReadInt32();

@@ -66,10 +66,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// </summary>
         Byte ExitPointAmount { get; set; }
         /// <summary>
-        /// Slots map that indicates the amount of slotted resources for each category <seealso cref="ResourcesBitfield"/>
-        /// </summary>
-        Byte[] SlotsMap { get; set; }
-        /// <summary>
         /// Object's name
         /// </summary>
         String Name { get; set; }
