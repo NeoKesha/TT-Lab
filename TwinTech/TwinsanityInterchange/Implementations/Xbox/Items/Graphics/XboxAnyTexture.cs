@@ -226,7 +226,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics
             Colors = new List<Color>(rawData);
         }
 
-        public void FromBitmap(List<Color> image, Int32 width, ITwinTexture.TextureFunction fun, ITwinTexture.TexturePixelFormat format)
+        public void FromBitmap(List<Color> image, Int32 width, ITwinTexture.TextureFunction fun, ITwinTexture.TexturePixelFormat format, bool generateMipmaps = false)
         {
             int height = image.Count / width;
             TexFun = fun;
@@ -234,19 +234,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics
             TextureBufferWidth = (int)Math.Ceiling(width / 64.0f);
             ImageWidthPower = (ushort)Math.Log2(width);
             ImageHeightPower = (ushort)Math.Log2(height);
-            if (width != 256)
+            if (width != 256 && generateMipmaps)
             {
                 TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
                 ClutBufferBasePointer = textureDescriptor.CBP;
                 MipLevelsTBP = textureDescriptor.MipTBP;
-                MipLevelsTBP = textureDescriptor.MipTBP;
+                MipLevelsTBW = textureDescriptor.MipTBW;
                 MipLevels = (byte)textureDescriptor.MipLevels;
             }
             else
             {
                 ClutBufferBasePointer = 0;
                 MipLevelsTBP = new Int32[6];
-                MipLevelsTBP = new Int32[6];
+                MipLevelsTBW = new Int32[6];
                 MipLevels = 1;
             }
             //this is probably not bytes but whatever

@@ -24,6 +24,10 @@ namespace TT_Lab.AssetData.Graphics
 
         public Bitmap Bitmap;
 
+        public ITwinTexture.TexturePixelFormat TexturePixelFormat { get; set; }
+        public ITwinTexture.TextureFunction TextureFunction { get; set; }
+        public Boolean GenerateMipmaps { get; set; }
+
         protected override void Dispose(Boolean disposing)
         {
             if (Bitmap != null && !Disposed)
@@ -105,7 +109,7 @@ namespace TT_Lab.AssetData.Graphics
         public override ITwinItem Export(ITwinItemFactory factory)
         {
             ITwinTexture texture = factory.GenerateTexture();
-            var fun = ITwinTexture.TextureFunction.MODULATE;
+            var fun = TextureFunction;
             var format = (Bitmap.Width == 256) ? ITwinTexture.TexturePixelFormat.PSMCT32 : ITwinTexture.TexturePixelFormat.PSMT8;
             var tex = new List<Twinsanity.TwinsanityInterchange.Common.Color>();
             var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
@@ -127,7 +131,7 @@ namespace TT_Lab.AssetData.Graphics
                     source = scan - bits.Stride;
                 }
             }
-            texture.FromBitmap(tex, Bitmap.Width, fun, format);
+            texture.FromBitmap(tex, Bitmap.Width, fun, format, GenerateMipmaps);
             Bitmap.UnlockBits(bits);
 
             return texture;

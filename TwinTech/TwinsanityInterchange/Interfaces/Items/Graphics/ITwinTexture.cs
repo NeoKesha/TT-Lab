@@ -98,7 +98,8 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
         /// <param name="width">Width of the image (height is calculated automatically)</param>
         /// <param name="fun">GS function to use when rendering the texture</param>
         /// <param name="format">Texture's pixel format</param>
-        void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format);
+        /// <param name="generateMipmaps">Generate mipmaps for the texture</param>
+        void FromBitmap(List<Color> image, Int32 width, TextureFunction fun, TexturePixelFormat format, bool generateMipmaps = false);
 
         #region Enums
         enum TexturePixelFormat

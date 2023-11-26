@@ -128,13 +128,19 @@ namespace TT_Lab.Assets
             binaryWriter.Close();
         }
 
+        protected virtual void PreResolveResources()
+        {
+
+        }
+
         public virtual void ResolveChunkResources(Factory.ITwinItemFactory factory, ITwinSection section)
         {
             if (!IsLoaded || assetData.Disposed)
             {
                 assetData = GetData();
             }
-            
+
+            PreResolveResources();
             var item = assetData.ResolveChunkResouces(factory, section, ID);
             item?.SetID(ID);
             item?.Compile();
