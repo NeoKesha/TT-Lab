@@ -39,13 +39,18 @@ namespace TT_Lab.AssetData.Graphics
             {
                 RootNode = new Node("Root")
             };
-
+            Node skinNode = new Node("Skin");
+            scene.RootNode.Children.Add(skinNode);
+            
             var materialIndex = 0;
             var materials = new List<Material>();
             var materialsUri = new List<LabURI>();
+            var boneNodes = new Dictionary<string, Node>();
+            var subskinIndex = 0;
             foreach (var subSkin in SubSkins)
             {
                 Mesh mesh = new(PrimitiveType.Triangle);
+                mesh.Name = $"SubSkin_{subskinIndex}";
 
                 // Conversion to jointIndex -> vertex index + weight
                 var bones = new Dictionary<int, List<(int, float)>>();
@@ -100,6 +105,14 @@ namespace TT_Lab.AssetData.Graphics
                             Weight = boneInfo.Item2,
                         });
                     }
+                    if (!boneNodes.ContainsKey(bone.Name))
+                    {
+                        Node boneNode = new Node();
+                        boneNode.Name = bone.Name;
+                        boneNode.Transform = Matrix4x4.Identity;
+                        boneNodes.Add(bone.Name, boneNode);
+                        skinNode.Children.Add(boneNode);
+                    }
                     mesh.Bones.Add(bone);
                 }
 
@@ -126,9 +139,15 @@ namespace TT_Lab.AssetData.Graphics
                 };
                 materials.Add(material);
                 scene.Meshes.Add(mesh);
-                scene.RootNode.MeshIndices.Add(materialIndex);
+
+                Node meshNode = new Node(mesh.Name);
+                meshNode.MeshIndices.Add(materialIndex);
+                skinNode.Children.Add(meshNode);
+
                 mesh.MaterialIndex = materialIndex++;
                 materialsUri.Add(AssetManager.Get().GetAsset(subSkin.Material).URI);
+
+                ++subskinIndex;
             }
 
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Create, System.IO.FileAccess.Write);
