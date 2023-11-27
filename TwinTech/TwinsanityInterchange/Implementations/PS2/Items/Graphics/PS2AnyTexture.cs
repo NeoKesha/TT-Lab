@@ -8,6 +8,7 @@ using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using static Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics.PS2AnyTexture;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
@@ -212,6 +213,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 MipLevelsTBW = new Int32[6];
                 MipLevels = 1;
             }
+
+            if (width != 256 && !generateMipmaps)
+            {
+                TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
+                ClutBufferBasePointer = textureDescriptor.MipTBP[0];
+            }
+
             //this is probably not bytes but whatever
             UnkBytes2[1] = UnkBytes3[0] = (Byte)((width == 256) ? 0 : (byte)Math.Min(width, height));
             UnkBytes2[2] = UnkBytes3[1] = (Byte)((width == 256) ? 2 : 0);
