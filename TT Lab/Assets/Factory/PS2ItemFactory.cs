@@ -748,7 +748,7 @@ namespace TT_Lab.Assets.Factory
             layout8.SetID(Constants.LEVEL_LAYOUT_8_SECTION);
             FillLayoutSection(layout8, @default);
 
-            var collision = new BaseTwinSection();
+            var collision = new BaseTwinItem();
             collision.SetID(Constants.LEVEL_COLLISION_ITEM);
             collision.SetRoot(@default);
             collision.SetParent(@default);
