@@ -303,9 +303,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                     mipWidth /= 2;
                     mipHeight /= 2;
                     var mipData = new byte[mipWidth * mipHeight];
-                    for (var j = 0; j < mipData.Length; ++j)
+                    for (var y = 0; y < mipHeight; ++y)
                     {
-                        mipData[j] = prevData[4 * j];
+                        for (var x = 0; x < mipWidth; ++x)
+                        {
+                            var prevWidth = mipWidth * 2;
+                            var srcX = x * 2;
+                            var srcY = y * 2;
+                            mipData[x + y * mipWidth] = prevData[srcX + srcY * prevWidth];
+                        }
                     }
                     MipLevelsTBW[i - 1] = (int)Math.Ceiling(mipWidth / 64.0f);
                     EzSwizzle.writeTexPSMT8To(MipLevelsTBP[i - 1], MipLevelsTBW[i - 1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
