@@ -40,8 +40,6 @@ namespace TT_Lab.Controls
             DependencyProperty.Register("IsHorizontal", typeof(bool), typeof(LabeledCheckBox),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnLayoutChanged)));
 
-
-
         public bool DisplayChecked
         {
             get { return (bool)GetValue(DisplayCheckedProperty); }
@@ -52,6 +50,7 @@ namespace TT_Lab.Controls
         public static readonly DependencyProperty DisplayCheckedProperty =
             DependencyProperty.Register("DisplayChecked", typeof(bool), typeof(LabeledCheckBox),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
 
         // Using a DependencyProperty as the backing store for Checked.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CheckedProperty =

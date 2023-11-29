@@ -65,7 +65,7 @@ namespace TT_Lab.Editors.Graphics
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
             var texPlane = new Plane(((TextureViewModel)viewModel).Texture);
-            TextureViewer.Scene.AddRender(texPlane);
+            TextureViewer.Scene.AddRender(texPlane, false);
         }
 
         private void TextureViewer_Drop(Object sender, DragEventArgs e)

@@ -16,10 +16,10 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public UInt32 IntParam { get; set; }
         public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending { get; set; }
-        public Byte AlphaRegSettingsIndex { get; set; }
+        public AlphaBlendPresets AlphaRegSettingsIndex { get; set; }
         public AlphaTest ATest { get; set; }
         public AlphaTestMethod ATestMethod { get; set; }
-        public byte AlphaValueToBeComparedTo { get; set; }
+        public Byte AlphaValueToBeComparedTo { get; set; }
         public ProcessAfterAlphaTestFailed ProcessMethodWhenAlphaTestFailed { get; set; }
         public DestinationAlphaTest DAlphaTest { get; set; }
         public DestinationAlphaTestMode DAlphaTestMode { get; set; }
@@ -29,24 +29,24 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public TextureCoordinatesSpecification MethodOfSpecifyingTextureCoordinates { get; set; }
         public Fogging Fog { get; set; }
         public Context ContextNum { get; set; }
-        public bool UsePresetAlphaRegSettings { get; set; }
+        public Boolean UseCustomAlphaRegSettings { get; set; }
         public ColorSpecMethod SpecOfColA { get; set; }
         public ColorSpecMethod SpecOfColB { get; set; }
         public AlphaSpecMethod SpecOfAlphaC { get; set; }
         public ColorSpecMethod SpecOfColD { get; set; }
-        public byte FixedAlphaValue { get; set; }
+        public Byte FixedAlphaValue { get; set; }
         public TextureFilter TextureFilterWhenTextureIsExpanded { get; set; }
-        public bool AlphaCorrectionValue { get; set; }
+        public Boolean AlphaCorrectionValue { get; set; }
         public ZValueDrawMask ZValueDrawingMask { get; set; }
         public UInt16 LodParamK { get; set; }
         public UInt16 LodParamL { get; set; }
         public LabURI TextureId { get; set; }
-        public byte UnkVal1 { get; set; }
-        public byte UnkVal2 { get; set; }
-        public byte UnkVal3 { get; set; }
-        public bool UnkFlag1 { get; set; }
-        public bool UnkFlag2 { get; set; }
-        public bool UnkFlag3 { get; set; }
+        public Byte UnkVal1 { get; set; }
+        public Byte UnkVal2 { get; set; }
+        public Byte UnkVal3 { get; set; }
+        public Boolean UnkFlag1 { get; set; }
+        public Boolean UnkFlag2 { get; set; }
+        public Boolean UnkFlag3 { get; set; }
         public Vector4 UnkVector1 { get; set; }
         public Vector4 UnkVector2 { get; set; }
         public Vector4 UnkVector3 { get; set; }
@@ -77,7 +77,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             MethodOfSpecifyingTextureCoordinates = vm.TexCoordSpec;
             Fog = vm.Fog ? Fogging.ON : Fogging.OFF;
             ContextNum = vm.CxtNum;
-            UsePresetAlphaRegSettings = vm.UsePresetAlphaRegSettings;
+            UseCustomAlphaRegSettings = vm.UseCustomAlphaRegSettings;
             SpecOfColA = vm.SpecOfColA;
             SpecOfColB = vm.SpecOfColB;
             SpecOfAlphaC = vm.SpecOfAlphaC;
@@ -137,7 +137,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             MethodOfSpecifyingTextureCoordinates = twinShader.MethodOfSpecifyingTextureCoordinates;
             Fog = twinShader.Fog;
             ContextNum = twinShader.ContextNum;
-            UsePresetAlphaRegSettings = twinShader.UsePresetAlphaRegSettings;
+            UseCustomAlphaRegSettings = twinShader.UseCustomAlphaRegSettings;
             SpecOfColA = twinShader.SpecOfColA;
             SpecOfColB = twinShader.SpecOfColB;
             SpecOfAlphaC = twinShader.SpecOfAlphaC;
@@ -186,7 +186,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
                     break;
             }
             writer.Write((byte)ABlending);
-            writer.Write(AlphaRegSettingsIndex);
+            writer.Write((byte)AlphaRegSettingsIndex);
             writer.Write((byte)ATest);
             writer.Write((byte)ATestMethod);
             writer.Write(AlphaValueToBeComparedTo);
@@ -202,7 +202,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             writer.Write((byte)ContextNum);
             writer.Write(UnkVal2);
             writer.Write(UnkVal3);
-            writer.Write(UsePresetAlphaRegSettings);
+            writer.Write(UseCustomAlphaRegSettings);
             writer.Write((byte)SpecOfColA);
             writer.Write((byte)SpecOfColB);
             writer.Write((byte)SpecOfAlphaC);

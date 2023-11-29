@@ -13,7 +13,7 @@ namespace TT_Lab.ViewModels.Graphics
         private UInt32 _intParam;
         private Single[] _floatParam;
         private AlphaBlending _alphaBlending;
-        private Byte _alphaRegSettingsIndex;
+        private AlphaBlendPresets _alphaRegSettingsIndex;
         private AlphaTest _alphaTest;
         private AlphaTestMethod _alphaTestMethod;
         private Byte _alphaValueToCompareTo;
@@ -26,7 +26,7 @@ namespace TT_Lab.ViewModels.Graphics
         private TextureCoordinatesSpecification _texCoordSpec;
         private Fogging _fog;
         private Context _cxtNum;
-        private Boolean _usePresetAlphaRegSettings;
+        private Boolean _useCustomAlphaRegSettings;
         private ColorSpecMethod _specOfColA;
         private ColorSpecMethod _specOfColB;
         private AlphaSpecMethod _specOfAlphaC;
@@ -79,7 +79,7 @@ namespace TT_Lab.ViewModels.Graphics
             _texCoordSpec = shader.MethodOfSpecifyingTextureCoordinates;
             _fog = shader.Fog;
             _cxtNum = shader.ContextNum;
-            _usePresetAlphaRegSettings = shader.UsePresetAlphaRegSettings;
+            _useCustomAlphaRegSettings = shader.UseCustomAlphaRegSettings;
             _specOfColA = shader.SpecOfColA;
             _specOfColB = shader.SpecOfColB;
             _specOfAlphaC = shader.SpecOfAlphaC;
@@ -164,7 +164,11 @@ namespace TT_Lab.ViewModels.Graphics
         }
         public Boolean CanColorSpec
         {
-            get => !UsePresetAlphaRegSettings && AlphaBlending;
+            get => UseCustomAlphaRegSettings && AlphaBlending;
+        }
+        public Boolean UsePresetBlending
+        {
+            get => !UseCustomAlphaRegSettings && AlphaBlending;
         }
         public TwinShader.Type Type
         {
@@ -208,10 +212,11 @@ namespace TT_Lab.ViewModels.Graphics
                     _alphaBlending = value ? TwinShader.AlphaBlending.ON : TwinShader.AlphaBlending.OFF;
                     NotifyChange();
                     NotifyChange(nameof(CanColorSpec));
+                    NotifyChange(nameof(UsePresetBlending));
                 }
             }
         }
-        public Byte AlphaRegSettingsIndex
+        public AlphaBlendPresets AlphaRegSettingsIndex
         {
             get => _alphaRegSettingsIndex;
             set
@@ -367,16 +372,17 @@ namespace TT_Lab.ViewModels.Graphics
                 }
             }
         }
-        public Boolean UsePresetAlphaRegSettings
+        public Boolean UseCustomAlphaRegSettings
         {
-            get => _usePresetAlphaRegSettings;
+            get => _useCustomAlphaRegSettings;
             set
             {
-                if (_usePresetAlphaRegSettings != value)
+                if (_useCustomAlphaRegSettings != value)
                 {
-                    _usePresetAlphaRegSettings = value;
+                    _useCustomAlphaRegSettings = value;
                     NotifyChange();
                     NotifyChange(nameof(CanColorSpec));
+                    NotifyChange(nameof(UsePresetBlending));
                 }
             }
         }

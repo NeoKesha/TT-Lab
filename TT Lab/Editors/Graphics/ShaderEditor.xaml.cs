@@ -43,7 +43,8 @@ namespace TT_Lab.Editors.Graphics
                 TextureFilters = new ObservableCollection<object>(Enum.GetValues(typeof(TextureFilter)).Cast<object>()),
                 ZvalueDrawMasks = new ObservableCollection<object>(Enum.GetValues(typeof(ZValueDrawMask)).Cast<object>()),
                 ColorSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(ColorSpecMethod)).Cast<object>()),
-                AlphaSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaSpecMethod)).Cast<object>())
+                AlphaSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaSpecMethod)).Cast<object>()),
+                AlphaBlendingPresets = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaBlendPresets)).Cast<object>()),
             };
             InitValidators();
             TextureViewer.FileDrop += TextureViewer_FileDrop;
@@ -122,16 +123,6 @@ namespace TT_Lab.Editors.Graphics
                 if (oStr == nStr) return null;
                 if (string.IsNullOrEmpty(nStr)) return 0U;
                 if (!UInt32.TryParse(nStr, out UInt32 result)) return null;
-                return result;
-            };
-            AcceptNewPropValuePredicate["AlphaRegSettingsIndex"] = (n, o) =>
-            {
-                var nStr = (string)n;
-                var oStr = (string)o;
-                if (oStr == nStr) return null;
-                if (string.IsNullOrEmpty(nStr)) return (Byte)0;
-                if (!Byte.TryParse(nStr, out Byte result)) return null;
-                if (result > 9) return null;
                 return result;
             };
             AcceptNewPropValuePredicate["AlphaValueToCompareTo"] = (n, o) =>

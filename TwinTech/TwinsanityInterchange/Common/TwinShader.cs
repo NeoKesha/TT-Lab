@@ -3,6 +3,7 @@ using System.IO;
 using Twinsanity.TwinsanityInterchange.Common.ShaderAnimation;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
@@ -12,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt32 IntParam { get; set; }
         public Single[] FloatParam { get; set; }
         public AlphaBlending ABlending;
-        public byte AlphaRegSettingsIndex;
+        public AlphaBlendPresets AlphaRegSettingsIndex;
         public AlphaTest ATest;
         public AlphaTestMethod ATestMethod;
         public byte AlphaValueToBeComparedTo;
@@ -28,7 +29,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Context ContextNum;
         public byte UnkVal2;
         public byte UnkVal3;
-        public bool UsePresetAlphaRegSettings;
+        public bool UseCustomAlphaRegSettings;
         public ColorSpecMethod SpecOfColA;
         public ColorSpecMethod SpecOfColB;
         public AlphaSpecMethod SpecOfAlphaC;
@@ -90,7 +91,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                     break;
             }
             ABlending = (AlphaBlending)reader.ReadByte();
-            AlphaRegSettingsIndex = reader.ReadByte();
+            AlphaRegSettingsIndex = ((Int32)reader.ReadByte()).ToEnum();
             ATest = (AlphaTest)reader.ReadByte();
             ATestMethod = (AlphaTestMethod)reader.ReadByte();
             AlphaValueToBeComparedTo = reader.ReadByte();
@@ -106,7 +107,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             ContextNum = (Context)reader.ReadByte();
             UnkVal2 = reader.ReadByte();
             UnkVal3 = reader.ReadByte();
-            UsePresetAlphaRegSettings = reader.ReadBoolean();
+            UseCustomAlphaRegSettings = reader.ReadBoolean();
             SpecOfColA = (ColorSpecMethod)reader.ReadByte();
             SpecOfColB = (ColorSpecMethod)reader.ReadByte();
             SpecOfAlphaC = (AlphaSpecMethod)reader.ReadByte();
@@ -163,7 +164,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                     break;
             }
             writer.Write((byte)ABlending);
-            writer.Write(AlphaRegSettingsIndex);
+            writer.Write((byte)AlphaRegSettingsIndex);
             writer.Write((byte)ATest);
             writer.Write((byte)ATestMethod);
             writer.Write(AlphaValueToBeComparedTo);
@@ -179,7 +180,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write((byte)ContextNum);
             writer.Write(UnkVal2);
             writer.Write(UnkVal3);
-            writer.Write(UsePresetAlphaRegSettings);
+            writer.Write(UseCustomAlphaRegSettings);
             writer.Write((byte)SpecOfColA);
             writer.Write((byte)SpecOfColB);
             writer.Write((byte)SpecOfAlphaC);
@@ -313,6 +314,16 @@ namespace Twinsanity.TwinsanityInterchange.Common
             FIX = 0b10,
             RESERVED = 0b11
         }
+        public enum AlphaBlendPresets
+        {
+            Mix,
+            Add,
+            Sub,
+            Alpha,
+            Zero,
+            Destination,
+            Source
+        }
         public enum TextureFilter
         {
             NEAREST,
@@ -324,5 +335,17 @@ namespace Twinsanity.TwinsanityInterchange.Common
             NOT_UPDATE
         }
         #endregion
+    }
+
+    public static class TwinShaderEnumConverter
+    {
+        public static AlphaBlendPresets ToEnum(this Int32 value)
+        {
+            if (Enum.IsDefined(typeof(AlphaBlendPresets), value))
+            {
+                return (AlphaBlendPresets)value;
+            }
+            return AlphaBlendPresets.Source;
+        }
     }
 }

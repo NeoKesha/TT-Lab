@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Runtime.InteropServices;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
@@ -59,7 +60,7 @@ namespace TT_Lab.AssetData.Graphics
 
                 var Bits = new UInt32[width * height];
                 var BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
-                var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+                var tmpBmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, BitsHandle.AddrOfPinnedObject());
 
                 for (var x = 0; x < width; ++x)
                 {

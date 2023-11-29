@@ -217,7 +217,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             if (width != 256 && !generateMipmaps)
             {
                 TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
-                ClutBufferBasePointer = textureDescriptor.MipTBP[0];
+                ClutBufferBasePointer = textureDescriptor.CBP;
             }
 
             //this is probably not bytes but whatever
@@ -301,6 +301,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 ulong low = (ulong)textureDescriptor.RRW;
                 head2.Output = (high << 32) | (low);
                 byte[] rawTextureData = new byte[textureDescriptor.RRH * 256];
+                Array.Fill<byte>(rawTextureData, 0xFF);
 
                 EzSwizzle.writeTexPSMT8To(0, TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
                 var prevData = textureData;
