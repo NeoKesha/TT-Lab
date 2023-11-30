@@ -310,15 +310,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             if (maxPacketIndex != -1)
             {
-                Bytes.RemoveRange(maxPacketIndex, PacketDataLength - maxPacketIndex);
-                if (floatIdx > 0)
-                {
-                    Floats.RemoveRange(floatIdx - 1, PacketDataLength - (floatIdx - 1));
-                }
-                else
-                {
-                    Floats.Clear();
-                }
+                Bytes.RemoveRange(maxPacketIndex + 1, PacketDataLength - maxPacketIndex - 1);
+                Floats.RemoveRange(floatIdx, PacketDataLength - floatIdx);
             }
             else
             {
