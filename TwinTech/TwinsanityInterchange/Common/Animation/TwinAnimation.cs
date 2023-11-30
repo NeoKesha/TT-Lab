@@ -69,6 +69,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             {
                 packer |= (UInt32)(AnimatedTransformations[0].Count << 0x16);
             }
+            // These bits must always be set
+            packer |= (1 << 0x7);
+            packer |= (1 << 0xA);
 
             dataPacker = packer;
             writer.Write(packer);
