@@ -30,7 +30,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             dataPacker = reader.ReadUInt32();
             TotalFrames = reader.ReadUInt16();
             var modelSettings = (dataPacker & 0x7F);
-            var staticTransformations = (dataPacker >> 0x9 & 0x1FFC) / 4;
+            var staticTransformations = ((dataPacker >> 0x9) & 0x1FFC) / 4;
             var animatedTransformations = (dataPacker >> 0x16);
 
             ModelSettings.Clear();
