@@ -128,12 +128,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     {
                         if (e == null)
                             break;
-                        Vector4 emit = new(e);
-                        emit.X = emit.GetBinaryX() & 0xFF;// / 256.0f;
-                        emit.Y = emit.GetBinaryY() & 0xFF;// / 256.0f;
-                        emit.Z = emit.GetBinaryZ() & 0xFF;// / 256.0f;
-                        emit.W = emit.GetBinaryW() & 0xFF;// / 256.0f;
-                        EmitColor.Add(emit);
+
+                        var r = Math.Min((byte)e.X, (byte)255);
+                        var g = Math.Min((byte)e.Y, (byte)255);
+                        var b = Math.Min((byte)e.Z, (byte)255);
+                        var a = (byte)((byte)e.W << 1);
+                        Color col = new(r, g, b, a);
+
+                        EmitColor.Add(Vector4.FromColor(col));
                     }
                 }
                 i += fields + 2;

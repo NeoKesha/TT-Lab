@@ -309,6 +309,7 @@ namespace TT_Lab.Project
                 WorkableProject = true;
                 NotifyChange("ProjectOpened");
                 NotifyChange("ProjectTitle");
+                GC.Collect();
                 Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
 #if !DEBUG
                 }
@@ -348,6 +349,7 @@ namespace TT_Lab.Project
                             WorkableProject = true;
                             NotifyChange("ProjectOpened");
                             NotifyChange("ProjectTitle");
+                            GC.Collect();
 #if !DEBUG
                         }
                         catch (Exception ex)

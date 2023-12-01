@@ -290,6 +290,7 @@ namespace Twinsanity.PS2Hardware
                             for (Int32 j = 0; j < colors.Count; j++)
                             {
                                 var color = colors[j];
+                                color.A >>= 1;
                                 var uv = uvs[j];
                                 var compiledVector = new Vector4();
                                 compiledVector.SetBinaryX((uv.GetBinaryX() & 0xFFFFFF00) | color.R);
@@ -362,7 +363,7 @@ namespace Twinsanity.PS2Hardware
                                     compiledColor.SetBinaryX(c.R);
                                     compiledColor.SetBinaryY(c.G);
                                     compiledColor.SetBinaryZ(c.B);
-                                    compiledColor.SetBinaryW(c.A);
+                                    compiledColor.SetBinaryW((UInt32)(c.A >> 1));
                                     compiledColors.Add(compiledColor);
                                 }
                                 interpreter.Pack(compiledColors, packedEmits, PackFormat.V4_8);
