@@ -356,8 +356,8 @@ namespace Twinsanity.PS2Hardware
                             SEXT8(ref w2);
                         }
 
-                        v1.X = (w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
-                        v1.Y = (w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
+                        v1.X = ((w1 + (IsInOffsetMode() ? VIFn_R[0] : 0)) & 0xFF);
+                        v1.Y = ((w2 + (IsInOffsetMode() ? VIFn_R[1] : 0)) & 0xFF);
                         Fill(dst, v1, i, fill, write, cycle, ref addr);
                         if (i % 2 != 0)
                         {
@@ -465,9 +465,9 @@ namespace Twinsanity.PS2Hardware
                             SEXT8(ref w2);
                             SEXT8(ref w3);
                         }
-                        v1.X = (w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
-                        v1.Y = (w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
-                        v1.Z = (w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
+                        v1.X = ((w1 + (IsInOffsetMode() ? VIFn_R[0] : 0)) & 0xFF);
+                        v1.Y = ((w2 + (IsInOffsetMode() ? VIFn_R[1] : 0)) & 0xFF);
+                        v1.Z = ((w3 + (IsInOffsetMode() ? VIFn_R[2] : 0)) & 0xFF);
                         Fill(dst, v1, i, fill, write, cycle, ref addr);
                     }
                     break;
@@ -519,10 +519,10 @@ namespace Twinsanity.PS2Hardware
                             SEXT8(ref w3);
                             SEXT8(ref w4);
                         }
-                        v.X = (w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
-                        v.Y = (w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
-                        v.Z = (w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
-                        v.W = (w4 + (IsInOffsetMode() ? VIFn_R[3] : 0));
+                        v.X = ((w1 + (IsInOffsetMode() ? VIFn_R[0] : 0)) & 0xFF);
+                        v.Y = ((w2 + (IsInOffsetMode() ? VIFn_R[1] : 0)) & 0xFF);
+                        v.Z = ((w3 + (IsInOffsetMode() ? VIFn_R[2] : 0)) & 0xFF);
+                        v.W = ((w4 + (IsInOffsetMode() ? VIFn_R[3] : 0)) & 0xFF);
                         Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;

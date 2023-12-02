@@ -469,7 +469,7 @@ namespace Twinsanity.PS2Hardware
                                 compiledColor.SetBinaryX(c.R);
                                 compiledColor.SetBinaryY(c.G);
                                 compiledColor.SetBinaryZ(c.B);
-                                compiledColor.SetBinaryW(c.A);
+                                compiledColor.SetBinaryW((UInt32)(c.A >> 1));
                                 compiledColors.Add(compiledColor);
                             }
 
