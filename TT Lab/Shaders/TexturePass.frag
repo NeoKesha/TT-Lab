@@ -5,7 +5,7 @@ uniform sampler2D tex;
 
 vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
 {
-    vec4 color = texture(tex, texCoord.st);
+    vec4 color = texture(tex, vec2(texCoord.s, 1.0 - texCoord.t));
     color *= Alpha;
     return color;
 }

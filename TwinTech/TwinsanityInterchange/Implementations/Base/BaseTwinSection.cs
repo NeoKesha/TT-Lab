@@ -145,6 +145,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return 0x1;
         }
 
+        public void SortItems(Comparison<ITwinItem> comparer)
+        {
+            Items.Sort(comparer);
+        }
+
         protected void PrepareWrite()
         {
             foreach (var item in Items.Where(item => item is BaseTwinSection).Cast<BaseTwinSection>())
