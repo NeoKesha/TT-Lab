@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
@@ -48,15 +49,16 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             }
         }
 
-        public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, IEnumerable<Assimp.Animation> animations)
+        public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, IEnumerable<SharpGLTF.Geometry.VertexBufferColumns> morphTargets)
         {
             BlendShape = blendShape;
             Vertexes = vertexes;
             Faces = faces;
 
-            foreach (var animation in animations)
+            foreach (var morph in morphTargets)
             {
-                BlendFaces.Add(new SubBlendFaceData(animation.NodeAnimationChannels[0].PositionKeys));
+                Debug.Assert(Vertexes.Count == morph.Positions.Count, "Morph must have the same amount of vertexes as the model!");
+                BlendFaces.Add(new SubBlendFaceData(morph.Positions));
             }
         }
 

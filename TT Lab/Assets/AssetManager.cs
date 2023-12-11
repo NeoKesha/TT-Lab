@@ -145,13 +145,29 @@ namespace TT_Lab.Assets
         {
             var variantString = variant != null ? $"/{variant}" : "";
 
-            // If a variant was sent out try to find URI with it as a failsafe also try without variant
-            var withVariant = GetUri($"{package}/{folder}/{id}{variantString}");
-            if (withVariant == LabURI.Empty && variant != null)
+            // First with try to find the URI with its variant
+            // If that fails we attempt to find its no variant counterpart
+            // Finally we do the same but walk through every dependency the package has
+            var resultUri = GetUri($"{package}/{folder}/{id}{variantString}");
+            if (resultUri == LabURI.Empty && variant != null)
             {
-                withVariant = GetUri($"{package}/{folder}/{id}");
+                resultUri = GetUri($"{package}/{folder}/{id}");
             }
-            return withVariant;
+            if (resultUri == LabURI.Empty)
+            {
+                var packageAsset = GetAsset<Package>(package);
+                foreach (var dependency in packageAsset.Dependencies)
+                {
+                    var dependencyAsset = GetAsset<Package>(dependency);
+                    resultUri = GetUri($"{dependency}/{folder}/{id}{variantString}");
+                    if (resultUri == LabURI.Empty)
+                    {
+                        var dependencyVariantString = dependencyAsset.Variant.Length == 0 ? "" : $"/{dependencyAsset.Variant}";
+                        resultUri = GetUri($"{dependency}/{folder}/{id}{dependencyVariantString}");
+                    }
+                }
+            }
+            return resultUri;
         }
 
         /// <summary>
@@ -173,7 +189,7 @@ namespace TT_Lab.Assets
             return GetUri(package, folder, resultVariant, id);
         }
 
-        // Disallow obtaining URIs by pure strings
+        // Disallow obtaining URIs by pure strings publically
         private LabURI GetUri(string uri)
         {
             return _assets.ContainsKey((LabURI)uri) ? _assets[(LabURI)uri].URI : LabURI.Empty;

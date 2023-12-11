@@ -34,6 +34,10 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
         /// Joints for this model
         /// </summary>
         List<VertexJointInfo> SkinJoints { get; set; }
+        /// <summary>
+        /// The amount of verticies in the batch that form triangle strip/strips
+        /// </summary>
+        List<Int32> GroupSizes { get; set; }
 
         /// <summary>
         /// Converts VIF code into the vertex data of the model

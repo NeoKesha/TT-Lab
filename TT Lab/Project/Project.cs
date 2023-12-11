@@ -106,8 +106,8 @@ namespace TT_Lab.Project
             LastModified = DateTime.Now;
 
             System.IO.Directory.SetCurrentDirectory(path);
-            using (System.IO.FileStream fs = new System.IO.FileStream(Name + ".tson", System.IO.FileMode.Create, System.IO.FileAccess.Write))
-            using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(fs))
+            using (System.IO.FileStream fs = new(Name + ".tson", System.IO.FileMode.Create, System.IO.FileAccess.Write))
+            using (System.IO.BinaryWriter writer = new(fs))
             {
                 writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
             }
@@ -115,11 +115,13 @@ namespace TT_Lab.Project
             System.IO.Directory.SetCurrentDirectory("assets");
             var query = from asset in AssetManager.GetAssets()
                         group asset by asset.Type;
-            var tasks = new Task[query.Count()];
+            var tasks = new Task[query.Count() - 2];
             var index = 0;
             DateTime startAsset = DateTime.Now;
             foreach (var group in query)
             {
+                if (group.Key.Name == typeof(BlendSkin).Name || group.Key.Name == typeof(Skin).Name)
+                    continue;
                 tasks[index++] = Task.Factory.StartNew(() =>
                 {
                     Log.WriteLine($"Serializing {group.Key.Name}...");
@@ -144,6 +146,33 @@ namespace TT_Lab.Project
                 });
             }
             Task.WaitAll(tasks);
+
+            // Skins and blend skins are serialized without multithreading because of accessing and changing current directory
+            // and needing all the materials and textures serialized
+            foreach (var group in query)
+            {
+                if (group.Key.Name != typeof(BlendSkin).Name && group.Key.Name != typeof(Skin).Name)
+                    continue;
+                Log.WriteLine($"Serializing {group.Key.Name}...");
+                var now = DateTime.Now;
+#if !DEBUG
+                try
+                {
+#endif
+                foreach (var asset in group)
+                {
+                    asset.Serialize();
+                }
+#if !DEBUG
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine($"Error serializing: {ex.Message}");
+                }
+#endif
+                var span = DateTime.Now - now;
+                Log.WriteLine($"Finished serializing {group.Key.Name} in {span}");
+            }
             Log.WriteLine($"Serialized assets in {(DateTime.Now - startAsset)}");
             System.IO.Directory.SetCurrentDirectory(path);
         }
@@ -206,10 +235,18 @@ namespace TT_Lab.Project
             AssetManager.AddAsset(BasePackage);
             Packages = new Folder(BasePackage.URI, "Packages", null, BasePackage);
             AssetManager.AddAsset(Packages);
-            GlobalPackagePS2 = new Package("Global PS2", Packages);
-            GlobalPackageXbox = new Package("Global XBOX", Packages);
+            GlobalPackagePS2 = new Package("Global PS2", Packages)
+            {
+                Variant = ""
+            };
+            GlobalPackageXbox = new Package("Global XBOX", Packages)
+            {
+                Variant = ""
+            };
             Ps2Package = new Package("PS2", Packages);
+            Ps2Package.AddDependency(GlobalPackagePS2.URI);
             XboxPackage = new Package("XBOX", Packages);
+            XboxPackage.AddDependency(GlobalPackageXbox.URI);
             AssetManager.AddAsset(GlobalPackagePS2);
             AssetManager.AddAsset(GlobalPackageXbox);
             AssetManager.AddAsset(Ps2Package);
@@ -570,6 +607,10 @@ namespace TT_Lab.Project
 
                     // Chunk's path for variation of resources if they happen to be duplicated
                     var chunkPath = path;
+                    if (isDefault)
+                    {
+                        GlobalPackagePS2.Variant = chunkPath;
+                    }
                     path = path[..^4];
 
                     // Read graphics stuff
@@ -840,36 +881,20 @@ namespace TT_Lab.Project
             System.IO.Directory.CreateDirectory("Levels");
             System.IO.Directory.CreateDirectory("Startup");
 
-            var defaultChunk = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
+            System.IO.Directory.SetCurrentDirectory("Levels");
+            Log.WriteLine("Writing Levels...");
+            var chunksFolder = (from assetUri in Ps2Package.GetData().To<FolderData>().Children
                                 let asset = assetManager.GetAsset(assetUri)
-                                where asset is ChunkFolder
-                                where ArchivesLayout.StartupItems.Contains(asset.Name)
-                                select asset).First();
-
-            var @default = factory.GenerateDefault();
-            defaultChunk.ResolveChunkResources(factory, @default);
-            // Default is a special case where we need to put in the meshes even though they are usually exclusive to SM2 files
-            var defaultMeshes = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
-                                 let asset = assetManager.GetAsset(assetUri)
-                                 where asset is Folder
-                                 where asset.Name.Contains("Global Assets")
-                                 from childUri in asset.GetData<FolderData>().Children
-                                 let child = assetManager.GetAsset(childUri)
-                                 where child is Folder
-                                 where child.Name.Contains("Meshes")
-                                 select child).First();
-            defaultMeshes.ResolveChunkResources(factory, @default.GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION).GetItem<ITwinSection>(Constants.GRAPHICS_MESHES_SECTION));
-            using var defaultFile = new System.IO.FileStream($"Default.rm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
-            using var defaultWriter = new System.IO.BinaryWriter(defaultFile);
-            @default.Write(defaultWriter);
-            defaultWriter.Flush();
-            defaultWriter.Close();
-            Log.WriteLine("Created test Default.rm2 file");
+                                where asset.Name == "Chunks"
+                                select asset).First().GetData<FolderData>();
+            ResolveAndWriteChunks(factory, chunksFolder);
+            Log.WriteLine("Finished creating test chunks...");
+            System.IO.Directory.SetCurrentDirectory("../..");
             return;
 
             Log.WriteLine("Writing Extras...");
-            System.IO.Directory.SetCurrentDirectory("Extras");
-            
+            System.IO.Directory.SetCurrentDirectory("../Extras");
+
             var extrasFolders = (from asset in GlobalPackagePS2.GetData().To<FolderData>().Children
                                  where assetManager.GetAsset(asset) is Folder
                                  let folder = assetManager.GetAsset<Folder>(asset)
@@ -990,7 +1015,32 @@ namespace TT_Lab.Project
                                  where asset is not Folder
                                  where ArchivesLayout.StartupItems.Contains(asset.Name)
                                  select asset).ToList();
-            
+
+            var defaultChunk = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
+                                let asset = assetManager.GetAsset(assetUri)
+                                where asset is ChunkFolder
+                                where ArchivesLayout.StartupItems.Contains(asset.Name)
+                                select asset).First();
+
+            var @default = factory.GenerateDefault();
+            defaultChunk.ResolveChunkResources(factory, @default);
+            // Default is a special case where we need to put in the meshes which are actually shadows
+            var defaultMeshes = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
+                                 let asset = assetManager.GetAsset(assetUri)
+                                 where asset is Folder
+                                 where asset.Name.Contains("Global Assets")
+                                 from childUri in asset.GetData<FolderData>().Children
+                                 let child = assetManager.GetAsset(childUri)
+                                 where child is Folder
+                                 where child.Name.Contains("Meshes")
+                                 select child).First();
+            defaultMeshes.ResolveChunkResources(factory, @default.GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION).GetItem<ITwinSection>(Constants.GRAPHICS_MESHES_SECTION));
+            using var defaultFile = new System.IO.FileStream($"Default.rm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            using var defaultWriter = new System.IO.BinaryWriter(defaultFile);
+            @default.Write(defaultWriter);
+            defaultWriter.Flush();
+            defaultWriter.Close();
+
             foreach (var asset in startupAssets)
             {
                 Log.WriteLine($"Writing {asset.Name}...");
@@ -1023,14 +1073,62 @@ namespace TT_Lab.Project
                 font.ExportToFile(factory);
             }
 
-            System.IO.Directory.SetCurrentDirectory("../../Levels");
-            Log.WriteLine("Writing Levels...");
-            // TODO: Figure out how in the world chunks are gonna be compiled
+            System.IO.Directory.SetCurrentDirectory("../../..");
+            Log.WriteLine("Finished writing archives!");
         }
 
         public void PackAssetsXbox()
         {
             throw new NotImplementedException();
+        }
+
+        private void ResolveAndWriteChunks(ITwinItemFactory factory, FolderData currentFolder)
+        {
+            var assetManager = AssetManager.Get();
+            foreach (var item in currentFolder.Children)
+            {
+                var folder = assetManager.GetAsset(item);
+                if (folder is ChunkFolder)
+                {
+                    Log.WriteLine($"Writing level {folder.Name}...");
+                    var rm2 = factory.GenerateRM();
+                    var sm2 = factory.GenerateSM();
+
+                    foreach (var child in folder.GetData<FolderData>().Children)
+                    {
+                        var asset = assetManager.GetAsset(child);
+                        if (asset is Scenery || asset is DynamicScenery || asset is ChunkLinks)
+                        {
+                            asset.ResolveChunkResources(factory, sm2);
+                        }
+                        else
+                        {
+                            asset.ResolveChunkResources(factory, rm2);
+                        }
+                    }
+
+                    using var rm2File = new System.IO.FileStream($"{folder.Name}.rm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    using var rm2Writer = new System.IO.BinaryWriter(rm2File);
+                    rm2.Write(rm2Writer);
+                    rm2Writer.Flush();
+                    rm2Writer.Close();
+
+                    using var sm2File = new System.IO.FileStream($"{folder.Name}.sm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    using var sm2Writer = new System.IO.BinaryWriter(sm2File);
+                    sm2.Write(sm2Writer);
+                    sm2Writer.Flush();
+                    sm2Writer.Close();
+                    break;
+                }
+                else if (folder is Folder)
+                {
+                    System.IO.Directory.CreateDirectory(folder.Name);
+                    System.IO.Directory.SetCurrentDirectory(folder.Name);
+                    ResolveAndWriteChunks(factory, folder.GetData<FolderData>());
+                    System.IO.Directory.SetCurrentDirectory("..");
+                    break;
+                }
+            }
         }
 
 

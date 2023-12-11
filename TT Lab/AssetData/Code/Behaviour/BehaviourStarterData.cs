@@ -86,6 +86,10 @@ namespace TT_Lab.AssetData.Code.Behaviour
                 {
                     assetManager.GetAsset(assigner.Behaviour).ResolveChunkResources(factory, section);
                 }
+                if (Assigners.Count == 0)
+                {
+                    Console.WriteLine("WTF HAPPENED???");
+                }
             }
             return base.ResolveChunkResouces(factory, section, id);
         }

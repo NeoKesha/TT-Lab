@@ -46,7 +46,7 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public String ChunkPath { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkUInt { get; set; }
+        public UInt32 FogColor { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -97,7 +97,7 @@ namespace TT_Lab.AssetData.Instance
         {
             ITwinScenery scenery = GetTwinItem<ITwinScenery>();
             ChunkPath = scenery.Name[..];
-            UnkUInt = scenery.UnkUInt;
+            FogColor = scenery.FogColor;
             UnkByte = scenery.UnkByte;
             if (scenery.SkydomeID != 0)
             {
@@ -125,7 +125,7 @@ namespace TT_Lab.AssetData.Instance
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
             writer.Write(ChunkPath);
-            writer.Write(UnkUInt);
+            writer.Write(FogColor);
             writer.Write(UnkByte);
             writer.Write(SkydomeID == LabURI.Empty ? 0 : assetManager.GetAsset(SkydomeID).ID);
             writer.Write(HasLighting);

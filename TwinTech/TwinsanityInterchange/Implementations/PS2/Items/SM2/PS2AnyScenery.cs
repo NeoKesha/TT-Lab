@@ -13,7 +13,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
     {
         public Boolean HasLighting { get; set; }
         public String Name { get; set; }
-        public UInt32 UnkUInt { get; set; }
+        public UInt32 FogColor { get; set; }
         public Byte UnkByte { get; set; }
         public UInt32 SkydomeID { get; set; }
         public Boolean[] UnkLightFlags { get; set; }
@@ -51,7 +51,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
             var NameLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(NameLen));
-            UnkUInt = reader.ReadUInt32();
+            FogColor = reader.ReadUInt32();
             var sceneryType = reader.ReadInt32();
             UnkByte = reader.ReadByte();
             if ((flags & 0x10000) != 0)
@@ -118,7 +118,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             writer.Write(newFlags);
             writer.Write(Name.Length);
             writer.Write(Name.ToCharArray());
-            writer.Write(UnkUInt);
+            writer.Write(FogColor);
             writer.Write(Sceneries.Count != 0 ? 0x160A : 3);
             writer.Write(UnkByte);
             if ((newFlags & 0x10000) != 0)

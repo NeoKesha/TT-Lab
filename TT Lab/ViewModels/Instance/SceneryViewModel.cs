@@ -27,7 +27,7 @@ namespace TT_Lab.ViewModels.Instance
         {
             var data = _asset.GetData<SceneryData>();
             sceneryName = data.ChunkPath[..];
-            unkUInt = data.UnkUInt;
+            unkUInt = data.FogColor;
             unkByte = data.UnkByte;
             skydome = data.SkydomeID;
             lightFlag1 = data.UnkLightFlags[0];
@@ -47,7 +47,7 @@ namespace TT_Lab.ViewModels.Instance
         {
             var data = _asset.GetData<SceneryData>();
             data.ChunkPath = sceneryName;
-            data.UnkUInt = UnkUInt;
+            data.FogColor = UnkUInt;
             data.UnkByte = UnkByte;
             data.SkydomeID = Skydome;
             data.UnkLightFlags[0] = LightFlag1;

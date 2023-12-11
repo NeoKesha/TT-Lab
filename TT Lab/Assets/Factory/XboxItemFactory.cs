@@ -198,12 +198,12 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinSection GenerateRM2()
+        public ITwinSection GenerateRM()
         {
             throw new NotImplementedException();
         }
 
-        public ITwinSection GenerateSM2()
+        public ITwinSection GenerateSM()
         {
             throw new NotImplementedException();
         }

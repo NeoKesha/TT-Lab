@@ -1,14 +1,12 @@
 ﻿using System;
 using TT_Lab.AssetData;
-using TT_Lab.Assets.Factory;
 using TT_Lab.Editors;
-using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
     public class ChunkFolder : Folder
     {
-        
+
         public ChunkFolder() : base()
         {
             SkipExport = false;

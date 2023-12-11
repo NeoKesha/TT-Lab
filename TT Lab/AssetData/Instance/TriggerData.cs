@@ -26,7 +26,7 @@ namespace TT_Lab.AssetData.Instance
             SetTwinItem(trigger);
         }
 
-        public TriggerData(LabURI package, String? variant, TwinTrigger trigger) : this()
+        public TriggerData(LabURI package, String? variant, TwinTrigger trigger, Int32? layoutId) : this()
         {
             ObjectActivatorMask = trigger.ObjectActivatorMask;
             Position = CloneUtils.Clone(trigger.Position);
@@ -35,7 +35,7 @@ namespace TT_Lab.AssetData.Instance
             Instances = new(trigger.Instances.Count);
             foreach (var inst in trigger.Instances)
             {
-                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, inst));
+                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, layoutId, inst));
             }
             Header = trigger.Header;
             UnkFloat = trigger.UnkFloat;

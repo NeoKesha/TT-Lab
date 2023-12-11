@@ -52,7 +52,7 @@ namespace TT_Lab.Assets.Factory
         ITwinPTC GeneratePTC(UInt32 texID, UInt32 matID, ITwinTexture texture, ITwinMaterial material);
         ITwinPSM GeneratePSM(List<ITwinPTC> ptcs);
         ITwinSection GenerateDefault();
-        ITwinSection GenerateRM2();
-        ITwinSection GenerateSM2();
+        ITwinSection GenerateRM();
+        ITwinSection GenerateSM();
     }
 }

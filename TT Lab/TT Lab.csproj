@@ -44,16 +44,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
     <PackageReference Include="GlmNet" Version="0.7.0" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OpenTK" Version="4.7.5" />
+    <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0030" />
+    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0030" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GLWpfControl\src\GLWpfControl\GLWpfControl.csproj" />
+    <ProjectReference Include="..\NvTriStripDotNet\NvTriStripDotNet.csproj" />
     <ProjectReference Include="..\TwinTech\TwinTech.csproj" />
   </ItemGroup>
 

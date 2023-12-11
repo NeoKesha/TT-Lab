@@ -185,7 +185,10 @@ namespace TT_Lab.AssetData.Instance
             var behavioursSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOURS_SECTION);
 
             assetManager.GetAsset(ObjectId).ResolveChunkResources(factory, objectsSection);
-            assetManager.GetAsset(OnSpawnScriptId).ResolveChunkResources(factory, behavioursSection);
+            if (OnSpawnScriptId != LabURI.Empty)
+            {
+                assetManager.GetAsset(OnSpawnScriptId).ResolveChunkResources(factory, behavioursSection);
+            }
 
             // Positions, paths and instances don't need to be resolved because they are gonna be resolved by themselves anyway
 

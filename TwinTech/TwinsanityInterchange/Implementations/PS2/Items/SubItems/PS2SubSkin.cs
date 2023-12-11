@@ -19,6 +19,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public List<Vector4> UVW { get; set; }
         public List<Vector4> Colors { get; set; }
         public List<VertexJointInfo> SkinJoints { get; set; }
+        public List<Int32> GroupSizes { get; set; }
 
         public int GetLength()
         {
@@ -42,6 +43,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             UVW = new List<Vector4>();
             Colors = new List<Vector4>();
             SkinJoints = new List<VertexJointInfo>();
+            GroupSizes = new List<Int32>();
 
             const Int32 VERT_DATA_INDEX = 3;
             for (Int32 i = 0; i < data.Count;)
@@ -123,6 +125,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     jointInfos.Add(joint);
                 }
 
+                GroupSizes.Add((Int32)verts);
                 for (Int32 j = 0; j < verts; j++)
                 {
                     Vertexes.Add(positioVertexBatch[j]);
@@ -148,6 +151,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         {
             var data = new List<List<Vector4>>()
             {
+                GroupSizes.Select(g => new Vector4(g, 0, 0, 0)).ToList(),
                 Vertexes,
                 UVW,
                 Colors,

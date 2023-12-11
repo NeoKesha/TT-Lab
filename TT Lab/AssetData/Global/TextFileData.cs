@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
-using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Global

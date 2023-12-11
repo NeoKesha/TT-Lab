@@ -52,6 +52,19 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return;
         }
 
+        public void Normalize()
+        {
+            var length = Length();
+            X /= length;
+            Y /= length;
+            Z /= length;
+        }
+
+        public Single Length()
+        {
+            return (Single)Math.Sqrt(X * X + Y * Y + Z * Z);
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             X = reader.ReadSingle();

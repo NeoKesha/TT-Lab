@@ -21,6 +21,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Normals { get; set; }
         public List<bool> Connection { get; set; }
+        public List<Int32> GroupSizes { get; set; }
         public PS2SubModel()
         {
 
@@ -58,6 +59,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             Normals = new List<Vector4>();
             Colors = new List<Vector4>();
             Connection = new List<bool>();
+            GroupSizes = new List<Int32>();
             var index = 0;
             for (var i = 0; i < data.Count;)
             {
@@ -90,6 +92,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         break;
 
                 }
+                GroupSizes.Add(data[i + 2].Count);
                 Vertexes.AddRange(data[i + 2].Where((v) => v != null));
                 if (fieldsPresent.HasFlag(FieldsPresent.UV_Color))
                 {
@@ -161,6 +164,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             TrimList(Colors, (Int32)VertexesCount, new Vector4());
             var data = new List<List<Vector4>>
             {
+                GroupSizes.Select(i => new Vector4(i, 0, 0, 0)).ToList(),
                 Vertexes,
                 Colors,
                 UVW

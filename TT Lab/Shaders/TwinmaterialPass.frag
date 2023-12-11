@@ -19,7 +19,7 @@ vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
 	vec4 color = vec4(1.0);
 	for (int i = 0; i < TexturesAmount; ++i)
 	{
-		vec4 texCol = texture(tex[i], vec2(texCoord.s, 1.0 - texCoord.t));
+		vec4 texCol = texture(tex[i], vec2(texCoord.s, texCoord.t));
 		if (AlphaBlending[i] == 1) {
 			vec4 colorA = vec4(0.0);
 			vec4 colorB = vec4(0.0);

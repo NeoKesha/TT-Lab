@@ -1,9 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
-using TT_Lab.Assets.Factory;
 using Twinsanity.TwinsanityInterchange.Enumerations;
-using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.Assets.Code
@@ -11,7 +9,6 @@ namespace TT_Lab.Assets.Code
     public class GameObject : SerializableAsset
     {
         public override UInt32 Section => Constants.CODE_GAME_OBJECTS_SECTION;
-        private bool resolveTraversed = false;
 
         public GameObject() { }
 
@@ -44,15 +41,6 @@ namespace TT_Lab.Assets.Code
                 IsLoaded = true;
             }
             return assetData;
-        }
-
-        public override void ResolveChunkResources(ITwinItemFactory factory, ITwinSection section)
-        {
-            if (resolveTraversed) return;
-
-            resolveTraversed = true;
-            base.ResolveChunkResources(factory, section);
-            resolveTraversed = false;
         }
     }
 }

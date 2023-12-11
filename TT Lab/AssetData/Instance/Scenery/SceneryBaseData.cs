@@ -223,35 +223,38 @@ namespace TT_Lab.AssetData.Instance.Scenery
         public virtual void Write(BinaryWriter writer)
         {
             var assetManager = AssetManager.Get();
-            writer.Write(MeshIDs.Count);
-            foreach (var mesh in MeshIDs)
+            var hasMeshLods = MeshIDs.Count > 0 || LodIDs.Count > 0 ? 0x1613 : 0;
+            writer.Write(hasMeshLods);
+            if (hasMeshLods != 0)
             {
-                writer.Write(assetManager.GetAsset(mesh).ID);
-            }
+                writer.Write((Int16)MeshIDs.Count);
+                writer.Write((Int16)LodIDs.Count);
 
-            writer.Write(LodIDs.Count);
-            foreach (var lod in LodIDs)
-            {
-                writer.Write(assetManager.GetAsset(lod).ID);
-            }
+                foreach (var bb in BoundingBoxes)
+                {
+                    bb[0].Write(writer);
+                    bb[1].Write(writer);
+                }
 
-            writer.Write(BoundingBoxes.Count);
-            foreach (var bb in BoundingBoxes)
-            {
-                bb[0].Write(writer);
-                bb[1].Write(writer);
-            }
+                foreach (var mesh in MeshIDs)
+                {
+                    writer.Write(assetManager.GetAsset(mesh).ID);
+                }
 
-            writer.Write(MeshModelMatrices.Count);
-            foreach (var mat in MeshModelMatrices)
-            {
-                mat.Write(writer);
-            }
+                foreach (var lod in LodIDs)
+                {
+                    writer.Write(assetManager.GetAsset(lod).ID);
+                }
 
-            writer.Write(LodModelMatrices.Count);
-            foreach (var mat in LodModelMatrices)
-            {
-                mat.Write(writer);
+                foreach (var mat in MeshModelMatrices)
+                {
+                    mat.Write(writer);
+                }
+
+                foreach (var mat in LodModelMatrices)
+                {
+                    mat.Write(writer);
+                }
             }
 
             UnkVec1.Write(writer);

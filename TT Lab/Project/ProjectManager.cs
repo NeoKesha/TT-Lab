@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using TT_Lab.AssetData;
-using TT_Lab.AssetData.Global;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Factory;
-using TT_Lab.Assets.Global;
 using TT_Lab.Command;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
@@ -342,14 +339,14 @@ namespace TT_Lab.Project
                         try
                         {
 #endif
-                            Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
-                            Project.Deserialize(prFile);
-                            Log.WriteLine($"Building project tree...");
-                            BuildProjectTree();
-                            WorkableProject = true;
-                            NotifyChange("ProjectOpened");
-                            NotifyChange("ProjectTitle");
-                            GC.Collect();
+                    Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
+                    Project.Deserialize(prFile);
+                    Log.WriteLine($"Building project tree...");
+                    BuildProjectTree();
+                    WorkableProject = true;
+                    NotifyChange("ProjectOpened");
+                    NotifyChange("ProjectTitle");
+                    GC.Collect();
 #if !DEBUG
                         }
                         catch (Exception ex)

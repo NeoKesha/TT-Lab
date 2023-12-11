@@ -17,6 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         public List<Vector4> UVW { get; set; }
         public List<Vector4> Colors { get; set; }
         public List<VertexJointInfo> SkinJoints { get; set; }
+        public List<Int32> GroupSizes { get; set; }
 
         public void CalculateData()
         {
@@ -49,9 +50,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             reader.ReadUInt32(); // Total amount of group joints
             var groupAmount = reader.ReadUInt32();
 
+            GroupSizes = new();
             for (Int32 i = 0; i < groupAmount; i++)
             {
                 groupList.Add(reader.ReadUInt32());
+                GroupSizes.Add((Int32)groupList[^1]);
             }
             var jointAmountList = new List<UInt32>((Int32)groupAmount);
             for (Int32 i = 0; i < groupAmount; i++)

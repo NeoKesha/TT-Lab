@@ -77,6 +77,7 @@ namespace TT_Lab.Assets.Code
             }
 
             assetData.Dispose();
+            IsLoaded = false;
         }
 
         public override AbstractAssetData GetData()

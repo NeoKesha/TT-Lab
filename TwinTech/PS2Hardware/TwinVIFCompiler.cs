@@ -45,7 +45,7 @@ namespace Twinsanity.PS2Hardware
             JointInfo
         }
 
-        public static int VertexBatchAmount => 36;
+        public static int VertexStripCache => 36;
 
         /// <summary>
         /// Twinsanity's model formats
@@ -355,7 +355,8 @@ namespace Twinsanity.PS2Hardware
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
-                                var emitColors = vectorBatch[batchIndex].Select(c => c.GetColor()).Select(c => {
+                                var emitColors = vectorBatch[batchIndex].Select(c => c.GetColor()).Select(c =>
+                                {
                                     c.ScaleAlphaDown();
                                     c.A = (Byte)(c.A & ~(1 << 4));
                                     return c;
@@ -587,24 +588,22 @@ namespace Twinsanity.PS2Hardware
 
         private void SwizzleVectorData()
         {
-            var vertexAmount = vectorData[0].Count;
-            Debug.Assert(vectorData.Skip(1).All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
-            // TODO: Better swizzling heuristic
-            var swizzleAmount = VertexBatchAmount;
+            var vertexAmount = vectorData[1].Count;
+            Debug.Assert(vectorData.Skip(2).All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
+            var swizzleSizes = vectorData[0];
             var vertexIndex = 0;
-            var leftOver = vertexAmount % swizzleAmount;
-            var swizzleCount = vertexAmount / swizzleAmount;
-            Debug.Assert(swizzleCount * swizzleAmount + leftOver == vertexAmount, "Didn't properly calculate the proper amount of batches");
 
             // Create new batch
             swizzledVectorBatches = new();
-            for (Int32 i = 0; i < swizzleCount; i++)
+            foreach (var swizzleVector in swizzleSizes)
             {
+                var swizzleAmount = (Int32)swizzleVector.X;
+
                 // Create new list for the batch
                 swizzledVectorBatches.Add(new());
 
                 // Create new list for each type of vertex data
-                for (Int32 j = 0; j < vectorData.Count; j++)
+                for (Int32 j = 1; j < vectorData.Count; j++)
                 {
                     swizzledVectorBatches[^1].Add(new());
                 }
@@ -612,34 +611,12 @@ namespace Twinsanity.PS2Hardware
                 // Fill the batch with each vertex type
                 for (Int32 j = 0; j < swizzleAmount; j++)
                 {
-                    for (Int32 k = 0; k < vectorData.Count; k++)
+                    for (Int32 k = 1; k < vectorData.Count; k++)
                     {
-                        swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
+                        swizzledVectorBatches[^1][k - 1].Add(vectorData[k][vertexIndex + j]);
                     }
                 }
                 vertexIndex += swizzleAmount;
-            }
-
-            // Fill the leftover batch if any
-            if (leftOver != 0)
-            {
-                // Create new list for the batch
-                swizzledVectorBatches.Add(new());
-
-                // Create new list for each type of vertex data
-                for (Int32 j = 0; j < vectorData.Count; j++)
-                {
-                    swizzledVectorBatches[^1].Add(new());
-                }
-
-                // Fill the batch with each vertex type
-                for (Int32 j = 0; j < leftOver; j++)
-                {
-                    for (Int32 k = 0; k < vectorData.Count; k++)
-                    {
-                        swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
-                    }
-                }
             }
         }
     }

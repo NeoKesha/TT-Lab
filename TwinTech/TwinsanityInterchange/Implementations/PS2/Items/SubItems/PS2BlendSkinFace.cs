@@ -56,9 +56,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             for (Int32 i = 0; i < VertexesAmount; i++)
             {
                 var vec = data[0][i + 1];
-                var xComp = (Int32)vec.GetBinaryX();
-                var yComp = (Int32)vec.GetBinaryY();
-                var zComp = (Int32)vec.GetBinaryZ();
+                var xComp = (Int32)vec.X;
+                var yComp = (Int32)vec.Y;
+                var zComp = (Int32)vec.Z;
                 Vertices.Add(new VertexBlendShape
                 {
                     BlendShape = blendShape,
@@ -69,7 +69,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(faceData.Length << 4);
+            writer.Write(faceData.Length >> 4);
             writer.Write(VertexesAmount);
             writer.Write(faceData);
         }
@@ -81,7 +81,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             vertexData.Insert(0, new Vector4());
             var data = new List<List<Vector4>>()
             {
-                Vertices.Select(v => v.GetVector4()).ToList()
+                vertexData
             };
             var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendFace, data, null);
             faceData = compiler.Compile();

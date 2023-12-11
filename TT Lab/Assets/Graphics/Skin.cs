@@ -9,7 +9,7 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Skin : SerializableAsset
     {
-        protected override String DataExt => ".dae";
+        protected override String DataExt => ".glb";
         public override UInt32 Section => Constants.GRAPHICS_SKINS_SECTION;
 
         public Skin() { }

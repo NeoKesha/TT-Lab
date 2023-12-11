@@ -9,7 +9,7 @@ namespace TT_Lab.Assets.Graphics
 {
     public class Model : SerializableAsset
     {
-        protected override String DataExt => ".dae";
+        protected override String DataExt => ".glb";
         public override UInt32 Section => Constants.GRAPHICS_MODELS_SECTION;
 
         public Model(LabURI package, String? variant, UInt32 id, String Name, ITwinModel model) : base(id, Name, package, variant)

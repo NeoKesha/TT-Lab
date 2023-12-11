@@ -16,9 +16,16 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         /// </summary>
         String Name { get; set; }
         /// <summary>
-        /// Unknown unsigned integer parameter
+        /// Determines the color of the fog in the chunk<para/>
+        /// Currently known values:<para/>
+        /// 0 - Purple
+        /// 1 - No color
+        /// 2 - Light blue
+        /// 3 - Green
+        /// 4 - Grey
+        /// 5 - Beige
         /// </summary>
-        UInt32 UnkUInt { get; set; }
+        UInt32 FogColor { get; set; }
         /// <summary>
         /// Unknown byte parameter
         /// </summary>

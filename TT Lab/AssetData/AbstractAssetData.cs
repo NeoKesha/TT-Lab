@@ -37,6 +37,8 @@ namespace TT_Lab.AssetData
             using System.IO.FileStream fs = new(dataPath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using System.IO.BinaryWriter writer = new(fs);
             writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings).ToCharArray());
+            writer.Flush();
+            writer.Close();
         }
 
         protected abstract void Dispose(Boolean disposing);

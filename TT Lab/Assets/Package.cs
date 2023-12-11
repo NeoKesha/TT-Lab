@@ -11,6 +11,8 @@ namespace TT_Lab.Assets
         public Boolean Enabled { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> Dependencies { get; private set; } = new();
+        [JsonProperty(Required = Required.Always)]
+        public String Variant { get; set; } = "";
 
         public Package() : base()
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using TT_Lab.Assets.Factory;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets.Instance

@@ -1,18 +1,23 @@
-﻿using Assimp;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
-using Twinsanity.TwinsanityInterchange.Common;
+using TT_Lab.Extensions;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
+    using COLOR_UV = SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1;
+    using JOINT_WEIGHT = SharpGLTF.Geometry.VertexTypes.VertexJoints4;
+    using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
+    using VERTEX_BUILDER = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
+
     public class BlendSkinData : AbstractAssetData
     {
         public BlendSkinData()
@@ -38,204 +43,162 @@ namespace TT_Lab.AssetData.Graphics
 
         public override void Save(String dataPath, JsonSerializerSettings? settings = null)
         {
-            Scene scene = new()
+            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityBlendSkin");
+            var root = new SharpGLTF.Scenes.NodeBuilder("blend_skin_root");
+            var metadata = new Metadata();
+            scene.AddNode(root);
+
+            static VERTEX_BUILDER generateVertexFromTwinVertex(Vertex vertex)
             {
-                RootNode = new Node("Root")
+                return new VERTEX_BUILDER(new VERTEX(vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
+                        new COLOR_UV(
+                            new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
+                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)),
+                        new JOINT_WEIGHT(
+                            (vertex.JointInfo.JointIndex1, vertex.JointInfo.Weight1),
+                            (vertex.JointInfo.JointIndex2, vertex.JointInfo.Weight2),
+                            (vertex.JointInfo.JointIndex3, vertex.JointInfo.Weight3)));
             };
 
-            Node blendSkinNode = new("BlendSkin");
-            scene.RootNode.Children.Add(blendSkinNode);
-
-            var materialIndex = 0;
-            var meshIndex = 0;
-            var materials = new List<Material>();
-            var metadata = new Metadata();
-            var boneNodes = new Dictionary<String, Node>();
+            var jointsAmount = 0;
             foreach (var blend in Blends)
             {
-                foreach (var subSkin in blend.Models)
+                foreach (var blendModel in blend.Models)
                 {
-                    Mesh mesh = new(PrimitiveType.Triangle)
+                    foreach (var ver in blendModel.Vertexes)
                     {
-                        Name = $"SubSkin_{meshIndex}"
-                    };
-
-                    // Conversion to jointIndex -> vertex index + weight
-                    var bones = new Dictionary<int, List<(int, float)>>();
-                    var vertexIndex = 0;
-                    foreach (var ver in subSkin.Vertexes)
-                    {
-                        var pos = new Vector4(ver.Position.X, ver.Position.Y, ver.Position.Z, 1.0f);
-                        var color = ver.Color;
-                        var uv = ver.UV;
-                        var jointInfo = ver.JointInfo;
-                        mesh.Vertices.Add(new Vector3D(pos.X, pos.Y, pos.Z));
-                        mesh.VertexColorChannels[0].Add(new Color4D(color.X, color.Y, color.Z, color.W));
-                        mesh.TextureCoordinateChannels[0].Add(new Vector3D(uv.X, uv.Y, 1.0f));
-
-                        var jointAmount = jointInfo.GetJointConnectionsAmount();
-                        if (!bones.ContainsKey(jointInfo.JointIndex1))
+                        if (ver.JointInfo.JointIndex1 > jointsAmount)
                         {
-                            bones.Add(jointInfo.JointIndex1, new());
+                            jointsAmount = ver.JointInfo.JointIndex1;
                         }
-                        bones[jointInfo.JointIndex1].Add((vertexIndex, jointInfo.Weight1));
-                        if (jointAmount >= 2)
+                        if (ver.JointInfo.JointIndex2 > jointsAmount)
                         {
-                            if (!bones.ContainsKey(jointInfo.JointIndex2))
-                            {
-                                bones.Add(jointInfo.JointIndex2, new());
-                            }
-                            bones[jointInfo.JointIndex2].Add((vertexIndex, jointInfo.Weight2));
+                            jointsAmount = ver.JointInfo.JointIndex2;
                         }
-                        if (jointAmount == 3)
+                        if (ver.JointInfo.JointIndex3 > jointsAmount)
                         {
-                            if (!bones.ContainsKey(jointInfo.JointIndex3))
-                            {
-                                bones.Add(jointInfo.JointIndex3, new());
-                            }
-                            bones[jointInfo.JointIndex3].Add((vertexIndex, jointInfo.Weight3));
+                            jointsAmount = ver.JointInfo.JointIndex3;
                         }
-                        vertexIndex++;
                     }
-
-                    foreach (var boneMap in bones)
-                    {
-                        var bone = new Bone
-                        {
-                            Name = $"Bone_{boneMap.Key}",
-                            OffsetMatrix = Matrix4x4.Identity, // We don't really care at the moment
-                        };
-                        foreach (var boneInfo in boneMap.Value)
-                        {
-                            bone.VertexWeights.Add(new VertexWeight
-                            {
-                                VertexID = boneInfo.Item1,
-                                Weight = boneInfo.Item2,
-                            });
-                        }
-                        if (boneNodes.ContainsKey(bone.Name))
-                        {
-                            Node boneNode = new()
-                            {
-                                Name = bone.Name,
-                                Transform = Matrix4x4.Identity
-                            };
-                            boneNodes.Add(bone.Name, boneNode);
-                            blendSkinNode.Children.Add(boneNode);
-                        }
-                        mesh.Bones.Add(bone);
-                    }
-
-                    foreach (var face in subSkin.Faces)
-                    {
-                        mesh.Faces.Add(new Face(new int[] { face.Indexes![0], face.Indexes[1], face.Indexes[2] }));
-                    }
-
-                    Node meshNode = new(mesh.Name)
-                    {
-                        Transform = Matrix4x4.Identity
-                    };
-                    meshNode.MeshIndices.Add(meshIndex);
-                    blendSkinNode.Children.Add(meshNode);
-
-                    var blendFaceIndex = 0;
-                    foreach (var blendFace in subSkin.BlendFaces)
-                    {
-                        Animation animation = new()
-                        {
-                            DurationInTicks = blendFace.BlendShapes.Count,
-                            TicksPerSecond = 1,
-                            Name = $"BlendShape_{materialIndex}_{meshIndex}_{blendFaceIndex++}"
-                        };
-                        animation.NodeAnimationChannels.Add(new NodeAnimationChannel
-                        {
-                            NodeName = meshNode.Name
-                        });
-
-                        var vecIndex = 0;
-                        foreach (var vec in blendFace.BlendShapes)
-                        {
-                            animation.NodeAnimationChannels[0].PositionKeys.Add(new VectorKey
-                            {
-                                Time = vecIndex,
-                                Value = new Vector3D(vec.Offset.X, vec.Offset.Y, vec.Offset.Z)
-                            });
-                            animation.NodeAnimationChannels[0].ScalingKeys.Add(new VectorKey
-                            {
-                                Time = vecIndex,
-                                Value = new Vector3D(1.0f)
-                            });
-                            animation.NodeAnimationChannels[0].RotationKeys.Add(new QuaternionKey
-                            {
-                                Time = vecIndex,
-                                Value = new Quaternion(0, 0, 0)
-                            });
-                            vecIndex++;
-                        }
-
-                        scene.Animations.Add(animation);
-                    }
-
-                    metadata.BlendShapes.Add(subSkin.BlendShape);
-
-                    scene.Meshes.Add(mesh);
-                    mesh.MaterialIndex = materialIndex;
                 }
 
-                var material = new Material
-                {
-                    Name = $"Material_{materialIndex++}",
-                    TextureAmbient = new TextureSlot
-                    {
-                        TextureType = TextureType.Ambient,
-                        UVIndex = 0,
-                        WrapModeU = TextureWrapMode.Wrap,
-                        WrapModeV = TextureWrapMode.Wrap,
-                        FilePath = AssetManager.Get().GetAsset(blend.Material).Data,
-                        Mapping = TextureMapping.FromUV,
-                        Operation = TextureOperation.Add,
-                        TextureIndex = 0,
-                        BlendFactor = 1.0f,
-                    }
-                };
-                materials.Add(material);
-                metadata.Materials.Add(AssetManager.Get().GetAsset(blend.Material).URI);
             }
 
-            scene.Materials.AddRange(materials);
+            // Create all the joint nodes
+            List<SharpGLTF.Scenes.NodeBuilder> nodes = new(jointsAmount + 1);
+            var subSkinNodes = new List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>();
+            for (var i = 0; i < nodes.Capacity; ++i)
+            {
+                var node = new SharpGLTF.Scenes.NodeBuilder($"joint_{i}");
+                root.AddNode(node);
+                subSkinNodes.Add((node, System.Numerics.Matrix4x4.Identity));
+                nodes.Add(node);
+            }
 
-            metadata.BlendsAmount = BlendsAmount;
+            var index = 0;
+            var materialIndex = 0;
+            foreach (var blend in Blends)
+            {
+                var twinMaterial = AssetManager.Get().GetAssetData<MaterialData>(blend.Material);
+                metadata.Materials.Add(AssetManager.Get().GetAsset(blend.Material).URI);
+                var texture = twinMaterial.Shaders[0].TextureId == LabURI.Empty ? null : AssetManager.Get().GetAsset<Assets.Graphics.Texture>(twinMaterial.Shaders[0].TextureId);
+                var texturePath = texture == null ? null : $"{typeof(Assets.Graphics.Texture).Name}/{texture.Data}";
+                var material = new SharpGLTF.Materials.MaterialBuilder($"Material_{materialIndex++}")
+                    .WithDoubleSide(true)
+                    .WithAlpha(SharpGLTF.Materials.AlphaMode.OPAQUE);
+
+                if (texturePath == null)
+                {
+                    material.WithBaseColor(new System.Numerics.Vector4(1, 1, 1, 1));
+                }
+                else
+                {
+                    material.WithBaseColor(texturePath);
+                }
+
+                foreach (var blendModel in blend.Models)
+                {
+                    var mesh = new SharpGLTF.Geometry.MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"blend_subskin_{index}");
+                    var blendShapeInfo = System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape);
+                    mesh.Extras = SharpGLTF.IO.JsonContent.Serialize(blendModel.BlendShape);
+
+                    foreach (var face in blendModel.Faces)
+                    {
+                        var ver1 = blendModel.Vertexes[face.Indexes![0]];
+                        var ver2 = blendModel.Vertexes[face.Indexes[1]];
+                        var ver3 = blendModel.Vertexes[face.Indexes[2]];
+                        var primitive = mesh.UsePrimitive(material);
+                        primitive.AddTriangle(generateVertexFromTwinVertex(ver1), generateVertexFromTwinVertex(ver2), generateVertexFromTwinVertex(ver3));
+                    }
+
+                    int findVertexIndex(VERTEX vertex)
+                    {
+                        var index = -1;
+                        foreach (var ver in blendModel.Vertexes)
+                        {
+                            if (ver.Position.ToSystem() == vertex.Position)
+                            {
+                                return index + 1;
+                            }
+
+                            index++;
+                        }
+
+                        return index;
+                    }
+
+                    foreach (var primitive in mesh.Primitives)
+                    {
+                        for (Int32 i = 0; i < blendModel.BlendFaces.Count; i++)
+                        {
+                            var blendFace = blendModel.BlendFaces[i];
+                            var morph = mesh.UseMorphTarget(i);
+                            foreach (var vertex in morph.Vertices)
+                            {
+                                var newVer = vertex;
+                                var shapeIndex = findVertexIndex(vertex);
+                                var blendVec = blendFace.BlendShapes[shapeIndex].Offset;
+
+                                newVer.Position += new System.Numerics.Vector3(blendVec.X, blendVec.Y, blendVec.Z);
+
+                                morph.SetVertex(vertex, newVer);
+
+                            }
+                        }
+                    }
+
+                    scene.AddSkinnedMesh(mesh, subSkinNodes.ToArray());
+                }
+            }
+
+            var model = scene.ToGltf2();
+            model.SaveGLB(dataPath);
 
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using System.IO.BinaryWriter writer = new(fs);
             writer.Write(JsonConvert.SerializeObject(metadata, Formatting.Indented, settings).ToCharArray());
-
-            using AssimpContext context = new();
-            context.ExportFile(scene, dataPath, "collada");
         }
 
 
         protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
-            using AssimpContext context = new();
-            var scene = context.ImportFile(dataPath);
             var metadata = new Metadata();
+            var blendSkin = ModelRoot.Load(dataPath);
 
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Open, System.IO.FileAccess.Read);
             using System.IO.StreamReader reader = new(fs);
             JsonConvert.PopulateObject(value: reader.ReadToEnd(), target: metadata, settings);
 
-            BlendsAmount = metadata.BlendsAmount;
+            BlendsAmount = blendSkin.LogicalMeshes[0].Primitives[0].GetVertexColumns().MorphTargets.Count;
 
-            var meshIndex = 0;
-            for (var i = 0; i < scene.MaterialCount; i++)
+            foreach (var material in blendSkin.LogicalMaterials)
             {
-                var material = metadata.Materials[i];
-                var meshes = scene.Meshes.Where(m => m.MaterialIndex == i);
-                var animations = scene.Animations.Where(a => a.Name.Contains($"BlendShape_{i}"));
-                Blends.Add(new SubBlendData(material, meshes, animations, metadata.BlendShapes, meshIndex));
-                meshIndex += meshes.Count();
+                var labMaterial = metadata.Materials[material.LogicalIndex];
+                var meshes = blendSkin.LogicalMeshes.Where(m => m.Primitives.All(p => p.Material.LogicalIndex == material.LogicalIndex)).ToList();
+                Blends.Add(new SubBlendData(labMaterial, meshes, BlendsAmount));
             }
+
+
         }
 
         public override void Import(LabURI package, String? variant, Int32? layoutId)
@@ -270,10 +233,6 @@ namespace TT_Lab.AssetData.Graphics
         {
             [JsonProperty(Required = Required.Always)]
             public List<LabURI> Materials { get; set; } = new();
-            [JsonProperty(Required = Required.Always)]
-            public List<Vector3> BlendShapes { get; set; } = new();
-            [JsonProperty(Required = Required.Always)]
-            public Int32 BlendsAmount { get; set; }
         }
     }
 }

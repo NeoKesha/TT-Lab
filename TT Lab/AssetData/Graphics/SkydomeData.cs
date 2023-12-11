@@ -55,7 +55,7 @@ namespace TT_Lab.AssetData.Graphics
 
             writer.Flush();
             ms.Position = 0;
-            return factory.GenerateMesh(ms);
+            return factory.GenerateSkydome(ms);
         }
 
         public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
@@ -69,7 +69,7 @@ namespace TT_Lab.AssetData.Graphics
                 assetManager.GetAsset(mesh).ResolveChunkResources(factory, meshSection);
             }
 
-            section = section.GetItem<ITwinSection>(Constants.GRAPHICS_SKYDOMES_SECTION);
+            section = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_SKYDOMES_SECTION);
             return base.ResolveChunkResouces(factory, section, id);
         }
     }

@@ -16,6 +16,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Normals { get; set; }
         public List<Boolean> Connection { get; set; }
+        public List<Int32> GroupSizes { get; set; }
 
         public void CalculateData()
         {
@@ -33,9 +34,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             var vertexAmount = reader.ReadInt32();
             reader.ReadUInt32(); // Vertex amount * 0x1C
             var groupAmount = reader.ReadUInt32();
+            GroupSizes = new();
             for (Int32 i = 0; i < groupAmount; i++)
             {
                 groupList.Add(reader.ReadUInt32());
+                GroupSizes.Add((Int32)groupList[^1]);
             }
 
             Vertexes = new();

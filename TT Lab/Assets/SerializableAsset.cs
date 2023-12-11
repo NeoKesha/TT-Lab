@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using TT_Lab.AssetData;
 using TT_Lab.ViewModels;
-using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
@@ -38,6 +37,8 @@ namespace TT_Lab.Assets
         public LabURI URI { get; set; }
         public LabURI Package { get; set; }
         public String? Variation { get; set; }
+
+        private bool resolveTraversed = false;
 
         public SerializableAsset()
         {
@@ -133,19 +134,25 @@ namespace TT_Lab.Assets
 
         }
 
+        private void DisposeData()
+        {
+            assetData.Dispose();
+            IsLoaded = false;
+        }
+
         public virtual void ResolveChunkResources(Factory.ITwinItemFactory factory, ITwinSection section)
         {
-            if (!IsLoaded || assetData.Disposed)
-            {
-                assetData = GetData();
-            }
+            if (resolveTraversed) return;
 
+            resolveTraversed = true;
+            assetData = GetData();
             PreResolveResources();
             var item = assetData.ResolveChunkResouces(factory, section, ID);
             item?.SetID(ID);
             item?.Compile();
 
-            assetData.Dispose();
+            DisposeData();
+            resolveTraversed = false;
         }
 
         public virtual AssetViewModel GetViewModel(AssetViewModel? parent = null)

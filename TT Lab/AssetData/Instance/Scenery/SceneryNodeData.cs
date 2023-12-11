@@ -27,6 +27,11 @@ namespace TT_Lab.AssetData.Instance.Scenery
             SceneryTypes = CloneUtils.DeepClone(vm.SceneryTypes);
         }
 
+        public override ITwinScenery.SceneryType GetSceneryType()
+        {
+            return ITwinScenery.SceneryType.Node;
+        }
+
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);

@@ -26,6 +26,10 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
         /// Model's joints
         /// </summary>
         List<VertexJointInfo> SkinJoints { get; set; }
+        /// <summary>
+        /// The amount of verticies in the batch that form triangle strip/strips
+        /// </summary>
+        List<Int32> GroupSizes { get; set; }
 
 
         /// <summary>

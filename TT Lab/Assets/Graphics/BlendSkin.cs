@@ -8,7 +8,7 @@ namespace TT_Lab.Assets.Graphics
 {
     public class BlendSkin : SerializableAsset
     {
-        protected override String DataExt => ".dae";
+        protected override String DataExt => ".glb";
         public override UInt32 Section => Constants.GRAPHICS_BLEND_SKINS_SECTION;
 
         public BlendSkin() { }

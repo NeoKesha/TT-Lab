@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NvTriStripDotNet;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.AssetData.Graphics.SubModels;
@@ -9,6 +10,7 @@ using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
@@ -17,8 +19,11 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentL
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
@@ -27,12 +32,6 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 using static Twinsanity.TwinsanityInterchange.Common.AgentLab.TwinBehaviourAssigner;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code;
-using Twinsanity.TwinsanityInterchange.Implementations.Base;
-using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Layout;
-using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
-using System.Drawing;
 
 namespace TT_Lab.Assets.Factory
 {
@@ -121,7 +120,7 @@ namespace TT_Lab.Assets.Factory
             {
                 var subBlend = new PS2SubBlendSkin(blendsAmount)
                 {
-                    Material = assetManager.GetAsset(blend.Material).ID
+                    Material = assetManager.GetAsset(blend.Material).ID,
                 };
 
                 foreach (var model in blend.Models)
@@ -132,53 +131,97 @@ namespace TT_Lab.Assets.Factory
                         UVW = new(),
                         Colors = new(),
                         SkinJoints = new(),
-                        Faces = new()
+                        Faces = new(),
+                        BlendShape = new Vector3(model.BlendShape.X, model.BlendShape.Y, model.BlendShape.Z),
+                        GroupSizes = new()
                     };
-                    var vertexBatch = model.Vertexes;
-                    var i = 0;
-                    foreach (var face in model.Faces)
+
+                    var subFaces = model.Faces;
+                    List<UInt16> indices = new(subFaces.Count * 3);
+                    foreach (var face in subFaces)
                     {
-                        i %= TwinVIFCompiler.VertexBatchAmount;
-
-                        var idx0 = (i % 2 == 0) ? 0 : 1;
-                        var idx1 = (i % 2 == 0) ? 1 : 0;
-                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
-                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
-                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
-                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
-                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                        submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
-                        submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
-                        submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[idx0]].JointInfo);
-                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[idx1]].JointInfo);
-                        vertexBatch[face.Indexes[2]].JointInfo.Connection = true;
-                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[2]].JointInfo);
-
-                        ++i;
+                        indices.Add((UInt16)face.Indexes![0]);
+                        indices.Add((UInt16)face.Indexes[1]);
+                        indices.Add((UInt16)face.Indexes[2]);
                     }
 
-                    foreach (var blendFace in model.BlendFaces)
+                    // Generate triangle strips instead of triangle lists
+                    var stripifier = new NvStripifier()
                     {
-                        var ps2BlendFace = new PS2BlendSkinFace(model.BlendShape)
+                        StitchStrips = false,
+                        CacheSize = NvStripifier.CACHESIZE_GEFORCE3
+                    };
+                    stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
+                    var groupsList = new List<PrimitiveGroup>(primitiveGroups);
+                    groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
+
+                    var blendFaceVerticies = new Dictionary<SubBlendFaceData, List<VertexBlendShape>>();
+
+                    var rawModel = model.Vertexes;
+                    var vertexBatchSum = 0;
+                    var groupIndex = 0;
+                    var indexList = new List<UInt16>();
+                    foreach (var group in groupsList)
+                    {
+                        var startingIndex = 0;
+                        if (groupIndex + 1 < groupsList.Count && vertexBatchSum + groupsList[groupIndex + 1].IndexCount >= TwinVIFCompiler.VertexStripCache + 3)
                         {
-                            VertexesAmount = blendFace.VertexesAmount,
+                            submodel.GroupSizes.Add(vertexBatchSum);
+                            vertexBatchSum = 0;
+                        }
+
+                        vertexBatchSum += group.IndexCount;
+                        foreach (var idx in group.Indices)
+                        {
+                            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                            submodel.Colors.Add(rawModel[idx].Color);
+                            submodel.SkinJoints.Add(rawModel[idx].JointInfo);
+                            rawModel[idx].JointInfo.Connection = startingIndex > 1;
+
+                            foreach (var blendFace in model.BlendFaces)
+                            {
+                                if (!blendFaceVerticies.ContainsKey(blendFace))
+                                {
+                                    blendFaceVerticies[blendFace] = new();
+                                }
+                                var ver = blendFace.BlendShapes[idx];
+                                blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                                {
+                                    BlendShape = model.BlendShape,
+                                    Offset = ver.Offset
+                                });
+                            }
+
+                            indexList.Add(idx);
+                            startingIndex++;
+                        }
+
+                        if (groupIndex + 1 >= groupsList.Count)
+                        {
+                            submodel.GroupSizes.Add(vertexBatchSum);
+                        }
+
+                        groupIndex++;
+                    }
+
+                    foreach (var (blendFace, vertexList) in blendFaceVerticies)
+                    {
+                        var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
+                        {
+                            VertexesAmount = (UInt32)vertexList.Count,
                             Vertices = new()
                         };
-                        foreach (var ver in blendFace.BlendShapes)
+                        foreach (var ver in vertexList)
                         {
-                            ps2BlendFace.Vertices.Add(new VertexBlendShape
-                            {
-                                BlendShape = model.BlendShape,
-                                Offset = ver.Offset
-                            });
+                            ps2BlendFace.Vertices.Add(ver);
                         }
                         submodel.Faces.Add(ps2BlendFace);
                     }
 
                     subBlend.Models.Add(submodel);
                 }
+                blendSkin.SubBlends.Add(subBlend);
             }
 
             return blendSkin;
@@ -244,6 +287,7 @@ namespace TT_Lab.Assets.Factory
                     builder.Read(reader, (Int32)stream.Length);
                     chunkLink.ChunkLinksCollisionData.Add(builder);
                 }
+                link.LinksList.Add(chunkLink);
             }
             return link;
         }
@@ -275,8 +319,8 @@ namespace TT_Lab.Assets.Factory
         public ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces)
         {
             var model = new PS2AnyModel();
-            var vertexBatchIndex = 0;
-            foreach (var subFaces in faces)
+            var facesBatchIndex = 0;
+            foreach (var rawModel in vertexes)
             {
                 var submodel = new PS2SubModel
                 {
@@ -286,42 +330,73 @@ namespace TT_Lab.Assets.Factory
                     Colors = new(),
                     EmitColor = new(),
                     Normals = new(),
-                    Connection = new()
+                    Connection = new(),
+                    GroupSizes = new()
                 };
-                var vertexBatch = vertexes[vertexBatchIndex++];
-                var i = 0;
+
+                var subFaces = faces[facesBatchIndex++];
+                List<UInt16> indices = new(subFaces.Count * 3);
                 foreach (var face in subFaces)
                 {
-                    i %= TwinVIFCompiler.VertexBatchAmount;
+                    indices.Add((UInt16)face.Indexes![0]);
+                    indices.Add((UInt16)face.Indexes[1]);
+                    indices.Add((UInt16)face.Indexes[2]);
+                }
 
-                    var idx0 = (i % 2 == 0) ? 0 : 1;
-                    var idx1 = (i % 2 == 0) ? 1 : 0;
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                    submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
-                    submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
-                    submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                    if (vertexBatch[face.Indexes[idx0]].HasNormals)
-                    {
-                        submodel.Normals.Add(vertexBatch[face.Indexes[idx0]].Normal);
-                        submodel.Normals.Add(vertexBatch[face.Indexes[idx1]].Normal);
-                        submodel.Normals.Add(vertexBatch[face.Indexes[2]].Normal);
-                    }
-                    if (vertexBatch[face.Indexes[idx0]].HasEmitColor)
-                    {
-                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
-                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
-                        submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
-                    }
-                    submodel.Connection.Add(false);
-                    submodel.Connection.Add(false);
-                    submodel.Connection.Add(true);
+                // Generate triangle strips instead of triangle lists
+                var stripifier = new NvStripifier()
+                {
+                    StitchStrips = false,
+                    CacheSize = NvStripifier.CACHESIZE_GEFORCE3
+                };
+                stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
+                var groupsList = new List<PrimitiveGroup>(primitiveGroups);
+                groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
 
-                    ++i;
+
+                var vertexBatchSum = 0;
+                var groupIndex = 0;
+                foreach (var group in groupsList)
+                {
+                    if (group.IndexCount == 0)
+                    {
+                        Console.WriteLine("WHAT???");
+                    }
+                    var startingIndex = 0;
+                    if (groupIndex + 1 < groupsList.Count && vertexBatchSum + groupsList[groupIndex + 1].IndexCount >= TwinVIFCompiler.VertexStripCache)
+                    {
+                        submodel.GroupSizes.Add(vertexBatchSum);
+                        vertexBatchSum = 0;
+                    }
+
+                    vertexBatchSum += group.IndexCount;
+                    foreach (var idx in group.Indices)
+                    {
+                        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                        submodel.Colors.Add(rawModel[idx].Color);
+                        if (rawModel[idx].HasEmitColor)
+                        {
+                            submodel.EmitColor.Add(rawModel[idx].EmitColor);
+                        }
+                        if (rawModel[idx].HasNormals)
+                        {
+                            submodel.Normals.Add(rawModel[idx].Normal);
+                        }
+                        submodel.Connection.Add(startingIndex > 1);
+                        startingIndex++;
+                    }
+
+                    if (groupIndex + 1 >= groupsList.Count)
+                    {
+                        submodel.GroupSizes.Add(vertexBatchSum);
+                    }
+
+                    groupIndex++;
+                }
+                if (submodel.GroupSizes.Contains(0))
+                {
+                    Console.WriteLine("WHAT???");
                 }
                 model.SubModels.Add(submodel);
             }
@@ -491,7 +566,7 @@ namespace TT_Lab.Assets.Factory
             var scenery = new PS2AnyScenery();
             using var reader = new BinaryReader(stream);
             scenery.Name = reader.ReadString();
-            scenery.UnkUInt = reader.ReadUInt32();
+            scenery.FogColor = reader.ReadUInt32();
             scenery.UnkByte = reader.ReadByte();
             scenery.SkydomeID = reader.ReadUInt32();
             scenery.HasLighting = reader.ReadBoolean();
@@ -568,39 +643,66 @@ namespace TT_Lab.Assets.Factory
 
             foreach (var subskin in subskins)
             {
-                var ps2Subskin = new PS2SubSkin
+                var submodel = new PS2SubSkin
                 {
                     Vertexes = new(),
                     UVW = new(),
                     Colors = new(),
                     SkinJoints = new(),
                     Material = AssetManager.Get().GetAsset(subskin.Material).ID,
+                    GroupSizes = new()
                 };
-                var vertexBatch = subskin.Vertexes;
-                var i = 0;
-                foreach (var face in subskin.Faces)
+
+                var subFaces = subskin.Faces;
+                List<UInt16> indices = new(subFaces.Count * 3);
+                foreach (var face in subFaces)
                 {
-                    i %= TwinVIFCompiler.VertexBatchAmount;
-
-                    var idx0 = (i % 2 == 0) ? 0 : 1;
-                    var idx1 = (i % 2 == 0) ? 1 : 0;
-                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
-                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
-                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
-                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
-                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
-                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
-                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx0]].JointInfo);
-                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx1]].JointInfo);
-                    vertexBatch[face.Indexes[2]].JointInfo.Connection = true;
-                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[2]].JointInfo);
-
-                    ++i;
+                    indices.Add((UInt16)face.Indexes![0]);
+                    indices.Add((UInt16)face.Indexes[1]);
+                    indices.Add((UInt16)face.Indexes[2]);
                 }
-                skin.SubSkins.Add(ps2Subskin);
+
+                // Generate triangle strips instead of triangle lists
+                var stripifier = new NvStripifier()
+                {
+                    StitchStrips = false,
+                    CacheSize = NvStripifier.CACHESIZE_GEFORCE3
+                };
+                stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
+                var groupsList = new List<PrimitiveGroup>(primitiveGroups);
+                groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
+
+                var rawModel = subskin.Vertexes;
+                var vertexBatchSum = 0;
+                var groupIndex = 0;
+                foreach (var group in groupsList)
+                {
+                    var startingIndex = 0;
+                    if (groupIndex + 1 < groupsList.Count && vertexBatchSum + groupsList[groupIndex + 1].IndexCount >= TwinVIFCompiler.VertexStripCache + 3)
+                    {
+                        submodel.GroupSizes.Add(vertexBatchSum);
+                        vertexBatchSum = 0;
+                    }
+
+                    vertexBatchSum += group.IndexCount;
+                    foreach (var idx in group.Indices)
+                    {
+                        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                        submodel.Colors.Add(rawModel[idx].Color);
+                        submodel.SkinJoints.Add(rawModel[idx].JointInfo);
+                        rawModel[idx].JointInfo.Connection = startingIndex > 1;
+                        startingIndex++;
+                    }
+
+                    if (groupIndex + 1 >= groupsList.Count)
+                    {
+                        submodel.GroupSizes.Add(vertexBatchSum);
+                    }
+
+                    groupIndex++;
+                }
+                skin.SubSkins.Add(submodel);
             }
             return skin;
         }
@@ -769,7 +871,7 @@ namespace TT_Lab.Assets.Factory
             return @default;
         }
 
-        public ITwinSection GenerateRM2()
+        public ITwinSection GenerateRM()
         {
             var rm2 = new PS2AnyTwinsanityRM2();
             var graphics = new PS2AnyGraphicsSection();
@@ -791,7 +893,7 @@ namespace TT_Lab.Assets.Factory
             }
 
             var layout8 = new PS2AnyLayoutSection();
-            layout8.SetID(Constants.LEVEL_LAYOUT_7_SECTION);
+            layout8.SetID(Constants.LEVEL_LAYOUT_8_SECTION);
             layout8.SetRoot(rm2);
             layout8.SetParent(rm2);
             rm2.AddItem(layout8);
@@ -801,7 +903,7 @@ namespace TT_Lab.Assets.Factory
             return rm2;
         }
 
-        public ITwinSection GenerateSM2()
+        public ITwinSection GenerateSM()
         {
             var sm2 = new PS2AnyTwinsanitySM2();
             var graphics = new PS2AnyGraphicsSection();

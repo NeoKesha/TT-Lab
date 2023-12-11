@@ -94,10 +94,11 @@ namespace TT_Lab.AssetData.Instance
         {
             Trigger.Dispose();
         }
+
         public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinCamera camera = GetTwinItem<ITwinCamera>();
-            Trigger = new TriggerData(package, variant, camera.CamTrigger);
+            Trigger = new TriggerData(package, variant, camera.CamTrigger, layoutId);
             CameraHeader = camera.CameraHeader;
             UnkShort = camera.UnkShort;
             UnkFloat1 = camera.UnkFloat1;

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using SharpGLTF.Schema2;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Graphics;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
@@ -15,10 +16,10 @@ namespace TT_Lab.AssetData.Graphics.SubModels
 
         public SubBlendData(LabURI package, String? variant, ITwinSubBlendSkin blend)
         {
-            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, variant, blend.Material);
+            Material = AssetManager.Get().GetUri(package, typeof(Assets.Graphics.Material).Name, variant, blend.Material);
             if (Material == LabURI.Empty)
             {
-                var allMaterials = AssetManager.Get().GetAssets().FindAll(a => a is Material).ConvertAll(a => a.URI);
+                var allMaterials = AssetManager.Get().GetAssets().FindAll(a => a is Assets.Graphics.Material).ConvertAll(a => a.URI);
                 var actuallyHasTheMaterial = allMaterials.FindAll(uri => uri.ToString().Contains(blend.Material.ToString()));
                 throw new Exception($"Couldn't find requested material 0x{blend.Material:X}!");
             }
@@ -29,75 +30,42 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             }
         }
 
-        public SubBlendData(LabURI material, IEnumerable<Assimp.Mesh> meshes, IEnumerable<Assimp.Animation> animations, List<Vector3> blendShapes, int meshIndex)
+        public SubBlendData(LabURI material, IEnumerable<SharpGLTF.Schema2.Mesh> meshes, Int32 blendsAmount)
         {
             Material = material;
 
             foreach (var mesh in meshes)
             {
-                var vertexes = new List<Vertex>();
-
-                // Convert bone -> vertex index to vertex -> bone id
-                List<Dictionary<int, (int, float)>> vertexToBone = new();
-                for (Int32 j = 0; j < mesh.Bones.Count; j++)
-                {
-                    var bone = mesh.Bones[j];
-                    vertexToBone.Add(new());
-                    foreach (var vertexWeight in bone.VertexWeights)
-                    {
-                        vertexToBone[^1].Add(vertexWeight.VertexID, new(j, vertexWeight.Weight));
-                    }
-                }
-
-                for (Int32 vertIdx = 0; vertIdx < mesh.VertexCount; vertIdx++)
-                {
-                    var vertex = new Vertex(
-                        new Vector4(mesh.Vertices[vertIdx].X, mesh.Vertices[vertIdx].Y, mesh.Vertices[vertIdx].Z, 0.0f),
-                        new Vector4(mesh.VertexColorChannels[0][vertIdx].R, mesh.VertexColorChannels[0][vertIdx].G, mesh.VertexColorChannels[0][vertIdx].B, mesh.VertexColorChannels[0][vertIdx].A),
-                        new Vector4(mesh.TextureCoordinateChannels[0][vertIdx].X, mesh.TextureCoordinateChannels[0][vertIdx].Y, 1.0f, 0.0f)
-                        )
-                    {
-                        JointInfo = new VertexJointInfo()
-                        {
-                            Connection = false // Temporarily lost information, restored during export
-                        }
-                    };
-
-                    List<(int, float)> joints = new();
-                    foreach (var vertexMap in vertexToBone)
-                    {
-                        if (vertexMap.ContainsKey(vertIdx))
-                        {
-                            joints.Add(vertexMap[vertIdx]);
-                        }
-                    }
-                    Debug.Assert(joints.Count != 0, "Vertex must be connected to at least 1 joint");
-                    Debug.Assert(joints.Count <= 3, "Vertex can only have up to 3 joints connected to it");
-
-                    vertex.JointInfo.JointIndex1 = joints[0].Item1;
-                    vertex.JointInfo.Weight1 = joints[0].Item2;
-                    if (joints.Count >= 2)
-                    {
-                        vertex.JointInfo.JointIndex2 = joints[1].Item1;
-                        vertex.JointInfo.Weight2 = joints[1].Item2;
-                    }
-                    if (joints.Count == 3)
-                    {
-                        vertex.JointInfo.JointIndex3 = joints[2].Item1;
-                        vertex.JointInfo.Weight3 = joints[2].Item2;
-                    }
-                    vertexes.Add(vertex);
-                }
-
+                var subblend = new List<Vertex>();
                 var faces = new List<IndexedFace>();
-                for (var j = 0; j < mesh.FaceCount; ++j)
+                var blendShape = (Vector3)mesh.Extras.Deserialize(typeof(Vector3));
+                foreach (var primitive in mesh.Primitives)
                 {
-                    faces.Add(new IndexedFace(mesh.Faces[j].Indices.ToArray()));
+                    var vertexes = primitive.GetVertexColumns();
+                    for (var i = 0; i < vertexes.Positions.Count; i++)
+                    {
+                        var ver = new Vertex(
+                                vertexes.Positions[i].ToTwin(),
+                                vertexes.Colors0[i].ToTwin(),
+                                vertexes.TexCoords0[i].ToTwin());
+                        ver.JointInfo.JointIndex1 = (Int32)vertexes.Joints0[i].X;
+                        ver.JointInfo.JointIndex2 = (Int32)vertexes.Joints0[i].Y;
+                        ver.JointInfo.JointIndex3 = (Int32)vertexes.Joints0[i].Z;
+                        ver.JointInfo.Weight1 = vertexes.Weights0[i].X;
+                        ver.JointInfo.Weight2 = vertexes.Weights0[i].Y;
+                        ver.JointInfo.Weight3 = vertexes.Weights0[i].Z;
+
+                        subblend.Add(ver);
+                    }
+
+                    foreach (var (idx1, idx2, idx3) in primitive.GetTriangleIndices())
+                    {
+                        faces.Add(new IndexedFace(new int[] { idx1, idx2, idx3 }));
+                    }
+
+                    Debug.Assert(vertexes.MorphTargets.Count == blendsAmount);
+                    Models.Add(new SubBlendModelData(blendShape, subblend, faces, vertexes.MorphTargets));
                 }
-
-                Models.Add(new SubBlendModelData(blendShapes[meshIndex], vertexes, faces, animations));
-
-                meshIndex++;
             }
         }
 
