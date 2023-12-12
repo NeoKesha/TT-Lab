@@ -11,12 +11,6 @@ namespace TT_Lab.Assets
     public interface IAsset
     {
         /// <summary>
-        /// Asset's unique ID
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        Guid UUID { get; }
-
-        /// <summary>
         /// Asset's string type
         /// </summary>
         [JsonProperty(Required = Required.Always)]

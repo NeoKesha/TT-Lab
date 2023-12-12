@@ -133,10 +133,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         if (e == null)
                             break;
 
-                        var r = Math.Min((byte)e.X, (byte)255);
-                        var g = Math.Min((byte)e.Y, (byte)255);
-                        var b = Math.Min((byte)e.Z, (byte)255);
-                        var a = (byte)e.W;
+                        var r = Math.Min((byte)(e.GetBinaryX() & 0xFF), (byte)255);
+                        var g = Math.Min((byte)(e.GetBinaryY() & 0xFF), (byte)255);
+                        var b = Math.Min((byte)(e.GetBinaryZ() & 0xFF), (byte)255);
+                        var a = (byte)(e.GetBinaryW() & 0xFF);
                         Color col = new(r, g, b, a);
                         col.ScaleAlphaUp();
 

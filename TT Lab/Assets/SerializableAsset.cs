@@ -10,8 +10,6 @@ namespace TT_Lab.Assets
 {
     public abstract class SerializableAsset : IAsset
     {
-        public Guid UUID { get; private set; }
-
         protected virtual String SavePath => Type.Name;
         protected virtual String DataExt => ".data";
         protected virtual String TwinDataExt => "bin";
@@ -47,7 +45,6 @@ namespace TT_Lab.Assets
 
         private SerializableAsset(UInt32 id, String name)
         {
-            UUID = Guid.NewGuid();
             ID = id;
             Name = name;
             Alias = Name;
@@ -61,7 +58,7 @@ namespace TT_Lab.Assets
             Package = package;
             Variation = variant;
             var variantPath = Variation == null ? "" : Variation.Replace("\\", "_").Replace("/", "_");
-            Data = $"{Name.Replace("/", "_").Replace("\\", "_")}_{(UInt32)UUID.GetHashCode()}_{variantPath}{DataExt}";
+            Data = $"{Name.Replace("/", "_").Replace("\\", "_")}_{variantPath}{DataExt}";
             RegenerateURI();
         }
 
@@ -78,7 +75,7 @@ namespace TT_Lab.Assets
             Directory.CreateDirectory(path);
             var variantPath = Variation == null ? "" : Variation.Replace("\\", "_").Replace("/", "_");
             var name = Name.Replace("/", "_").Replace("\\", "_");
-            using FileStream fs = new(Path.Combine(path, $"{name}_{(UInt32)UUID.GetHashCode()}_{variantPath}.json"), FileMode.Create, FileAccess.Write);
+            using FileStream fs = new(Path.Combine(path, $"{name}_{variantPath}.json"), FileMode.Create, FileAccess.Write);
             using BinaryWriter writer = new(fs);
             writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
 

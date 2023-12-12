@@ -133,6 +133,20 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + BehaviourPack.GetLength();
         }
 
+        public override void ComputeHash(Stream stream, UInt32 length)
+        {
+            var startPos = stream.Position;
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            var reader = new BinaryReader(stream);
+            Read(reader, (Int32)length);
+            WriteInternal(writer, writeName: false);
+            ms.Position = 0;
+            base.ComputeHash(ms, (UInt32)ms.Length);
+
+            stream.Position = startPos;
+        }
+
         public override void Read(BinaryReader reader, int length)
         {
             var bitfield = reader.ReadUInt32();
@@ -219,6 +233,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override void Write(BinaryWriter writer)
         {
+            WriteInternal(writer);
+        }
+
+        private void WriteInternal(BinaryWriter writer, bool writeName = true)
+        {
             UInt32 newBitfield = ExitPointAmount;
             if (ReferencesResources)
             {
@@ -247,8 +266,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             slotsMap[7] = 0;
 
             writer.Write(slotsMap);
-            writer.Write(Name.Length);
-            writer.Write(Name.ToCharArray(), 0, Name.Length);
+            if (writeName)
+            {
+                writer.Write(Name.Length);
+                writer.Write(Name.ToCharArray(), 0, Name.Length);
+            }
 
             {
                 writer.Write(TriggerBehaviours.Count);
@@ -378,7 +400,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override String GetName()
         {
-            return Name.Replace("|", "_");
+            return $"{Name.Replace("|", "_")}_{id:X}";
         }
     }
 }

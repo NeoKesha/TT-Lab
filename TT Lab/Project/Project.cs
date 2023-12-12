@@ -197,7 +197,7 @@ namespace TT_Lab.Project
             System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(projectPath)!);
             ProjectManagerSingleton.PM.OpenedProject = pr;
 
-            var taskList = new List<Task<Dictionary<Guid, IAsset>>>();
+            var taskList = new List<Task<Dictionary<LabURI, IAsset>>>();
             // Deserialize assets
             foreach (var dir in System.IO.Directory.GetDirectories("assets"))
             {
@@ -207,7 +207,7 @@ namespace TT_Lab.Project
             }
             Task.WaitAll(taskList.ToArray());
             Log.WriteLine("Finished opening assets...");
-            Dictionary<Guid, IAsset> assets = new();
+            Dictionary<LabURI, IAsset> assets = new();
             pr.AssetManager = new();
             foreach (var assetsList in taskList)
             {
@@ -265,57 +265,57 @@ namespace TT_Lab.Project
                 return;
             }
 
-            Dictionary<Guid, IAsset> assets = new();
+            Dictionary<LabURI, IAsset> assets = new();
 
             // Create base package folder for user created assets
-            var backPackage = BasePackage;
-            var assetsFolder = Folder.CreatePackageFolder(backPackage, "Assets");
-            var blendSkins = Folder.CreatePackageFolder(backPackage, "Blend Skins", assetsFolder);
-            var skins = Folder.CreatePackageFolder(backPackage, "Skins", assetsFolder);
-            var models = Folder.CreatePackageFolder(backPackage, "Models", assetsFolder);
-            var rigidModels = Folder.CreatePackageFolder(backPackage, "Rigid models", assetsFolder);
-            var meshes = Folder.CreatePackageFolder(backPackage, "Meshes", assetsFolder);
-            var materials = Folder.CreatePackageFolder(backPackage, "Materials", assetsFolder);
-            var lods = Folder.CreatePackageFolder(backPackage, "LODs", assetsFolder);
-            var skydomes = Folder.CreatePackageFolder(backPackage, "Skydomes", assetsFolder);
-            var textures = Folder.CreatePackageFolder(backPackage, "Textures", assetsFolder);
-            var animations = Folder.CreatePackageFolder(backPackage, "Animations", assetsFolder);
-            var codeModels = Folder.CreatePackageFolder(backPackage, "Code models", assetsFolder);
-            var gameObjects = Folder.CreatePackageFolder(backPackage, "Game objects", assetsFolder);
-            var scripts = Folder.CreatePackageFolder(backPackage, "Scripts", assetsFolder);
-            var ogis = Folder.CreatePackageFolder(backPackage, "OGIs/Skeletons", assetsFolder);
-            var sfx = Folder.CreatePackageFolder(backPackage, "Sound Effects", assetsFolder);
-            var en = Folder.CreatePackageFolder(backPackage, "English Sound Effects", assetsFolder);
-            var fr = Folder.CreatePackageFolder(backPackage, "French Sound Effects", assetsFolder);
-            var gr = Folder.CreatePackageFolder(backPackage, "German Sound Effects", assetsFolder);
-            var ita = Folder.CreatePackageFolder(backPackage, "Italian Sound Effects", assetsFolder);
-            var jpn = Folder.CreatePackageFolder(backPackage, "Japanese Sound Effects", assetsFolder);
-            var spa = Folder.CreatePackageFolder(backPackage, "Spanish Sound Effects", assetsFolder);
-            var chunks = Folder.CreatePackageFolder(backPackage, "Chunks", assetsFolder);
+            var basePackage = BasePackage;
+            var assetsFolder = Folder.CreatePackageFolder(basePackage, "Assets", basePackage.Name);
+            var blendSkins = Folder.CreatePackageFolder(basePackage, "Blend Skins", assetsFolder, basePackage.Name);
+            var skins = Folder.CreatePackageFolder(basePackage, "Skins", assetsFolder, basePackage.Name);
+            var models = Folder.CreatePackageFolder(basePackage, "Models", assetsFolder, basePackage.Name);
+            var rigidModels = Folder.CreatePackageFolder(basePackage, "Rigid models", assetsFolder, basePackage.Name);
+            var meshes = Folder.CreatePackageFolder(basePackage, "Meshes", assetsFolder, basePackage.Name);
+            var materials = Folder.CreatePackageFolder(basePackage, "Materials", assetsFolder, basePackage.Name);
+            var lods = Folder.CreatePackageFolder(basePackage, "LODs", assetsFolder, basePackage.Name);
+            var skydomes = Folder.CreatePackageFolder(basePackage, "Skydomes", assetsFolder, basePackage.Name);
+            var textures = Folder.CreatePackageFolder(basePackage, "Textures", assetsFolder, basePackage.Name);
+            var animations = Folder.CreatePackageFolder(basePackage, "Animations", assetsFolder, basePackage.Name);
+            var codeModels = Folder.CreatePackageFolder(basePackage, "Code models", assetsFolder, basePackage.Name);
+            var gameObjects = Folder.CreatePackageFolder(basePackage, "Game objects", assetsFolder, basePackage.Name);
+            var scripts = Folder.CreatePackageFolder(basePackage, "Scripts", assetsFolder, basePackage.Name);
+            var ogis = Folder.CreatePackageFolder(basePackage, "OGIs/Skeletons", assetsFolder, basePackage.Name);
+            var sfx = Folder.CreatePackageFolder(basePackage, "Sound Effects", assetsFolder, basePackage.Name);
+            var en = Folder.CreatePackageFolder(basePackage, "English Sound Effects", assetsFolder, basePackage.Name);
+            var fr = Folder.CreatePackageFolder(basePackage, "French Sound Effects", assetsFolder, basePackage.Name);
+            var gr = Folder.CreatePackageFolder(basePackage, "German Sound Effects", assetsFolder, basePackage.Name);
+            var ita = Folder.CreatePackageFolder(basePackage, "Italian Sound Effects", assetsFolder, basePackage.Name);
+            var jpn = Folder.CreatePackageFolder(basePackage, "Japanese Sound Effects", assetsFolder, basePackage.Name);
+            var spa = Folder.CreatePackageFolder(basePackage, "Spanish Sound Effects", assetsFolder, basePackage.Name);
+            var chunks = Folder.CreatePackageFolder(basePackage, "Chunks", assetsFolder, basePackage.Name);
 
-            assets.Add(assetsFolder.UUID, assetsFolder);
-            assets.Add(blendSkins.UUID, blendSkins);
-            assets.Add(skins.UUID, skins);
-            assets.Add(models.UUID, models);
-            assets.Add(rigidModels.UUID, rigidModels);
-            assets.Add(meshes.UUID, meshes);
-            assets.Add(materials.UUID, materials);
-            assets.Add(lods.UUID, lods);
-            assets.Add(skydomes.UUID, skydomes);
-            assets.Add(textures.UUID, textures);
-            assets.Add(animations.UUID, animations);
-            assets.Add(codeModels.UUID, codeModels);
-            assets.Add(gameObjects.UUID, gameObjects);
-            assets.Add(scripts.UUID, scripts);
-            assets.Add(ogis.UUID, ogis);
-            assets.Add(sfx.UUID, sfx);
-            assets.Add(en.UUID, en);
-            assets.Add(fr.UUID, fr);
-            assets.Add(gr.UUID, gr);
-            assets.Add(ita.UUID, ita);
-            assets.Add(jpn.UUID, jpn);
-            assets.Add(spa.UUID, spa);
-            assets.Add(chunks.UUID, chunks);
+            assets.Add(assetsFolder.URI, assetsFolder);
+            assets.Add(blendSkins.URI, blendSkins);
+            assets.Add(skins.URI, skins);
+            assets.Add(models.URI, models);
+            assets.Add(rigidModels.URI, rigidModels);
+            assets.Add(meshes.URI, meshes);
+            assets.Add(materials.URI, materials);
+            assets.Add(lods.URI, lods);
+            assets.Add(skydomes.URI, skydomes);
+            assets.Add(textures.URI, textures);
+            assets.Add(animations.URI, animations);
+            assets.Add(codeModels.URI, codeModels);
+            assets.Add(gameObjects.URI, gameObjects);
+            assets.Add(scripts.URI, scripts);
+            assets.Add(ogis.URI, ogis);
+            assets.Add(sfx.URI, sfx);
+            assets.Add(en.URI, en);
+            assets.Add(fr.URI, fr);
+            assets.Add(gr.URI, gr);
+            assets.Add(ita.URI, ita);
+            assets.Add(jpn.URI, jpn);
+            assets.Add(spa.URI, spa);
+            assets.Add(chunks.URI, chunks);
 
 
             // Folders hierarchy
@@ -361,95 +361,95 @@ namespace TT_Lab.Project
             }
 
             // Create Global PS2 package folders for Default.rm2 assets since they can be referenced from anywhere in the project
-            var globalAssets = Folder.CreatePackageFolder(GlobalPackagePS2, "Global Assets");
-            var globalBlendSkinsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Blend Skins", globalAssets);
-            var globalSkinsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Skins", globalAssets);
-            var globalModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Models", globalAssets);
-            var globalRigidModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Rigid models", globalAssets);
-            var globalMaterialsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Materials", globalAssets);
-            var globalTexturesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Textures", globalAssets);
-            var globalMeshesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Meshes", globalAssets);
-            var globalAnimationsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Animations", globalAssets);
-            var globalCodeModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Code models", globalAssets);
-            var globalGameObjectsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Game objects", globalAssets);
-            var globalScriptsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Scripts", globalAssets);
-            var globalOgisFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "OGIs/Skeletons", globalAssets);
-            var globalSfxFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Sound Effects", globalAssets);
-            var globalEnFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "English Sound Effects", globalAssets);
-            var globalFrFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "French Sound Effects", globalAssets);
-            var globalGrFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "German Sound Effects", globalAssets);
-            var globalItaFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Italian Sound Effects", globalAssets);
-            var globalJpnFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Japanese Sound Effects", globalAssets);
-            var globalSpaFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Spanish Sound Effects", globalAssets);
+            var globalAssets = Folder.CreatePackageFolder(GlobalPackagePS2, "Global Assets", GlobalPackagePS2.Name);
+            var globalBlendSkinsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Blend Skins", globalAssets, GlobalPackagePS2.Name);
+            var globalSkinsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Skins", globalAssets, GlobalPackagePS2.Name);
+            var globalModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Models", globalAssets, GlobalPackagePS2.Name);
+            var globalRigidModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Rigid models", globalAssets, GlobalPackagePS2.Name);
+            var globalMaterialsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Materials", globalAssets, GlobalPackagePS2.Name);
+            var globalTexturesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Textures", globalAssets, GlobalPackagePS2.Name);
+            var globalMeshesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Meshes", globalAssets, GlobalPackagePS2.Name);
+            var globalAnimationsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Animations", globalAssets, GlobalPackagePS2.Name);
+            var globalCodeModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Code models", globalAssets, GlobalPackagePS2.Name);
+            var globalGameObjectsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Game objects", globalAssets, GlobalPackagePS2.Name);
+            var globalScriptsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Scripts", globalAssets, GlobalPackagePS2.Name);
+            var globalOgisFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "OGIs/Skeletons", globalAssets, GlobalPackagePS2.Name);
+            var globalSfxFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            var globalEnFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "English Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            var globalFrFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "French Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            var globalGrFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "German Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            var globalItaFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Italian Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            var globalJpnFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Japanese Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            var globalSpaFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Spanish Sound Effects", globalAssets, GlobalPackagePS2.Name);
 
-            assets.Add(globalAssets.UUID, globalAssets);
-            assets.Add(globalBlendSkinsFolder.UUID, globalBlendSkinsFolder);
-            assets.Add(globalSkinsFolder.UUID, globalSkinsFolder);
-            assets.Add(globalModelsFolder.UUID, globalModelsFolder);
-            assets.Add(globalRigidModelsFolder.UUID, globalRigidModelsFolder);
-            assets.Add(globalMaterialsFolder.UUID, globalMaterialsFolder);
-            assets.Add(globalTexturesFolder.UUID, globalTexturesFolder);
-            assets.Add(globalMeshesFolder.UUID, globalMeshesFolder);
-            assets.Add(globalAnimationsFolder.UUID, globalAnimationsFolder);
-            assets.Add(globalCodeModelsFolder.UUID, globalCodeModelsFolder);
-            assets.Add(globalGameObjectsFolder.UUID, globalGameObjectsFolder);
-            assets.Add(globalScriptsFolder.UUID, globalScriptsFolder);
-            assets.Add(globalOgisFolder.UUID, globalOgisFolder);
-            assets.Add(globalSfxFolder.UUID, globalSfxFolder);
-            assets.Add(globalEnFolder.UUID, globalEnFolder);
-            assets.Add(globalFrFolder.UUID, globalFrFolder);
-            assets.Add(globalGrFolder.UUID, globalGrFolder);
-            assets.Add(globalItaFolder.UUID, globalItaFolder);
-            assets.Add(globalJpnFolder.UUID, globalJpnFolder);
-            assets.Add(globalSpaFolder.UUID, globalSpaFolder);
+            assets.Add(globalAssets.URI, globalAssets);
+            assets.Add(globalBlendSkinsFolder.URI, globalBlendSkinsFolder);
+            assets.Add(globalSkinsFolder.URI, globalSkinsFolder);
+            assets.Add(globalModelsFolder.URI, globalModelsFolder);
+            assets.Add(globalRigidModelsFolder.URI, globalRigidModelsFolder);
+            assets.Add(globalMaterialsFolder.URI, globalMaterialsFolder);
+            assets.Add(globalTexturesFolder.URI, globalTexturesFolder);
+            assets.Add(globalMeshesFolder.URI, globalMeshesFolder);
+            assets.Add(globalAnimationsFolder.URI, globalAnimationsFolder);
+            assets.Add(globalCodeModelsFolder.URI, globalCodeModelsFolder);
+            assets.Add(globalGameObjectsFolder.URI, globalGameObjectsFolder);
+            assets.Add(globalScriptsFolder.URI, globalScriptsFolder);
+            assets.Add(globalOgisFolder.URI, globalOgisFolder);
+            assets.Add(globalSfxFolder.URI, globalSfxFolder);
+            assets.Add(globalEnFolder.URI, globalEnFolder);
+            assets.Add(globalFrFolder.URI, globalFrFolder);
+            assets.Add(globalGrFolder.URI, globalGrFolder);
+            assets.Add(globalItaFolder.URI, globalItaFolder);
+            assets.Add(globalJpnFolder.URI, globalJpnFolder);
+            assets.Add(globalSpaFolder.URI, globalSpaFolder);
 
             // Create PS2 package folders for storing assets for display in project tree
             var ps2Package = Ps2Package;
-            var ps2BlendSkinsFolder = Folder.CreatePS2Folder("Blend Skins", ps2Package);
-            var ps2SkinsFolder = Folder.CreatePS2Folder("Skins", ps2Package);
-            var ps2ModelsFolder = Folder.CreatePS2Folder("Models", ps2Package);
-            var ps2RigidModelsFolder = Folder.CreatePS2Folder("Rigid models", ps2Package);
-            var ps2MeshesFolder = Folder.CreatePS2Folder("Meshes", ps2Package);
-            var ps2MaterialsFolder = Folder.CreatePS2Folder("Materials", ps2Package);
-            var ps2LodsFolder = Folder.CreatePS2Folder("LODs", ps2Package);
-            var ps2SkydomesFolder = Folder.CreatePS2Folder("Skydomes", ps2Package);
-            var ps2TexturesFolder = Folder.CreatePS2Folder("Textures", ps2Package);
-            var ps2AnimationsFolder = Folder.CreatePS2Folder("Animations", ps2Package);
-            var ps2CodeModelsFolder = Folder.CreatePS2Folder("Code models", ps2Package);
-            var ps2GameObjectsFolder = Folder.CreatePS2Folder("Game objects", ps2Package);
-            var ps2ScriptsFolder = Folder.CreatePS2Folder("Scripts", ps2Package);
-            var ps2OgisFolder = Folder.CreatePS2Folder("OGIs/Skeletons", ps2Package);
-            var ps2SfxFolder = Folder.CreatePS2Folder("Sound Effects", ps2Package);
-            var ps2EnFolder = Folder.CreatePS2Folder("English Sound Effects", ps2Package);
-            var ps2FrFolder = Folder.CreatePS2Folder("French Sound Effects", ps2Package);
-            var ps2GrFolder = Folder.CreatePS2Folder("German Sound Effects", ps2Package);
-            var ps2ItaFolder = Folder.CreatePS2Folder("Italian Sound Effects", ps2Package);
-            var ps2JpnFolder = Folder.CreatePS2Folder("Japanese Sound Effects", ps2Package);
-            var ps2SpaFolder = Folder.CreatePS2Folder("Spanish Sound Effects", ps2Package);
-            var ps2ChunksFolder = Folder.CreatePS2Folder("Chunks", ps2Package);
+            var ps2BlendSkinsFolder = Folder.CreatePS2Folder("Blend Skins", ps2Package, ps2Package.Name);
+            var ps2SkinsFolder = Folder.CreatePS2Folder("Skins", ps2Package, ps2Package.Name);
+            var ps2ModelsFolder = Folder.CreatePS2Folder("Models", ps2Package, ps2Package.Name);
+            var ps2RigidModelsFolder = Folder.CreatePS2Folder("Rigid models", ps2Package, ps2Package.Name);
+            var ps2MeshesFolder = Folder.CreatePS2Folder("Meshes", ps2Package, ps2Package.Name);
+            var ps2MaterialsFolder = Folder.CreatePS2Folder("Materials", ps2Package, ps2Package.Name);
+            var ps2LodsFolder = Folder.CreatePS2Folder("LODs", ps2Package, ps2Package.Name);
+            var ps2SkydomesFolder = Folder.CreatePS2Folder("Skydomes", ps2Package, ps2Package.Name);
+            var ps2TexturesFolder = Folder.CreatePS2Folder("Textures", ps2Package, ps2Package.Name);
+            var ps2AnimationsFolder = Folder.CreatePS2Folder("Animations", ps2Package, ps2Package.Name);
+            var ps2CodeModelsFolder = Folder.CreatePS2Folder("Code models", ps2Package, ps2Package.Name);
+            var ps2GameObjectsFolder = Folder.CreatePS2Folder("Game objects", ps2Package, ps2Package.Name);
+            var ps2ScriptsFolder = Folder.CreatePS2Folder("Scripts", ps2Package, ps2Package.Name);
+            var ps2OgisFolder = Folder.CreatePS2Folder("OGIs/Skeletons", ps2Package, ps2Package.Name);
+            var ps2SfxFolder = Folder.CreatePS2Folder("Sound Effects", ps2Package, ps2Package.Name);
+            var ps2EnFolder = Folder.CreatePS2Folder("English Sound Effects", ps2Package, ps2Package.Name);
+            var ps2FrFolder = Folder.CreatePS2Folder("French Sound Effects", ps2Package, ps2Package.Name);
+            var ps2GrFolder = Folder.CreatePS2Folder("German Sound Effects", ps2Package, ps2Package.Name);
+            var ps2ItaFolder = Folder.CreatePS2Folder("Italian Sound Effects", ps2Package, ps2Package.Name);
+            var ps2JpnFolder = Folder.CreatePS2Folder("Japanese Sound Effects", ps2Package, ps2Package.Name);
+            var ps2SpaFolder = Folder.CreatePS2Folder("Spanish Sound Effects", ps2Package, ps2Package.Name);
+            var ps2ChunksFolder = Folder.CreatePS2Folder("Chunks", ps2Package, ps2Package.Name);
 
-            assets.Add(ps2BlendSkinsFolder.UUID, ps2BlendSkinsFolder);
-            assets.Add(ps2SkinsFolder.UUID, ps2SkinsFolder);
-            assets.Add(ps2ModelsFolder.UUID, ps2ModelsFolder);
-            assets.Add(ps2RigidModelsFolder.UUID, ps2RigidModelsFolder);
-            assets.Add(ps2MeshesFolder.UUID, ps2MeshesFolder);
-            assets.Add(ps2MaterialsFolder.UUID, ps2MaterialsFolder);
-            assets.Add(ps2LodsFolder.UUID, ps2LodsFolder);
-            assets.Add(ps2SkydomesFolder.UUID, ps2SkydomesFolder);
-            assets.Add(ps2TexturesFolder.UUID, ps2TexturesFolder);
-            assets.Add(ps2AnimationsFolder.UUID, ps2AnimationsFolder);
-            assets.Add(ps2CodeModelsFolder.UUID, ps2CodeModelsFolder);
-            assets.Add(ps2GameObjectsFolder.UUID, ps2GameObjectsFolder);
-            assets.Add(ps2ScriptsFolder.UUID, ps2ScriptsFolder);
-            assets.Add(ps2OgisFolder.UUID, ps2OgisFolder);
-            assets.Add(ps2SfxFolder.UUID, ps2SfxFolder);
-            assets.Add(ps2EnFolder.UUID, ps2EnFolder);
-            assets.Add(ps2FrFolder.UUID, ps2FrFolder);
-            assets.Add(ps2GrFolder.UUID, ps2GrFolder);
-            assets.Add(ps2ItaFolder.UUID, ps2ItaFolder);
-            assets.Add(ps2JpnFolder.UUID, ps2JpnFolder);
-            assets.Add(ps2SpaFolder.UUID, ps2SpaFolder);
-            assets.Add(ps2ChunksFolder.UUID, ps2ChunksFolder);
+            assets.Add(ps2BlendSkinsFolder.URI, ps2BlendSkinsFolder);
+            assets.Add(ps2SkinsFolder.URI, ps2SkinsFolder);
+            assets.Add(ps2ModelsFolder.URI, ps2ModelsFolder);
+            assets.Add(ps2RigidModelsFolder.URI, ps2RigidModelsFolder);
+            assets.Add(ps2MeshesFolder.URI, ps2MeshesFolder);
+            assets.Add(ps2MaterialsFolder.URI, ps2MaterialsFolder);
+            assets.Add(ps2LodsFolder.URI, ps2LodsFolder);
+            assets.Add(ps2SkydomesFolder.URI, ps2SkydomesFolder);
+            assets.Add(ps2TexturesFolder.URI, ps2TexturesFolder);
+            assets.Add(ps2AnimationsFolder.URI, ps2AnimationsFolder);
+            assets.Add(ps2CodeModelsFolder.URI, ps2CodeModelsFolder);
+            assets.Add(ps2GameObjectsFolder.URI, ps2GameObjectsFolder);
+            assets.Add(ps2ScriptsFolder.URI, ps2ScriptsFolder);
+            assets.Add(ps2OgisFolder.URI, ps2OgisFolder);
+            assets.Add(ps2SfxFolder.URI, ps2SfxFolder);
+            assets.Add(ps2EnFolder.URI, ps2EnFolder);
+            assets.Add(ps2FrFolder.URI, ps2FrFolder);
+            assets.Add(ps2GrFolder.URI, ps2GrFolder);
+            assets.Add(ps2ItaFolder.URI, ps2ItaFolder);
+            assets.Add(ps2JpnFolder.URI, ps2JpnFolder);
+            assets.Add(ps2SpaFolder.URI, ps2SpaFolder);
+            assets.Add(ps2ChunksFolder.URI, ps2ChunksFolder);
             // Unpack all assets from chunks
             foreach (var item in archive.Items)
             {
@@ -484,7 +484,7 @@ namespace TT_Lab.Project
                         }
                         Folder nextFolder = Folder.CreatePS2Folder(otherFolders[i], prevFolder);
                         folders.Add(nextFolder.URI, nextFolder);
-                        assets.Add(nextFolder.UUID, nextFolder);
+                        assets.Add(nextFolder.URI, nextFolder);
                         prevFolder = nextFolder;
                     }
 
@@ -494,7 +494,7 @@ namespace TT_Lab.Project
                         using System.IO.StreamReader textReader = new(ms);
                         var text = textReader.ReadToEnd();
                         var textFile = new TextFile(GlobalPackagePS2.URI, pathLow, resourceName, text);
-                        assets.Add(textFile.UUID, textFile);
+                        assets.Add(textFile.URI, textFile);
                         prevFolder.AddChild(textFile);
                         continue;
                     }
@@ -507,7 +507,7 @@ namespace TT_Lab.Project
                         var font = new PS2PSF();
                         font.Read(globalReader, (Int32)globalReader.BaseStream.Length);
                         var fontAsset = new Font(GlobalPackagePS2.URI, pathLow, resourceName, font);
-                        assets.Add(fontAsset.UUID, fontAsset);
+                        assets.Add(fontAsset.URI, fontAsset);
                         prevFolder.AddChild(fontAsset);
                         continue;
                     }
@@ -518,7 +518,7 @@ namespace TT_Lab.Project
                         var psm = new PS2PSM();
                         psm.Read(globalReader, (Int32)globalReader.BaseStream.Length);
                         var psmAsset = new PSM(GlobalPackagePS2.URI, pathLow, resourceName, psm);
-                        assets.Add(psmAsset.UUID, psmAsset);
+                        assets.Add(psmAsset.URI, psmAsset);
                         prevFolder.AddChild(psmAsset);
                         continue;
                     }
@@ -529,7 +529,7 @@ namespace TT_Lab.Project
                         var ptc = new PS2PTC();
                         ptc.Read(globalReader, (Int32)globalReader.BaseStream.Length);
                         var ptcAsset = new PTC(GlobalPackagePS2.URI, pathLow, resourceName, ptc);
-                        assets.Add(ptcAsset.UUID, ptcAsset);
+                        assets.Add(ptcAsset.URI, ptcAsset);
                         prevFolder.AddChild(ptcAsset);
                         continue;
                     }
@@ -538,7 +538,7 @@ namespace TT_Lab.Project
                     if (isIco)
                     {
                         var ico = new SaveIcon(GlobalPackagePS2.URI, null, resourceName, item.Data);
-                        assets.Add(ico.UUID, ico);
+                        assets.Add(ico.URI, ico);
                         prevFolder.AddChild(ico);
                         continue;
                     }
@@ -552,7 +552,7 @@ namespace TT_Lab.Project
                         {
                             Alias = "UI Sound Library"
                         };
-                        assets.Add(uiLibrary.UUID, uiLibrary);
+                        assets.Add(uiLibrary.URI, uiLibrary);
                         prevFolder.AddChild(uiLibrary);
                         continue;
                     }
@@ -681,7 +681,7 @@ namespace TT_Lab.Project
                             {
                                 scriptsFolder.AddChild(metaAsset);
                             }
-                            assets.Add(metaAsset.UUID, metaAsset);
+                            assets.Add(metaAsset.URI, metaAsset);
                         }
 
                         ReadSectionItems<SoundEffect, PS2AnySoundsSection, PS2AnySound>
@@ -721,17 +721,17 @@ namespace TT_Lab.Project
                             }
                             else
                             {
-                                nextFolder = new ChunkFolder(ps2Package.URI, otherFolders[i], prevFolder);
+                                nextFolder = new ChunkFolder(ps2Package.URI, otherFolders[i], prevFolder, chunkPath);
                             }
                             folders.Add(nextFolder.URI, nextFolder);
-                            assets.Add(nextFolder.UUID, nextFolder);
+                            assets.Add(nextFolder.URI, nextFolder);
                             prevFolder = nextFolder;
                         }
                     }
                     else
                     {
-                        prevFolder = new ChunkFolder(GlobalPackagePS2.URI, "Default", GlobalPackagePS2);
-                        assets.Add(prevFolder.UUID, prevFolder);
+                        prevFolder = new ChunkFolder(GlobalPackagePS2.URI, "Default", GlobalPackagePS2, GlobalPackagePS2.Name);
+                        assets.Add(prevFolder.URI, prevFolder);
                     }
                     var chunkFolder = prevFolder;
 
@@ -743,19 +743,19 @@ namespace TT_Lab.Project
                             // Extract collision data
                             var collisionData = chunk.GetItem<PS2AnyCollisionData>(Constants.LEVEL_COLLISION_ITEM);
                             var colData = new Collision(ps2Package.URI, collisionData.GetID(), collisionData.GetName(), chunkPath, collisionData);
-                            assets.Add(colData.UUID, colData);
+                            assets.Add(colData.URI, colData);
                             chunkFolder.AddChild(colData);
 
                             var particleData = chunk.GetItem<PS2AnyParticleData>(Constants.LEVEL_PARTICLES_ITEM);
                             var partData = new Particles(ps2Package.URI, particleData.GetID(), particleData.GetName(), chunkPath, particleData);
-                            assets.Add(partData.UUID, partData);
+                            assets.Add(partData.URI, partData);
                             chunkFolder.AddChild(partData);
                         }
                         else
                         {
                             var particleData = chunk.GetItem<PS2DefaultParticleData>(Constants.LEVEL_PARTICLES_ITEM);
                             var partData = new DefaultParticles(GlobalPackagePS2.URI, particleData.GetID(), particleData.GetName(), chunkPath, particleData);
-                            assets.Add(partData.UUID, partData);
+                            assets.Add(partData.URI, partData);
                             chunkFolder.AddChild(partData);
                         }
 
@@ -770,15 +770,15 @@ namespace TT_Lab.Project
                         var pathFolder = Folder.CreatePackageFolder(instancePackage, "Paths", chunkFolder, chunkPath);
                         var posFolder = Folder.CreatePackageFolder(instancePackage, "Positions", chunkFolder, chunkPath);
                         var trgFolder = Folder.CreatePackageFolder(instancePackage, "Triggers", chunkFolder, chunkPath);
-                        assets.Add(instFolder.UUID, instFolder);
-                        assets.Add(aiPathFolder.UUID, aiPathFolder);
-                        assets.Add(aiPosFolder.UUID, aiPosFolder);
-                        assets.Add(cameraFolder.UUID, cameraFolder);
-                        assets.Add(colSurfaceFolder.UUID, colSurfaceFolder);
-                        assets.Add(instTempFolder.UUID, instTempFolder);
-                        assets.Add(pathFolder.UUID, pathFolder);
-                        assets.Add(posFolder.UUID, posFolder);
-                        assets.Add(trgFolder.UUID, trgFolder);
+                        assets.Add(instFolder.URI, instFolder);
+                        assets.Add(aiPathFolder.URI, aiPathFolder);
+                        assets.Add(aiPosFolder.URI, aiPosFolder);
+                        assets.Add(cameraFolder.URI, cameraFolder);
+                        assets.Add(colSurfaceFolder.URI, colSurfaceFolder);
+                        assets.Add(instTempFolder.URI, instTempFolder);
+                        assets.Add(pathFolder.URI, pathFolder);
+                        assets.Add(posFolder.URI, posFolder);
+                        assets.Add(trgFolder.URI, trgFolder);
 
                         for (var i = 0; i < 8; ++i)
                         {
@@ -814,9 +814,9 @@ namespace TT_Lab.Project
                         var sceneryAsset = new Scenery(ps2Package.URI, scenery.GetID(), scenery.GetName(), chunkPath, scenery);
                         var dynamicSceneryAsset = new DynamicScenery(ps2Package.URI, dynamicScenery.GetID(), dynamicScenery.GetName(), chunkPath, dynamicScenery);
                         var chunkLinksAsset = new ChunkLinks(ps2Package.URI, chunkLinks.GetID(), chunkLinks.GetName(), chunkPath, chunkLinks);
-                        assets.Add(sceneryAsset.UUID, sceneryAsset);
-                        assets.Add(dynamicSceneryAsset.UUID, dynamicSceneryAsset);
-                        assets.Add(chunkLinksAsset.UUID, chunkLinksAsset);
+                        assets.Add(sceneryAsset.URI, sceneryAsset);
+                        assets.Add(dynamicSceneryAsset.URI, dynamicSceneryAsset);
+                        assets.Add(chunkLinksAsset.URI, chunkLinksAsset);
                         chunkFolder.AddChild(sceneryAsset);
                         chunkFolder.AddChild(dynamicSceneryAsset);
                         chunkFolder.AddChild(chunkLinksAsset);
@@ -1141,7 +1141,7 @@ namespace TT_Lab.Project
         /// <param name="fromSection">Which section to read from</param>
         /// <param name="globalCheck">Dictionary of global resources to check against</param>
         /// <param name="secId">Subsection ID where game asset is stored at</param>
-        private void ReadSectionItems<T, S, I>(Dictionary<Guid, IAsset> assets, ITwinSection fromSection, String chunkName, Dictionary<uint, Dictionary<String, uint>> globalCheck, uint secId, Folder folder)
+        private void ReadSectionItems<T, S, I>(Dictionary<LabURI, IAsset> assets, ITwinSection fromSection, String chunkName, Dictionary<uint, Dictionary<String, uint>> globalCheck, uint secId, Folder folder)
             where T : IAsset where S : ITwinSection where I : ITwinItem
         {
             var items = fromSection.GetItem<S>(secId);
@@ -1174,7 +1174,7 @@ namespace TT_Lab.Project
                 var package = isDefault ? GlobalPackagePS2 : Ps2Package;
                 var metaAsset = (T?)Activator.CreateInstance(typeof(T), package.URI, needVariant ? chunkName : null, asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                 folder.AddChild(metaAsset);
-                assets.Add(metaAsset.UUID, metaAsset);
+                assets.Add(metaAsset.URI, metaAsset);
             }
         }
 
@@ -1187,7 +1187,7 @@ namespace TT_Lab.Project
         /// <typeparam name="I">Game asset type</typeparam>
         /// <param name="fromSection">Which section to read from</param>
         /// <param name="secId">Subsection ID where game asset is stored at</param>
-        private void ReadSectionItems<T, S, I>(Dictionary<Guid, IAsset> assets, ITwinSection fromSection, uint secId, string chunkName, int layId, Folder folder)
+        private void ReadSectionItems<T, S, I>(Dictionary<LabURI, IAsset> assets, ITwinSection fromSection, uint secId, string chunkName, int layId, Folder folder)
             where T : IAsset where S : ITwinSection where I : ITwinItem
         {
             var items = fromSection.GetItem<S>(secId);
@@ -1199,7 +1199,7 @@ namespace TT_Lab.Project
                     var package = chunkName.ToLower().Contains("default") ? GlobalPackagePS2 : Ps2Package;
                     var metaAsset = (T?)Activator.CreateInstance(typeof(T), package.URI, asset.GetID(), asset.GetName(), chunkName, layId, asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                     folder.AddChild(metaAsset);
-                    assets.Add(metaAsset.UUID, metaAsset);
+                    assets.Add(metaAsset.URI, metaAsset);
                 }
             }
         }

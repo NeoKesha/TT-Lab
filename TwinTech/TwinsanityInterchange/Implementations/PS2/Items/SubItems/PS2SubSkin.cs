@@ -128,9 +128,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 GroupSizes.Add((Int32)verts);
                 for (Int32 j = 0; j < verts; j++)
                 {
+                    var color = new Vector4(
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryX() & 0xFF) + 127, 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryY() & 0xFF) + 127, 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryZ() & 0xFF) + 127, 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryW() & 0xFF) + 127, 255))
+                        );
                     Vertexes.Add(positioVertexBatch[j]);
                     UVW.Add(uvVertexBatch[j]);
-                    Colors.Add(colorsVertexBatch[j]);
+                    Colors.Add(color);
                     SkinJoints.Add(jointInfos[j]);
                 }
 

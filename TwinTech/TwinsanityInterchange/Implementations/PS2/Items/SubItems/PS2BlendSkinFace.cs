@@ -56,9 +56,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             for (Int32 i = 0; i < VertexesAmount; i++)
             {
                 var vec = data[0][i + 1];
-                var xComp = (Int32)vec.X;
-                var yComp = (Int32)vec.Y;
-                var zComp = (Int32)vec.Z;
+                var xComp = (Int32)vec.GetBinaryX();
+                var yComp = (Int32)vec.GetBinaryY();
+                var zComp = (Int32)vec.GetBinaryZ();
                 Vertices.Add(new VertexBlendShape
                 {
                     BlendShape = blendShape,

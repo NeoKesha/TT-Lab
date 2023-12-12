@@ -6,6 +6,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class Vector4 : ITwinSerializable
     {
         public float X { get; set; }
@@ -160,6 +161,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public static Vector4 FromColor(Color c)
         {
             return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
+        }
+
+        private String DebuggerDisplay
+        {
+            get => $"x = {X}, y = {Y}, z = {Z}, W = {W}; BinX = {GetBinaryX()}, BinY = {GetBinaryY()}, BinZ = {GetBinaryZ()}, BinW = {GetBinaryW()}";
         }
     }
 }

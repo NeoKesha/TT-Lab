@@ -14,21 +14,19 @@ namespace TT_Lab.Assets
     {
         private AssetStorage _assets = new();
         private AssetStorage _importAssets = new();
-        private GuidManager _guidManager = new();
 
         public AssetManager() { }
 
-        public AssetManager(Dictionary<Guid, IAsset> assets)
+        public AssetManager(Dictionary<LabURI, IAsset> assets)
         {
             AddAllAssets(assets);
         }
 
-        public void AddAllAssets(Dictionary<Guid, IAsset> assets)
+        public void AddAllAssets(Dictionary<LabURI, IAsset> assets)
         {
             foreach (var ass in assets)
             {
-                _guidManager.AddMapping(ass.Value);
-                _assets.Add(ass.Value.URI, ass.Value);
+                _assets.Add(ass.Key, ass.Value);
             }
         }
 
@@ -49,11 +47,6 @@ namespace TT_Lab.Assets
             }
 
             _assets.Add(uri, asset);
-
-            // Asset variants as well as assets that have the same UUID are allowed to be duplicated in _assets
-            if (_guidManager.GuidToLabUri.ContainsKey(asset.UUID)) return;
-
-            _guidManager.AddMapping(asset);
         }
 
         /// <summary>
@@ -70,11 +63,6 @@ namespace TT_Lab.Assets
             }
 
             _assets.Add(uri, asset);
-
-            // Asset variants as well as assets that have the same UUID are allowed to be duplicated in _assets
-            if (_guidManager.GuidToLabUri.ContainsKey(asset.UUID)) return;
-
-            _guidManager.AddMapping(asset);
         }
 
         /// <summary>
@@ -83,18 +71,7 @@ namespace TT_Lab.Assets
         /// <param name="asset">Asset to add</param>
         public void AddAsset(IAsset asset)
         {
-            if (_assets.ContainsKey(asset.URI))
-            {
-                Log.WriteLine($"WARNING: Attempted to add already existing asset at {asset.URI}! The asset was not added.");
-                return;
-            }
-
-            _assets.Add(asset.URI, asset);
-
-            // Asset variants as well as assets that have the same UUID are allowed to be duplicated in _assets
-            if (_guidManager.GuidToLabUri.ContainsKey(asset.UUID)) return;
-
-            _guidManager.AddMapping(asset);
+            AddAsset(asset.URI, asset);
         }
 
         /// <summary>
@@ -119,7 +96,6 @@ namespace TT_Lab.Assets
                 return;
             }
 
-            _guidManager.RemoveMapping(GetAsset(uri));
             _assets.Remove(uri);
         }
 
@@ -196,16 +172,6 @@ namespace TT_Lab.Assets
         }
 
         /// <summary>
-        /// Gets URI by asset's GUID
-        /// </summary>
-        /// <param Name="assetID">Asset's unique GUID</param>
-        /// <returns>Asset's URI</returns>
-        public LabURI GetUri(Guid assetID)
-        {
-            return _guidManager.GetLabUriByGuid(assetID);
-        }
-
-        /// <summary>
         /// Get asset by its package, subpackage, folder, variant(if needed) and id
         /// </summary>
         /// <param Name="package"></param>
@@ -227,16 +193,6 @@ namespace TT_Lab.Assets
         public IAsset GetAsset(LabURI labURI)
         {
             return _assets[labURI];
-        }
-
-        /// <summary>
-        /// Get asset by GUID
-        /// </summary>
-        /// <param Name="assetID">Asset's unique GUID</param>
-        /// <returns>Any asset</returns>
-        public IAsset GetAsset(Guid assetID)
-        {
-            return _assets[_guidManager.GetLabUriByGuid(assetID)];
         }
 
         /// <summary>
@@ -268,18 +224,6 @@ namespace TT_Lab.Assets
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam Name="T">Specific asset type</typeparam>
-        /// <param Name="assetID"></param>
-        /// <returns>Asset of a specific type</returns>
-        /// <seealso cref="GetAsset(Guid)"/>
-        public T GetAsset<T>(Guid assetID) where T : IAsset
-        {
-            return (T)GetAsset(assetID);
-        }
-
-        /// <summary>
         /// Get asset data by its package, subpackage, folder, variant(if needed) and id
         /// </summary>
         /// <typeparam Name="T">Specific asset data type</typeparam>
@@ -306,17 +250,6 @@ namespace TT_Lab.Assets
         }
 
         /// <summary>
-        /// Get asset data by its unique GUID
-        /// </summary>
-        /// <typeparam Name="T">Specific asset data type</typeparam>
-        /// <param Name="assetID"></param>
-        /// <returns>Data of the asset of a specified type</returns>
-        public T GetAssetData<T>(Guid assetID) where T : AbstractAssetData
-        {
-            return GetAsset(assetID).GetData<T>();
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <returns>All the currently stored assets</returns>
@@ -327,43 +260,5 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <returns>All assets queued for delayed import stage</returns>
         public ImmutableList<IAsset> GetAssetsToImport() { var immut = _importAssets.Values.Distinct().ToImmutableList(); _importAssets.Clear(); return immut; }
-
-        private class GuidManager
-        {
-
-            public Dictionary<Guid, LabURI> GuidToLabUri { get; set; } = new();
-
-            public void InitMappers(Dictionary<Guid, IAsset> Assets)
-            {
-                foreach (var key in Assets.Keys)
-                {
-                    IAsset asset = Assets[key];
-#if !DEBUG
-                    try
-                    {
-#endif
-                    GuidToLabUri.Add(key, asset.URI);
-#if !DEBUG
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.WriteLine($"Error initializing mapper: {ex.Message} for {asset.Type} ID {asset.ID}");
-                    }
-#endif
-                }
-            }
-
-            public void RemoveMapping(IAsset asset)
-            {
-                GuidToLabUri.Remove(asset.UUID);
-            }
-
-            public void AddMapping(IAsset asset)
-            {
-                GuidToLabUri.Add(asset.UUID, asset.URI);
-            }
-
-            public LabURI GetLabUriByGuid(Guid id) { return GuidToLabUri.ContainsKey(id) ? GuidToLabUri[id] : LabURI.Empty; }
-        }
     }
 }

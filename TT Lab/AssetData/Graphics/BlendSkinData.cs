@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SharpGLTF.Geometry;
 using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace TT_Lab.AssetData.Graphics
     using COLOR_UV = SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1;
     using JOINT_WEIGHT = SharpGLTF.Geometry.VertexTypes.VertexJoints4;
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
-    using VERTEX_BUILDER = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
+    using VERTEX_BUILDER = VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
 
     public class BlendSkinData : AbstractAssetData
     {
@@ -50,9 +51,9 @@ namespace TT_Lab.AssetData.Graphics
 
             static VERTEX_BUILDER generateVertexFromTwinVertex(Vertex vertex)
             {
-                return new VERTEX_BUILDER(new VERTEX(vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
+                return new VERTEX_BUILDER(new VERTEX(vertex.Position.ToSystem()),
                         new COLOR_UV(
-                            new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
+                            vertex.Color.ToSystem(),
                             new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)),
                         new JOINT_WEIGHT(
                             (vertex.JointInfo.JointIndex1, vertex.JointInfo.Weight1),
@@ -118,7 +119,7 @@ namespace TT_Lab.AssetData.Graphics
 
                 foreach (var blendModel in blend.Models)
                 {
-                    var mesh = new SharpGLTF.Geometry.MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"blend_subskin_{index}");
+                    var mesh = new MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"blend_subskin_{index++}");
                     var blendShapeInfo = System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape);
                     mesh.Extras = SharpGLTF.IO.JsonContent.Serialize(blendModel.BlendShape);
 
@@ -144,26 +145,25 @@ namespace TT_Lab.AssetData.Graphics
                             index++;
                         }
 
-                        return index;
+                        return -1;
                     }
 
-                    foreach (var primitive in mesh.Primitives)
+                    // TODO: Better index remapping. Some morph targets are getting lost entirely!
+                    var morphs = new List<IMorphTargetBuilder>();
+                    for (Int32 i = 0; i < blendModel.BlendFaces.Count; i++)
                     {
-                        for (Int32 i = 0; i < blendModel.BlendFaces.Count; i++)
+                        var blendFace = blendModel.BlendFaces[i];
+                        var morph = mesh.UseMorphTarget(i);
+                        morphs.Add(morph);
+                        foreach (var vertex in morph.Vertices)
                         {
-                            var blendFace = blendModel.BlendFaces[i];
-                            var morph = mesh.UseMorphTarget(i);
-                            foreach (var vertex in morph.Vertices)
-                            {
-                                var newVer = vertex;
-                                var shapeIndex = findVertexIndex(vertex);
-                                var blendVec = blendFace.BlendShapes[shapeIndex].Offset;
+                            var newVer = vertex;
+                            var shapeIndex = findVertexIndex(vertex);
+                            var blendVec = blendFace.BlendShapes[shapeIndex].Offset;
 
-                                newVer.Position += new System.Numerics.Vector3(blendVec.X, blendVec.Y, blendVec.Z);
+                            newVer.Position += new System.Numerics.Vector3(blendVec.X, blendVec.Y, blendVec.Z);
 
-                                morph.SetVertex(vertex, newVer);
-
-                            }
+                            morph.SetVertex(vertex, newVer);
                         }
                     }
 
@@ -183,7 +183,7 @@ namespace TT_Lab.AssetData.Graphics
         protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             var metadata = new Metadata();
-            var blendSkin = ModelRoot.Load(dataPath);
+            var blendSkin = ModelRoot.Load(dataPath, SharpGLTF.Validation.ValidationMode.Strict);
 
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Open, System.IO.FileAccess.Read);
             using System.IO.StreamReader reader = new(fs);

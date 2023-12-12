@@ -9,9 +9,9 @@ namespace TT_Lab.Assets.Factory
 {
     public static class AssetFactory
     {
-        public static async Task<Dictionary<Guid, IAsset>> GetAssets(string[] jsonAssets)
+        public static async Task<Dictionary<LabURI, IAsset>> GetAssets(string[] jsonAssets)
         {
-            var assets = new Dictionary<Guid, IAsset>();
+            var assets = new Dictionary<LabURI, IAsset>();
             var assetMut = new Mutex();
             var tasks = new Task[jsonAssets.Length];
             var index = 0;
@@ -28,7 +28,7 @@ namespace TT_Lab.Assets.Factory
                     newAsset = (IAsset)Activator.CreateInstance(baseAss.Type)!;
                     newAsset.Deserialize(json);
                     assetMut.WaitOne();
-                    assets.Add(newAsset.UUID, newAsset);
+                    assets.Add(newAsset.URI, newAsset);
                     assetMut.ReleaseMutex();
                 });
             }

@@ -17,7 +17,7 @@ namespace TT_Lab.Assets
             SkipExport = false;
         }
 
-        public ChunkFolder(LabURI package, String Name, Folder parent) : base(package, Name: Name, variant: Name, parent)
+        public ChunkFolder(LabURI package, String Name, Folder parent, String? variant = null) : base(package, Name: Name, variant, parent)
         {
             SkipExport = false;
         }

@@ -519,10 +519,10 @@ namespace Twinsanity.PS2Hardware
                             SEXT8(ref w3);
                             SEXT8(ref w4);
                         }
-                        v.X = ((w1 + (IsInOffsetMode() ? VIFn_R[0] : 0)) & 0xFF);
-                        v.Y = ((w2 + (IsInOffsetMode() ? VIFn_R[1] : 0)) & 0xFF);
-                        v.Z = ((w3 + (IsInOffsetMode() ? VIFn_R[2] : 0)) & 0xFF);
-                        v.W = ((w4 + (IsInOffsetMode() ? VIFn_R[3] : 0)) & 0xFF);
+                        v.SetBinaryX(w1 + (IsInOffsetMode() ? VIFn_R[0] : 0));
+                        v.SetBinaryY(w2 + (IsInOffsetMode() ? VIFn_R[1] : 0));
+                        v.SetBinaryZ(w3 + (IsInOffsetMode() ? VIFn_R[2] : 0));
+                        v.SetBinaryW(w4 + (IsInOffsetMode() ? VIFn_R[3] : 0));
                         Fill(dst, v, i, fill, write, cycle, ref addr);
                     }
                     break;
