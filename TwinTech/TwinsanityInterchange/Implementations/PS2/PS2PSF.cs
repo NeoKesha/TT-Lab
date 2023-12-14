@@ -17,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2
 
         public override Int32 GetLength()
         {
-            return 4 + FontPages.Sum(f => f.GetLength()) + UnkVecs.Count * Constants.SIZE_VECTOR4;
+            return 12 + FontPages.Sum(f => f.GetLength()) + UnkVecs.Count * Constants.SIZE_VECTOR4;
         }
 
         public override void Read(BinaryReader reader, Int32 length)

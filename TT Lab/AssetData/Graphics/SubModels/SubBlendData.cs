@@ -63,7 +63,20 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                         faces.Add(new IndexedFace(new int[] { idx1, idx2, idx3 }));
                     }
 
-                    Debug.Assert(vertexes.MorphTargets.Count == blendsAmount);
+                    if (vertexes.MorphTargets.Count == 0)
+                    {
+                        var zeros = new List<List<System.Numerics.Vector3>>();
+                        for (var j = 0; j < blendsAmount; j++)
+                        {
+                            zeros.Add(new());
+                            for (var i = 0; i < vertexes.Positions.Count; i++)
+                            {
+                                zeros[^1].Add(System.Numerics.Vector3.Zero);
+                            }
+                        }
+                        Models.Add(new SubBlendModelData(blendShape, subblend, faces, zeros));
+                        continue;
+                    }
                     Models.Add(new SubBlendModelData(blendShape, subblend, faces, vertexes.MorphTargets));
                 }
             }

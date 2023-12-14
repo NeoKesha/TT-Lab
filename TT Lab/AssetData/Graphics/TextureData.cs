@@ -81,15 +81,14 @@ namespace TT_Lab.AssetData.Graphics
         {
             ITwinTexture texture = factory.GenerateTexture();
             var fun = TextureFunction;
-            var format = (Bitmap.Width == 256) ? ITwinTexture.TexturePixelFormat.PSMCT32 : ITwinTexture.TexturePixelFormat.PSMT8;
+            var format = TexturePixelFormat;
             var tex = new List<Twinsanity.TwinsanityInterchange.Common.Color>();
             var bits = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             unsafe
             {
-                byte* source = (byte*)(bits.Scan0 + bits.Stride * (bits.Height - 1));
+                byte* source = (byte*)bits.Scan0;
                 for (int i = 0; i < bits.Height; i++)
                 {
-                    var scan = source;
                     for (int j = 0; j < bits.Width; j++)
                     {
                         var b = source[0];
@@ -99,7 +98,6 @@ namespace TT_Lab.AssetData.Graphics
                         tex.Add(new Twinsanity.TwinsanityInterchange.Common.Color(r, g, b, a));
                         source += 4;
                     }
-                    source = scan - bits.Stride;
                 }
             }
             texture.FromBitmap(tex, Bitmap.Width, fun, format, GenerateMipmaps);

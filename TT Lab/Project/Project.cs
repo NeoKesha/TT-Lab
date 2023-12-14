@@ -717,7 +717,7 @@ namespace TT_Lab.Project
                             Folder nextFolder;
                             if (i != otherFolders.Length - 1)
                             {
-                                nextFolder = Folder.CreatePS2Folder(otherFolders[i], prevFolder);
+                                nextFolder = Folder.CreatePS2Folder(otherFolders[i], prevFolder, chunkPath);
                             }
                             else
                             {
@@ -888,9 +888,6 @@ namespace TT_Lab.Project
                                 where asset.Name == "Chunks"
                                 select asset).First().GetData<FolderData>();
             ResolveAndWriteChunks(factory, chunksFolder);
-            Log.WriteLine("Finished creating test chunks...");
-            System.IO.Directory.SetCurrentDirectory("../..");
-            return;
 
             Log.WriteLine("Writing Extras...");
             System.IO.Directory.SetCurrentDirectory("../Extras");
@@ -1118,7 +1115,6 @@ namespace TT_Lab.Project
                     sm2.Write(sm2Writer);
                     sm2Writer.Flush();
                     sm2Writer.Close();
-                    break;
                 }
                 else if (folder is Folder)
                 {
@@ -1126,7 +1122,6 @@ namespace TT_Lab.Project
                     System.IO.Directory.SetCurrentDirectory(folder.Name);
                     ResolveAndWriteChunks(factory, folder.GetData<FolderData>());
                     System.IO.Directory.SetCurrentDirectory("..");
-                    break;
                 }
             }
         }

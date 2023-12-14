@@ -321,7 +321,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                             mipData[x + y * mipWidth] = prevData[srcX + srcY * prevWidth];
                         }
                     }
-                    MipLevelsTBW[i - 1] = (int)Math.Ceiling(mipWidth / 64.0f);
                     EzSwizzle.writeTexPSMT8To(MipLevelsTBP[i - 1], MipLevelsTBW[i - 1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
                     prevData = mipData;
                 }

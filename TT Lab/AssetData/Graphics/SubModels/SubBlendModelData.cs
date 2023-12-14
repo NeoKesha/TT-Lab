@@ -49,6 +49,19 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             }
         }
 
+        public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, List<List<System.Numerics.Vector3>> morphTargets)
+        {
+            BlendShape = blendShape;
+            Vertexes = vertexes;
+            Faces = faces;
+
+            foreach (var morph in morphTargets)
+            {
+                Debug.Assert(Vertexes.Count == morph.Count, "Morph must have the same amount of vertexes as the model!");
+                BlendFaces.Add(new SubBlendFaceData(morph));
+            }
+        }
+
         public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, IEnumerable<SharpGLTF.Geometry.VertexBufferColumns> morphTargets)
         {
             BlendShape = blendShape;
