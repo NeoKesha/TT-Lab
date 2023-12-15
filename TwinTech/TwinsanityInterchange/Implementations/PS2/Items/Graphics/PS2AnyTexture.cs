@@ -213,7 +213,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 MipLevels = 1;
             }
 
-            if (width != 256 && !generateMipmaps)
+            if (format == ITwinTexture.TexturePixelFormat.PSMT8 && !generateMipmaps)
             {
                 TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
                 ClutBufferBasePointer = textureDescriptor.CBP;

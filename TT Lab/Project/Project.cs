@@ -904,7 +904,7 @@ namespace TT_Lab.Project
             Log.WriteLine($"Writing {mcdonaldsAssset.Name}...");
             mcdonaldsAssset.ExportToFile(factory);
 
-            foreach (var folder in extrasFolders)
+            /*foreach (var folder in extrasFolders)
             {
                 var folderData = folder.GetData().To<FolderData>();
                 System.IO.Directory.CreateDirectory(folder.Name);
@@ -1003,7 +1003,7 @@ namespace TT_Lab.Project
                     }
                 }
                 System.IO.Directory.SetCurrentDirectory("..");
-            }
+            }*/
 
             System.IO.Directory.SetCurrentDirectory("../Startup");
             Log.WriteLine("Writing Startup...");
@@ -1071,7 +1071,7 @@ namespace TT_Lab.Project
             }
 
             System.IO.Directory.SetCurrentDirectory("../../..");
-            Log.WriteLine("Finished writing archives!");
+            Log.WriteLine("Finished writing test files!");
         }
 
         public void PackAssetsXbox()
@@ -1087,6 +1087,10 @@ namespace TT_Lab.Project
                 var folder = assetManager.GetAsset(item);
                 if (folder is ChunkFolder)
                 {
+                    if (!folder.Name.ToLower().Contains("beach"))
+                    {
+                        break;
+                    }
                     Log.WriteLine($"Writing level {folder.Name}...");
                     var rm2 = factory.GenerateRM();
                     var sm2 = factory.GenerateSM();
