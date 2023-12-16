@@ -50,10 +50,10 @@ namespace TT_Lab.Assets.Graphics
             return typeof(TextureEditor);
         }
 
-        protected override void PreResolveResources()
+        public override void PreResolveResources()
         {
             base.PreResolveResources();
-            var textureData = (TextureData)assetData;
+            var textureData = (TextureData)GetData();
             textureData.GenerateMipmaps = GenerateMipmaps;
             textureData.TextureFunction = TextureFunction;
             textureData.TexturePixelFormat = PixelFormat;

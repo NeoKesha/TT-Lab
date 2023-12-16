@@ -14,6 +14,7 @@ using TT_Lab.Assets.Instance;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
@@ -889,7 +890,7 @@ namespace TT_Lab.Project
                                 select asset).First().GetData<FolderData>();
             ResolveAndWriteChunks(factory, chunksFolder);
 
-            Log.WriteLine("Writing Extras...");
+            /*Log.WriteLine("Writing Extras...");
             System.IO.Directory.SetCurrentDirectory("../Extras");
 
             var extrasFolders = (from asset in GlobalPackagePS2.GetData().To<FolderData>().Children
@@ -904,7 +905,7 @@ namespace TT_Lab.Project
             Log.WriteLine($"Writing {mcdonaldsAssset.Name}...");
             mcdonaldsAssset.ExportToFile(factory);
 
-            /*foreach (var folder in extrasFolders)
+            foreach (var folder in extrasFolders)
             {
                 var folderData = folder.GetData().To<FolderData>();
                 System.IO.Directory.CreateDirectory(folder.Name);
@@ -1003,7 +1004,7 @@ namespace TT_Lab.Project
                     }
                 }
                 System.IO.Directory.SetCurrentDirectory("..");
-            }*/
+            }
 
             System.IO.Directory.SetCurrentDirectory("../Startup");
             Log.WriteLine("Writing Startup...");
@@ -1068,7 +1069,7 @@ namespace TT_Lab.Project
                 var font = assetManager.GetAsset(fontUri);
                 Log.WriteLine($"Writing {font.Name}...");
                 font.ExportToFile(factory);
-            }
+            }*/
 
             System.IO.Directory.SetCurrentDirectory("../../..");
             Log.WriteLine("Finished writing test files!");
@@ -1107,6 +1108,11 @@ namespace TT_Lab.Project
                             asset.ResolveChunkResources(factory, rm2);
                         }
                     }
+
+                    ((BaseTwinSection)rm2).ChangeItemPosition(Constants.LEVEL_COLLISION_ITEM, 2);
+                    ((BaseTwinSection)rm2).ChangeItemPosition(Constants.LEVEL_PARTICLES_ITEM, 2);
+
+                    ((BaseTwinSection)sm2).ChangeItemPosition(Constants.SCENERY_SECENERY_ITEM, 1);
 
                     using var rm2File = new System.IO.FileStream($"{folder.Name}.rm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
                     using var rm2Writer = new System.IO.BinaryWriter(rm2File);

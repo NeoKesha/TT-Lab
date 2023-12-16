@@ -43,6 +43,13 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return (T)Items.Where(item => item.GetID() == id).FirstOrDefault();
         }
 
+        public void ChangeItemPosition(UInt32 id, Int32 position)
+        {
+            var item = Items.Where(item => item.GetID() == id).First();
+            Items.Remove(item);
+            Items.Insert(position, item);
+        }
+
         public bool ContainsItem(UInt32 id)
         {
             return (from item in Items

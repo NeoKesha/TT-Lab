@@ -28,6 +28,17 @@ namespace TT_Lab.Assets.Global
             return assetData;
         }
 
+        public override void PreResolveResources()
+        {
+            base.PreResolveResources();
+            var assetManager = AssetManager.Get();
+            PSMData data = (PSMData)GetData();
+            foreach (var ptc in data.PTCs)
+            {
+                assetManager.GetAsset<PTC>(ptc).PreResolveResources();
+            }
+        }
+
         public override Type GetEditorType()
         {
             throw new NotImplementedException();

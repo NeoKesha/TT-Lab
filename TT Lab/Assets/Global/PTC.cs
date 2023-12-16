@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Global;
+using TT_Lab.Assets.Graphics;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets.Global
@@ -26,6 +27,14 @@ namespace TT_Lab.Assets.Global
                 IsLoaded = true;
             }
             return assetData;
+        }
+
+        public override void PreResolveResources()
+        {
+            base.PreResolveResources();
+            PTCData data = (PTCData)GetData();
+            AssetManager.Get().GetAsset<Texture>(data.TextureID).PreResolveResources();
+            AssetManager.Get().GetAsset<Material>(data.MaterialID).PreResolveResources();
         }
 
         public override Type GetEditorType()

@@ -28,6 +28,17 @@ namespace TT_Lab.Assets.Global
             return assetData;
         }
 
+        public override void PreResolveResources()
+        {
+            base.PreResolveResources();
+            var assetManager = AssetManager.Get();
+            FontData data = (FontData)GetData();
+            foreach (var page in data.FontPages)
+            {
+                assetManager.GetAsset<PTC>(page).PreResolveResources();
+            }
+        }
+
         public override Type GetEditorType()
         {
             throw new NotImplementedException();

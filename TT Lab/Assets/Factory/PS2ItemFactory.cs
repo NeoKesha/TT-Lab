@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Util;
 using Twinsanity.PS2Hardware;
@@ -149,7 +150,7 @@ namespace TT_Lab.Assets.Factory
                     var stripifier = new NvStripifier()
                     {
                         StitchStrips = false,
-                        CacheSize = NvStripifier.CACHESIZE_GEFORCE3
+                        CacheSize = model.Vertexes.Count
                     };
                     stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
                     var groupsList = new List<PrimitiveGroup>(primitiveGroups);
@@ -158,26 +159,78 @@ namespace TT_Lab.Assets.Factory
                     var blendFaceVerticies = new Dictionary<SubBlendFaceData, List<VertexBlendShape>>();
 
                     var rawModel = model.Vertexes;
-                    var vertexBatchSum = 0;
-                    var groupIndex = 0;
                     var indexList = new List<UInt16>();
                     foreach (var group in groupsList)
                     {
-                        var startingIndex = 0;
-                        if (groupIndex + 1 < groupsList.Count && vertexBatchSum + groupsList[groupIndex + 1].IndexCount >= TwinVIFCompiler.VertexStripCache + 3)
+                        var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
+                        var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
+                        if (leftoverGroup < 3)
                         {
-                            submodel.GroupSizes.Add(vertexBatchSum);
-                            vertexBatchSum = 0;
+                            totalGroups -= 1;
+                            leftoverGroup += TwinVIFCompiler.VertexStripCache;
+                        }
+                        var vertexIndex = 0;
+                        var groupIndices = group.Indices;
+                        for (var i = 0; i < totalGroups; i++)
+                        {
+                            for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
+                            {
+                                var idx = groupIndices[vertexIndex++];
+                                submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                                submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                                submodel.Colors.Add(rawModel[idx].Color);
+                                var modelJointInfo = rawModel[idx].JointInfo;
+                                var jointInfo = new VertexJointInfo()
+                                {
+                                    JointIndex1 = modelJointInfo.JointIndex1,
+                                    JointIndex2 = modelJointInfo.JointIndex2,
+                                    JointIndex3 = modelJointInfo.JointIndex3,
+                                    Weight1 = modelJointInfo.Weight1,
+                                    Weight2 = modelJointInfo.Weight2,
+                                    Weight3 = modelJointInfo.Weight3,
+                                    Connection = j > 1
+                                };
+                                submodel.SkinJoints.Add(jointInfo);
+
+                                foreach (var blendFace in model.BlendFaces)
+                                {
+                                    if (!blendFaceVerticies.ContainsKey(blendFace))
+                                    {
+                                        blendFaceVerticies[blendFace] = new();
+                                    }
+                                    var ver = blendFace.BlendShapes[idx];
+                                    blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                                    {
+                                        BlendShape = model.BlendShape,
+                                        Offset = ver.Offset
+                                    });
+                                }
+
+                                indexList.Add(idx);
+                            }
+                            // Go back to start building new strip
+                            vertexIndex--;
+                            submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
                         }
 
-                        vertexBatchSum += group.IndexCount;
-                        foreach (var idx in group.Indices)
+                        for (var i = 0; i < leftoverGroup; ++i)
                         {
+                            var idx = groupIndices[vertexIndex++];
                             submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
                             submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
                             submodel.Colors.Add(rawModel[idx].Color);
-                            submodel.SkinJoints.Add(rawModel[idx].JointInfo);
-                            rawModel[idx].JointInfo.Connection = startingIndex > 1;
+                            var modelJointInfo = rawModel[idx].JointInfo;
+                            var jointInfo = new VertexJointInfo()
+                            {
+                                JointIndex1 = modelJointInfo.JointIndex1,
+                                JointIndex2 = modelJointInfo.JointIndex2,
+                                JointIndex3 = modelJointInfo.JointIndex3,
+                                Weight1 = modelJointInfo.Weight1,
+                                Weight2 = modelJointInfo.Weight2,
+                                Weight3 = modelJointInfo.Weight3,
+                                Connection = i > 1
+                            };
+                            submodel.SkinJoints.Add(jointInfo);
 
                             foreach (var blendFace in model.BlendFaces)
                             {
@@ -194,15 +247,11 @@ namespace TT_Lab.Assets.Factory
                             }
 
                             indexList.Add(idx);
-                            startingIndex++;
                         }
-
-                        if (groupIndex + 1 >= groupsList.Count)
+                        if (leftoverGroup > 0)
                         {
-                            submodel.GroupSizes.Add(vertexBatchSum);
+                            submodel.GroupSizes.Add(leftoverGroup);
                         }
-
-                        groupIndex++;
                     }
 
                     foreach (var (blendFace, vertexList) in blendFaceVerticies)
@@ -347,31 +396,48 @@ namespace TT_Lab.Assets.Factory
                 var stripifier = new NvStripifier()
                 {
                     StitchStrips = false,
-                    CacheSize = NvStripifier.CACHESIZE_GEFORCE3
+                    CacheSize = rawModel.Count
                 };
                 stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
                 var groupsList = new List<PrimitiveGroup>(primitiveGroups);
                 groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
-
-
-                var vertexBatchSum = 0;
-                var groupIndex = 0;
                 foreach (var group in groupsList)
                 {
-                    if (group.IndexCount == 0)
+                    var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
+                    var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
+                    if (leftoverGroup < 3)
                     {
-                        Console.WriteLine("WHAT???");
+                        totalGroups -= 1;
+                        leftoverGroup += TwinVIFCompiler.VertexStripCache;
                     }
-                    var startingIndex = 0;
-                    if (groupIndex + 1 < groupsList.Count && vertexBatchSum + groupsList[groupIndex + 1].IndexCount >= TwinVIFCompiler.VertexStripCache)
+                    var vertexIndex = 0;
+                    var groupIndices = group.Indices;
+                    for (var i = 0; i < totalGroups; i++)
                     {
-                        submodel.GroupSizes.Add(vertexBatchSum);
-                        vertexBatchSum = 0;
+                        for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
+                        {
+                            var idx = groupIndices[vertexIndex++];
+                            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                            submodel.Colors.Add(rawModel[idx].Color);
+                            if (rawModel[idx].HasEmitColor)
+                            {
+                                submodel.EmitColor.Add(rawModel[idx].EmitColor);
+                            }
+                            if (rawModel[idx].HasNormals)
+                            {
+                                submodel.Normals.Add(rawModel[idx].Normal);
+                            }
+                            submodel.Connection.Add(j > 1);
+                        }
+                        // Go back to start building new strip
+                        vertexIndex--;
+                        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
                     }
 
-                    vertexBatchSum += group.IndexCount;
-                    foreach (var idx in group.Indices)
+                    for (var i = 0; i < leftoverGroup; ++i)
                     {
+                        var idx = groupIndices[vertexIndex++];
                         submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
                         submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
                         submodel.Colors.Add(rawModel[idx].Color);
@@ -383,20 +449,12 @@ namespace TT_Lab.Assets.Factory
                         {
                             submodel.Normals.Add(rawModel[idx].Normal);
                         }
-                        submodel.Connection.Add(startingIndex > 1);
-                        startingIndex++;
+                        submodel.Connection.Add(i > 1);
                     }
-
-                    if (groupIndex + 1 >= groupsList.Count)
+                    if (leftoverGroup > 0)
                     {
-                        submodel.GroupSizes.Add(vertexBatchSum);
+                        submodel.GroupSizes.Add(leftoverGroup);
                     }
-
-                    groupIndex++;
-                }
-                if (submodel.GroupSizes.Contains(0))
-                {
-                    Console.WriteLine("WHAT???");
                 }
                 model.SubModels.Add(submodel);
             }
@@ -666,41 +724,73 @@ namespace TT_Lab.Assets.Factory
                 var stripifier = new NvStripifier()
                 {
                     StitchStrips = false,
-                    CacheSize = NvStripifier.CACHESIZE_GEFORCE3
+                    CacheSize = subskin.Vertexes.Count
                 };
                 stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
                 var groupsList = new List<PrimitiveGroup>(primitiveGroups);
                 groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
 
                 var rawModel = subskin.Vertexes;
-                var vertexBatchSum = 0;
-                var groupIndex = 0;
                 foreach (var group in groupsList)
                 {
-                    var startingIndex = 0;
-                    if (groupIndex + 1 < groupsList.Count && vertexBatchSum + groupsList[groupIndex + 1].IndexCount >= TwinVIFCompiler.VertexStripCache + 3)
+                    var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
+                    var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
+                    if (leftoverGroup < 3)
                     {
-                        submodel.GroupSizes.Add(vertexBatchSum);
-                        vertexBatchSum = 0;
+                        totalGroups -= 1;
+                        leftoverGroup += TwinVIFCompiler.VertexStripCache;
+                    }
+                    var vertexIndex = 0;
+                    var groupIndices = group.Indices;
+                    for (var i = 0; i < totalGroups; i++)
+                    {
+                        for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
+                        {
+                            var idx = groupIndices[vertexIndex++];
+                            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                            submodel.Colors.Add(rawModel[idx].Color);
+                            var modelJointInfo = rawModel[idx].JointInfo;
+                            var jointInfo = new VertexJointInfo()
+                            {
+                                JointIndex1 = modelJointInfo.JointIndex1,
+                                JointIndex2 = modelJointInfo.JointIndex2,
+                                JointIndex3 = modelJointInfo.JointIndex3,
+                                Weight1 = modelJointInfo.Weight1,
+                                Weight2 = modelJointInfo.Weight2,
+                                Weight3 = modelJointInfo.Weight3,
+                                Connection = j > 1
+                            };
+                            submodel.SkinJoints.Add(jointInfo);
+                        }
+                        // Go back to start building new strip
+                        vertexIndex--;
+                        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
                     }
 
-                    vertexBatchSum += group.IndexCount;
-                    foreach (var idx in group.Indices)
+                    for (var i = 0; i < leftoverGroup; ++i)
                     {
+                        var idx = groupIndices[vertexIndex++];
                         submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
                         submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
                         submodel.Colors.Add(rawModel[idx].Color);
-                        submodel.SkinJoints.Add(rawModel[idx].JointInfo);
-                        rawModel[idx].JointInfo.Connection = startingIndex > 1;
-                        startingIndex++;
+                        var modelJointInfo = rawModel[idx].JointInfo;
+                        var jointInfo = new VertexJointInfo()
+                        {
+                            JointIndex1 = modelJointInfo.JointIndex1,
+                            JointIndex2 = modelJointInfo.JointIndex2,
+                            JointIndex3 = modelJointInfo.JointIndex3,
+                            Weight1 = modelJointInfo.Weight1,
+                            Weight2 = modelJointInfo.Weight2,
+                            Weight3 = modelJointInfo.Weight3,
+                            Connection = i > 1
+                        };
+                        submodel.SkinJoints.Add(jointInfo);
                     }
-
-                    if (groupIndex + 1 >= groupsList.Count)
+                    if (leftoverGroup > 0)
                     {
-                        submodel.GroupSizes.Add(vertexBatchSum);
+                        submodel.GroupSizes.Add(leftoverGroup);
                     }
-
-                    groupIndex++;
                 }
                 skin.SubSkins.Add(submodel);
             }

@@ -118,6 +118,7 @@ namespace TT_Lab.Assets
 
         public void ExportToFile(Factory.ITwinItemFactory factory)
         {
+            PreResolveResources();
             var item = Export(factory);
             using var itemFile = new FileStream($"{Name}.{TwinDataExt}", FileMode.Create, FileAccess.Write);
             using var binaryWriter = new BinaryWriter(itemFile);
@@ -126,7 +127,7 @@ namespace TT_Lab.Assets
             binaryWriter.Close();
         }
 
-        protected virtual void PreResolveResources()
+        public virtual void PreResolveResources()
         {
 
         }
