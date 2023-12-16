@@ -176,13 +176,18 @@ namespace TT_Lab.AssetData.Instance
             return factory.GenerateInstance(ms);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var root = section.GetRoot();
             var codeSection = root.GetItem<ITwinSection>(Constants.LEVEL_CODE_SECTION);
             var objectsSection = codeSection.GetItem<ITwinSection>(Constants.CODE_GAME_OBJECTS_SECTION);
             var behavioursSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOURS_SECTION);
+
+            if (layoutID != null && layoutID == Constants.LEVEL_LAYOUT_6_SECTION)
+            {
+                return base.ResolveChunkResouces(factory, section, id, layoutID);
+            }
 
             assetManager.GetAsset(ObjectId).ResolveChunkResources(factory, objectsSection);
             if (OnSpawnScriptId != LabURI.Empty)

@@ -42,10 +42,11 @@ namespace TT_Lab.AssetData.Instance
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
+            var assetManager = AssetManager.Get();
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
-            writer.Write(PathBegin);
-            writer.Write(PathEnd);
+            writer.Write((UInt16)assetManager.GetAsset(PathBegin).ID);
+            writer.Write((UInt16)assetManager.GetAsset(PathEnd).ID);
             foreach (var arg in Args)
             {
                 writer.Write(arg);

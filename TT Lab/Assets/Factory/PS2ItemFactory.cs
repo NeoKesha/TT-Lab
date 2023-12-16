@@ -982,7 +982,7 @@ namespace TT_Lab.Assets.Factory
                 rm2.AddItem(layout);
             }
 
-            var layout8 = new PS2AnyLayoutSection();
+            var layout8 = new BaseTwinItem();
             layout8.SetID(Constants.LEVEL_LAYOUT_8_SECTION);
             layout8.SetRoot(rm2);
             layout8.SetParent(rm2);

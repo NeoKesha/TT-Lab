@@ -76,7 +76,7 @@ namespace TT_Lab.AssetData.Graphics
             assetManager.GetAsset(Model).ResolveChunkResources(factory, modelsSection);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             ResolveResources(factory, section);
             return base.ResolveChunkResouces(factory, section, id);

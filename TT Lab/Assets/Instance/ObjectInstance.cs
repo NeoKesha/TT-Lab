@@ -1,10 +1,12 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Editors.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.Assets.Instance

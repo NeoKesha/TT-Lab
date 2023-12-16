@@ -71,7 +71,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             return factory.GenerateBehaviourStarter(ms);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id)
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var codeSection = section.GetParent();

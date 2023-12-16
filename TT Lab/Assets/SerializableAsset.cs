@@ -145,7 +145,7 @@ namespace TT_Lab.Assets
             resolveTraversed = true;
             assetData = GetData();
             PreResolveResources();
-            var item = assetData.ResolveChunkResouces(factory, section, ID);
+            var item = assetData.ResolveChunkResouces(factory, section, ID, LayoutID);
             item?.SetID(ID);
             item?.Compile();
 
