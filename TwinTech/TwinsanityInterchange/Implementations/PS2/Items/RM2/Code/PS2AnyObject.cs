@@ -249,7 +249,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
             UInt32 objType = (UInt32)(type << 0x14);
             UInt32 objTypeRelVal = (UInt32)(UnkTypeValue << 0xC);
-            UInt32 unkOgiArraySize = (UInt32)(ReactJointAmount & 0x3F << 0x6);
+            UInt32 unkOgiArraySize = (UInt32)((ReactJointAmount & 0x3F) << 0x6);
             newBitfield |= objType;
             newBitfield |= objTypeRelVal;
             newBitfield |= unkOgiArraySize;

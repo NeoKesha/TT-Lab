@@ -30,7 +30,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public TwinAnimation MainAnimation { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public TwinAnimation FacialAnimation { get; set; }
+        public TwinMorphAnimation FacialAnimation { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {

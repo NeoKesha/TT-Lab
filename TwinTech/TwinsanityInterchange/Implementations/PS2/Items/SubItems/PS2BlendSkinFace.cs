@@ -77,8 +77,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public void Compile()
         {
             var vertexData = Vertices.Select(v => v.GetVector4()).ToList();
-            // Add pad vertex
-            vertexData.Insert(0, new Vector4());
             var data = new List<List<Vector4>>()
             {
                 vertexData

@@ -76,7 +76,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             type = reader.ReadUInt32();
             {
-                UnkFlag = (type & 0x2) == 1;
+                UnkFlag = (type & 0x2) != 0;
             }
             int pathLen = reader.ReadInt32();
             Path = new String(reader.ReadChars(pathLen));

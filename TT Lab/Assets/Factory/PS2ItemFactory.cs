@@ -62,7 +62,7 @@ namespace TT_Lab.Assets.Factory
             animation.DefaultFPS = reader.ReadByte();
             animation.MainAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinAnimation();
             animation.MainAnimation.Read(reader, (Int32)stream.Length);
-            animation.FacialAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinAnimation();
+            animation.FacialAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinMorphAnimation();
             animation.FacialAnimation.Read(reader, (Int32)stream.Length);
             animation.HasAnimationData = true;
             animation.HasFacialAnimationData = animation.FacialAnimation.TotalFrames != 0;
@@ -1156,7 +1156,7 @@ namespace TT_Lab.Assets.Factory
                 behaviourSequences.SetID(Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION);
                 behaviourSequences.SetRoot(root);
                 behaviourSequences.SetParent(code);
-                var unknowns = new BaseTwinSection();
+                var unknowns = new BaseTwinItem();
                 unknowns.SetID(Constants.CODE_UNK_ITEM);
                 unknowns.SetRoot(root);
                 unknowns.SetParent(code);

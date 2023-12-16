@@ -14,12 +14,12 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public UInt16 TotalFrames { get; set; }
         public Byte DefaultFPS { get; set; }
         public TwinAnimation MainAnimation { get; set; }
-        public TwinAnimation FacialAnimation { get; set; }
+        public TwinMorphAnimation FacialAnimation { get; set; }
 
         public PS2AnyAnimation()
         {
             MainAnimation = new TwinAnimation();
-            FacialAnimation = new TwinAnimation();
+            FacialAnimation = new TwinMorphAnimation();
         }
 
         public override int GetLength()
