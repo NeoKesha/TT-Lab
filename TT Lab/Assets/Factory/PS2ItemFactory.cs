@@ -160,20 +160,21 @@ namespace TT_Lab.Assets.Factory
 
                     var rawModel = model.Vertexes;
                     var indexList = new List<UInt16>();
+                    const Int32 groupVertexLimit = 18;
                     foreach (var group in groupsList)
                     {
-                        var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
-                        var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
+                        var totalGroups = group.IndexCount / groupVertexLimit;
+                        var leftoverGroup = group.IndexCount % groupVertexLimit;
                         if (leftoverGroup < 3)
                         {
                             totalGroups -= 1;
-                            leftoverGroup += TwinVIFCompiler.VertexStripCache;
+                            leftoverGroup += groupVertexLimit;
                         }
                         var vertexIndex = 0;
                         var groupIndices = group.Indices;
                         for (var i = 0; i < totalGroups; i++)
                         {
-                            for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
+                            for (var j = 0; j < groupVertexLimit + 1; j++)
                             {
                                 var idx = groupIndices[vertexIndex++];
                                 submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
@@ -210,7 +211,7 @@ namespace TT_Lab.Assets.Factory
                             }
                             // Go back to start building new strip
                             vertexIndex--;
-                            submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
+                            submodel.GroupSizes.Add(groupVertexLimit + 1);
                         }
 
                         for (var i = 0; i < leftoverGroup; ++i)

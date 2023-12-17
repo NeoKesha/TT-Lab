@@ -1004,7 +1004,7 @@ namespace TT_Lab.Project
                     }
                 }
                 System.IO.Directory.SetCurrentDirectory("..");
-            }
+            }*/
 
             System.IO.Directory.SetCurrentDirectory("../Startup");
             Log.WriteLine("Writing Startup...");
@@ -1019,7 +1019,7 @@ namespace TT_Lab.Project
                                 where asset is ChunkFolder
                                 where ArchivesLayout.StartupItems.Contains(asset.Name)
                                 select asset).First();
-
+            Log.WriteLine("Writing default...");
             var @default = factory.GenerateDefault();
             defaultChunk.ResolveChunkResources(factory, @default);
             // Default is a special case where we need to put in the meshes which are actually shadows
@@ -1039,7 +1039,7 @@ namespace TT_Lab.Project
             defaultWriter.Flush();
             defaultWriter.Close();
 
-            foreach (var asset in startupAssets)
+            /*foreach (var asset in startupAssets)
             {
                 Log.WriteLine($"Writing {asset.Name}...");
                 if (asset.Name == "LevelSelect")
