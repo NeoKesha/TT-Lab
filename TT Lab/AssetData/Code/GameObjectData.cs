@@ -266,7 +266,7 @@ namespace TT_Lab.AssetData.Code
             foreach (var triggerBehaviour in TriggerBehaviours)
             {
                 writer.Write((UInt16)assetManager.GetAsset(triggerBehaviour.TriggerBehaviour).ID);
-                writer.Write(triggerBehaviour.UnkTriggerValue);
+                writer.Write(triggerBehaviour.MessageID);
                 writer.Write(triggerBehaviour.BehaviourCallerIndex);
             }
 

@@ -478,7 +478,7 @@ namespace TT_Lab.Assets.Factory
             {
                 var triggerBehaviour = new TwinObjectTriggerBehaviour();
                 triggerBehaviour.TriggerBehaviour = reader.ReadUInt16();
-                triggerBehaviour.UnkTriggerValue = reader.ReadUInt16();
+                triggerBehaviour.MessageID = reader.ReadUInt16();
                 triggerBehaviour.BehaviourCallerIndex = reader.ReadByte();
                 gameObject.TriggerBehaviours.Add(triggerBehaviour);
             }

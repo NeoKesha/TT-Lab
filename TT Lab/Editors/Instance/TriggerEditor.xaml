@@ -45,7 +45,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="ArgumentsTab" Header="Arguments" Background="White">
+            <TabItem x:Name="ArgumentsTab" Header="Messages" Background="White">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -58,7 +58,7 @@
                             </ListBox.ContextMenu>
                         </ListBox>
                     </GroupBox>
-                    <GroupBox Grid.Column="1" Header="Arguments">
+                    <GroupBox Grid.Column="1" Header="Messages">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
@@ -70,10 +70,10 @@
                                 <ColumnDefinition Width="113*"/>
                                 <ColumnDefinition Width="104*"/>
                             </Grid.ColumnDefinitions>
-                            <Controls:LabeledTextBox x:Name="Arg1Box" Text="{Binding ViewModel.TriggerArgument1}" BoundProperty="TriggerArgument1" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" TextBoxName="Trigger argument 1" IsEnabled="{Binding Checked, ElementName=Arg1EnabledBox}" Margin="0,0,0,100" Grid.RowSpan="2"/>
-                            <Controls:LabeledTextBox x:Name="Arg2Box" Text="{Binding ViewModel.TriggerArgument2}" Grid.Row="1" BoundProperty="TriggerArgument2" TextBoxName="Trigger argument 2" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" IsEnabled="{Binding Checked, ElementName=Arg2EnabledBox}" Margin="0,0,0,99" Grid.RowSpan="2"/>
-                            <Controls:LabeledTextBox x:Name="Arg3Box" Text="{Binding ViewModel.TriggerArgument3}" Grid.Row="2" BoundProperty="TriggerArgument3" TextBoxName="Trigger argument 3" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" IsEnabled="{Binding Checked, ElementName=Arg3EnabledBox}"/>
-                            <Controls:LabeledTextBox x:Name="Arg4Box" Text="{Binding ViewModel.TriggerArgument4}" Grid.Row="2" BoundProperty="TriggerArgument4" TextBoxName="Trigger argument 4" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" IsEnabled="{Binding Checked, ElementName=Arg4EnabledBox}" Margin="0,99,0,0" Grid.RowSpan="2"/>
+                            <Controls:LabeledTextBox x:Name="Arg1Box" Text="{Binding ViewModel.TriggerMessage1}" BoundProperty="TriggerMessage1" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" TextBoxName="Trigger message 1" IsEnabled="{Binding Checked, ElementName=Arg1EnabledBox}" Margin="0,0,0,100" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox x:Name="Arg2Box" Text="{Binding ViewModel.TriggerMessage2}" Grid.Row="1" BoundProperty="TriggerMessage2" TextBoxName="Trigger message 2" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" IsEnabled="{Binding Checked, ElementName=Arg2EnabledBox}" Margin="0,0,0,99" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox x:Name="Arg3Box" Text="{Binding ViewModel.TriggerMessage3}" Grid.Row="2" BoundProperty="TriggerMessage3" TextBoxName="Trigger message 3" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" IsEnabled="{Binding Checked, ElementName=Arg3EnabledBox}" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox x:Name="Arg4Box" Text="{Binding ViewModel.TriggerMessage4}" Grid.Row="2" BoundProperty="TriggerMessage4" TextBoxName="Trigger message 4" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" IsEnabled="{Binding Checked, ElementName=Arg4EnabledBox}" Margin="0,99,0,0" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
                             <Controls:LabeledCheckBox x:Name="Arg1EnabledBox" Checked="{Binding ViewModel.TriggerArgument1Enabled}" Grid.Column="1" HorizontalAlignment="Left" Margin="3,0,0,100" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" BoundProperty="TriggerArgument1Enabled" Grid.RowSpan="2" Width="62"/>
                             <Controls:LabeledCheckBox x:Name="Arg2EnabledBox" Checked="{Binding ViewModel.TriggerArgument2Enabled}" Grid.Column="1" HorizontalAlignment="Left" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Grid.Row="1" BoundProperty="TriggerArgument2Enabled" Margin="3,0,0,99" Grid.RowSpan="2" Width="62"/>
                             <Controls:LabeledCheckBox x:Name="Arg3EnabledBox" Checked="{Binding ViewModel.TriggerArgument3Enabled}" Grid.Column="1" HorizontalAlignment="Left" IsHorizontal="True" CheckBoxName="Enabled" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Grid.Row="2" BoundProperty="TriggerArgument3Enabled" Margin="3,0,0,0" Width="62"/>

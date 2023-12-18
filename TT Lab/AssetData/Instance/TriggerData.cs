@@ -40,10 +40,10 @@ namespace TT_Lab.AssetData.Instance
             Header = trigger.Header;
             UnkFloat = trigger.UnkFloat;
             InstanceExtensionValue = trigger.InstanceExtensionValue;
-            TriggerArgument1 = 0;
-            TriggerArgument2 = 0;
-            TriggerArgument3 = 0;
-            TriggerArgument4 = 0;
+            TriggerMessage1 = 0;
+            TriggerMessage2 = 0;
+            TriggerMessage3 = 0;
+            TriggerMessage4 = 0;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -63,13 +63,13 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 InstanceExtensionValue { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 TriggerArgument1 { get; set; }
+        public UInt16 TriggerMessage1 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 TriggerArgument2 { get; set; }
+        public UInt16 TriggerMessage2 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 TriggerArgument3 { get; set; }
+        public UInt16 TriggerMessage3 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt16 TriggerArgument4 { get; set; }
+        public UInt16 TriggerMessage4 { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -91,10 +91,10 @@ namespace TT_Lab.AssetData.Instance
             Header = trigger.Trigger.Header;
             UnkFloat = trigger.Trigger.UnkFloat;
             InstanceExtensionValue = trigger.Trigger.InstanceExtensionValue;
-            TriggerArgument1 = trigger.TriggerArguments[0];
-            TriggerArgument2 = trigger.TriggerArguments[1];
-            TriggerArgument3 = trigger.TriggerArguments[2];
-            TriggerArgument4 = trigger.TriggerArguments[3];
+            TriggerMessage1 = trigger.TriggerMessages[0];
+            TriggerMessage2 = trigger.TriggerMessages[1];
+            TriggerMessage3 = trigger.TriggerMessages[2];
+            TriggerMessage4 = trigger.TriggerMessages[3];
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
@@ -118,10 +118,10 @@ namespace TT_Lab.AssetData.Instance
                 trigger.Instances.Add((UInt16)assetManager.GetAsset(instance).ID);
             }
             trigger.Write(writer);
-            writer.Write(TriggerArgument1);
-            writer.Write(TriggerArgument2);
-            writer.Write(TriggerArgument3);
-            writer.Write(TriggerArgument4);
+            writer.Write(TriggerMessage1);
+            writer.Write(TriggerMessage2);
+            writer.Write(TriggerMessage3);
+            writer.Write(TriggerMessage4);
 
             writer.Flush();
             ms.Position = 0;

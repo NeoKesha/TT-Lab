@@ -1090,7 +1090,7 @@ namespace TT_Lab.Project
                 {
                     if (!folder.Name.ToLower().Contains("beach"))
                     {
-                        break;
+                        continue;
                     }
                     Log.WriteLine($"Writing level {folder.Name}...");
                     var rm2 = factory.GenerateRM();

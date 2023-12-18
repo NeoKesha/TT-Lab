@@ -18,10 +18,10 @@ namespace TT_Lab.ViewModels.Instance
         private UInt32 _header;
         private Single _unkFloat;
         private Enums.Layouts _layId;
-        private UInt16 _triggerArgument1;
-        private UInt16 _triggerArgument2;
-        private UInt16 _triggerArgument3;
-        private UInt16 _triggerArgument4;
+        private UInt16 _triggerMessage1;
+        private UInt16 _triggerMessage2;
+        private UInt16 _triggerMessage3;
+        private UInt16 _triggerMessage4;
 
         public TriggerViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
@@ -40,10 +40,10 @@ namespace TT_Lab.ViewModels.Instance
             _scale.PropertyChanged += _vector_PropertyChanged;
             _header = data.Header;
             _unkFloat = data.UnkFloat;
-            _triggerArgument1 = data.TriggerArgument1;
-            _triggerArgument2 = data.TriggerArgument2;
-            _triggerArgument3 = data.TriggerArgument3;
-            _triggerArgument4 = data.TriggerArgument4;
+            _triggerMessage1 = data.TriggerMessage1;
+            _triggerMessage2 = data.TriggerMessage2;
+            _triggerMessage3 = data.TriggerMessage3;
+            _triggerMessage4 = data.TriggerMessage4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
@@ -65,10 +65,10 @@ namespace TT_Lab.ViewModels.Instance
             _scale.PropertyChanged += _vector_PropertyChanged;
             _header = data.Header;
             _unkFloat = data.UnkFloat;
-            _triggerArgument1 = data.TriggerArgument1;
-            _triggerArgument2 = data.TriggerArgument2;
-            _triggerArgument3 = data.TriggerArgument3;
-            _triggerArgument4 = data.TriggerArgument4;
+            _triggerMessage1 = data.TriggerMessage1;
+            _triggerMessage2 = data.TriggerMessage2;
+            _triggerMessage3 = data.TriggerMessage3;
+            _triggerMessage4 = data.TriggerMessage4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
@@ -93,10 +93,10 @@ namespace TT_Lab.ViewModels.Instance
             {
                 data.Instances.Add(inst);
             }
-            data.TriggerArgument1 = TriggerArgument1;
-            data.TriggerArgument2 = TriggerArgument2;
-            data.TriggerArgument3 = TriggerArgument3;
-            data.TriggerArgument4 = TriggerArgument4;
+            data.TriggerMessage1 = TriggerMessage1;
+            data.TriggerMessage2 = TriggerMessage2;
+            data.TriggerMessage3 = TriggerMessage3;
+            data.TriggerMessage4 = TriggerMessage4;
         }
 
         private void _vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -428,53 +428,53 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt16 TriggerArgument1
+        public UInt16 TriggerMessage1
         {
-            get => _triggerArgument1;
+            get => _triggerMessage1;
             set
             {
-                if (value != _triggerArgument1)
+                if (value != _triggerMessage1)
                 {
-                    _triggerArgument1 = value;
+                    _triggerMessage1 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public UInt16 TriggerArgument2
+        public UInt16 TriggerMessage2
         {
-            get => _triggerArgument2;
+            get => _triggerMessage2;
             set
             {
-                if (value != _triggerArgument2)
+                if (value != _triggerMessage2)
                 {
-                    _triggerArgument2 = value;
+                    _triggerMessage2 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public UInt16 TriggerArgument3
+        public UInt16 TriggerMessage3
         {
-            get => _triggerArgument3;
+            get => _triggerMessage3;
             set
             {
-                if (value != _triggerArgument3)
+                if (value != _triggerMessage3)
                 {
-                    _triggerArgument3 = value;
+                    _triggerMessage3 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public UInt16 TriggerArgument4
+        public UInt16 TriggerMessage4
         {
-            get => _triggerArgument4;
+            get => _triggerMessage4;
             set
             {
-                if (value != _triggerArgument4)
+                if (value != _triggerMessage4)
                 {
-                    _triggerArgument4 = value;
+                    _triggerMessage4 = value;
                     IsDirty = true;
                     NotifyChange();
                 }

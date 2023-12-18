@@ -10,8 +10,8 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout
         /// </summary>
         TwinTrigger Trigger { get; set; }
         /// <summary>
-        /// Unknown arguments
+        /// Message IDs to send out
         /// </summary>
-        UInt16[] TriggerArguments { get; set; }
+        UInt16[] TriggerMessages { get; set; }
     }
 }

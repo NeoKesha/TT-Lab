@@ -9,10 +9,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
     public class PS2AnyTrigger : BaseTwinItem, ITwinTrigger
     {
         public TwinTrigger Trigger { get; set; }
-        public UInt16[] TriggerArguments { get; set; }
+        public UInt16[] TriggerMessages { get; set; }
         public PS2AnyTrigger()
         {
-            TriggerArguments = new UInt16[4];
+            TriggerMessages = new UInt16[4];
             Trigger = new TwinTrigger();
         }
 
@@ -26,7 +26,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             Trigger.Read(reader, length);
             for (int i = 0; i < 4; ++i)
             {
-                TriggerArguments[i] = reader.ReadUInt16();
+                TriggerMessages[i] = reader.ReadUInt16();
             }
         }
 
@@ -35,7 +35,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             Trigger.Write(writer);
             for (int i = 0; i < 4; ++i)
             {
-                writer.Write(TriggerArguments[i]);
+                writer.Write(TriggerMessages[i]);
             }
         }
 
