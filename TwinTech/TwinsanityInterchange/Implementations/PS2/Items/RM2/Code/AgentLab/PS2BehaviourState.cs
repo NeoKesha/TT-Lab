@@ -107,7 +107,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             {
                 StringUtils.WriteLineTabulated(writer, $"additional_flags = 0x{Convert.ToString(AdditionalFlags, 16)}", tabs + 1);
             }
-
+            if (UsesObjectSlot)
+            {
+                StringUtils.WriteLineTabulated(writer, $"uses_object_slot = {UsesObjectSlot}", tabs + 1);
+            }
             if (SkipsFirstStateBody)
             {
                 StringUtils.WriteLineTabulated(writer, "skip_first_state", tabs + 1);
@@ -160,6 +163,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 if (line.StartsWith("additional_flags"))
                 {
                     AdditionalFlags = UInt16.Parse(StringUtils.GetStringAfter(StringUtils.GetStringAfter(line, "=").Trim(), "0x"), System.Globalization.NumberStyles.HexNumber);
+                }
+                if (line.StartsWith("uses_object_slot"))
+                {
+                    UsesObjectSlot = Boolean.Parse(StringUtils.GetStringAfter(line, "=").Trim());
                 }
                 if (line.StartsWith("skip_first_state"))
                 {
