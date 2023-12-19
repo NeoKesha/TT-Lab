@@ -18,7 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
         public Vector4 UnkVec2;
         public Vector4 UnkVec3;
         public Vector4 UnkVec4;
-        public Vector4 UnkVec5;
+        public Boolean[] LightsEnabler;
 
         public TwinSceneryBaseType()
         {
@@ -31,7 +31,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             UnkVec2 = new Vector4();
             UnkVec3 = new Vector4();
             UnkVec4 = new Vector4();
-            UnkVec5 = new Vector4();
+            LightsEnabler = new Boolean[128];
         }
 
         public virtual Int32 GetLength()
@@ -93,7 +93,18 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             UnkVec2.Read(reader, Constants.SIZE_VECTOR4);
             UnkVec3.Read(reader, Constants.SIZE_VECTOR4);
             UnkVec4.Read(reader, Constants.SIZE_VECTOR4);
-            UnkVec5.Read(reader, Constants.SIZE_VECTOR4);
+            var bytes = reader.ReadBytes(0x10);
+            var index = 0;
+            foreach (var b in bytes)
+            {
+                var currentByte = b;
+                for (var i = 0; i < 8; ++i)
+                {
+                    LightsEnabler[i + index * 8] = (currentByte & 1) == 1;
+                    currentByte >>= 1;
+                }
+                index++;
+            }
         }
 
         public virtual void Write(BinaryWriter writer)
@@ -130,7 +141,16 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             UnkVec2.Write(writer);
             UnkVec3.Write(writer);
             UnkVec4.Write(writer);
-            UnkVec5.Write(writer);
+            var bytes = new Byte[16];
+            for (var i = 0; i < 16; ++i)
+            {
+                for (var j = 0; j < 8; ++j)
+                {
+                    var num = LightsEnabler[j + i * 8] ? 1 : 0;
+                    bytes[i] |= (Byte)(num << j);
+                }
+            }
+            writer.Write(bytes);
         }
 
         public virtual ITwinScenery.SceneryType GetObjectIndex()

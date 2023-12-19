@@ -35,10 +35,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         /// </summary>
         UInt32 SkydomeID { get; set; }
         /// <summary>
-        /// Unknown flags for the lights
-        /// </summary>
-        Boolean[] UnkLightFlags { get; set; }
-        /// <summary>
         /// Ambient lights present in the scenery
         /// </summary>
         List<AmbientLight> AmbientLights { get; set; }
@@ -70,7 +66,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         private static readonly Byte[] reservedBlob;
         static ITwinScenery()
         {
-            reservedBlob = new Byte[0x3E8];
+            reservedBlob = new Byte[0x400];
             for (Int32 i = 0; i < reservedBlob.Length; i++)
             {
                 reservedBlob[i] = 0xCD;

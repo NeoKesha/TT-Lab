@@ -631,11 +631,6 @@ namespace TT_Lab.Assets.Factory
             scenery.HasLighting = reader.ReadBoolean();
             if (scenery.HasLighting)
             {
-                for (Int32 i = 0; i < scenery.UnkLightFlags.Length; i++)
-                {
-                    scenery.UnkLightFlags[i] = reader.ReadBoolean();
-                }
-
                 var ambientLights = reader.ReadInt32();
                 for (var i = 0; i < ambientLights; ++i)
                 {

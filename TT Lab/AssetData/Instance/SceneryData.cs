@@ -30,7 +30,6 @@ namespace TT_Lab.AssetData.Instance
             ChunkPath = "levels\\earth\\hub\\beach";
             SkydomeID = LabURI.Empty;
             HasLighting = false;
-            UnkLightFlags = new Boolean[6];
             AmbientLights = new();
             DirectionalLights = new();
             PointLights = new();
@@ -53,8 +52,6 @@ namespace TT_Lab.AssetData.Instance
         public LabURI SkydomeID { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Boolean HasLighting { get; set; }
-        [JsonProperty(Required = Required.AllowNull)]
-        public Boolean[] UnkLightFlags { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public List<AmbientLight> AmbientLights { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
@@ -106,7 +103,6 @@ namespace TT_Lab.AssetData.Instance
             HasLighting = scenery.HasLighting;
             if (HasLighting)
             {
-                UnkLightFlags = CloneUtils.CloneArray(scenery.UnkLightFlags);
                 AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
                 DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
                 PointLights = CloneUtils.DeepClone(scenery.PointLights);
@@ -131,11 +127,6 @@ namespace TT_Lab.AssetData.Instance
             writer.Write(HasLighting);
             if (HasLighting)
             {
-                for (var i = 0; i < UnkLightFlags.Length; ++i)
-                {
-                    writer.Write(UnkLightFlags[i]);
-                }
-
                 writer.Write(AmbientLights.Count);
                 foreach (var ambient in AmbientLights)
                 {

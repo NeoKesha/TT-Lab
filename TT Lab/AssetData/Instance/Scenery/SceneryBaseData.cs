@@ -37,7 +37,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
         [JsonProperty(Required = Required.Always)]
         public Vector4 UnkVec4 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Vector4 UnkVec5 { get; set; }
+        public Boolean[] LightsEnabler { get; set; }
 
         public SceneryBaseData() { }
 
@@ -72,7 +72,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
             UnkVec2 = CloneUtils.Clone(baseType.UnkVec2);
             UnkVec3 = CloneUtils.Clone(baseType.UnkVec3);
             UnkVec4 = CloneUtils.Clone(baseType.UnkVec4);
-            UnkVec5 = CloneUtils.Clone(baseType.UnkVec5);
+            LightsEnabler = CloneUtils.CloneArray(baseType.LightsEnabler);
         }
 
         public SceneryBaseData(BaseSceneryViewModel vm)
@@ -206,13 +206,12 @@ namespace TT_Lab.AssetData.Instance.Scenery
                 Z = vm.UnkVec4.Z,
                 W = vm.UnkVec4.W,
             };
-            UnkVec5 = new Vector4
+            LightsEnabler = new Boolean[128];
+            var index = 0;
+            foreach (var enabler in vm.LightsEnabler)
             {
-                X = vm.UnkVec5.X,
-                Y = vm.UnkVec5.Y,
-                Z = vm.UnkVec5.Z,
-                W = vm.UnkVec5.W,
-            };
+                LightsEnabler[index++] = enabler;
+            }
         }
 
         public virtual ITwinScenery.SceneryType GetSceneryType()
@@ -261,7 +260,16 @@ namespace TT_Lab.AssetData.Instance.Scenery
             UnkVec2.Write(writer);
             UnkVec3.Write(writer);
             UnkVec4.Write(writer);
-            UnkVec5.Write(writer);
+            var bytes = new Byte[16];
+            for (var i = 0; i < 16; ++i)
+            {
+                for (var j = 0; j < 8; ++j)
+                {
+                    var num = LightsEnabler[j + i * 8] ? 1 : 0;
+                    bytes[i] |= (Byte)(num << j);
+                }
+            }
+            writer.Write(bytes);
         }
 
         public void ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section)

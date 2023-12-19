@@ -16,7 +16,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
         public UInt32 FogColor { get; set; }
         public Byte UnkByte { get; set; }
         public UInt32 SkydomeID { get; set; }
-        public Boolean[] UnkLightFlags { get; set; }
         public List<AmbientLight> AmbientLights { get; set; }
         public List<DirectionalLight> DirectionalLights { get; set; }
         public List<PointLight> PointLights { get; set; }
@@ -25,7 +24,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
 
         public PS2AnyScenery()
         {
-            UnkLightFlags = new Boolean[6];
             AmbientLights = new List<AmbientLight>();
             DirectionalLights = new List<DirectionalLight>();
             PointLights = new List<PointLight>();
@@ -37,7 +35,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
         {
             return 4 + 4 + Name.Length + 4 + 4 + 1 +
                 (SkydomeID != 0 ? 4 : 0) +
-                (HasLighting ? 0x3E8 + 24 + 4 * 5 + AmbientLights.Sum(a => a.GetLength()) +
+                (HasLighting ? 0x400 + 4 * 5 + AmbientLights.Sum(a => a.GetLength()) +
                     DirectionalLights.Sum(d => d.GetLength()) + PointLights.Sum(p => p.GetLength()) +
                     NegativeLights.Sum(n => n.GetLength()) : 0) +
                 Sceneries.Sum(s => s.GetLength());
@@ -60,11 +58,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
             if (HasLighting)
             {
-                for (var i = 0; i < UnkLightFlags.Length; ++i)
-                {
-                    UnkLightFlags[i] = reader.ReadInt32() != 0;
-                }
-                reader.ReadBytes(0x3E8); // Reserved binary data
+                reader.ReadBytes(0x400); // Lights accessor buffer
                 reader.ReadInt32(); // Total lights amount
                 var ambientLights = reader.ReadInt32();
                 var dirLights = reader.ReadInt32();
@@ -127,12 +121,29 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
             }
             if (HasLighting)
             {
-                for (var i = 0; i < UnkLightFlags.Length; ++i)
+                for (var i = 0; i < AmbientLights.Count; ++i)
                 {
-                    writer.Write(UnkLightFlags[i] ? 1 : 0);
+                    writer.Write(i);
+                    writer.Write((Int32)LightIdentifier.Ambient);
                 }
-                writer.Write(ITwinScenery.GetReservedBlob());
-                writer.Write(AmbientLights.Count + DirectionalLights.Count + PointLights.Count + NegativeLights.Count);
+                for (var i = 0; i < DirectionalLights.Count; ++i)
+                {
+                    writer.Write(i);
+                    writer.Write((Int32)LightIdentifier.Directional);
+                }
+                for (var i = 0; i < PointLights.Count; i++)
+                {
+                    writer.Write(i);
+                    writer.Write((Int32)LightIdentifier.Point);
+                }
+                for (var i = 0; i < NegativeLights.Count; ++i)
+                {
+                    writer.Write(i);
+                    writer.Write((Int32)LightIdentifier.Negative);
+                }
+                var totalLightCount = AmbientLights.Count + DirectionalLights.Count + PointLights.Count + NegativeLights.Count;
+                writer.Write(ITwinScenery.GetReservedBlob(), 0, 0x400 - (8 * totalLightCount));
+                writer.Write(totalLightCount);
                 writer.Write(AmbientLights.Count);
                 writer.Write(DirectionalLights.Count);
                 writer.Write(PointLights.Count);
@@ -166,6 +177,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2
         public override String GetName()
         {
             return $"Scenery {id:X}";
+        }
+
+        private enum LightIdentifier
+        {
+            Ambient,
+            Directional,
+            Point,
+            Negative
         }
     }
 }
