@@ -92,7 +92,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         break;
 
                 }
-                GroupSizes.Add(data[i + 2].Count);
                 Vertexes.AddRange(data[i + 2].Where((v) => v != null));
                 if (fieldsPresent.HasFlag(FieldsPresent.UV_Color))
                 {
@@ -144,6 +143,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     }
                 }
                 i += fields + 2;
+                GroupSizes.Add((Int32)verts);
                 TrimList(UVW, Vertexes.Count);
                 TrimList(Colors, Vertexes.Count);
             }

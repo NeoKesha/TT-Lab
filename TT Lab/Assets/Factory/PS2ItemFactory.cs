@@ -668,24 +668,18 @@ namespace TT_Lab.Assets.Factory
             for (Int32 i = 0; i < sceneries; i++)
             {
                 var type = (ITwinScenery.SceneryType)reader.ReadInt32();
+                TwinSceneryBaseType sceneryNode = new TwinSceneryLeaf();
                 switch (type)
                 {
                     case ITwinScenery.SceneryType.Root:
-                        var root = new TwinSceneryRoot();
-                        root.Read(reader, 0);
-                        scenery.Sceneries.Add(root);
+                        sceneryNode = new TwinSceneryRoot();
                         break;
                     case ITwinScenery.SceneryType.Node:
-                        var node = new TwinSceneryNode();
-                        node.Read(reader, 0);
-                        scenery.Sceneries.Add(node);
-                        break;
-                    case ITwinScenery.SceneryType.Leaf:
-                        var leaf = new TwinSceneryLeaf();
-                        leaf.Read(reader, 0);
-                        scenery.Sceneries.Add(leaf);
+                        sceneryNode = new TwinSceneryNode();
                         break;
                 }
+                sceneryNode.Read(reader, 0);
+                scenery.Sceneries.Add(sceneryNode);
             }
 
             return scenery;

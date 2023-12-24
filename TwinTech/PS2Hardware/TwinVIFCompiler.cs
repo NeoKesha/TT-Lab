@@ -200,7 +200,7 @@ namespace Twinsanity.PS2Hardware
                 // Scale vector for Twinsanity's skins and blend skins
                 // This is mostly correct and what most skins use in Twinsanity but maybe there is some magic to figure this out?
                 var scaleVector = new Vector4();
-                scaleVector.SetBinaryX(0x38C03F4D); // Vertex position scale
+                scaleVector.SetBinaryX(0x38BCC8C0); // Vertex position scale
                 scaleVector.SetBinaryY(0x3A000000); // UV scale
 
                 // For skins and blend skins a special scaling vector comes in
@@ -352,13 +352,13 @@ namespace Twinsanity.PS2Hardware
                                     Amount = (Byte)vectorBatch[batchIndex].Count
                                 };
                                 emitColorsCode.SetUnpackAddressMode(true);
+                                emitColorsCode.SetUnsignedDecompressMode(true);
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
                                 var emitColors = vectorBatch[batchIndex].Select(c => c.GetColor()).Select(c =>
                                 {
                                     c.ScaleAlphaDown();
-                                    c.A = (Byte)(c.A & ~(1 << 4));
                                     return c;
                                 }).ToList();
                                 var compiledColors = new List<Vector4>(emitColors.Count);
@@ -368,7 +368,7 @@ namespace Twinsanity.PS2Hardware
                                     compiledColor.SetBinaryX(c.R);
                                     compiledColor.SetBinaryY(c.G);
                                     compiledColor.SetBinaryZ(c.B);
-                                    compiledColor.SetBinaryW((UInt32)(c.A >> 1));
+                                    compiledColor.SetBinaryW(c.A);
                                     compiledColors.Add(compiledColor);
                                 }
                                 interpreter.Pack(compiledColors, packedEmits, PackFormat.V4_8);
@@ -466,20 +466,15 @@ namespace Twinsanity.PS2Hardware
                             totalSpaceNeeded += turnOffOffsetCode.GetLength();
 
                             // Compile colors
-                            var colors = vectorBatch[GetBatchIndex(VectorBatchIndex.Color)].Select(c => c.GetColor()).Select(c =>
-                            {
-                                c.ScaleAlphaDown();
-                                c.A = (Byte)(c.A & ~(1 << 4));
-                                return c;
-                            }).ToList();
+                            var colors = vectorBatch[GetBatchIndex(VectorBatchIndex.Color)];
                             var compiledColors = new List<Vector4>(colors.Count);
                             foreach (var c in colors)
                             {
                                 var compiledColor = new Vector4();
-                                compiledColor.SetBinaryX(c.R);
-                                compiledColor.SetBinaryY(c.G);
-                                compiledColor.SetBinaryZ(c.B);
-                                compiledColor.SetBinaryW((UInt32)(c.A >> 1));
+                                compiledColor.SetBinaryX((UInt32)c.X >> 1);
+                                compiledColor.SetBinaryY((UInt32)c.Y >> 1);
+                                compiledColor.SetBinaryZ((UInt32)c.Z >> 1);
+                                compiledColor.SetBinaryW((UInt32)c.W >> 1);
                                 compiledColors.Add(compiledColor);
                             }
 
@@ -524,21 +519,24 @@ namespace Twinsanity.PS2Hardware
                         throw new Exception("Unexisting model type provided");
                 }
 
-                VIFCode mscal = new()
+                if (format != ModelFormat.BlendSkin)
                 {
-                    OP = VIFCodeEnum.MSCAL,
-                    Immediate = 0x0
-                };
-                mscal.Write(writer);
-                totalSpaceNeeded += mscal.GetLength();
+                    VIFCode mscal = new()
+                    {
+                        OP = VIFCodeEnum.MSCAL,
+                        Immediate = 0x0
+                    };
+                    mscal.Write(writer);
+                    totalSpaceNeeded += mscal.GetLength();
 
-                setCycle = new()
-                {
-                    OP = VIFCodeEnum.STCYCL,
-                    Immediate = 0x0101
-                };
-                setCycle.Write(writer);
-                totalSpaceNeeded += setCycle.GetLength();
+                    setCycle = new()
+                    {
+                        OP = VIFCodeEnum.STCYCL,
+                        Immediate = 0x0101
+                    };
+                    setCycle.Write(writer);
+                    totalSpaceNeeded += setCycle.GetLength();
+                }
             }
 
             // Align to 16(0x10) bytes

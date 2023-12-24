@@ -52,6 +52,18 @@ namespace Twinsanity.PS2Hardware
             Immediate &= unchecked((UInt16)(~(1U << 15)));
         }
 
+        public void SetUnsignedDecompressMode(bool set)
+        {
+            Debug.Assert(IsUnpack(), "VIF Code must be in unpack mode for this operation");
+            if (set)
+            {
+                Immediate |= (1 << 14);
+                return;
+            }
+            
+            Immediate &= unchecked((UInt16)(~(1U << 14)));
+        }
+
         public bool IsUnpack()
         {
             return (OP & VIFCodeEnum.UNPACK) == VIFCodeEnum.UNPACK;

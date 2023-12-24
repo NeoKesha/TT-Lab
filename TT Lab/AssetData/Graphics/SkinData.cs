@@ -151,6 +151,7 @@ namespace TT_Lab.AssetData.Graphics
                                 vertexes.Positions[i].ToTwin(),
                                 vertexes.Colors0[i].ToTwin(),
                                 vertexes.TexCoords0[i].ToTwin());
+                        ver.Color = new Twinsanity.TwinsanityInterchange.Common.Vector4(ver.Color.X * 255, ver.Color.Y * 255, ver.Color.Z * 255, ver.Color.W * 255);
                         ver.JointInfo.JointIndex1 = (Int32)vertexes.Joints0[i].X;
                         ver.JointInfo.JointIndex2 = (Int32)vertexes.Joints0[i].Y;
                         ver.JointInfo.JointIndex3 = (Int32)vertexes.Joints0[i].Z;

@@ -1088,6 +1088,10 @@ namespace TT_Lab.Project
                 var folder = assetManager.GetAsset(item);
                 if (folder is ChunkFolder)
                 {
+                    if (!folder.Name.ToLower().Contains("hubd"))
+                    {
+                        continue;
+                    }
                     Log.WriteLine($"Writing level {folder.Name}...");
                     var rm2 = factory.GenerateRM();
                     var sm2 = factory.GenerateSM();
