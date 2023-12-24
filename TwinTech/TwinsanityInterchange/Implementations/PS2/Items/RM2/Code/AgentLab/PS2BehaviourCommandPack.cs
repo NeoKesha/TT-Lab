@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Twinsanity.Libraries;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab
@@ -47,14 +48,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 com.Write(writer);
             }
         }
+
         public void WriteText(StreamWriter writer, Int32 tabs = 0)
         {
-            writer.WriteLine("@PS2 Pack");
+            StringUtils.WriteLineTabulated(writer, "@PS2 Pack", tabs);
             foreach (var cmd in Commands)
             {
                 cmd.WriteText(writer, tabs);
             }
         }
+
         public bool ReadText(StreamReader reader)
         {
             String line = reader.ReadLine().Trim();
@@ -66,7 +69,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 {
                     continue;
                 }
-                if (line == "}")
+                if (line.EndsWith("}"))
                 {
                     return false;
                 }
@@ -76,6 +79,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             }
             return true;
         }
+
         public override String ToString()
         {
             using MemoryStream stream = new();
