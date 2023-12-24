@@ -62,7 +62,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
         {
             String line = reader.ReadLine().Trim();
             Debug.Assert(line == "@PS2 Pack", "Attepting to parse PS2 command pack as a different version");
-            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            while (!reader.EndOfStream)
             {
                 line = reader.ReadLine().Trim();
                 if (string.IsNullOrWhiteSpace(line))
