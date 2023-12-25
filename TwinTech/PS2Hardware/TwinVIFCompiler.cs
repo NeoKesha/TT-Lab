@@ -18,6 +18,7 @@ namespace Twinsanity.PS2Hardware
 
         private readonly ModelFormat format;
         private readonly List<List<Vector4>> vectorData;
+        private readonly UInt32 minSkinCoord;
         private readonly List<Boolean> conns;
         private readonly Boolean hasNormals;
         private readonly Boolean hasEmitColors;
@@ -75,6 +76,29 @@ namespace Twinsanity.PS2Hardware
             this.format = format;
             this.vectorData = data;
             this.conns = conns;
+
+            minSkinCoord = UInt32.MaxValue;
+            if (format != ModelFormat.BlendFace)
+            {
+                foreach (var vec in this.vectorData[1])
+                {
+                    var binX = vec.GetBinaryX();
+                    var binY = vec.GetBinaryY();
+                    var binZ = vec.GetBinaryZ();
+                    if (binX < minSkinCoord && binX > 0)
+                    {
+                        minSkinCoord = binX;
+                    }
+                    if (binY < minSkinCoord && binY > 0)
+                    {
+                        minSkinCoord = binY;
+                    }
+                    if (binZ < minSkinCoord && binZ > 0)
+                    {
+                        minSkinCoord = binZ;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -200,7 +224,7 @@ namespace Twinsanity.PS2Hardware
                 // Scale vector for Twinsanity's skins and blend skins
                 // This is mostly correct and what most skins use in Twinsanity but maybe there is some magic to figure this out?
                 var scaleVector = new Vector4();
-                scaleVector.SetBinaryX(0x38BCC8C0); // Vertex position scale
+                scaleVector.SetBinaryX(minSkinCoord); // Vertex position scale
                 scaleVector.SetBinaryY(0x3A000000); // UV scale
 
                 // For skins and blend skins a special scaling vector comes in
@@ -356,19 +380,15 @@ namespace Twinsanity.PS2Hardware
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
-                                var emitColors = vectorBatch[batchIndex].Select(c => c.GetColor()).Select(c =>
-                                {
-                                    c.ScaleAlphaDown();
-                                    return c;
-                                }).ToList();
+                                var emitColors = vectorBatch[batchIndex];
                                 var compiledColors = new List<Vector4>(emitColors.Count);
                                 foreach (var c in emitColors)
                                 {
                                     var compiledColor = new Vector4();
-                                    compiledColor.SetBinaryX(c.R);
-                                    compiledColor.SetBinaryY(c.G);
-                                    compiledColor.SetBinaryZ(c.B);
-                                    compiledColor.SetBinaryW(c.A);
+                                    compiledColor.SetBinaryX((UInt32)c.X >> 1);
+                                    compiledColor.SetBinaryY((UInt32)c.Y >> 1);
+                                    compiledColor.SetBinaryZ((UInt32)c.Z >> 1);
+                                    compiledColor.SetBinaryW((UInt32)c.W >> 1);
                                     compiledColors.Add(compiledColor);
                                 }
                                 interpreter.Pack(compiledColors, packedEmits, PackFormat.V4_8);
@@ -395,10 +415,10 @@ namespace Twinsanity.PS2Hardware
                                 var uv = vectorBatch[GetBatchIndex(VectorBatchIndex.Uv)][j];
                                 var compiledPosition = position.Divide(scaleVector.X);
                                 var compiledUv = uv.Divide(scaleVector.Y);
-                                compiledPosition.SetBinaryX((UInt32)((Int16)compiledPosition.X));
-                                compiledPosition.SetBinaryY((UInt32)((Int16)compiledPosition.Y));
-                                compiledPosition.SetBinaryZ((UInt32)((Int16)compiledPosition.Z));
-                                compiledPosition.SetBinaryW((UInt32)((Int16)compiledPosition.W));
+                                compiledPosition.SetBinaryX((UInt32)((Int16)Math.Round(compiledPosition.X)));
+                                compiledPosition.SetBinaryY((UInt32)((Int16)Math.Round(compiledPosition.Y)));
+                                compiledPosition.SetBinaryZ((UInt32)((Int16)Math.Round(compiledPosition.Z)));
+                                compiledPosition.SetBinaryW((UInt32)((Int16)Math.Round(compiledPosition.W)));
                                 compiledUv.SetBinaryX((UInt32)((Int16)compiledUv.X));
                                 compiledUv.SetBinaryY((UInt32)((Int16)compiledUv.Y));
                                 compiledUv.SetBinaryZ((UInt32)((Int16)compiledUv.Z));

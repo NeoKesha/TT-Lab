@@ -1088,7 +1088,7 @@ namespace TT_Lab.Project
                 var folder = assetManager.GetAsset(item);
                 if (folder is ChunkFolder)
                 {
-                    if (!folder.Name.ToLower().Contains("hubd"))
+                    if (!folder.Name.ToLower().StartsWith("beach"))
                     {
                         continue;
                     }

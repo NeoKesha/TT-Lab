@@ -39,16 +39,15 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public Vector4 GetVector4()
         {
-            Debug.Assert(Math.Abs(Weight1 + Weight2 + Weight3 - 1.0f) < 0.0001f, "Weights must sum up to 1");
             Vector4 v = new()
             {
                 X = Weight1,
                 Y = Weight2,
                 Z = Weight3
             };
-            var xComp = (v.GetBinaryX() & 0xFFFFFF00) | (UInt32)(JointIndex1 * 4);
-            var yComp = (v.GetBinaryY() & 0xFFFFFF00) | (UInt32)(JointIndex2 * 4);
-            var zComp = (v.GetBinaryZ() & 0xFFFFFF00) | (UInt32)(JointIndex3 * 4);
+            var xComp = (v.GetBinaryX() & 0xFFFFFE00) | (UInt32)(JointIndex1 * 4);
+            var yComp = (v.GetBinaryY() & 0xFFFFFE00) | (UInt32)(JointIndex2 * 4);
+            var zComp = (v.GetBinaryZ() & 0xFFFFFE00) | (UInt32)(JointIndex3 * 4);
             v.SetBinaryX(xComp);
             v.SetBinaryY(yComp);
             v.SetBinaryZ(zComp);
@@ -60,7 +59,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 totalWeight += Weight2;
                 weightCount++;
             }
-            if (totalWeight + Weight3 <= 1 && Weight3 != 0)
+            if (totalWeight + Weight3 <= 1 && Weight3 != 0 && weightCount > 1)
             {
                 weightCount++;
             }
