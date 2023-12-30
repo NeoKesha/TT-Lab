@@ -185,6 +185,31 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             VertexData = compiler.Compile();
         }
 
+        public UInt32 GetMinSkinCoord()
+        {
+            var minSkinCoord = UInt32.MaxValue;
+            foreach (var vec in Vertexes)
+            {
+                var binX = vec.GetBinaryX();
+                var binY = vec.GetBinaryY();
+                var binZ = vec.GetBinaryZ();
+                if (binX < minSkinCoord && binX > 0)
+                {
+                    minSkinCoord = binX;
+                }
+                if (binY < minSkinCoord && binY > 0)
+                {
+                    minSkinCoord = binY;
+                }
+                if (binZ < minSkinCoord && binZ > 0)
+                {
+                    minSkinCoord = binZ;
+                }
+            }
+
+            return minSkinCoord;
+        }
+
         private static void TrimList(List<Vector4> list, Int32 desiredLength, Vector4 defaultValue = null)
         {
             if (list != null)

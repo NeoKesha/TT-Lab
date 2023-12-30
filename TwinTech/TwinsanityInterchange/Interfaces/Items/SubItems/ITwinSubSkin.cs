@@ -31,6 +31,8 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
         /// </summary>
         List<Int32> GroupSizes { get; set; }
 
+        UInt32 GetMinSkinCoord();
+
 
         /// <summary>
         /// Converts VIF code into vertex data

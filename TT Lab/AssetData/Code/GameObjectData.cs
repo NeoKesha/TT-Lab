@@ -200,14 +200,30 @@ namespace TT_Lab.AssetData.Code
                 // Range reserved for CodeModel(Command sequences) behaviour IDs
                 if (e > 500 && e < 616)
                 {
-                    foreach (var cm in RefBehaviourCommandsSequences)
+                    if (RefBehaviourCommandsSequences.Count > 0)
                     {
-                        var cmAsset = assetManager.GetAsset<BehaviourCommandsSequence>(cm);
-                        if (cmAsset.BehaviourGraphLinks.ContainsKey(e))
+                        foreach (var cm in RefBehaviourCommandsSequences)
                         {
-                            Debug.Assert(cmAsset.BehaviourGraphLinks[e] != LabURI.Empty, "REFERENCES CAN NOT CONTAIN REFERENCE TO NULL DATA");
-                            RefBehaviours.Add(cmAsset.BehaviourGraphLinks[e]);
-                            break;
+                            var cmAsset = assetManager.GetAsset<BehaviourCommandsSequence>(cm);
+                            if (cmAsset.BehaviourGraphLinks.ContainsKey(e))
+                            {
+                                Debug.Assert(cmAsset.BehaviourGraphLinks[e] != LabURI.Empty, "REFERENCES CAN NOT CONTAIN REFERENCE TO NULL DATA");
+                                RefBehaviours.Add(cmAsset.BehaviourGraphLinks[e]);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var allCms = assetManager.GetAssets().Where(a => a is BehaviourCommandsSequence).Cast<BehaviourCommandsSequence>().ToList();
+                        foreach (var cm in allCms)
+                        {
+                            if (cm.BehaviourGraphLinks.ContainsKey(e))
+                            {
+                                Debug.Assert(cm.BehaviourGraphLinks[e] != LabURI.Empty, "REFERENCES CAN NOT CONTAIN REFERENCE TO NULL DATA");
+                                RefBehaviours.Add(cm.BehaviourGraphLinks[e]);
+                                break;
+                            }
                         }
                     }
                 }

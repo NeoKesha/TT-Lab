@@ -10,7 +10,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             resultVec.SetBinaryX((UInt32)((Int32)(Offset.X / BlendShape.X)));
             resultVec.SetBinaryY((UInt32)((Int32)(Offset.Y / BlendShape.Y)));
             resultVec.SetBinaryZ((UInt32)((Int32)(Offset.Z / BlendShape.Z)));
-            resultVec.SetBinaryW(0x0);
+            resultVec.W = 1.0f;
 
             return resultVec;
         }

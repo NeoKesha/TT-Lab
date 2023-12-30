@@ -116,7 +116,7 @@ namespace TT_Lab.Assets
         /// <param Name="folder">Folder</param>
         /// <param Name="variant">Variant if present</param>
         /// <param Name="id">ID</param>
-        /// <returns>Returns a URI</returns>
+        /// <returns>Found URI.<para/><code>LabURI.Empty</code> if URI was not found</returns>
         public LabURI GetUri(LabURI package, String folder, String? variant, UInt32 id)
         {
             var variantString = variant != null ? $"/{variant}" : "";
@@ -205,7 +205,7 @@ namespace TT_Lab.Assets
         /// <param Name="variant"></param>
         /// <param Name="id"></param>
         /// <returns>Asset of a specific type</returns>
-        /// <seealso cref="GetAsset(string, string, string, string?, uint)"/>
+        /// <seealso cref="GetAsset(LabURI, string, string?, uint)"/>
         public T GetAsset<T>(LabURI package, String folder, String? variant, uint id) where T : IAsset
         {
             return (T)GetAsset(package, folder, variant, id);

@@ -17,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 
         public Int32 GetLength()
         {
-            return 6 + ModelSettings.Sum(d => d.GetLength()) + StaticTransformations.Count * 2 + AnimatedTransformations.Sum(r => r.GetLength());
+            return 6 + ModelSettings.Sum(d => d.GetLength()) + StaticTransformations.Sum(s => s.GetLength()) + AnimatedTransformations.Sum(r => r.GetLength());
         }
 
         public void Compile()

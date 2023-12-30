@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
@@ -14,6 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         List<UInt32> packedNormals = new();
         Int32 blendsAmount;
 
+        public UInt32 CompileScale { get; set; }
         public Int32 VertexesAmount { get; set; }
         public Vector3 BlendShape { get; set; }
         public List<ITwinBlendSkinFace> Faces { get; set; }

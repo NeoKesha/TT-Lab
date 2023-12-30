@@ -17,6 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
         public TransformType RotateX { get; set; }
         public TransformType RotateY { get; set; }
         public TransformType RotateZ { get; set; }
+        public TransformType RotateW { get; set; }
 
         public UInt16 StaticTransformationIndex { get; set; }
         public UInt16 AnimationTransformationIndex { get; set; }
@@ -45,6 +46,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
                 RotateX = (TransformType)((transformationChoice & 0x8) >> 0x3);
                 RotateY = (TransformType)((transformationChoice & 0x10) >> 0x4);
                 RotateZ = (TransformType)((transformationChoice & 0x20) >> 0x5);
+                RotateW = (TransformType)((transformationChoice & 0x40) >> 0x6);
             }
             StaticTransformationIndex = reader.ReadUInt16();
             AnimationTransformationIndex = reader.ReadUInt16();
@@ -61,6 +63,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             newTransformationChoice |= (UInt16)((UInt16)RotateX << 0x3);
             newTransformationChoice |= (UInt16)((UInt16)RotateY << 0x4);
             newTransformationChoice |= (UInt16)((UInt16)RotateZ << 0x5);
+            newTransformationChoice |= (UInt16)((UInt16)RotateW << 0x6);
             transformationChoice = newTransformationChoice;
             writer.Write(transformationChoice);
 

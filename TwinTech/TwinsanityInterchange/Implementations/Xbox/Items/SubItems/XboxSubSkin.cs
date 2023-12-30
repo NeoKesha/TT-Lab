@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
@@ -40,6 +41,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             length += Vertexes.Count * 0x30;
 
             return length;
+        }
+
+        public UInt32 GetMinSkinCoord()
+        {
+            return 0;
         }
 
         public void Read(BinaryReader reader, Int32 length)

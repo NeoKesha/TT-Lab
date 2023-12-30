@@ -81,7 +81,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             {
                 vertexData
             };
-            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendFace, data, null);
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendFace, data, null, 0);
             faceData = compiler.Compile();
         }
     }

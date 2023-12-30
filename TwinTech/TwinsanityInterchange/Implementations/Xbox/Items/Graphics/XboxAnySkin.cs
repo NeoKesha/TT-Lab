@@ -48,5 +48,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics
         {
             return $"Skin {id:X}";
         }
+
+        public UInt32 GetMinSkinCoord()
+        {
+            return 0;
+        }
     }
 }

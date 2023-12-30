@@ -7,6 +7,10 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
     public interface ITwinBlendSkinModel : ITwinSerializable
     {
         /// <summary>
+        /// Scale used to compress vectors into UInt16
+        /// </summary>
+        UInt32 CompileScale { get; set; }
+        /// <summary>
         /// Total amount of vertexes in the model
         /// </summary>
         Int32 VertexesAmount { get; set; }

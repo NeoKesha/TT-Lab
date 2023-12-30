@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
@@ -9,6 +10,7 @@ using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Code
@@ -139,22 +141,44 @@ namespace TT_Lab.AssetData.Code
         {
             var assetManager = AssetManager.Get();
             var graphicsSection = section.GetRoot().GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION);
+            var blendSkinScale = UInt32.MaxValue;
             if (RigidModelIds.Count > 0)
             {
                 var rigidModelSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_RIGID_MODELS_SECTION);
                 foreach (var rigidModel in RigidModelIds)
                 {
                     assetManager.GetAsset(rigidModel).ResolveChunkResources(factory, rigidModelSection);
+                    var rigid = assetManager.GetAsset(rigidModel);
+                    var model = (ITwinModel)assetManager.GetAsset<Model>(rigid.GetData<RigidModelData>().Model).Export(factory);
+                    model.Compile();
+                    var minCoord = model.GetMinSkinCoord();
+                    if (minCoord < blendSkinScale && minCoord != 0)
+                    {
+                        blendSkinScale = minCoord;
+                    }
                 }
             }
             if (Skin != LabURI.Empty)
             {
                 var skinSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_SKINS_SECTION);
                 assetManager.GetAsset(Skin).ResolveChunkResources(factory, skinSection);
+                var skinAsset = assetManager.GetAssetData<SkinData>(Skin);
+                var skin = (ITwinSkin)skinAsset.Export(factory);
+                skin.Compile();
+                var minCoord = skin.GetMinSkinCoord();
+                if (minCoord < blendSkinScale && minCoord != 0)
+                {
+                    blendSkinScale = minCoord;
+                }
             }
             if (BlendSkin != LabURI.Empty)
             {
                 var blendSkinSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_BLEND_SKINS_SECTION);
+                var blendSkinData = assetManager.GetAssetData<BlendSkinData>(BlendSkin);
+                if (blendSkinScale != UInt32.MaxValue)
+                {
+                    blendSkinData.CompileScale = blendSkinScale;
+                }
                 assetManager.GetAsset(BlendSkin).ResolveChunkResources(factory, blendSkinSection);
             }
             return base.ResolveChunkResouces(factory, section, id);

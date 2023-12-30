@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
@@ -31,6 +32,24 @@ namespace TT_Lab.Assets.Graphics
         public override Type GetEditorType()
         {
             throw new NotImplementedException();
+        }
+
+        public override void PostResolveResources(Factory.ITwinItemFactory factory, ITwinSection section, ITwinItem? item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            item.SetID(ID);
+            var data = (BlendSkinData)GetData();
+            var blendSkinItem = (ITwinBlendSkin)item;
+            if (data.CompileScale != null)
+            {
+                blendSkinItem.CompileScale = data.CompileScale.Value;
+            }
+
+            blendSkinItem.Compile();
         }
 
         public override AbstractAssetData GetData()

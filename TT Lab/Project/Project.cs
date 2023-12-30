@@ -888,7 +888,9 @@ namespace TT_Lab.Project
                                 let asset = assetManager.GetAsset(assetUri)
                                 where asset.Name == "Chunks"
                                 select asset).First().GetData<FolderData>();
-            ResolveAndWriteChunks(factory, chunksFolder);
+            UInt32 totalScenes = 0;
+            UInt32 currentSceneCount = 0;
+            ResolveAndWriteChunks(factory, chunksFolder, ref totalScenes, ref currentSceneCount);
 
             /*Log.WriteLine("Writing Extras...");
             System.IO.Directory.SetCurrentDirectory("../Extras");
@@ -1080,19 +1082,17 @@ namespace TT_Lab.Project
             throw new NotImplementedException();
         }
 
-        private void ResolveAndWriteChunks(ITwinItemFactory factory, FolderData currentFolder)
+        private void ResolveAndWriteChunks(ITwinItemFactory factory, FolderData currentFolder, ref UInt32 scenesTotal, ref UInt32 currentSceneCount)
         {
             var assetManager = AssetManager.Get();
+            scenesTotal += (UInt32)currentFolder.Children.Select(assetManager.GetAsset).Where(a => a is ChunkFolder).Count();
             foreach (var item in currentFolder.Children)
             {
                 var folder = assetManager.GetAsset(item);
                 if (folder is ChunkFolder)
                 {
-                    if (!folder.Name.ToLower().StartsWith("beach"))
-                    {
-                        continue;
-                    }
-                    Log.WriteLine($"Writing level {folder.Name}...");
+                    currentSceneCount++;
+                    Log.WriteLine($"Writing level ({currentSceneCount}/{scenesTotal}) {folder.Name}...");
                     var rm2 = factory.GenerateRM();
                     var sm2 = factory.GenerateSM();
 
@@ -1130,7 +1130,7 @@ namespace TT_Lab.Project
                 {
                     System.IO.Directory.CreateDirectory(folder.Name);
                     System.IO.Directory.SetCurrentDirectory(folder.Name);
-                    ResolveAndWriteChunks(factory, folder.GetData<FolderData>());
+                    ResolveAndWriteChunks(factory, folder.GetData<FolderData>(), ref scenesTotal, ref currentSceneCount);
                     System.IO.Directory.SetCurrentDirectory("..");
                 }
             }

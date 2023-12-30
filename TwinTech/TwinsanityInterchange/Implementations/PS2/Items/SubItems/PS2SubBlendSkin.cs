@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Interfaces;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
@@ -11,6 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
     {
         Int32 blendsAmount;
 
+        public UInt32 CompileScale { get; set; }
         public UInt32 Material { get; set; }
         public List<ITwinBlendSkinModel> Models { get; set; }
 

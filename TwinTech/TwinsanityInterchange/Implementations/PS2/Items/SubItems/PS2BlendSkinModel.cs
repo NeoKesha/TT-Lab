@@ -5,6 +5,7 @@ using System.Linq;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
@@ -14,6 +15,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         Byte[] vifCode;
         Int32 blendsAmount;
 
+        public UInt32 CompileScale { get; set; }
         public Int32 VertexesAmount { get; set; }
         public Vector3 BlendShape { get; set; }
         public List<ITwinBlendSkinFace> Faces { get; set; }
@@ -109,23 +111,23 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     var jointIndex3 = 0u;
                     if (weightAmount > 0)
                     {
-                        jointIndex1 = v1.GetBinaryX() & 0xFF;
+                        jointIndex1 = v1.GetBinaryX() & 0x1FF;
                         jointIndex1 /= 4;
-                        v1.SetBinaryX(v1.GetBinaryX() & 0xFFFFFF00);
+                        v1.SetBinaryX(v1.GetBinaryX() & 0xFFFFFE00);
                         weight1 = v1.X;
                     }
                     if (weightAmount > 1)
                     {
-                        jointIndex2 = v1.GetBinaryY() & 0xFF;
+                        jointIndex2 = v1.GetBinaryY() & 0x1FF;
                         jointIndex2 /= 4;
-                        v1.SetBinaryY(v1.GetBinaryY() & 0xFFFFFF00);
+                        v1.SetBinaryY(v1.GetBinaryY() & 0xFFFFFE00);
                         weight2 = v1.Y;
                     }
                     if (weightAmount > 2)
                     {
-                        jointIndex3 = v1.GetBinaryZ() & 0xFF;
+                        jointIndex3 = v1.GetBinaryZ() & 0x1FF;
                         jointIndex3 /= 4;
-                        v1.SetBinaryZ(v1.GetBinaryZ() & 0xFFFFFF00);
+                        v1.SetBinaryZ(v1.GetBinaryZ() & 0xFFFFFE00);
                         weight3 = v1.Z;
                     }
 
@@ -191,7 +193,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 Colors,
                 SkinJoints.Select(j => j.GetVector4()).ToList()
             };
-            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendSkin, data, null);
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendSkin, data, null, CompileScale);
             vifCode = compiler.Compile();
             foreach (var face in Faces)
             {

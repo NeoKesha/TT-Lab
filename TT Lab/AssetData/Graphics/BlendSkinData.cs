@@ -30,6 +30,7 @@ namespace TT_Lab.AssetData.Graphics
             SetTwinItem(blendSkin);
         }
 
+        public UInt32? CompileScale { get; set; }
         public Int32 BlendsAmount { get; set; }
         public List<SubBlendData> Blends { get; set; } = new();
 
@@ -148,7 +149,6 @@ namespace TT_Lab.AssetData.Graphics
                         return -1;
                     }
 
-                    // TODO: Better index remapping. Some morph targets are getting lost entirely!
                     var morphs = new List<IMorphTargetBuilder>();
                     for (Int32 i = 0; i < blendModel.BlendFaces.Count; i++)
                     {
@@ -197,8 +197,6 @@ namespace TT_Lab.AssetData.Graphics
                 var meshes = blendSkin.LogicalMeshes.Where(m => m.Primitives.All(p => p.Material.LogicalIndex == material.LogicalIndex)).ToList();
                 Blends.Add(new SubBlendData(labMaterial, meshes, BlendsAmount));
             }
-
-
         }
 
         public override void Import(LabURI package, String? variant, Int32? layoutId)

@@ -132,6 +132,12 @@ namespace TT_Lab.Assets
 
         }
 
+        public virtual void PostResolveResources(Factory.ITwinItemFactory factory, ITwinSection section, ITwinItem? item)
+        {
+            item?.SetID(ID);
+            item?.Compile();
+        }
+
         private void DisposeData()
         {
             assetData.Dispose();
@@ -146,8 +152,7 @@ namespace TT_Lab.Assets
             assetData = GetData();
             PreResolveResources();
             var item = assetData.ResolveChunkResouces(factory, section, ID, LayoutID);
-            item?.SetID(ID);
-            item?.Compile();
+            PostResolveResources(factory, section, item);
 
             DisposeData();
             resolveTraversed = false;

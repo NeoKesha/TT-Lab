@@ -39,5 +39,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems
         /// Converts VIF code into vertex data
         /// </summary>
         void CalculateData();
+
+        UInt32 GetMinSkinCoord();
     }
 }

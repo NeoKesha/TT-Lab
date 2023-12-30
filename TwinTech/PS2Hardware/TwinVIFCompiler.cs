@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 
 namespace Twinsanity.PS2Hardware
@@ -71,40 +72,44 @@ namespace Twinsanity.PS2Hardware
             BlendFace
         }
 
-        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<Boolean> conns)
+        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<Boolean> conns, UInt32 minSkinCoord)
         {
             this.format = format;
             this.vectorData = data;
             this.conns = conns;
 
-            minSkinCoord = UInt32.MaxValue;
-            if (format != ModelFormat.BlendFace)
+            this.minSkinCoord = UInt32.MaxValue;
+            if (format != ModelFormat.BlendFace && minSkinCoord == 0)
             {
                 foreach (var vec in this.vectorData[1])
                 {
                     var binX = vec.GetBinaryX();
                     var binY = vec.GetBinaryY();
                     var binZ = vec.GetBinaryZ();
-                    if (binX < minSkinCoord && binX > 0)
+                    if (binX < this.minSkinCoord && binX > 0)
                     {
-                        minSkinCoord = binX;
+                        this.minSkinCoord = binX;
                     }
-                    if (binY < minSkinCoord && binY > 0)
+                    if (binY < this.minSkinCoord && binY > 0)
                     {
-                        minSkinCoord = binY;
+                        this.minSkinCoord = binY;
                     }
-                    if (binZ < minSkinCoord && binZ > 0)
+                    if (binZ < this.minSkinCoord && binZ > 0)
                     {
-                        minSkinCoord = binZ;
+                        this.minSkinCoord = binZ;
                     }
                 }
+            }
+            else if (minSkinCoord != 0)
+            {
+                this.minSkinCoord = minSkinCoord;
             }
         }
 
         /// <summary>
         /// Special constructor for compiling models to indicate if normals or emit colors are missing
         /// </summary>
-        public TwinVIFCompiler(List<List<Vector4>> data, List<Boolean> conns, Boolean hasNormals, Boolean hasEmitColors) : this(ModelFormat.Model, data, conns)
+        public TwinVIFCompiler(List<List<Vector4>> data, List<Boolean> conns, Boolean hasNormals, Boolean hasEmitColors) : this(ModelFormat.Model, data, conns, 0)
         {
             this.hasNormals = hasNormals;
             this.hasEmitColors = hasEmitColors;

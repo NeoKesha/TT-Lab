@@ -12,6 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 {
     public class PS2AnyBlendSkin : BaseTwinItem, ITwinBlendSkin
     {
+        public UInt32 CompileScale { get; set; }
         public Int32 BlendsAmount { get; set; }
         public List<ITwinSubBlendSkin> SubBlends { get; set; }
 
@@ -52,6 +53,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             base.Compile();
             foreach (var subBlend in SubBlends)
             {
+                subBlend.CompileScale = CompileScale;
                 subBlend.Compile();
             }
         }

@@ -24,6 +24,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             // TODO: Figure out the indexing
         }
 
+        public UInt32 GetMinSkinCoord()
+        {
+            return 0;
+        }
+
         public Int32 GetLength()
         {
             return 16 + groupList.Count * 4 + Vertexes.Count * 0x1C;
