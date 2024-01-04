@@ -18,7 +18,7 @@ namespace TT_Lab.Assets.Code
 
         public BehaviourCommandsSequence() { }
 
-        public BehaviourCommandsSequence(LabURI package, String? variant, UInt32 id, String Name, PS2BehaviourCommandsSequence codeModel) : base(id, Name, package, variant)
+        public BehaviourCommandsSequence(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, PS2BehaviourCommandsSequence codeModel) : base(id, Name, package, needVariant, variant)
         {
             assetData = new BehaviourCommandsSequenceData(codeModel);
             assetData.Import(package, variant, LayoutID);

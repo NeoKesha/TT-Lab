@@ -65,7 +65,7 @@ namespace TT_Lab.Assets
             }
         }
 
-        protected Folder(LabURI package, String? variant, UInt32 id, String Name) : base(id, Name, package, variant)
+        protected Folder(LabURI package, String? variant, UInt32 id, String Name) : base(id, Name, package, variant != null, variant ?? "")
         {
             IsLoaded = true;
             SkipExport = true;

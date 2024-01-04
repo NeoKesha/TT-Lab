@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Global
 
         public PSM() { }
 
-        public PSM(LabURI package, String? variant, String name, ITwinPSM psm) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public PSM(LabURI package, Boolean needVariant, String variant, String name, ITwinPSM psm) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new PSMData(psm);
         }

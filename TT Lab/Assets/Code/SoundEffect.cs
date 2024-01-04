@@ -29,7 +29,7 @@ namespace TT_Lab.Assets.Code
 
         public SoundEffect() { }
 
-        public SoundEffect(LabURI package, String? variant, UInt32 id, String Name, ITwinSound sound) : base(id, Name, package, variant)
+        public SoundEffect(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinSound sound) : base(id, Name, package, needVariant, variant)
         {
             assetData = new SoundEffectData(sound);
             Header = sound.Header;

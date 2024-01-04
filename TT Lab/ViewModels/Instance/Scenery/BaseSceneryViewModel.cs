@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using TT_Lab.AssetData.Instance.Scenery;
 using TT_Lab.Assets;
-using TT_Lab.Util;
 
 namespace TT_Lab.ViewModels.Instance.Scenery
 {

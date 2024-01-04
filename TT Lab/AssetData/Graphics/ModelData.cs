@@ -28,6 +28,7 @@ namespace TT_Lab.AssetData.Graphics
         {
             Vertexes = new List<List<Vertex>>();
             Faces = new List<List<IndexedFace>>();
+            Meshes = new List<MeshProcessor.Mesh>();
         }
 
         public ModelData(ITwinModel model) : this()
@@ -37,6 +38,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public List<List<Vertex>> Vertexes { get; set; }
         public List<List<IndexedFace>> Faces { get; set; }
+        public List<MeshProcessor.Mesh> Meshes { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
@@ -44,6 +46,8 @@ namespace TT_Lab.AssetData.Graphics
             Vertexes.Clear();
             Faces.ForEach(fl => fl.Clear());
             Faces.Clear();
+            Meshes.ForEach(m => m.Clear());
+            Meshes.Clear();
         }
 
         public override void Save(string dataPath, JsonSerializerSettings? settings = null)
@@ -219,6 +223,7 @@ namespace TT_Lab.AssetData.Graphics
         {
             Vertexes.Clear();
             Faces.Clear();
+            Meshes.Clear();
             var model = ModelRoot.Load(dataPath);
 
             foreach (var mesh in model.LogicalMeshes)
@@ -253,6 +258,13 @@ namespace TT_Lab.AssetData.Graphics
                 }
                 Vertexes.Add(submodel);
                 Faces.Add(faces);
+            }
+
+            for (var i = 0; i < Vertexes.Count; ++i)
+            {
+                var mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes[i], Faces[i]);
+                MeshProcessor.MeshProcessor.ProcessMesh(mesh);
+                Meshes.Add(mesh);
             }
         }
 
@@ -305,7 +317,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            return factory.GenerateModel(Vertexes, Faces);
+            return factory.GenerateModel(Meshes);
         }
     }
 }

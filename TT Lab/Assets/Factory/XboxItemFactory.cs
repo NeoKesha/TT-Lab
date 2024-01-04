@@ -93,7 +93,7 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces)
+        public ITwinModel GenerateModel(List<MeshProcessor.Mesh> meshes)
         {
             throw new NotImplementedException();
         }

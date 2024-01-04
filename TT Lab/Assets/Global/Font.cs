@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Global
 
         public Font() { }
 
-        public Font(LabURI package, String? variant, String name, ITwinPSF psf) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public Font(LabURI package, Boolean needVariant, String variant, String name, ITwinPSF psf) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new FontData(psf);
         }

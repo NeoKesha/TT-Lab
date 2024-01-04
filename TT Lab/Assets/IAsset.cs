@@ -32,37 +32,37 @@ namespace TT_Lab.Assets
         /// In case of Twinsanity ID collisions the distinct category asset belongs to
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string? Variation { get; set; }
+        String Variation { get; set; }
 
         /// <summary>
         /// Asset's name
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        string Name { get; set; }
+        String Name { get; set; }
 
         /// <summary>
         /// Whether asset's data is in raw form
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        bool Raw { get; set; }
+        Boolean Raw { get; set; }
 
         /// <summary>
         /// Path to asset's data
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string Data { get; set; }
+        String Data { get; set; }
 
         /// <summary>
         /// Name for the asset to display in project tree
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string Alias { get; set; }
+        String Alias { get; set; }
 
         /// <summary>
         /// Chunk path where this asset belongs to
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string Chunk { get; }
+        String Chunk { get; }
 
         /// <summary>
         /// Resources unique URI to be accessed from around the project
@@ -100,7 +100,7 @@ namespace TT_Lab.Assets
         /// If asset shouldn't be exported during game's build stage
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        public Boolean SkipExport { get; set; }
+        Boolean SkipExport { get; set; }
 
         /// <summary>
         /// 
@@ -178,7 +178,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Regenerates the URI if package, subpackage or variation was changed
         /// </summary>
-        void RegenerateURI();
+        void RegenerateURI(Boolean needVariant);
 
         /// <summary>
         /// Dump on disk in JSON format
@@ -188,7 +188,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Convert JSON format to the project asset object
         /// </summary>
-        void Deserialize(string json);
+        void Deserialize(String json);
 
         /// <summary>
         /// Called if asset needs to do anything else after being deserialized

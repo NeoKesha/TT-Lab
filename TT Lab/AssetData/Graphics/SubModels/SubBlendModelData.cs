@@ -13,6 +13,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         public List<SubBlendFaceData> BlendFaces { get; set; } = new();
         public List<IndexedFace> Faces { get; set; } = new();
         public List<Vertex> Vertexes { get; set; } = new();
+        public MeshProcessor.Mesh Mesh { get; set; }
 
         public SubBlendModelData(ITwinBlendSkinModel model)
         {
@@ -47,6 +48,9 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                     JointInfo = CloneUtils.Clone(model.SkinJoints[i])
                 });
             }
+
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
         }
 
         public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, List<List<System.Numerics.Vector3>> morphTargets)
@@ -54,6 +58,8 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             BlendShape = blendShape;
             Vertexes = vertexes;
             Faces = faces;
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
 
             foreach (var morph in morphTargets)
             {
@@ -67,6 +73,8 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             BlendShape = blendShape;
             Vertexes = vertexes;
             Faces = faces;
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
 
             foreach (var morph in morphTargets)
             {

@@ -165,7 +165,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         private String DebuggerDisplay
         {
-            get => $"x = {X}, y = {Y}, z = {Z}, W = {W}; BinX = {GetBinaryX()}, BinY = {GetBinaryY()}, BinZ = {GetBinaryZ()}, BinW = {GetBinaryW()}";
+            get => $"x,y,z,w = {X},{Y},{Z},{W}; BinX, BinY, BinZ, BinW = {GetBinaryX():X}, {GetBinaryY():X}, {GetBinaryZ():X}, {GetBinaryW():X}";
         }
     }
 }

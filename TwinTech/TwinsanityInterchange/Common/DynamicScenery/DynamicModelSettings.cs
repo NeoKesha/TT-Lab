@@ -8,6 +8,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
     public class DynamicModelSettings : ITwinSerializable
     {
         UInt16 flags;
+        public UInt16 UnknownValue { get; set; }
         public UInt16 UnusedRotationRelatedParameter { get; set; }
 
         UInt16 transformationChoice;
@@ -36,7 +37,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
         {
             flags = reader.ReadUInt16();
             {
-                UnusedRotationRelatedParameter = (UInt16)(flags >> 0x8 & 0xf);
+                UnknownValue = (UInt16)(flags & 0xFF);
+                UnusedRotationRelatedParameter = (UInt16)((flags >> 0x8) & 0xf);
             }
             transformationChoice = reader.ReadUInt16();
             {
@@ -54,7 +56,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 
         public void Write(BinaryWriter writer)
         {
-            flags = (UInt16)(UnusedRotationRelatedParameter & 0xf << 0x8);
+            flags = UnknownValue;
+            flags |= (UInt16)((UnusedRotationRelatedParameter & 0xf) << 0x8);
             writer.Write(flags);
 
             UInt16 newTransformationChoice = (UInt16)TranslateX;

@@ -8,7 +8,7 @@ namespace TT_Lab.Assets.Code
     {
         public override UInt32 Section => Constants.CODE_LANG_FRE_SECTION;
         public SoundEffectFR() : base() { }
-        public SoundEffectFR(LabURI package, String? variant, UInt32 id, String Name, ITwinSound sound) : base(package, variant, id, Name, sound)
+        public SoundEffectFR(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinSound sound) : base(package, needVariant, variant, id, Name, sound)
         {
         }
     }

@@ -41,7 +41,7 @@ namespace TT_Lab.AssetData.Global
             for (Int32 i = 0; i < frontend.GetItemsAmount(); i++)
             {
                 var sound = frontend.GetItem<ITwinSound>(frontend.GetItem(i).GetID());
-                var soundImport = new SoundEffect(package, $"{sound.GetName()}_ui_sfx_{i}", sound.GetID(), $"{sound.GetName()}_ui_sfx_{i}", sound);
+                var soundImport = new SoundEffect(package, true, $"{sound.GetName()}_ui_sfx_{i}", sound.GetID(), $"{sound.GetName()}_ui_sfx_{i}", sound);
                 AssetManager.Get().AddAssetToImport(soundImport);
                 UiSounds.Add(soundImport.URI);
             }

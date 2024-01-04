@@ -245,7 +245,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
             if (HasInstanceProperties)
             {
-                newBitfield |= 0x20000000;
+                // If object has instance properties it means we have to mark that the instance properties have also been loaded
+                newBitfield |= 0x30000000;
             }
             UInt32 objType = (UInt32)(type << 0x14);
             UInt32 objTypeRelVal = (UInt32)(UnkTypeValue << 0xC);

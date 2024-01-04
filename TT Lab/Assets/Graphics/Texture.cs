@@ -22,7 +22,7 @@ namespace TT_Lab.Assets.Graphics
         [JsonProperty(Required = Required.Always)]
         public Boolean GenerateMipmaps { get; set; }
 
-        public Texture(LabURI package, String? variant, UInt32 id, String name, ITwinTexture texture) : base(id, name, package, variant)
+        public Texture(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinTexture texture) : base(id, name, package, needVariant, variant)
         {
             assetData = new TextureData(texture);
             Raw = false;

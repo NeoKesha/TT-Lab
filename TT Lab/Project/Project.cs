@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TT_Lab.AssetData;
-using TT_Lab.AssetData.Global;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -494,7 +493,7 @@ namespace TT_Lab.Project
                     {
                         using System.IO.StreamReader textReader = new(ms);
                         var text = textReader.ReadToEnd();
-                        var textFile = new TextFile(GlobalPackagePS2.URI, pathLow, resourceName, text);
+                        var textFile = new TextFile(GlobalPackagePS2.URI, true, pathLow, resourceName, text);
                         assets.Add(textFile.URI, textFile);
                         prevFolder.AddChild(textFile);
                         continue;
@@ -507,7 +506,7 @@ namespace TT_Lab.Project
                     {
                         var font = new PS2PSF();
                         font.Read(globalReader, (Int32)globalReader.BaseStream.Length);
-                        var fontAsset = new Font(GlobalPackagePS2.URI, pathLow, resourceName, font);
+                        var fontAsset = new Font(GlobalPackagePS2.URI, true, pathLow, resourceName, font);
                         assets.Add(fontAsset.URI, fontAsset);
                         prevFolder.AddChild(fontAsset);
                         continue;
@@ -518,7 +517,7 @@ namespace TT_Lab.Project
                     {
                         var psm = new PS2PSM();
                         psm.Read(globalReader, (Int32)globalReader.BaseStream.Length);
-                        var psmAsset = new PSM(GlobalPackagePS2.URI, pathLow, resourceName, psm);
+                        var psmAsset = new PSM(GlobalPackagePS2.URI, true, pathLow, resourceName, psm);
                         assets.Add(psmAsset.URI, psmAsset);
                         prevFolder.AddChild(psmAsset);
                         continue;
@@ -529,7 +528,7 @@ namespace TT_Lab.Project
                     {
                         var ptc = new PS2PTC();
                         ptc.Read(globalReader, (Int32)globalReader.BaseStream.Length);
-                        var ptcAsset = new PTC(GlobalPackagePS2.URI, pathLow, resourceName, ptc);
+                        var ptcAsset = new PTC(GlobalPackagePS2.URI, true, pathLow, resourceName, ptc);
                         assets.Add(ptcAsset.URI, ptcAsset);
                         prevFolder.AddChild(ptcAsset);
                         continue;
@@ -538,7 +537,7 @@ namespace TT_Lab.Project
                     // Check for Save Icon
                     if (isIco)
                     {
-                        var ico = new SaveIcon(GlobalPackagePS2.URI, null, resourceName, item.Data);
+                        var ico = new SaveIcon(GlobalPackagePS2.URI, false, "", resourceName, item.Data);
                         assets.Add(ico.URI, ico);
                         prevFolder.AddChild(ico);
                         continue;
@@ -549,7 +548,7 @@ namespace TT_Lab.Project
                     {
                         var frontend = new PS2Frontend();
                         frontend.Read(globalReader, (Int32)globalReader.BaseStream.Length);
-                        var uiLibrary = new UiSoundLibrary(GlobalPackagePS2.URI, null, "Frontend", frontend)
+                        var uiLibrary = new UiSoundLibrary(GlobalPackagePS2.URI, false, "", "Frontend", frontend)
                         {
                             Alias = "UI Sound Library"
                         };
@@ -676,7 +675,7 @@ namespace TT_Lab.Project
                                 // TODO: Add dupes addition
                             }
                             var package = isDefault ? GlobalPackagePS2 : ps2Package;
-                            var metaAsset = (IAsset?)Activator.CreateInstance(type, package.URI, needVariant ? chunkPath : null,
+                            var metaAsset = (IAsset?)Activator.CreateInstance(type, package.URI, needVariant, chunkPath,
                                 asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                             if (!isHeader)
                             {
@@ -1164,7 +1163,7 @@ namespace TT_Lab.Project
                     }
                     continue;
                 }
-                if (!hasHash)
+                if (!hasHash && !isDefault)
                 {
                     checker.Add(asset.GetHash(), asset.GetID());
                 }
@@ -1177,7 +1176,7 @@ namespace TT_Lab.Project
                     // TODO: Add dupes addition
                 }
                 var package = isDefault ? GlobalPackagePS2 : Ps2Package;
-                var metaAsset = (T?)Activator.CreateInstance(typeof(T), package.URI, needVariant ? chunkName : null, asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
+                var metaAsset = (T?)Activator.CreateInstance(typeof(T), package.URI, needVariant, chunkName, asset.GetID(), asset.GetName(), asset) ?? throw new ProjectException($"Could not read asset {asset.GetName()} with ID {asset.GetID()}");
                 folder.AddChild(metaAsset);
                 assets.Add(metaAsset.URI, metaAsset);
             }

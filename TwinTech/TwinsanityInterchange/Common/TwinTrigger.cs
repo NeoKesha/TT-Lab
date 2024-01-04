@@ -27,7 +27,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public int GetLength()
         {
-            return 16 + Position.GetLength() + Rotation.GetLength() + Scale.GetLength() + 8 + Instances.Count * Constants.SIZE_UINT16;
+            return 12 + Position.GetLength() + Rotation.GetLength() + Scale.GetLength() + 12 + Instances.Count * Constants.SIZE_UINT16;
         }
 
         public void Compile()

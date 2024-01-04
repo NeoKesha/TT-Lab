@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Code
 
         public GameObject() { }
 
-        public GameObject(LabURI package, String? variant, UInt32 id, String Name, ITwinObject @object) : base(id, Name, package, variant)
+        public GameObject(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinObject @object) : base(id, Name, package, needVariant, variant)
         {
             assetData = new GameObjectData(@object);
         }

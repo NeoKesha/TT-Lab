@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Graphics
     {
         public override UInt32 Section => Constants.GRAPHICS_LODS_SECTION;
 
-        public LodModel(LabURI package, String? variant, UInt32 id, String Name, ITwinLOD lod) : base(id, Name, package, variant)
+        public LodModel(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinLOD lod) : base(id, Name, package, needVariant, variant)
         {
             assetData = new LodModelData(lod);
         }

@@ -60,7 +60,7 @@ namespace Twinsanity.PS2Hardware
                 Immediate |= (1 << 14);
                 return;
             }
-            
+
             Immediate &= unchecked((UInt16)(~(1U << 14)));
         }
 

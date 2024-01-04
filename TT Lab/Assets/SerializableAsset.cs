@@ -34,7 +34,7 @@ namespace TT_Lab.Assets
         public Dictionary<String, Object?> Parameters { get; set; } = new();
         public LabURI URI { get; set; }
         public LabURI Package { get; set; }
-        public String? Variation { get; set; }
+        public String Variation { get; set; }
 
         private bool resolveTraversed = false;
 
@@ -53,18 +53,18 @@ namespace TT_Lab.Assets
             Type = GetType();
         }
 
-        public SerializableAsset(UInt32 id, String name, LabURI package, String? variant) : this(id, name)
+        public SerializableAsset(UInt32 id, String name, LabURI package, Boolean needVariant, String variant) : this(id, name)
         {
             Package = package;
             Variation = variant;
-            var variantPath = Variation == null ? "" : Variation.Replace("\\", "_").Replace("/", "_");
+            var variantPath = needVariant ? Variation.Replace("\\", "_").Replace("/", "_") : "";
             Data = $"{Name.Replace("/", "_").Replace("\\", "_")}_{variantPath}{DataExt}";
-            RegenerateURI();
+            RegenerateURI(needVariant);
         }
 
-        public void RegenerateURI()
+        public void RegenerateURI(Boolean needVariant)
         {
-            var variantAddition = Variation == null ? "" : $"/{Variation}";
+            var variantAddition = needVariant ? $"/{Variation}" : "";
             var layoutId = LayoutID == null ? "" : $"/{LayoutID}";
             URI = new LabURI($"{Package}/{Type.Name}/{ID}{variantAddition}{layoutId}");
         }

@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Code
         public override UInt32 Section => Constants.CODE_ANIMATIONS_SECTION;
         public Animation() { }
 
-        public Animation(LabURI package, String? variant, UInt32 id, String Name, ITwinAnimation animation) : base(id, Name, package, variant)
+        public Animation(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinAnimation animation) : base(id, Name, package, needVariant, variant)
         {
             assetData = new AnimationData(animation);
         }

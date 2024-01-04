@@ -1,7 +1,6 @@
 ﻿using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TT_Lab.Assets;
 using TT_Lab.Util;

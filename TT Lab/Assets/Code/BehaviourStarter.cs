@@ -12,10 +12,10 @@ namespace TT_Lab.Assets.Code
         protected override String DataExt => ".data";
         public BehaviourStarter() { }
 
-        public BehaviourStarter(LabURI package, String? variant, UInt32 id, String name, TwinBehaviourStarter script) : base(package, variant, id, name)
+        public BehaviourStarter(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, TwinBehaviourStarter script) : base(package, needVariant, variant, id, name)
         {
             assetData = new BehaviourStarterData(script);
-            RegenerateURI();
+            RegenerateURI(needVariant);
         }
 
         public override Byte[] ToFormat()

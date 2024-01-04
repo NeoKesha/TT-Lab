@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Global
 
         public TextFile() { }
 
-        public TextFile(LabURI package, String? variant, String name, String data) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public TextFile(LabURI package, Boolean needVariant, String variant, String name, String data) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new TextFileData(data);
         }

@@ -21,7 +21,7 @@ namespace TT_Lab.Assets.Global
         {
         }
 
-        public SaveIcon(LabURI package, String? variant, String name, Byte[] data) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public SaveIcon(LabURI package, Boolean needVariant, String variant, String name, Byte[] data) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new SaveIconData(data);
         }

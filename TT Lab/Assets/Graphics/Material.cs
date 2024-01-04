@@ -13,7 +13,7 @@ namespace TT_Lab.Assets.Graphics
     {
         public override UInt32 Section => Constants.GRAPHICS_MATERIALS_SECTION;
 
-        public Material(LabURI package, String? variant, UInt32 id, String name, ITwinMaterial material) : base(id, name, package, variant)
+        public Material(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinMaterial material) : base(id, name, package, needVariant, variant)
         {
             assetData = new MaterialData(material);
         }

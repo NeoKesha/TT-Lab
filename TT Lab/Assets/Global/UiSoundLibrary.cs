@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Global
 
         public UiSoundLibrary() { }
 
-        public UiSoundLibrary(LabURI package, String? variant, String name, ITwinSection frontend) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public UiSoundLibrary(LabURI package, Boolean needVariant, String variant, String name, ITwinSection frontend) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new UiSoundLibraryData(frontend);
         }

@@ -14,7 +14,7 @@ namespace TT_Lab.Assets.Graphics
 
         public Skin() { }
 
-        public Skin(LabURI package, String? variant, UInt32 id, String name, ITwinSkin skin) : base(id, name, package, variant)
+        public Skin(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinSkin skin) : base(id, name, package, needVariant, variant)
         {
             assetData = new SkinData(skin);
             Raw = false;

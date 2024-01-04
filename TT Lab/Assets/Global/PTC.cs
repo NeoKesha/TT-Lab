@@ -13,7 +13,7 @@ namespace TT_Lab.Assets.Global
 
         public PTC() { }
 
-        public PTC(LabURI package, String? variant, String name, ITwinPTC ptc) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public PTC(LabURI package, Boolean needVariant, String variant, String name, ITwinPTC ptc) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new PTCData(ptc);
         }
