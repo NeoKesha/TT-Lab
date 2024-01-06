@@ -9,7 +9,11 @@ namespace Twinsanity.Libraries
         static public string GetStringInBetween(String src, String str1, String str2)
         {
             int pos1 = src.IndexOf(str1) + str1.Length - 1;
-            int pos2 = src.IndexOf(str2);
+            int pos2 = src.IndexOf(str2, pos1 + 1);
+            if (pos2 == -1)
+            {
+                return String.Empty;
+            }
             return src.Substring(pos1 + 1, pos2 - pos1 - 1);
         }
         static public string GetStringAfter(String src, String str)

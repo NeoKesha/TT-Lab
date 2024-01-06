@@ -29,6 +29,14 @@ namespace TT_Lab.Rendering.Buffers
             GL.EnableVertexAttribArray(attributeIndex);
         }
 
+        public void SetDataArray(uint attributeIndex, float[] rawData, bool isNormalised, int stride)
+        {
+            //  Set the data, specify its shape and assign it to a vertex attribute (so shaders can bind to it).
+            GL.BufferData(BufferTarget.ArrayBuffer, rawData.Length * sizeof(float), rawData, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(attributeIndex, stride, VertexAttribPointerType.Float, isNormalised, 0, IntPtr.Zero);
+            GL.EnableVertexArrayAttrib(vertexBufferObject, attributeIndex);
+        }
+
         public void SetData(uint attributeIndex, Vector3[] data, bool isNormalised, int stride)
         {
             //  Set the data, specify its shape and assign it to a vertex attribute (so shaders can bind to it).

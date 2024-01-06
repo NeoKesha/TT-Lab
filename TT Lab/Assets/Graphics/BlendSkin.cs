@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
@@ -31,7 +32,7 @@ namespace TT_Lab.Assets.Graphics
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
+            return typeof(BlendSkinModelEditor);
         }
 
         public override void PostResolveResources(Factory.ITwinItemFactory factory, ITwinSection section, ITwinItem? item)

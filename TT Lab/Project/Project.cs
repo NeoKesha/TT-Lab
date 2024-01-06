@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TT_Lab.AssetData;
+using TT_Lab.AssetData.Global;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -891,7 +892,7 @@ namespace TT_Lab.Project
             UInt32 currentSceneCount = 0;
             ResolveAndWriteChunks(factory, chunksFolder, ref totalScenes, ref currentSceneCount);
 
-            /*Log.WriteLine("Writing Extras...");
+            Log.WriteLine("Writing Extras...");
             System.IO.Directory.SetCurrentDirectory("../Extras");
 
             var extrasFolders = (from asset in GlobalPackagePS2.GetData().To<FolderData>().Children
@@ -1005,7 +1006,7 @@ namespace TT_Lab.Project
                     }
                 }
                 System.IO.Directory.SetCurrentDirectory("..");
-            }*/
+            }
 
             System.IO.Directory.SetCurrentDirectory("../Startup");
             Log.WriteLine("Writing Startup...");
@@ -1040,7 +1041,7 @@ namespace TT_Lab.Project
             defaultWriter.Flush();
             defaultWriter.Close();
 
-            /*foreach (var asset in startupAssets)
+            foreach (var asset in startupAssets)
             {
                 Log.WriteLine($"Writing {asset.Name}...");
                 if (asset.Name == "LevelSelect")
@@ -1070,7 +1071,7 @@ namespace TT_Lab.Project
                 var font = assetManager.GetAsset(fontUri);
                 Log.WriteLine($"Writing {font.Name}...");
                 font.ExportToFile(factory);
-            }*/
+            }
 
             System.IO.Directory.SetCurrentDirectory("../../..");
             Log.WriteLine("Finished writing test files!");
