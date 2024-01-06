@@ -44,6 +44,29 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
+        public UInt32 GetMinSkinCoord()
+        {
+            var minSkinCoord = UInt32.MaxValue;
+            foreach (var submodel in SubModels)
+            {
+                if (submodel.GetMinSkinCoord() < minSkinCoord)
+                {
+                    minSkinCoord = submodel.GetMinSkinCoord();
+                }
+            }
+
+            return minSkinCoord;
+        }
+
+        public override void Compile()
+        {
+            base.Compile();
+            foreach (var subModel in SubModels)
+            {
+                subModel.Compile();
+            }
+        }
+
         public override String GetName()
         {
             return $"Model {id:X}";

@@ -7,9 +7,12 @@ namespace TT_Lab.Assets.Global
 {
     public class Font : SerializableAsset
     {
+        protected override String TwinDataExt => "psf";
+        public override UInt32 Section => throw new NotImplementedException();
+
         public Font() { }
 
-        public Font(LabURI package, String? variant, String name, ITwinPSF psf) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public Font(LabURI package, Boolean needVariant, String variant, String name, ITwinPSF psf) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new FontData(psf);
         }
@@ -23,6 +26,17 @@ namespace TT_Lab.Assets.Global
                 IsLoaded = true;
             }
             return assetData;
+        }
+
+        public override void PreResolveResources()
+        {
+            base.PreResolveResources();
+            var assetManager = AssetManager.Get();
+            FontData data = (FontData)GetData();
+            foreach (var page in data.FontPages)
+            {
+                assetManager.GetAsset<PTC>(page).PreResolveResources();
+            }
         }
 
         public override Type GetEditorType()

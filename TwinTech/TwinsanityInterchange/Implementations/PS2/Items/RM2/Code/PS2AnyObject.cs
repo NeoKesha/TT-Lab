@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -23,7 +24,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
         public Byte UnkTypeValue { get; set; }
         public Byte ReactJointAmount { get; set; }
         public Byte ExitPointAmount { get; set; }
-        public Byte[] SlotsMap { get; set; }
         public String Name { get; set; }
         public List<TwinObjectTriggerBehaviour> TriggerBehaviours { get; set; }
         public List<UInt16> OGISlots { get; set; }
@@ -64,7 +64,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public PS2AnyObject()
         {
-            SlotsMap = new Byte[8];
             TriggerBehaviours = new List<TwinObjectTriggerBehaviour>();
             OGISlots = new List<UInt16>();
             AnimationSlots = new List<UInt16>();
@@ -134,6 +133,20 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
                 InstIntegers.Count * Constants.SIZE_UINT32 : 0) + resourcesLength + BehaviourPack.GetLength();
         }
 
+        public override void ComputeHash(Stream stream, UInt32 length)
+        {
+            var startPos = stream.Position;
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            var reader = new BinaryReader(stream);
+            Read(reader, (Int32)length);
+            WriteInternal(writer, writeName: false);
+            ms.Position = 0;
+            base.ComputeHash(ms, (UInt32)ms.Length);
+
+            stream.Position = startPos;
+        }
+
         public override void Read(BinaryReader reader, int length)
         {
             var bitfield = reader.ReadUInt32();
@@ -144,9 +157,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
             var hasInstProps = (bitfield & 0x20000000) != 0;
             var refRes = (bitfield & 0x40000000) != 0;
+            // Slots map skipped
             for (var i = 0; i < 8; ++i)
             {
-                SlotsMap[i] = reader.ReadByte();
+                reader.ReadByte();
             }
             var strLen = reader.ReadInt32();
             Name = new String(reader.ReadChars(strLen));
@@ -219,6 +233,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override void Write(BinaryWriter writer)
         {
+            WriteInternal(writer);
+        }
+
+        private void WriteInternal(BinaryWriter writer, bool writeName = true)
+        {
             UInt32 newBitfield = ExitPointAmount;
             if (ReferencesResources)
             {
@@ -226,18 +245,33 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
             }
             if (HasInstanceProperties)
             {
-                newBitfield |= 0x20000000;
+                // If object has instance properties it means we have to mark that the instance properties have also been loaded
+                newBitfield |= 0x30000000;
             }
             UInt32 objType = (UInt32)(type << 0x14);
             UInt32 objTypeRelVal = (UInt32)(UnkTypeValue << 0xC);
-            UInt32 unkOgiArraySize = (UInt32)(ReactJointAmount & 0x3F << 0x6);
+            UInt32 unkOgiArraySize = (UInt32)((ReactJointAmount & 0x3F) << 0x6);
             newBitfield |= objType;
             newBitfield |= objTypeRelVal;
             newBitfield |= unkOgiArraySize;
             writer.Write(newBitfield);
-            writer.Write(SlotsMap);
-            writer.Write(Name.Length);
-            writer.Write(Name.ToCharArray(), 0, Name.Length);
+            var slotsMap = new Byte[8];
+            Debug.Assert(OGISlots.Count == AnimationSlots.Count, "Amount of slots of OGIs and Animations must be equal");
+            slotsMap[0] = (Byte)OGISlots.Count;
+            slotsMap[1] = (Byte)BehaviourSlots.Count;
+            slotsMap[2] = (Byte)ObjectSlots.Count;
+            slotsMap[3] = (Byte)TriggerBehaviours.Count;
+            slotsMap[4] = (Byte)SoundSlots.Count;
+            slotsMap[5] = 0;
+            slotsMap[6] = 0;
+            slotsMap[7] = 0;
+
+            writer.Write(slotsMap);
+            if (writeName)
+            {
+                writer.Write(Name.Length);
+                writer.Write(Name.ToCharArray(), 0, Name.Length);
+            }
 
             {
                 writer.Write(TriggerBehaviours.Count);
@@ -367,7 +401,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code
 
         public override String GetName()
         {
-            return Name.Replace("|", "_");
+            return $"{Name.Replace("|", "_")}_{id:X}";
         }
     }
 }

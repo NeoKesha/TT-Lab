@@ -6,6 +6,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items
 {
     public interface ITwinBlendSkin : ITwinItem
     {
+        public UInt32 CompileScale { get; set; }
         /// <summary>
         /// Amount of blends/morphs
         /// </summary>

@@ -58,7 +58,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             MipLevelsTBW = new int[6];
             ClutBufferBasePointer = 0;
             UnkBytes1 = new byte[2];
-            UnkBytes2 = new byte[8] { 0, 0, 0, 0, 224, 0, 2, 0 };
+            UnkBytes2 = new byte[4] { 224, 0, 2, 0 };
             UnkBytes3 = new byte[2] { 0, 2 };
             UnusedMetadata = new byte[32];
             UnusedMetadata[0] = 31;
@@ -99,7 +99,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 MipLevelsTBW[i] = reader.ReadInt32();
             }
             ClutBufferBasePointer = reader.ReadInt32();
-            UnkBytes2 = reader.ReadBytes(8);
+            reader.ReadInt32(); // CLUT buffer width, always 1 meaning always 64
+            UnkBytes2 = reader.ReadBytes(4);
             reader.ReadInt32(); // Reserved
             reader.ReadInt32(); // Reserved
             UnkBytes3 = reader.ReadBytes(2);
@@ -132,6 +133,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 writer.Write(MipLevelsTBW[i]);
             }
             writer.Write(ClutBufferBasePointer);
+            writer.Write(1); // CLUT buffer width
             writer.Write(UnkBytes2);
             writer.Write(0); // Reserved
             writer.Write(0); // Reserved
@@ -187,7 +189,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             }
         }
 
-        public void FromBitmap(List<Color> image, Int32 width, ITwinTexture.TextureFunction fun, ITwinTexture.TexturePixelFormat format)
+        public void FromBitmap(List<Color> image, Int32 width, ITwinTexture.TextureFunction fun, ITwinTexture.TexturePixelFormat format, bool generateMipmaps = false)
         {
             int height = image.Count / width;
             TexFun = fun;
@@ -195,24 +197,31 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             TextureBufferWidth = (int)Math.Ceiling(width / 64.0f);
             ImageWidthPower = (ushort)Math.Log2(width);
             ImageHeightPower = (ushort)Math.Log2(height);
-            if (width != 256)
+            if (width != 256 && generateMipmaps)
             {
                 TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
                 ClutBufferBasePointer = textureDescriptor.CBP;
                 MipLevelsTBP = textureDescriptor.MipTBP;
-                MipLevelsTBP = textureDescriptor.MipTBP;
+                MipLevelsTBW = textureDescriptor.MipTBW;
                 MipLevels = (byte)textureDescriptor.MipLevels;
             }
             else
             {
                 ClutBufferBasePointer = 0;
                 MipLevelsTBP = new Int32[6];
-                MipLevelsTBP = new Int32[6];
+                MipLevelsTBW = new Int32[6];
                 MipLevels = 1;
             }
+
+            if (format == ITwinTexture.TexturePixelFormat.PSMT8 && !generateMipmaps)
+            {
+                TextureDescriptor textureDescriptor = TextureDescriptorHelper[$"{width}x{height}"];
+                ClutBufferBasePointer = textureDescriptor.CBP;
+            }
+
             //this is probably not bytes but whatever
-            UnkBytes2[5] = UnkBytes3[0] = (Byte)((width == 256) ? 0 : (byte)Math.Min(width, height));
-            UnkBytes2[6] = UnkBytes3[1] = (Byte)((width == 256) ? 2 : 0);
+            UnkBytes2[1] = UnkBytes3[0] = (Byte)((width == 256) ? 0 : (byte)Math.Min(width, height));
+            UnkBytes2[2] = UnkBytes3[1] = (Byte)((width == 256) ? 2 : 0);
 
             GIFTag headerTag = new GIFTag();
             headerTag.REGS = new REGSEnum[16];
@@ -291,6 +300,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 ulong low = (ulong)textureDescriptor.RRW;
                 head2.Output = (high << 32) | (low);
                 byte[] rawTextureData = new byte[textureDescriptor.RRH * 256];
+                Array.Fill<byte>(rawTextureData, 0xFF);
 
                 EzSwizzle.writeTexPSMT8To(0, TextureBufferWidth, 0, 0, width, height, textureData, rawTextureData);
                 var prevData = textureData;
@@ -300,21 +310,28 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 {
                     mipWidth /= 2;
                     mipHeight /= 2;
-                    var mipData = new byte[prevData.Length / 4];
-                    for (var j = 0; j < mipData.Length; ++j)
+                    var mipData = new byte[mipWidth * mipHeight];
+                    for (var y = 0; y < mipHeight; ++y)
                     {
-                        mipData[j] = prevData[4 * j];
+                        for (var x = 0; x < mipWidth; ++x)
+                        {
+                            var prevWidth = mipWidth * 2;
+                            var srcX = x * 2;
+                            var srcY = y * 2;
+                            mipData[x + y * mipWidth] = prevData[srcX + srcY * prevWidth];
+                        }
                     }
-                    EzSwizzle.writeTexPSMT8To(textureDescriptor.MipTBP[i - 1], textureDescriptor.MipTBW[i - 1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
+                    EzSwizzle.writeTexPSMT8To(MipLevelsTBP[i - 1], MipLevelsTBW[i - 1], 0, 0, mipWidth, mipHeight, mipData, rawTextureData);
                     prevData = mipData;
                 }
                 EzSwizzle.writeTexPSMCT32To(ClutBufferBasePointer, 1, 0, 0, 16, 16, paletteData, rawTextureData);
                 byte[] gifData = EzSwizzle.readTexPSMCT32(0, 1, 0, 0, textureDescriptor.RRW, textureDescriptor.RRH, rawTextureData);
                 tag = EzSwizzle.ColorsToTag(EzSwizzle.BytesToColors(gifData));
             }
-            using (MemoryStream stream = new MemoryStream())
+
+            using MemoryStream stream = new();
+            using BinaryWriter writer = new(stream);
             {
-                BinaryWriter writer = new BinaryWriter(stream);
                 var QWC = (UInt64)headerTag.GetLength() + (UInt64)tag.GetLength() + 2;
                 UInt64 low = QWC;
                 low |= (UInt64)6 << 28;
@@ -328,6 +345,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
                 code2.Write(writer);
                 headerTag.Write(writer);
                 tag.Write(writer);
+                writer.Flush();
                 TextureData = stream.ToArray();
             }
         }

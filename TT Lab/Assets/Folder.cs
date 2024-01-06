@@ -1,18 +1,31 @@
 ﻿using System;
 using TT_Lab.AssetData;
+using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
     public class Folder : SerializableAsset
     {
-
+        public override UInt32 Section => throw new NotImplementedException();
         private static UInt32 rootOrder = 0;
         private UInt32 order = 0;
 
         public Folder()
         {
             IsLoaded = true;
+            SkipExport = true;
             assetData = new FolderData();
+        }
+
+        public static Folder CreatePackageFolder(Package package, String Name, String? variant = null)
+        {
+            return new Folder((LabURI)$"res://{package.Name}", Name, variant, package);
+        }
+
+        public static Folder CreatePackageFolder(Package package, String Name, Folder parent, String? variant = null)
+        {
+            return new Folder((LabURI)$"res://{package.Name}", Name, variant, parent);
         }
 
         public static Folder CreatePS2Folder(String Name, String? variant = null)
@@ -52,9 +65,10 @@ namespace TT_Lab.Assets
             }
         }
 
-        protected Folder(LabURI package, String? variant, UInt32 id, String Name) : base(id, Name, package, variant)
+        protected Folder(LabURI package, String? variant, UInt32 id, String Name) : base(id, Name, package, variant != null, variant ?? "")
         {
             IsLoaded = true;
+            SkipExport = true;
             assetData = new FolderData();
         }
 
@@ -85,10 +99,6 @@ namespace TT_Lab.Assets
             throw new NotImplementedException();
         }
 
-        internal UInt32 GetOrder()
-        {
-            return order++;
-        }
         public override AbstractAssetData GetData()
         {
             if (!IsLoaded || assetData.Disposed)
@@ -99,5 +109,21 @@ namespace TT_Lab.Assets
             }
             return assetData;
         }
+
+        public override void ResolveChunkResources(ITwinItemFactory factory, ITwinSection section)
+        {
+            var assetManager = AssetManager.Get();
+            foreach (var item in assetData.To<FolderData>().Children)
+            {
+                assetManager.GetAsset(item).ResolveChunkResources(factory, section);
+            }
+        }
+
+        internal UInt32 GetOrder()
+        {
+            return order++;
+        }
+
+
     }
 }

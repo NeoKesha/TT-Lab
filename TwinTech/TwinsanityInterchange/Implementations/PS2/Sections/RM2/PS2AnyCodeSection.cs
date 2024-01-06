@@ -1,6 +1,8 @@
-﻿using Twinsanity.TwinsanityInterchange.Enumerations;
+﻿using System.Linq;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2
 {
@@ -21,6 +23,18 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2
             idToClassDictionary.Add(Constants.CODE_LANG_SPA_SECTION, typeof(PS2AnySoundsSection));
             idToClassDictionary.Add(Constants.CODE_LANG_ITA_SECTION, typeof(PS2AnySoundsSection));
             idToClassDictionary.Add(Constants.CODE_LANG_JPN_SECTION, typeof(PS2AnySoundsSection));
+        }
+
+        protected override void PreprocessWrite()
+        {
+            base.PreprocessWrite();
+            foreach (var item in Items.Where(i => i is BaseTwinSection).Cast<BaseTwinSection>())
+            {
+                item.SortItems(delegate (ITwinItem item1, ITwinItem item2)
+                {
+                    return item1.GetID().CompareTo(item2.GetID());
+                });
+            }
         }
     }
 }

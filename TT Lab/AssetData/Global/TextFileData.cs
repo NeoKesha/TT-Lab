@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
-using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Global
@@ -24,10 +23,10 @@ namespace TT_Lab.AssetData.Global
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            return new BaseTwinItem();
+            throw new NotImplementedException();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             return;
         }
@@ -39,7 +38,7 @@ namespace TT_Lab.AssetData.Global
             writer.Write(Text.ToCharArray());
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using var fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read);
             using var reader = new StreamReader(fs);

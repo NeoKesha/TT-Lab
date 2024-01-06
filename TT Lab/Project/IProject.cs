@@ -26,6 +26,16 @@ namespace TT_Lab.Project
         Package BasePackage { get; }
 
         /// <summary>
+        /// Global package where all the PS2 resources that can be accessed globally are put
+        /// </summary>
+        Package GlobalPackagePS2 { get; }
+
+        /// <summary>
+        /// Global package where all the XBOX resources that can be accessed globally are put
+        /// </summary>
+        Package GlobalPackageXbox { get; }
+
+        /// <summary>
         /// PS2 assets package [optional]
         /// </summary>
         Package Ps2Package { get; }
@@ -93,6 +103,16 @@ namespace TT_Lab.Project
         /// Unpacks XBox assets data into project readable format
         /// </summary>
         void UnpackAssetsXbox();
+
+        /// <summary>
+        /// Packs all the assets back into Twinsanity's PS2 format
+        /// </summary>
+        void PackAssetsPS2();
+
+        /// <summary>
+        /// Packs all the assets back into Twinsanity's XBox format
+        /// </summary>
+        void PackAssetsXbox();
 
         /// <summary>
         /// Dump on disk in JSON format

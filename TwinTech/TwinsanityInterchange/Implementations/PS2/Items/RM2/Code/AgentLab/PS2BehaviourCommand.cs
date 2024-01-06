@@ -37,6 +37,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             return 4 + Arguments.Count * 4;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
@@ -194,7 +199,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             }
             else
             {
-                String cmd_Name = StringUtils.GetStringBefore(line, "(");
+                String cmd_Name = StringUtils.GetStringAfter(StringUtils.GetStringBefore(line, "("), $"@{Version}").Trim();
                 CommandIndex = ushort.Parse(defs.CommandMap.FirstOrDefault(x => x.Value.Name == cmd_Name).Key);
             }
             String[] args = StringUtils.GetStringInBetween(line, "(", ")").Split(',');

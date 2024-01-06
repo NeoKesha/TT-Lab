@@ -14,6 +14,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         List<UInt32> packedNormals = new();
         Int32 blendsAmount;
 
+        public UInt32 CompileScale { get; set; }
         public Int32 VertexesAmount { get; set; }
         public Vector3 BlendShape { get; set; }
         public List<ITwinBlendSkinFace> Faces { get; set; }
@@ -21,6 +22,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         public List<Vector4> UVW { get; set; }
         public List<Vector4> Colors { get; set; }
         public List<VertexJointInfo> SkinJoints { get; set; }
+        public List<Int32> GroupSizes { get; set; }
 
         public XboxBlendSkinModel(Int32 blendsAmount)
         {
@@ -30,6 +32,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
         public void CalculateData()
         {
             // Data needs no decompression as it is already presented decompressed on read
+        }
+
+        public void Compile()
+        {
+            return;
         }
 
         public Int32 GetLength()
@@ -52,10 +59,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.SubItems
             var vertexAmount = reader.ReadInt32();
             reader.ReadUInt32(); // Total amount of group joints
             var groupAmount = reader.ReadUInt32();
-
+            GroupSizes = new();
             for (Int32 i = 0; i < groupAmount; i++)
             {
                 groupList.Add(reader.ReadUInt32());
+                GroupSizes.Add((Int32)groupList[^1]);
             }
             var jointAmountList = new List<UInt32>((Int32)groupAmount);
             for (Int32 i = 0; i < groupAmount; i++)

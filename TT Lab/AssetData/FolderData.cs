@@ -22,13 +22,13 @@ namespace TT_Lab.AssetData
             return;
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

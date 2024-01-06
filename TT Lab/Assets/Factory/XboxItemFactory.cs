@@ -93,7 +93,7 @@ namespace TT_Lab.Assets.Factory
             throw new NotImplementedException();
         }
 
-        public ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces)
+        public ITwinModel GenerateModel(List<MeshProcessor.Mesh> meshes)
         {
             throw new NotImplementedException();
         }
@@ -189,6 +189,21 @@ namespace TT_Lab.Assets.Factory
         }
 
         public ITwinPSM GeneratePSM(List<ITwinPTC> ptcs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinSection GenerateDefault()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinSection GenerateRM()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITwinSection GenerateSM()
         {
             throw new NotImplementedException();
         }

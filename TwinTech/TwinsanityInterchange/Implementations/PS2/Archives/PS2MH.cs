@@ -22,6 +22,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             return 8 + Records.Sum(r => r.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         internal List<MHRecord> GetSortedRecords()
         {
             var resList = Records.ToList();

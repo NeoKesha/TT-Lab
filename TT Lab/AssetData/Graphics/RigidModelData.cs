@@ -5,6 +5,7 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -31,7 +32,7 @@ namespace TT_Lab.AssetData.Graphics
             Materials.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinRigidModel rigidModel = GetTwinItem<ITwinRigidModel>();
             Materials = new List<LabURI>();
@@ -55,8 +56,30 @@ namespace TT_Lab.AssetData.Graphics
             }
             writer.Write(assetManager.GetAsset(Model).ID);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateRigidModel(ms);
+        }
+
+        protected virtual void ResolveResources(ITwinItemFactory factory, ITwinSection section)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetRoot().GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION);
+            var materialsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MATERIALS_SECTION);
+            var modelsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MODELS_SECTION);
+
+            foreach (var material in Materials)
+            {
+                assetManager.GetAsset(material).ResolveChunkResources(factory, materialsSection);
+            }
+
+            assetManager.GetAsset(Model).ResolveChunkResources(factory, modelsSection);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        {
+            ResolveResources(factory, section);
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

@@ -36,14 +36,14 @@ namespace TT_Lab.AssetData.Code
             RIFF.SaveRiff(writer, PCM, ref Channels, ref Frequency);
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using FileStream fs = new(dataPath, FileMode.Open, FileAccess.Read);
             using BinaryReader reader = new(fs);
             PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinSound sound = GetTwinItem<ITwinSound>();
             Frequency = sound.GetFreq();

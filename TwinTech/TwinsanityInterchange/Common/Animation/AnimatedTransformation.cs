@@ -10,7 +10,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
     {
         List<Transformation> transformValues;
 
-        public Int32 Count { get => transformValues.Count; }
+        public Int32 Count { get => Transforms.Count; }
+        public List<Transformation> Transforms { get => transformValues; }
 
         public AnimatedTransformation(UInt16 amount)
         {
@@ -26,6 +27,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
         public Int32 GetLength()
         {
             return transformValues.Sum(t => t.GetLength());
+        }
+
+        public void Compile()
+        {
+            return;
         }
 
         public void Read(BinaryReader reader, Int32 length)

@@ -31,6 +31,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return Constants.SIZE_JOINT;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             ReactId = (Int32)(reader.ReadUInt32() & 0xFF);

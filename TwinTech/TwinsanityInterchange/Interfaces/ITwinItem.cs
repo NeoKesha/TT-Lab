@@ -53,12 +53,22 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
         /// Get the item's root
         /// </summary>
         /// <returns></returns>
-        ITwinItem GetRoot();
+        ITwinSection GetRoot();
         /// <summary>
         /// Set the item's root
         /// </summary>
         /// <param name="root"></param>
-        void SetRoot(ITwinItem root);
+        void SetRoot(ITwinSection root);
+        /// <summary>
+        /// Gets the item's parent
+        /// </summary>
+        /// <returns></returns>
+        ITwinSection GetParent();
+        /// <summary>
+        /// Sets the item's parent
+        /// </summary>
+        /// <param name="parent"></param>
+        void SetParent(ITwinSection parent);
         /// <summary>
         /// Get item's data stream
         /// </summary>

@@ -11,7 +11,7 @@ namespace TT_Lab.ViewModels.Instance
     {
         private Enums.Layouts layId;
         private SurfaceType surfId;
-        private UInt32 flags;
+        private SurfaceFlags flags;
         private LabURI stepSoundId1;
         private LabURI stepSoundId2;
         private LabURI landSoundId1;
@@ -31,17 +31,16 @@ namespace TT_Lab.ViewModels.Instance
             var surfData = _asset.GetData<CollisionSurfaceData>();
             surfId = surfData.SurfaceID;
             flags = surfData.Flags;
-            floatParams = CloneUtils.CloneArray(surfData.Parameters);
+            floatParams = CloneUtils.CloneArray(surfData.PhysicsParameters);
             stepSoundId1 = surfData.StepSoundId1;
             stepSoundId2 = surfData.StepSoundId2;
             landSoundId1 = surfData.LandSoundId1;
             landSoundId2 = surfData.LandSoundId2;
             unkSoundId = surfData.UnkSoundId;
-            unkId1 = surfData.UnkId1;
-            unkId2 = surfData.UnkId2;
+            unkId1 = surfData.WalkOnParticleSystemId1;
+            unkId2 = surfData.WalkOnParticleSystemId2;
             unkId3 = surfData.UnkId3;
-            unkId4 = surfData.UnkId4;
-            unkId5 = surfData.UnkId5;
+            unkId4 = surfData.LandOnParticleSystemId;
             unkVec = new Vector4ViewModel(surfData.UnkVec);
             unkVec.PropertyChanged += Vector_PropertyChanged;
             unkBoundingBox = new Vector4ViewModel[2];
@@ -64,12 +63,11 @@ namespace TT_Lab.ViewModels.Instance
             data.LandSoundId1 = LandSoundId1;
             data.LandSoundId2 = LandSoundId2;
             data.UnkSoundId = UnkSoundId;
-            data.UnkId1 = UnkId1;
-            data.UnkId2 = UnkId2;
+            data.WalkOnParticleSystemId1 = UnkId1;
+            data.WalkOnParticleSystemId2 = UnkId2;
             data.UnkId3 = UnkId3;
-            data.UnkId4 = UnkId4;
-            data.UnkId5 = UnkId5;
-            data.Parameters = CloneUtils.CloneArray(FloatParams);
+            data.LandOnParticleSystemId = UnkId4;
+            data.PhysicsParameters = CloneUtils.CloneArray(FloatParams);
             data.UnkVec = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {
                 X = UnkVec.X,
@@ -127,7 +125,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt32 Flags
+        public SurfaceFlags Flags
         {
             get => flags;
             set

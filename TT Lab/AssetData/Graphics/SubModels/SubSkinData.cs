@@ -12,10 +12,11 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         public LabURI Material { get; set; }
         public List<Vertex> Vertexes { get; set; }
         public List<IndexedFace> Faces { get; set; }
+        public MeshProcessor.Mesh Mesh { get; set; }
 
         public SubSkinData(LabURI package, String? variant, ITwinSubSkin subSkin)
         {
-            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, null, subSkin.Material);
+            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, variant, subSkin.Material);
             if (Material == LabURI.Empty)
             {
                 var allMaterials = AssetManager.Get().GetAssets().FindAll(a => a is Material).ConvertAll(a => a.URI);
@@ -50,6 +51,9 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                     JointInfo = CloneUtils.Clone(subSkin.SkinJoints[i])
                 });
             }
+
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
         }
 
         public SubSkinData(LabURI material, List<Vertex> vertexes, List<IndexedFace> faces)
@@ -57,12 +61,15 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             Material = material;
             Vertexes = vertexes;
             Faces = faces;
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
         }
 
         public void Dispose()
         {
             Vertexes.Clear();
             Faces.Clear();
+            Mesh.Clear();
 
             GC.SuppressFinalize(this);
         }

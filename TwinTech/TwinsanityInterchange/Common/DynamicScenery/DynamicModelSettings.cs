@@ -8,6 +8,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
     public class DynamicModelSettings : ITwinSerializable
     {
         UInt16 flags;
+        public UInt16 UnknownValue { get; set; }
         public UInt16 UnusedRotationRelatedParameter { get; set; }
 
         UInt16 transformationChoice;
@@ -17,6 +18,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
         public TransformType RotateX { get; set; }
         public TransformType RotateY { get; set; }
         public TransformType RotateZ { get; set; }
+        public TransformType RotateW { get; set; }
 
         public UInt16 StaticTransformationIndex { get; set; }
         public UInt16 AnimationTransformationIndex { get; set; }
@@ -26,20 +28,27 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             return 4 * 2;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             flags = reader.ReadUInt16();
             {
-                UnusedRotationRelatedParameter = (UInt16)(flags >> 0x8 & 0xf);
+                UnknownValue = (UInt16)(flags & 0xFF);
+                UnusedRotationRelatedParameter = (UInt16)((flags >> 0x8) & 0xf);
             }
             transformationChoice = reader.ReadUInt16();
             {
                 TranslateX = (TransformType)(transformationChoice & 0x1);
-                TranslateY = (TransformType)(transformationChoice & 0x2);
-                TranslateZ = (TransformType)(transformationChoice & 0x4);
-                RotateX = (TransformType)(transformationChoice & 0x8);
-                RotateY = (TransformType)(transformationChoice & 0x10);
-                RotateZ = (TransformType)(transformationChoice & 0x20);
+                TranslateY = (TransformType)((transformationChoice & 0x2) >> 0x1);
+                TranslateZ = (TransformType)((transformationChoice & 0x4) >> 0x2);
+                RotateX = (TransformType)((transformationChoice & 0x8) >> 0x3);
+                RotateY = (TransformType)((transformationChoice & 0x10) >> 0x4);
+                RotateZ = (TransformType)((transformationChoice & 0x20) >> 0x5);
+                RotateW = (TransformType)((transformationChoice & 0x40) >> 0x6);
             }
             StaticTransformationIndex = reader.ReadUInt16();
             AnimationTransformationIndex = reader.ReadUInt16();
@@ -47,7 +56,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 
         public void Write(BinaryWriter writer)
         {
-            flags = (UInt16)(UnusedRotationRelatedParameter & 0xf << 0x8);
+            flags = UnknownValue;
+            flags |= (UInt16)((UnusedRotationRelatedParameter & 0xf) << 0x8);
             writer.Write(flags);
 
             UInt16 newTransformationChoice = (UInt16)TranslateX;
@@ -56,6 +66,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             newTransformationChoice |= (UInt16)((UInt16)RotateX << 0x3);
             newTransformationChoice |= (UInt16)((UInt16)RotateY << 0x4);
             newTransformationChoice |= (UInt16)((UInt16)RotateZ << 0x5);
+            newTransformationChoice |= (UInt16)((UInt16)RotateW << 0x6);
             transformationChoice = newTransformationChoice;
             writer.Write(transformationChoice);
 

@@ -36,6 +36,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return 4;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             R = reader.ReadByte();

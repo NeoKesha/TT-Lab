@@ -33,6 +33,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 (Condition != null ? Condition.GetLength() : 0);
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             Bitfield = reader.ReadUInt32();
@@ -76,6 +81,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 newBitfield |= 0x200;
             }
             newBitfield |= AdditionalFlags & AdditionalFlagsMask;
+            Bitfield = newBitfield;
             writer.Write(newBitfield);
             if (HasStateJump)
             {
@@ -122,10 +128,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 if (line.StartsWith("next_state "))
                 {
                     JumpToState = int.Parse(StringUtils.GetStringAfter(line, "="));
+                    HasStateJump = true;
                 }
                 else if (line.StartsWith("additional_flags"))
                 {
-                    AdditionalFlags = UInt32.Parse(StringUtils.GetStringAfter(line, "="));
+                    AdditionalFlags = UInt32.Parse(StringUtils.GetStringAfter(StringUtils.GetStringAfter(line, "=").Trim(), "0x"), System.Globalization.NumberStyles.HexNumber);
                 }
                 else if (line.StartsWith("Condition"))
                 {

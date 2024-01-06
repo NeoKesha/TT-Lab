@@ -18,6 +18,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return 20;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             Type = (PS2MB.RecordType)reader.ReadInt32();

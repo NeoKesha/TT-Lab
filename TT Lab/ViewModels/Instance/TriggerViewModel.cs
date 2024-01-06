@@ -18,10 +18,10 @@ namespace TT_Lab.ViewModels.Instance
         private UInt32 _header;
         private Single _unkFloat;
         private Enums.Layouts _layId;
-        private LabURI _triggerScript1;
-        private LabURI _triggerScript2;
-        private LabURI _triggerScript3;
-        private LabURI _triggerScript4;
+        private UInt16 _triggerMessage1;
+        private UInt16 _triggerMessage2;
+        private UInt16 _triggerMessage3;
+        private UInt16 _triggerMessage4;
 
         public TriggerViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
         {
@@ -40,10 +40,10 @@ namespace TT_Lab.ViewModels.Instance
             _scale.PropertyChanged += _vector_PropertyChanged;
             _header = data.Header;
             _unkFloat = data.UnkFloat;
-            _triggerScript1 = data.TriggerScript1;
-            _triggerScript2 = data.TriggerScript2;
-            _triggerScript3 = data.TriggerScript3;
-            _triggerScript4 = data.TriggerScript4;
+            _triggerMessage1 = data.TriggerMessage1;
+            _triggerMessage2 = data.TriggerMessage2;
+            _triggerMessage3 = data.TriggerMessage3;
+            _triggerMessage4 = data.TriggerMessage4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
@@ -65,10 +65,10 @@ namespace TT_Lab.ViewModels.Instance
             _scale.PropertyChanged += _vector_PropertyChanged;
             _header = data.Header;
             _unkFloat = data.UnkFloat;
-            _triggerScript1 = data.TriggerScript1;
-            _triggerScript2 = data.TriggerScript2;
-            _triggerScript3 = data.TriggerScript3;
-            _triggerScript4 = data.TriggerScript4;
+            _triggerMessage1 = data.TriggerMessage1;
+            _triggerMessage2 = data.TriggerMessage2;
+            _triggerMessage3 = data.TriggerMessage3;
+            _triggerMessage4 = data.TriggerMessage4;
             _layId = MiscUtils.ConvertEnum<Enums.Layouts>(_asset.LayoutID!.Value);
             DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
         }
@@ -93,10 +93,10 @@ namespace TT_Lab.ViewModels.Instance
             {
                 data.Instances.Add(inst);
             }
-            data.TriggerScript1 = TriggerScript1;
-            data.TriggerScript2 = TriggerScript2;
-            data.TriggerScript3 = TriggerScript3;
-            data.TriggerScript4 = TriggerScript4;
+            data.TriggerMessage1 = TriggerMessage1;
+            data.TriggerMessage2 = TriggerMessage2;
+            data.TriggerMessage3 = TriggerMessage3;
+            data.TriggerMessage4 = TriggerMessage4;
         }
 
         private void _vector_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -327,12 +327,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean TriggerScript1Enabled
+        public Boolean TriggerArgument1Enabled
         {
             get => (_header >> 0xB & 0x1) != 0;
             set
             {
-                if (value != TriggerScript1Enabled)
+                if (value != TriggerArgument1Enabled)
                 {
                     if (value)
                     {
@@ -349,12 +349,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean TriggerScript2Enabled
+        public Boolean TriggerArgument2Enabled
         {
             get => (_header >> 0x8 & 0x1) != 0;
             set
             {
-                if (value != TriggerScript2Enabled)
+                if (value != TriggerArgument2Enabled)
                 {
                     if (value)
                     {
@@ -371,12 +371,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean TriggerScript3Enabled
+        public Boolean TriggerArgument3Enabled
         {
             get => (_header >> 0x9 & 0x1) != 0;
             set
             {
-                if (value != TriggerScript3Enabled)
+                if (value != TriggerArgument3Enabled)
                 {
                     if (value)
                     {
@@ -393,12 +393,12 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public Boolean TriggerScript4Enabled
+        public Boolean TriggerArgument4Enabled
         {
             get => (_header >> 0xA & 0x1) != 0;
             set
             {
-                if (value != TriggerScript4Enabled)
+                if (value != TriggerArgument4Enabled)
                 {
                     if (value)
                     {
@@ -428,53 +428,53 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public LabURI TriggerScript1
+        public UInt16 TriggerMessage1
         {
-            get => _triggerScript1;
+            get => _triggerMessage1;
             set
             {
-                if (value != _triggerScript1)
+                if (value != _triggerMessage1)
                 {
-                    _triggerScript1 = value;
+                    _triggerMessage1 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public LabURI TriggerScript2
+        public UInt16 TriggerMessage2
         {
-            get => _triggerScript2;
+            get => _triggerMessage2;
             set
             {
-                if (value != _triggerScript2)
+                if (value != _triggerMessage2)
                 {
-                    _triggerScript2 = value;
+                    _triggerMessage2 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public LabURI TriggerScript3
+        public UInt16 TriggerMessage3
         {
-            get => _triggerScript3;
+            get => _triggerMessage3;
             set
             {
-                if (value != _triggerScript3)
+                if (value != _triggerMessage3)
                 {
-                    _triggerScript3 = value;
+                    _triggerMessage3 = value;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public LabURI TriggerScript4
+        public UInt16 TriggerMessage4
         {
-            get => _triggerScript4;
+            get => _triggerMessage4;
             set
             {
-                if (value != _triggerScript4)
+                if (value != _triggerMessage4)
                 {
-                    _triggerScript4 = value;
+                    _triggerMessage4 = value;
                     IsDirty = true;
                     NotifyChange();
                 }

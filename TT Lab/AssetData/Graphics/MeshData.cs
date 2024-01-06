@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -29,8 +30,24 @@ namespace TT_Lab.AssetData.Graphics
             }
             writer.Write(assetManager.GetAsset(Model).ID);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateMesh(ms);
+        }
+
+        protected override void ResolveResources(ITwinItemFactory factory, ITwinSection section)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetParent();
+            var materialsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MATERIALS_SECTION);
+            var modelsSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MODELS_SECTION);
+
+            foreach (var material in Materials)
+            {
+                assetManager.GetAsset(material).ResolveChunkResources(factory, materialsSection);
+            }
+
+            assetManager.GetAsset(Model).ResolveChunkResources(factory, modelsSection);
         }
     }
 }

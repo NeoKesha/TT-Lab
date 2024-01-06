@@ -26,6 +26,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
 
         protected override void PreprocessWrite()
         {
+            base.PreprocessWrite();
             using var newExtraData = new MemoryStream();
             var offset = 0;
             foreach (PS2AnySound item in Items.Cast<PS2AnySound>())
@@ -34,6 +35,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code
                 item.offset = offset;
                 offset += item.Sound.Length;
             }
+            newExtraData.Flush();
             extraData = newExtraData.ToArray();
         }
     }

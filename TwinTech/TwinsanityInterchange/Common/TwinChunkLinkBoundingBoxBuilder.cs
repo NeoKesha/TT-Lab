@@ -19,6 +19,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return 4 + BondingBoxBuilder.GetLength();
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             Type = reader.ReadInt32();

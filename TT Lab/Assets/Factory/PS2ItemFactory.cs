@@ -9,6 +9,7 @@ using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2;
@@ -17,6 +18,11 @@ using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentL
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SM2;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.Graphics;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Code;
+using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Layout;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
@@ -54,7 +60,7 @@ namespace TT_Lab.Assets.Factory
             animation.DefaultFPS = reader.ReadByte();
             animation.MainAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinAnimation();
             animation.MainAnimation.Read(reader, (Int32)stream.Length);
-            animation.FacialAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinAnimation();
+            animation.FacialAnimation = new Twinsanity.TwinsanityInterchange.Common.Animation.TwinMorphAnimation();
             animation.FacialAnimation.Read(reader, (Int32)stream.Length);
             animation.HasAnimationData = true;
             animation.HasFacialAnimationData = animation.FacialAnimation.TotalFrames != 0;
@@ -96,6 +102,7 @@ namespace TT_Lab.Assets.Factory
                 assigner.AssignLocality = (AssignLocalityID)reader.ReadUInt32();
                 assigner.AssignStatus = (AssignStatusID)reader.ReadUInt32();
                 assigner.AssignPreference = (AssignPreferenceID)reader.ReadUInt32();
+                starter.Assigners.Add(assigner);
             }
             return starter;
         }
@@ -112,7 +119,7 @@ namespace TT_Lab.Assets.Factory
             {
                 var subBlend = new PS2SubBlendSkin(blendsAmount)
                 {
-                    Material = assetManager.GetAsset(blend.Material).ID
+                    Material = assetManager.GetAsset(blend.Material).ID,
                 };
 
                 foreach (var model in blend.Models)
@@ -123,16 +130,100 @@ namespace TT_Lab.Assets.Factory
                         UVW = new(),
                         Colors = new(),
                         SkinJoints = new(),
-                        Faces = new()
+                        Faces = new(),
+                        BlendShape = new Vector3(model.BlendShape.X, model.BlendShape.Y, model.BlendShape.Z),
+                        GroupSizes = new()
                     };
-                    var vertexBatch = model.Vertexes;
-                    var i = 0;
-                    foreach (var face in model.Faces)
-                    {
-                        i %= TwinVIFCompiler.VertexBatchAmount;
 
-                        var idx0 = (i % 2 == 0) ? 0 : 1;
-                        var idx1 = (i % 2 == 0) ? 1 : 0;
+                    var blendFaceVerticies = new Dictionary<SubBlendFaceData, List<VertexBlendShape>>();
+
+                    //var mesh = model.Mesh;
+                    //var groups = new List<List<Int32>>();
+                    //foreach (var strip in mesh.Strips)
+                    //{
+                    //    groups.Add(new());
+                    //    var addedFirst = false;
+                    //    foreach (var node in strip.Strip)
+                    //    {
+                    //        if (!addedFirst)
+                    //        {
+                    //            groups[^1].AddRange(node.GetIndexes());
+                    //            addedFirst = true;
+                    //            continue;
+                    //        }
+                    //        groups[^1].Add(node.GetIndexes()[2]);
+                    //    }
+                    //}
+
+                    //var rawModel = mesh.GetVertices();
+
+                    //foreach (var group in groups)
+                    //{
+                    //    var j = 0;
+                    //    foreach (var idx in group)
+                    //    {
+                    //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                    //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                    //        submodel.Colors.Add(rawModel[idx].Color);
+                    //        var modelJointInfo = rawModel[idx].JointInfo;
+                    //        var jointInfo = new VertexJointInfo()
+                    //        {
+                    //            JointIndex1 = modelJointInfo.JointIndex1,
+                    //            JointIndex2 = modelJointInfo.JointIndex2,
+                    //            JointIndex3 = modelJointInfo.JointIndex3,
+                    //            Weight1 = modelJointInfo.Weight1,
+                    //            Weight2 = modelJointInfo.Weight2,
+                    //            Weight3 = modelJointInfo.Weight3,
+                    //            Connection = j > 1
+                    //        };
+                    //        submodel.SkinJoints.Add(jointInfo);
+
+                    //        foreach (var blendFace in model.BlendFaces)
+                    //        {
+                    //            if (!blendFaceVerticies.ContainsKey(blendFace))
+                    //            {
+                    //                blendFaceVerticies[blendFace] = new();
+                    //            }
+                    //            var ver1 = blendFace.BlendShapes[idx];
+                    //            blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                    //            {
+                    //                BlendShape = model.BlendShape,
+                    //                Offset = ver1.Offset
+                    //            });
+                    //        }
+
+                    //        j++;
+                    //    }
+
+                    //    submodel.GroupSizes.Add(group.Count);
+                    //}
+
+                    //foreach (var (blendFace, vertexList) in blendFaceVerticies)
+                    //{
+                    //    var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
+                    //    {
+                    //        VertexesAmount = (UInt32)vertexList.Count,
+                    //        Vertices = new()
+                    //    };
+                    //    foreach (var ver in vertexList)
+                    //    {
+                    //        ps2BlendFace.Vertices.Add(ver);
+                    //    }
+                    //    submodel.Faces.Add(ps2BlendFace);
+                    //}
+
+                    //subBlend.Models.Add(submodel);
+
+                    var subFaces = model.Faces;
+                    var vertexBatch = model.Vertexes;
+                    var index = 0;
+                    var vertexAmount = 0;
+                    foreach (var face in subFaces)
+                    {
+                        index %= TwinVIFCompiler.VertexStripCache;
+
+                        var idx0 = (index % 2 == 0) ? 0 : 1;
+                        var idx1 = (index % 2 == 0) ? 1 : 0;
                         submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
                         submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
                         submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
@@ -142,34 +233,232 @@ namespace TT_Lab.Assets.Factory
                         submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
                         submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
                         submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[idx0]].JointInfo);
-                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[idx1]].JointInfo);
-                        vertexBatch[face.Indexes[2]].JointInfo.Connection = true;
-                        submodel.SkinJoints.Add(vertexBatch[face.Indexes[2]].JointInfo);
-
-                        ++i;
-                    }
-
-                    foreach (var blendFace in model.BlendFaces)
-                    {
-                        var ps2BlendFace = new PS2BlendSkinFace(model.BlendShape)
+                        var modelJointInfo1 = vertexBatch[face.Indexes[idx0]].JointInfo;
+                        var modelJointInfo2 = vertexBatch[face.Indexes[idx1]].JointInfo;
+                        var modelJointInfo3 = vertexBatch[face.Indexes[2]].JointInfo;
+                        var jointInfo1 = new VertexJointInfo()
                         {
-                            VertexesAmount = blendFace.VertexesAmount,
-                            Vertices = new()
+                            JointIndex1 = modelJointInfo1.JointIndex1,
+                            JointIndex2 = modelJointInfo1.JointIndex2,
+                            JointIndex3 = modelJointInfo1.JointIndex3,
+                            Weight1 = modelJointInfo1.Weight1,
+                            Weight2 = modelJointInfo1.Weight2,
+                            Weight3 = modelJointInfo1.Weight3,
+                            Connection = false
                         };
-                        foreach (var ver in blendFace.BlendShapes)
+                        var jointInfo2 = new VertexJointInfo()
                         {
-                            ps2BlendFace.Vertices.Add(new VertexBlendShape
+                            JointIndex1 = modelJointInfo2.JointIndex1,
+                            JointIndex2 = modelJointInfo2.JointIndex2,
+                            JointIndex3 = modelJointInfo2.JointIndex3,
+                            Weight1 = modelJointInfo2.Weight1,
+                            Weight2 = modelJointInfo2.Weight2,
+                            Weight3 = modelJointInfo2.Weight3,
+                            Connection = false
+                        };
+                        var jointInfo3 = new VertexJointInfo()
+                        {
+                            JointIndex1 = modelJointInfo3.JointIndex1,
+                            JointIndex2 = modelJointInfo3.JointIndex2,
+                            JointIndex3 = modelJointInfo3.JointIndex3,
+                            Weight1 = modelJointInfo3.Weight1,
+                            Weight2 = modelJointInfo3.Weight2,
+                            Weight3 = modelJointInfo3.Weight3,
+                            Connection = true
+                        };
+                        submodel.SkinJoints.Add(jointInfo1);
+                        submodel.SkinJoints.Add(jointInfo2);
+                        submodel.SkinJoints.Add(jointInfo3);
+
+                        foreach (var blendFace in model.BlendFaces)
+                        {
+                            if (!blendFaceVerticies.ContainsKey(blendFace))
+                            {
+                                blendFaceVerticies[blendFace] = new();
+                            }
+                            var ver1 = blendFace.BlendShapes[face.Indexes[idx0]];
+                            blendFaceVerticies[blendFace].Add(new VertexBlendShape
                             {
                                 BlendShape = model.BlendShape,
-                                Offset = ver.Offset
+                                Offset = ver1.Offset
                             });
+                            var ver2 = blendFace.BlendShapes[face.Indexes[idx1]];
+                            blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                            {
+                                BlendShape = model.BlendShape,
+                                Offset = ver2.Offset
+                            });
+                            var ver3 = blendFace.BlendShapes[face.Indexes[2]];
+                            blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                            {
+                                BlendShape = model.BlendShape,
+                                Offset = ver3.Offset
+                            });
+                        }
+
+                        index++;
+                        vertexAmount += 3;
+                        if (vertexAmount >= TwinVIFCompiler.VertexStripCache)
+                        {
+                            submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache);
+                            vertexAmount %= TwinVIFCompiler.VertexStripCache;
+                        }
+                    }
+                    if (vertexAmount > 0)
+                    {
+                        submodel.GroupSizes.Add(vertexAmount);
+                    }
+
+                    foreach (var (blendFace, vertexList) in blendFaceVerticies)
+                    {
+                        var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
+                        {
+                            VertexesAmount = (UInt32)vertexList.Count,
+                            Vertices = new()
+                        };
+                        foreach (var ver in vertexList)
+                        {
+                            ps2BlendFace.Vertices.Add(ver);
                         }
                         submodel.Faces.Add(ps2BlendFace);
                     }
 
                     subBlend.Models.Add(submodel);
+
+                    //List<UInt16> indices = new(subFaces.Count * 3);
+                    //foreach (var face in subFaces)
+                    //{
+                    //    indices.Add((UInt16)face.Indexes![0]);
+                    //    indices.Add((UInt16)face.Indexes[1]);
+                    //    indices.Add((UInt16)face.Indexes[2]);
+                    //}
+
+                    //// Generate triangle strips instead of triangle lists
+                    //var stripifier = new NvStripifier()
+                    //{
+                    //    StitchStrips = false,
+                    //    CacheSize = model.Vertexes.Count
+                    //};
+                    //stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
+                    //var groupsList = new List<PrimitiveGroup>(primitiveGroups);
+                    //groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
+
+                    //var blendFaceVerticies = new Dictionary<SubBlendFaceData, List<VertexBlendShape>>();
+
+                    //var rawModel = model.Vertexes;
+                    //var indexList = new List<UInt16>();
+                    //const Int32 groupVertexLimit = 18;
+                    //foreach (var group in groupsList)
+                    //{
+                    //    var totalGroups = group.IndexCount / groupVertexLimit;
+                    //    var leftoverGroup = group.IndexCount % groupVertexLimit;
+                    //    if (leftoverGroup < 3)
+                    //    {
+                    //        totalGroups -= 1;
+                    //        leftoverGroup += groupVertexLimit;
+                    //    }
+                    //    var vertexIndex = 0;
+                    //    var groupIndices = group.Indices;
+                    //    for (var i = 0; i < totalGroups; i++)
+                    //    {
+                    //        for (var j = 0; j < groupVertexLimit + 1; j++)
+                    //        {
+                    //            var idx = groupIndices[vertexIndex++];
+                    //            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                    //            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                    //            submodel.Colors.Add(rawModel[idx].Color);
+                    //            var modelJointInfo = rawModel[idx].JointInfo;
+                    //            var jointInfo = new VertexJointInfo()
+                    //            {
+                    //                JointIndex1 = modelJointInfo.JointIndex1,
+                    //                JointIndex2 = modelJointInfo.JointIndex2,
+                    //                JointIndex3 = modelJointInfo.JointIndex3,
+                    //                Weight1 = modelJointInfo.Weight1,
+                    //                Weight2 = modelJointInfo.Weight2,
+                    //                Weight3 = modelJointInfo.Weight3,
+                    //                Connection = j > 1
+                    //            };
+                    //            submodel.SkinJoints.Add(jointInfo);
+
+                    //            foreach (var blendFace in model.BlendFaces)
+                    //            {
+                    //                if (!blendFaceVerticies.ContainsKey(blendFace))
+                    //                {
+                    //                    blendFaceVerticies[blendFace] = new();
+                    //                }
+                    //                var ver = blendFace.BlendShapes[idx];
+                    //                blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                    //                {
+                    //                    BlendShape = model.BlendShape,
+                    //                    Offset = ver.Offset
+                    //                });
+                    //            }
+
+                    //            indexList.Add(idx);
+                    //        }
+                    //        // Go back to start building new strip
+                    //        vertexIndex--;
+                    //        submodel.GroupSizes.Add(groupVertexLimit + 1);
+                    //    }
+
+                    //    for (var i = 0; i < leftoverGroup; ++i)
+                    //    {
+                    //        var idx = groupIndices[vertexIndex++];
+                    //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                    //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                    //        submodel.Colors.Add(rawModel[idx].Color);
+                    //        var modelJointInfo = rawModel[idx].JointInfo;
+                    //        var jointInfo = new VertexJointInfo()
+                    //        {
+                    //            JointIndex1 = modelJointInfo.JointIndex1,
+                    //            JointIndex2 = modelJointInfo.JointIndex2,
+                    //            JointIndex3 = modelJointInfo.JointIndex3,
+                    //            Weight1 = modelJointInfo.Weight1,
+                    //            Weight2 = modelJointInfo.Weight2,
+                    //            Weight3 = modelJointInfo.Weight3,
+                    //            Connection = i > 1
+                    //        };
+                    //        submodel.SkinJoints.Add(jointInfo);
+
+                    //        foreach (var blendFace in model.BlendFaces)
+                    //        {
+                    //            if (!blendFaceVerticies.ContainsKey(blendFace))
+                    //            {
+                    //                blendFaceVerticies[blendFace] = new();
+                    //            }
+                    //            var ver = blendFace.BlendShapes[idx];
+                    //            blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                    //            {
+                    //                BlendShape = model.BlendShape,
+                    //                Offset = ver.Offset
+                    //            });
+                    //        }
+
+                    //        indexList.Add(idx);
+                    //    }
+                    //    if (leftoverGroup > 0)
+                    //    {
+                    //        submodel.GroupSizes.Add(leftoverGroup);
+                    //    }
+                    //}
+
+                    //foreach (var (blendFace, vertexList) in blendFaceVerticies)
+                    //{
+                    //    var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
+                    //    {
+                    //        VertexesAmount = (UInt32)vertexList.Count,
+                    //        Vertices = new()
+                    //    };
+                    //    foreach (var ver in vertexList)
+                    //    {
+                    //        ps2BlendFace.Vertices.Add(ver);
+                    //    }
+                    //    submodel.Faces.Add(ps2BlendFace);
+                    //}
+
+                    //subBlend.Models.Add(submodel);
                 }
+                blendSkin.SubBlends.Add(subBlend);
             }
 
             return blendSkin;
@@ -235,6 +524,7 @@ namespace TT_Lab.Assets.Factory
                     builder.Read(reader, (Int32)stream.Length);
                     chunkLink.ChunkLinksCollisionData.Add(builder);
                 }
+                link.LinksList.Add(chunkLink);
             }
             return link;
         }
@@ -263,11 +553,10 @@ namespace TT_Lab.Assets.Factory
             return mesh;
         }
 
-        public ITwinModel GenerateModel(List<List<Vertex>> vertexes, List<List<IndexedFace>> faces)
+        public ITwinModel GenerateModel(List<MeshProcessor.Mesh> meshes)
         {
             var model = new PS2AnyModel();
-            var vertexBatchIndex = 0;
-            foreach (var subFaces in faces)
+            foreach (var mesh in meshes)
             {
                 var submodel = new PS2SubModel
                 {
@@ -277,44 +566,128 @@ namespace TT_Lab.Assets.Factory
                     Colors = new(),
                     EmitColor = new(),
                     Normals = new(),
-                    Connection = new()
+                    Connection = new(),
+                    GroupSizes = new()
                 };
-                var vertexBatch = vertexes[vertexBatchIndex++];
-                var i = 0;
-                foreach (var face in subFaces)
+
+                var groups = new List<List<Int32>>();
+                foreach (var strip in mesh.Strips)
                 {
-                    i %= TwinVIFCompiler.VertexBatchAmount;
-
-                    var idx0 = (i % 2 == 0) ? 0 : 1;
-                    var idx1 = (i % 2 == 0) ? 1 : 0;
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
-                    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
-                    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                    submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
-                    submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
-                    submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                    if (vertexBatch[face.Indexes[idx0]].HasNormals)
+                    groups.Add(new());
+                    var addedFirst = false;
+                    foreach (var node in strip.Strip)
                     {
-                        submodel.Normals.Add(vertexBatch[face.Indexes[idx0]].Normal);
-                        submodel.Normals.Add(vertexBatch[face.Indexes[idx1]].Normal);
-                        submodel.Normals.Add(vertexBatch[face.Indexes[2]].Normal);
+                        if (!addedFirst)
+                        {
+                            groups[^1].AddRange(node.GetIndexes());
+                            addedFirst = true;
+                            continue;
+                        }
+                        groups[^1].Add(node.GetIndexes()[2]);
                     }
-                    if (vertexBatch[face.Indexes[idx0]].HasEmitColor)
-                    {
-                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx0]].EmitColor);
-                        submodel.EmitColor.Add(vertexBatch[face.Indexes[idx1]].EmitColor);
-                        submodel.EmitColor.Add(vertexBatch[face.Indexes[2]].EmitColor);
-                    }
-                    submodel.Connection.Add(false);
-                    submodel.Connection.Add(false);
-                    submodel.Connection.Add(true);
-
-                    ++i;
                 }
+
+                var rawModel = mesh.GetVertices();
+
+                foreach (var group in groups)
+                {
+                    var j = 0;
+                    foreach (var idx in group)
+                    {
+                        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                        submodel.Colors.Add(rawModel[idx].Color);
+                        if (rawModel[idx].HasEmitColor)
+                        {
+                            submodel.EmitColor.Add(rawModel[idx].EmitColor);
+                        }
+                        if (rawModel[idx].HasNormals)
+                        {
+                            submodel.Normals.Add(rawModel[idx].Normal);
+                        }
+                        submodel.Connection.Add(j > 1);
+                        j++;
+                    }
+
+                    submodel.GroupSizes.Add(group.Count);
+                }
+
                 model.SubModels.Add(submodel);
+
+                //var subFaces = faces[facesBatchIndex++];
+                //List<UInt16> indices = new(subFaces.Count * 3);
+                //foreach (var face in subFaces)
+                //{
+                //    indices.Add((UInt16)face.Indexes![0]);
+                //    indices.Add((UInt16)face.Indexes[1]);
+                //    indices.Add((UInt16)face.Indexes[2]);
+                //}
+
+                //// Generate triangle strips instead of triangle lists
+                //var stripifier = new NvStripifier()
+                //{
+                //    StitchStrips = false,
+                //    CacheSize = rawModel.Count
+                //};
+                //stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
+                //var groupsList = new List<PrimitiveGroup>(primitiveGroups);
+                //groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
+                //foreach (var group in groupsList)
+                //{
+                //    var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
+                //    var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
+                //    if (leftoverGroup < 3)
+                //    {
+                //        totalGroups -= 1;
+                //        leftoverGroup += TwinVIFCompiler.VertexStripCache;
+                //    }
+                //    var vertexIndex = 0;
+                //    var groupIndices = group.Indices;
+                //    for (var i = 0; i < totalGroups; i++)
+                //    {
+                //        for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
+                //        {
+                //            var idx = groupIndices[vertexIndex++];
+                //            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                //            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                //            submodel.Colors.Add(rawModel[idx].Color);
+                //            if (rawModel[idx].HasEmitColor)
+                //            {
+                //                submodel.EmitColor.Add(rawModel[idx].EmitColor);
+                //            }
+                //            if (rawModel[idx].HasNormals)
+                //            {
+                //                submodel.Normals.Add(rawModel[idx].Normal);
+                //            }
+                //            submodel.Connection.Add(j > 1);
+                //        }
+                //        // Go back to start building new strip
+                //        vertexIndex--;
+                //        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
+                //    }
+
+                //    for (var i = 0; i < leftoverGroup; ++i)
+                //    {
+                //        var idx = groupIndices[vertexIndex++];
+                //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                //        submodel.Colors.Add(rawModel[idx].Color);
+                //        if (rawModel[idx].HasEmitColor)
+                //        {
+                //            submodel.EmitColor.Add(rawModel[idx].EmitColor);
+                //        }
+                //        if (rawModel[idx].HasNormals)
+                //        {
+                //            submodel.Normals.Add(rawModel[idx].Normal);
+                //        }
+                //        submodel.Connection.Add(i > 1);
+                //    }
+                //    if (leftoverGroup > 0)
+                //    {
+                //        submodel.GroupSizes.Add(leftoverGroup);
+                //    }
+                //}
+                //model.SubModels.Add(submodel);
             }
 
             return model;
@@ -328,7 +701,6 @@ namespace TT_Lab.Assets.Factory
             gameObject.UnkTypeValue = reader.ReadByte();
             gameObject.ReactJointAmount = reader.ReadByte();
             gameObject.ExitPointAmount = reader.ReadByte();
-            gameObject.SlotsMap = reader.ReadBytes(8);
             gameObject.Name = reader.ReadString();
 
             var triggerBehaviours = reader.ReadInt32();
@@ -336,7 +708,7 @@ namespace TT_Lab.Assets.Factory
             {
                 var triggerBehaviour = new TwinObjectTriggerBehaviour();
                 triggerBehaviour.TriggerBehaviour = reader.ReadUInt16();
-                triggerBehaviour.UnkTriggerValue = reader.ReadUInt16();
+                triggerBehaviour.MessageID = reader.ReadUInt16();
                 triggerBehaviour.BehaviourCallerIndex = reader.ReadByte();
                 gameObject.TriggerBehaviours.Add(triggerBehaviour);
             }
@@ -483,17 +855,12 @@ namespace TT_Lab.Assets.Factory
             var scenery = new PS2AnyScenery();
             using var reader = new BinaryReader(stream);
             scenery.Name = reader.ReadString();
-            scenery.UnkUInt = reader.ReadUInt32();
+            scenery.FogColor = reader.ReadUInt32();
             scenery.UnkByte = reader.ReadByte();
             scenery.SkydomeID = reader.ReadUInt32();
             scenery.HasLighting = reader.ReadBoolean();
             if (scenery.HasLighting)
             {
-                for (Int32 i = 0; i < scenery.UnkLightFlags.Length; i++)
-                {
-                    scenery.UnkLightFlags[i] = reader.ReadBoolean();
-                }
-
                 var ambientLights = reader.ReadInt32();
                 for (var i = 0; i < ambientLights; ++i)
                 {
@@ -531,24 +898,18 @@ namespace TT_Lab.Assets.Factory
             for (Int32 i = 0; i < sceneries; i++)
             {
                 var type = (ITwinScenery.SceneryType)reader.ReadInt32();
+                TwinSceneryBaseType sceneryNode = new TwinSceneryLeaf();
                 switch (type)
                 {
                     case ITwinScenery.SceneryType.Root:
-                        var root = new TwinSceneryRoot();
-                        root.Read(reader, 0);
-                        scenery.Sceneries.Add(root);
+                        sceneryNode = new TwinSceneryRoot();
                         break;
                     case ITwinScenery.SceneryType.Node:
-                        var node = new TwinSceneryNode();
-                        node.Read(reader, 0);
-                        scenery.Sceneries.Add(node);
-                        break;
-                    case ITwinScenery.SceneryType.Leaf:
-                        var leaf = new TwinSceneryLeaf();
-                        leaf.Read(reader, 0);
-                        scenery.Sceneries.Add(leaf);
+                        sceneryNode = new TwinSceneryNode();
                         break;
                 }
+                sceneryNode.Read(reader, 0);
+                scenery.Sceneries.Add(sceneryNode);
             }
 
             return scenery;
@@ -560,39 +921,215 @@ namespace TT_Lab.Assets.Factory
 
             foreach (var subskin in subskins)
             {
-                var ps2Subskin = new PS2SubSkin
+                var submodel = new PS2SubSkin
                 {
                     Vertexes = new(),
                     UVW = new(),
                     Colors = new(),
                     SkinJoints = new(),
                     Material = AssetManager.Get().GetAsset(subskin.Material).ID,
+                    GroupSizes = new()
                 };
-                var vertexBatch = subskin.Vertexes;
-                var i = 0;
-                foreach (var face in subskin.Faces)
+
+                var mesh = subskin.Mesh;
+                var groups = new List<List<Int32>>();
+                foreach (var strip in mesh.Strips)
                 {
-                    i %= TwinVIFCompiler.VertexBatchAmount;
-
-                    var idx0 = (i % 2 == 0) ? 0 : 1;
-                    var idx1 = (i % 2 == 0) ? 1 : 0;
-                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
-                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
-                    ps2Subskin.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
-                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
-                    ps2Subskin.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
-                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
-                    ps2Subskin.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx0]].JointInfo);
-                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[idx1]].JointInfo);
-                    vertexBatch[face.Indexes[2]].JointInfo.Connection = true;
-                    ps2Subskin.SkinJoints.Add(vertexBatch[face.Indexes[2]].JointInfo);
-
-                    ++i;
+                    groups.Add(new());
+                    var addedFirst = false;
+                    foreach (var node in strip.Strip)
+                    {
+                        if (!addedFirst)
+                        {
+                            groups[^1].AddRange(node.GetIndexes());
+                            addedFirst = true;
+                            continue;
+                        }
+                        groups[^1].Add(node.GetIndexes()[2]);
+                    }
                 }
-                skin.SubSkins.Add(ps2Subskin);
+
+                var rawModel = mesh.GetVertices();
+
+                foreach (var group in groups)
+                {
+                    var j = 0;
+                    foreach (var idx in group)
+                    {
+                        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                        submodel.Colors.Add(rawModel[idx].Color);
+                        var modelJointInfo = rawModel[idx].JointInfo;
+                        var jointInfo = new VertexJointInfo()
+                        {
+                            JointIndex1 = modelJointInfo.JointIndex1,
+                            JointIndex2 = modelJointInfo.JointIndex2,
+                            JointIndex3 = modelJointInfo.JointIndex3,
+                            Weight1 = modelJointInfo.Weight1,
+                            Weight2 = modelJointInfo.Weight2,
+                            Weight3 = modelJointInfo.Weight3,
+                            Connection = j > 1
+                        };
+                        submodel.SkinJoints.Add(jointInfo);
+                        j++;
+                    }
+
+                    submodel.GroupSizes.Add(group.Count);
+                }
+
+                skin.SubSkins.Add(submodel);
+
+                //var subFaces = subskin.Faces;
+                //var vertexBatch = subskin.Vertexes;
+                //var index = 0;
+                //var vertexAmount = 0;
+                //foreach (var face in subFaces)
+                //{
+                //    index %= TwinVIFCompiler.VertexStripCache;
+
+                //    var idx0 = (index % 2 == 0) ? 0 : 1;
+                //    var idx1 = (index % 2 == 0) ? 1 : 0;
+                //    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
+                //    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
+                //    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
+                //    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
+                //    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
+                //    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
+                //    submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
+                //    submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
+                //    submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
+                //    var modelJointInfo1 = vertexBatch[face.Indexes[idx0]].JointInfo;
+                //    var modelJointInfo2 = vertexBatch[face.Indexes[idx1]].JointInfo;
+                //    var modelJointInfo3 = vertexBatch[face.Indexes[2]].JointInfo;
+                //    var jointInfo1 = new VertexJointInfo()
+                //    {
+                //        JointIndex1 = modelJointInfo1.JointIndex1,
+                //        JointIndex2 = modelJointInfo1.JointIndex2,
+                //        JointIndex3 = modelJointInfo1.JointIndex3,
+                //        Weight1 = modelJointInfo1.Weight1,
+                //        Weight2 = modelJointInfo1.Weight2,
+                //        Weight3 = modelJointInfo1.Weight3,
+                //        Connection = false
+                //    };
+                //    var jointInfo2 = new VertexJointInfo()
+                //    {
+                //        JointIndex1 = modelJointInfo2.JointIndex1,
+                //        JointIndex2 = modelJointInfo2.JointIndex2,
+                //        JointIndex3 = modelJointInfo2.JointIndex3,
+                //        Weight1 = modelJointInfo2.Weight1,
+                //        Weight2 = modelJointInfo2.Weight2,
+                //        Weight3 = modelJointInfo2.Weight3,
+                //        Connection = false
+                //    };
+                //    var jointInfo3 = new VertexJointInfo()
+                //    {
+                //        JointIndex1 = modelJointInfo3.JointIndex1,
+                //        JointIndex2 = modelJointInfo3.JointIndex2,
+                //        JointIndex3 = modelJointInfo3.JointIndex3,
+                //        Weight1 = modelJointInfo3.Weight1,
+                //        Weight2 = modelJointInfo3.Weight2,
+                //        Weight3 = modelJointInfo3.Weight3,
+                //        Connection = true
+                //    };
+                //    submodel.SkinJoints.Add(jointInfo1);
+                //    submodel.SkinJoints.Add(jointInfo2);
+                //    submodel.SkinJoints.Add(jointInfo3);
+
+                //    index++;
+                //    vertexAmount += 3;
+                //    if (vertexAmount >= TwinVIFCompiler.VertexStripCache)
+                //    {
+                //        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache);
+                //        vertexAmount %= TwinVIFCompiler.VertexStripCache;
+                //    }
+                //}
+                //if (vertexAmount > 0)
+                //{
+                //    submodel.GroupSizes.Add(vertexAmount);
+                //}
+                //skin.SubSkins.Add(submodel);
+
+                //List<UInt16> indices = new(subFaces.Count * 3);
+                //foreach (var face in subFaces)
+                //{
+                //    indices.Add((UInt16)face.Indexes![0]);
+                //    indices.Add((UInt16)face.Indexes[1]);
+                //    indices.Add((UInt16)face.Indexes[2]);
+                //}
+
+                //// Generate triangle strips instead of triangle lists
+                //var stripifier = new NvStripifier()
+                //{
+                //    StitchStrips = false,
+                //    CacheSize = subskin.Vertexes.Count
+                //};
+                //stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
+                //var groupsList = new List<PrimitiveGroup>(primitiveGroups);
+                //groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
+
+                //var rawModel = subskin.Vertexes;
+                //foreach (var group in groupsList)
+                //{
+                //    var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
+                //    var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
+                //    if (leftoverGroup < 3)
+                //    {
+                //        totalGroups -= 1;
+                //        leftoverGroup += TwinVIFCompiler.VertexStripCache;
+                //    }
+                //    var vertexIndex = 0;
+                //    var groupIndices = group.Indices;
+                //    for (var i = 0; i < totalGroups; i++)
+                //    {
+                //        for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
+                //        {
+                //            var idx = groupIndices[vertexIndex++];
+                //            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                //            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                //            submodel.Colors.Add(rawModel[idx].Color);
+                //            var modelJointInfo = rawModel[idx].JointInfo;
+                //            var jointInfo = new VertexJointInfo()
+                //            {
+                //                JointIndex1 = modelJointInfo.JointIndex1,
+                //                JointIndex2 = modelJointInfo.JointIndex2,
+                //                JointIndex3 = modelJointInfo.JointIndex3,
+                //                Weight1 = modelJointInfo.Weight1,
+                //                Weight2 = modelJointInfo.Weight2,
+                //                Weight3 = modelJointInfo.Weight3,
+                //                Connection = j > 1
+                //            };
+                //            submodel.SkinJoints.Add(jointInfo);
+                //        }
+                //        // Go back to start building new strip
+                //        vertexIndex--;
+                //        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
+                //    }
+
+                //    for (var i = 0; i < leftoverGroup; ++i)
+                //    {
+                //        var idx = groupIndices[vertexIndex++];
+                //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
+                //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
+                //        submodel.Colors.Add(rawModel[idx].Color);
+                //        var modelJointInfo = rawModel[idx].JointInfo;
+                //        var jointInfo = new VertexJointInfo()
+                //        {
+                //            JointIndex1 = modelJointInfo.JointIndex1,
+                //            JointIndex2 = modelJointInfo.JointIndex2,
+                //            JointIndex3 = modelJointInfo.JointIndex3,
+                //            Weight1 = modelJointInfo.Weight1,
+                //            Weight2 = modelJointInfo.Weight2,
+                //            Weight3 = modelJointInfo.Weight3,
+                //            Connection = i > 1
+                //        };
+                //        submodel.SkinJoints.Add(jointInfo);
+                //    }
+                //    if (leftoverGroup > 0)
+                //    {
+                //        submodel.GroupSizes.Add(leftoverGroup);
+                //    }
+                //}
+                //skin.SubSkins.Add(submodel);
             }
             return skin;
         }
@@ -687,6 +1224,322 @@ namespace TT_Lab.Assets.Factory
             }
 
             return psm;
+        }
+
+        public ITwinSection GenerateDefault()
+        {
+            var @default = new PS2Default();
+            @default.SetRoot(@default);
+            @default.SetParent(@default);
+
+            var graphics = new PS2AnyGraphicsSection();
+            graphics.SetID(Constants.LEVEL_GRAPHICS_SECTION);
+            FillGraphicsSection(graphics, @default);
+
+            var code = new PS2AnyCodeSection();
+            FillCodeSection(code, @default);
+
+            var layout1 = new PS2AnyLayoutSection();
+            layout1.SetID(Constants.LEVEL_LAYOUT_1_SECTION);
+            FillLayoutSection(layout1, @default);
+
+            var layout2 = new PS2AnyLayoutSection();
+            layout2.SetID(Constants.LEVEL_LAYOUT_2_SECTION);
+            layout2.SetRoot(@default);
+            layout2.SetParent(@default);
+
+            var layout3 = new PS2AnyLayoutSection();
+            layout3.SetID(Constants.LEVEL_LAYOUT_3_SECTION);
+            layout3.SetRoot(@default);
+            layout3.SetParent(@default);
+
+            var layout4 = new PS2AnyLayoutSection();
+            layout4.SetID(Constants.LEVEL_LAYOUT_4_SECTION);
+            layout4.SetRoot(@default);
+            layout4.SetParent(@default);
+
+            var layout5 = new PS2AnyLayoutSection();
+            layout5.SetID(Constants.LEVEL_LAYOUT_5_SECTION);
+            layout5.SetRoot(@default);
+            layout5.SetParent(@default);
+
+            var layout6 = new PS2AnyLayoutSection();
+            layout6.SetID(Constants.LEVEL_LAYOUT_6_SECTION);
+            layout6.SetRoot(@default);
+            layout6.SetParent(@default);
+
+            var layout7 = new PS2AnyLayoutSection();
+            layout7.SetID(Constants.LEVEL_LAYOUT_7_SECTION);
+            layout7.SetRoot(@default);
+            layout7.SetParent(@default);
+
+            var layout8 = new PS2AnyLayoutSection();
+            layout8.SetID(Constants.LEVEL_LAYOUT_8_SECTION);
+            FillLayoutSection(layout8, @default);
+
+            var collision = new BaseTwinItem();
+            collision.SetID(Constants.LEVEL_COLLISION_ITEM);
+            collision.SetRoot(@default);
+            collision.SetParent(@default);
+
+            // Particles are generated and injected later
+
+            @default.AddItem(graphics);
+            @default.AddItem(code);
+            @default.AddItem(collision);
+            @default.AddItem(layout1);
+            @default.AddItem(layout2);
+            @default.AddItem(layout3);
+            @default.AddItem(layout4);
+            @default.AddItem(layout5);
+            @default.AddItem(layout6);
+            @default.AddItem(layout7);
+            @default.AddItem(layout8);
+            return @default;
+        }
+
+        public ITwinSection GenerateRM()
+        {
+            var rm2 = new PS2AnyTwinsanityRM2();
+            var graphics = new PS2AnyGraphicsSection();
+            graphics.SetID(Constants.LEVEL_GRAPHICS_SECTION);
+            FillGraphicsSection(graphics, rm2);
+
+            var code = new PS2AnyCodeSection();
+            FillCodeSection(code, rm2);
+
+            rm2.AddItem(graphics);
+            rm2.AddItem(code);
+
+            for (UInt32 i = 0; i < 7; ++i)
+            {
+                var layout = new PS2AnyLayoutSection();
+                layout.SetID(Constants.LEVEL_LAYOUT_1_SECTION + i);
+                FillLayoutSection(layout, rm2);
+                rm2.AddItem(layout);
+            }
+
+            var layout8 = new BaseTwinItem();
+            layout8.SetID(Constants.LEVEL_LAYOUT_8_SECTION);
+            layout8.SetRoot(rm2);
+            layout8.SetParent(rm2);
+            rm2.AddItem(layout8);
+
+            // Collision and particles are generated and injected later
+
+            return rm2;
+        }
+
+        public ITwinSection GenerateSM()
+        {
+            var sm2 = new PS2AnyTwinsanitySM2();
+            var graphics = new PS2AnyGraphicsSection();
+            graphics.SetID(Constants.SCENERY_GRAPHICS_SECTION);
+            FillGraphicsSection(graphics, sm2);
+
+            var unk1 = new BaseTwinItem();
+            unk1.SetID(Constants.SCENERY_UNK_1_ITEM);
+            unk1.SetRoot(sm2);
+            unk1.SetParent(sm2);
+            var unk2 = new BaseTwinItem();
+            unk2.SetID(Constants.SCENERY_UNK_2_ITEM);
+            unk2.SetRoot(sm2);
+            unk2.SetParent(sm2);
+            var unk3 = new BaseTwinItem();
+            unk3.SetID(Constants.SCENERY_UNK_3_ITEM);
+            unk3.SetRoot(sm2);
+            unk3.SetParent(sm2);
+
+            // Scenery, dynamic scenery and chunk links are generated and injected later
+
+            sm2.AddItem(graphics);
+            sm2.AddItem(unk1);
+            sm2.AddItem(unk2);
+            sm2.AddItem(unk3);
+            return sm2;
+        }
+
+        private static void FillLayoutSection(PS2AnyLayoutSection layout, ITwinSection root)
+        {
+            layout.SetRoot(root);
+            layout.SetParent(root);
+            {
+                var templates = new PS2AnyTemplatesSection();
+                templates.SetID(Constants.LAYOUT_TEMPLATES_SECTION);
+                templates.SetRoot(root);
+                templates.SetParent(layout);
+                var aiPositions = new PS2AnyAIPositionsSection();
+                aiPositions.SetID(Constants.LAYOUT_AI_POSITIONS_SECTION);
+                aiPositions.SetRoot(root);
+                aiPositions.SetParent(layout);
+                var aiPaths = new PS2AnyAIPathsSection();
+                aiPaths.SetID(Constants.LAYOUT_AI_PATHS_SECTION);
+                aiPaths.SetRoot(root);
+                aiPaths.SetParent(layout);
+                var positions = new PS2AnyPositionsSection();
+                positions.SetID(Constants.LAYOUT_POSITIONS_SECTION);
+                positions.SetRoot(root);
+                positions.SetParent(layout);
+                var paths = new PS2AnyPathsSection();
+                paths.SetID(Constants.LAYOUT_PATHS_SECTION);
+                paths.SetRoot(root);
+                paths.SetParent(layout);
+                var surfaces = new PS2AnySurfacesSection();
+                surfaces.SetID(Constants.LAYOUT_SURFACES_SECTION);
+                surfaces.SetRoot(root);
+                surfaces.SetParent(layout);
+                var instances = new PS2AnyInstancesSection();
+                instances.SetID(Constants.LAYOUT_INSTANCES_SECTION);
+                instances.SetRoot(root);
+                instances.SetParent(layout);
+                var triggers = new PS2AnyTriggersSection();
+                triggers.SetID(Constants.LAYOUT_TRIGGERS_SECTION);
+                triggers.SetRoot(root);
+                triggers.SetParent(layout);
+                var cameras = new PS2AnyCamerasSection();
+                cameras.SetID(Constants.LAYOUT_CAMERAS_SECTION);
+                cameras.SetRoot(root);
+                cameras.SetParent(layout);
+
+                layout.AddItem(templates);
+                layout.AddItem(aiPositions);
+                layout.AddItem(aiPaths);
+                layout.AddItem(positions);
+                layout.AddItem(paths);
+                layout.AddItem(surfaces);
+                layout.AddItem(instances);
+                layout.AddItem(triggers);
+                layout.AddItem(cameras);
+            }
+        }
+
+        private static void FillGraphicsSection(PS2AnyGraphicsSection graphics, ITwinSection root)
+        {
+            graphics.SetRoot(root);
+            graphics.SetParent(root);
+            {
+                var textures = new PS2AnyTexturesSection();
+                textures.SetID(Constants.GRAPHICS_TEXTURES_SECTION);
+                textures.SetRoot(root);
+                textures.SetParent(graphics);
+                var materials = new PS2AnyMaterialsSection();
+                materials.SetID(Constants.GRAPHICS_MATERIALS_SECTION);
+                materials.SetRoot(root);
+                materials.SetParent(graphics);
+                var models = new PS2AnyModelsSection();
+                models.SetID(Constants.GRAPHICS_MODELS_SECTION);
+                models.SetRoot(root);
+                models.SetParent(graphics);
+                var rigids = new PS2AnyRigidModelsSection();
+                rigids.SetID(Constants.GRAPHICS_RIGID_MODELS_SECTION);
+                rigids.SetRoot(root);
+                rigids.SetParent(graphics);
+                var skins = new PS2AnySkinsSection();
+                skins.SetID(Constants.GRAPHICS_SKINS_SECTION);
+                skins.SetRoot(root);
+                skins.SetParent(graphics);
+                var blendSkins = new PS2AnyBlendSkinsSection();
+                blendSkins.SetID(Constants.GRAPHICS_BLEND_SKINS_SECTION);
+                blendSkins.SetRoot(root);
+                blendSkins.SetParent(graphics);
+                var meshes = new PS2AnyMeshesSection();
+                meshes.SetID(Constants.GRAPHICS_MESHES_SECTION);
+                meshes.SetRoot(root);
+                meshes.SetParent(graphics);
+                var lods = new PS2AnyLODsSection();
+                lods.SetID(Constants.GRAPHICS_LODS_SECTION);
+                lods.SetRoot(root);
+                lods.SetParent(graphics);
+                var skydomes = new PS2AnySkydomesSection();
+                skydomes.SetID(Constants.GRAPHICS_SKYDOMES_SECTION);
+                skydomes.SetRoot(root);
+                skydomes.SetParent(graphics);
+
+                graphics.AddItem(textures);
+                graphics.AddItem(materials);
+                graphics.AddItem(models);
+                graphics.AddItem(rigids);
+                graphics.AddItem(skins);
+                graphics.AddItem(blendSkins);
+                graphics.AddItem(meshes);
+                graphics.AddItem(lods);
+                graphics.AddItem(skydomes);
+            }
+        }
+
+        private static void FillCodeSection(PS2AnyCodeSection code, ITwinSection root)
+        {
+            code.SetID(Constants.LEVEL_CODE_SECTION);
+            code.SetRoot(root);
+            code.SetParent(root);
+            {
+                var objects = new PS2AnyGameObjectsSection();
+                objects.SetID(Constants.CODE_GAME_OBJECTS_SECTION);
+                objects.SetRoot(root);
+                objects.SetParent(code);
+                var behaviours = new PS2AnyBehavioursSection();
+                behaviours.SetID(Constants.CODE_BEHAVIOURS_SECTION);
+                behaviours.SetRoot(root);
+                behaviours.SetParent(code);
+                var animations = new PS2AnyAnimationsSection();
+                animations.SetID(Constants.CODE_ANIMATIONS_SECTION);
+                animations.SetRoot(root);
+                animations.SetParent(code);
+                var ogis = new PS2AnyOGIsSection();
+                ogis.SetID(Constants.CODE_OGIS_SECTION);
+                ogis.SetRoot(root);
+                ogis.SetParent(code);
+                var behaviourSequences = new PS2AnyBehaviourCommandsSequencesSection();
+                behaviourSequences.SetID(Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION);
+                behaviourSequences.SetRoot(root);
+                behaviourSequences.SetParent(code);
+                var unknowns = new BaseTwinItem();
+                unknowns.SetID(Constants.CODE_UNK_ITEM);
+                unknowns.SetRoot(root);
+                unknowns.SetParent(code);
+                var sfxs = new PS2AnySoundsSection();
+                sfxs.SetID(Constants.CODE_SOUND_EFFECTS_SECTION);
+                sfxs.SetRoot(root);
+                sfxs.SetParent(code);
+                var sfxsEn = new PS2AnySoundsSection();
+                sfxsEn.SetID(Constants.CODE_LANG_ENG_SECTION);
+                sfxsEn.SetRoot(root);
+                sfxsEn.SetParent(code);
+                var sfxsFr = new PS2AnySoundsSection();
+                sfxsFr.SetID(Constants.CODE_LANG_FRE_SECTION);
+                sfxsFr.SetRoot(root);
+                sfxsFr.SetParent(code);
+                var sfxsGr = new PS2AnySoundsSection();
+                sfxsGr.SetID(Constants.CODE_LANG_GER_SECTION);
+                sfxsGr.SetRoot(root);
+                sfxsGr.SetParent(code);
+                var sfxsSp = new PS2AnySoundsSection();
+                sfxsSp.SetID(Constants.CODE_LANG_SPA_SECTION);
+                sfxsSp.SetRoot(root);
+                sfxsSp.SetParent(code);
+                var sfxsIt = new PS2AnySoundsSection();
+                sfxsIt.SetID(Constants.CODE_LANG_ITA_SECTION);
+                sfxsIt.SetRoot(root);
+                sfxsIt.SetParent(code);
+                var sfxsJp = new PS2AnySoundsSection();
+                sfxsJp.SetID(Constants.CODE_LANG_JPN_SECTION);
+                sfxsJp.SetRoot(root);
+                sfxsJp.SetParent(code);
+
+                code.AddItem(objects);
+                code.AddItem(behaviours);
+                code.AddItem(animations);
+                code.AddItem(ogis);
+                code.AddItem(behaviourSequences);
+                code.AddItem(unknowns);
+                code.AddItem(sfxs);
+                code.AddItem(sfxsEn);
+                code.AddItem(sfxsFr);
+                code.AddItem(sfxsGr);
+                code.AddItem(sfxsSp);
+                code.AddItem(sfxsIt);
+                code.AddItem(sfxsJp);
+            }
         }
     }
 }

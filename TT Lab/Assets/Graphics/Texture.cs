@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
@@ -11,13 +13,22 @@ namespace TT_Lab.Assets.Graphics
     public class Texture : SerializableAsset
     {
         protected override String DataExt => ".png";
+        public override UInt32 Section => Constants.GRAPHICS_TEXTURES_SECTION;
 
-        public Texture(LabURI package, String? variant, UInt32 id, String name, ITwinTexture texture) : base(id, name, package, variant)
+        [JsonProperty(Required = Required.Always)]
+        public ITwinTexture.TextureFunction TextureFunction { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public ITwinTexture.TexturePixelFormat PixelFormat { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public Boolean GenerateMipmaps { get; set; }
+
+        public Texture(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinTexture texture) : base(id, name, package, needVariant, variant)
         {
             assetData = new TextureData(texture);
             Raw = false;
-            Parameters.Add("texture_function", texture.TexFun);
-            Parameters.Add("pixel_storage_format", texture.TextureFormat);
+            TextureFunction = texture.TexFun;
+            PixelFormat = texture.TextureFormat;
+            GenerateMipmaps = texture.MipLevels > 1;
         }
 
         public Texture()
@@ -37,6 +48,15 @@ namespace TT_Lab.Assets.Graphics
         public override Type GetEditorType()
         {
             return typeof(TextureEditor);
+        }
+
+        public override void PreResolveResources()
+        {
+            base.PreResolveResources();
+            var textureData = (TextureData)GetData();
+            textureData.GenerateMipmaps = GenerateMipmaps;
+            textureData.TextureFunction = TextureFunction;
+            textureData.TexturePixelFormat = PixelFormat;
         }
 
         public override AbstractAssetData GetData()

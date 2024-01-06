@@ -19,6 +19,8 @@ namespace TT_Lab.AssetData.Instance.DynamicScenery
         public LabURI Mesh { get; set; }
         public Vector4[] BoundingBox { get; set; }
 
+        public DynamicSceneryModelData() { }
+
         public DynamicSceneryModelData(LabURI package, String? variant, TwinDynamicSceneryModel model)
         {
             UnkInt = model.UnkInt;

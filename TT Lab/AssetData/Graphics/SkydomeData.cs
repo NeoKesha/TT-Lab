@@ -5,6 +5,7 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -30,7 +31,7 @@ namespace TT_Lab.AssetData.Graphics
             Meshes.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinSkydome skydome = GetTwinItem<ITwinSkydome>();
             Meshes = new List<LabURI>();
@@ -52,8 +53,24 @@ namespace TT_Lab.AssetData.Graphics
                 writer.Write(assetManager.GetAsset(mesh).ID);
             }
 
+            writer.Flush();
             ms.Position = 0;
-            return factory.GenerateMesh(ms);
+            return factory.GenerateSkydome(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        {
+            var assetManager = AssetManager.Get();
+            var root = section.GetRoot();
+            var graphicsSection = root.GetItem<ITwinSection>(Constants.SCENERY_GRAPHICS_SECTION);
+            var meshSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_MESHES_SECTION);
+            foreach (var mesh in Meshes)
+            {
+                assetManager.GetAsset(mesh).ResolveChunkResources(factory, meshSection);
+            }
+
+            section = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_SKYDOMES_SECTION);
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

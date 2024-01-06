@@ -6,6 +6,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Common
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class Vector4 : ITwinSerializable
     {
         public float X { get; set; }
@@ -45,6 +46,24 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public int GetLength()
         {
             return Constants.SIZE_VECTOR4;
+        }
+
+        public void Compile()
+        {
+            return;
+        }
+
+        public void Normalize()
+        {
+            var length = Length();
+            X /= length;
+            Y /= length;
+            Z /= length;
+        }
+
+        public Single Length()
+        {
+            return (Single)Math.Sqrt(X * X + Y * Y + Z * Z);
         }
 
         public void Read(BinaryReader reader, int length)
@@ -142,6 +161,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public static Vector4 FromColor(Color c)
         {
             return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
+        }
+
+        private String DebuggerDisplay
+        {
+            get => $"x,y,z,w = {X},{Y},{Z},{W}; BinX, BinY, BinZ, BinW = {GetBinaryX():X}, {GetBinaryY():X}, {GetBinaryZ():X}, {GetBinaryW():X}";
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.Graphics
 {
     public class XboxAnyBlendSkin : BaseTwinItem, ITwinBlendSkin
     {
+        public UInt32 CompileScale { get; set; }
         public Int32 BlendsAmount { get; set; }
         public List<ITwinSubBlendSkin> SubBlends { get; set; }
 

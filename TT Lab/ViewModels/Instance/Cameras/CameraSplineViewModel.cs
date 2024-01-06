@@ -9,7 +9,7 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         private Single unkFloat3;
         private ObservableCollection<Vector4ViewModel> pathPoints;
         private ObservableCollection<Vector4ViewModel> interpolationPoints;
-        private ObservableCollection<UInt64> unkData;
+        private ObservableCollection<Vector2ViewModel> unkData;
         private UInt16 unkShort;
 
         public CameraSplineViewModel(CameraSubBase cam) : base(cam)
@@ -28,10 +28,10 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             {
                 interpolationPoints.Add(new Vector4ViewModel(v));
             }
-            unkData = new ObservableCollection<UInt64>();
+            unkData = new ObservableCollection<Vector2ViewModel>();
             foreach (var d in baseCam.UnkData)
             {
-                unkData.Add(d);
+                unkData.Add(new Vector2ViewModel(d));
             }
             unkShort = baseCam.UnkShort;
         }
@@ -87,7 +87,11 @@ namespace TT_Lab.ViewModels.Instance.Cameras
             splineCam.UnkData.Clear();
             foreach (var d in UnkData)
             {
-                splineCam.UnkData.Add(d);
+                splineCam.UnkData.Add(new Twinsanity.TwinsanityInterchange.Common.Vector2
+                {
+                    X = d.X,
+                    Y = d.Y
+                });
             }
             base.Save(cam);
         }
@@ -112,7 +116,7 @@ namespace TT_Lab.ViewModels.Instance.Cameras
         {
             get => interpolationPoints;
         }
-        public ObservableCollection<UInt64> UnkData
+        public ObservableCollection<Vector2ViewModel> UnkData
         {
             get => unkData;
         }

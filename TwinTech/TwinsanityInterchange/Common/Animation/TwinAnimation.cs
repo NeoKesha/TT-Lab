@@ -20,12 +20,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             return 6 + JointSettings.Sum(d => d.GetLength()) + StaticTransformations.Count * 2 + AnimatedTransformations.Sum(r => r.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             dataPacker = reader.ReadUInt32();
             TotalFrames = reader.ReadUInt16();
             var jointSettings = (dataPacker & 0x7F);
-            var staticTransformations = (dataPacker >> 0xA & 0xFFE) / 2;
+            var staticTransformations = ((dataPacker >> 0xA) & 0xFFE) / 2;
             var animatedTransformations = (dataPacker >> 0x16);
 
             JointSettings.Clear();
@@ -64,6 +69,9 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             {
                 packer |= (UInt32)(AnimatedTransformations[0].Count << 0x16);
             }
+            // These bits must always be set
+            packer |= (1 << 0x7);
+            packer |= (1 << 0xA);
 
             dataPacker = packer;
             writer.Write(packer);

@@ -12,10 +12,10 @@ namespace TT_Lab.Assets.Code
 
         public BehaviourGraph() { }
 
-        public BehaviourGraph(LabURI package, String? variant, UInt32 id, String Name, PS2BehaviourGraph script) : base(package, variant, id, Name)
+        public BehaviourGraph(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, PS2BehaviourGraph script) : base(package, needVariant, variant, id, Name)
         {
             assetData = new BehaviourGraphData(script);
-            RegenerateURI();
+            RegenerateURI(needVariant);
         }
 
         public override Byte[] ToFormat()

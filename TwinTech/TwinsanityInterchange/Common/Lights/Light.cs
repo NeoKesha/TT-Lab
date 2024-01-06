@@ -27,6 +27,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Lights
             return 8 + 4 * Constants.SIZE_VECTOR4;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public virtual void Read(BinaryReader reader, Int32 length)
         {
             UnkData = reader.ReadUInt32();

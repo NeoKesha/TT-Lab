@@ -22,6 +22,8 @@ namespace TT_Lab.AssetData.Code.Behaviour
         [JsonProperty(Required = Required.Always)]
         public AssignPreferenceID AssignPreference { get; set; }
 
+        public BehaviourAssignerData() { }
+
         public BehaviourAssignerData(LabURI package, String? variant, TwinBehaviourAssigner assigner)
         {
             Behaviour = assigner.Behaviour - 1 == -1 ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, variant, (UInt32)assigner.Behaviour - 1);

@@ -12,7 +12,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public UInt16 ObjectId { get; set; }
         public Byte UnkByte1 { get; set; }
         public Byte UnkByte2 { get; set; }
-        public List<UInt16> UnkIds { get; set; }
+        public List<UInt16> UnkBehaviourIds { get; set; }
         public UInt32 Header1 { get; set; }
         public UInt32 Header2 { get; set; }
         public Byte UnkByte3 { get; set; }
@@ -24,7 +24,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
         public List<UInt32> Ints { get; set; }
         public PS2AnyTemplate()
         {
-            UnkIds = new List<ushort>();
+            UnkBehaviourIds = new List<ushort>();
             Floats = new List<float>();
             Ints = new List<uint>();
             Flags = new List<uint>();
@@ -32,7 +32,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
 
         public override int GetLength()
         {
-            return 4 + Name.Length + 16 + UnkIds.Count * 2 + 22 + Flags.Count * 4 + Floats.Count * 4 + Ints.Count * 4;
+            return 4 + Name.Length + 16 + UnkBehaviourIds.Count * 2 + 22 + Flags.Count * 4 + Floats.Count * 4 + Ints.Count * 4;
         }
 
         public override void Read(BinaryReader reader, int length)
@@ -45,10 +45,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             var amt = reader.ReadUInt32();
             Header1 = reader.ReadUInt32();
             Header2 = reader.ReadUInt32();
-            UnkIds.Clear();
+            UnkBehaviourIds.Clear();
             for (var i = 0; i < amt; ++i)
             {
-                UnkIds.Add(reader.ReadUInt16());
+                UnkBehaviourIds.Add(reader.ReadUInt16());
             }
             UnkByte3 = reader.ReadByte();
             UnkByte4 = reader.ReadByte();
@@ -81,10 +81,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Layout
             writer.Write(ObjectId);
             writer.Write(UnkByte1);
             writer.Write(UnkByte2);
-            writer.Write(UnkIds.Count);
+            writer.Write(UnkBehaviourIds.Count);
             writer.Write(Header1);
             writer.Write(Header2);
-            foreach (var s in UnkIds)
+            foreach (var s in UnkBehaviourIds)
             {
                 writer.Write(s);
             }

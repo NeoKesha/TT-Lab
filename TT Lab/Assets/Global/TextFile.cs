@@ -7,10 +7,12 @@ namespace TT_Lab.Assets.Global
     public class TextFile : SerializableAsset
     {
         protected override String DataExt => ".txt";
+        protected override String TwinDataExt => ".txt";
+        public override UInt32 Section => throw new NotImplementedException();
 
         public TextFile() { }
 
-        public TextFile(LabURI package, String? variant, String name, String data) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, variant)
+        public TextFile(LabURI package, Boolean needVariant, String variant, String name, String data) : base((UInt32)Guid.NewGuid().GetHashCode(), name, package, needVariant, variant)
         {
             assetData = new TextFileData(data);
         }

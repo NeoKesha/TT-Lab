@@ -33,14 +33,14 @@ namespace TT_Lab.AssetData.Code.Behaviour
             writer.Write(Graph.ToCharArray());
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using var fs = new FileStream(dataPath, FileMode.Open, FileAccess.Read);
             using var reader = new StreamReader(fs);
             Graph = reader.ReadToEnd();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var graph = GetTwinItem<ITwinBehaviourGraph>();
             Graph = graph.ToString();
@@ -51,6 +51,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             using var ms = new MemoryStream();
             using var writer = new StreamWriter(ms);
             writer.Write(Graph);
+            writer.Flush();
 
             ms.Position = 0;
             return factory.GenerateBehaviourGraph(ms);

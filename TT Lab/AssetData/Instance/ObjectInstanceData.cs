@@ -5,8 +5,10 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
@@ -37,15 +39,15 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 InstancesRelated { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> Instances { get; set; }
+        public List<LabURI> Instances { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 PositionsRelated { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> Positions { get; set; }
+        public List<LabURI> Positions { get; set; }
         [JsonProperty(Required = Required.Always)]
         public UInt32 PathsRelated { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<UInt16> Paths { get; set; }
+        public List<LabURI> Paths { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI ObjectId { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -71,22 +73,35 @@ namespace TT_Lab.AssetData.Instance
             ParamList3.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
+            var assetManager = AssetManager.Get();
             ITwinInstance instance = GetTwinItem<ITwinInstance>();
             Position = CloneUtils.Clone(instance.Position);
             RotationX = CloneUtils.Clone(instance.RotationX);
             RotationY = CloneUtils.Clone(instance.RotationY);
             RotationZ = CloneUtils.Clone(instance.RotationZ);
             InstancesRelated = instance.InstancesRelated;
-            Instances = CloneUtils.CloneList(instance.Instances);
+            Instances = new(instance.Instances.Count);
+            foreach (var inst in instance.Instances)
+            {
+                Instances.Add(assetManager.GetUri(package, typeof(ObjectInstance).Name, variant, layoutId, inst));
+            }
             PositionsRelated = instance.PositionsRelated;
-            Positions = CloneUtils.CloneList(instance.Positions);
+            Positions = new(instance.Positions.Count);
+            foreach (var pos in instance.Positions)
+            {
+                Positions.Add(assetManager.GetUri(package, typeof(Position).Name, variant, layoutId, pos));
+            }
             PathsRelated = instance.PathsRelated;
-            Paths = CloneUtils.CloneList(instance.Paths);
-            ObjectId = AssetManager.Get().GetUri(package, typeof(GameObject).Name, null, instance.ObjectId);
+            Paths = new(instance.Paths.Count);
+            foreach (var path in instance.Paths)
+            {
+                Paths.Add(assetManager.GetUri(package, typeof(Assets.Instance.Path).Name, variant, layoutId, path));
+            }
+            ObjectId = assetManager.GetUri(package, typeof(GameObject).Name, variant, instance.ObjectId);
             RefListIndex = instance.RefListIndex;
-            OnSpawnScriptId = AssetManager.Get().GetUri(package, typeof(BehaviourStarter).Name, null, instance.OnSpawnHeaderScriptID);
+            OnSpawnScriptId = assetManager.GetUri(package, typeof(BehaviourStarter).Name, variant, instance.OnSpawnHeaderScriptID);
             StateFlags = instance.StateFlags;
             ParamList1 = CloneUtils.CloneList(instance.ParamList1);
             ParamList2 = CloneUtils.CloneList(instance.ParamList2);
@@ -108,7 +123,7 @@ namespace TT_Lab.AssetData.Instance
             writer.Write(InstancesRelated);
             foreach (var inst in Instances)
             {
-                writer.Write(inst);
+                writer.Write((UInt16)assetManager.GetAsset(inst).ID);
             }
 
             writer.Write(Positions.Count);
@@ -116,7 +131,7 @@ namespace TT_Lab.AssetData.Instance
             writer.Write(PositionsRelated);
             foreach (var pos in Positions)
             {
-                writer.Write(pos);
+                writer.Write((UInt16)assetManager.GetAsset(pos).ID);
             }
 
             writer.Write(Paths.Count);
@@ -124,7 +139,7 @@ namespace TT_Lab.AssetData.Instance
             writer.Write(PathsRelated);
             foreach (var path in Paths)
             {
-                writer.Write(path);
+                writer.Write((UInt16)assetManager.GetAsset(path).ID);
             }
 
             writer.Write((UInt16)assetManager.GetAsset(ObjectId).ID);
@@ -156,8 +171,33 @@ namespace TT_Lab.AssetData.Instance
                 writer.Write(param);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateInstance(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        {
+            var assetManager = AssetManager.Get();
+            var root = section.GetRoot();
+            var codeSection = root.GetItem<ITwinSection>(Constants.LEVEL_CODE_SECTION);
+            var objectsSection = codeSection.GetItem<ITwinSection>(Constants.CODE_GAME_OBJECTS_SECTION);
+            var behavioursSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOURS_SECTION);
+
+            if (layoutID != null && layoutID == Constants.LEVEL_LAYOUT_6_SECTION)
+            {
+                return base.ResolveChunkResouces(factory, section, id, layoutID);
+            }
+
+            assetManager.GetAsset(ObjectId).ResolveChunkResources(factory, objectsSection);
+            if (OnSpawnScriptId != LabURI.Empty)
+            {
+                assetManager.GetAsset(OnSpawnScriptId).ResolveChunkResources(factory, behavioursSection);
+            }
+
+            // Positions, paths and instances don't need to be resolved because they are gonna be resolved by themselves anyway
+
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

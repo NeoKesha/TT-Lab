@@ -21,6 +21,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
             return 4 + Commands.Sum(com => com.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             var amt = reader.ReadInt32();
@@ -50,7 +55,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
                 cmd.WriteText(writer, tabs);
             }
         }
-        public void ReadText(StreamReader reader)
+        public bool ReadText(StreamReader reader)
         {
             String line = reader.ReadLine().Trim();
             Debug.Assert(line == "@Xbox Pack", "Attepting to parse XBox command pack as a different version");
@@ -65,6 +70,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Xbox.Items.RMX.Code.A
                 cmd.ReadText(line);
                 Commands.Add(cmd);
             }
+            return true;
         }
         public override String ToString()
         {

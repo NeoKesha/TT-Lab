@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TT Lab", "TT Lab\TT Lab.csp
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GLWpfControl", "GLWpfControl\src\GLWpfControl\GLWpfControl.csproj", "{FA7C1291-E0F8-4C2F-8964-DE992B00E568}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NvTriStripDotNet", "NvTriStripDotNet\NvTriStripDotNet.csproj", "{66B926EE-FF73-42BE-A27E-CBCB333A4C07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +56,14 @@ Global
 		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Release|x64.ActiveCfg = Release|Any CPU
 		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Release|x64.Build.0 = Release|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Debug|x64.Build.0 = Debug|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Release|x64.ActiveCfg = Release|Any CPU
+		{66B926EE-FF73-42BE-A27E-CBCB333A4C07}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

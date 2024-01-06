@@ -22,6 +22,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             return 4 + Records.Sum(r => r.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             Header = reader.ReadInt32();

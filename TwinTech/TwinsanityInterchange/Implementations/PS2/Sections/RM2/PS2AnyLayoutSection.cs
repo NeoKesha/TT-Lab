@@ -1,6 +1,8 @@
-﻿using Twinsanity.TwinsanityInterchange.Enumerations;
+﻿using System.Linq;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.Base;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2.Layout;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2
 {
@@ -17,6 +19,18 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Sections.RM2
             idToClassDictionary.Add(Constants.LAYOUT_INSTANCES_SECTION, typeof(PS2AnyInstancesSection));
             idToClassDictionary.Add(Constants.LAYOUT_TRIGGERS_SECTION, typeof(PS2AnyTriggersSection));
             idToClassDictionary.Add(Constants.LAYOUT_CAMERAS_SECTION, typeof(PS2AnyCamerasSection));
+        }
+
+        protected override void PreprocessWrite()
+        {
+            base.PreprocessWrite();
+            foreach (var item in Items.Where(i => i is BaseTwinSection).Cast<BaseTwinSection>())
+            {
+                item.SortItems(delegate (ITwinItem item1, ITwinItem item2)
+                {
+                    return item1.GetID().CompareTo(item2.GetID());
+                });
+            }
         }
     }
 }

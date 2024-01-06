@@ -11,12 +11,6 @@ namespace TT_Lab.Assets
     public interface IAsset
     {
         /// <summary>
-        /// Asset's unique ID
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        Guid UUID { get; }
-
-        /// <summary>
         /// Asset's string type
         /// </summary>
         [JsonProperty(Required = Required.Always)]
@@ -38,37 +32,37 @@ namespace TT_Lab.Assets
         /// In case of Twinsanity ID collisions the distinct category asset belongs to
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string? Variation { get; set; }
+        String Variation { get; set; }
 
         /// <summary>
         /// Asset's name
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        string Name { get; set; }
+        String Name { get; set; }
 
         /// <summary>
         /// Whether asset's data is in raw form
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        bool Raw { get; set; }
+        Boolean Raw { get; set; }
 
         /// <summary>
         /// Path to asset's data
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string Data { get; set; }
+        String Data { get; set; }
 
         /// <summary>
         /// Name for the asset to display in project tree
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string Alias { get; set; }
+        String Alias { get; set; }
 
         /// <summary>
         /// Chunk path where this asset belongs to
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
-        string Chunk { get; }
+        String Chunk { get; }
 
         /// <summary>
         /// Resources unique URI to be accessed from around the project
@@ -95,6 +89,8 @@ namespace TT_Lab.Assets
         [JsonProperty(Required = Required.AllowNull)]
         Int32? LayoutID { get; set; }
 
+        UInt32 Section { get; }
+
         /// <summary>
         /// Whether the data for this asset is currently in memory
         /// </summary>
@@ -103,8 +99,8 @@ namespace TT_Lab.Assets
         /// <summary>
         /// If asset shouldn't be exported during game's build stage
         /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public Boolean SkipExport { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        Boolean SkipExport { get; set; }
 
         /// <summary>
         /// 
@@ -182,7 +178,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Regenerates the URI if package, subpackage or variation was changed
         /// </summary>
-        void RegenerateURI();
+        void RegenerateURI(Boolean needVariant);
 
         /// <summary>
         /// Dump on disk in JSON format
@@ -192,7 +188,12 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Convert JSON format to the project asset object
         /// </summary>
-        void Deserialize(string json);
+        void Deserialize(String json);
+
+        /// <summary>
+        /// Called if asset needs to do anything else after being deserialized
+        /// </summary>
+        void PostDeserialize();
 
         /// <summary>
         /// Converts given data to raw game's data
@@ -210,5 +211,22 @@ namespace TT_Lab.Assets
         /// Finishes import on Project Creation stage
         /// </summary>
         void Import();
+
+        /// <summary>
+        /// Exports the item to Twinsanity format during Project Compilation stage
+        /// </summary>
+        Twinsanity.TwinsanityInterchange.Interfaces.ITwinItem Export(Factory.ITwinItemFactory factory);
+
+        /// <summary>
+        /// Exports the item to a file in Twinsanity's format
+        /// </summary>
+        /// <param name="factory"></param>
+        void ExportToFile(Factory.ITwinItemFactory factory);
+
+        /// <summary>
+        /// Traverses the chunk sections to fill it with all the referenced data
+        /// </summary>
+        /// <param name="section"></param>
+        void ResolveChunkResources(Factory.ITwinItemFactory factory, Twinsanity.TwinsanityInterchange.Interfaces.ITwinSection section);
     }
 }

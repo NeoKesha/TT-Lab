@@ -1,12 +1,15 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.Assets.Instance
 {
     public class DynamicScenery : SerializableInstance
     {
+        public override UInt32 Section => Constants.SCENERY_DYNAMIC_SECENERY_ITEM;
+
         public DynamicScenery()
         {
         }

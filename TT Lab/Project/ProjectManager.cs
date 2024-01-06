@@ -137,7 +137,7 @@ namespace TT_Lab.Project
             NotifyChange("ProjectTree");
         }
 
-        private AssetViewModel FilterAsset(AssetViewModel asset, String filter)
+        private AssetViewModel? FilterAsset(AssetViewModel asset, String filter)
         {
             if (asset.GetInternalChildren() == null)
             {
@@ -306,6 +306,7 @@ namespace TT_Lab.Project
                 WorkableProject = true;
                 NotifyChange("ProjectOpened");
                 NotifyChange("ProjectTitle");
+                GC.Collect();
                 Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
 #if !DEBUG
                 }
@@ -339,12 +340,13 @@ namespace TT_Lab.Project
                         {
 #endif
                     Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
-                    OpenedProject = Project.Deserialize(prFile);
+                    Project.Deserialize(prFile);
                     Log.WriteLine($"Building project tree...");
                     BuildProjectTree();
                     WorkableProject = true;
                     NotifyChange("ProjectOpened");
                     NotifyChange("ProjectTitle");
+                    GC.Collect();
 #if !DEBUG
                         }
                         catch (Exception ex)
@@ -367,13 +369,19 @@ namespace TT_Lab.Project
 
         public void BuildPs2Project()
         {
-
+            WorkableProject = false;
+            Task.Factory.StartNew(() =>
+            {
+                var pr = OpenedProject!;
+                pr.PackAssetsPS2();
+                WorkableProject = true;
+            });
         }
 
         public void CloseProject()
         {
             OpenedProject = null;
-            ProjectTree = null;
+            ProjectTree.Clear();
             Log.Clear();
             NotifyChange("ProjectOpened");
             NotifyChange("ProjectTitle");

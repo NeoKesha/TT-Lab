@@ -4,12 +4,15 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.Assets.Instance
 {
     public class Camera : SerializableInstance
     {
+        public override UInt32 Section => Constants.LAYOUT_CAMERAS_SECTION;
+
         public Camera(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, ITwinCamera camera) : base(package, id, Name, chunk, layId)
         {
             assetData = new CameraData(camera);

@@ -57,7 +57,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
 
         public override String GetName()
         {
-            return Name.Replace("\0", "");
+            return $"{Name.Replace("\0", "")}_{id:X}";
         }
     }
 }

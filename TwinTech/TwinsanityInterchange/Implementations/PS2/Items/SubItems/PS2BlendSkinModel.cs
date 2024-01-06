@@ -14,6 +14,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         Byte[] vifCode;
         Int32 blendsAmount;
 
+        public UInt32 CompileScale { get; set; }
         public Int32 VertexesAmount { get; set; }
         public Vector3 BlendShape { get; set; }
         public List<ITwinBlendSkinFace> Faces { get; set; }
@@ -21,6 +22,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public List<Vector4> UVW { get; set; }
         public List<Vector4> Colors { get; set; }
         public List<VertexJointInfo> SkinJoints { get; set; }
+        public List<Int32> GroupSizes { get; set; }
 
         public PS2BlendSkinModel(Int32 blendsAmount)
         {
@@ -58,6 +60,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             UVW = new List<Vector4>();
             Colors = new List<Vector4>();
             SkinJoints = new List<VertexJointInfo>();
+            GroupSizes = new List<Int32>();
 
             const Int32 VERT_DATA_INDEX = 3;
             for (Int32 i = 0; i < data.Count;)
@@ -107,23 +110,23 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     var jointIndex3 = 0u;
                     if (weightAmount > 0)
                     {
-                        jointIndex1 = v1.GetBinaryX() & 0xFF;
+                        jointIndex1 = v1.GetBinaryX() & 0x1FF;
                         jointIndex1 /= 4;
-                        v1.SetBinaryX(v1.GetBinaryX() & 0xFFFFFF00);
+                        v1.SetBinaryX(v1.GetBinaryX() & 0xFFFFFE00);
                         weight1 = v1.X;
                     }
                     if (weightAmount > 1)
                     {
-                        jointIndex2 = v1.GetBinaryY() & 0xFF;
+                        jointIndex2 = v1.GetBinaryY() & 0x1FF;
                         jointIndex2 /= 4;
-                        v1.SetBinaryY(v1.GetBinaryY() & 0xFFFFFF00);
+                        v1.SetBinaryY(v1.GetBinaryY() & 0xFFFFFE00);
                         weight2 = v1.Y;
                     }
                     if (weightAmount > 2)
                     {
-                        jointIndex3 = v1.GetBinaryZ() & 0xFF;
+                        jointIndex3 = v1.GetBinaryZ() & 0x1FF;
                         jointIndex3 /= 4;
-                        v1.SetBinaryZ(v1.GetBinaryZ() & 0xFFFFFF00);
+                        v1.SetBinaryZ(v1.GetBinaryZ() & 0xFFFFFE00);
                         weight3 = v1.Z;
                     }
 
@@ -141,12 +144,19 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     jointInfos.Add(joint);
                 }
 
+                GroupSizes.Add((Int32)verts);
                 // Save the batches into their respective vertex parts
                 for (Int32 j = 0; j < verts; j++)
                 {
+                    var color = new Vector4(
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryX() & 0xFF) + 127, 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryY() & 0xFF) + 127, 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryZ() & 0xFF) + 127, 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryW() & 0xFF) + 127, 255))
+                        );
                     Vertexes.Add(positionVertexBatch[j]);
                     UVW.Add(uvVertexBatch[j]);
-                    Colors.Add(colorsVertexBatch[j]);
+                    Colors.Add(color);
                     SkinJoints.Add(jointInfos[j]);
                 }
 
@@ -161,15 +171,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
 
         public void Write(BinaryWriter writer)
         {
-            var data = new List<List<Vector4>>()
-            {
-                Vertexes,
-                UVW,
-                Colors,
-                SkinJoints.Select(j => j.GetVector4()).ToList()
-            };
-            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.Skin, data, null);
-            vifCode = compiler.Compile();
             VertexesAmount = Vertexes.Count;
             writer.Write(vifCode.Length);
             writer.Write(VertexesAmount);
@@ -178,6 +179,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             foreach (var face in Faces)
             {
                 face.Write(writer);
+            }
+        }
+
+        public void Compile()
+        {
+            var data = new List<List<Vector4>>()
+            {
+                GroupSizes.Select(g => new Vector4(g, 0, 0, 0)).ToList(),
+                Vertexes,
+                UVW,
+                Colors,
+                SkinJoints.Select(j => j.GetVector4()).ToList()
+            };
+            var compiler = new TwinVIFCompiler(TwinVIFCompiler.ModelFormat.BlendSkin, data, null, CompileScale);
+            vifCode = compiler.Compile();
+            foreach (var face in Faces)
+            {
+                face.Compile();
             }
         }
     }

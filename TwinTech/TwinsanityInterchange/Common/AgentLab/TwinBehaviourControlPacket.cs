@@ -44,6 +44,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             return 8 + Bytes.Count + Floats.Count * 4;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             Byte bytesCnt = reader.ReadByte();
@@ -268,10 +273,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
             }
             var maxPacketIndex = -1;
             Byte floatIdx = 0;
+            line = reader.ReadLine().Trim(); // Read the start of data
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("data"))
+                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("}"))
                 {
                     continue;
                 }
@@ -302,8 +308,16 @@ namespace Twinsanity.TwinsanityInterchange.Common.AgentLab
                     Floats[floatIdx++] = BitConverter.SingleToUInt32Bits(value);
                 }
             }
-            Bytes.RemoveRange(maxPacketIndex, PacketDataLength - maxPacketIndex);
-            Floats.RemoveRange(floatIdx - 1, PacketDataLength - (floatIdx - 1));
+            if (maxPacketIndex != -1)
+            {
+                Bytes.RemoveRange(maxPacketIndex + 1, PacketDataLength - maxPacketIndex - 1);
+                Floats.RemoveRange(floatIdx, PacketDataLength - floatIdx);
+            }
+            else
+            {
+                Bytes.Clear();
+                Floats.Clear();
+            }
         }
 
         public static bool IsIntegerPacket(ControlPacketData packet)

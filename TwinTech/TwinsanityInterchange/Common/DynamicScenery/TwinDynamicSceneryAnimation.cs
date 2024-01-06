@@ -17,7 +17,12 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
 
         public Int32 GetLength()
         {
-            return 6 + ModelSettings.Sum(d => d.GetLength()) + StaticTransformations.Count * 2 + AnimatedTransformations.Sum(r => r.GetLength());
+            return 6 + ModelSettings.Sum(d => d.GetLength()) + StaticTransformations.Sum(s => s.GetLength()) + AnimatedTransformations.Sum(r => r.GetLength());
+        }
+
+        public void Compile()
+        {
+            return;
         }
 
         public void Read(BinaryReader reader, Int32 length)
@@ -25,7 +30,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             dataPacker = reader.ReadUInt32();
             TotalFrames = reader.ReadUInt16();
             var modelSettings = (dataPacker & 0x7F);
-            var staticTransformations = (dataPacker >> 0x9 & 0x1FFC) / 4;
+            var staticTransformations = ((dataPacker >> 0x9) & 0x1FFC) / 4;
             var animatedTransformations = (dataPacker >> 0x16);
 
             ModelSettings.Clear();

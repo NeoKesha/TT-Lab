@@ -67,20 +67,25 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 + ChunkLinksCollisionData.Sum(l => l.GetLength());
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             type = reader.ReadUInt32();
             {
-                UnkFlag = (type & 0x2) == 1;
+                UnkFlag = (type & 0x2) != 0;
             }
             int pathLen = reader.ReadInt32();
             Path = new String(reader.ReadChars(pathLen));
             flags = reader.ReadUInt32();
             {
-                IsRendered = (flags & 0x1) == 1;
-                UnkNum = (Byte)(flags >> 0x1 & 0x3F);
-                KeepLoaded = (flags & 0x80) == 1;
-                IsLoadWallActive = (flags & 0x100) == 1;
+                IsRendered = (flags & 0x1) != 0;
+                UnkNum = (Byte)((flags >> 0x1) & 0x3F);
+                KeepLoaded = (flags & 0x80) != 0;
+                IsLoadWallActive = (flags & 0x100) != 0;
             }
             ObjectMatrix.Read(reader, Constants.SIZE_MATRIX4);
             ChunkMatrix.Read(reader, Constants.SIZE_MATRIX4);
@@ -108,7 +113,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public void Write(BinaryWriter writer)
         {
-            flags = ((UInt32)UnkNum & 0x3F << 1);
+            flags = (UInt32)((UnkNum & 0x3F) << 1);
             type = 0;
             if (IsRendered)
             {

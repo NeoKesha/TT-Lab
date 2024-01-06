@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -39,33 +38,38 @@ namespace Twinsanity.TwinsanityInterchange.Common
 
         public Vector4 GetVector4()
         {
-            Debug.Assert(Math.Abs(Weight1 + Weight2 + Weight3 - 1.0f) < 0.000001f, "Weights must sum up to 1");
             Vector4 v = new()
             {
                 X = Weight1,
                 Y = Weight2,
                 Z = Weight3
             };
-            var xComp = v.GetBinaryX() | (UInt32)(JointIndex1 * 4);
-            var yComp = v.GetBinaryY() | (UInt32)(JointIndex2 * 4);
-            var zComp = v.GetBinaryZ() | (UInt32)(JointIndex3 * 4);
+            var xComp = (v.GetBinaryX() & 0xFFFFFE00) | (UInt32)(JointIndex1 * 4);
+            var yComp = (v.GetBinaryY() & 0xFFFFFE00) | (UInt32)(JointIndex2 * 4);
+            var zComp = (v.GetBinaryZ() & 0xFFFFFE00) | (UInt32)(JointIndex3 * 4);
             v.SetBinaryX(xComp);
             v.SetBinaryY(yComp);
             v.SetBinaryZ(zComp);
             UInt32 wComp = Connection ? 0 : 0x8000U;
             var weightCount = 1;
-            var totalWeight = Weight1 + Weight2;
-            if (totalWeight < 1)
+            var totalWeight = Weight1;
+            if (totalWeight < 1 && Weight2 != 0)
             {
+                totalWeight += Weight2;
                 weightCount++;
             }
-            if (totalWeight + Weight3 <= 1)
+            if (totalWeight + Weight3 <= 1 && Weight3 != 0 && weightCount > 1)
             {
                 weightCount++;
             }
             wComp |= (UInt32)weightCount;
             v.SetBinaryW(wComp);
             return v;
+        }
+
+        public void Compile()
+        {
+            return;
         }
 
         public void Read(BinaryReader reader, Int32 length)

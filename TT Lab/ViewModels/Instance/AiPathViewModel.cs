@@ -9,8 +9,8 @@ namespace TT_Lab.ViewModels.Instance
     public class AiPathViewModel : AssetViewModel
     {
         private Enums.Layouts layId;
-        private UInt16 pathBegin;
-        private UInt16 pathEnd;
+        private LabURI pathBegin;
+        private LabURI pathEnd;
         private UInt16[] args;
 
         public AiPathViewModel(LabURI asset, AssetViewModel? parent) : base(asset, parent)
@@ -47,7 +47,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt16 PathBegin
+        public LabURI PathBegin
         {
             get => pathBegin;
             set
@@ -60,7 +60,7 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public UInt16 PathEnd
+        public LabURI PathEnd
         {
             get => pathEnd;
             set

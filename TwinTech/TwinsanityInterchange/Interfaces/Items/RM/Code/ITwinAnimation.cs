@@ -28,6 +28,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// <summary>
         /// Facial animation data
         /// </summary>
-        TwinAnimation FacialAnimation { get; set; }
+        TwinMorphAnimation FacialAnimation { get; set; }
     }
 }

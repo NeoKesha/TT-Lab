@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
+using Twinsanity.TwinsanityInterchange.Enumerations;
+using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance.Scenery
@@ -34,7 +37,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
         [JsonProperty(Required = Required.Always)]
         public Vector4 UnkVec4 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Vector4 UnkVec5 { get; set; }
+        public Boolean[] LightsEnabler { get; set; }
 
         public SceneryBaseData() { }
 
@@ -43,12 +46,12 @@ namespace TT_Lab.AssetData.Instance.Scenery
             MeshIDs = new List<LabURI>();
             foreach (var m in baseType.MeshIDs)
             {
-                MeshIDs.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, null, m));
+                MeshIDs.Add(AssetManager.Get().GetUri(package, typeof(Mesh).Name, variant, m));
             }
             LodIDs = new List<LabURI>();
             foreach (var l in baseType.LodIDs)
             {
-                LodIDs.Add(AssetManager.Get().GetUri(package, typeof(LodModel).Name, null, l));
+                LodIDs.Add(AssetManager.Get().GetUri(package, typeof(LodModel).Name, variant, l));
             }
             BoundingBoxes = new List<Vector4[]>();
             foreach (var bb in baseType.BoundingBoxes)
@@ -69,7 +72,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
             UnkVec2 = CloneUtils.Clone(baseType.UnkVec2);
             UnkVec3 = CloneUtils.Clone(baseType.UnkVec3);
             UnkVec4 = CloneUtils.Clone(baseType.UnkVec4);
-            UnkVec5 = CloneUtils.Clone(baseType.UnkVec5);
+            LightsEnabler = CloneUtils.CloneArray(baseType.LightsEnabler);
         }
 
         public SceneryBaseData(BaseSceneryViewModel vm)
@@ -203,13 +206,12 @@ namespace TT_Lab.AssetData.Instance.Scenery
                 Z = vm.UnkVec4.Z,
                 W = vm.UnkVec4.W,
             };
-            UnkVec5 = new Vector4
+            LightsEnabler = new Boolean[128];
+            var index = 0;
+            foreach (var enabler in vm.LightsEnabler)
             {
-                X = vm.UnkVec5.X,
-                Y = vm.UnkVec5.Y,
-                Z = vm.UnkVec5.Z,
-                W = vm.UnkVec5.W,
-            };
+                LightsEnabler[index++] = enabler;
+            }
         }
 
         public virtual ITwinScenery.SceneryType GetSceneryType()
@@ -220,42 +222,71 @@ namespace TT_Lab.AssetData.Instance.Scenery
         public virtual void Write(BinaryWriter writer)
         {
             var assetManager = AssetManager.Get();
-            writer.Write(MeshIDs.Count);
-            foreach (var mesh in MeshIDs)
+            var hasMeshLods = MeshIDs.Count > 0 || LodIDs.Count > 0 ? 0x1613 : 0;
+            writer.Write(hasMeshLods);
+            if (hasMeshLods != 0)
             {
-                writer.Write(assetManager.GetAsset(mesh).ID);
-            }
+                writer.Write((Int16)MeshIDs.Count);
+                writer.Write((Int16)LodIDs.Count);
 
-            writer.Write(LodIDs.Count);
-            foreach (var lod in LodIDs)
-            {
-                writer.Write(assetManager.GetAsset(lod).ID);
-            }
+                foreach (var bb in BoundingBoxes)
+                {
+                    bb[0].Write(writer);
+                    bb[1].Write(writer);
+                }
 
-            writer.Write(BoundingBoxes.Count);
-            foreach (var bb in BoundingBoxes)
-            {
-                bb[0].Write(writer);
-                bb[1].Write(writer);
-            }
+                foreach (var mesh in MeshIDs)
+                {
+                    writer.Write(assetManager.GetAsset(mesh).ID);
+                }
 
-            writer.Write(MeshModelMatrices.Count);
-            foreach (var mat in MeshModelMatrices)
-            {
-                mat.Write(writer);
-            }
+                foreach (var lod in LodIDs)
+                {
+                    writer.Write(assetManager.GetAsset(lod).ID);
+                }
 
-            writer.Write(LodModelMatrices.Count);
-            foreach (var mat in LodModelMatrices)
-            {
-                mat.Write(writer);
+                foreach (var mat in MeshModelMatrices)
+                {
+                    mat.Write(writer);
+                }
+
+                foreach (var mat in LodModelMatrices)
+                {
+                    mat.Write(writer);
+                }
             }
 
             UnkVec1.Write(writer);
             UnkVec2.Write(writer);
             UnkVec3.Write(writer);
             UnkVec4.Write(writer);
-            UnkVec5.Write(writer);
+            var bytes = new Byte[16];
+            for (var i = 0; i < 16; ++i)
+            {
+                for (var j = 0; j < 8; ++j)
+                {
+                    var num = LightsEnabler[j + i * 8] ? 1 : 0;
+                    bytes[i] |= (Byte)(num << j);
+                }
+            }
+            writer.Write(bytes);
+        }
+
+        public void ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section)
+        {
+            var assetManager = AssetManager.Get();
+            var meshSection = section.GetItem<ITwinSection>(Constants.GRAPHICS_MESHES_SECTION);
+            var lodSection = section.GetItem<ITwinSection>(Constants.GRAPHICS_LODS_SECTION);
+
+            foreach (var mesh in MeshIDs)
+            {
+                assetManager.GetAsset(mesh).ResolveChunkResources(factory, meshSection);
+            }
+
+            foreach (var lod in LodIDs)
+            {
+                assetManager.GetAsset(lod).ResolveChunkResources(factory, lodSection);
+            }
         }
     }
 }

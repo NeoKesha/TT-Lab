@@ -35,13 +35,13 @@ namespace TT_Lab.AssetData.Global
             return factory.GeneratePSM(ptcs);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var psm = GetTwinItem<ITwinPSM>();
             var ptcIndex = 0;
             foreach (var ptc in psm.PTCs)
             {
-                var asset = new PTC(package, $"{psm.GetName()}_{variant}_{ptcIndex++}", $"{psm.GetName()}_{ptcIndex++}", ptc);
+                var asset = new PTC(package, true, $"{psm.GetName()}_{variant}_{ptcIndex++}", $"{psm.GetName()}_{ptcIndex++}", ptc);
                 AssetManager.Get().AddAssetToImport(asset);
                 PTCs.Add(asset.URI);
             }

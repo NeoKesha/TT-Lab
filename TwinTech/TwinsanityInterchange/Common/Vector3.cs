@@ -24,6 +24,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return Constants.SIZE_VECTOR3;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             X = reader.ReadSingle();

@@ -4,12 +4,14 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.Assets.Instance
 {
     public class Scenery : SerializableInstance
     {
+        public override UInt32 Section => Constants.SCENERY_SECENERY_ITEM;
 
         public Scenery()
         {

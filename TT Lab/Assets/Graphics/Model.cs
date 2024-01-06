@@ -2,15 +2,17 @@
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Editors.Graphics;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Assets.Graphics
 {
     public class Model : SerializableAsset
     {
-        protected override String DataExt => ".dae";
+        protected override String DataExt => ".glb";
+        public override UInt32 Section => Constants.GRAPHICS_MODELS_SECTION;
 
-        public Model(LabURI package, String? variant, UInt32 id, String Name, ITwinModel model) : base(id, Name, package, variant)
+        public Model(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinModel model) : base(id, Name, package, needVariant, variant)
         {
             assetData = new ModelData(model);
             Raw = false;

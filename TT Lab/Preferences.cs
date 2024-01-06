@@ -24,7 +24,7 @@ namespace TT_Lab
         static Preferences()
         {
             PrefFilePath = Path.Combine(ExePath, PrefFileName);
-            Settings[TranslucencyMethod] = Rendering.RenderSwitches.TranslucencyMethod.DDP;
+            Settings[TranslucencyMethod] = Rendering.RenderSwitches.TranslucencyMethod.WBOIT;
         }
 
         public static void Save()

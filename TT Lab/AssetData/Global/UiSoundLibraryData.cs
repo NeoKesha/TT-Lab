@@ -35,13 +35,13 @@ namespace TT_Lab.AssetData.Global
             return factory.GenerateFrontend(sounds);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var frontend = GetTwinItem<ITwinSection>();
             for (Int32 i = 0; i < frontend.GetItemsAmount(); i++)
             {
                 var sound = frontend.GetItem<ITwinSound>(frontend.GetItem(i).GetID());
-                var soundImport = new SoundEffect(package, $"{sound.GetName()}_ui_sfx_{i}", sound.GetID(), $"{sound.GetName()}_ui_sfx_{i}", sound);
+                var soundImport = new SoundEffect(package, true, $"{sound.GetName()}_ui_sfx_{i}", sound.GetID(), $"{sound.GetName()}_ui_sfx_{i}", sound);
                 AssetManager.Get().AddAssetToImport(soundImport);
                 UiSounds.Add(soundImport.URI);
             }

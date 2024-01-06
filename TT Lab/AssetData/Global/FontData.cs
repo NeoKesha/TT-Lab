@@ -42,13 +42,13 @@ namespace TT_Lab.AssetData.Global
             return factory.GenerateFont(pages, UnkVecs, UnkInt);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var psf = GetTwinItem<ITwinPSF>();
             var psfIndex = 0;
             foreach (var ptc in psf.FontPages)
             {
-                var asset = new PTC(package, $"{psf.GetName()}_{variant}_page_{psfIndex++}", $"{psf.GetName()}_page_{psfIndex++}", ptc);
+                var asset = new PTC(package, true, $"{psf.GetName()}_{variant}_page_{psfIndex++}", $"{psf.GetName()}_page_{psfIndex++}", ptc);
                 AssetManager.Get().AddAssetToImport(asset);
                 FontPages.Add(asset.URI);
             }

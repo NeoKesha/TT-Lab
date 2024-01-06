@@ -1,8 +1,10 @@
-﻿using System;
+﻿using SharpGLTF.Schema2;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Graphics;
+using TT_Lab.Util;
+using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
@@ -15,10 +17,10 @@ namespace TT_Lab.AssetData.Graphics.SubModels
 
         public SubBlendData(LabURI package, String? variant, ITwinSubBlendSkin blend)
         {
-            Material = AssetManager.Get().GetUri(package, typeof(Material).Name, variant, blend.Material);
+            Material = AssetManager.Get().GetUri(package, typeof(Assets.Graphics.Material).Name, variant, blend.Material);
             if (Material == LabURI.Empty)
             {
-                var allMaterials = AssetManager.Get().GetAssets().FindAll(a => a is Material).ConvertAll(a => a.URI);
+                var allMaterials = AssetManager.Get().GetAssets().FindAll(a => a is Assets.Graphics.Material).ConvertAll(a => a.URI);
                 var actuallyHasTheMaterial = allMaterials.FindAll(uri => uri.ToString().Contains(blend.Material.ToString()));
                 throw new Exception($"Couldn't find requested material 0x{blend.Material:X}!");
             }
@@ -29,75 +31,106 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             }
         }
 
-        public SubBlendData(LabURI material, IEnumerable<Assimp.Mesh> meshes, IEnumerable<Assimp.Animation> animations, List<Vector3> blendShapes, int meshIndex)
+        public SubBlendData(LabURI material, IEnumerable<SharpGLTF.Schema2.Mesh> meshes, Int32 blendsAmount)
         {
             Material = material;
 
             foreach (var mesh in meshes)
             {
-                var vertexes = new List<Vertex>();
-
-                // Convert bone -> vertex index to vertex -> bone id
-                List<Dictionary<int, (int, float)>> vertexToBone = new();
-                for (Int32 j = 0; j < mesh.Bones.Count; j++)
+                var allVertexes = new List<Vertex>();
+                var indiceAccessor = 0;
+                var blendShape = (Vector3)mesh.Extras.Deserialize(typeof(Vector3));
+                var primitive = mesh.Primitives[0];
+                var vertexes = primitive.GetVertexColumns();
+                var indices = primitive.GetTriangleIndices();
+                var amountOfSubmodels = (indices.Count() * 3) / TwinVIFCompiler.VertexStripCache;
+                var leftovers = (indices.Count() * 3) % TwinVIFCompiler.VertexStripCache;
+                if (leftovers > 0)
                 {
-                    var bone = mesh.Bones[j];
-                    vertexToBone.Add(new());
-                    foreach (var vertexWeight in bone.VertexWeights)
-                    {
-                        vertexToBone[^1].Add(vertexWeight.VertexID, new(j, vertexWeight.Weight));
-                    }
+                    amountOfSubmodels++;
                 }
 
-                for (Int32 vertIdx = 0; vertIdx < mesh.VertexCount; vertIdx++)
+                for (var i = 0; i < vertexes.Positions.Count; i++)
                 {
-                    var vertex = new Vertex(
-                        new Vector4(mesh.Vertices[vertIdx].X, mesh.Vertices[vertIdx].Y, mesh.Vertices[vertIdx].Z, 0.0f),
-                        new Vector4(mesh.VertexColorChannels[0][vertIdx].R, mesh.VertexColorChannels[0][vertIdx].G, mesh.VertexColorChannels[0][vertIdx].B, mesh.VertexColorChannels[0][vertIdx].A),
-                        new Vector4(mesh.TextureCoordinateChannels[0][vertIdx].X, mesh.TextureCoordinateChannels[0][vertIdx].Y, 1.0f, 0.0f)
-                        )
+                    var ver = new Vertex(
+                            vertexes.Positions[i].ToTwin(),
+                            vertexes.Colors0[i].ToTwin(),
+                            vertexes.TexCoords0[i].ToTwin());
+                    ver.Color = new Vector4(ver.Color.X * 255, ver.Color.Y * 255, ver.Color.Z * 255, ver.Color.W * 255);
+                    ver.JointInfo.JointIndex1 = (Int32)vertexes.Joints0[i].X;
+                    ver.JointInfo.JointIndex2 = (Int32)vertexes.Joints0[i].Y;
+                    ver.JointInfo.JointIndex3 = (Int32)vertexes.Joints0[i].Z;
+                    ver.JointInfo.Weight1 = vertexes.Weights0[i].X;
+                    ver.JointInfo.Weight2 = vertexes.Weights0[i].Y;
+                    ver.JointInfo.Weight3 = vertexes.Weights0[i].Z;
+
+                    allVertexes.Add(ver);
+                }
+
+                for (var submodelIdx = 0; submodelIdx < amountOfSubmodels; ++submodelIdx)
+                {
+                    var faces = new List<IndexedFace>();
+                    for (var i = indiceAccessor; i < indices.Count(); ++i)
                     {
-                        JointInfo = new VertexJointInfo()
+                        var (idx1, idx2, idx3) = indices.ElementAt(i);
+                        faces.Add(new IndexedFace(new int[] { idx1, idx2, idx3 }));
+                        if (faces.Count * 3 >= TwinVIFCompiler.VertexStripCache)
                         {
-                            Connection = false // Temporarily lost information, restored during export
+                            break;
                         }
-                    };
+                    }
 
-                    List<(int, float)> joints = new();
-                    foreach (var vertexMap in vertexToBone)
+                    var submodelVertexes = new List<Vertex>();
+                    var newIndexList = new List<IndexedFace>();
+                    var idxCount = 0;
+                    foreach (var face in faces)
                     {
-                        if (vertexMap.ContainsKey(vertIdx))
+                        submodelVertexes.Add(allVertexes[face.Indexes![0]]);
+                        submodelVertexes.Add(allVertexes[face.Indexes[1]]);
+                        submodelVertexes.Add(allVertexes[face.Indexes[2]]);
+                        newIndexList.Add(new IndexedFace(new int[] { idxCount, idxCount + 1, idxCount + 2 }));
+                        idxCount += 3;
+                    }
+
+                    if (vertexes.MorphTargets.Count == 0)
+                    {
+                        var zeros = new List<List<System.Numerics.Vector3>>();
+                        for (var j = 0; j < blendsAmount; j++)
                         {
-                            joints.Add(vertexMap[vertIdx]);
+                            zeros.Add(new());
+                            for (var i = 0; i < submodelVertexes.Count; i++)
+                            {
+                                zeros[^1].Add(System.Numerics.Vector3.Zero);
+                            }
                         }
+                        Models.Add(new SubBlendModelData(blendShape, submodelVertexes, newIndexList, zeros));
+                        indiceAccessor += (TwinVIFCompiler.VertexStripCache / 3);
+                        continue;
                     }
-                    Debug.Assert(joints.Count != 0, "Vertex must be connected to at least 1 joint");
-                    Debug.Assert(joints.Count <= 3, "Vertex can only have up to 3 joints connected to it");
 
-                    vertex.JointInfo.JointIndex1 = joints[0].Item1;
-                    vertex.JointInfo.Weight1 = joints[0].Item2;
-                    if (joints.Count >= 2)
+                    var morphTargets = new List<List<System.Numerics.Vector3>>();
+                    var targetIndex = 0;
+                    foreach (var target in vertexes.MorphTargets)
                     {
-                        vertex.JointInfo.JointIndex2 = joints[1].Item1;
-                        vertex.JointInfo.Weight2 = joints[1].Item2;
+                        morphTargets.Add(new());
+                        for (var i = indiceAccessor; i < indices.Count(); ++i)
+                        {
+                            var (idx1, idx2, idx3) = indices.ElementAt(i);
+                            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx1]);
+                            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx2]);
+                            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx3]);
+                            if (morphTargets[^1].Count >= TwinVIFCompiler.VertexStripCache)
+                            {
+                                break;
+                            }
+                        }
+
+                        targetIndex++;
                     }
-                    if (joints.Count == 3)
-                    {
-                        vertex.JointInfo.JointIndex3 = joints[2].Item1;
-                        vertex.JointInfo.Weight3 = joints[2].Item2;
-                    }
-                    vertexes.Add(vertex);
+
+                    Models.Add(new SubBlendModelData(blendShape, submodelVertexes, newIndexList, morphTargets));
+                    indiceAccessor += (TwinVIFCompiler.VertexStripCache / 3);
                 }
-
-                var faces = new List<IndexedFace>();
-                for (var j = 0; j < mesh.FaceCount; ++j)
-                {
-                    faces.Add(new IndexedFace(mesh.Faces[j].Indices.ToArray()));
-                }
-
-                Models.Add(new SubBlendModelData(blendShapes[meshIndex], vertexes, faces, animations));
-
-                meshIndex++;
             }
         }
 

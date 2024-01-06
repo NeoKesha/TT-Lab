@@ -10,7 +10,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
         protected UInt32 id;
         protected bool isLoaded;
         protected bool isLazy;
-        protected ITwinItem root;
+        protected ITwinSection root;
+        protected ITwinSection parent;
         protected MemoryStream stream;
         protected String hash;
         Byte[] data;
@@ -23,7 +24,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             this.data = data;
         }
 
-        public void ComputeHash(Stream stream)
+        public virtual void ComputeHash(Stream stream)
         {
             hash = Hasher.ComputeHash(stream);
             using var ms = new MemoryStream();
@@ -34,7 +35,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             hash = Hasher.ComputeHash(ms);
         }
 
-        public void ComputeHash(Stream stream, UInt32 length)
+        public virtual void ComputeHash(Stream stream, UInt32 length)
         {
             hash = Hasher.ComputeHash(stream, length);
             using var ms = new MemoryStream();
@@ -70,14 +71,24 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             return $"Item {id:X}";
         }
 
-        public virtual ITwinItem GetRoot()
+        public virtual ITwinSection GetRoot()
         {
             return root;
+        }
+
+        public virtual ITwinSection GetParent()
+        {
+            return parent;
         }
 
         public virtual MemoryStream GetStream()
         {
             return stream;
+        }
+
+        public virtual void Compile()
+        {
+
         }
 
         public virtual void Read(BinaryReader reader, Int32 length)
@@ -95,9 +106,14 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.Base
             this.isLazy = isLazy;
         }
 
-        public virtual void SetRoot(ITwinItem root)
+        public virtual void SetRoot(ITwinSection root)
         {
             this.root = root;
+        }
+
+        public virtual void SetParent(ITwinSection parent)
+        {
+            this.parent = parent;
         }
 
         public virtual void SetStream(MemoryStream stream)

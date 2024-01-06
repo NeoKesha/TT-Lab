@@ -32,25 +32,30 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             return 4 * 2;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             flags = reader.ReadUInt16();
             {
-                FacialShapesAmount = (Byte)(flags >> 0x8 & 0xF);
-                UnusedFlag = (flags >> 0xD & 0x1) != 0;
-                UseAdditionalRotation = (flags >> 0xC & 0x1) != 0;
+                FacialShapesAmount = (Byte)((flags >> 0x8) & 0xF);
+                UnusedFlag = ((flags >> 0xD) & 0x1) != 0;
+                UseAdditionalRotation = ((flags >> 0xC) & 0x1) != 0;
             }
             transformationChoice = reader.ReadUInt16();
             {
                 TranslateX = (TransformType)(transformationChoice & 0x1);
-                TranslateY = (TransformType)(transformationChoice & 0x2);
-                TranslateZ = (TransformType)(transformationChoice & 0x4);
-                RotateX = (TransformType)(transformationChoice & 0x8);
-                RotateY = (TransformType)(transformationChoice & 0x10);
-                RotateZ = (TransformType)(transformationChoice & 0x20);
-                ScaleX = (TransformType)(transformationChoice & 0x40);
-                ScaleY = (TransformType)(transformationChoice & 0x80);
-                ScaleZ = (TransformType)(transformationChoice & 0x100);
+                TranslateY = (TransformType)((transformationChoice & 0x2) >> 0x1);
+                TranslateZ = (TransformType)((transformationChoice & 0x4) >> 0x2);
+                RotateX = (TransformType)((transformationChoice & 0x8) >> 0x3);
+                RotateY = (TransformType)((transformationChoice & 0x10) >> 0x4);
+                RotateZ = (TransformType)((transformationChoice & 0x20) >> 0x5);
+                ScaleX = (TransformType)((transformationChoice & 0x40) >> 0x6);
+                ScaleY = (TransformType)((transformationChoice & 0x80) >> 0x7);
+                ScaleZ = (TransformType)((transformationChoice & 0x100) >> 0x8);
             }
             TransformationIndex = reader.ReadUInt16();
             AnimationTransformationIndex = reader.ReadUInt16();
@@ -68,14 +73,13 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
 
             UInt16 newTransformationChoice = (UInt16)TranslateX;
             newTransformationChoice |= (UInt16)((UInt16)TranslateY << 0x1);
-            newTransformationChoice |= (UInt16)((UInt16)TranslateY << 0x2);
-            newTransformationChoice |= (UInt16)((UInt16)TranslateZ << 0x3);
-            newTransformationChoice |= (UInt16)((UInt16)RotateX << 0x4);
-            newTransformationChoice |= (UInt16)((UInt16)RotateY << 0x5);
-            newTransformationChoice |= (UInt16)((UInt16)RotateZ << 0x6);
-            newTransformationChoice |= (UInt16)((UInt16)ScaleX << 0x7);
-            newTransformationChoice |= (UInt16)((UInt16)ScaleY << 0x8);
-            newTransformationChoice |= (UInt16)((UInt16)ScaleZ << 0x9);
+            newTransformationChoice |= (UInt16)((UInt16)TranslateZ << 0x2);
+            newTransformationChoice |= (UInt16)((UInt16)RotateX << 0x3);
+            newTransformationChoice |= (UInt16)((UInt16)RotateY << 0x4);
+            newTransformationChoice |= (UInt16)((UInt16)RotateZ << 0x5);
+            newTransformationChoice |= (UInt16)((UInt16)ScaleX << 0x6);
+            newTransformationChoice |= (UInt16)((UInt16)ScaleY << 0x7);
+            newTransformationChoice |= (UInt16)((UInt16)ScaleZ << 0x8);
             transformationChoice = newTransformationChoice;
             writer.Write(transformationChoice);
 

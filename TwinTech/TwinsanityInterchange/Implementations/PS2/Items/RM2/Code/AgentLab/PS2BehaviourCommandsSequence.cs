@@ -50,7 +50,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
 
         public override void Write(BinaryWriter writer)
         {
-            var newHeader = (Int32)(Header & 0xFF00FFFF) | BehaviourPacks.Count << 16;
+            var newHeader = (Int32)(Header & 0xFF00FFFF) | (BehaviourPacks.Count << 16);
             newHeader |= (Int32)(Header & 0xFF00FFFF);
             writer.Write(newHeader);
             foreach (var pair in BehaviourPacks)
@@ -81,6 +81,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             }
             StringUtils.WriteLineTabulated(writer, "}", tabs);
         }
+
         public void ReadText(StreamReader reader)
         {
             String line = reader.ReadLine().Trim();
@@ -96,10 +97,11 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
             {
                 line = reader.ReadLine().Trim();
             }
+
             while (!line.EndsWith("}"))
             {
                 line = reader.ReadLine().Trim();
-                if (string.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line) || line == "}")
                 {
                     continue;
                 }
@@ -113,10 +115,6 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                         line = reader.ReadLine().Trim();
                     }
                     pack.ReadText(reader);
-                    while (!line.EndsWith("}"))
-                    {
-                        line = reader.ReadLine().Trim();
-                    }
                 }
                 else
                 {
@@ -126,6 +124,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.Ag
                 }
             }
         }
+
         public override String ToString()
         {
             using MemoryStream stream = new();

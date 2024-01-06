@@ -85,19 +85,20 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.AllowNull)]
         public CameraSubBase? MainCamera2 { get; set; }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
-            base.Load(dataPath, settings);
+            base.LoadInternal(dataPath, settings);
         }
 
         protected override void Dispose(Boolean disposing)
         {
             Trigger.Dispose();
         }
-        public override void Import(LabURI package, String? variant)
+
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinCamera camera = GetTwinItem<ITwinCamera>();
-            Trigger = new TriggerData(package, variant, camera.CamTrigger);
+            Trigger = new TriggerData(package, variant, camera.CamTrigger, layoutId);
             CameraHeader = camera.CameraHeader;
             UnkShort = camera.UnkShort;
             UnkFloat1 = camera.UnkFloat1;
@@ -136,8 +137,11 @@ namespace TT_Lab.AssetData.Instance
             using var writer = new BinaryWriter(ms);
             var trigger = Trigger.Export(factory);
             trigger.Write(writer);
+
             // Reposition to where TriggerScripts start since they do not exist for the camera
+            writer.Flush();
             ms.Position -= 2 * 4;
+
             writer.Write(CameraHeader);
             writer.Write(UnkShort);
             writer.Write(UnkFloat1);
@@ -165,6 +169,7 @@ namespace TT_Lab.AssetData.Instance
             MainCamera1?.Write(writer);
             MainCamera2?.Write(writer);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateCamera(ms);
         }

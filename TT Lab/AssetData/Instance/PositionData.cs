@@ -14,7 +14,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public PositionData()
         {
-
+            Coords = new Vector4();
         }
 
         public PositionData(ITwinPosition position)
@@ -30,7 +30,7 @@ namespace TT_Lab.AssetData.Instance
             return;
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinPosition position = GetTwinItem<ITwinPosition>();
             Coords = CloneUtils.Clone(position.Position);
@@ -42,6 +42,7 @@ namespace TT_Lab.AssetData.Instance
             using var writer = new BinaryWriter(ms);
             Coords.Write(writer);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GeneratePosition(ms);
         }

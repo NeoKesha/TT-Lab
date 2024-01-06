@@ -14,6 +14,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.Collision
             return 8;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             Size = reader.ReadUInt32();

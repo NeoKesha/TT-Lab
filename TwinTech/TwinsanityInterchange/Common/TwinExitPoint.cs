@@ -19,6 +19,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return Constants.SIZE_EXIT_POINT;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, int length)
         {
             ParentJointIndex = reader.ReadUInt32();

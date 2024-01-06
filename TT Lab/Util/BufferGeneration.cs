@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TT_Lab.AssetData.Graphics.SubModels;
+using TT_Lab.Extensions;
 using TT_Lab.Rendering.Buffers;
 
 namespace TT_Lab.Util
@@ -111,6 +112,7 @@ namespace TT_Lab.Util
 
             return buffer;
         }
+
         public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors, List<Twinsanity.TwinsanityInterchange.Common.Vector3>? uvs,
             List<Twinsanity.TwinsanityInterchange.Common.Vector4>? normals = null)
         {
@@ -143,6 +145,40 @@ namespace TT_Lab.Util
 
             return bufferArray;
         }
+
+        public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors, List<Twinsanity.TwinsanityInterchange.Common.Vector3>? uvs,
+            List<SubBlendFaceData> morphs)
+        {
+            var morphVecs = new List<float>();
+
+            foreach (var morph in morphs)
+            {
+                foreach (var face in faces)
+                {
+                    var i1 = face.Indexes[0];
+                    var i2 = face.Indexes[1];
+                    var i3 = face.Indexes[2];
+                    var v1 = new Vector3(morph.BlendShapes[i1].Offset.X, morph.BlendShapes[i1].Offset.Y, morph.BlendShapes[i1].Offset.Z);
+                    var v2 = new Vector3(morph.BlendShapes[i2].Offset.X, morph.BlendShapes[i2].Offset.Y, morph.BlendShapes[i2].Offset.Z);
+                    var v3 = new Vector3(morph.BlendShapes[i3].Offset.X, morph.BlendShapes[i3].Offset.Y, morph.BlendShapes[i3].Offset.Z);
+                    morphVecs.AddRange(v1.ToArray());
+                    morphVecs.AddRange(v2.ToArray());
+                    morphVecs.AddRange(v3.ToArray());
+                }
+            }
+
+            var bufferArray = GetModelBuffer(vectors, faces, colors, uvs);
+            bufferArray.Bind();
+
+            var morphBuffer = new VertexBuffer();
+            morphBuffer.Bind();
+            morphBuffer.SetDataArray(4, morphVecs.ToArray(), false, 3);
+
+            bufferArray.Unbind();
+
+            return bufferArray;
+        }
+
         public static IndexedBufferArray GetCubeBuffer(Vector3 position = default, Vector3 scale = default, Quaternion rotation = default, List<Color>? colors = null)
         {
             colors ??= new List<Color> { Color.LightGray };
@@ -228,6 +264,7 @@ namespace TT_Lab.Util
             }
             return GetModelBuffer(vectors, faces, colors);
         }
+
         public static IndexedBufferArray GetCubeBuffer(Vector3 position = default, float scale = 1.0f, List<Color>? colors = null)
         {
             return GetCubeBuffer(position, new Vector3(scale, scale, scale), default, colors);

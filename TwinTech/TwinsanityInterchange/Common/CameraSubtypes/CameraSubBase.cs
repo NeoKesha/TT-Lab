@@ -19,6 +19,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             return 12;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public virtual void Read(BinaryReader reader, int length)
         {
             UnkInt = reader.ReadUInt32();

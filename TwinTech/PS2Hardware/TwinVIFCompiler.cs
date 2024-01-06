@@ -18,6 +18,7 @@ namespace Twinsanity.PS2Hardware
 
         private readonly ModelFormat format;
         private readonly List<List<Vector4>> vectorData;
+        private readonly UInt32 minSkinCoord;
         private readonly List<Boolean> conns;
         private readonly Boolean hasNormals;
         private readonly Boolean hasEmitColors;
@@ -45,7 +46,7 @@ namespace Twinsanity.PS2Hardware
             JointInfo
         }
 
-        public static int VertexBatchAmount => 36;
+        public static int VertexStripCache => 36;
 
         /// <summary>
         /// Twinsanity's model formats
@@ -70,17 +71,44 @@ namespace Twinsanity.PS2Hardware
             BlendFace
         }
 
-        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<Boolean> conns)
+        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<Boolean> conns, UInt32 minSkinCoord)
         {
             this.format = format;
             this.vectorData = data;
             this.conns = conns;
+
+            this.minSkinCoord = UInt32.MaxValue;
+            if (format != ModelFormat.BlendFace && minSkinCoord == 0)
+            {
+                foreach (var vec in this.vectorData[1])
+                {
+                    var binX = vec.GetBinaryX();
+                    var binY = vec.GetBinaryY();
+                    var binZ = vec.GetBinaryZ();
+                    if (binX < this.minSkinCoord && binX > 0)
+                    {
+                        this.minSkinCoord = binX;
+                    }
+                    if (binY < this.minSkinCoord && binY > 0)
+                    {
+                        this.minSkinCoord = binY;
+                    }
+                    if (binZ < this.minSkinCoord && binZ > 0)
+                    {
+                        this.minSkinCoord = binZ;
+                    }
+                }
+            }
+            else if (minSkinCoord != 0)
+            {
+                this.minSkinCoord = minSkinCoord;
+            }
         }
 
         /// <summary>
         /// Special constructor for compiling models to indicate if normals or emit colors are missing
         /// </summary>
-        public TwinVIFCompiler(List<List<Vector4>> data, List<Boolean> conns, Boolean hasNormals, Boolean hasEmitColors) : this(ModelFormat.Model, data, conns)
+        public TwinVIFCompiler(List<List<Vector4>> data, List<Boolean> conns, Boolean hasNormals, Boolean hasEmitColors) : this(ModelFormat.Model, data, conns, 0)
         {
             this.hasNormals = hasNormals;
             this.hasEmitColors = hasEmitColors;
@@ -200,7 +228,7 @@ namespace Twinsanity.PS2Hardware
                 // Scale vector for Twinsanity's skins and blend skins
                 // This is mostly correct and what most skins use in Twinsanity but maybe there is some magic to figure this out?
                 var scaleVector = new Vector4();
-                scaleVector.SetBinaryX(0x38C03F4D); // Vertex position scale
+                scaleVector.SetBinaryX(minSkinCoord); // Vertex position scale
                 scaleVector.SetBinaryY(0x3A000000); // UV scale
 
                 // For skins and blend skins a special scaling vector comes in
@@ -344,29 +372,27 @@ namespace Twinsanity.PS2Hardware
                             // Write emit colors if any
                             if (hasEmitColors)
                             {
+                                var batchIndex = hasNormals ? GetBatchIndex(VectorBatchIndex.EmitColor) : GetBatchIndex(VectorBatchIndex.EmitColor) - 1;
                                 VIFCode emitColorsCode = new()
                                 {
                                     OP = VIFCodeEnum.UNPACK,
                                     Immediate = outputAddressMap[format][outAddressIndex],
-                                    Amount = (Byte)vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)].Count
+                                    Amount = (Byte)vectorBatch[batchIndex].Count
                                 };
                                 emitColorsCode.SetUnpackAddressMode(true);
+                                emitColorsCode.SetUnsignedDecompressMode(true);
                                 emitColorsCode.SetUnpackFormat(PackFormat.V4_8);
                                 emitColorsCode.Write(writer);
                                 var packedEmits = new List<UInt32>();
-                                var emitColors = vectorBatch[GetBatchIndex(VectorBatchIndex.EmitColor)].Select(c => c.GetColor()).Select(c =>
-                                {
-                                    c.ScaleAlphaDown();
-                                    return c;
-                                }).ToList();
+                                var emitColors = vectorBatch[batchIndex];
                                 var compiledColors = new List<Vector4>(emitColors.Count);
                                 foreach (var c in emitColors)
                                 {
                                     var compiledColor = new Vector4();
-                                    compiledColor.SetBinaryX(c.R);
-                                    compiledColor.SetBinaryY(c.G);
-                                    compiledColor.SetBinaryZ(c.B);
-                                    compiledColor.SetBinaryW(c.A);
+                                    compiledColor.SetBinaryX((UInt32)c.X >> 1);
+                                    compiledColor.SetBinaryY((UInt32)c.Y >> 1);
+                                    compiledColor.SetBinaryZ((UInt32)c.Z >> 1);
+                                    compiledColor.SetBinaryW((UInt32)c.W >> 1);
                                     compiledColors.Add(compiledColor);
                                 }
                                 interpreter.Pack(compiledColors, packedEmits, PackFormat.V4_8);
@@ -393,10 +419,10 @@ namespace Twinsanity.PS2Hardware
                                 var uv = vectorBatch[GetBatchIndex(VectorBatchIndex.Uv)][j];
                                 var compiledPosition = position.Divide(scaleVector.X);
                                 var compiledUv = uv.Divide(scaleVector.Y);
-                                compiledPosition.SetBinaryX((UInt32)((Int16)compiledPosition.X));
-                                compiledPosition.SetBinaryY((UInt32)((Int16)compiledPosition.Y));
-                                compiledPosition.SetBinaryZ((UInt32)((Int16)compiledPosition.Z));
-                                compiledPosition.SetBinaryW((UInt32)((Int16)compiledPosition.W));
+                                compiledPosition.SetBinaryX((UInt32)((Int16)Math.Round(compiledPosition.X)));
+                                compiledPosition.SetBinaryY((UInt32)((Int16)Math.Round(compiledPosition.Y)));
+                                compiledPosition.SetBinaryZ((UInt32)((Int16)Math.Round(compiledPosition.Z)));
+                                compiledPosition.SetBinaryW((UInt32)((Int16)Math.Round(compiledPosition.W)));
                                 compiledUv.SetBinaryX((UInt32)((Int16)compiledUv.X));
                                 compiledUv.SetBinaryY((UInt32)((Int16)compiledUv.Y));
                                 compiledUv.SetBinaryZ((UInt32)((Int16)compiledUv.Z));
@@ -464,19 +490,15 @@ namespace Twinsanity.PS2Hardware
                             totalSpaceNeeded += turnOffOffsetCode.GetLength();
 
                             // Compile colors
-                            var colors = vectorBatch[GetBatchIndex(VectorBatchIndex.Color)].Select(c => c.GetColor()).Select(c =>
-                            {
-                                c.ScaleAlphaDown();
-                                return c;
-                            }).ToList();
+                            var colors = vectorBatch[GetBatchIndex(VectorBatchIndex.Color)];
                             var compiledColors = new List<Vector4>(colors.Count);
                             foreach (var c in colors)
                             {
                                 var compiledColor = new Vector4();
-                                compiledColor.SetBinaryX(c.R);
-                                compiledColor.SetBinaryY(c.G);
-                                compiledColor.SetBinaryZ(c.B);
-                                compiledColor.SetBinaryW(c.A);
+                                compiledColor.SetBinaryX((UInt32)c.X >> 1);
+                                compiledColor.SetBinaryY((UInt32)c.Y >> 1);
+                                compiledColor.SetBinaryZ((UInt32)c.Z >> 1);
+                                compiledColor.SetBinaryW((UInt32)c.W >> 1);
                                 compiledColors.Add(compiledColor);
                             }
 
@@ -521,21 +543,24 @@ namespace Twinsanity.PS2Hardware
                         throw new Exception("Unexisting model type provided");
                 }
 
-                VIFCode mscal = new()
+                if (format != ModelFormat.BlendSkin)
                 {
-                    OP = VIFCodeEnum.MSCAL,
-                    Immediate = 0x0
-                };
-                mscal.Write(writer);
-                totalSpaceNeeded += mscal.GetLength();
+                    VIFCode mscal = new()
+                    {
+                        OP = VIFCodeEnum.MSCAL,
+                        Immediate = 0x0
+                    };
+                    mscal.Write(writer);
+                    totalSpaceNeeded += mscal.GetLength();
 
-                setCycle = new()
-                {
-                    OP = VIFCodeEnum.STCYCL,
-                    Immediate = 0x0101
-                };
-                setCycle.Write(writer);
-                totalSpaceNeeded += setCycle.GetLength();
+                    setCycle = new()
+                    {
+                        OP = VIFCodeEnum.STCYCL,
+                        Immediate = 0x0101
+                    };
+                    setCycle.Write(writer);
+                    totalSpaceNeeded += setCycle.GetLength();
+                }
             }
 
             // Align to 16(0x10) bytes
@@ -585,24 +610,22 @@ namespace Twinsanity.PS2Hardware
 
         private void SwizzleVectorData()
         {
-            var vertexAmount = vectorData[0].Count;
-            Debug.Assert(vectorData.Skip(1).All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
-            // TODO: Better swizzling heuristic
-            var swizzleAmount = VertexBatchAmount;
+            var vertexAmount = vectorData[1].Count;
+            Debug.Assert(vectorData.Skip(2).All(l => l.Count == vertexAmount), "Must swizzle equal amount of vertexes");
+            var swizzleSizes = vectorData[0];
             var vertexIndex = 0;
-            var leftOver = vertexAmount % swizzleAmount;
-            var swizzleCount = vertexAmount / swizzleAmount;
-            Debug.Assert(swizzleCount * swizzleAmount + leftOver == vertexAmount, "Didn't properly calculate the proper amount of batches");
 
             // Create new batch
             swizzledVectorBatches = new();
-            for (Int32 i = 0; i < swizzleCount; i++)
+            foreach (var swizzleVector in swizzleSizes)
             {
+                var swizzleAmount = (Int32)swizzleVector.X;
+
                 // Create new list for the batch
                 swizzledVectorBatches.Add(new());
 
                 // Create new list for each type of vertex data
-                for (Int32 j = 0; j < vectorData.Count; j++)
+                for (Int32 j = 1; j < vectorData.Count; j++)
                 {
                     swizzledVectorBatches[^1].Add(new());
                 }
@@ -610,34 +633,12 @@ namespace Twinsanity.PS2Hardware
                 // Fill the batch with each vertex type
                 for (Int32 j = 0; j < swizzleAmount; j++)
                 {
-                    for (Int32 k = 0; k < vectorData.Count; k++)
+                    for (Int32 k = 1; k < vectorData.Count; k++)
                     {
-                        swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
+                        swizzledVectorBatches[^1][k - 1].Add(vectorData[k][vertexIndex + j]);
                     }
                 }
                 vertexIndex += swizzleAmount;
-            }
-
-            // Fill the leftover batch if any
-            if (leftOver != 0)
-            {
-                // Create new list for the batch
-                swizzledVectorBatches.Add(new());
-
-                // Create new list for each type of vertex data
-                for (Int32 j = 0; j < vectorData.Count; j++)
-                {
-                    swizzledVectorBatches[^1].Add(new());
-                }
-
-                // Fill the batch with each vertex type
-                for (Int32 j = 0; j < leftOver; j++)
-                {
-                    for (Int32 k = 0; k < vectorData.Count; k++)
-                    {
-                        swizzledVectorBatches[^1][k].Add(vectorData[k][vertexIndex + j]);
-                    }
-                }
             }
         }
     }

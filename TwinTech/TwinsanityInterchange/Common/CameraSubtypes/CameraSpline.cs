@@ -11,17 +11,17 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         public Single UnkFloat3 { get; set; }
         public List<Vector4> PathPoints { get; set; }
         public List<Vector4> InterpolationPoints { get; set; }
-        public List<UInt64> UnkData { get; set; }
+        public List<Vector2> UnkData { get; set; }
         public UInt16 UnkShort { get; set; }
         public CameraSpline()
         {
             PathPoints = new List<Vector4>();
             InterpolationPoints = new List<Vector4>();
-            UnkData = new List<UInt64>();
+            UnkData = new List<Vector2>();
         }
         public override int GetLength()
         {
-            return base.GetLength() + 4 + 4 + PathPoints.Count * Constants.SIZE_VECTOR4 + InterpolationPoints.Count * Constants.SIZE_VECTOR4 + UnkData.Count * 8 + 2;
+            return base.GetLength() + 4 + 4 + PathPoints.Count * Constants.SIZE_VECTOR4 + InterpolationPoints.Count * Constants.SIZE_VECTOR4 + UnkData.Count * Constants.SIZE_VECTOR2 + 2;
         }
 
         public override void Read(BinaryReader reader, int length)
@@ -31,19 +31,21 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             UnkFloat3 = reader.ReadSingle();
             PathPoints.Clear();
             InterpolationPoints.Clear();
-            for (int i = 0; i < cnt1; ++i)
+            for (int i = 0; i < cnt1 + 1; ++i)
             {
-                Vector4 vec = new Vector4();
+                Vector4 vec = new();
                 vec.Read(reader, Constants.SIZE_VECTOR4);
                 PathPoints.Add(vec);
-                Vector4 vec2 = new Vector4();
+                Vector4 vec2 = new();
                 vec2.Read(reader, Constants.SIZE_VECTOR4);
                 InterpolationPoints.Add(vec2);
             }
             UnkData.Clear();
             for (var i = 0; i < cnt1; ++i)
             {
-                UnkData.Add(reader.ReadUInt64());
+                Vector2 vec = new();
+                vec.Read(reader, Constants.SIZE_VECTOR2);
+                UnkData.Add(vec);
             }
             UnkShort = reader.ReadUInt16();
         }
@@ -51,7 +53,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(PathPoints.Count);
+            writer.Write(UnkData.Count);
             writer.Write(UnkFloat3);
             for (var i = 0; i < PathPoints.Count; ++i)
             {
@@ -60,7 +62,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
             }
             foreach (var d in UnkData)
             {
-                writer.Write(d);
+                d.Write(writer);
             }
             writer.Write(UnkShort);
         }

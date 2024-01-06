@@ -16,9 +16,16 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         /// </summary>
         String Name { get; set; }
         /// <summary>
-        /// Unknown unsigned integer parameter
+        /// Determines the color of the fog in the chunk<para/>
+        /// Currently known values:<para/>
+        /// 0 - Purple
+        /// 1 - No color
+        /// 2 - Light blue
+        /// 3 - Green
+        /// 4 - Grey
+        /// 5 - Beige
         /// </summary>
-        UInt32 UnkUInt { get; set; }
+        UInt32 FogColor { get; set; }
         /// <summary>
         /// Unknown byte parameter
         /// </summary>
@@ -27,10 +34,6 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         /// Skydome's ID to render
         /// </summary>
         UInt32 SkydomeID { get; set; }
-        /// <summary>
-        /// Unknown flags for the lights
-        /// </summary>
-        Boolean[] UnkLightFlags { get; set; }
         /// <summary>
         /// Ambient lights present in the scenery
         /// </summary>
@@ -63,7 +66,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.SM
         private static readonly Byte[] reservedBlob;
         static ITwinScenery()
         {
-            reservedBlob = new Byte[0x3E8];
+            reservedBlob = new Byte[0x400];
             for (Int32 i = 0; i < reservedBlob.Length; i++)
             {
                 reservedBlob[i] = 0xCD;

@@ -21,6 +21,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         public List<Vector4> EmitColor { get; set; }
         public List<Vector4> Normals { get; set; }
         public List<bool> Connection { get; set; }
+        public List<Int32> GroupSizes { get; set; }
         public PS2SubModel()
         {
 
@@ -58,6 +59,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             Normals = new List<Vector4>();
             Colors = new List<Vector4>();
             Connection = new List<bool>();
+            GroupSizes = new List<Int32>();
             var index = 0;
             for (var i = 0; i < data.Count;)
             {
@@ -101,16 +103,16 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         var r = Math.Min(e.GetBinaryX() & 0xFF, 255);
                         var g = Math.Min(e.GetBinaryY() & 0xFF, 255);
                         var b = Math.Min(e.GetBinaryZ() & 0xFF, 255);
-                        var a = (e.GetBinaryW() & 0xFF) << 1;
+                        var a = (e.GetBinaryW() & 0xFF);
 
                         Color col = new((byte)r, (byte)g, (byte)b, (byte)a);
+                        col.ScaleAlphaUp();
                         Colors.Add(Vector4.FromColor(col));
 
                         Vector4 uv = new(e);
                         uv.SetBinaryX(uv.GetBinaryX() & 0xFFFFFF00);
                         uv.SetBinaryY(uv.GetBinaryY() & 0xFFFFFF00);
                         uv.SetBinaryZ(uv.GetBinaryZ() & 0xFFFFFF00);
-                        uv.Y = 1 - uv.Y;
                         UVW.Add(uv);
                     }
                 }
@@ -129,26 +131,40 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     {
                         if (e == null)
                             break;
-                        Vector4 emit = new(e);
-                        emit.X = emit.GetBinaryX() & 0xFF;// / 256.0f;
-                        emit.Y = emit.GetBinaryY() & 0xFF;// / 256.0f;
-                        emit.Z = emit.GetBinaryZ() & 0xFF;// / 256.0f;
-                        emit.W = emit.GetBinaryW() & 0xFF;// / 256.0f;
-                        EmitColor.Add(emit);
+
+                        var r = Math.Min((byte)(e.GetBinaryX() & 0xFF), (byte)255);
+                        var g = Math.Min((byte)(e.GetBinaryY() & 0xFF), (byte)255);
+                        var b = Math.Min((byte)(e.GetBinaryZ() & 0xFF), (byte)255);
+                        var a = (byte)(e.GetBinaryW() & 0xFF);
+                        Color col = new(r, g, b, a);
+                        col.ScaleAlphaUp();
+
+                        EmitColor.Add(Vector4.FromColor(col));
                     }
                 }
                 i += fields + 2;
+                GroupSizes.Add((Int32)verts);
                 TrimList(UVW, Vertexes.Count);
                 TrimList(Colors, Vertexes.Count);
             }
         }
         public void Write(BinaryWriter writer)
         {
+            writer.Write(VertexesCount);
+            writer.Write(VertexData.Length);
+            writer.Write(VertexData);
+            writer.Write(UnusedBlob.Length);
+            writer.Write(UnusedBlob);
+        }
+
+        public void Compile()
+        {
             VertexesCount = (UInt32)Vertexes.Count;
             TrimList(UVW, (Int32)VertexesCount);
             TrimList(Colors, (Int32)VertexesCount, new Vector4());
             var data = new List<List<Vector4>>
             {
+                GroupSizes.Select(i => new Vector4(i, 0, 0, 0)).ToList(),
                 Vertexes,
                 Colors,
                 UVW
@@ -167,12 +183,31 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
             }
             var compiler = new TwinVIFCompiler(data, Connection, hasNormals, hasEmitColors);
             VertexData = compiler.Compile();
+        }
 
-            writer.Write(VertexesCount);
-            writer.Write(VertexData.Length);
-            writer.Write(VertexData);
-            writer.Write(UnusedBlob.Length);
-            writer.Write(UnusedBlob);
+        public UInt32 GetMinSkinCoord()
+        {
+            var minSkinCoord = UInt32.MaxValue;
+            foreach (var vec in Vertexes)
+            {
+                var binX = vec.GetBinaryX();
+                var binY = vec.GetBinaryY();
+                var binZ = vec.GetBinaryZ();
+                if (binX < minSkinCoord && binX > 0)
+                {
+                    minSkinCoord = binX;
+                }
+                if (binY < minSkinCoord && binY > 0)
+                {
+                    minSkinCoord = binY;
+                }
+                if (binZ < minSkinCoord && binZ > 0)
+                {
+                    minSkinCoord = binZ;
+                }
+            }
+
+            return minSkinCoord;
         }
 
         private static void TrimList(List<Vector4> list, Int32 desiredLength, Vector4 defaultValue = null)

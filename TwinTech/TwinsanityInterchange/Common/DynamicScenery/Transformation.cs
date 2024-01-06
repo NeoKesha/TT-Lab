@@ -13,6 +13,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             return 4;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             Value = reader.ReadSingle();

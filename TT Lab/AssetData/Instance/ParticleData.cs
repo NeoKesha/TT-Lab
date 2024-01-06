@@ -35,7 +35,7 @@ namespace TT_Lab.AssetData.Instance
             ParticleEmitters.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinParticle particleData = GetTwinItem<ITwinParticle>();
             ParticleSystems = CloneUtils.DeepClone(particleData.ParticleSystems);
@@ -49,6 +49,8 @@ namespace TT_Lab.AssetData.Instance
 
             WriteExport(writer);
 
+            writer.Flush();
+            ms.Position = 0;
             return factory.GenerateParticle(ms);
         }
 

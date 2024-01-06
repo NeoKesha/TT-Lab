@@ -30,14 +30,14 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public TwinAnimation MainAnimation { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public TwinAnimation FacialAnimation { get; set; }
+        public TwinMorphAnimation FacialAnimation { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             return;
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             var twinAnimation = GetTwinItem<ITwinAnimation>();
             TotalFrames = twinAnimation.TotalFrames;
@@ -55,6 +55,7 @@ namespace TT_Lab.AssetData.Code
             MainAnimation.Write(writer);
             FacialAnimation.Write(writer);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateAnimation(ms);
         }

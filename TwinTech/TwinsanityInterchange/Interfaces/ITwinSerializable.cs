@@ -17,6 +17,10 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces
         /// <param name="writer">Destination of the data</param>
         void Write(BinaryWriter writer);
         /// <summary>
+        /// Compute any needed resources and internals that end user doesn't need to know about
+        /// </summary>
+        void Compile();
+        /// <summary>
         /// Get length of item
         /// </summary>
         /// <returns></returns>

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Util;
@@ -25,7 +24,7 @@ namespace TT_Lab.AssetData.Instance
             SetTwinItem(trigger);
         }
 
-        public TriggerData(LabURI package, String? variant, TwinTrigger trigger) : this()
+        public TriggerData(LabURI package, String? variant, TwinTrigger trigger, Int32? layoutId) : this()
         {
             ObjectActivatorMask = trigger.ObjectActivatorMask;
             Position = CloneUtils.Clone(trigger.Position);
@@ -34,15 +33,15 @@ namespace TT_Lab.AssetData.Instance
             Instances = new(trigger.Instances.Count);
             foreach (var inst in trigger.Instances)
             {
-                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, inst));
+                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, layoutId, inst));
             }
             Header = trigger.Header;
             UnkFloat = trigger.UnkFloat;
             InstanceExtensionValue = trigger.InstanceExtensionValue;
-            TriggerScript1 = LabURI.Empty;
-            TriggerScript2 = LabURI.Empty;
-            TriggerScript3 = LabURI.Empty;
-            TriggerScript4 = LabURI.Empty;
+            TriggerMessage1 = 0;
+            TriggerMessage2 = 0;
+            TriggerMessage3 = 0;
+            TriggerMessage4 = 0;
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -62,20 +61,20 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 InstanceExtensionValue { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public LabURI TriggerScript1 { get; set; }
+        public UInt16 TriggerMessage1 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public LabURI TriggerScript2 { get; set; }
+        public UInt16 TriggerMessage2 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public LabURI TriggerScript3 { get; set; }
+        public UInt16 TriggerMessage3 { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public LabURI TriggerScript4 { get; set; }
+        public UInt16 TriggerMessage4 { get; set; }
 
         protected override void Dispose(Boolean disposing)
         {
             Instances.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinTrigger trigger = GetTwinItem<ITwinTrigger>();
             ObjectActivatorMask = trigger.Trigger.ObjectActivatorMask;
@@ -85,15 +84,15 @@ namespace TT_Lab.AssetData.Instance
             Instances = new(trigger.Trigger.Instances.Count);
             foreach (var inst in trigger.Trigger.Instances)
             {
-                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, inst));
+                Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, layoutId, inst));
             }
             Header = trigger.Trigger.Header;
             UnkFloat = trigger.Trigger.UnkFloat;
             InstanceExtensionValue = trigger.Trigger.InstanceExtensionValue;
-            TriggerScript1 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[0]);
-            TriggerScript2 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[1]);
-            TriggerScript3 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[2]);
-            TriggerScript4 = AssetManager.Get().GetUri(package, typeof(BehaviourGraph).Name, null, trigger.TriggerScripts[3]);
+            TriggerMessage1 = trigger.TriggerMessages[0];
+            TriggerMessage2 = trigger.TriggerMessages[1];
+            TriggerMessage3 = trigger.TriggerMessages[2];
+            TriggerMessage4 = trigger.TriggerMessages[3];
         }
 
         public override ITwinItem Export(ITwinItemFactory factory)
@@ -117,11 +116,12 @@ namespace TT_Lab.AssetData.Instance
                 trigger.Instances.Add((UInt16)assetManager.GetAsset(instance).ID);
             }
             trigger.Write(writer);
-            writer.Write(TriggerScript1 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript1).ID);
-            writer.Write(TriggerScript2 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript2).ID);
-            writer.Write(TriggerScript3 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript3).ID);
-            writer.Write(TriggerScript4 == LabURI.Empty ? UInt16.MaxValue : (UInt16)assetManager.GetAsset(TriggerScript4).ID);
+            writer.Write(TriggerMessage1);
+            writer.Write(TriggerMessage2);
+            writer.Write(TriggerMessage3);
+            writer.Write(TriggerMessage4);
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateTrigger(ms);
         }

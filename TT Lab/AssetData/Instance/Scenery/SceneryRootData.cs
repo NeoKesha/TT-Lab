@@ -4,6 +4,7 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.ViewModels.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance.Scenery
 {
@@ -23,6 +24,11 @@ namespace TT_Lab.AssetData.Instance.Scenery
         public SceneryRootData(SceneryRootViewModel vm) : base(vm)
         {
             UnkUInt = vm.UnkUInt;
+        }
+
+        public override ITwinScenery.SceneryType GetSceneryType()
+        {
+            return ITwinScenery.SceneryType.Root;
         }
 
         public override void Write(BinaryWriter writer)

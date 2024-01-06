@@ -116,7 +116,7 @@ namespace TT_Lab.Editors.Instance
             var positions = tree.Find(avm => avm.Asset.Name == "Paths");
             foreach (var item in vm.Paths)
             {
-                pathVMs.Add((PathViewModel)positions!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.ID == item));
+                pathVMs.Add((PathViewModel)positions!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.URI == item));
             }
             LinkedPathsList.ItemsSource = pathVMs;
             UpdateAddPathMenu();
@@ -131,7 +131,7 @@ namespace TT_Lab.Editors.Instance
             var positions = tree.Find(avm => avm.Asset.Name == "Positions");
             foreach (var item in vm.Positions)
             {
-                posVMs.Add((PositionViewModel)positions!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.ID == item));
+                posVMs.Add((PositionViewModel)positions!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.URI == item));
             }
             LinkedPositionsList.ItemsSource = posVMs;
             UpdateAddPositionMenu();
@@ -146,7 +146,7 @@ namespace TT_Lab.Editors.Instance
             var instances = tree.Find(avm => avm.Asset.Name == "Instances");
             foreach (var item in vm.Instances)
             {
-                instVMs.Add((ObjectInstanceViewModel)instances!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.ID == item));
+                instVMs.Add((ObjectInstanceViewModel)instances!.Children.First(inst => inst.Asset.LayoutID == (int)vm.LayoutID && inst.Asset.URI == item));
             }
             LinkedInstancesList.ItemsSource = instVMs;
             UpdateAddInstanceMenu();
@@ -236,7 +236,7 @@ namespace TT_Lab.Editors.Instance
             var vm = GetViewModel<ObjectInstanceViewModel>();
             var fitInstances = instances!.Children.Where((i) =>
             {
-                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Instances.Contains((UInt16)i.Asset.ID);
+                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Instances.Contains(i.Asset.URI);
             }).ToList();
             if (fitInstances.Any())
             {
@@ -252,7 +252,7 @@ namespace TT_Lab.Editors.Instance
                             var index = vm.Instances.Count;
                             var rc = new RelayCommand(new GenerateCommand(() =>
                             {
-                                vm.Instances.Add((UInt16)inst.Asset.ID);
+                                vm.Instances.Add(inst.Asset.URI);
                             },
                             () =>
                             {
@@ -282,7 +282,7 @@ namespace TT_Lab.Editors.Instance
             var vm = GetViewModel<ObjectInstanceViewModel>();
             var fitPaths = paths!.Children.Where((i) =>
             {
-                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Paths.Contains((UInt16)i.Asset.ID);
+                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Paths.Contains(i.Asset.URI);
             }).ToList();
             if (fitPaths.Any())
             {
@@ -298,7 +298,7 @@ namespace TT_Lab.Editors.Instance
                             var index = vm.Paths.Count;
                             var rc = new RelayCommand(new GenerateCommand(() =>
                             {
-                                vm.Paths.Add((UInt16)path.Asset.ID);
+                                vm.Paths.Add(path.Asset.URI);
                             },
                             () =>
                             {
@@ -328,9 +328,9 @@ namespace TT_Lab.Editors.Instance
             var vm = GetViewModel<ObjectInstanceViewModel>();
             var fitPositions = positions!.Children.Where((i) =>
             {
-                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Positions.Contains((UInt16)i.Asset.ID);
+                return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Positions.Contains(i.Asset.URI);
             }).ToList();
-            if (fitPositions.Any())
+            if (fitPositions.Count != 0)
             {
                 var posMenuItem = new MenuItem[fitPositions.Count];
                 for (var i = 0; i < fitPositions.Count; ++i)
@@ -344,7 +344,7 @@ namespace TT_Lab.Editors.Instance
                             var index = vm.Positions.Count;
                             var rc = new RelayCommand(new GenerateCommand(() =>
                             {
-                                vm.Positions.Add((UInt16)pos.Asset.ID);
+                                vm.Positions.Add(pos.Asset.URI);
                             },
                             () =>
                             {

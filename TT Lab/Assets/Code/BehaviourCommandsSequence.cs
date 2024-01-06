@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code.Behaviour;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
 
 namespace TT_Lab.Assets.Code
@@ -9,17 +11,27 @@ namespace TT_Lab.Assets.Code
     public class BehaviourCommandsSequence : SerializableAsset
     {
         protected override String DataExt => ".lab";
+        public override UInt32 Section => Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION;
 
+        [JsonProperty(Required = Required.Always)]
         public Dictionary<UInt32, LabURI> BehaviourGraphLinks = new();
 
         public BehaviourCommandsSequence() { }
 
-        public BehaviourCommandsSequence(LabURI package, String? variant, UInt32 id, String Name, PS2BehaviourCommandsSequence codeModel) : base(id, Name, package, variant)
+        public BehaviourCommandsSequence(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, PS2BehaviourCommandsSequence codeModel) : base(id, Name, package, needVariant, variant)
         {
             assetData = new BehaviourCommandsSequenceData(codeModel);
-            assetData.Import(package, variant);
-            Parameters.Add("behaviour_graph_links", BehaviourGraphLinks);
+            assetData.Import(package, variant, LayoutID);
             GenerateBehaviourGraphLinks(package, variant);
+        }
+
+        public override void PostDeserialize()
+        {
+            base.PostDeserialize();
+            foreach (var graphLink in BehaviourGraphLinks)
+            {
+                AssetManager.Get().AddAssetUnsafe(graphLink.Value, this);
+            }
         }
 
         public override Byte[] ToFormat()
@@ -43,7 +55,6 @@ namespace TT_Lab.Assets.Code
             {
                 assetData = new BehaviourCommandsSequenceData();
                 assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
-                BehaviourGraphLinks = (Dictionary<UInt32, LabURI>)Parameters["behaviour_graph_links"]!;
                 IsLoaded = true;
             }
             return assetData;

@@ -15,6 +15,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             return 12 + Path.Length;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             var chars = reader.ReadInt32();

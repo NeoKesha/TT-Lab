@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
@@ -12,6 +13,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
         public List<SubBlendFaceData> BlendFaces { get; set; } = new();
         public List<IndexedFace> Faces { get; set; } = new();
         public List<Vertex> Vertexes { get; set; } = new();
+        public MeshProcessor.Mesh Mesh { get; set; }
 
         public SubBlendModelData(ITwinBlendSkinModel model)
         {
@@ -46,17 +48,38 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                     JointInfo = CloneUtils.Clone(model.SkinJoints[i])
                 });
             }
+
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
         }
 
-        public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, IEnumerable<Assimp.Animation> animations)
+        public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, List<List<System.Numerics.Vector3>> morphTargets)
         {
             BlendShape = blendShape;
             Vertexes = vertexes;
             Faces = faces;
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
 
-            foreach (var animation in animations)
+            foreach (var morph in morphTargets)
             {
-                BlendFaces.Add(new SubBlendFaceData(animation.NodeAnimationChannels[0].PositionKeys));
+                Debug.Assert(Vertexes.Count == morph.Count, "Morph must have the same amount of vertexes as the model!");
+                BlendFaces.Add(new SubBlendFaceData(morph));
+            }
+        }
+
+        public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, IEnumerable<SharpGLTF.Geometry.VertexBufferColumns> morphTargets)
+        {
+            BlendShape = blendShape;
+            Vertexes = vertexes;
+            Faces = faces;
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
+
+            foreach (var morph in morphTargets)
+            {
+                Debug.Assert(Vertexes.Count == morph.Positions.Count, "Morph must have the same amount of vertexes as the model!");
+                BlendFaces.Add(new SubBlendFaceData(morph.Positions));
             }
         }
 

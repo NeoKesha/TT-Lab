@@ -19,6 +19,11 @@ namespace Twinsanity.TwinsanityInterchange.Common.DynamicScenery
             return TransformationValues.Count * 4;
         }
 
+        public void Compile()
+        {
+            return;
+        }
+
         public void Read(BinaryReader reader, Int32 length)
         {
             for (Int32 i = 0; i < TransformationValues.Capacity; i++)

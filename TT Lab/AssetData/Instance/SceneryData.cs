@@ -8,6 +8,7 @@ using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -29,7 +30,6 @@ namespace TT_Lab.AssetData.Instance
             ChunkPath = "levels\\earth\\hub\\beach";
             SkydomeID = LabURI.Empty;
             HasLighting = false;
-            UnkLightFlags = new Boolean[6];
             AmbientLights = new();
             DirectionalLights = new();
             PointLights = new();
@@ -45,15 +45,13 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public String ChunkPath { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 UnkUInt { get; set; }
+        public UInt32 FogColor { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Byte UnkByte { get; set; }
         [JsonProperty(Required = Required.Always)]
         public LabURI SkydomeID { get; set; }
         [JsonProperty(Required = Required.Always)]
         public Boolean HasLighting { get; set; }
-        [JsonProperty(Required = Required.AllowNull)]
-        public Boolean[] UnkLightFlags { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
         public List<AmbientLight> AmbientLights { get; set; }
         [JsonProperty(Required = Required.AllowNull)]
@@ -83,29 +81,28 @@ namespace TT_Lab.AssetData.Instance
             base.Save(dataPath, settings);
         }
 
-        public override void Load(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             settings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             };
-            base.Load(dataPath, settings);
+            base.LoadInternal(dataPath, settings);
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinScenery scenery = GetTwinItem<ITwinScenery>();
             ChunkPath = scenery.Name[..];
-            UnkUInt = scenery.UnkUInt;
+            FogColor = scenery.FogColor;
             UnkByte = scenery.UnkByte;
             if (scenery.SkydomeID != 0)
             {
-                SkydomeID = AssetManager.Get().GetUri(package, typeof(Skydome).Name, null, scenery.SkydomeID);
+                SkydomeID = AssetManager.Get().GetUri(package, typeof(Skydome).Name, variant, scenery.SkydomeID);
             }
             HasLighting = scenery.HasLighting;
             if (HasLighting)
             {
-                UnkLightFlags = CloneUtils.CloneArray(scenery.UnkLightFlags);
                 AmbientLights = CloneUtils.DeepClone(scenery.AmbientLights);
                 DirectionalLights = CloneUtils.DeepClone(scenery.DirectionalLights);
                 PointLights = CloneUtils.DeepClone(scenery.PointLights);
@@ -124,17 +121,12 @@ namespace TT_Lab.AssetData.Instance
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
             writer.Write(ChunkPath);
-            writer.Write(UnkUInt);
+            writer.Write(FogColor);
             writer.Write(UnkByte);
             writer.Write(SkydomeID == LabURI.Empty ? 0 : assetManager.GetAsset(SkydomeID).ID);
             writer.Write(HasLighting);
             if (HasLighting)
             {
-                for (var i = 0; i < UnkLightFlags.Length; ++i)
-                {
-                    writer.Write(UnkLightFlags[i]);
-                }
-
                 writer.Write(AmbientLights.Count);
                 foreach (var ambient in AmbientLights)
                 {
@@ -166,8 +158,27 @@ namespace TT_Lab.AssetData.Instance
                 scenery.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateScenery(ms);
+        }
+
+        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        {
+            var assetManager = AssetManager.Get();
+            var graphicsSection = section.GetItem<ITwinSection>(Constants.SCENERY_GRAPHICS_SECTION);
+            var skydomeSection = graphicsSection.GetItem<ITwinSection>(Constants.GRAPHICS_SKYDOMES_SECTION);
+            if (SkydomeID != LabURI.Empty)
+            {
+                assetManager.GetAsset(SkydomeID).ResolveChunkResources(factory, skydomeSection);
+            }
+
+            foreach (var scenery in Sceneries)
+            {
+                scenery.ResolveChunkResouces(factory, graphicsSection);
+            }
+
+            return base.ResolveChunkResouces(factory, section, id);
         }
     }
 }

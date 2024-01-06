@@ -1,14 +1,20 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace TT_Lab.AssetData.Graphics.SubModels
 {
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class SubBlendFaceData : IDisposable
     {
         public UInt32 VertexesAmount { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public List<BlendShapeData> BlendShapes { get; set; } = new();
+
+        public SubBlendFaceData() { }
 
         public SubBlendFaceData(ITwinBlendSkinFace face)
         {
@@ -25,14 +31,15 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             }
         }
 
-        public SubBlendFaceData(List<Assimp.VectorKey> positions)
+        public SubBlendFaceData(IEnumerable<System.Numerics.Vector3> positions)
         {
-            VertexesAmount = (UInt32)positions.Count;
+            VertexesAmount = (UInt32)positions.Count();
+
             foreach (var pos in positions)
             {
                 var shapeData = new BlendShapeData()
                 {
-                    Offset = new Twinsanity.TwinsanityInterchange.Common.Vector4(pos.Value.X, pos.Value.Y, pos.Value.Z, 1.0f)
+                    Offset = pos.ToTwin()
                 };
                 BlendShapes.Add(shapeData);
             }

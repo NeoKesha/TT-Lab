@@ -43,7 +43,7 @@ namespace TT_Lab.AssetData.Instance
             Vectors.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinCollision collision = GetTwinItem<ITwinCollision>();
             UnkInt = collision.UnkInt;
@@ -104,6 +104,7 @@ namespace TT_Lab.AssetData.Instance
                 vec.Write(writer);
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateCollision(ms);
         }

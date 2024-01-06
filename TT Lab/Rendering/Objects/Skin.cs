@@ -32,7 +32,7 @@ namespace TT_Lab.Rendering.Objects
                             var col = v.Color.GetColor();
                             return System.Drawing.Color.FromArgb((int)col.ToARGB());
                         }).ToList(),
-                        subSkin.Vertexes.Select(v => new Vector3(v.UV.X, 1 - v.UV.Y, v.UV.Z)).ToList(),
+                        subSkin.Vertexes.Select(v => v.UV).ToList(),
                         subSkin.Vertexes.Select(v => v.Normal).ToList());
                     modelBuffers.Add(buffer);
                     var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);

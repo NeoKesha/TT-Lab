@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using Twinsanity.Libraries;
 // Credits to https://github.com/dwmkerr/sharpgl
 namespace TT_Lab.Rendering.Shaders
 {
@@ -30,6 +31,8 @@ namespace TT_Lab.Rendering.Shaders
         public ShaderProgram(string vertexShaderSource, string fragmentShaderSource, LibShader? fragShader = null, LibShader? vertShader = null)
         {
             //  Create the shaders.
+            ProcessIncludes(ref vertexShaderSource);
+            ProcessIncludes(ref fragmentShaderSource);
             vertexShader = new Shader(ShaderType.VertexShader, vertexShaderSource);
             fragmentShader = new Shader(ShaderType.FragmentShader, fragmentShaderSource);
 
@@ -40,7 +43,7 @@ namespace TT_Lab.Rendering.Shaders
             // Library shaders
             if (!vertShader.HasValue)
             {
-                shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.vert"));
+                shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\VertexShading.vert"));
             }
             else
             {
@@ -191,6 +194,17 @@ namespace TT_Lab.Rendering.Shaders
         }
 
         private uint shaderProgramObject;
+
+        private void ProcessIncludes(ref string shaderText)
+        {
+            while (StringUtils.GetStringInBetween(shaderText, "#include \"", "\"") != String.Empty)
+            {
+                var includePath = StringUtils.GetStringInBetween(shaderText, "#include \"", "\"");
+                var includeLoadPath = $"Shaders\\{includePath}";
+                var includeText = Util.ManifestResourceLoader.LoadTextFile(includeLoadPath);
+                shaderText = shaderText.Replace($"#include \"{includePath}\"", includeText);
+            }
+        }
 
         /// <summary>
         /// A mapping of uniform Names to locations. This allows us to very easily specify 

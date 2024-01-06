@@ -28,7 +28,7 @@ namespace TT_Lab.AssetData.Instance
             Links.Clear();
         }
 
-        public override void Import(LabURI package, String? variant)
+        public override void Import(LabURI package, String? variant, Int32? layoutId)
         {
             ITwinLink link = GetTwinItem<ITwinLink>();
             foreach (var l in link.LinksList)
@@ -61,6 +61,7 @@ namespace TT_Lab.AssetData.Instance
                 }
             }
 
+            writer.Flush();
             ms.Position = 0;
             return factory.GenerateLink(ms);
         }
