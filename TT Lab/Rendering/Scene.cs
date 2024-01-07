@@ -114,16 +114,24 @@ namespace TT_Lab.Rendering
             }
         }
 
+        /// <summary>
+        /// Adds new renderable object to the scene. Safe to do anywhere. Object will be added to the render on next render frame.
+        /// </summary>
+        /// <param name="renderObj">Object to add</param>
+        /// <param name="transparent">Whether the object is transparent and goes through translucency pipeline</param>
         public void AddRender(IRenderable renderObj, bool transparent = true)
         {
-            if (transparent)
-            {
-                objectsTransparent.Add(renderObj);
-            }
-            else
-            {
-                objectsOpaque.Add(renderObj);
-            }
+            queuedRenderActions.Enqueue(() => {
+                if (transparent)
+                {
+                    objectsTransparent.Add(renderObj);
+                }
+                else
+                {
+                    objectsOpaque.Add(renderObj);
+                }
+            });
+            
             renderObj.Parent = this;
         }
 
@@ -292,6 +300,10 @@ namespace TT_Lab.Rendering
 
         public void PreRender()
         {
+            foreach (var @object in objectsOpaque)
+            {
+                @object.PreRender();
+            }
             foreach (var @object in objectsTransparent)
             {
                 @object.PreRender();
@@ -300,6 +312,10 @@ namespace TT_Lab.Rendering
 
         public void PostRender()
         {
+            foreach (var @object in objectsOpaque)
+            {
+                @object.PostRender();
+            }
             foreach (var @object in objectsTransparent)
             {
                 @object.PostRender();

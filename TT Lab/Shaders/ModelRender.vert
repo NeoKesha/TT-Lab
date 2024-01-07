@@ -1,26 +1,14 @@
-#version 410 compatibility
-layout (location = 0) in vec3 in_Position;
-layout (location = 1) in vec4 in_Color;
-layout (location = 2) in vec3 in_Normal;
-layout (location = 3) in vec3 in_Texpos;
-
-out vec3 Texpos;
-out vec4 Color;
-out vec3 Diffuse;
-out vec3 EyespaceNormal;
-
-uniform mat4 Projection;
-uniform mat4 View;
-uniform mat4 Model;
-
-vec3 ShadeVertex(mat4 normalMat, vec3 vertex, vec3 normal);
+#include "Includes/ModelLayout.vert"
+#include "Includes/ShadingLibrary.vert"
 
 void main()
 {
-	mat4 modelView = View * Model;
-    gl_Position = Projection * modelView * vec4(in_Position, 1.0);
+	mat4 viewModel = View * Model;
+    vec3 processedPosition = in_Position;
+	processedPosition = PositionVertex(processedPosition, Morphs, gl_VertexID, MorphWeights);
+	gl_Position = Projection * viewModel * vec4(processedPosition, 1.0);//
 	Texpos = in_Texpos;
-	mat4 normalMat = transpose(inverse(modelView));
+	mat4 normalMat = transpose(inverse(viewModel));
 	Diffuse = ShadeVertex(normalMat, in_Position, in_Normal);
 	EyespaceNormal = normalize(normalMat * vec4(in_Normal, 0.0)).xyz;
 	Color = in_Color;

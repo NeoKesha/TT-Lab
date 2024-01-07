@@ -65,6 +65,11 @@ namespace TT_Lab.Rendering.Objects
             texture = new TextureBuffer(texImage.Width, texImage.Height, texImage);
         }
 
+        public Plane(TextureBuffer texture) : this()
+        {
+            this.texture = texture;
+        }
+
         public void Bind()
         {
             if (texture != null)
