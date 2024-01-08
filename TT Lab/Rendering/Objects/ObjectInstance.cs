@@ -54,9 +54,9 @@ namespace TT_Lab.Rendering.Objects
 
         public void Select()
         {
-            ambientColor.X = 0.0f;
-            ambientColor.Y = 1.0f;
-            ambientColor.Z = 0.0f;
+            ambientColor.X = 0.1f;
+            ambientColor.Y = 0.6f;
+            ambientColor.Z = 0.1f;
         }
 
         public void Deselect()
