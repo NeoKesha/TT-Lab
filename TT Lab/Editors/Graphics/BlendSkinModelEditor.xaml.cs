@@ -4,6 +4,7 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Graphics;
 
 namespace TT_Lab.Editors.Graphics
 {
@@ -14,6 +15,7 @@ namespace TT_Lab.Editors.Graphics
     {
 
         private int selectedMaterial = 0;
+        private BlendSkin blendSkin;
 
         public BlendSkinModelEditor()
         {
@@ -47,8 +49,65 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var blendSkinData = GetAssetData<BlendSkinData>();
-            BlendSkin model = new(blendSkinData);
-            SceneRenderer.Scene.AddRender(model, false);
+            blendSkin = new(blendSkinData);
+            SceneRenderer.Scene.AddRender(blendSkin, false);
+
+            ((BlendSkinViewModel)MorphWeightsGrid.DataContext).PropertyChanged += BlendSkinModelEditor_PropertyChanged;
+        }
+
+        private void BlendSkinModelEditor_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == null) return;
+
+            var context = (BlendSkinViewModel)MorphWeightsGrid.DataContext;
+            switch(e.PropertyName)
+            {
+                case nameof(BlendSkinViewModel.Weight1):
+                    blendSkin.BlendShapesValues[0] = context.Weight1;
+                    break;
+                case nameof(BlendSkinViewModel.Weight2):
+                    blendSkin.BlendShapesValues[1] = context.Weight2;
+                    break;
+                case nameof(BlendSkinViewModel.Weight3):
+                    blendSkin.BlendShapesValues[2] = context.Weight3;
+                    break;
+                case nameof(BlendSkinViewModel.Weight4):
+                    blendSkin.BlendShapesValues[3] = context.Weight4;
+                    break;
+                case nameof(BlendSkinViewModel.Weight5):
+                    blendSkin.BlendShapesValues[4] = context.Weight5;
+                    break;
+                case nameof(BlendSkinViewModel.Weight6):
+                    blendSkin.BlendShapesValues[5] = context.Weight6;
+                    break;
+                case nameof(BlendSkinViewModel.Weight7):
+                    blendSkin.BlendShapesValues[6] = context.Weight7;
+                    break;
+                case nameof(BlendSkinViewModel.Weight8):
+                    blendSkin.BlendShapesValues[7] = context.Weight8;
+                    break;
+                case nameof(BlendSkinViewModel.Weight9):
+                    blendSkin.BlendShapesValues[8] = context.Weight9;
+                    break;
+                case nameof(BlendSkinViewModel.Weight10):
+                    blendSkin.BlendShapesValues[9] = context.Weight10;
+                    break;
+                case nameof(BlendSkinViewModel.Weight11):
+                    blendSkin.BlendShapesValues[10] = context.Weight11;
+                    break;
+                case nameof(BlendSkinViewModel.Weight12):
+                    blendSkin.BlendShapesValues[11] = context.Weight12;
+                    break;
+                case nameof(BlendSkinViewModel.Weight13):
+                    blendSkin.BlendShapesValues[12] = context.Weight13;
+                    break;
+                case nameof(BlendSkinViewModel.Weight14):
+                    blendSkin.BlendShapesValues[13] = context.Weight14;
+                    break;
+                case nameof(BlendSkinViewModel.Weight15):
+                    blendSkin.BlendShapesValues[14] = context.Weight15;
+                    break;
+            };
         }
 
         private void ResetMaterialViewer()

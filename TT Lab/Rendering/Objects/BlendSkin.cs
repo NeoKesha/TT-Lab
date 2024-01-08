@@ -35,7 +35,6 @@ namespace TT_Lab.Rendering.Objects
                 BlendShapesAmount = blendSkin.Blends[0].Models[0].BlendFaces.Count;
             }
             BlendShapesValues = new Single[15];
-            BlendShapesValues[1] = 1.0f;
 
             var morphData = new Byte[512 * 512];
             var morphDataHandle = GCHandle.Alloc(morphData, GCHandleType.Pinned);
@@ -52,7 +51,7 @@ namespace TT_Lab.Rendering.Objects
                     var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
                     if (texturedShaderIndex != -1)
                     {
-                        var buffer = BufferGeneration.GetModelBuffer(model.Vertexes.Select(v => v.Position).ToList(), model.Faces,
+                        var buffer = BufferGeneration.GetModelBuffer(model.Vertexes.Select(v => new Vector3(-v.Position.X, v.Position.Y, v.Position.Z)).ToList(), model.Faces,
                             model.Vertexes.Select((v) =>
                             {
                                 var col = v.Color.GetColor();
@@ -106,7 +105,7 @@ namespace TT_Lab.Rendering.Objects
             }
 
             morphTexture = morphBmp;
-            morphBuffer = new TextureBuffer(TextureTarget.Texture2D, 512, 512, morphTexture, false, System.Drawing.Imaging.PixelFormat.Format8bppIndexed, PixelFormat.Red, PixelInternalFormat.R8Snorm, PixelType.Byte);
+            morphBuffer = new TextureBuffer(TextureTarget.Texture2D, 512, 512, morphTexture, false, System.Drawing.Imaging.PixelFormat.Format8bppIndexed, PixelFormat.Red, PixelInternalFormat.R8, PixelType.UnsignedByte);
 
             morphDataHandle.Free();
         }
@@ -118,7 +117,7 @@ namespace TT_Lab.Rendering.Objects
 
             renderProgram.SetUniform1("Alpha", Opacity);
             renderProgram.SetUniform1("BlendShapesAmount", BlendShapesAmount);
-            renderProgram.SetUniform3("BlendShape", BlendShape.X, BlendShape.Y, BlendShape.Z);
+            renderProgram.SetUniform3("BlendShape", -BlendShape.X, BlendShape.Y, BlendShape.Z);
             renderProgram.SetTextureUniform("Morphs", TextureTarget.Texture2D, morphBuffer.Buffer, 2);
             for (Int32 i = 0; i < BlendShapesAmount; i++)
             {
