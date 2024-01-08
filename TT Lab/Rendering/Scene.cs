@@ -5,7 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using TT_Lab.AssetData.Code;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
@@ -52,7 +56,9 @@ namespace TT_Lab.Rendering
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new Queue<Action>();
-
+        private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new Dictionary<LabURI, List<IndexedBufferArray>>();
+        private readonly List<SceneInstance> sceneInstances = new List<SceneInstance>();
+        private SceneInstance selectedInstance = null;
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -111,6 +117,19 @@ namespace TT_Lab.Rendering
                 var trRend = new Objects.Trigger((TriggerViewModel)trg);
                 trRend.Parent = this;
                 objectsTransparent.Add(trRend);
+            }
+
+            //Instances renderer
+            var manager = AssetManager.Get();
+            var instances = sceneTree.Find(avm => avm.Alias == "Instances");
+            foreach (var instance in instances!.Children)
+            {
+                var instData = instance.Asset.GetData<ObjectInstanceData>();
+                var sceneInstance = new SceneInstance(instData, modelBufferCache, this);
+                var pRend = sceneInstance.GetRenderable();
+
+                objectsOpaque.Add(pRend);
+                sceneInstances.Add(sceneInstance);
             }
         }
 
@@ -174,6 +193,8 @@ namespace TT_Lab.Rendering
             // Render all objects
             Renderer.RenderOpaque(objectsOpaque);
             Renderer.Render(objectsTransparent);
+            // Render HUD
+            
             // Reset modes
             GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.Blend);
@@ -206,6 +227,15 @@ namespace TT_Lab.Rendering
             }
             objectsTransparent.Clear();
             objectsOpaque.Clear();
+            foreach (var modelBuffers in modelBufferCache.Values)
+            {
+                foreach (var buffer in modelBuffers)
+                {
+                    buffer.Delete();
+                }
+                modelBuffers.Clear();
+            }
+            modelBufferCache.Clear();
             Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
         }
 
@@ -244,6 +274,33 @@ namespace TT_Lab.Rendering
             direction.z = (float)Math.Sin(glm.radians(yaw_pitch.x)) * (float)Math.Cos(glm.radians(yaw_pitch.y));
 
             cameraDirection = glm.normalize(direction);
+        }
+
+        public void MouseSelect(float x, float y)
+        {
+            var win = new vec3(x, resolution.y - y, 0.0f);
+            var view = new vec4(0, 0, resolution.x, resolution.y);
+            var worldPos = glm.unProject(win, viewMat, projectionMat, view);
+            vec3 dir = glm.normalize(worldPos - cameraPosition);
+            if (selectedInstance != null)
+            {
+                selectedInstance.Deselect();
+                selectedInstance = null;
+            }
+            foreach (var instance in sceneInstances)
+            {
+                vec3 hit = new vec3();
+                float distance = 0.0f;
+                if (MathExtension.IntersectRaySphere(cameraPosition, dir, instance.GetPosition(), 1.0f, ref distance, ref hit))
+                {
+                    selectedInstance = instance;
+                    break;
+                }
+            }
+            if (selectedInstance != null)
+            {
+                selectedInstance.Select();
+            }
         }
 
         public void ZoomView(float z)

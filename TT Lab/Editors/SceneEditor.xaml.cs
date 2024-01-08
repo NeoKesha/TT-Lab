@@ -133,6 +133,11 @@ namespace TT_Lab.Editors
             {
                 ContextMenu.IsOpen = true;
             }
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var pos = e.MouseDevice.GetPosition(Glcontrol);
+                Scene?.MouseSelect((float)pos.X, (float)pos.Y);
+            }
         }
 
         private void Glcontrol_MouseMove(Object? sender, MouseEventArgs e)
