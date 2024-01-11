@@ -128,7 +128,7 @@ namespace TT_Lab.Rendering
                 var sceneInstance = new SceneInstance(instData, modelBufferCache, this);
                 var pRend = sceneInstance.GetRenderable();
 
-                objectsOpaque.Add(pRend);
+                objectsTransparent.Add(pRend);
                 sceneInstances.Add(sceneInstance);
             }
         }

@@ -61,15 +61,17 @@ namespace TT_Lab.Rendering.Objects
 
         public void Deselect()
         {
-            ambientColor.X = 0.0f;
-            ambientColor.Y = 0.0f;
-            ambientColor.Z = 0.0f;
+            ambientColor.X = 0.5f;
+            ambientColor.Y = 0.5f;
+            ambientColor.Z = 0.5f;
         }
 
         public void Bind()
         {
             Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
             Parent?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
+            Parent?.Renderer.RenderProgram.SetUniform3("LightPosition", Parent.CameraPosition.x, Parent.CameraPosition.y, Parent.CameraPosition.z);
+            Parent?.Renderer.RenderProgram.SetUniform3("LightDirection", -Parent.CameraDirection.x, Parent.CameraDirection.y, Parent.CameraDirection.z);
             Parent?.Renderer.RenderProgram.SetUniformMatrix4("Model", transform!);
         }
 
@@ -150,10 +152,13 @@ namespace TT_Lab.Rendering.Objects
                     modelBuffers.Add(BufferGeneration.GetModelBuffer(modelData.Vertexes[i].Select(v => v.Position).ToList(), modelData.Faces[i],
                     modelData.Vertexes[i].Select((v) =>
                     {
-                            var col = v.Color.GetColor();
-                            return System.Drawing.Color.FromArgb((int)col.ToARGB());
-                    }).ToList(),
-                        modelData.Vertexes[i].Select(v => v.Normal).ToList()));
+                        var col = v.Color.GetColor();
+                        var emit = v.EmitColor;
+                        col.R = (Byte)Math.Min(col.R + emit.X, 255);
+                        col.G = (Byte)Math.Min(col.G + emit.Y, 255);
+                        col.B = (Byte)Math.Min(col.B + emit.Z, 255);
+                        return System.Drawing.Color.FromArgb((int)col.ToARGB());
+                    }).ToList()));
                 }
             }
 

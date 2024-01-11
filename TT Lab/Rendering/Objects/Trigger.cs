@@ -27,8 +27,8 @@ namespace TT_Lab.Rendering.Objects
             pos = new Vector4(tvm.Position.X, tvm.Position.Y, tvm.Position.Z, tvm.Position.W);
             scale = new Vector4(tvm.Scale.X, tvm.Scale.Y, tvm.Scale.Z, tvm.Scale.W);
             rotation = new Vector4(tvm.Rotation.X, tvm.Rotation.Y, tvm.Rotation.Z, tvm.Rotation.W);
-            var trgColor = System.Drawing.Color.Orange;
-            trgColor = System.Drawing.Color.FromArgb(100, trgColor.R, trgColor.G, trgColor.B);
+            var trgColor = System.Drawing.Color.DarkOrange;
+            trgColor = System.Drawing.Color.FromArgb(100, trgColor.R >> 1, trgColor.G >> 1, trgColor.B >> 1);
             triggerBuffer = BufferGeneration.GetCubeBuffer(pos.Xyz, scale.Xyz, new Quaternion(rotation.Xyz, rotation.W), new List<System.Drawing.Color>
             {
                 trgColor
