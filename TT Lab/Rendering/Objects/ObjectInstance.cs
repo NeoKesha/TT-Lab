@@ -22,7 +22,7 @@ namespace TT_Lab.Rendering.Objects
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache;
 
-        float[] trasform;
+        float[]? transform;
         Vector3 ambientColor = new Vector3();
 
         public ObjectInstance(ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache)
@@ -49,7 +49,7 @@ namespace TT_Lab.Rendering.Objects
             Matrix4.CreateRotationZ(rot.z, out matrixRotationZ);
             Matrix4 modelTransform = matrixRotationZ * matrixRotationY * matrixRotationX;
             modelTransform *= matrixPosition;
-            trasform = MathExtension.Matrix4ToArray(modelTransform);
+            transform = MathExtension.Matrix4ToArray(modelTransform);
         }
 
         public void Select()
@@ -70,7 +70,7 @@ namespace TT_Lab.Rendering.Objects
         {
             Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
             Parent?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
-            Parent?.Renderer.RenderProgram.SetUniformMatrix4("Model", trasform);
+            Parent?.Renderer.RenderProgram.SetUniformMatrix4("Model", transform!);
         }
 
         public void Delete()
@@ -80,7 +80,7 @@ namespace TT_Lab.Rendering.Objects
 
         public void Render()
         {
-            if (trasform == null)
+            if (transform == null)
             {
                 return;
             }
@@ -102,6 +102,11 @@ namespace TT_Lab.Rendering.Objects
         private void SetupModelBufferFromCache(LabURI uri)
         {
             var cache = modelBufferCache.GetValueOrDefault(uri);
+            if (cache == null)
+            {
+                return;
+            }
+
             foreach (var buffer in cache)
             {
                 modelBuffers.Add(buffer);
@@ -111,6 +116,11 @@ namespace TT_Lab.Rendering.Objects
         private void ClearCacheEntry(LabURI uri)
         {
             var cache = modelBufferCache.GetValueOrDefault(uri);
+            if (cache == null)
+            {
+                return;
+            }
+
             modelBuffers.Clear();
             foreach (var buffer in cache)
             {
