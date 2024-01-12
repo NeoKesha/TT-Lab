@@ -19,4 +19,5 @@ out float Depth;
 uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Model;
-uniform float MorphWeight;
+uniform float MorphWeights[15];
+layout (binding = 2) uniform sampler2D Morphs;

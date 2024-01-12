@@ -87,7 +87,7 @@ namespace TT_Lab.Editors.Graphics
                     textures.Add(texData.Bitmap);
                 }
             }
-            TwinMaterialPlane plane = new(MaterialViewer.Scene.Renderer.RenderProgram, textures.ToArray(), viewModel.Shaders.ToArray(), viewModel.Shaders.Count);
+            TwinMaterialPlane plane = new(MaterialViewer.Scene, MaterialViewer.Scene.Renderer.RenderProgram, textures.ToArray(), viewModel.Shaders.ToArray(), viewModel.Shaders.Count);
             MaterialViewer.Scene.AddRender(plane);
         }
 

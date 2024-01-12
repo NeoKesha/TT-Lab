@@ -1,4 +1,4 @@
-﻿using GlmNet;
+﻿using GlmSharp;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
@@ -13,19 +13,15 @@ using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {
-    internal class ObjectInstance : IRenderable
+    public class ObjectInstance : BaseRenderable
     {
-
-        public Scene? Parent { get; set; }
-        public float Opacity { get; set; } = 1.0f;
-
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache;
 
         float[]? transform;
         Vector3 ambientColor = new Vector3();
 
-        public ObjectInstance(ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache)
+        public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache) : base(root)
         {
             this.modelBufferCache = modelBufferCache;
             var objURI = instance.ObjectId;
@@ -68,11 +64,11 @@ namespace TT_Lab.Rendering.Objects
 
         public void Bind()
         {
-            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
-            Parent?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
-            Parent?.Renderer.RenderProgram.SetUniform3("LightPosition", Parent.CameraPosition.x, Parent.CameraPosition.y, Parent.CameraPosition.z);
-            Parent?.Renderer.RenderProgram.SetUniform3("LightDirection", -Parent.CameraDirection.x, Parent.CameraDirection.y, Parent.CameraDirection.z);
-            Parent?.Renderer.RenderProgram.SetUniformMatrix4("Model", transform!);
+            Root.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
+            Root.Renderer.RenderProgram.SetUniform3("LightPosition", Root.CameraPosition.x, Root.CameraPosition.y, Root.CameraPosition.z);
+            Root.Renderer.RenderProgram.SetUniform3("LightDirection", -Root.CameraDirection.x, Root.CameraDirection.y, Root.CameraDirection.z);
+            Root.Renderer.RenderProgram.SetUniformMatrix4("Model", transform!);
         }
 
         public void Delete()
@@ -80,7 +76,7 @@ namespace TT_Lab.Rendering.Objects
             modelBuffers.Clear();
         }
 
-        public void Render()
+        public override void Render()
         {
             if (transform == null)
             {

@@ -47,7 +47,7 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var skinData = GetAssetData<SkinData>();
-            Skin model = new(skinData);
+            Skin model = new(SceneRenderer.Scene, skinData);
             SceneRenderer.Scene.AddRender(model, false);
         }
 
@@ -63,7 +63,7 @@ namespace TT_Lab.Editors.Graphics
             var skinData = GetAssetData<SkinData>();
             var matData = AssetManager.Get().GetAsset(skinData.SubSkins[selectedMaterial].Material).GetData<MaterialData>();
             MaterialName.Text = matData.Name;
-            var texPlane = new Plane(matData);
+            var texPlane = new Plane(MaterialViewer.Scene, matData);
             MaterialViewer.Scene.AddRender(texPlane);
         }
 

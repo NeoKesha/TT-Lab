@@ -104,6 +104,7 @@ namespace TT_Lab.ViewModels
             {
                 LoadData();
                 _editor = (Control)Activator.CreateInstance(Asset.GetEditorType(), this, commandManager)!;
+                _editor.Unloaded += EditorUnload;
             }
             return _editor;
         }

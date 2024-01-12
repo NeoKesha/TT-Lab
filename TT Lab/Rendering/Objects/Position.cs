@@ -8,17 +8,14 @@ using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Position : IRenderable
+    public class Position : BaseRenderable
     {
-        public Scene? Parent { get; set; }
-        public float Opacity { get; set; } = 1.0f;
-
         private uint id;
         private int layid;
         private Vector4 pos;
         private IndexedBufferArray positionBuffer;
 
-        public Position(PositionViewModel pos)
+        public Position(Scene root, PositionViewModel pos) : base(root)
         {
             id = pos.Asset.ID;
             layid = (int)pos.LayoutID;
@@ -39,7 +36,7 @@ namespace TT_Lab.Rendering.Objects
 
         public void Bind()
         {
-            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
             positionBuffer.Bind();
         }
 
@@ -48,7 +45,7 @@ namespace TT_Lab.Rendering.Objects
             positionBuffer.Delete();
         }
 
-        public void Render()
+        public override void Render()
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, positionBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

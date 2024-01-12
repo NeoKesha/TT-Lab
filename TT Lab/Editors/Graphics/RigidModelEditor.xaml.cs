@@ -47,7 +47,7 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var rm = GetAssetData<RigidModelData>();
-            RigidModel model = new RigidModel(rm);
+            RigidModel model = new RigidModel(SceneRenderer.Scene, rm);
             SceneRenderer.Scene.AddRender(model, false);
         }
 
@@ -63,7 +63,7 @@ namespace TT_Lab.Editors.Graphics
             var rm = GetAssetData<RigidModelData>();
             var matData = AssetManager.Get().GetAsset(rm.Materials[selectedMaterial]).GetData<MaterialData>();
             MaterialName.Text = matData.Name;
-            var texPlane = new Plane(matData);
+            var texPlane = new Plane(MaterialViewer.Scene, matData);
             MaterialViewer.Scene.AddRender(texPlane);
         }
 

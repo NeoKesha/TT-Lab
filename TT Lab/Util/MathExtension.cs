@@ -1,4 +1,4 @@
-﻿using GlmNet;
+﻿using GlmSharp;
 using OpenTK.Mathematics;
 using System;
 using TT_Lab.AssetData.Graphics;
@@ -26,8 +26,8 @@ namespace TT_Lab.Util
         public static bool IntersectRaySphere(vec3 origin, vec3 direction, vec3 spherePosition, float radius, ref float distance, ref vec3 hit)
         {
             vec3 dirToSphere = origin - spherePosition;
-            float angleDifference = glm.dot(dirToSphere, direction);
-            float distanceDifference = glm.dot(dirToSphere, dirToSphere) - radius * radius;
+            float angleDifference = glm.Dot(dirToSphere, direction);
+            float distanceDifference = glm.Dot(dirToSphere, dirToSphere) - radius * radius;
 
             if (distanceDifference > 0.0f && angleDifference > 0.0f)
             {

@@ -37,7 +37,7 @@ namespace TT_Lab.Editors.Instance
         {
             var vm = GetViewModel<ObjectInstanceViewModel>();
             var chunkEditor = (ChunkEditor)ParentEditor!;
-            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
+            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmSharp.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
             vm.PropertyChanged += ObjectInstanceViewModel_PropertyChanged;
             vm.Instances.CollectionChanged += Instances_CollectionChanged;
             vm.Positions.CollectionChanged += Positions_CollectionChanged;

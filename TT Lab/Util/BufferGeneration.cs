@@ -1,4 +1,4 @@
-﻿using GlmNet;
+﻿using GlmSharp;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,53 @@ namespace TT_Lab.Util
 {
     public static class BufferGeneration
     {
+        public static IndexedBufferArray GetModelBuffer(List<Vertex> vertexes, List<IndexedFace> faces, bool generateUvs = true)
+        {
+            if (generateUvs)
+            {
+                return GetModelBuffer(vertexes.Select(v => v.Position).ToList(), faces,
+                    vertexes.Select((v) =>
+                    {
+                        var col = v.Color.GetColor();
+                        return Color.FromArgb((int)col.ToARGB());
+                    }).ToList(),
+                    vertexes.Select(v => v.UV).ToList(),
+                    vertexes.Select(v => v.Normal).ToList());
+            }
+
+            if (vertexes.Select(v => v.HasNormals).Any())
+            {
+                return GetModelBuffer(vertexes.Select(v => v.Position).ToList(), faces,
+                    vertexes.Select((v) =>
+                    {
+                        var col = v.Color.GetColor();
+                        return Color.FromArgb((int)col.ToARGB());
+                    }).ToList(),
+                    vertexes.Select(v => v.Normal).ToList());
+            }
+
+            return GetModelBuffer(vertexes.Select(v => v.Position).ToList(), faces,
+                vertexes.Select((v) =>
+                {
+                    var col = v.Color.GetColor();
+                    return Color.FromArgb((int)col.ToARGB());
+                }).ToList());
+        }
+
+        public static IndexedBufferArray GetModelBuffer(List<Vertex> vertexes, List<IndexedFace> faces, List<SubBlendFaceData> morphs)
+        {
+            return GetModelBuffer(
+                vertexes.Select(v => new Twinsanity.TwinsanityInterchange.Common.Vector3(-v.Position.X, v.Position.Y, v.Position.Z)).ToList(),
+                faces,
+                vertexes.Select((v) =>
+                {
+                    var col = v.Color.GetColor();
+                    return Color.FromArgb((int)col.ToARGB());
+                }).ToList(),
+                vertexes.Select(v => v.UV).ToList(),
+                morphs);
+        }
+
         public static IndexedBufferArray GetModelBuffer(List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors, List<IndexedFace> faces, List<Color> colors,
             List<Twinsanity.TwinsanityInterchange.Common.Vector4>? preCalcNormals = null, Func<List<Color>, int, float[]>? colorSelector = null)
         {
@@ -221,7 +268,7 @@ namespace TT_Lab.Util
                 1.0f,-1.0f, 1.0f
             };
             // Scale
-            var scaleMat = glm.scale(mat4.identity(), new vec3(scale.X, scale.Y, scale.Z));
+            var scaleMat = mat4.Scale(new vec3(scale.X, scale.Y, scale.Z));
             for (var i = 0; i < cubeVertecies.Length; i += 3)
             {
                 var v = new vec4(cubeVertecies[i], cubeVertecies[i + 1], cubeVertecies[i + 2], 1.0f);

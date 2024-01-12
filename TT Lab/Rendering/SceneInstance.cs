@@ -1,4 +1,4 @@
-﻿using GlmNet;
+﻿using GlmSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +22,10 @@ namespace TT_Lab.Rendering
         public SceneInstance(ObjectInstanceData instanceData, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache, Scene parent)
         {
             this.instanceData = instanceData;
-            instanceRender = new ObjectInstance(instanceData, modelBufferCache);
+            instanceRender = new ObjectInstance(parent, instanceData, modelBufferCache);
             position = new vec3(-instanceData.Position.X, instanceData.Position.Y, instanceData.Position.Z);
             rotation = new vec3(instanceData.RotationX.GetRotation(), instanceData.RotationY.GetRotation(), instanceData.RotationZ.GetRotation());
             instanceRender.SetPositionAndRotation(position, rotation);
-            instanceRender.Parent = parent;
         }
 
         public void Select()

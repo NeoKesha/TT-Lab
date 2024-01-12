@@ -8,55 +8,24 @@ using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Model : IRenderable
+    public class Model : BaseRenderable
     {
-        public Scene? Parent { get; set; }
-        public float Opacity { get; set; } = 1.0f;
+        ModelBuffer model;
 
-        List<IndexedBufferArray> modelBuffers;
-
-        public Model(ModelData model)
+        public Model(Scene root, ModelData model) : base(root)
         {
-            modelBuffers = new List<IndexedBufferArray>();
-            for (var i = 0; i < model.Vertexes.Count; ++i)
-            {
-                modelBuffers.Add(BufferGeneration.GetModelBuffer(model.Vertexes[i].Select(v => v.Position).ToList(), model.Faces[i],
-                    model.Vertexes[i].Select((v) =>
-                    {
-                        var col = v.Color.GetColor();
-                        return System.Drawing.Color.FromArgb((int)col.ToARGB());
-                    }).ToList(),
-                    model.Vertexes[i].Select(v => v.Normal).ToList()));
-            }
-        }
-
-        public void Bind()
-        {
-            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            this.model = new ModelBuffer(root, model);
+            AddChild(this.model);
         }
 
         public void Delete()
         {
-            foreach (var modelBuffer in modelBuffers)
-            {
-                modelBuffer.Delete();
-            }
+            model.Delete();
         }
 
-        public void Render()
+        public override void Render()
         {
-            Bind();
-            foreach (var modelBuffer in modelBuffers)
-            {
-                modelBuffer.Bind();
-                GL.DrawElements(PrimitiveType.Triangles, modelBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-                modelBuffer.Unbind();
-            }
-            Unbind();
-        }
-
-        public void Unbind()
-        {
+            model.Render();
         }
     }
 }
