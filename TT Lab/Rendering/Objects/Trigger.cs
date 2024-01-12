@@ -8,10 +8,8 @@ using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Trigger : IRenderable
+    public class Trigger : BaseRenderable
     {
-        public Scene? Parent { get; set; }
-        public float Opacity { get; set; } = 0.4f;
 
         private uint id;
         private int layid;
@@ -20,8 +18,9 @@ namespace TT_Lab.Rendering.Objects
         private Vector4 rotation;
         private IndexedBufferArray triggerBuffer;
 
-        public Trigger(TriggerViewModel tvm)
+        public Trigger(Scene root, TriggerViewModel tvm) : base(root)
         {
+            Opacity = 0.4f;
             id = tvm.Asset.ID;
             layid = (int)tvm.LayoutID;
             pos = new Vector4(tvm.Position.X, tvm.Position.Y, tvm.Position.Z, tvm.Position.W);
@@ -55,7 +54,7 @@ namespace TT_Lab.Rendering.Objects
 
         public void Bind()
         {
-            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
             triggerBuffer.Bind();
         }
 
@@ -64,7 +63,7 @@ namespace TT_Lab.Rendering.Objects
             triggerBuffer.Delete();
         }
 
-        public void Render()
+        public override void Render()
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, triggerBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

@@ -110,7 +110,7 @@ namespace TT_Lab.Editors.Graphics
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();
-            var texPlane = new Plane(bitmap);
+            var texPlane = new Plane(TextureViewer.Scene, bitmap);
             TextureViewer.Scene.AddRender(texPlane);
         }
 

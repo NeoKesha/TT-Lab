@@ -1,4 +1,4 @@
-﻿using GlmNet;
+﻿using GlmSharp;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
@@ -18,12 +18,8 @@ namespace TT_Lab.Rendering
     /// <summary>
     /// A 3D scene to render to
     /// </summary>
-    public class Scene : IRenderable
+    public class Scene : BaseRenderable
     {
-        private Scene? parent = null;
-
-        public Scene? Parent { get => parent; set => parent = value; }
-        public float Opacity { get; set; } = 1.0f;
         public IRenderer Renderer { get; private set; }
         public vec3 CameraPosition { get => cameraPosition; }
         public vec3 CameraDirection { get => cameraDirection; }
@@ -34,24 +30,24 @@ namespace TT_Lab.Rendering
         private mat4 projectionMat;
         private mat4 viewMat;
         private mat4 modelMat;
-        private vec3 cameraPosition = new vec3(0.0f, 0.0f, 0.0f);
-        private vec3 cameraDirection = new vec3(0, 0, -1);
-        private vec3 cameraUp = new vec3(0, 1, 0);
-        private vec2 resolution = new vec2(0, 0);
+        private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
+        private vec3 cameraDirection = new(0, 0, -1);
+        private vec3 cameraUp = new(0, 1, 0);
+        private vec2 resolution = new(0, 0);
         private float cameraSpeed = 1.0f;
         private float cameraZoom = 90.0f;
         private bool canManipulateCamera = true;
         private ShaderProgram.LibShader libShader;
 
         // Scene rendering
-        private readonly List<IRenderable> objectsTransparent = new List<IRenderable>();
-        private readonly List<IRenderable> objectsOpaque = new List<IRenderable>();
-        private readonly TextureBuffer colorTextureNT = new TextureBuffer(TextureTarget.Texture2DMultisample);
-        private readonly FrameBuffer framebufferNT = new FrameBuffer();
-        private readonly RenderBuffer depthRenderbuffer = new RenderBuffer();
+        private readonly List<IRenderable> objectsTransparent = new();
+        private readonly List<IRenderable> objectsOpaque = new();
+        private readonly TextureBuffer colorTextureNT = new(TextureTarget.Texture2DMultisample);
+        private readonly FrameBuffer framebufferNT = new();
+        private readonly RenderBuffer depthRenderbuffer = new();
 
         // Misc helper stuff
-        private readonly Queue<Action> queuedRenderActions = new Queue<Action>();
+        private readonly Queue<Action> queuedRenderActions = new();
 
 
         /// <summary>
@@ -59,15 +55,15 @@ namespace TT_Lab.Rendering
         /// </summary>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(float width, float height, ShaderProgram.LibShader libShader)
+        public Scene(float width, float height, ShaderProgram.LibShader libShader) : base(null)
         {
             Preferences.PreferenceChanged += Preferences_PreferenceChanged;
 
             resolution.x = width;
             resolution.y = height;
-            projectionMat = glm.perspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
-            viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-            modelMat = glm.scale(new mat4(1.0f), new vec3(1.0f));
+            projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
+            viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
+            modelMat = mat4.Scale(new vec3(1.0f));
 
             this.libShader = libShader;
             ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
@@ -91,16 +87,14 @@ namespace TT_Lab.Rendering
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
-            var colRender = new Objects.Collision(colData);
-            colRender.Parent = this;
+            var colRender = new Objects.Collision(this, colData);
             objectsOpaque.Add(colRender);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
             foreach (var pos in positions!.Children)
             {
-                var pRend = new Objects.Position((PositionViewModel)pos);
-                pRend.Parent = this;
+                var pRend = new Objects.Position(this, (PositionViewModel)pos);
                 objectsOpaque.Add(pRend);
             }
 
@@ -108,8 +102,7 @@ namespace TT_Lab.Rendering
             var triggers = sceneTree.Find(avm => avm.Alias == "Triggers");
             foreach (var trg in triggers!.Children)
             {
-                var trRend = new Objects.Trigger((TriggerViewModel)trg);
-                trRend.Parent = this;
+                var trRend = new Objects.Trigger(this, (TriggerViewModel)trg);
                 objectsTransparent.Add(trRend);
             }
         }
@@ -131,8 +124,6 @@ namespace TT_Lab.Rendering
                     objectsOpaque.Add(renderObj);
                 }
             });
-            
-            renderObj.Parent = this;
         }
 
         public void SetCameraPosition(vec3 position)
@@ -146,9 +137,9 @@ namespace TT_Lab.Rendering
         /// <param name="program"></param>
         public void SetPVMNShaderUniforms(ShaderProgram program)
         {
-            program.SetUniformMatrix4("Projection", projectionMat.to_array());
-            program.SetUniformMatrix4("View", viewMat.to_array());
-            program.SetUniformMatrix4("Model", modelMat.to_array());
+            program.SetUniformMatrix4("Projection", projectionMat.Values1D);
+            program.SetUniformMatrix4("View", viewMat.Values1D);
+            program.SetUniformMatrix4("Model", modelMat.Values1D);
         }
 
         public void SetResolution(float width, float height)
@@ -158,7 +149,7 @@ namespace TT_Lab.Rendering
             ReallocateFramebuffer((int)width, (int)height);
         }
 
-        public void Render()
+        public override void Render()
         {
             foreach (var a in queuedRenderActions)
             {
@@ -247,11 +238,11 @@ namespace TT_Lab.Rendering
             }
 
             vec3 direction;
-            direction.x = (float)Math.Cos(glm.radians(yaw_pitch.x)) * (float)Math.Cos(glm.radians(yaw_pitch.y));
-            direction.y = (float)Math.Sin(glm.radians(yaw_pitch.y));
-            direction.z = (float)Math.Sin(glm.radians(yaw_pitch.x)) * (float)Math.Cos(glm.radians(yaw_pitch.y));
+            direction.x = (float)Math.Cos(glm.Radians(yaw_pitch.x)) * (float)Math.Cos(glm.Radians(yaw_pitch.y));
+            direction.y = (float)Math.Sin(glm.Radians(yaw_pitch.y));
+            direction.z = (float)Math.Sin(glm.Radians(yaw_pitch.x)) * (float)Math.Cos(glm.Radians(yaw_pitch.y));
 
-            cameraDirection = glm.normalize(direction);
+            cameraDirection = glm.Normalized(direction);
         }
 
         public void ZoomView(float z)
@@ -289,10 +280,10 @@ namespace TT_Lab.Rendering
                         cameraPosition -= camSp * cameraDirection;
                         break;
                     case Key.A:
-                        cameraPosition -= camSp * glm.cross(cameraDirection, cameraUp);
+                        cameraPosition -= camSp * glm.Cross(cameraDirection, cameraUp);
                         break;
                     case Key.D:
-                        cameraPosition += camSp * glm.cross(cameraDirection, cameraUp);
+                        cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
                         break;
                 }
             }
@@ -324,8 +315,8 @@ namespace TT_Lab.Rendering
 
         private void UpdateMatrices()
         {
-            projectionMat = glm.perspective(glm.radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
-            viewMat = glm.lookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
+            projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
+            viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
         }
 
         private void ReallocateFramebuffer(int width, int height)

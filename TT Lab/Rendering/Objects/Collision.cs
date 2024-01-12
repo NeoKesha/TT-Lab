@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets.Instance;
@@ -8,14 +9,11 @@ using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Collision : IRenderable
+    public class Collision : BaseRenderable
     {
-        public Scene? Parent { get; set; }
-        public float Opacity { get; set; } = 1.0f;
-
         IndexedBufferArray collisionBuffer;
 
-        public Collision(CollisionData colData)
+        public Collision(Scene root, CollisionData colData) : base(root)
         {
             collisionBuffer = BufferGeneration.GetModelBuffer(
                 colData.Vectors.Select(v => new Twinsanity.TwinsanityInterchange.Common.Vector3(v.X, v.Y, v.Z)).ToList(),
@@ -38,15 +36,15 @@ namespace TT_Lab.Rendering.Objects
             collisionBuffer.Delete();
         }
 
-        public void Render()
+        public override void Render()
         {
             Bind();
-            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
             // Fragment program uniforms
-            Parent?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
-            Parent?.Renderer.RenderProgram.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
-            Parent?.Renderer.RenderProgram.SetUniform3("LightPosition", Parent.CameraPosition.x, Parent.CameraPosition.y, Parent.CameraPosition.z);
-            Parent?.Renderer.RenderProgram.SetUniform3("LightDirection", -Parent.CameraDirection.x, Parent.CameraDirection.y, Parent.CameraDirection.z);
+            Root?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
+            Root?.Renderer.RenderProgram.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
+            Root?.Renderer.RenderProgram.SetUniform3("LightPosition", Root.CameraPosition.x, Root.CameraPosition.y, Root.CameraPosition.z);
+            Root?.Renderer.RenderProgram.SetUniform3("LightDirection", -Root.CameraDirection.x, Root.CameraDirection.y, Root.CameraDirection.z);
             // Draw collision
             GL.DrawElements(PrimitiveType.Triangles, collisionBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Unbind();

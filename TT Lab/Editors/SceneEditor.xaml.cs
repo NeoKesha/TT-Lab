@@ -34,7 +34,7 @@ namespace TT_Lab.Editors
             DependencyProperty.Register("Header", typeof(object), typeof(SceneEditor),
                 new FrameworkPropertyMetadata("Scene viewer", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnHeaderChanged)));
 
-        public Scene Scene
+        public Scene? Scene
         {
             get => _scene;
             set
@@ -50,11 +50,9 @@ namespace TT_Lab.Editors
             }
         }
 
-        private Scene _scene;
+        private Scene? _scene;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public SceneEditor()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             InitializeComponent();
 

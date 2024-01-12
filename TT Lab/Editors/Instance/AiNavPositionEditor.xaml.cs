@@ -52,7 +52,7 @@ namespace TT_Lab.Editors.Instance
         {
             var chunkEditor = (ChunkEditor)ParentEditor!;
             var vm = GetViewModel<AIPositionViewModel>();
-            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
+            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmSharp.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
         }
     }
 }

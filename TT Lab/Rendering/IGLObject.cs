@@ -2,8 +2,8 @@
 {
     public interface IGLObject
     {
-        void Bind();
-        void Unbind();
-        void Delete();
+        void Bind() { }
+        void Unbind() { }
+        void Delete() { }
     }
 }

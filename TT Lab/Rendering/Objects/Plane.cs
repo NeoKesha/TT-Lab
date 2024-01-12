@@ -1,4 +1,4 @@
-﻿using GlmNet;
+﻿using GlmSharp;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -10,19 +10,16 @@ using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Plane : IRenderable
+    public class Plane : BaseRenderable
     {
-        public Scene? Parent { get; set; }
-        public float Opacity { get; set; } = 1.0f;
-
         IndexedBufferArray planeBuffer;
         TextureBuffer? texture;
 
-        public Plane() : this(new vec3())
+        public Plane(Scene root) : this(root, new vec3())
         {
         }
 
-        public Plane(vec3 position)
+        public Plane(Scene root, vec3 position) : base(root)
         {
             planeBuffer = BufferGeneration.GetModelBuffer(
                 new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
@@ -47,7 +44,7 @@ namespace TT_Lab.Rendering.Objects
                 });
         }
 
-        public Plane(MaterialData material) : this()
+        public Plane(Scene root, MaterialData material) : this(root)
         {
             if (material.Shaders[0].TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON)
             {
@@ -56,16 +53,16 @@ namespace TT_Lab.Rendering.Objects
             }
         }
 
-        public Plane(TextureData tex) : this(tex.Bitmap)
+        public Plane(Scene root, TextureData tex) : this(root, tex.Bitmap)
         {
         }
 
-        public Plane(Bitmap texImage) : this()
+        public Plane(Scene root, Bitmap texImage) : this(root)
         {
             texture = new TextureBuffer(texImage.Width, texImage.Height, texImage);
         }
 
-        public Plane(TextureBuffer texture) : this()
+        public Plane(Scene root, TextureBuffer texture) : this(root)
         {
             this.texture = texture;
         }
@@ -74,9 +71,9 @@ namespace TT_Lab.Rendering.Objects
         {
             if (texture != null)
             {
-                Parent?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 0);
+                Root?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 0);
             }
-            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
             planeBuffer.Bind();
         }
 
@@ -86,7 +83,7 @@ namespace TT_Lab.Rendering.Objects
             planeBuffer.Delete();
         }
 
-        public void Render()
+        public override void Render()
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

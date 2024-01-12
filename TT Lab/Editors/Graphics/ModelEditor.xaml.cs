@@ -33,7 +33,7 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.Scene = new Scene((float)SceneRenderer.Glcontrol.ActualWidth, (float)SceneRenderer.Glcontrol.ActualHeight,
                 new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\Light.frag" });
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
-            Model m = new(GetAssetData<AssetData.Graphics.ModelData>());
+            Model m = new(SceneRenderer.Scene, GetAssetData<AssetData.Graphics.ModelData>());
             SceneRenderer.Scene.AddRender(m);
         }
     }

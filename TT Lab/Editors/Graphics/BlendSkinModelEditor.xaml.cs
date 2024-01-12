@@ -49,7 +49,7 @@ namespace TT_Lab.Editors.Graphics
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var blendSkinData = GetAssetData<BlendSkinData>();
-            blendSkin = new(blendSkinData);
+            blendSkin = new(SceneRenderer.Scene, blendSkinData);
             SceneRenderer.Scene.AddRender(blendSkin, false);
 
             ((BlendSkinViewModel)MorphWeightsGrid.DataContext).PropertyChanged += BlendSkinModelEditor_PropertyChanged;
@@ -63,49 +63,49 @@ namespace TT_Lab.Editors.Graphics
             switch(e.PropertyName)
             {
                 case nameof(BlendSkinViewModel.Weight1):
-                    blendSkin.BlendShapesValues[0] = context.Weight1;
+                    blendSkin.SetBlendShapeValue(0, context.Weight1);
                     break;
                 case nameof(BlendSkinViewModel.Weight2):
-                    blendSkin.BlendShapesValues[1] = context.Weight2;
+                    blendSkin.SetBlendShapeValue(1, context.Weight2);
                     break;
                 case nameof(BlendSkinViewModel.Weight3):
-                    blendSkin.BlendShapesValues[2] = context.Weight3;
+                    blendSkin.SetBlendShapeValue(2, context.Weight3);
                     break;
                 case nameof(BlendSkinViewModel.Weight4):
-                    blendSkin.BlendShapesValues[3] = context.Weight4;
+                    blendSkin.SetBlendShapeValue(3, context.Weight4);
                     break;
                 case nameof(BlendSkinViewModel.Weight5):
-                    blendSkin.BlendShapesValues[4] = context.Weight5;
+                    blendSkin.SetBlendShapeValue(4, context.Weight5);
                     break;
                 case nameof(BlendSkinViewModel.Weight6):
-                    blendSkin.BlendShapesValues[5] = context.Weight6;
+                    blendSkin.SetBlendShapeValue(5, context.Weight6);
                     break;
                 case nameof(BlendSkinViewModel.Weight7):
-                    blendSkin.BlendShapesValues[6] = context.Weight7;
+                    blendSkin.SetBlendShapeValue(6, context.Weight7);
                     break;
                 case nameof(BlendSkinViewModel.Weight8):
-                    blendSkin.BlendShapesValues[7] = context.Weight8;
+                    blendSkin.SetBlendShapeValue(7, context.Weight8);
                     break;
                 case nameof(BlendSkinViewModel.Weight9):
-                    blendSkin.BlendShapesValues[8] = context.Weight9;
+                    blendSkin.SetBlendShapeValue(8, context.Weight9);
                     break;
                 case nameof(BlendSkinViewModel.Weight10):
-                    blendSkin.BlendShapesValues[9] = context.Weight10;
+                    blendSkin.SetBlendShapeValue(9, context.Weight10);
                     break;
                 case nameof(BlendSkinViewModel.Weight11):
-                    blendSkin.BlendShapesValues[10] = context.Weight11;
+                    blendSkin.SetBlendShapeValue(10, context.Weight11);
                     break;
                 case nameof(BlendSkinViewModel.Weight12):
-                    blendSkin.BlendShapesValues[11] = context.Weight12;
+                    blendSkin.SetBlendShapeValue(11, context.Weight12);
                     break;
                 case nameof(BlendSkinViewModel.Weight13):
-                    blendSkin.BlendShapesValues[12] = context.Weight13;
+                    blendSkin.SetBlendShapeValue(12, context.Weight13);
                     break;
                 case nameof(BlendSkinViewModel.Weight14):
-                    blendSkin.BlendShapesValues[13] = context.Weight14;
+                    blendSkin.SetBlendShapeValue(13, context.Weight14);
                     break;
                 case nameof(BlendSkinViewModel.Weight15):
-                    blendSkin.BlendShapesValues[14] = context.Weight15;
+                    blendSkin.SetBlendShapeValue(14, context.Weight15);
                     break;
             };
         }
@@ -122,7 +122,7 @@ namespace TT_Lab.Editors.Graphics
             var blendSkinData = GetAssetData<BlendSkinData>();
             var matData = AssetManager.Get().GetAsset(blendSkinData.Blends[selectedMaterial].Material).GetData<MaterialData>();
             MaterialName.Text = matData.Name;
-            var texPlane = new Plane(matData);
+            var texPlane = new Plane(MaterialViewer.Scene, matData);
             MaterialViewer.Scene.AddRender(texPlane);
         }
 

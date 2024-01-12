@@ -59,7 +59,7 @@ namespace TT_Lab.Editors.Instance
             var vm = GetViewModel<TriggerViewModel>();
             vm.Instances.CollectionChanged += Instances_CollectionChanged;
             vm.PropertyChanged += TriggerViewModel_Changed;
-            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmNet.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
+            chunkEditor?.SceneRenderer.Scene.SetCameraPosition(new GlmSharp.vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z));
 
             UpdateAddInstancesMenu();
             InstancesListContextMenu.Items.Add(new MenuItem

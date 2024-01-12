@@ -9,16 +9,13 @@ using TT_Lab.ViewModels.Graphics;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class TwinMaterialPlane : IRenderable
+    public class TwinMaterialPlane : BaseRenderable
     {
-        public Scene? Parent { get; set; }
-        public Single Opacity { get; set; } = 1.0f;
-
         private IndexedBufferArray planeBuffer;
         private TwinMaterial[] materialBuffers = new TwinMaterial[5];
         private int texAmt;
 
-        private TwinMaterialPlane()
+        private TwinMaterialPlane(Scene root) : base(root)
         {
             planeBuffer = BufferGeneration.GetModelBuffer(
                 new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
@@ -43,7 +40,7 @@ namespace TT_Lab.Rendering.Objects
                 });
         }
 
-        public TwinMaterialPlane(ShaderProgram shader, Bitmap[] textures, LabShaderViewModel[] viewModels, int texAmt = 1) : this()
+        public TwinMaterialPlane(Scene root, ShaderProgram shader, Bitmap[] textures, LabShaderViewModel[] viewModels, int texAmt = 1) : this(root)
         {
             if (texAmt > 5) texAmt = 5;
             this.texAmt = texAmt;
@@ -59,8 +56,8 @@ namespace TT_Lab.Rendering.Objects
             {
                 materialBuffers[i].Bind();
             }
-            Parent?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
-            Parent?.Renderer.RenderProgram.SetUniform1("TexturesAmount", texAmt);
+            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("TexturesAmount", texAmt);
             planeBuffer.Bind();
         }
 
@@ -73,7 +70,7 @@ namespace TT_Lab.Rendering.Objects
             }
         }
 
-        public void Render()
+        public override void Render()
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
