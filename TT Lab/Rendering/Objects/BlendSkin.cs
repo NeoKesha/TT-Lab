@@ -15,7 +15,7 @@ namespace TT_Lab.Rendering.Objects
 {
     public class BlendSkin : BaseRenderable
     {
-        ModelBufferBlendSkin model;
+        readonly ModelBufferBlendSkin model;
 
         public BlendSkin(Scene root, BlendSkinData blendSkin) : base(root)
         {

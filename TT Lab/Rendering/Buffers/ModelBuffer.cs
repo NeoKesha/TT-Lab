@@ -69,7 +69,7 @@ namespace TT_Lab.Rendering.Buffers
                 {
                     var matData = AssetManager.Get().GetAssetData<MaterialData>(blend.Material);
                     var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
-                    var buffer = BufferGeneration.GetModelBuffer(model.Vertexes, model.Faces, model.BlendFaces);
+                    var buffer = BufferGeneration.GetModelBuffer(model.Vertexes, model.Faces);
                     modelBuffers.Add(buffer);
                     if (texturedShaderIndex != -1)
                     {
