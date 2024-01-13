@@ -45,5 +45,52 @@ namespace TT_Lab.Util
 
             return true;
         }
+
+        public static bool IntersectRayBox(vec3 origin, vec3 direction, vec3 boxPosition, vec3 originOffset, vec3 boxSize, mat4 localTransform, ref float distance, ref vec3 hit)
+        {
+            mat4 invWorld = localTransform.Inverse;
+            vec4 localOrigin = invWorld * new vec4(origin, 0);
+            vec4 localDirection = invWorld * new vec4(direction, 0);
+            vec4 localBoxPosition = invWorld * new vec4(boxPosition, 0) + new vec4(originOffset, 0);
+            return IntersectRayAABB(localOrigin.xyz, localDirection.xyz, localBoxPosition.xyz, boxSize, ref distance, ref hit);
+        }
+
+        //https://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
+        public static bool IntersectRayAABB(vec3 origin, vec3 direction, vec3 boxPosition, vec3 boxSize, ref float distance, ref vec3 hit)
+        {
+            vec3 dirfrac;
+            // r.dir is unit direction vector of ray
+            dirfrac.x = 1.0f / direction.x;
+            dirfrac.y = 1.0f / direction.y;
+            dirfrac.z = 1.0f / direction.z;
+            // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+            // r.org is origin of ray
+            vec3 boxTopCorner = boxPosition + boxSize;
+            float t1 = (boxPosition.x - origin.x) * dirfrac.x;
+            float t2 = (boxTopCorner.x - origin.x) * dirfrac.x;
+            float t3 = (boxPosition.y - origin.y) * dirfrac.y;
+            float t4 = (boxTopCorner.y - origin.y) * dirfrac.y;
+            float t5 = (boxPosition.z - origin.z) * dirfrac.z;
+            float t6 = (boxTopCorner.z - origin.z) * dirfrac.z;
+
+            float tmin = Math.Max(Math.Max(Math.Min(t1, t2), Math.Min(t3, t4)), Math.Min(t5, t6));
+            float tmax = Math.Min(Math.Min(Math.Max(t1, t2), Math.Max(t3, t4)), Math.Max(t5, t6));
+
+            // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+            if (tmax < 0)
+            {
+                return false;
+            }
+
+            // if tmin > tmax, ray doesn't intersect AABB
+            if (tmin > tmax)
+            {
+                return false;
+            }
+
+            distance = tmin;
+            hit = origin + direction * distance;
+            return true;
+        }
     }
 }

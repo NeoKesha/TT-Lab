@@ -4,6 +4,7 @@ using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
@@ -18,7 +19,7 @@ namespace TT_Lab.Rendering.Objects
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache;
 
-        float[]? transform;
+        mat4 transform = new mat4();
         Vector3 ambientColor = new Vector3();
 
         public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache) : base(root)
@@ -38,14 +39,18 @@ namespace TT_Lab.Rendering.Objects
 
         public void SetPositionAndRotation(vec3 pos, vec3 rot)
         {
-            Matrix4 matrixPosition = Matrix4.CreateTranslation(pos.x, pos.y, pos.z);
-            Matrix4 matrixRotationX, matrixRotationY, matrixRotationZ;
-            Matrix4.CreateRotationX(rot.x, out matrixRotationX);
-            Matrix4.CreateRotationY(rot.y, out matrixRotationY);
-            Matrix4.CreateRotationZ(rot.z, out matrixRotationZ);
-            Matrix4 modelTransform = matrixRotationZ * matrixRotationY * matrixRotationX;
-            modelTransform *= matrixPosition;
-            transform = MathExtension.Matrix4ToArray(modelTransform);
+            mat4 matrixPosition = mat4.Translate(pos.x, pos.y, pos.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rot.x);
+            matrixRotationY = mat4.RotateY(rot.y);
+            matrixRotationZ = mat4.RotateZ(rot.z);
+            transform = matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+        }
+
+        public mat4 GetTransform()
+        {
+            return transform;
         }
 
         public void Select()
@@ -68,7 +73,7 @@ namespace TT_Lab.Rendering.Objects
             Root.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
             Root.Renderer.RenderProgram.SetUniform3("LightPosition", Root.CameraPosition.x, Root.CameraPosition.y, Root.CameraPosition.z);
             Root.Renderer.RenderProgram.SetUniform3("LightDirection", -Root.CameraDirection.x, Root.CameraDirection.y, Root.CameraDirection.z);
-            Root.Renderer.RenderProgram.SetUniformMatrix4("Model", transform!);
+            Root.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
         }
 
         public void Delete()
@@ -78,11 +83,6 @@ namespace TT_Lab.Rendering.Objects
 
         public override void Render()
         {
-            if (transform == null)
-            {
-                return;
-            }
-
             Bind();
             foreach (var modelBuffer in modelBuffers)
             {

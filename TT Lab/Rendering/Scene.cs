@@ -35,7 +35,7 @@ namespace TT_Lab.Rendering
         private mat4 viewMat;
         private mat4 modelMat;
         private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
-        private vec3 cameraDirection = new(0, 0, -1);
+        private vec3 cameraDirection = new(1, 0, 0);
         private vec3 cameraUp = new(0, 1, 0);
         private vec2 resolution = new(0, 0);
         private float cameraSpeed = 1.0f;
@@ -291,7 +291,7 @@ namespace TT_Lab.Rendering
             {
                 vec3 hit = new vec3();
                 float distance = 0.0f;
-                if (MathExtension.IntersectRaySphere(cameraPosition, dir, instance.GetPosition(), 1.0f, ref distance, ref hit))
+                if (MathExtension.IntersectRayBox(cameraPosition, dir, instance.GetPosition(), instance.GetOffset(), instance.GetSize(), instance.GetTransform(), ref distance, ref hit))
                 {
                     selectedInstance = instance;
                     break;
@@ -342,6 +342,12 @@ namespace TT_Lab.Rendering
                         break;
                     case Key.D:
                         cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
+                        break;
+                    case Key.Q:
+                        cameraPosition.y -= camSp;
+                        break;
+                    case Key.E:
+                        cameraPosition.y += camSp;
                         break;
                 }
             }
