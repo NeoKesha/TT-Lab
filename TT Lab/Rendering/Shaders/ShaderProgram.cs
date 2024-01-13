@@ -65,7 +65,7 @@ namespace TT_Lab.Rendering.Shaders
 
             //  Now that we've compiled and linked the shader, check it's link status. If it's not linked properly, we're
             //  going to throw an exception.
-            if (GetLinkStatus() == false)
+            if (!GetLinkStatus())
             {
                 throw new ShaderCompilationException(string.Format("Failed to link shader program with ID {0}.", shaderProgramObject), GetInfoLog());
             }
@@ -128,11 +128,11 @@ namespace TT_Lab.Rendering.Shaders
 
         public void AssertValid()
         {
-            if (vertexShader.GetCompileStatus() == false)
+            if (!vertexShader.GetCompileStatus())
                 throw new Exception(vertexShader.GetInfoLog());
-            if (fragmentShader.GetCompileStatus() == false)
+            if (!fragmentShader.GetCompileStatus())
                 throw new Exception(fragmentShader.GetInfoLog());
-            if (GetLinkStatus() == false)
+            if (!GetLinkStatus())
                 throw new Exception(GetInfoLog());
         }
 
@@ -173,7 +173,7 @@ namespace TT_Lab.Rendering.Shaders
         {
             //  If we don't have the uniform Name in the dictionary, get it's 
             //  location and add it.
-            if (uniformNamesToLocations.ContainsKey(uniformName) == false)
+            if (!uniformNamesToLocations.ContainsKey(uniformName))
             {
                 uniformNamesToLocations[uniformName] = GL.GetUniformLocation(shaderProgramObject, uniformName);
             }

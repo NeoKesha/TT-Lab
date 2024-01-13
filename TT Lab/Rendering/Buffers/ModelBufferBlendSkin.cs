@@ -12,26 +12,30 @@ namespace TT_Lab.Rendering.Buffers
 {
     public class ModelBufferBlendSkin : ModelBuffer
     {
-        public Int32 BlendShapesAmount { get; set; }
+        
         public Single[] BlendShapesValues { get; set; }
 
-        Vector3 blendShape;
-        System.Drawing.Bitmap morphTexture;
-        TextureBuffer morphBuffer;
-        Dictionary<Int32, Int32> MorphStartOffset = new();
-        Dictionary<(Int32, Int32), Int32> MorphShapesOffsets = new();
+        readonly Int32 blendShapesAmount;
+        readonly Vector3 blendShape;
+        readonly System.Drawing.Bitmap morphTexture;
+        readonly TextureBuffer morphBuffer;
+        readonly Dictionary<Int32, Int32> morphStartOffset = new();
+        readonly Dictionary<(Int32, Int32), Int32> morphShapesOffsets = new();
+
+        const Int32 MORPH_DATA_TEXTURE_SIZE = 256;
 
         public ModelBufferBlendSkin(Scene root, BlendSkinData blendSkin) : base(root, blendSkin)
         {
             if (blendSkin.Blends.Count > 0)
             {
-                BlendShapesAmount = blendSkin.Blends[0].Models[0].BlendFaces.Count;
+                blendShapesAmount = blendSkin.Blends[0].Models[0].BlendFaces.Count;
+                blendShape = blendSkin.Blends[0].Models[0].BlendShape;
             }
             BlendShapesValues = new Single[15];
 
-            var morphData = new Byte[512 * 512];
+            var morphData = new UInt32[MORPH_DATA_TEXTURE_SIZE * MORPH_DATA_TEXTURE_SIZE];
             var morphDataHandle = GCHandle.Alloc(morphData, GCHandleType.Pinned);
-            var morphBmp = new System.Drawing.Bitmap(512, 512, 512, System.Drawing.Imaging.PixelFormat.Format8bppIndexed, morphDataHandle.AddrOfPinnedObject());
+            var morphBmp = new System.Drawing.Bitmap(MORPH_DATA_TEXTURE_SIZE, MORPH_DATA_TEXTURE_SIZE, MORPH_DATA_TEXTURE_SIZE * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, morphDataHandle.AddrOfPinnedObject());
 
             var offset = 0;
             var morphStartCount = 0;
@@ -39,8 +43,6 @@ namespace TT_Lab.Rendering.Buffers
             {
                 foreach (var model in blend.Models)
                 {
-                    blendShape ??= model.BlendShape;
-
                     var indices = new List<Int32>();
                     foreach (var face in model.Faces)
                     {
@@ -49,11 +51,12 @@ namespace TT_Lab.Rendering.Buffers
                         indices.Add(face.Indexes[2]);
                     }
 
-                    MorphStartOffset.Add(morphStartCount, offset);
+                    morphStartOffset.Add(morphStartCount, offset);
                     var shapeId = 0;
+                    var shapeOffset = 0;
                     foreach (var shape in model.BlendFaces)
                     {
-                        MorphShapesOffsets[(shapeId++, morphStartCount)] = offset;
+                        morphShapesOffsets[(shapeId++, morphStartCount)] = shapeOffset;
                         foreach (var index in indices)
                         {
                             var twinVertex = new VertexBlendShape
@@ -62,12 +65,9 @@ namespace TT_Lab.Rendering.Buffers
                                 BlendShape = blendShape
                             };
                             var converted = twinVertex.GetVector4();
-                            morphData[offset] = (Byte)converted.GetBinaryX();
-                            morphData[offset + 1] = (Byte)converted.GetBinaryY();
-                            morphData[offset + 2] = (Byte)converted.GetBinaryZ();
-                            morphData[offset + 3] = (Byte)converted.GetBinaryW();
-                            offset += 4;
+                            morphData[offset++] = (new Color((Byte)converted.GetBinaryX(), (Byte)converted.GetBinaryY(), (Byte)converted.GetBinaryZ(), (Byte)converted.GetBinaryW())).ToABGR();
                         }
+                        shapeOffset += indices.Count;
                     }
 
                     morphStartCount++;
@@ -77,7 +77,7 @@ namespace TT_Lab.Rendering.Buffers
             blendShape ??= new Vector3(1.0f, 1.0f, 1.0f);
 
             morphTexture = morphBmp;
-            morphBuffer = new TextureBuffer(TextureTarget.Texture2D, 512, 512, morphTexture, false, System.Drawing.Imaging.PixelFormat.Format8bppIndexed, PixelFormat.Red, PixelInternalFormat.R8, PixelType.UnsignedByte);
+            morphBuffer = new TextureBuffer(TextureTarget.Texture2D, MORPH_DATA_TEXTURE_SIZE, MORPH_DATA_TEXTURE_SIZE, morphTexture, false, System.Drawing.Imaging.PixelFormat.Format32bppArgb, PixelFormat.Rgba, PixelInternalFormat.Rgba8Snorm, PixelType.Byte);
 
             morphDataHandle.Free();
         }
@@ -87,10 +87,10 @@ namespace TT_Lab.Rendering.Buffers
             base.Bind();
 
             var renderProgram = Root.Renderer.RenderProgram;
-            renderProgram.SetUniform1("BlendShapesAmount", BlendShapesAmount);
+            renderProgram.SetUniform1("BlendShapesAmount", blendShapesAmount);
             renderProgram.SetUniform3("BlendShape", -blendShape.X, blendShape.Y, blendShape.Z);
             renderProgram.SetTextureUniform("Morphs", TextureTarget.Texture2D, morphBuffer.Buffer, 2);
-            for (Int32 i = 0; i < BlendShapesAmount; i++)
+            for (Int32 i = 0; i < blendShapesAmount; i++)
             {
                 renderProgram.SetUniform1($"MorphWeights[{i}]", BlendShapesValues[i]);
             }
@@ -103,19 +103,19 @@ namespace TT_Lab.Rendering.Buffers
             var shapeStart = 0;
             for (var i = 0; i < modelBuffers.Count; ++i)
             {
-                if (textureBuffers.ContainsKey(i))
+                if (textureBuffers.TryGetValue(i, out TextureBuffer? value))
                 {
-                    renderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, textureBuffers[i].Buffer, 0);
+                    renderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, value.Buffer, 0);
                 }
-                for (var j = 0; j < BlendShapesAmount; j++)
+                for (var j = 0; j < blendShapesAmount; j++)
                 {
-                    renderProgram.SetUniform1($"ShapeOffset[{j}]", MorphShapesOffsets[(j, i)]);
+                    renderProgram.SetUniform1($"ShapeOffset[{j}]", morphShapesOffsets[(j, i)]);
                 }
-                renderProgram.SetUniform1("ShapeStart", MorphStartOffset[i]);
+                renderProgram.SetUniform1("ShapeStart", morphStartOffset[i]);
                 modelBuffers[i].Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffers[i].Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
                 modelBuffers[i].Unbind();
-                shapeStart += modelBuffers[i].Indices.Length * BlendShapesAmount;
+                shapeStart += modelBuffers[i].Indices.Length * blendShapesAmount;
             }
             Unbind();
         }
