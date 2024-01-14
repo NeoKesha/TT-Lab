@@ -176,15 +176,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 var binX = vec.GetBinaryX();
                 var binY = vec.GetBinaryY();
                 var binZ = vec.GetBinaryZ();
-                if (binX < minSkinCoord && binX > 0)
+                if (binX < minSkinCoord && binX > 0x358637BF)
                 {
                     minSkinCoord = binX;
                 }
-                if (binY < minSkinCoord && binY > 0)
+                if (binY < minSkinCoord && binY > 0x358637BF)
                 {
                     minSkinCoord = binY;
                 }
-                if (binZ < minSkinCoord && binZ > 0)
+                if (binZ < minSkinCoord && binZ > 0x358637BF)
                 {
                     minSkinCoord = binZ;
                 }

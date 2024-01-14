@@ -49,7 +49,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                 });
             }
 
-            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces, BlendFaces);
             MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
         }
 
@@ -58,14 +58,15 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             BlendShape = blendShape;
             Vertexes = vertexes;
             Faces = faces;
-            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
-            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
 
             foreach (var morph in morphTargets)
             {
                 Debug.Assert(Vertexes.Count == morph.Count, "Morph must have the same amount of vertexes as the model!");
                 BlendFaces.Add(new SubBlendFaceData(morph));
             }
+
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces, BlendFaces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
         }
 
         public SubBlendModelData(Vector3 blendShape, List<Vertex> vertexes, List<IndexedFace> faces, IEnumerable<SharpGLTF.Geometry.VertexBufferColumns> morphTargets)
@@ -73,14 +74,15 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             BlendShape = blendShape;
             Vertexes = vertexes;
             Faces = faces;
-            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces);
-            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
 
             foreach (var morph in morphTargets)
             {
                 Debug.Assert(Vertexes.Count == morph.Positions.Count, "Morph must have the same amount of vertexes as the model!");
                 BlendFaces.Add(new SubBlendFaceData(morph.Positions));
             }
+
+            Mesh = MeshProcessor.MeshProcessor.CreateMesh(Vertexes, Faces, BlendFaces);
+            MeshProcessor.MeshProcessor.ProcessMesh(Mesh);
         }
 
         public void Dispose()

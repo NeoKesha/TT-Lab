@@ -52,6 +52,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
         {
             foreach (var model in Models)
             {
+                model.CompileScale = CompileScale;
                 model.Compile();
             }
         }

@@ -45,11 +45,10 @@
 
   <ItemGroup>
     <PackageReference Include="GlmSharpStd" Version="0.9.8" />
+    <PackageReference Include="Meshoptimizer.NET" Version="1.0.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OpenTK" Version="4.7.5" />
-    <PackageReference Include="QuikGraph" Version="2.5.0" />
-    <PackageReference Include="QuikGraph.Graphviz" Version="2.5.0" />
     <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0030" />
     <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0030" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
@@ -58,7 +57,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GLWpfControl\src\GLWpfControl\GLWpfControl.csproj" />
-    <ProjectReference Include="..\NvTriStripDotNet\NvTriStripDotNet.csproj" />
     <ProjectReference Include="..\TwinTech\TwinTech.csproj" />
   </ItemGroup>
 

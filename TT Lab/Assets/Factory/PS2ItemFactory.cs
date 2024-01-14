@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Util;
 using Twinsanity.PS2Hardware;
@@ -107,13 +109,17 @@ namespace TT_Lab.Assets.Factory
             return starter;
         }
 
-        public ITwinBlendSkin GenerateBlendSkin(Int32 blendsAmount, List<SubBlendData> blends)
+        public ITwinBlendSkin GenerateBlendSkin(Int32 blendsAmount, List<SubBlendData> blends, UInt32? compileScale)
         {
             var assetManager = AssetManager.Get();
             var blendSkin = new PS2AnyBlendSkin
             {
-                BlendsAmount = blendsAmount
+                BlendsAmount = blendsAmount,
             };
+            if (compileScale.HasValue)
+            {
+                blendSkin.CompileScale = compileScale.Value;
+            }
 
             foreach (var blend in blends)
             {
@@ -124,339 +130,86 @@ namespace TT_Lab.Assets.Factory
 
                 foreach (var model in blend.Models)
                 {
-                    var submodel = new PS2BlendSkinModel(blendsAmount)
+                    foreach (var meshlet in model.Mesh.Meshlets)
                     {
-                        Vertexes = new(),
-                        UVW = new(),
-                        Colors = new(),
-                        SkinJoints = new(),
-                        Faces = new(),
-                        BlendShape = new Vector3(model.BlendShape.X, model.BlendShape.Y, model.BlendShape.Z),
-                        GroupSizes = new()
-                    };
-
-                    var blendFaceVerticies = new Dictionary<SubBlendFaceData, List<VertexBlendShape>>();
-
-                    //var mesh = model.Mesh;
-                    //var groups = new List<List<Int32>>();
-                    //foreach (var strip in mesh.Strips)
-                    //{
-                    //    groups.Add(new());
-                    //    var addedFirst = false;
-                    //    foreach (var node in strip.Strip)
-                    //    {
-                    //        if (!addedFirst)
-                    //        {
-                    //            groups[^1].AddRange(node.GetIndexes());
-                    //            addedFirst = true;
-                    //            continue;
-                    //        }
-                    //        groups[^1].Add(node.GetIndexes()[2]);
-                    //    }
-                    //}
-
-                    //var rawModel = mesh.GetVertices();
-
-                    //foreach (var group in groups)
-                    //{
-                    //    var j = 0;
-                    //    foreach (var idx in group)
-                    //    {
-                    //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                    //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                    //        submodel.Colors.Add(rawModel[idx].Color);
-                    //        var modelJointInfo = rawModel[idx].JointInfo;
-                    //        var jointInfo = new VertexJointInfo()
-                    //        {
-                    //            JointIndex1 = modelJointInfo.JointIndex1,
-                    //            JointIndex2 = modelJointInfo.JointIndex2,
-                    //            JointIndex3 = modelJointInfo.JointIndex3,
-                    //            Weight1 = modelJointInfo.Weight1,
-                    //            Weight2 = modelJointInfo.Weight2,
-                    //            Weight3 = modelJointInfo.Weight3,
-                    //            Connection = j > 1
-                    //        };
-                    //        submodel.SkinJoints.Add(jointInfo);
-
-                    //        foreach (var blendFace in model.BlendFaces)
-                    //        {
-                    //            if (!blendFaceVerticies.ContainsKey(blendFace))
-                    //            {
-                    //                blendFaceVerticies[blendFace] = new();
-                    //            }
-                    //            var ver1 = blendFace.BlendShapes[idx];
-                    //            blendFaceVerticies[blendFace].Add(new VertexBlendShape
-                    //            {
-                    //                BlendShape = model.BlendShape,
-                    //                Offset = ver1.Offset
-                    //            });
-                    //        }
-
-                    //        j++;
-                    //    }
-
-                    //    submodel.GroupSizes.Add(group.Count);
-                    //}
-
-                    //foreach (var (blendFace, vertexList) in blendFaceVerticies)
-                    //{
-                    //    var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
-                    //    {
-                    //        VertexesAmount = (UInt32)vertexList.Count,
-                    //        Vertices = new()
-                    //    };
-                    //    foreach (var ver in vertexList)
-                    //    {
-                    //        ps2BlendFace.Vertices.Add(ver);
-                    //    }
-                    //    submodel.Faces.Add(ps2BlendFace);
-                    //}
-
-                    //subBlend.Models.Add(submodel);
-
-                    var subFaces = model.Faces;
-                    var vertexBatch = model.Vertexes;
-                    var index = 0;
-                    var vertexAmount = 0;
-                    foreach (var face in subFaces)
-                    {
-                        index %= TwinVIFCompiler.VertexStripCache;
-
-                        var idx0 = (index % 2 == 0) ? 0 : 1;
-                        var idx1 = (index % 2 == 0) ? 1 : 0;
-                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
-                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
-                        submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
-                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
-                        submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                        submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
-                        submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
-                        submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                        var modelJointInfo1 = vertexBatch[face.Indexes[idx0]].JointInfo;
-                        var modelJointInfo2 = vertexBatch[face.Indexes[idx1]].JointInfo;
-                        var modelJointInfo3 = vertexBatch[face.Indexes[2]].JointInfo;
-                        var jointInfo1 = new VertexJointInfo()
+                        var submodel = new PS2BlendSkinModel(blendsAmount)
                         {
-                            JointIndex1 = modelJointInfo1.JointIndex1,
-                            JointIndex2 = modelJointInfo1.JointIndex2,
-                            JointIndex3 = modelJointInfo1.JointIndex3,
-                            Weight1 = modelJointInfo1.Weight1,
-                            Weight2 = modelJointInfo1.Weight2,
-                            Weight3 = modelJointInfo1.Weight3,
-                            Connection = false
+                            Vertexes = new(),
+                            UVW = new(),
+                            Colors = new(),
+                            SkinJoints = new(),
+                            Faces = new(),
+                            BlendShape = new Vector3(model.BlendShape.X, model.BlendShape.Y, model.BlendShape.Z),
+                            GroupSizes = new()
                         };
-                        var jointInfo2 = new VertexJointInfo()
-                        {
-                            JointIndex1 = modelJointInfo2.JointIndex1,
-                            JointIndex2 = modelJointInfo2.JointIndex2,
-                            JointIndex3 = modelJointInfo2.JointIndex3,
-                            Weight1 = modelJointInfo2.Weight1,
-                            Weight2 = modelJointInfo2.Weight2,
-                            Weight3 = modelJointInfo2.Weight3,
-                            Connection = false
-                        };
-                        var jointInfo3 = new VertexJointInfo()
-                        {
-                            JointIndex1 = modelJointInfo3.JointIndex1,
-                            JointIndex2 = modelJointInfo3.JointIndex2,
-                            JointIndex3 = modelJointInfo3.JointIndex3,
-                            Weight1 = modelJointInfo3.Weight1,
-                            Weight2 = modelJointInfo3.Weight2,
-                            Weight3 = modelJointInfo3.Weight3,
-                            Connection = true
-                        };
-                        submodel.SkinJoints.Add(jointInfo1);
-                        submodel.SkinJoints.Add(jointInfo2);
-                        submodel.SkinJoints.Add(jointInfo3);
 
-                        foreach (var blendFace in model.BlendFaces)
+                        var j = 0;
+                        var groupCount = 0;
+                        foreach (Int32 idx in meshlet.Strip.Select(v => (Int32)v))
                         {
-                            if (!blendFaceVerticies.ContainsKey(blendFace))
+                            // Reset index encountered. Reset the strip
+                            if (idx == 0xFFFF)
                             {
-                                blendFaceVerticies[blendFace] = new();
+                                j = 0;
+                                continue;
                             }
-                            var ver1 = blendFace.BlendShapes[face.Indexes[idx0]];
-                            blendFaceVerticies[blendFace].Add(new VertexBlendShape
+
+                            submodel.Vertexes.Add(new Vector4(meshlet.Vertexes[idx].Position, 1.0f));
+                            submodel.UVW.Add(new Vector4(meshlet.Vertexes[idx].UV, 0.0f));
+                            submodel.Colors.Add(meshlet.Vertexes[idx].Color);
+                            var modelJointInfo = meshlet.Vertexes[idx].JointInfo;
+                            var jointInfo = new VertexJointInfo()
                             {
-                                BlendShape = model.BlendShape,
-                                Offset = ver1.Offset
-                            });
-                            var ver2 = blendFace.BlendShapes[face.Indexes[idx1]];
-                            blendFaceVerticies[blendFace].Add(new VertexBlendShape
+                                JointIndex1 = modelJointInfo.JointIndex1,
+                                JointIndex2 = modelJointInfo.JointIndex2,
+                                JointIndex3 = modelJointInfo.JointIndex3,
+                                Weight1 = modelJointInfo.Weight1,
+                                Weight2 = modelJointInfo.Weight2,
+                                Weight3 = modelJointInfo.Weight3,
+                                Connection = j > 1
+                            };
+                            submodel.SkinJoints.Add(jointInfo);
+
+                            foreach (var blendFace in meshlet.BlendFaces!)
                             {
-                                BlendShape = model.BlendShape,
-                                Offset = ver2.Offset
-                            });
-                            var ver3 = blendFace.BlendShapes[face.Indexes[2]];
-                            blendFaceVerticies[blendFace].Add(new VertexBlendShape
-                            {
-                                BlendShape = model.BlendShape,
-                                Offset = ver3.Offset
-                            });
+                                var blendShape = blendFace.BlendShapes[idx];
+
+                            }
+
+                            groupCount++;
+                            j++;
                         }
 
-                        index++;
-                        vertexAmount += 3;
-                        if (vertexAmount >= TwinVIFCompiler.VertexStripCache)
+                        var faces = new List<PS2BlendSkinFace>();
+                        foreach (var blendFace in meshlet.BlendFaces!)
                         {
-                            submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache);
-                            vertexAmount %= TwinVIFCompiler.VertexStripCache;
+                            var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
+                            {
+                                VertexesAmount = (UInt32)submodel.Vertexes.Count,
+                                Vertices = new()
+                            };
+
+                            foreach (Int32 idx in meshlet.Strip.Select(v => (Int32)v))
+                            {
+                                if (idx == 0xFFFF)
+                                {
+                                    continue;
+                                }
+
+                                var blendShape = blendFace.BlendShapes[idx];
+                                ps2BlendFace.Vertices.Add(new VertexBlendShape
+                                {
+                                    BlendShape = submodel.BlendShape,
+                                    Offset = blendShape.Offset
+                                });
+                            }
+
+                            submodel.Faces.Add(ps2BlendFace);
                         }
+
+                        submodel.GroupSizes.Add(groupCount);
+                        subBlend.Models.Add(submodel);
                     }
-                    if (vertexAmount > 0)
-                    {
-                        submodel.GroupSizes.Add(vertexAmount);
-                    }
-
-                    foreach (var (blendFace, vertexList) in blendFaceVerticies)
-                    {
-                        var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
-                        {
-                            VertexesAmount = (UInt32)vertexList.Count,
-                            Vertices = new()
-                        };
-                        foreach (var ver in vertexList)
-                        {
-                            ps2BlendFace.Vertices.Add(ver);
-                        }
-                        submodel.Faces.Add(ps2BlendFace);
-                    }
-
-                    subBlend.Models.Add(submodel);
-
-                    //List<UInt16> indices = new(subFaces.Count * 3);
-                    //foreach (var face in subFaces)
-                    //{
-                    //    indices.Add((UInt16)face.Indexes![0]);
-                    //    indices.Add((UInt16)face.Indexes[1]);
-                    //    indices.Add((UInt16)face.Indexes[2]);
-                    //}
-
-                    //// Generate triangle strips instead of triangle lists
-                    //var stripifier = new NvStripifier()
-                    //{
-                    //    StitchStrips = false,
-                    //    CacheSize = model.Vertexes.Count
-                    //};
-                    //stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
-                    //var groupsList = new List<PrimitiveGroup>(primitiveGroups);
-                    //groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
-
-                    //var blendFaceVerticies = new Dictionary<SubBlendFaceData, List<VertexBlendShape>>();
-
-                    //var rawModel = model.Vertexes;
-                    //var indexList = new List<UInt16>();
-                    //const Int32 groupVertexLimit = 18;
-                    //foreach (var group in groupsList)
-                    //{
-                    //    var totalGroups = group.IndexCount / groupVertexLimit;
-                    //    var leftoverGroup = group.IndexCount % groupVertexLimit;
-                    //    if (leftoverGroup < 3)
-                    //    {
-                    //        totalGroups -= 1;
-                    //        leftoverGroup += groupVertexLimit;
-                    //    }
-                    //    var vertexIndex = 0;
-                    //    var groupIndices = group.Indices;
-                    //    for (var i = 0; i < totalGroups; i++)
-                    //    {
-                    //        for (var j = 0; j < groupVertexLimit + 1; j++)
-                    //        {
-                    //            var idx = groupIndices[vertexIndex++];
-                    //            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                    //            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                    //            submodel.Colors.Add(rawModel[idx].Color);
-                    //            var modelJointInfo = rawModel[idx].JointInfo;
-                    //            var jointInfo = new VertexJointInfo()
-                    //            {
-                    //                JointIndex1 = modelJointInfo.JointIndex1,
-                    //                JointIndex2 = modelJointInfo.JointIndex2,
-                    //                JointIndex3 = modelJointInfo.JointIndex3,
-                    //                Weight1 = modelJointInfo.Weight1,
-                    //                Weight2 = modelJointInfo.Weight2,
-                    //                Weight3 = modelJointInfo.Weight3,
-                    //                Connection = j > 1
-                    //            };
-                    //            submodel.SkinJoints.Add(jointInfo);
-
-                    //            foreach (var blendFace in model.BlendFaces)
-                    //            {
-                    //                if (!blendFaceVerticies.ContainsKey(blendFace))
-                    //                {
-                    //                    blendFaceVerticies[blendFace] = new();
-                    //                }
-                    //                var ver = blendFace.BlendShapes[idx];
-                    //                blendFaceVerticies[blendFace].Add(new VertexBlendShape
-                    //                {
-                    //                    BlendShape = model.BlendShape,
-                    //                    Offset = ver.Offset
-                    //                });
-                    //            }
-
-                    //            indexList.Add(idx);
-                    //        }
-                    //        // Go back to start building new strip
-                    //        vertexIndex--;
-                    //        submodel.GroupSizes.Add(groupVertexLimit + 1);
-                    //    }
-
-                    //    for (var i = 0; i < leftoverGroup; ++i)
-                    //    {
-                    //        var idx = groupIndices[vertexIndex++];
-                    //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                    //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                    //        submodel.Colors.Add(rawModel[idx].Color);
-                    //        var modelJointInfo = rawModel[idx].JointInfo;
-                    //        var jointInfo = new VertexJointInfo()
-                    //        {
-                    //            JointIndex1 = modelJointInfo.JointIndex1,
-                    //            JointIndex2 = modelJointInfo.JointIndex2,
-                    //            JointIndex3 = modelJointInfo.JointIndex3,
-                    //            Weight1 = modelJointInfo.Weight1,
-                    //            Weight2 = modelJointInfo.Weight2,
-                    //            Weight3 = modelJointInfo.Weight3,
-                    //            Connection = i > 1
-                    //        };
-                    //        submodel.SkinJoints.Add(jointInfo);
-
-                    //        foreach (var blendFace in model.BlendFaces)
-                    //        {
-                    //            if (!blendFaceVerticies.ContainsKey(blendFace))
-                    //            {
-                    //                blendFaceVerticies[blendFace] = new();
-                    //            }
-                    //            var ver = blendFace.BlendShapes[idx];
-                    //            blendFaceVerticies[blendFace].Add(new VertexBlendShape
-                    //            {
-                    //                BlendShape = model.BlendShape,
-                    //                Offset = ver.Offset
-                    //            });
-                    //        }
-
-                    //        indexList.Add(idx);
-                    //    }
-                    //    if (leftoverGroup > 0)
-                    //    {
-                    //        submodel.GroupSizes.Add(leftoverGroup);
-                    //    }
-                    //}
-
-                    //foreach (var (blendFace, vertexList) in blendFaceVerticies)
-                    //{
-                    //    var ps2BlendFace = new PS2BlendSkinFace(submodel.BlendShape)
-                    //    {
-                    //        VertexesAmount = (UInt32)vertexList.Count,
-                    //        Vertices = new()
-                    //    };
-                    //    foreach (var ver in vertexList)
-                    //    {
-                    //        ps2BlendFace.Vertices.Add(ver);
-                    //    }
-                    //    submodel.Faces.Add(ps2BlendFace);
-                    //}
-
-                    //subBlend.Models.Add(submodel);
                 }
                 blendSkin.SubBlends.Add(subBlend);
             }
@@ -571,123 +324,51 @@ namespace TT_Lab.Assets.Factory
                 };
 
                 var groups = new List<List<Int32>>();
-                foreach (var strip in mesh.Strips)
+                foreach (var strip in mesh.Meshlets)
                 {
                     groups.Add(new());
-                    var addedFirst = false;
                     foreach (var node in strip.Strip)
                     {
-                        if (!addedFirst)
-                        {
-                            groups[^1].AddRange(node.GetIndexes());
-                            addedFirst = true;
-                            continue;
-                        }
-                        groups[^1].Add(node.GetIndexes()[2]);
+                        groups[^1].Add((Int32)node);
                     }
                 }
 
-                var rawModel = mesh.GetVertices();
-
+                var groupIndex = 0;
                 foreach (var group in groups)
                 {
                     var j = 0;
+                    var groupCount = 0;
+                    var rawModel = mesh.Meshlets[groupIndex];
                     foreach (var idx in group)
                     {
-                        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                        submodel.Colors.Add(rawModel[idx].Color);
-                        if (rawModel[idx].HasEmitColor)
+                        // Reset index encountered. Reset the strip
+                        if (idx == 0xFFFF)
                         {
-                            submodel.EmitColor.Add(rawModel[idx].EmitColor);
+                            j = 0;
+                            continue;
                         }
-                        if (rawModel[idx].HasNormals)
+
+                        submodel.Vertexes.Add(new Vector4(rawModel.Vertexes[idx].Position, 1.0f));
+                        submodel.UVW.Add(new Vector4(rawModel.Vertexes[idx].UV, 0.0f));
+                        submodel.Colors.Add(rawModel.Vertexes[idx].Color);
+                        if (rawModel.Vertexes[idx].HasEmitColor)
                         {
-                            submodel.Normals.Add(rawModel[idx].Normal);
+                            submodel.EmitColor.Add(rawModel.Vertexes[idx].EmitColor);
+                        }
+                        if (rawModel.Vertexes[idx].HasNormals)
+                        {
+                            submodel.Normals.Add(rawModel.Vertexes[idx].Normal);
                         }
                         submodel.Connection.Add(j > 1);
                         j++;
+                        groupCount++;
                     }
 
-                    submodel.GroupSizes.Add(group.Count);
+                    submodel.GroupSizes.Add(groupCount);
+                    groupIndex++;
                 }
 
                 model.SubModels.Add(submodel);
-
-                //var subFaces = faces[facesBatchIndex++];
-                //List<UInt16> indices = new(subFaces.Count * 3);
-                //foreach (var face in subFaces)
-                //{
-                //    indices.Add((UInt16)face.Indexes![0]);
-                //    indices.Add((UInt16)face.Indexes[1]);
-                //    indices.Add((UInt16)face.Indexes[2]);
-                //}
-
-                //// Generate triangle strips instead of triangle lists
-                //var stripifier = new NvStripifier()
-                //{
-                //    StitchStrips = false,
-                //    CacheSize = rawModel.Count
-                //};
-                //stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
-                //var groupsList = new List<PrimitiveGroup>(primitiveGroups);
-                //groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
-                //foreach (var group in groupsList)
-                //{
-                //    var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
-                //    var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
-                //    if (leftoverGroup < 3)
-                //    {
-                //        totalGroups -= 1;
-                //        leftoverGroup += TwinVIFCompiler.VertexStripCache;
-                //    }
-                //    var vertexIndex = 0;
-                //    var groupIndices = group.Indices;
-                //    for (var i = 0; i < totalGroups; i++)
-                //    {
-                //        for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
-                //        {
-                //            var idx = groupIndices[vertexIndex++];
-                //            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                //            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                //            submodel.Colors.Add(rawModel[idx].Color);
-                //            if (rawModel[idx].HasEmitColor)
-                //            {
-                //                submodel.EmitColor.Add(rawModel[idx].EmitColor);
-                //            }
-                //            if (rawModel[idx].HasNormals)
-                //            {
-                //                submodel.Normals.Add(rawModel[idx].Normal);
-                //            }
-                //            submodel.Connection.Add(j > 1);
-                //        }
-                //        // Go back to start building new strip
-                //        vertexIndex--;
-                //        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
-                //    }
-
-                //    for (var i = 0; i < leftoverGroup; ++i)
-                //    {
-                //        var idx = groupIndices[vertexIndex++];
-                //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                //        submodel.Colors.Add(rawModel[idx].Color);
-                //        if (rawModel[idx].HasEmitColor)
-                //        {
-                //            submodel.EmitColor.Add(rawModel[idx].EmitColor);
-                //        }
-                //        if (rawModel[idx].HasNormals)
-                //        {
-                //            submodel.Normals.Add(rawModel[idx].Normal);
-                //        }
-                //        submodel.Connection.Add(i > 1);
-                //    }
-                //    if (leftoverGroup > 0)
-                //    {
-                //        submodel.GroupSizes.Add(leftoverGroup);
-                //    }
-                //}
-                //model.SubModels.Add(submodel);
             }
 
             return model;
@@ -933,33 +614,34 @@ namespace TT_Lab.Assets.Factory
 
                 var mesh = subskin.Mesh;
                 var groups = new List<List<Int32>>();
-                foreach (var strip in mesh.Strips)
+                foreach (var strip in mesh.Meshlets)
                 {
                     groups.Add(new());
-                    var addedFirst = false;
                     foreach (var node in strip.Strip)
                     {
-                        if (!addedFirst)
-                        {
-                            groups[^1].AddRange(node.GetIndexes());
-                            addedFirst = true;
-                            continue;
-                        }
-                        groups[^1].Add(node.GetIndexes()[2]);
+                        groups[^1].Add((Int32)node);
                     }
                 }
 
-                var rawModel = mesh.GetVertices();
-
+                var groupIndex = 0;
                 foreach (var group in groups)
                 {
                     var j = 0;
+                    var groupCount = 0;
+                    var rawModel = mesh.Meshlets[groupIndex];
                     foreach (var idx in group)
                     {
-                        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                        submodel.Colors.Add(rawModel[idx].Color);
-                        var modelJointInfo = rawModel[idx].JointInfo;
+                        // Reset index encountered. Reset the strip
+                        if (idx == 0xFFFF)
+                        {
+                            j = 0;
+                            continue;
+                        }
+
+                        submodel.Vertexes.Add(new Vector4(rawModel.Vertexes[idx].Position, 1.0f));
+                        submodel.UVW.Add(new Vector4(rawModel.Vertexes[idx].UV, 0.0f));
+                        submodel.Colors.Add(rawModel.Vertexes[idx].Color);
+                        var modelJointInfo = rawModel.Vertexes[idx].JointInfo;
                         var jointInfo = new VertexJointInfo()
                         {
                             JointIndex1 = modelJointInfo.JointIndex1,
@@ -971,165 +653,15 @@ namespace TT_Lab.Assets.Factory
                             Connection = j > 1
                         };
                         submodel.SkinJoints.Add(jointInfo);
+                        groupCount++;
                         j++;
                     }
 
-                    submodel.GroupSizes.Add(group.Count);
+                    submodel.GroupSizes.Add(groupCount);
+                    groupIndex++;
                 }
 
                 skin.SubSkins.Add(submodel);
-
-                //var subFaces = subskin.Faces;
-                //var vertexBatch = subskin.Vertexes;
-                //var index = 0;
-                //var vertexAmount = 0;
-                //foreach (var face in subFaces)
-                //{
-                //    index %= TwinVIFCompiler.VertexStripCache;
-
-                //    var idx0 = (index % 2 == 0) ? 0 : 1;
-                //    var idx1 = (index % 2 == 0) ? 1 : 0;
-                //    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes![idx0]].Position, 1f));
-                //    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[idx1]].Position, 1f));
-                //    submodel.Vertexes.Add(new Vector4(vertexBatch[face.Indexes[2]].Position, 1f));
-                //    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx0]].UV, 0f));
-                //    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[idx1]].UV, 0f));
-                //    submodel.UVW.Add(new Vector4(vertexBatch[face.Indexes[2]].UV, 0f));
-                //    submodel.Colors.Add(vertexBatch[face.Indexes[idx0]].Color);
-                //    submodel.Colors.Add(vertexBatch[face.Indexes[idx1]].Color);
-                //    submodel.Colors.Add(vertexBatch[face.Indexes[2]].Color);
-                //    var modelJointInfo1 = vertexBatch[face.Indexes[idx0]].JointInfo;
-                //    var modelJointInfo2 = vertexBatch[face.Indexes[idx1]].JointInfo;
-                //    var modelJointInfo3 = vertexBatch[face.Indexes[2]].JointInfo;
-                //    var jointInfo1 = new VertexJointInfo()
-                //    {
-                //        JointIndex1 = modelJointInfo1.JointIndex1,
-                //        JointIndex2 = modelJointInfo1.JointIndex2,
-                //        JointIndex3 = modelJointInfo1.JointIndex3,
-                //        Weight1 = modelJointInfo1.Weight1,
-                //        Weight2 = modelJointInfo1.Weight2,
-                //        Weight3 = modelJointInfo1.Weight3,
-                //        Connection = false
-                //    };
-                //    var jointInfo2 = new VertexJointInfo()
-                //    {
-                //        JointIndex1 = modelJointInfo2.JointIndex1,
-                //        JointIndex2 = modelJointInfo2.JointIndex2,
-                //        JointIndex3 = modelJointInfo2.JointIndex3,
-                //        Weight1 = modelJointInfo2.Weight1,
-                //        Weight2 = modelJointInfo2.Weight2,
-                //        Weight3 = modelJointInfo2.Weight3,
-                //        Connection = false
-                //    };
-                //    var jointInfo3 = new VertexJointInfo()
-                //    {
-                //        JointIndex1 = modelJointInfo3.JointIndex1,
-                //        JointIndex2 = modelJointInfo3.JointIndex2,
-                //        JointIndex3 = modelJointInfo3.JointIndex3,
-                //        Weight1 = modelJointInfo3.Weight1,
-                //        Weight2 = modelJointInfo3.Weight2,
-                //        Weight3 = modelJointInfo3.Weight3,
-                //        Connection = true
-                //    };
-                //    submodel.SkinJoints.Add(jointInfo1);
-                //    submodel.SkinJoints.Add(jointInfo2);
-                //    submodel.SkinJoints.Add(jointInfo3);
-
-                //    index++;
-                //    vertexAmount += 3;
-                //    if (vertexAmount >= TwinVIFCompiler.VertexStripCache)
-                //    {
-                //        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache);
-                //        vertexAmount %= TwinVIFCompiler.VertexStripCache;
-                //    }
-                //}
-                //if (vertexAmount > 0)
-                //{
-                //    submodel.GroupSizes.Add(vertexAmount);
-                //}
-                //skin.SubSkins.Add(submodel);
-
-                //List<UInt16> indices = new(subFaces.Count * 3);
-                //foreach (var face in subFaces)
-                //{
-                //    indices.Add((UInt16)face.Indexes![0]);
-                //    indices.Add((UInt16)face.Indexes[1]);
-                //    indices.Add((UInt16)face.Indexes[2]);
-                //}
-
-                //// Generate triangle strips instead of triangle lists
-                //var stripifier = new NvStripifier()
-                //{
-                //    StitchStrips = false,
-                //    CacheSize = subskin.Vertexes.Count
-                //};
-                //stripifier.GenerateStrips(indices.ToArray(), out var primitiveGroups);
-                //var groupsList = new List<PrimitiveGroup>(primitiveGroups);
-                //groupsList.Sort((g1, g2) => g2.IndexCount - g1.IndexCount);
-
-                //var rawModel = subskin.Vertexes;
-                //foreach (var group in groupsList)
-                //{
-                //    var totalGroups = group.IndexCount / TwinVIFCompiler.VertexStripCache;
-                //    var leftoverGroup = group.IndexCount % TwinVIFCompiler.VertexStripCache;
-                //    if (leftoverGroup < 3)
-                //    {
-                //        totalGroups -= 1;
-                //        leftoverGroup += TwinVIFCompiler.VertexStripCache;
-                //    }
-                //    var vertexIndex = 0;
-                //    var groupIndices = group.Indices;
-                //    for (var i = 0; i < totalGroups; i++)
-                //    {
-                //        for (var j = 0; j < TwinVIFCompiler.VertexStripCache + 1; j++)
-                //        {
-                //            var idx = groupIndices[vertexIndex++];
-                //            submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                //            submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                //            submodel.Colors.Add(rawModel[idx].Color);
-                //            var modelJointInfo = rawModel[idx].JointInfo;
-                //            var jointInfo = new VertexJointInfo()
-                //            {
-                //                JointIndex1 = modelJointInfo.JointIndex1,
-                //                JointIndex2 = modelJointInfo.JointIndex2,
-                //                JointIndex3 = modelJointInfo.JointIndex3,
-                //                Weight1 = modelJointInfo.Weight1,
-                //                Weight2 = modelJointInfo.Weight2,
-                //                Weight3 = modelJointInfo.Weight3,
-                //                Connection = j > 1
-                //            };
-                //            submodel.SkinJoints.Add(jointInfo);
-                //        }
-                //        // Go back to start building new strip
-                //        vertexIndex--;
-                //        submodel.GroupSizes.Add(TwinVIFCompiler.VertexStripCache + 1);
-                //    }
-
-                //    for (var i = 0; i < leftoverGroup; ++i)
-                //    {
-                //        var idx = groupIndices[vertexIndex++];
-                //        submodel.Vertexes.Add(new Vector4(rawModel[idx].Position, 1.0f));
-                //        submodel.UVW.Add(new Vector4(rawModel[idx].UV, 0.0f));
-                //        submodel.Colors.Add(rawModel[idx].Color);
-                //        var modelJointInfo = rawModel[idx].JointInfo;
-                //        var jointInfo = new VertexJointInfo()
-                //        {
-                //            JointIndex1 = modelJointInfo.JointIndex1,
-                //            JointIndex2 = modelJointInfo.JointIndex2,
-                //            JointIndex3 = modelJointInfo.JointIndex3,
-                //            Weight1 = modelJointInfo.Weight1,
-                //            Weight2 = modelJointInfo.Weight2,
-                //            Weight3 = modelJointInfo.Weight3,
-                //            Connection = i > 1
-                //        };
-                //        submodel.SkinJoints.Add(jointInfo);
-                //    }
-                //    if (leftoverGroup > 0)
-                //    {
-                //        submodel.GroupSizes.Add(leftoverGroup);
-                //    }
-                //}
-                //skin.SubSkins.Add(submodel);
             }
             return skin;
         }
