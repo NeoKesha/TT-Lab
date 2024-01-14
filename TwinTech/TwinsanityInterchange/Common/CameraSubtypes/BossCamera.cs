@@ -45,7 +45,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.CameraSubtypes
         {
             base.Write(writer);
             UnkMatrix1.Write(writer);
-            UnkMatrix1.Write(writer);
+            UnkMatrix2.Write(writer);
             UnkVector.Write(writer);
             writer.Write(UnkByte1);
             writer.Write(UnkFloat3);
