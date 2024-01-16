@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdonisUI.Controls;
+using System;
 using System.Windows;
 using TT_Lab.Command;
 
@@ -7,7 +8,7 @@ namespace TT_Lab.Controls
     /// <summary>
     /// Interaction logic for UnsavedChangedDialogue.xaml
     /// </summary>
-    public partial class UnsavedChangesDialogue : Window
+    public partial class UnsavedChangesDialogue : AdonisWindow
     {
         OpenDialogueCommand.DialogueResult result;
 

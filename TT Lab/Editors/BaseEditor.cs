@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
@@ -33,6 +34,7 @@ namespace TT_Lab.Editors
             // This is used as reference because DataContext may not always be our viewmodel depending on specific editor needs
             viewModel = asset;
             DataContext = asset;
+            Background = (Brush)FindResource(AdonisUI.Brushes.Layer1BackgroundBrush);
         }
 
         public BaseEditor(object asset, Command.CommandManager commandManager) : this(asset)

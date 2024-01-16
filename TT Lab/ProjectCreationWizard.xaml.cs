@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using AdonisUI.Controls;
+using System.Windows;
 using TT_Lab.Project;
 using TT_Lab.ViewModels;
 
@@ -7,7 +8,7 @@ namespace TT_Lab
     /// <summary>
     /// Interaction logic for ProjectCreationWizard.xaml
     /// </summary>
-    public partial class ProjectCreationWizard : Window
+    public partial class ProjectCreationWizard : AdonisWindow
     {
         public ProjectCreationWizard()
         {

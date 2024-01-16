@@ -11,7 +11,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label x:Name="CheckboxLabel" Content="Label" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
-        <CheckBox x:Name="CheckBox" IsChecked="{Binding DisplayChecked, ElementName=LabeledCheckboxControl, Mode=TwoWay}" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        <CheckBox x:Name="CheckBox" Style="{DynamicResource AdonisCheckBoxStyle}" IsChecked="{Binding DisplayChecked, ElementName=LabeledCheckboxControl, Mode=TwoWay}" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
 
     </Grid>
 </local:BoundUserControl>

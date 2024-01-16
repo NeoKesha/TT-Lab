@@ -9,8 +9,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="350">
     <Grid>
-        <TabControl Background="{x:Null}">
-            <TabItem x:Name="MainPropertiesTab" Header="Properties" Background="White">
+        <TabControl>
+            <TabItem x:Name="MainPropertiesTab" Header="Properties">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -45,7 +45,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="ArgumentsTab" Header="Messages" Background="White">
+            <TabItem x:Name="ArgumentsTab" Header="Messages">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -82,7 +82,7 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="ActivatorsTab" Header="Activators" Background="White">
+            <TabItem x:Name="ActivatorsTab" Header="Activators">
                 <Grid Margin="0,0,0,0">
                     <UniformGrid>
                         <Controls:LabeledCheckBox x:Name="ActByPlayCharBox" CheckBoxName="Playable character" BoundProperty="ActivateByPlayableCharacter" Editor="{Binding ElementName=TriggerEditorControl, Mode=OneWay}" Checked="{Binding ViewModel.ActivateByPlayableCharacter}"/>
