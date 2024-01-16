@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdonisUI.Controls;
+using System;
 using System.Diagnostics;
 using System.Windows;
 
@@ -7,7 +8,7 @@ namespace TT_Lab
     /// <summary>
     /// Interaction logic for About.xaml
     /// </summary>
-    public partial class About : Window
+    public partial class About : AdonisWindow
     {
         public About()
         {

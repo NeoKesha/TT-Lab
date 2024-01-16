@@ -253,7 +253,7 @@ namespace TT_Lab.AssetData.Graphics
 
                     foreach (var (idx1, idx2, idx3) in primitive.GetTriangleIndices())
                     {
-                        faces.Add(new IndexedFace(new int[] { idx1, idx2, idx3 }));
+                        faces.Add(new IndexedFace(idx1, idx2, idx3));
                     }
                 }
                 Vertexes.Add(submodel);

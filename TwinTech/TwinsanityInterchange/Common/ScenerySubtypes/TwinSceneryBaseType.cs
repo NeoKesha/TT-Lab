@@ -110,7 +110,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
         public virtual void Write(BinaryWriter writer)
         {
             var hasMeshLods = (MeshIDs.Count != 0 || LodIDs.Count != 0);
-            writer.Write(hasMeshLods ? 0x1613 : 0);
+            writer.Write(hasMeshLods ? 0x1613 : 3);
             if (hasMeshLods)
             {
                 writer.Write((Int16)MeshIDs.Count);

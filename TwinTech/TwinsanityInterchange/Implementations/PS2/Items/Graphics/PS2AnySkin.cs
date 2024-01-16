@@ -63,9 +63,10 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.Graphics
             var minSkinCoord = UInt32.MaxValue;
             foreach (var subSkin in SubSkins)
             {
-                if (subSkin.GetMinSkinCoord() < minSkinCoord)
+                var skinCoord = subSkin.GetMinSkinCoord();
+                if (skinCoord < minSkinCoord && skinCoord > 0x358637BF)
                 {
-                    minSkinCoord = subSkin.GetMinSkinCoord();
+                    minSkinCoord = skinCoord;
                 }
             }
 

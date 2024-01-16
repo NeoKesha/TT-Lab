@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TT_Lab.Assets;
+using TT_Lab.MeshProcessor;
 using TT_Lab.Util;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -38,6 +39,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
             foreach (var mesh in meshes)
             {
                 var allVertexes = new List<Vertex>();
+                var allIndices = new List<IndexedFace>();
                 var indiceAccessor = 0;
                 var blendShape = (Vector3)mesh.Extras.Deserialize(typeof(Vector3));
                 var primitive = mesh.Primitives[0];
@@ -67,70 +69,92 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                     allVertexes.Add(ver);
                 }
 
-                for (var submodelIdx = 0; submodelIdx < amountOfSubmodels; ++submodelIdx)
+                foreach (var (idx1, idx2, idx3) in indices)
                 {
-                    var faces = new List<IndexedFace>();
-                    for (var i = indiceAccessor; i < indices.Count(); ++i)
-                    {
-                        var (idx1, idx2, idx3) = indices.ElementAt(i);
-                        faces.Add(new IndexedFace(new int[] { idx1, idx2, idx3 }));
-                        if (faces.Count * 3 >= TwinVIFCompiler.VertexStripCache)
-                        {
-                            break;
-                        }
-                    }
-
-                    var submodelVertexes = new List<Vertex>();
-                    var newIndexList = new List<IndexedFace>();
-                    var idxCount = 0;
-                    foreach (var face in faces)
-                    {
-                        submodelVertexes.Add(allVertexes[face.Indexes![0]]);
-                        submodelVertexes.Add(allVertexes[face.Indexes[1]]);
-                        submodelVertexes.Add(allVertexes[face.Indexes[2]]);
-                        newIndexList.Add(new IndexedFace(new int[] { idxCount, idxCount + 1, idxCount + 2 }));
-                        idxCount += 3;
-                    }
-
-                    if (vertexes.MorphTargets.Count == 0)
-                    {
-                        var zeros = new List<List<System.Numerics.Vector3>>();
-                        for (var j = 0; j < blendsAmount; j++)
-                        {
-                            zeros.Add(new());
-                            for (var i = 0; i < submodelVertexes.Count; i++)
-                            {
-                                zeros[^1].Add(System.Numerics.Vector3.Zero);
-                            }
-                        }
-                        Models.Add(new SubBlendModelData(blendShape, submodelVertexes, newIndexList, zeros));
-                        indiceAccessor += (TwinVIFCompiler.VertexStripCache / 3);
-                        continue;
-                    }
-
-                    var morphTargets = new List<List<System.Numerics.Vector3>>();
-                    var targetIndex = 0;
-                    foreach (var target in vertexes.MorphTargets)
-                    {
-                        morphTargets.Add(new());
-                        for (var i = indiceAccessor; i < indices.Count(); ++i)
-                        {
-                            var (idx1, idx2, idx3) = indices.ElementAt(i);
-                            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx1]);
-                            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx2]);
-                            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx3]);
-                            if (morphTargets[^1].Count >= TwinVIFCompiler.VertexStripCache)
-                            {
-                                break;
-                            }
-                        }
-
-                        targetIndex++;
-                    }
-
-                    Models.Add(new SubBlendModelData(blendShape, submodelVertexes, newIndexList, morphTargets));
-                    indiceAccessor += (TwinVIFCompiler.VertexStripCache / 3);
+                    allIndices.Add(new IndexedFace(idx1, idx2, idx3));
                 }
+
+                if (vertexes.MorphTargets.Count == 0)
+                {
+                    var zeros = new List<List<System.Numerics.Vector3>>();
+                    for (var j = 0; j < blendsAmount; j++)
+                    {
+                        zeros.Add(new());
+                        for (var i = 0; i < vertexes.Positions.Count; i++)
+                        {
+                            zeros[^1].Add(System.Numerics.Vector3.Zero);
+                        }
+                    }
+                    Models.Add(new SubBlendModelData(blendShape, allVertexes, allIndices, zeros));
+                    continue;
+                }
+
+                Models.Add(new SubBlendModelData(blendShape, allVertexes, allIndices, vertexes.MorphTargets));
+
+                //for (var submodelIdx = 0; submodelIdx < amountOfSubmodels; ++submodelIdx)
+                //{
+                //    var faces = new List<IndexedFace>();
+                //    for (var i = indiceAccessor; i < indices.Count(); ++i)
+                //    {
+                //        var (idx1, idx2, idx3) = indices.ElementAt(i);
+                //        faces.Add(new IndexedFace(new int[] { idx1, idx2, idx3 }));
+                //        if (faces.Count * 3 >= TwinVIFCompiler.VertexStripCache)
+                //        {
+                //            break;
+                //        }
+                //    }
+
+                //    var submodelVertexes = new List<Vertex>();
+                //    var newIndexList = new List<IndexedFace>();
+                //    var idxCount = 0;
+                //    foreach (var face in faces)
+                //    {
+                //        submodelVertexes.Add(allVertexes[face.Indexes![0]]);
+                //        submodelVertexes.Add(allVertexes[face.Indexes[1]]);
+                //        submodelVertexes.Add(allVertexes[face.Indexes[2]]);
+                //        newIndexList.Add(new IndexedFace(new int[] { idxCount, idxCount + 1, idxCount + 2 }));
+                //        idxCount += 3;
+                //    }
+
+                //    if (vertexes.MorphTargets.Count == 0)
+                //    {
+                //        var zeros = new List<List<System.Numerics.Vector3>>();
+                //        for (var j = 0; j < blendsAmount; j++)
+                //        {
+                //            zeros.Add(new());
+                //            for (var i = 0; i < submodelVertexes.Count; i++)
+                //            {
+                //                zeros[^1].Add(System.Numerics.Vector3.Zero);
+                //            }
+                //        }
+                //        Models.Add(new SubBlendModelData(blendShape, submodelVertexes, newIndexList, zeros));
+                //        indiceAccessor += (TwinVIFCompiler.VertexStripCache / 3);
+                //        continue;
+                //    }
+
+                //    var morphTargets = new List<List<System.Numerics.Vector3>>();
+                //    var targetIndex = 0;
+                //    foreach (var target in vertexes.MorphTargets)
+                //    {
+                //        morphTargets.Add(new());
+                //        for (var i = indiceAccessor; i < indices.Count(); ++i)
+                //        {
+                //            var (idx1, idx2, idx3) = indices.ElementAt(i);
+                //            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx1]);
+                //            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx2]);
+                //            morphTargets[^1].Add(vertexes.MorphTargets[targetIndex].Positions[idx3]);
+                //            if (morphTargets[^1].Count >= TwinVIFCompiler.VertexStripCache)
+                //            {
+                //                break;
+                //            }
+                //        }
+
+                //        targetIndex++;
+                //    }
+
+                //    Models.Add(new SubBlendModelData(blendShape, submodelVertexes, newIndexList, morphTargets));
+                //    indiceAccessor += (TwinVIFCompiler.VertexStripCache / 3);
+                //}
             }
         }
 

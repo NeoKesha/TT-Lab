@@ -6,6 +6,7 @@
 
     <RootNamespace>Twinsanity</RootNamespace>
     <AssemblyName>TwinTech</AssemblyName>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

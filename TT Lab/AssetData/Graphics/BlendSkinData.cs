@@ -211,7 +211,7 @@ namespace TT_Lab.AssetData.Graphics
 
         public override ITwinItem Export(ITwinItemFactory factory)
         {
-            return factory.GenerateBlendSkin(BlendsAmount, Blends);
+            return factory.GenerateBlendSkin(BlendsAmount, Blends, CompileScale);
         }
 
         public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)

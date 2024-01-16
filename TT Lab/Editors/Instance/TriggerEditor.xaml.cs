@@ -109,7 +109,7 @@ namespace TT_Lab.Editors.Instance
             {
                 return i.Asset.LayoutID == (int)vm.LayoutID && !vm.Instances.Contains(i.Asset.URI);
             }).ToList();
-            if (fitInstances.Any())
+            if (fitInstances.Count != 0)
             {
                 var instMenuItems = new MenuItem[fitInstances.Count];
                 for (var i = 0; i < fitInstances.Count; ++i)

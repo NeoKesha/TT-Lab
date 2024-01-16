@@ -10,7 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="59*"/>
-            <RowDefinition Height="166*"/>
+            <RowDefinition Height="91*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="659*"/>
@@ -18,9 +18,16 @@
         </Grid.ColumnDefinitions>
         <base:SceneEditor x:Name="SceneRenderer" Header="Rigid model viewer" Margin="10,0,0,0" Grid.RowSpan="2"/>
         <base:SceneEditor x:Name="MaterialViewer" Grid.Column="1" Header="Material viewer" Margin="0,0,0,11"/>
-        <Button x:Name="NextMatButton" Content="Next material" Click="NextMatButton_Click" Margin="23,107,23,0" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"/>
-        <TextBlock x:Name="MaterialName" TextWrapping="Wrap" Text="Material Name" Grid.Column="1" TextAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" Grid.Row="1"/>
-        <Button x:Name="PrevMatButton" Content="Previous material" Click="NextMatButton_Click" Margin="23,8,23,0" Grid.Column="1" VerticalAlignment="Top" Height="19" Grid.Row="1"/>
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Button x:Name="NextMatButton" Content="Next material" Click="NextMatButton_Click" Grid.Row="0" Height="25"/>
+            <TextBlock Style="{DynamicResource TextBlockTreeViewStyle}" x:Name="MaterialName" TextWrapping="Wrap" Text="Material Name" TextAlignment="Center" Grid.Row="1" VerticalAlignment="Center"/>
+            <Button x:Name="PrevMatButton" Content="Previous material" Click="NextMatButton_Click" Height="25" Grid.Row="2"/>
+        </Grid>
 
     </Grid>
 </base:BaseEditor>

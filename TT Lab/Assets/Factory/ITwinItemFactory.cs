@@ -16,7 +16,7 @@ namespace TT_Lab.Assets.Factory
 {
     public interface ITwinItemFactory
     {
-        ITwinBlendSkin GenerateBlendSkin(Int32 blendsAmount, List<SubBlendData> blends);
+        ITwinBlendSkin GenerateBlendSkin(Int32 blendsAmount, List<SubBlendData> blends, UInt32? compileScale);
         ITwinLOD GenerateLOD(Stream stream);
         ITwinMaterial GenerateMaterial(Stream stream);
         ITwinMesh GenerateMesh(Stream stream);

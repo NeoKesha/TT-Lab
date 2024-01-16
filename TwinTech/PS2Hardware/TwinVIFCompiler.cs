@@ -46,6 +46,9 @@ namespace Twinsanity.PS2Hardware
             JointInfo
         }
 
+        /// <summary>
+        /// Maximum allowed amount of vertecies in a single VIF packet
+        /// </summary>
         public static int VertexStripCache => 36;
 
         /// <summary>
@@ -71,7 +74,14 @@ namespace Twinsanity.PS2Hardware
             BlendFace
         }
 
-        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<Boolean> conns, UInt32 minSkinCoord)
+        /// <summary>
+        /// Creates a compiler instance with provided data and strip information
+        /// </summary>
+        /// <param name="format">Model format <seealso cref="ModelFormat"/></param>
+        /// <param name="data">All the vector data. Must be in a certain order</param>
+        /// <param name="conns">Stripping data</param>
+        /// <param name="minSkinCoord">Optional minimal coordinate for scaling the position and UV vector data</param>
+        public TwinVIFCompiler(ModelFormat format, List<List<Vector4>> data, List<Boolean> conns, UInt32 minSkinCoord = 0)
         {
             this.format = format;
             this.vectorData = data;
