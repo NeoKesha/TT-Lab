@@ -36,7 +36,6 @@ namespace TT_Lab.Rendering
         // Rendering matrices and settings
         private mat4 projectionMat;
         private mat4 viewMat;
-        private mat4 modelMat;
         private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
         private vec3 cameraDirection = new(1, 0, 0);
         private vec3 cameraUp = new(0, 1, 0);
@@ -73,7 +72,6 @@ namespace TT_Lab.Rendering
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-            modelMat = mat4.Scale(new vec3(1.0f));
 
             this.libShader = libShader;
             ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
@@ -94,20 +92,23 @@ namespace TT_Lab.Rendering
         public Scene(List<AssetViewModel> sceneTree, float width, float height) :
             this(width, height, new ShaderProgram.LibShader { Path = "Shaders\\Light.frag", Type = ShaderType.FragmentShader })
         {
+            GlobalTransform = mat4.Identity;
+            GlobalTransform = mat4.Translate(vec3.UnitY * -100);
+
             // Collision renderer
             var colData = sceneTree.Find((avm) =>
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
             var colRender = new Objects.Collision(this, colData);
-            objectsOpaque.Add(colRender);
+            AddRender(colRender, false);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
             foreach (var pos in positions!.Children)
             {
                 var pRend = new Objects.Position(this, (PositionViewModel)pos);
-                objectsOpaque.Add(pRend);
+                AddRender(pRend, false);
             }
 
             // Triggers renderer
@@ -115,7 +116,7 @@ namespace TT_Lab.Rendering
             foreach (var trg in triggers!.Children)
             {
                 var trRend = new Objects.Trigger(this, (TriggerViewModel)trg);
-                objectsTransparent.Add(trRend);
+                AddRender(trRend);
             }
 
             //Instances renderer
@@ -127,7 +128,7 @@ namespace TT_Lab.Rendering
                 var sceneInstance = new SceneInstance(instData, modelBufferCache, this);
                 var pRend = sceneInstance.GetRenderable();
 
-                objectsTransparent.Add(pRend);
+                AddRender(pRend);
                 sceneInstances.Add(sceneInstance);
             }
         }
@@ -149,6 +150,7 @@ namespace TT_Lab.Rendering
                 {
                     objectsOpaque.Add(renderObj);
                 }
+                AddChild(renderObj);
             });
         }
 
@@ -161,11 +163,10 @@ namespace TT_Lab.Rendering
         /// Sets the matrix uniforms for object's rendering in 3D scene
         /// </summary>
         /// <param name="program"></param>
-        public void SetPVMNShaderUniforms(ShaderProgram program)
+        public void SetProjectViewShaderUniforms(ShaderProgram program)
         {
             program.SetUniformMatrix4("Projection", projectionMat.Values1D);
             program.SetUniformMatrix4("View", viewMat.Values1D);
-            program.SetUniformMatrix4("Model", modelMat.Values1D);
         }
 
         public void SetResolution(float width, float height)
@@ -263,7 +264,7 @@ namespace TT_Lab.Rendering
             matrixRotationY = mat4.RotateY(rotation.y);
             matrixRotationZ = mat4.RotateZ(rotation.z);
             mat4 matrixScale = mat4.Scale(scale);
-            mat4 transform = mat4.Identity;
+            mat4 transform = GlobalTransform;
             
             transform *= matrixPosition;
             transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
@@ -291,7 +292,7 @@ namespace TT_Lab.Rendering
             matrixRotationY = mat4.RotateY(rotation.y);
             matrixRotationZ = mat4.RotateZ(rotation.z);
             mat4 matrixScale = mat4.Scale(scale);
-            mat4 transform = mat4.Identity;
+            mat4 transform = GlobalTransform;
 
             transform *= matrixPosition;
             transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
@@ -304,7 +305,7 @@ namespace TT_Lab.Rendering
         }
         public void DrawLine(vec3 point1, vec3 point2, vec4 color)
         {
-            DrawLine(point1, point2, color, mat4.Identity);
+            DrawLine(point1, point2, color, GlobalTransform);
         }
         public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
         {
@@ -373,6 +374,7 @@ namespace TT_Lab.Rendering
                 selectedInstance.Deselect();
                 selectedInstance = null;
             }
+
             foreach (var instance in sceneInstances)
             {
                 vec3 hit = new vec3();
@@ -383,10 +385,8 @@ namespace TT_Lab.Rendering
                     break;
                 }
             }
-            if (selectedInstance != null)
-            {
-                selectedInstance.Select();
-            }
+
+            selectedInstance?.Select();
         }
 
         public void ZoomView(float z)

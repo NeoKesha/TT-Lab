@@ -77,7 +77,7 @@ namespace TT_Lab.Rendering
 
         public mat4 GetTransform()
         {
-            return instanceRender.GetTransform();
+            return instanceRender.GlobalTransform;
         }
     }
 }

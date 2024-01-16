@@ -71,9 +71,10 @@ namespace TT_Lab.Rendering.Renderers
             GL.BlendFunc(1, BlendingFactorSrc.DstColor, BlendingFactorDest.Zero);
             GL.BlendEquation(1, BlendEquationMode.FuncAdd);
             wboitShader.Bind();
-            Scene.SetPVMNShaderUniforms(wboitShader);
+            Scene.SetProjectViewShaderUniforms(wboitShader);
             foreach (var @object in objects)
             {
+                @object.SetUniforms(wboitShader);
                 @object.Render();
             }
             wboitShader.Unbind();
@@ -96,9 +97,10 @@ namespace TT_Lab.Rendering.Renderers
         public void RenderOpaque(List<IRenderable> objects)
         {
             opaqueShader.Bind();
-            Scene.SetPVMNShaderUniforms(opaqueShader);
+            Scene.SetProjectViewShaderUniforms(opaqueShader);
             foreach (var @object in objects)
             {
+                @object.SetUniforms(opaqueShader);
                 @object.Render();
             }
             opaqueShader.Unbind();

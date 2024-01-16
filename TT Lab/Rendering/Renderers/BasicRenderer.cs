@@ -29,7 +29,7 @@ namespace TT_Lab.Rendering.Renderers
 
         public void Render(List<IRenderable> objects)
         {
-            Scene.SetPVMNShaderUniforms(RenderProgram);
+            Scene.SetProjectViewShaderUniforms(RenderProgram);
             foreach (var @object in objects)
             {
                 @object.Render();

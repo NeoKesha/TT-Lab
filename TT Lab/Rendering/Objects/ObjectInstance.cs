@@ -20,9 +20,8 @@ namespace TT_Lab.Rendering.Objects
         List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
         Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache;
 
-        mat4 transform = new mat4();
         Vector3 ambientColor = new Vector3();
-        vec3 pos = new vec3();
+        private vec3 pos = new vec3();
 
         public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache) : base(root)
         {
@@ -48,13 +47,8 @@ namespace TT_Lab.Rendering.Objects
             matrixRotationX = mat4.RotateX(rot.x);
             matrixRotationY = mat4.RotateY(rot.y);
             matrixRotationZ = mat4.RotateZ(rot.z);
-            transform = matrixPosition;
-            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-        }
-
-        public mat4 GetTransform()
-        {
-            return transform;
+            LocalTransform = matrixPosition;
+            LocalTransform *= matrixRotationZ * matrixRotationY * matrixRotationX;
         }
 
         public void Select()
@@ -77,7 +71,6 @@ namespace TT_Lab.Rendering.Objects
             Root.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
             Root.Renderer.RenderProgram.SetUniform3("LightPosition", Root.CameraPosition.x, Root.CameraPosition.y, Root.CameraPosition.z);
             Root.Renderer.RenderProgram.SetUniform3("LightDirection", -Root.CameraDirection.x, Root.CameraDirection.y, Root.CameraDirection.z);
-            Root.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
         }
 
         public void Delete()
@@ -98,9 +91,9 @@ namespace TT_Lab.Rendering.Objects
 
 
             Unbind();
-            Root.DrawLine(vec3.Zero, new vec3(-1, 0, 0), new vec4(1.0f, 0.0f, 0.0f, 1.0f), transform);
-            Root.DrawLine(vec3.Zero, new vec3(0, 1, 0), new vec4(0.0f, 1.0f, 0.0f, 1.0f), transform);
-            Root.DrawLine(vec3.Zero, new vec3(0, 0, 1), new vec4(0.0f, 0.0f, 1.0f, 1.0f), transform);
+            Root.DrawLine(vec3.Zero, new vec3(-1, 0, 0), new vec4(1.0f, 0.0f, 0.0f, 1.0f), GlobalTransform);
+            Root.DrawLine(vec3.Zero, new vec3(0, 1, 0), new vec4(0.0f, 1.0f, 0.0f, 1.0f), GlobalTransform);
+            Root.DrawLine(vec3.Zero, new vec3(0, 0, 1), new vec4(0.0f, 0.0f, 1.0f, 1.0f), GlobalTransform);
         }
 
         public void Unbind()

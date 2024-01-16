@@ -21,7 +21,6 @@ namespace TT_Lab.Rendering.Objects
         private vec4 color;
 
         private TriggerViewModel viewModel;
-        private mat4 transform;
 
         public Trigger(Scene root, TriggerViewModel tvm) : base(root)
         {
@@ -58,11 +57,11 @@ namespace TT_Lab.Rendering.Objects
             matrixRotationY = mat4.RotateY(rotation.y);
             matrixRotationZ = mat4.RotateZ(rotation.z);
             mat4 matrixScale = mat4.Scale(scale);
-            transform = mat4.Identity;
+            LocalTransform = mat4.Identity;
 
-            transform *= matrixPosition;
-            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-            transform *= matrixScale;
+            LocalTransform *= matrixPosition;
+            LocalTransform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            LocalTransform *= matrixScale;
         }
 
         public void Bind()
@@ -76,7 +75,7 @@ namespace TT_Lab.Rendering.Objects
 
         public override void Render()
         {
-            Root.DrawBox(transform, color);
+            Root.DrawBox(GlobalTransform, color);
         }
 
         public void Unbind()
