@@ -5,17 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace TT_Lab.Rendering
 {
@@ -55,6 +58,7 @@ namespace TT_Lab.Rendering
         private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
         private readonly List<SceneInstance> sceneInstances = new();
         private SceneInstance? selectedInstance = null;
+        private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -77,6 +81,8 @@ namespace TT_Lab.Rendering
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
             SetupTransparencyRender();
+
+            primitiveRenderer.Init(this);
         }
 
         /// <summary>
@@ -236,9 +242,89 @@ namespace TT_Lab.Rendering
                 modelBuffers.Clear();
             }
             modelBufferCache.Clear();
+            primitiveRenderer.Terminate();
             Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
         }
 
+        public void DrawBox(vec3 position)
+        {
+            DrawBox(position, vec3.Zero, vec3.Ones);
+        }
+        public void DrawBox(vec3 position, vec3 rotation, vec3 scale)
+        {
+            DrawBox(position, rotation, scale, vec4.Ones);
+        }
+        public void DrawBox(vec3 position, vec3 rotation, vec3 scale, vec4 color)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = mat4.Identity;
+            
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawBox(transform, color);
+        }
+        public void DrawBox(mat4 transform, vec4 color)
+        {
+            primitiveRenderer.DrawBox(transform, color);
+        }
+        public void DrawCircle(vec3 position)
+        {
+            DrawCircle(position, vec3.Zero, vec3.Ones);
+        }
+        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale)
+        {
+            DrawCircle(position, rotation, scale, vec4.Ones);
+        }
+        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale, vec4 color)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = mat4.Identity;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawCircle(transform, color);
+        }
+        public void DrawCircle(mat4 transform, vec4 color)
+        {
+            primitiveRenderer.DrawCircle(transform, color);
+        }
+        public void DrawLine(vec3 point1, vec3 point2, vec4 color)
+        {
+            DrawLine(point1, point2, color, mat4.Identity);
+        }
+        public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
+        {
+            var scaleX = (point2 - point1).Length;
+            vec3 direction = (point2 - point1).Normalized;
+            vec3 scale = new vec3(scaleX, 1.0f, 1.0f);
+            mat4 matrixPosition = mat4.Translate(point1.x, point1.y, point1.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            var angleXZ = (float)glm.Angle(new vec2(direction.x, direction.z));
+            var angleY = glm.Acos(glm.Dot(direction, new vec3(direction.x, 0, direction.z)));
+            matrixRotationX = mat4.RotateX(0);
+            matrixRotationY = mat4.RotateY(angleXZ);
+            matrixRotationZ = mat4.RotateZ(-angleY);
+
+            mat4 transform = parent;
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= mat4.Scale(scale);
+            primitiveRenderer.DrawLine(transform, color);
+        }
         public void SetCameraSpeed(float s)
         {
             cameraSpeed = s;

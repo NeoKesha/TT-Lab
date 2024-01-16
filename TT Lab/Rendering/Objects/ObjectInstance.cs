@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
+using System.Windows.Media.Imaging;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
@@ -21,6 +22,7 @@ namespace TT_Lab.Rendering.Objects
 
         mat4 transform = new mat4();
         Vector3 ambientColor = new Vector3();
+        vec3 pos = new vec3();
 
         public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache) : base(root)
         {
@@ -34,6 +36,7 @@ namespace TT_Lab.Rendering.Objects
             {
                 SetupModelBuffer(objURI);
             }
+            pos = new vec3(-instance.Position.X, instance.Position.Y, instance.Position.Z);
             Deselect();
         }
 
@@ -41,6 +44,7 @@ namespace TT_Lab.Rendering.Objects
         {
             mat4 matrixPosition = mat4.Translate(pos.x, pos.y, pos.z);
             mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            rot = rot * 3.14f / 180.0f;
             matrixRotationX = mat4.RotateX(rot.x);
             matrixRotationY = mat4.RotateY(rot.y);
             matrixRotationZ = mat4.RotateZ(rot.z);
@@ -88,9 +92,15 @@ namespace TT_Lab.Rendering.Objects
             {
                 modelBuffer.Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+
                 modelBuffer.Unbind();
             }
+
+
             Unbind();
+            Root.DrawLine(vec3.Zero, new vec3(-1, 0, 0), new vec4(1.0f, 0.0f, 0.0f, 1.0f), transform);
+            Root.DrawLine(vec3.Zero, new vec3(0, 1, 0), new vec4(0.0f, 1.0f, 0.0f, 1.0f), transform);
+            Root.DrawLine(vec3.Zero, new vec3(0, 0, 1), new vec4(0.0f, 0.0f, 1.0f, 1.0f), transform);
         }
 
         public void Unbind()

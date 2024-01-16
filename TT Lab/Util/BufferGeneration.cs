@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Extensions;
 using TT_Lab.Rendering.Buffers;
@@ -270,5 +271,47 @@ namespace TT_Lab.Util
             return GetCubeBuffer(position, new Vector3(scale, scale, scale), default, colors);
         }
 
+        public static IndexedBufferArray GetCircleBuffer(Color color, float segmentPart = 1.0f, float thickness = 0.1f, int resolution = 16)
+        {
+            var segment = 2 * Math.PI * segmentPart;
+            List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors = new List<Twinsanity.TwinsanityInterchange.Common.Vector3>();
+            var step = (2 * Math.PI) / resolution;
+            var k = 1.0f - thickness;
+            for (var i = 0; i <= resolution; ++i)
+            {
+                var step1 = i * step;
+                if (step1 > segment)
+                {
+                    break;
+                }
+                var step2 = Math.Min((i + 1) * step, segment);
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3((float)Math.Cos(step1), 0, (float)Math.Sin(step1)));
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3((float)Math.Cos(step1) * k, 0, (float)Math.Sin(step1) * k));
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3((float)Math.Cos(step2) * k, 0, (float)Math.Sin(step2)));
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3((float)Math.Cos(step1), 0, (float)Math.Sin(step1)));
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3((float)Math.Cos(step2) * k, 0, (float)Math.Sin(step2) * k));
+                vectors.Add(new Twinsanity.TwinsanityInterchange.Common.Vector3((float)Math.Cos(step2), 0, (float)Math.Sin(step2)));
+            }
+            var faces = new List<IndexedFace>();
+            for (var i = 0; i < vectors.Count; i += 3)
+            {
+                faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
+            }
+            return GetModelBuffer(vectors, faces, new List<Color> {color});
+        }
+        public static IndexedBufferArray GetLineBuffer(Color color) {
+            List<Twinsanity.TwinsanityInterchange.Common.Vector3> vectors = new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
+            {
+                new Twinsanity.TwinsanityInterchange.Common.Vector3(0, 0, 0),
+                new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 0, 0),
+                new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 0, 0)
+            };
+            var faces = new List<IndexedFace>();
+            for (var i = 0; i < vectors.Count; i += 3)
+            {
+                faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
+            }
+            return GetModelBuffer(vectors, faces, new List<Color> { color });
+        }
     }
 }
