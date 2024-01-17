@@ -10,30 +10,24 @@ namespace TT_Lab.Rendering
 {
     public abstract class BaseRenderable : IRenderable
     {
-        private mat4 globalTransform;
+        private mat4 cachedWorldTransform;
         private mat4 localTransform;
-        private IRenderable parent;
+        private IRenderable? parent;
 
         public Scene Root { get; set; }
-        public IRenderable Parent
+        public IRenderable? Parent
         {
             get => parent;
             set
             {
                 parent = value;
-                UpdateChildrenTransform();
             }
         }
         public List<IRenderable> Children { get; set; } = new();
         public Single Opacity { get; set; } = 1.0f;
-        public mat4 GlobalTransform
+        public mat4 WorldTransform
         {
-            get => globalTransform;
-            set
-            {
-                globalTransform = value;
-                UpdateChildrenTransform();
-            }
+            get => cachedWorldTransform;
         }
         public mat4 LocalTransform
         {
@@ -41,16 +35,25 @@ namespace TT_Lab.Rendering
             set
             {
                 localTransform = value;
-                GlobalTransform = LocalTransform * Parent.GlobalTransform;
+                UpdateTransform();
             }
         }
 
-        public BaseRenderable(Scene? root)
+        public BaseRenderable(Scene root)
         {
             Root = root;
-            parent = Root;
-            globalTransform = mat4.Identity;
+            parent = root;
             localTransform = mat4.Identity;
+            UpdateTransform();
+        }
+
+        public void UpdateTransform()
+        {
+            cachedWorldTransform = (parent != null) ? parent.WorldTransform * localTransform : localTransform;
+            foreach (var child in Children)
+            {
+                child.UpdateTransform();
+            }
         }
 
         public abstract void Render();
@@ -59,27 +62,19 @@ namespace TT_Lab.Rendering
         {
             Children.Add(child);
             child.Parent = this;
-            UpdateChildrenTransform();
+            child.UpdateTransform();
         }
 
         public virtual void RemoveChild(IRenderable child)
         {
             Children.Remove(child);
             child.Parent = Root;
-            UpdateChildrenTransform();
-        }
-
-        private void UpdateChildrenTransform()
-        {
-            foreach (var child in Children)
-            {
-                child.GlobalTransform = child.LocalTransform * GlobalTransform;
-            }
+            child.UpdateTransform();
         }
 
         public virtual void SetUniforms(ShaderProgram shader)
         {
-            shader.SetUniformMatrix4("Model", GlobalTransform.Values1D);
+            shader.SetUniformMatrix4("Model", WorldTransform.Values1D);
         }
     }
 }

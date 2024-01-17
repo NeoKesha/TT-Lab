@@ -3,13 +3,17 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Policy;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Util;
 
@@ -22,6 +26,9 @@ namespace TT_Lab.Rendering.Objects
 
         Vector3 ambientColor = new Vector3();
         private vec3 pos = new vec3();
+        private vec3 rot = new vec3();
+        Gizmo gizmo;
+        bool selected;
 
         public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache) : base(root)
         {
@@ -36,7 +43,11 @@ namespace TT_Lab.Rendering.Objects
                 SetupModelBuffer(objURI);
             }
             pos = new vec3(-instance.Position.X, instance.Position.Y, instance.Position.Z);
+            rot = new vec3(instance.RotationX.GetRotation(), instance.RotationY.GetRotation(), instance.RotationZ.GetRotation());
+            SetPositionAndRotation(pos, rot);
             Deselect();
+            gizmo = new Gizmo(root);
+            AddChild(gizmo);
         }
 
         public void SetPositionAndRotation(vec3 pos, vec3 rot)
@@ -56,6 +67,7 @@ namespace TT_Lab.Rendering.Objects
             ambientColor.X = 0.1f;
             ambientColor.Y = 0.6f;
             ambientColor.Z = 0.1f;
+            selected = true;
         }
 
         public void Deselect()
@@ -63,6 +75,7 @@ namespace TT_Lab.Rendering.Objects
             ambientColor.X = 0.5f;
             ambientColor.Y = 0.5f;
             ambientColor.Z = 0.5f;
+            selected = false;
         }
 
         public void Bind()
@@ -85,15 +98,13 @@ namespace TT_Lab.Rendering.Objects
             {
                 modelBuffer.Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-
                 modelBuffer.Unbind();
             }
-
-
             Unbind();
-            Root.DrawLine(vec3.Zero, new vec3(-1, 0, 0), new vec4(1.0f, 0.0f, 0.0f, 1.0f), GlobalTransform);
-            Root.DrawLine(vec3.Zero, new vec3(0, 1, 0), new vec4(0.0f, 1.0f, 0.0f, 1.0f), GlobalTransform);
-            Root.DrawLine(vec3.Zero, new vec3(0, 0, 1), new vec4(0.0f, 0.0f, 1.0f, 1.0f), GlobalTransform);
+            if (selected)
+            {
+                gizmo.Render();
+            }
         }
 
         public void Unbind()
@@ -148,7 +159,7 @@ namespace TT_Lab.Rendering.Objects
                 var modelData = assetManager.GetAssetData<ModelData>(rigidModelData.Model);
                 for (var i = 0; i < modelData.Vertexes.Count; ++i)
                 {
-                    modelBuffers.Add(BufferGeneration.GetModelBuffer(modelData.Vertexes[i].Select(v => v.Position).ToList(), modelData.Faces[i],
+                    modelBuffers.Add(BufferGeneration.GetModelBuffer(modelData.Vertexes[i].Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), modelData.Faces[i],
                     modelData.Vertexes[i].Select((v) =>
                     {
                         var col = v.Color.GetColor();

@@ -28,7 +28,6 @@ namespace TT_Lab.Rendering
             instanceRender = new ObjectInstance(parent, instanceData, modelBufferCache);
             position = new vec3(-instanceData.Position.X, instanceData.Position.Y, instanceData.Position.Z);
             rotation = new vec3(instanceData.RotationX.GetRotation(), instanceData.RotationY.GetRotation(), instanceData.RotationZ.GetRotation());
-            instanceRender.SetPositionAndRotation(position, rotation);
             var assetManager = AssetManager.Get();
             var objData = assetManager.GetAssetData<GameObjectData>(instanceData.ObjectId);
             if (objData.OGISlots[0] != LabURI.Empty)
@@ -77,7 +76,7 @@ namespace TT_Lab.Rendering
 
         public mat4 GetTransform()
         {
-            return instanceRender.GlobalTransform;
+            return instanceRender.WorldTransform;
         }
     }
 }

@@ -92,8 +92,7 @@ namespace TT_Lab.Rendering
         public Scene(List<AssetViewModel> sceneTree, float width, float height) :
             this(width, height, new ShaderProgram.LibShader { Path = "Shaders\\Light.frag", Type = ShaderType.FragmentShader })
         {
-            GlobalTransform = mat4.Identity;
-            GlobalTransform = mat4.Translate(vec3.UnitY * -100);
+            LocalTransform = mat4.Identity;
 
             // Collision renderer
             var colData = sceneTree.Find((avm) =>
@@ -264,7 +263,7 @@ namespace TT_Lab.Rendering
             matrixRotationY = mat4.RotateY(rotation.y);
             matrixRotationZ = mat4.RotateZ(rotation.z);
             mat4 matrixScale = mat4.Scale(scale);
-            mat4 transform = GlobalTransform;
+            mat4 transform = WorldTransform;
             
             transform *= matrixPosition;
             transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
@@ -292,7 +291,7 @@ namespace TT_Lab.Rendering
             matrixRotationY = mat4.RotateY(rotation.y);
             matrixRotationZ = mat4.RotateZ(rotation.z);
             mat4 matrixScale = mat4.Scale(scale);
-            mat4 transform = GlobalTransform;
+            mat4 transform = WorldTransform;
 
             transform *= matrixPosition;
             transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
@@ -305,7 +304,7 @@ namespace TT_Lab.Rendering
         }
         public void DrawLine(vec3 point1, vec3 point2, vec4 color)
         {
-            DrawLine(point1, point2, color, GlobalTransform);
+            DrawLine(point1, point2, color, WorldTransform);
         }
         public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
         {
@@ -325,6 +324,34 @@ namespace TT_Lab.Rendering
             transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
             transform *= mat4.Scale(scale);
             primitiveRenderer.DrawLine(transform, color);
+        }
+        public void DrawSimpleAxis(vec3 position)
+        {
+            DrawSimpleAxis(position, vec3.Zero);
+        }
+        public void DrawSimpleAxis(vec3 position, vec3 rotation)
+        {
+            DrawSimpleAxis(position, rotation, vec3.Ones);
+        }
+        public void DrawSimpleAxis(vec3 position, vec3 rotation, vec3 scale)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = mat4.Identity;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawSimpleAxis(transform);
+        }
+        public void DrawSimpleAxis(mat4 transform)
+        {
+            primitiveRenderer.DrawSimpleAxis(transform);
         }
         public void SetCameraSpeed(float s)
         {
@@ -379,7 +406,8 @@ namespace TT_Lab.Rendering
             {
                 vec3 hit = new vec3();
                 float distance = 0.0f;
-                if (MathExtension.IntersectRayBox(cameraPosition, dir, instance.GetPosition(), instance.GetOffset(), instance.GetSize(), instance.GetTransform(), ref distance, ref hit))
+                var worldPosition =  instance.GetTransform() * new vec4(0,0,0,1);
+                if (MathExtension.IntersectRayBox(cameraPosition, dir, worldPosition.xyz, instance.GetOffset(), instance.GetSize(), instance.GetTransform(), ref distance, ref hit))
                 {
                     selectedInstance = instance;
                     break;

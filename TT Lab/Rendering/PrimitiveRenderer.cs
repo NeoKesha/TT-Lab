@@ -17,7 +17,7 @@ namespace TT_Lab.Rendering
         public void Init(Scene scene)
         {
             this.scene = scene;
-            boxBuffer = BufferGeneration.GetCubeBuffer(new Vector3(0,0,0), new Vector3(1,1,1), new Quaternion(new Vector3(0,0,0), 1.0f), new List<System.Drawing.Color>
+            boxBuffer = BufferGeneration.GetCubeBuffer(vec3.Zero, vec3.Ones, new quat(vec3.Zero, 1.0f), new List<System.Drawing.Color>
             {
                 System.Drawing.Color.White
             });
@@ -27,6 +27,7 @@ namespace TT_Lab.Rendering
                 ringBuffer[i] = BufferGeneration.GetCircleBuffer(System.Drawing.Color.White, i / (float)(RING_SEGMENT_RESOLUTION - 1));
             }
             lineBuffer = BufferGeneration.GetLineBuffer(System.Drawing.Color.White);
+            simpleAxisBuffer = BufferGeneration.GetSimpleAxisBuffer();
         }
 
         public void Terminate()
@@ -94,9 +95,29 @@ namespace TT_Lab.Rendering
             }
         }
 
+        public void DrawSimpleAxis(mat4 transform)
+        {
+            if (scene == null)
+            {
+                return;
+            }
+            scene.Renderer.RenderProgram.SetUniform1("Alpha", 1.0f);
+            scene.Renderer.RenderProgram.SetUniform3("AmbientMaterial", 1.0f, 1.0f, 1.0f);
+            scene.Renderer.RenderProgram.SetUniform3("LightPosition", scene.CameraPosition.x, scene.CameraPosition.y, scene.CameraPosition.z);
+            scene.Renderer.RenderProgram.SetUniform3("LightDirection", -scene.CameraDirection.x, scene.CameraDirection.y, scene.CameraDirection.z);
+            scene.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
+            if (simpleAxisBuffer != null)
+            {
+                simpleAxisBuffer.Bind();
+                GL.DrawElements(PrimitiveType.Lines, simpleAxisBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+                simpleAxisBuffer.Unbind();
+            }
+        }
+
         const int RING_SEGMENT_RESOLUTION = 16;
         private IndexedBufferArray? boxBuffer;
         private IndexedBufferArray? lineBuffer;
+        private IndexedBufferArray? simpleAxisBuffer;
         private IndexedBufferArray[]? ringBuffer;
         private Scene? scene;
     }

@@ -75,7 +75,7 @@ namespace TT_Lab.Rendering.Objects
 
         public override void Render()
         {
-            Root.DrawBox(GlobalTransform, color);
+            Root.DrawBox(WorldTransform, color);
         }
 
         public void Unbind()
