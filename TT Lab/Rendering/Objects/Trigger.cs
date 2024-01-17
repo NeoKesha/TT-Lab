@@ -73,7 +73,7 @@ namespace TT_Lab.Rendering.Objects
             viewModel.PropertyChanged -= Tvm_PropertyChanged;
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Root.DrawBox(WorldTransform, color);
         }

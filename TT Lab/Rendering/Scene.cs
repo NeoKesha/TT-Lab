@@ -209,6 +209,11 @@ namespace TT_Lab.Rendering
             Unbind();
         }
 
+        protected override void RenderSelf()
+        {
+            
+        }
+
         public void Bind()
         {
         }

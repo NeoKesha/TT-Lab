@@ -13,6 +13,7 @@ namespace TT_Lab.Rendering
         private mat4 cachedWorldTransform;
         private mat4 localTransform;
         private IRenderable? parent;
+        private bool enabled;
 
         public Scene Root { get; set; }
         public IRenderable? Parent
@@ -39,11 +40,24 @@ namespace TT_Lab.Rendering
             }
         }
 
+        public bool Enabled { get => enabled; set { 
+               if (value)
+                {
+                    Enable();
+                } 
+                else
+                {
+                    Disable();
+                }
+            } 
+        }
+
         public BaseRenderable(Scene root)
         {
             Root = root;
             parent = root;
             localTransform = mat4.Identity;
+            enabled = true;
             UpdateTransform();
         }
 
@@ -56,7 +70,29 @@ namespace TT_Lab.Rendering
             }
         }
 
-        public abstract void Render();
+        public virtual void Render()
+        {
+            RenderSelf();
+            foreach (var child in Children)
+            {
+                if (!child.Enabled)
+                {
+                    continue;
+                }
+                child?.Render();
+            }
+        }
+
+        protected abstract void RenderSelf();
+
+        public void Enable()
+        {
+            enabled = true;
+        }
+        public void Disable()
+        {
+            enabled = false;
+        }
 
         public virtual void AddChild(IRenderable child)
         {

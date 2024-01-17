@@ -12,10 +12,10 @@ namespace TT_Lab.Rendering.Objects
 {
     internal class Gizmo : BaseRenderable
     {
-
-        public Gizmo(Scene root, IRenderable? parent = null) : base(root)
+        private IRenderable? anchor;
+        public Gizmo(Scene root, IRenderable? anchor = null) : base(root)
         {
-
+            this.anchor = anchor;
         }
 
         public void Bind() 
@@ -28,7 +28,7 @@ namespace TT_Lab.Rendering.Objects
 
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Root.DrawSimpleAxis(WorldTransform);
         }

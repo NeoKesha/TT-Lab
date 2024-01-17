@@ -9,6 +9,7 @@ namespace TT_Lab.Rendering
     {
         Scene Root { get; set; }
         IRenderable? Parent { get; set; }
+        bool Enabled { get; set; }
         List<IRenderable> Children { get; set; }
         float Opacity { get; set; }
         mat4 WorldTransform { get; }
@@ -19,6 +20,8 @@ namespace TT_Lab.Rendering
         void PostRender() { }
         void AddChild(IRenderable child);
         void RemoveChild(IRenderable child);
+        void Enable();
+        void Disable();
         public void UpdateTransform();
     }
 }

@@ -96,7 +96,7 @@ namespace TT_Lab.Rendering.Buffers
             }
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             var renderProgram = Root.Renderer.RenderProgram;

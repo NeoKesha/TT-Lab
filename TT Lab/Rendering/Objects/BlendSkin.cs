@@ -33,7 +33,7 @@ namespace TT_Lab.Rendering.Objects
             model.Delete();
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             model.Render();
         }

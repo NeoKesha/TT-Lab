@@ -37,7 +37,7 @@ namespace TT_Lab.Rendering.Objects
             collisionBuffer.Delete();
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);

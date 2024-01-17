@@ -51,7 +51,7 @@ namespace TT_Lab.Rendering.Objects
         {
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Root.DrawBox(WorldTransform, color);
         }

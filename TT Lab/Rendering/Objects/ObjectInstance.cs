@@ -45,9 +45,9 @@ namespace TT_Lab.Rendering.Objects
             pos = new vec3(-instance.Position.X, instance.Position.Y, instance.Position.Z);
             rot = new vec3(instance.RotationX.GetRotation(), instance.RotationY.GetRotation(), instance.RotationZ.GetRotation());
             SetPositionAndRotation(pos, rot);
-            Deselect();
-            gizmo = new Gizmo(root);
+            gizmo = new Gizmo(root, this);
             AddChild(gizmo);
+            Deselect();
         }
 
         public void SetPositionAndRotation(vec3 pos, vec3 rot)
@@ -68,6 +68,7 @@ namespace TT_Lab.Rendering.Objects
             ambientColor.Y = 0.6f;
             ambientColor.Z = 0.1f;
             selected = true;
+            gizmo.Enable();
         }
 
         public void Deselect()
@@ -76,6 +77,7 @@ namespace TT_Lab.Rendering.Objects
             ambientColor.Y = 0.5f;
             ambientColor.Z = 0.5f;
             selected = false;
+            gizmo.Disable();
         }
 
         public void Bind()
@@ -91,7 +93,7 @@ namespace TT_Lab.Rendering.Objects
             modelBuffers.Clear();
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             foreach (var modelBuffer in modelBuffers)
@@ -101,10 +103,6 @@ namespace TT_Lab.Rendering.Objects
                 modelBuffer.Unbind();
             }
             Unbind();
-            if (selected)
-            {
-                gizmo.Render();
-            }
         }
 
         public void Unbind()
