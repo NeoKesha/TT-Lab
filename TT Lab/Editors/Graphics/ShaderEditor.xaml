@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors.Graphics"
-             xmlns:Controls="clr-namespace:TT_Lab.Controls" xmlns:Editors="clr-namespace:TT_Lab.Editors" x:Name="ShaderEditorControl" x:Class="TT_Lab.Editors.Graphics.ShaderEditor"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:Editors="clr-namespace:TT_Lab.Editors"
+             xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Graphics"
+             x:Name="ShaderEditorControl"
+             x:Class="TT_Lab.Editors.Graphics.ShaderEditor"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:MaterialShaderViewModel}"
              d:DesignHeight="786.996" d:DesignWidth="1300.683">
     <Grid>
         <Grid.ColumnDefinitions>

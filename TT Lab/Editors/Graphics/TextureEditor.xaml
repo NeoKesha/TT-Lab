@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:base="clr-namespace:TT_Lab.Editors"
-             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Class="TT_Lab.Editors.Graphics.TextureEditor"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls" xmlns:graphics="clr-namespace:TT_Lab.ViewModels.Graphics"
+             d:DataContext="{d:DesignInstance Type=graphics:TextureViewModel}"
+             x:Class="TT_Lab.Editors.Graphics.TextureEditor"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" AllowDrop="True" Drop="TextureViewer_Drop">
     <Grid>
@@ -22,9 +24,9 @@
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding ViewModel.TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1" IsEnabled="False"/>
-            <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding ViewModel.PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1" IsEnabled="False"/>
-            <Controls:LabeledCheckBox Checked="{Binding ViewModel.GenerateMipmaps}" BoundProperty="GenerateMipmaps" x:Name="GenerateMipmapsCheckbox" Grid.Column="2" HorizontalAlignment="Right" CheckBoxName="Generate Mipmaps" VerticalAlignment="Center"/>
+            <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1" IsEnabled="False"/>
+            <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1" IsEnabled="False"/>
+            <Controls:LabeledCheckBox Checked="{Binding GenerateMipmaps}" BoundProperty="GenerateMipmaps" x:Name="GenerateMipmapsCheckbox" Grid.Column="2" HorizontalAlignment="Left" CheckBoxName="Generate Mipmaps" VerticalAlignment="Center" Margin="5,0,0,0"/>
         </Grid>
         <base:SceneEditor x:Name="TextureViewer" Margin="0" Header="Texture viewer" Grid.Row="1" Padding="1"/>
         <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="2"/>

@@ -20,11 +20,6 @@ namespace TT_Lab.Editors.Instance
         public PathEditor(PathViewModel pvm, CommandManager comManager) : base(pvm, comManager)
         {
             InitializeComponent();
-            DataContext = new
-            {
-                ViewModel = pvm,
-                Layers = Util.Layers
-            };
             InitValidators();
             Loaded += PathEditor_Loaded;
         }

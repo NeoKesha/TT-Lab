@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Media;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
@@ -13,9 +16,13 @@ namespace TT_Lab.ViewModels.Graphics
         private ITwinTexture.TextureFunction _texFun;
         private ITwinTexture.TexturePixelFormat _pixelFormat;
         private Boolean _generateMipmaps;
+        private ObservableCollection<object> _textureFunctions;
+        private ObservableCollection<object> _pixelFormats;
 
         public TextureViewModel(LabURI asset) : base(asset)
         {
+            _textureFunctions = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TextureFunction)).Cast<object>());
+            _pixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TexturePixelFormat)).Cast<object>());
         }
 
         public TextureViewModel(LabURI asset, AssetViewModel parent) : base(asset, parent)
@@ -23,6 +30,8 @@ namespace TT_Lab.ViewModels.Graphics
             _pixelFormat = GetAsset<Texture>().PixelFormat;
             _texFun = GetAsset<Texture>().TextureFunction;
             _generateMipmaps = GetAsset<Texture>().GenerateMipmaps;
+            _textureFunctions = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TextureFunction)).Cast<object>());
+            _pixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TexturePixelFormat)).Cast<object>());
         }
 
         public override void Save(object? o)
@@ -40,6 +49,26 @@ namespace TT_Lab.ViewModels.Graphics
             _texture?.Dispose();
             _texture = null;
             base.UnloadData();
+        }
+
+        public ObservableCollection<object> TexFuns
+        {
+            get => _textureFunctions;
+            private set
+            {
+                _textureFunctions = value;
+                NotifyChange();
+            }
+        }
+
+        public ObservableCollection<object> PixelFormats
+        {
+            get => _pixelFormats;
+            private set
+            {
+                _pixelFormats = value;
+                NotifyChange();
+            }
         }
 
         public Bitmap Texture

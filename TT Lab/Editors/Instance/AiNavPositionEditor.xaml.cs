@@ -18,11 +18,6 @@ namespace TT_Lab.Editors.Instance
         public AiNavPositionEditor(AIPositionViewModel aiPosViewModel, Command.CommandManager commandManager) : base(aiPosViewModel, commandManager)
         {
             InitializeComponent();
-            DataContext = new
-            {
-                ViewModel = aiPosViewModel,
-                Layers = Util.Layers
-            };
             InitValidators();
             Loaded += AiNavPositionEditor_Loaded;
         }

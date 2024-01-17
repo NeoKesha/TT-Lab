@@ -44,11 +44,6 @@ namespace TT_Lab.Editors.Instance
         public TriggerEditor(TriggerViewModel viewModel, Command.CommandManager commandManager) : base(viewModel, commandManager)
         {
             InitializeComponent();
-            DataContext = new
-            {
-                ViewModel = viewModel,
-                Layers = Util.Layers
-            };
             InitValidators();
             Loaded += TriggerEditor_Loaded;
         }

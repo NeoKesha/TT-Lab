@@ -7,6 +7,8 @@
              xmlns:base="clr-namespace:TT_Lab.Editors"
              xmlns:sys="clr-namespace:System;assembly=System"
              xmlns:controls="clr-namespace:TT_Lab.Controls"
+             xmlns:instance="clr-namespace:TT_Lab.ViewModels.Instance"
+             d:DataContext="{d:DesignInstance Type=instance:PositionViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -14,7 +16,7 @@
             <RowDefinition/>
             <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
-        <controls:LabeledDropList x:Name="InstanceLayerIDList" SelectedItem="{Binding ViewModel.LayoutID}" Items="{Binding Layers}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout" Editor="{Binding ElementName=PositionEditorControl, Mode=OneWay}" BoundProperty="LayoutID"/>
-        <controls:VectorEditor Editor="{Binding ElementName=PositionEditorControl, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="-5,-5,-5,-5" Grid.Row="1" VerticalAlignment="Stretch" VerticalLayout="True" PropertyTarget="{Binding ViewModel.Position}"/>
+        <controls:LabeledDropList x:Name="InstanceLayerIDList" SelectedItem="{Binding LayoutID}" Items="{Binding Layers}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout" Editor="{Binding ElementName=PositionEditorControl, Mode=OneWay}" BoundProperty="LayoutID"/>
+        <controls:VectorEditor Editor="{Binding ElementName=PositionEditorControl, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="-5,-5,-5,-5" Grid.Row="1" VerticalAlignment="Stretch" VerticalLayout="True" PropertyTarget="{Binding Position}"/>
     </Grid>
 </base:BaseEditor>

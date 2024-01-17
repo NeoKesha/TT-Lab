@@ -29,6 +29,12 @@ namespace TT_Lab.ViewModels
         private bool _dirty;
         private OpenDialogueCommand.DialogueResult _dialogueResult = new();
         private ICommand _unsavedChangesCommand;
+        private static ObservableCollection<object> _layers;
+
+        static AssetViewModel()
+        {
+            _layers = Editors.Instance.Util.Layers;
+        }
 
         private AssetViewModel()
         {
@@ -217,6 +223,8 @@ namespace TT_Lab.ViewModels
             }
             return null;
         }
+
+        public ObservableCollection<object> Layers => _layers;
 
         public Boolean IsSelected
         {

@@ -20,11 +20,6 @@ namespace TT_Lab.Editors.Instance
         {
             var pvm = positionModel;
             InitializeComponent();
-            DataContext = new
-            {
-                ViewModel = pvm,
-                Layers = Util.Layers
-            };
             InitValidators();
             Loaded += PositionEditor_Loaded;
         }
