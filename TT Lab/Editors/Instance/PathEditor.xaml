@@ -5,7 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
              xmlns:base="clr-namespace:TT_Lab.Editors"
-             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="PathEditorControl" x:Class="TT_Lab.Editors.Instance.PathEditor"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:instance="clr-namespace:TT_Lab.ViewModels.Instance"
+             d:DataContext="{d:DesignInstance Type=instance:PathViewModel}"
+             x:Name="PathEditorControl"
+             x:Class="TT_Lab.Editors.Instance.PathEditor"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="300">
     <Grid>
@@ -19,23 +23,23 @@
             <RowDefinition Height="67*"/>
         </Grid.RowDefinitions>
 
-        <Controls:LabeledDropList Items="{Binding Layers}" SelectedItem="{Binding ViewModel.LayoutID}" x:Name="InstanceLayoutList" Grid.ColumnSpan="2" BoundProperty="LayoutID" Editor="{Binding ElementName=PathEditorControl, Mode=OneWay}" DropListName="Instance layout"/>
+        <Controls:LabeledDropList Items="{Binding Layers}" SelectedItem="{Binding LayoutID}" x:Name="InstanceLayoutList" Grid.ColumnSpan="2" BoundProperty="LayoutID" Editor="{Binding ElementName=PathEditorControl, Mode=OneWay}" DropListName="Instance layout"/>
         <GroupBox Header="Points" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1">
-            <ListBox x:Name="PointsList" ItemsSource="{Binding ViewModel.Points}" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="False" SelectionChanged="PointsList_SelectionChanged" GotFocus="PointsList_GotFocus">
+            <ListBox x:Name="PointsList" ItemsSource="{Binding Points}" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="False" SelectionChanged="PointsList_SelectionChanged" GotFocus="PointsList_GotFocus" d:ItemsSource="{d:SampleData ItemCount=5}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add" Command="{Binding ViewModel.AddPointCommand}"/>
-                        <MenuItem Header="Delete" Command="{Binding ViewModel.DeletePointCommand}"/>
+                        <MenuItem Header="Add" Command="{Binding AddPointCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding DeletePointCommand}"/>
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>
         </GroupBox>
         <GroupBox Grid.Column="1" Header="Arguments" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1">
-            <ListBox x:Name="ArgumentsList" ItemsSource="{Binding ViewModel.Arguments}" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="True" SelectionChanged="ArgumentsList_SelectionChanged" GotFocus="ArgumentsList_GotFocus">
+            <ListBox x:Name="ArgumentsList" ItemsSource="{Binding Arguments}" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="True" SelectionChanged="ArgumentsList_SelectionChanged" GotFocus="ArgumentsList_GotFocus" d:ItemsSource="{d:SampleData ItemCount=5}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add" Command="{Binding ViewModel.AddArgumentCommand}"/>
-                        <MenuItem Header="Delete" Command="{Binding ViewModel.DeleteArgumentCommand}"/>
+                        <MenuItem Header="Add" Command="{Binding AddArgumentCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding DeleteArgumentCommand}"/>
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>

@@ -29,23 +29,7 @@ namespace TT_Lab.Editors.Graphics
         public ShaderEditor(LabShaderViewModel shaderViewModel, MaterialEditor materialEditor) : base(shaderViewModel, materialEditor.CommandManager)
         {
             InitializeComponent();
-            DataContext = new
-            {
-                ViewModel = shaderViewModel,
-                MaterialEditor = materialEditor,
-                ShaderTypes = new ObservableCollection<object>(Enum.GetValues(typeof(TwinShader.Type)).Cast<object>()),
-                AlphaTestMethods = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaTestMethod)).Cast<object>()),
-                ProcessAfterFailed = new ObservableCollection<object>(Enum.GetValues(typeof(ProcessAfterAlphaTestFailed)).Cast<object>()),
-                DestinationAlphaTest = new ObservableCollection<object>(Enum.GetValues(typeof(DestinationAlphaTestMode)).Cast<object>()),
-                DepthTestMethods = new ObservableCollection<object>(Enum.GetValues(typeof(DepthTestMethod)).Cast<object>()),
-                ShadingMethods = new ObservableCollection<object>(Enum.GetValues(typeof(ShadingMethod)).Cast<object>()),
-                TextureCoordinates = new ObservableCollection<object>(Enum.GetValues(typeof(TextureCoordinatesSpecification)).Cast<object>()),
-                TextureFilters = new ObservableCollection<object>(Enum.GetValues(typeof(TextureFilter)).Cast<object>()),
-                ZvalueDrawMasks = new ObservableCollection<object>(Enum.GetValues(typeof(ZValueDrawMask)).Cast<object>()),
-                ColorSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(ColorSpecMethod)).Cast<object>()),
-                AlphaSpecs = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaSpecMethod)).Cast<object>()),
-                AlphaBlendingPresets = new ObservableCollection<object>(Enum.GetValues(typeof(AlphaBlendPresets)).Cast<object>()),
-            };
+            DataContext = new MaterialShaderViewModel(shaderViewModel, materialEditor);
             InitValidators();
             TextureViewer.FileDrop += TextureViewer_FileDrop;
             TextureViewer_RendererInit();

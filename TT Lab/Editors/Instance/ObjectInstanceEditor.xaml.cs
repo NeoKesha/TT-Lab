@@ -43,14 +43,8 @@ namespace TT_Lab.Editors.Instance
             vm.Positions.CollectionChanged += Positions_CollectionChanged;
             vm.Paths.CollectionChanged += Paths_CollectionChanged;
             var allObj = new ObservableCollection<object>(AssetManager.Get().GetAssets().Where(a => a.Type == typeof(GameObject)).Select(a => a.GetViewModel()).Cast<object>());
-            var allScripts = new ObservableCollection<object>(AssetManager.Get().GetAssets().Where(a => a.Type == typeof(BehaviourStarter)).Select(a => a.GetViewModel()).Cast<object>());
-            DataContext = new
-            {
-                ViewModel = vm,
-                Layers = Util.Layers,
-                AllObjects = allObj,
-                AllScripts = allScripts,
-            };
+            var allBehaviours = new ObservableCollection<object>(AssetManager.Get().GetAssets().Where(a => a.Type == typeof(BehaviourStarter)).Select(a => a.GetViewModel()).Cast<object>());
+            DataContext = new ObjectInstanceViewModelSearch(vm, allObj, allBehaviours);
 
             UpdateAddInstanceMenu();
             LinkedInstancesContextMenu.Items.Add(new MenuItem

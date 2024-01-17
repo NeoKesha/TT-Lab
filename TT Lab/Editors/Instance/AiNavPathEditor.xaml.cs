@@ -34,12 +34,7 @@ namespace TT_Lab.Editors.Instance
             {
                 positions.Add((UInt16)p.Asset.ID);
             }
-            DataContext = new
-            {
-                ViewModel = GetViewModel<AiPathViewModel>(),
-                Layers = Util.Layers,
-                Positions = positions
-            };
+            DataContext = new AiPathViewModelSearch(GetViewModel<AiPathViewModel>(), positions);
         }
 
         private void InitValidators()

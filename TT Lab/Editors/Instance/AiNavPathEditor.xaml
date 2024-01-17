@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
+             xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Instance"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="AiNavPathEditorControl" x:Class="TT_Lab.Editors.Instance.AiNavPathEditor"
              xmlns:base="clr-namespace:TT_Lab.Editors"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance viewModels:AiPathViewModelSearch}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -18,7 +20,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Controls:LabeledDropList SelectedItem="{Binding ViewModel.LayoutID}" Items="{Binding Layers}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Grid.ColumnSpan="2" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}"/>
+        <Controls:LabeledDropList SelectedItem="{Binding ViewModel.LayoutID}" Items="{Binding ViewModel.Layers}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Grid.ColumnSpan="2" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}"/>
         <UniformGrid Grid.Row="1" Rows="2">
             <Controls:LabeledDropList SelectedItem="{Binding ViewModel.PathBegin}" Items="{Binding Positions}" x:Name="PathBeginList" DropListName="Path Begin" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}" BoundProperty="PathBegin"/>
             <Controls:LabeledDropList SelectedItem="{Binding ViewModel.PathEnd}" Items="{Binding Positions}" x:Name="PathEndList" DropListName="Path End" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}" BoundProperty="PathEnd"/>

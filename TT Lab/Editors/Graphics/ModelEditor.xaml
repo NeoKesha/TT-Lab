@@ -8,11 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="419*"/>
-            <RowDefinition Height="31*"/>
-        </Grid.RowDefinitions>
         <base:SceneEditor x:Name="SceneRenderer" Header="Model viewer"/>
-        <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="1"/>
     </Grid>
 </base:BaseEditor>

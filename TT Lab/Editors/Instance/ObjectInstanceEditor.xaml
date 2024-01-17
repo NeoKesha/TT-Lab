@@ -8,7 +8,10 @@
              xmlns:vm="clr-namespace:TT_Lab.ViewModels.Code"
              xmlns:instVm="clr-namespace:TT_Lab.ViewModels.Instance"
              xmlns:baseVm="clr-namespace:TT_Lab.ViewModels"
-             xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="ObjectInstanceEditorControl" x:Class="TT_Lab.Editors.Instance.ObjectInstanceEditor"
+             xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             d:DataContext="{d:DesignInstance Type=instVm:ObjectInstanceViewModelSearch}"
+             x:Name="ObjectInstanceEditorControl"
+             x:Class="TT_Lab.Editors.Instance.ObjectInstanceEditor"
              mc:Ignorable="d" 
              d:DesignHeight="1100" d:DesignWidth="300">
     <Grid>
@@ -25,7 +28,7 @@
                         <RowDefinition Height="50*"/>
                         <RowDefinition Height="243*"/>
                     </Grid.RowDefinitions>
-                    <Controls:LabeledDropList Items="{Binding Layers}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" SelectedItem="{Binding ViewModel.LayoutID}"/>
+                    <Controls:LabeledDropList Items="{Binding ViewModel.Layers}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" SelectedItem="{Binding ViewModel.LayoutID}"/>
                     <Grid x:Name="MainPropsGrid" Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -35,7 +38,7 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Controls:LabeledDropList SelectedItem="{Binding ViewModel.InstanceObject}" Items="{Binding AllObjects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="InstanceObject">
+                        <Controls:LabeledDropList SelectedItem="{Binding ViewModel.InstanceObject}" Items="{Binding Objects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="InstanceObject">
                             <Controls:LabeledDropList.ItemTemplate>
                                 <DataTemplate DataType="{x:Type baseVm:AssetViewModel}">
                                     <TextBlock Text="{Binding Alias}"/>
@@ -47,7 +50,7 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="2*"/>
                             </Grid.RowDefinitions>
-                            <Controls:LabeledDropList SelectedItem="{Binding ViewModel.OnSpawnScript}" Items="{Binding AllScripts}" x:Name="OnSpawnScriptList" Margin="0,0,0,0" DropListName="On spawn script" AllowDrop="True" BoundProperty="OnSpawnScript" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=UseOnSpawnScriptBox}">
+                            <Controls:LabeledDropList SelectedItem="{Binding ViewModel.OnSpawnScript}" Items="{Binding Behaviours}" x:Name="OnSpawnScriptList" Margin="0,0,0,0" DropListName="On spawn script" AllowDrop="True" BoundProperty="OnSpawnScript" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=UseOnSpawnScriptBox}">
                                 <Controls:LabeledDropList.ItemTemplate>
                                     <DataTemplate DataType="{x:Type vm:BehaviourStarterViewModel}">
                                         <TextBlock Text="{Binding Alias}"/>
@@ -118,7 +121,7 @@
                         </Expander>
                         <Expander x:Name="LinkedInstancesExpander" Header="Linked instances" MaxHeight="250">
                             <Grid>
-                                <ListBox x:Name="LinkedInstancesList" Height="300" SelectionChanged="LinkedInstancesList_SelectionChanged">
+                                <ListBox x:Name="LinkedInstancesList" Height="300" SelectionChanged="LinkedInstancesList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type instVm:ObjectInstanceViewModel}">
                                             <TextBlock Text="{Binding Name}"/>
@@ -132,7 +135,7 @@
                         </Expander>
                         <Expander x:Name="LinkedPositionsExpander" Header="Linked positions" MaxHeight="300">
                             <Grid>
-                                <ListBox x:Name="LinkedPositionsList" Height="300" SelectionChanged="LinkedPositionsList_SelectionChanged">
+                                <ListBox x:Name="LinkedPositionsList" Height="300" SelectionChanged="LinkedPositionsList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type instVm:PositionViewModel}">
                                             <TextBlock Text="{Binding Alias}"/>
@@ -146,7 +149,7 @@
                         </Expander>
                         <Expander x:Name="LinkedPathsExpander" Header="Linked paths">
                             <Grid>
-                                <ListBox x:Name="LinkedPathsList" Height="300" SelectionChanged="LinkedPathsList_SelectionChanged">
+                                <ListBox x:Name="LinkedPathsList" Height="300" SelectionChanged="LinkedPathsList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type instVm:PathViewModel}">
                                             <TextBlock Text="{Binding Alias}"/>
@@ -170,7 +173,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding ViewModel.IntParams}" x:Name="IntPropsList" Height="200" SelectionChanged="IntPropsList_SelectionChanged">
+                                <ListBox ItemsSource="{Binding ViewModel.IntParams}" x:Name="IntPropsList" Height="200" SelectionChanged="IntPropsList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ContextMenu>
                                         <ContextMenu x:Name="IntPropsContextMenu"/>
                                     </ListBox.ContextMenu>
@@ -184,7 +187,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding ViewModel.FlagParams}" x:Name="FlagPropsList" Height="200" SelectionChanged="FlagPropsList_SelectionChanged">
+                                <ListBox ItemsSource="{Binding ViewModel.FlagParams}" x:Name="FlagPropsList" Height="200" SelectionChanged="FlagPropsList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding StringFormat={}{0:X}}"/>
@@ -203,7 +206,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding ViewModel.FloatParams}" x:Name="FloatPropsList" Height="200" SelectionChanged="FloatPropsList_SelectionChanged">
+                                <ListBox ItemsSource="{Binding ViewModel.FloatParams}" x:Name="FloatPropsList" Height="200" SelectionChanged="FloatPropsList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ContextMenu>
                                         <ContextMenu x:Name="FloatPropsContextMenu"/>
                                     </ListBox.ContextMenu>

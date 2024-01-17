@@ -26,12 +26,6 @@ namespace TT_Lab.Editors.Graphics
 
         public TextureEditor(TextureViewModel texture) : base(texture)
         {
-            DataContext = new
-            {
-                ViewModel = viewModel,
-                TexFuns = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TextureFunction)).Cast<object>()),
-                PixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TexturePixelFormat)).Cast<object>())
-            };
             InitializeComponent();
             TextureViewer_RendererInit();
             TextureViewer.FileDrop += TextureViewer_FileDrop;

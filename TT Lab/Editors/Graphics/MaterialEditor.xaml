@@ -7,8 +7,9 @@
              xmlns:viewmodel="clr-namespace:TT_Lab.ViewModels.Graphics"
              xmlns:base="clr-namespace:TT_Lab.Editors"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="MaterialEditorControl" x:Class="TT_Lab.Editors.Graphics.MaterialEditor"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance viewmodel:MaterialViewModel}"
+             d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="62*"/>
@@ -44,7 +45,7 @@
                         <ColumnDefinition Width="315*"/>
                         <ColumnDefinition Width="186*"/>
                     </Grid.ColumnDefinitions>
-                    <Controls:LabeledTextBox Text="{Binding Header, Mode=OneWay}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Header" Padding="2,0,0,0" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}" BoundProperty="Header"/>
+                    <Controls:LabeledTextBox Text="{Binding ActivatedShaders, Mode=OneWay}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Activated shaders" Padding="2,0,0,0" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}" BoundProperty="ActivatedShaders"/>
                     <Controls:LabeledTextBox Text="{Binding Name, Mode=OneWay}" x:Name="MaterialNameBox" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}" BoundProperty="Name"/>
                     <Controls:LabeledTextBox Text="{Binding DmaChainIndex, Mode=OneWay}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index" Editor="{Binding ElementName=MaterialEditorControl, Mode=OneWay}" BoundProperty="DmaChainIndex"/>
                 </Grid>

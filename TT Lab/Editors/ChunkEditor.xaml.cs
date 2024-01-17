@@ -30,7 +30,7 @@ namespace TT_Lab.Editors
             {
                 chunkTree.Add(AssetManager.Get().GetAsset(item).GetViewModel());
             }
-            DataContext = new { Items = chunkTree };
+            DataContext = new ChunkViewModel(chunkTree);
             isDefault = chunk.Name.ToLower() == "default";
             InitializeComponent();
             if (!isDefault)
