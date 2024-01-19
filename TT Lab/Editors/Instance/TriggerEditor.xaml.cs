@@ -131,6 +131,7 @@ namespace TT_Lab.Editors.Instance
                 {
                     Header = "Add",
                     ItemsSource = instMenuItems,
+                    ItemContainerStyle = (Style)FindResource("SimpleMenuItem"),
                 };
                 InstancesListContextMenu.Items.Insert(0, addInstance);
             }

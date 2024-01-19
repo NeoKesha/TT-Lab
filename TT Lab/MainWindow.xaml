@@ -102,7 +102,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Menu Template="{DynamicResource MainWindowMenuTemplate}" Style="{DynamicResource MainMenuStyle}" x:Name="MainMenu" UseLayoutRounding="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <MenuItem x:Name="ProjectSubMenu" Header="Project" >
+            <MenuItem x:Name="ProjectSubMenu" Header="Project">
                 <MenuItem x:Name="CreateProject" Header="Create Project..."/>
                 <MenuItem x:Name="OpenProject" Header="Open Project..." InputGestureText="Ctrl+O"/>
                 <MenuItem x:Name="OpenRecentSubMenu" Header="Open Recent" ItemsSource="{Binding RecentlyOpened}" IsEnabled="{Binding HasRecents}"/>

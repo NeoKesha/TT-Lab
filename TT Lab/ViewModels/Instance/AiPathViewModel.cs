@@ -26,8 +26,8 @@ namespace TT_Lab.ViewModels.Instance
         {
             _asset.LayoutID = (int)LayoutID;
             var data = _asset.GetData<AiPathData>();
-            data.PathBegin = PathBegin;
-            data.PathEnd = PathEnd;
+            data.PathBegin = pathBegin;
+            data.PathEnd = pathEnd;
             data.Args[0] = Arg1;
             data.Args[1] = Arg2;
             data.Args[2] = Arg3;
@@ -47,27 +47,27 @@ namespace TT_Lab.ViewModels.Instance
                 }
             }
         }
-        public LabURI PathBegin
+        public AssetViewModel PathBegin
         {
-            get => pathBegin;
+            get => AssetManager.Get().GetAsset(pathBegin).GetViewModel();
             set
             {
-                if (pathBegin != value)
+                if (pathBegin != value.Asset.URI)
                 {
-                    pathBegin = value;
+                    pathBegin = value.Asset.URI;
                     IsDirty = true;
                     NotifyChange();
                 }
             }
         }
-        public LabURI PathEnd
+        public AssetViewModel PathEnd
         {
-            get => pathEnd;
+            get => AssetManager.Get().GetAsset(pathEnd).GetViewModel();
             set
             {
-                if (pathEnd != value)
+                if (pathEnd != value.Asset.URI)
                 {
-                    pathEnd = value;
+                    pathEnd = value.Asset.URI;
                     IsDirty = true;
                     NotifyChange();
                 }
