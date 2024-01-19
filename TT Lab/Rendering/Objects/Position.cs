@@ -20,7 +20,7 @@ namespace TT_Lab.Rendering.Objects
         {
             id = pos.Asset.ID;
             layid = (int)pos.LayoutID;
-            position = new vec3(pos.Position.X, pos.Position.Y, pos.Position.Z);
+            position = new vec3(-pos.Position.X, pos.Position.Y, pos.Position.Z);
             pos.PropertyChanged += Pos_PropertyChanged;
             color = new vec4();
             System.Drawing.Color tmp = System.Drawing.Color.FromArgb(layid * 255 / 7, 100, 200);
@@ -37,7 +37,7 @@ namespace TT_Lab.Rendering.Objects
             if (!string.IsNullOrEmpty(e.PropertyName) && (e.PropertyName == "IsSelected" || e.PropertyName == "IsDirty")) return;
             var vm = (PositionViewModel)sender!;
             layid = (int)vm.LayoutID;
-            position = new vec3(vm.Position.X, vm.Position.Y, vm.Position.Z);
+            position = new vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z);
             LocalTransform = mat4.Translate(position);
             LocalTransform *= mat4.Scale(0.25f);
         }

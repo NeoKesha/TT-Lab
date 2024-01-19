@@ -51,7 +51,6 @@ namespace TT_Lab.Rendering
             if (boxBuffer != null) {
                 boxBuffer.Bind();
                 GL.DrawElements(PrimitiveType.Triangles, boxBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-                GL.DrawElements(PrimitiveType.Lines, boxBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
                 boxBuffer.Unbind();
             }
         }

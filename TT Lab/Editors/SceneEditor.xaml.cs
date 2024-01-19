@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Wpf;
+using SharpGLTF.Scenes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -65,6 +66,7 @@ namespace TT_Lab.Editors
             Glcontrol.KeyUp += Glcontrol_KeyUp;
             Glcontrol.MouseWheel += Glcontrol_MouseWheel;
             Glcontrol.MouseDown += Glcontrol_MouseClick;
+            Glcontrol.MouseUp += Glcontrol_MouseReleased;
 
             ContextMenu = new System.Windows.Controls.ContextMenu();
             var settings = new GLWpfControlSettings
@@ -111,6 +113,7 @@ namespace TT_Lab.Editors
 
         private void Glcontrol_KeyUp(Object? sender, KeyEventArgs e)
         {
+            Scene?.HandleKeyReleased(e.Key);
             if (pressedKeys.Contains(e.Key))
             {
                 pressedKeys.Remove(e.Key);
@@ -119,6 +122,7 @@ namespace TT_Lab.Editors
 
         private void Glcontrol_KeyDown(Object? sender, KeyEventArgs e)
         {
+            Scene?.HandleKeyPressed(e.Key);
             if (!pressedKeys.Contains(e.Key))
             {
                 pressedKeys.Add(e.Key);
@@ -134,7 +138,16 @@ namespace TT_Lab.Editors
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 var pos = e.MouseDevice.GetPosition(Glcontrol);
-                Scene?.MouseSelect((float)pos.X, (float)pos.Y);
+                Scene?.MousePressed((float)pos.X, (float)pos.Y);
+            }
+        }
+
+        private void Glcontrol_MouseReleased(Object? sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Released)
+            {
+                var pos = e.MouseDevice.GetPosition(Glcontrol);
+                Scene?.MouseReleased((float)pos.X, (float)pos.Y);
             }
         }
 
@@ -144,6 +157,10 @@ namespace TT_Lab.Editors
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
                 Scene?.RotateView(new Vector2((float)(curMousePos.X - mousePos.X), (float)(mousePos.Y - curMousePos.Y)));
+            }
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Scene?.MouseMove((float)curMousePos.X, (float)curMousePos.Y);
             }
             mousePos = curMousePos;
         }
@@ -163,8 +180,8 @@ namespace TT_Lab.Editors
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Scene?.PreRender();
-            Scene?.Move(pressedKeys);
             Scene?.HandleInputs(pressedKeys);
+            Scene?.Move(pressedKeys);
             Scene?.Render();
             Scene?.PostRender();
 

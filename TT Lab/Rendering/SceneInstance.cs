@@ -13,7 +13,7 @@ using TT_Lab.Rendering.Objects;
 
 namespace TT_Lab.Rendering
 {
-    internal class SceneInstance
+    public class SceneInstance
     {
         ObjectInstance instanceRender;
         ObjectInstanceData instanceData;
@@ -39,6 +39,11 @@ namespace TT_Lab.Rendering
                 size.z = ogiData.BoundingBox[1].Z - ogiData.BoundingBox[0].Z;
                 offset = new vec3(ogiData.BoundingBox[0].X, ogiData.BoundingBox[0].Y, ogiData.BoundingBox[0].Z);
             }
+        }
+
+        public ObjectInstanceData GetData()
+        {
+            return instanceData;
         }
 
         public void Select()

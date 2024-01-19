@@ -56,8 +56,20 @@ namespace TT_Lab.Rendering
         private readonly Queue<Action> queuedRenderActions = new();
         private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
         private readonly List<SceneInstance> sceneInstances = new();
-        private SceneInstance? selectedInstance = null;
+        public EditingContext editingContext = new EditingContext();
         private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
+
+        //Control keys handling
+        private bool leftShift = false;
+        private bool rightShift = false;
+        private bool leftCtrl = false;
+        private bool rightCtrl = false;
+        private bool leftAlt = false;
+        private bool rightAlt = false;
+
+        private bool Shift { get => leftShift | rightShift; }
+        private bool Ctrl { get => leftCtrl | rightCtrl; }
+        private bool Alt { get => leftAlt | rightAlt; }
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -211,7 +223,7 @@ namespace TT_Lab.Rendering
 
         protected override void RenderSelf()
         {
-            
+
         }
 
         public void Bind()
@@ -269,7 +281,7 @@ namespace TT_Lab.Rendering
             matrixRotationZ = mat4.RotateZ(rotation.z);
             mat4 matrixScale = mat4.Scale(scale);
             mat4 transform = WorldTransform;
-            
+
             transform *= matrixPosition;
             transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
             transform *= matrixScale;
@@ -395,31 +407,58 @@ namespace TT_Lab.Rendering
             cameraDirection = glm.Normalized(direction);
         }
 
-        public void MouseSelect(float x, float y)
+        public void MousePressed(float x, float y)
+        {
+            if (editingContext.transformMode == TransformMode.SELECTION || editingContext.transformAxis == TransformAxis.NONE)
+            {
+                MouseSelect(x, y);
+            } else
+            {
+                editingContext.StartTransform(x, y);
+            }
+        }
+
+        public void MouseMove(float x, float y)
+        {
+            editingContext.UpdateTransform(x, y);
+        }
+
+        public void MouseReleased(float x, float y)
+        {
+            
+            editingContext.EndTransform(x, y);
+        }
+
+        private void MouseSelect(float x, float y)
         {
             var win = new vec3(x, resolution.y - y, 0.0f);
             var view = new vec4(0, 0, resolution.x, resolution.y);
             var worldPos = mat4.UnProject(win, viewMat, projectionMat, view);
             vec3 dir = glm.Normalized(worldPos - cameraPosition);
-            if (selectedInstance != null)
+            if (editingContext.selectedInstance != null)
             {
-                selectedInstance.Deselect();
-                selectedInstance = null;
+                editingContext.selectedInstance.Deselect();
+                editingContext.selectedInstance = null;
             }
 
             foreach (var instance in sceneInstances)
             {
                 vec3 hit = new vec3();
                 float distance = 0.0f;
-                var worldPosition =  instance.GetTransform() * new vec4(0,0,0,1);
+                var worldPosition = instance.GetTransform() * new vec4(0, 0, 0, 1);
                 if (MathExtension.IntersectRayBox(cameraPosition, dir, worldPosition.xyz, instance.GetOffset(), instance.GetSize(), instance.GetTransform(), ref distance, ref hit))
                 {
-                    selectedInstance = instance;
+                    editingContext.selectedInstance = instance;
                     break;
                 }
             }
 
-            selectedInstance?.Select();
+            editingContext.selectedInstance?.Select();
+        }
+
+        public void SetAlt(bool value)
+        {
+
         }
 
         public void ZoomView(float z)
@@ -432,6 +471,54 @@ namespace TT_Lab.Rendering
 
         public void HandleInputs(List<Key> keysPressed)
         {
+            //Update control keys
+            leftShift = false;
+            rightShift = false;
+            leftCtrl = false;
+            rightCtrl = false;
+            leftAlt = false;
+            rightAlt = false;
+            foreach (var key in keysPressed)
+            {
+                if (key == Key.LeftAlt) leftAlt = true; 
+                if (key == Key.RightAlt) rightAlt = true;
+                if (key == Key.LeftCtrl) leftCtrl = true; 
+                if (key == Key.RightCtrl) rightCtrl = true;
+                if (key == Key.LeftShift) leftShift = true; 
+                if (key == Key.RightShift) rightShift = true; 
+            }
+        }
+
+        public void HandleKeyPressed(Key key)
+        {
+            switch (key)
+            {
+                case Key.M:
+                    editingContext.ToggleSpace();
+                    break;
+                case Key.T:
+                    editingContext.ToggleTranslate();
+                    break;
+                case Key.R:
+                    editingContext.ToggleRotate();
+                    break;
+                case Key.X:
+                    editingContext.SetTransformAxis(TransformAxis.X);
+                    break;
+                case Key.Y:
+                    editingContext.SetTransformAxis(TransformAxis.Y);
+                    break;
+                case Key.Z:
+                    editingContext.SetTransformAxis(TransformAxis.Z);
+                    break;
+                //case Key.None:
+                //    editingContext.transformMode = TransformMode.SCALE;
+                //    break;
+            }
+        }
+
+        public void HandleKeyReleased(Key key)
+        {
 
         }
 
@@ -439,13 +526,12 @@ namespace TT_Lab.Rendering
         {
             if (!canManipulateCamera) return;
 
-            var camSp = cameraSpeed;
-
-            if (keysPressed.Contains(Key.LeftShift) || keysPressed.Contains(Key.RightShift))
+            if (Alt || Ctrl)
             {
-                camSp *= 5;
+                return;
             }
 
+            var camSp = cameraSpeed * (Shift?5.0f:1.0f);
             foreach (var keyPressed in keysPressed)
             {
                 switch (keyPressed)
