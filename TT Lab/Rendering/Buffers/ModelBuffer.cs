@@ -82,7 +82,7 @@ namespace TT_Lab.Rendering.Buffers
 
         public virtual void Bind()
         {
-            Root.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
         }
 
         public override void Render()
@@ -92,7 +92,7 @@ namespace TT_Lab.Rendering.Buffers
             {
                 if (textureBuffers.TryGetValue(i, out TextureBuffer? value))
                 {
-                    Root?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, value.Buffer, 0);
+                    Root?.Renderer.RenderProgram.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, value.Buffer, 0);
                 }
                 modelBuffers[i].Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffers[i].Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

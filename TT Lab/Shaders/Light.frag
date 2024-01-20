@@ -1,4 +1,4 @@
-#version 410 compatibility
+#include "Includes/ModelLayout.frag"
 
 uniform vec3 LightPosition;
 uniform vec3 LightDirection;

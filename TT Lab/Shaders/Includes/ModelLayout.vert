@@ -15,8 +15,11 @@ out vec3 Diffuse;
 out vec3 EyespaceNormal;
 out float Depth;
 
-uniform mat4 Projection;
-uniform mat4 View;
-uniform mat4 Model;
+#include "Includes/GlobalUniformsDeclaration.glsl" //! #include "GlobalUniformsDeclaration.glsl"
+// Vertex shader specific uniforms
+uniform vec3 BlendShape;
+uniform int BlendShapesAmount;
+uniform int ShapeOffset[MAX_BLENDS];
+uniform int ShapeStart;
 uniform float MorphWeights[MAX_BLENDS];
 layout (binding = 2) uniform sampler2D Morphs;

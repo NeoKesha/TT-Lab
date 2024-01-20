@@ -13,9 +13,9 @@ namespace TT_Lab.Rendering.Renderers
 
         private ShaderProgram renderShader;
 
-        public BasicRenderer(ShaderProgram.LibShader lib)
+        public BasicRenderer(ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
         {
-            renderShader = new(ManifestResourceLoader.LoadTextFile("Shaders\\ModelRender.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\ModelTextured.frag"), lib);
+            renderShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
         }
 
         public void Delete()
@@ -29,7 +29,7 @@ namespace TT_Lab.Rendering.Renderers
 
         public void Render(List<IRenderable> objects)
         {
-            Scene.SetPVMNShaderUniforms(RenderProgram);
+            Scene.SetGlobalUniforms(RenderProgram);
             foreach (var @object in objects)
             {
                 @object.Render();
@@ -37,6 +37,10 @@ namespace TT_Lab.Rendering.Renderers
         }
 
         public void RenderOpaque(List<IRenderable> objects)
+        {
+        }
+
+        public void PostProcess()
         {
         }
     }

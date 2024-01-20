@@ -39,7 +39,7 @@ namespace TT_Lab.Rendering.Objects
         public override void Render()
         {
             Bind();
-            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
             // Fragment program uniforms
             Root?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
             Root?.Renderer.RenderProgram.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);

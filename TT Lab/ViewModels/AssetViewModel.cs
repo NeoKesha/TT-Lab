@@ -172,6 +172,21 @@ namespace TT_Lab.ViewModels
 
         protected virtual void UnloadData()
         {
+            if (_editor is BaseEditor)
+            {
+                _editor.Unloaded -= EditorUnload;
+            }
+            else
+            {
+                var baseEdit = (BaseEditor)((TabItem)_editor!).Content;
+                var closableTab = (ClosableTab)((TabItem)_editor).Header;
+                closableTab.CloseTab -= EditorUnload;
+                closableTab.CloseTab -= baseEdit.CloseEditor;
+                closableTab.UndoTab -= baseEdit.UndoExecuted;
+                closableTab.RedoTab -= baseEdit.RedoExecuted;
+                closableTab.SaveTab -= baseEdit.SaveExecuted;
+            }
+
             _asset.DisposeData();
             _editor = null;
         }

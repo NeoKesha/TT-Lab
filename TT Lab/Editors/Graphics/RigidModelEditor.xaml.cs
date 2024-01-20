@@ -43,7 +43,7 @@ namespace TT_Lab.Editors.Graphics
         private void SceneRenderer_RendererInit()
         {
             SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.Glcontrol.ActualWidth, (float)SceneRenderer.Glcontrol.ActualHeight,
-                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
+                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var rm = GetAssetData<RigidModelData>();
@@ -56,7 +56,7 @@ namespace TT_Lab.Editors.Graphics
             MaterialViewer.Scene?.Delete();
 
             MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.Glcontrol.ActualWidth, (float)MaterialViewer.Glcontrol.ActualHeight,
-                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TexturePass.frag" });
+                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
 

@@ -36,7 +36,7 @@ namespace TT_Lab.Rendering.Objects
 
         public void Bind()
         {
-            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
             positionBuffer.Bind();
         }
 

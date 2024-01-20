@@ -46,7 +46,7 @@ namespace TT_Lab.Rendering.Objects
             this.texAmt = texAmt;
             for (var i = 0; i < texAmt; ++i)
             {
-                materialBuffers[i] = new TwinMaterial(shader, "tex", textures[i], viewModels[i], 3 + i, i);
+                materialBuffers[i] = new TwinMaterial(shader, "Texture", textures[i], viewModels[i], 3 + i, i);
             }
         }
 
@@ -56,7 +56,7 @@ namespace TT_Lab.Rendering.Objects
             {
                 materialBuffers[i].Bind();
             }
-            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
             Root?.Renderer.RenderProgram.SetUniform1("TexturesAmount", texAmt);
             planeBuffer.Bind();
         }

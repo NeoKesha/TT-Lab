@@ -7,6 +7,7 @@ using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Controls;
 using TT_Lab.Project;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab

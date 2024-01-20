@@ -12,9 +12,9 @@
             /// </summary>
             WBOIT,
             /// <summary>
-            /// Dual Depth Peeling
+            /// Basic renderer with no translucency support
             /// </summary>
-            DDP
+            BASIC
         }
     }
 }

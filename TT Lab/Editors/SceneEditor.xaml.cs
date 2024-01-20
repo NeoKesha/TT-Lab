@@ -79,6 +79,18 @@ namespace TT_Lab.Editors
 
         public void CloseEditor()
         {
+            SizeChanged -= SceneEditor_SizeChanged;
+
+            Glcontrol.DragEnter -= Glcontrol_DragEnter;
+            Glcontrol.DragOver -= Glcontrol_DragDrop;
+            Glcontrol.MouseMove -= Glcontrol_MouseMove;
+            Glcontrol.KeyDown -= Glcontrol_KeyDown;
+            Glcontrol.KeyUp -= Glcontrol_KeyUp;
+            Glcontrol.MouseWheel -= Glcontrol_MouseWheel;
+            Glcontrol.MouseDown -= Glcontrol_MouseClick;
+            Glcontrol.Initialized -= Glcontrol_Init;
+            Glcontrol.Render -= Glcontrol_Paint;
+
             Scene?.Delete();
         }
 

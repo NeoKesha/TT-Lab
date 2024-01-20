@@ -105,7 +105,7 @@ namespace TT_Lab.Rendering.Buffers
             {
                 if (textureBuffers.TryGetValue(i, out TextureBuffer? value))
                 {
-                    renderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, value.Buffer, 0);
+                    renderProgram.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, value.Buffer, 0);
                 }
                 for (var j = 0; j < blendShapesAmount; j++)
                 {

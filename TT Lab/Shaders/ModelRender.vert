@@ -1,4 +1,3 @@
-#include "Includes/ModelLayout.vert"
 #include "Includes/ShadingLibrary.vert"
 
 void main()

@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
@@ -11,18 +12,20 @@ namespace TT_Lab.Rendering.Renderers
         public Scene Scene { get; set; }
         public ShaderProgram RenderProgram { get => wboitShader; }
 
+        private readonly TextureBuffer screenTexture = new TextureBuffer();
         private readonly TextureBuffer colorTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly TextureBuffer alphaTexture = new TextureBuffer(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebuffer = new FrameBuffer();
-        private readonly ShaderProgram resultImageShader =
-            new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\ScreenResult.frag"));
+        private readonly ShaderProgram resultImageShader;
         private readonly ShaderProgram wboitShader;
         private readonly ShaderProgram opaqueShader;
 
-        public WBOITRenderer(RenderBuffer depthBuffer, float width, float height, ShaderProgram.LibShader lib)
+        public WBOITRenderer(RenderBuffer depthBuffer, float width, float height, ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
         {
-            wboitShader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\WBOIT_blend.frag"), lib);
-            opaqueShader = new ShaderProgram(ManifestResourceLoader.LoadTextFile("Shaders\\ModelRender.vert"), ManifestResourceLoader.LoadTextFile("Shaders\\ModelTextured.frag"), lib);
+            resultImageShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.WboitScreenResult, ShaderStorage.StoredFragmentShaders.WboitScreenResult, vertexLib, fragmentLib);
+            wboitShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.WboitBlend, ShaderStorage.StoredFragmentShaders.WboitBlend, vertexLib, fragmentLib);
+            opaqueShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
+
             ReallocateFramebuffer((int)width, (int)height);
             framebuffer.Bind();
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTexture.Buffer, 0);
@@ -34,9 +37,7 @@ namespace TT_Lab.Rendering.Renderers
 
         public void Delete()
         {
-            resultImageShader.Delete();
-            wboitShader.Delete();
-            opaqueShader.Delete();
+            screenTexture.Delete();
             framebuffer.Delete();
             colorTexture.Delete();
             alphaTexture.Delete();
@@ -44,6 +45,11 @@ namespace TT_Lab.Rendering.Renderers
 
         public void ReallocateFramebuffer(int width, int height)
         {
+            screenTexture.Bind();
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, PixelFormat.Rgb, PixelType.UnsignedByte, nint.Zero);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
             int numOfSamples = 4;
             colorTexture?.Bind();
             GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, numOfSamples, PixelInternalFormat.Rgba16f, width, height, true);
@@ -71,7 +77,7 @@ namespace TT_Lab.Rendering.Renderers
             GL.BlendFunc(1, BlendingFactorSrc.DstColor, BlendingFactorDest.Zero);
             GL.BlendEquation(1, BlendEquationMode.FuncAdd);
             wboitShader.Bind();
-            Scene.SetPVMNShaderUniforms(wboitShader);
+            Scene.SetGlobalUniforms(wboitShader);
             foreach (var @object in objects)
             {
                 @object.Render();
@@ -96,12 +102,17 @@ namespace TT_Lab.Rendering.Renderers
         public void RenderOpaque(List<IRenderable> objects)
         {
             opaqueShader.Bind();
-            Scene.SetPVMNShaderUniforms(opaqueShader);
+            Scene.SetGlobalUniforms(opaqueShader);
             foreach (var @object in objects)
             {
                 @object.Render();
             }
             opaqueShader.Unbind();
+        }
+
+        public void PostProcess()
+        {
+            
         }
     }
 }
