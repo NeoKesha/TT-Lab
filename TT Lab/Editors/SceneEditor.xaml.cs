@@ -115,7 +115,6 @@ namespace TT_Lab.Editors
         {
             if (pressedKeys.Contains(e.Key))
             {
-                Scene?.HandleKeyReleased(e.Key);
                 pressedKeys.Remove(e.Key);
             }
         }
@@ -124,7 +123,6 @@ namespace TT_Lab.Editors
         {
             if (!pressedKeys.Contains(e.Key))
             {
-                Scene?.HandleKeyPressed(e.Key);
                 pressedKeys.Add(e.Key);
             }
         }
@@ -135,20 +133,11 @@ namespace TT_Lab.Editors
             {
                 ContextMenu.IsOpen = true;
             }
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                var pos = e.MouseDevice.GetPosition(Glcontrol);
-                Scene?.MousePressed((float)pos.X, (float)pos.Y);
-            }
         }
 
         private void Glcontrol_MouseReleased(Object? sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Released)
-            {
-                var pos = e.MouseDevice.GetPosition(Glcontrol);
-                Scene?.MouseReleased((float)pos.X, (float)pos.Y);
-            }
+
         }
 
         private void Glcontrol_MouseMove(Object? sender, MouseEventArgs e)
@@ -157,10 +146,6 @@ namespace TT_Lab.Editors
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
                 Scene?.RotateView(new Vector2((float)(curMousePos.X - mousePos.X), (float)(mousePos.Y - curMousePos.Y)));
-            }
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                Scene?.MouseMove((float)curMousePos.X, (float)curMousePos.Y);
             }
             mousePos = curMousePos;
         }

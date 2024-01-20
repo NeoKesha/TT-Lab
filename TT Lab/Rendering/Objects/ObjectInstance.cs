@@ -27,7 +27,6 @@ namespace TT_Lab.Rendering.Objects
         Vector3 ambientColor = new Vector3();
         private vec3 pos = new vec3();
         private vec3 rot = new vec3();
-        Gizmo gizmo;
         bool selected;
 
         public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache) : base(root)
@@ -45,8 +44,6 @@ namespace TT_Lab.Rendering.Objects
             pos = new vec3(-instance.Position.X, instance.Position.Y, instance.Position.Z);
             rot = new vec3(instance.RotationX.GetRotation(), instance.RotationY.GetRotation(), instance.RotationZ.GetRotation());
             SetPositionAndRotation(pos, rot);
-            gizmo = new Gizmo(root, this);
-            AddChild(gizmo);
             Deselect();
         }
 
@@ -68,7 +65,6 @@ namespace TT_Lab.Rendering.Objects
             ambientColor.Y = 0.6f;
             ambientColor.Z = 0.1f;
             selected = true;
-            gizmo.Enable();
         }
 
         public void Deselect()
@@ -77,7 +73,6 @@ namespace TT_Lab.Rendering.Objects
             ambientColor.Y = 0.5f;
             ambientColor.Z = 0.5f;
             selected = false;
-            gizmo.Disable();
         }
 
         public void Bind()

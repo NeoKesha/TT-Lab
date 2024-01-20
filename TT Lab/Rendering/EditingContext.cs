@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Editors;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 
@@ -21,18 +22,23 @@ namespace TT_Lab.Rendering
         private SceneInstance[] palette = new SceneInstance[9];
         private int currentPaletteIndex = 0;
         private Scene root;
+        private ChunkEditor editor;
+        private Gizmo gizmo;
 
-        public EditingContext(Scene root)
+        public EditingContext(Scene root, ChunkEditor editor)
         {
             this.root = root;
+            this.editor = editor;
             cursor = new EditorCursor(root);
             root.AddChild(cursor);
             root.AddRender(cursor);
+            gizmo = new Gizmo(root, this);
         }
 
         public void Deselect()
         {
             selectedInstance?.Deselect();
+            selectedInstance?.GetRenderable().RemoveChild(gizmo);
             selectedInstance = null;
         }
 
@@ -41,6 +47,7 @@ namespace TT_Lab.Rendering
             Deselect();
             selectedInstance = instance;
             selectedInstance?.Select();
+            selectedInstance?.GetRenderable().AddChild(gizmo);
         }
 
         public bool IsInstanceSelected()
@@ -68,7 +75,7 @@ namespace TT_Lab.Rendering
             var newInstanceData = CloneUtils.Clone(palette[currentPaletteIndex].GetData());
             var cursorPosition = cursor.GetPosition();
             newInstanceData.Position = new Twinsanity.TwinsanityInterchange.Common.Vector4(-cursorPosition.x, cursorPosition.y, cursorPosition.z, 1.0f);
-            var newInstance = root.NewSceneInstance(newInstanceData);
+            var newInstance = editor.NewSceneInstance(newInstanceData);
             Select(newInstance);
             transformMode = TransformMode.ROTATE;
             transformAxis = TransformAxis.NONE;
@@ -115,7 +122,7 @@ namespace TT_Lab.Rendering
 
         public void UpdateTransform(float x, float y)
         {
-            if (selectedInstance == null)
+            if (selectedInstance == null || !transforming)
             {
                 return;
             }
