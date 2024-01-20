@@ -113,18 +113,18 @@ namespace TT_Lab.Editors
 
         private void Glcontrol_KeyUp(Object? sender, KeyEventArgs e)
         {
-            Scene?.HandleKeyReleased(e.Key);
             if (pressedKeys.Contains(e.Key))
             {
+                Scene?.HandleKeyReleased(e.Key);
                 pressedKeys.Remove(e.Key);
             }
         }
 
         private void Glcontrol_KeyDown(Object? sender, KeyEventArgs e)
         {
-            Scene?.HandleKeyPressed(e.Key);
             if (!pressedKeys.Contains(e.Key))
             {
+                Scene?.HandleKeyPressed(e.Key);
                 pressedKeys.Add(e.Key);
             }
         }

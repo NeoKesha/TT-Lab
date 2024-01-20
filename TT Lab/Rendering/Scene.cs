@@ -56,8 +56,9 @@ namespace TT_Lab.Rendering
         private readonly Queue<Action> queuedRenderActions = new();
         private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
         private readonly List<SceneInstance> sceneInstances = new();
-        public EditingContext editingContext = new EditingContext();
+        public EditingContext editingContext;
         private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
+        private CollisionData colData;
 
         //Control keys handling
         private bool leftShift = false;
@@ -79,6 +80,7 @@ namespace TT_Lab.Rendering
         public Scene(float width, float height, ShaderProgram.LibShader libShader) : base(null)
         {
             Preferences.PreferenceChanged += Preferences_PreferenceChanged;
+            editingContext = new EditingContext(this);
 
             resolution.x = width;
             resolution.y = height;
@@ -107,7 +109,7 @@ namespace TT_Lab.Rendering
             LocalTransform = mat4.Identity;
 
             // Collision renderer
-            var colData = sceneTree.Find((avm) =>
+            colData = sceneTree.Find((avm) =>
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
@@ -142,6 +144,19 @@ namespace TT_Lab.Rendering
                 AddRender(pRend);
                 sceneInstances.Add(sceneInstance);
             }
+        }
+
+        public SceneInstance NewSceneInstance(ObjectInstanceData instData)
+        {
+            var newUri = new LabURI("fuckme");
+            var newAsset = new ObjectInstanceViewModel(newUri);
+            AssetManager.Get().AddAssetInstance(newUri., newAsset);
+            var sceneInstance = new SceneInstance(instData, modelBufferCache, this);
+            var pRend = sceneInstance.GetRenderable();
+
+            AddRender(pRend);
+            sceneInstances.Add(sceneInstance);
+            return sceneInstance;
         }
 
         /// <summary>
@@ -435,30 +450,45 @@ namespace TT_Lab.Rendering
             var view = new vec4(0, 0, resolution.x, resolution.y);
             var worldPos = mat4.UnProject(win, viewMat, projectionMat, view);
             vec3 dir = glm.Normalized(worldPos - cameraPosition);
-            if (editingContext.selectedInstance != null)
+
+            editingContext.Deselect();
+            SceneInstance result = null;
+            if (!Ctrl)
             {
-                editingContext.selectedInstance.Deselect();
-                editingContext.selectedInstance = null;
+                foreach (var instance in sceneInstances)
+                {
+                    vec3 hit = new vec3();
+                    float distance = 0.0f;
+                    var worldPosition = instance.GetTransform() * new vec4(0, 0, 0, 1);
+                    if (MathExtension.IntersectRayBox(cameraPosition, dir, worldPosition.xyz, instance.GetOffset(), instance.GetSize(), instance.GetTransform(), ref distance, ref hit))
+                    {
+                        result = instance;
+                        break;
+                    }
+                }
+                editingContext.Select(result);
             }
 
-            foreach (var instance in sceneInstances)
+            if (result == null)
             {
                 vec3 hit = new vec3();
                 float distance = 0.0f;
-                var worldPosition = instance.GetTransform() * new vec4(0, 0, 0, 1);
-                if (MathExtension.IntersectRayBox(cameraPosition, dir, worldPosition.xyz, instance.GetOffset(), instance.GetSize(), instance.GetTransform(), ref distance, ref hit))
+                foreach (var triangle in colData.Triangles)
                 {
-                    editingContext.selectedInstance = instance;
-                    break;
+                    var p1 = colData.Vectors[triangle.Face.Indexes[0]];
+                    var p2 = colData.Vectors[triangle.Face.Indexes[1]];
+                    var p3 = colData.Vectors[triangle.Face.Indexes[2]];
+                    if (MathExtension.IntersectRayTriangle(cameraPosition, dir, new vec3(-p1.X, p1.Y, p1.Z), new vec3(-p2.X, p2.Y, p2.Z), new vec3(-p3.X, p3.Y, p3.Z), ref distance, ref hit))
+                    {
+                        editingContext.SetCursorCoordinates(hit);
+                        if (Ctrl)
+                        {
+                            editingContext.SpawnAtCursor();
+                        }
+                        break;
+                    }
                 }
             }
-
-            editingContext.selectedInstance?.Select();
-        }
-
-        public void SetAlt(bool value)
-        {
-
         }
 
         public void ZoomView(float z)
@@ -485,7 +515,7 @@ namespace TT_Lab.Rendering
                 if (key == Key.LeftCtrl) leftCtrl = true; 
                 if (key == Key.RightCtrl) rightCtrl = true;
                 if (key == Key.LeftShift) leftShift = true; 
-                if (key == Key.RightShift) rightShift = true; 
+                if (key == Key.RightShift) rightShift = true;
             }
         }
 
@@ -511,9 +541,15 @@ namespace TT_Lab.Rendering
                 case Key.Z:
                     editingContext.SetTransformAxis(TransformAxis.Z);
                     break;
-                //case Key.None:
-                //    editingContext.transformMode = TransformMode.SCALE;
-                //    break;
+                case Key.K:
+                    editingContext.SetPalette(editingContext.selectedInstance);
+                    break;
+                case Key.P:
+                    editingContext.SpawnAtCursor();
+                    break;
+                    //case Key.None:
+                    //    editingContext.transformMode = TransformMode.SCALE;
+                    //    break;
             }
         }
 

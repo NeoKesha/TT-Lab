@@ -1,9 +1,13 @@
 ﻿using GlmSharp;
+using MS.WindowsAPICodePack.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TT_Lab.AssetData.Instance;
+using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 
 namespace TT_Lab.Rendering
 {
@@ -13,6 +17,62 @@ namespace TT_Lab.Rendering
         public TransformSpace transformSpace = TransformSpace.LOCAL;
         public TransformMode transformMode = TransformMode.SELECTION;
         public TransformAxis transformAxis = TransformAxis.NONE;
+        private EditorCursor cursor;
+        private SceneInstance[] palette = new SceneInstance[9];
+        private int currentPaletteIndex = 0;
+        private Scene root;
+
+        public EditingContext(Scene root)
+        {
+            this.root = root;
+            cursor = new EditorCursor(root);
+            root.AddChild(cursor);
+            root.AddRender(cursor);
+        }
+
+        public void Deselect()
+        {
+            selectedInstance?.Deselect();
+            selectedInstance = null;
+        }
+
+        public void Select(SceneInstance instance)
+        {
+            Deselect();
+            selectedInstance = instance;
+            selectedInstance?.Select();
+        }
+
+        public bool IsInstanceSelected()
+        {
+            return selectedInstance != null;
+        }
+
+        public void SetCursorCoordinates(vec3 pos)
+        {
+            cursor.SetPosition(pos);
+        }
+
+        public void SetPalette(SceneInstance instance)
+        {
+            palette[currentPaletteIndex] = instance;
+        }
+
+        public void SpawnAtCursor()
+        {
+            if (palette[currentPaletteIndex] == null)
+            {
+                return;
+            }
+
+            var newInstanceData = CloneUtils.Clone(palette[currentPaletteIndex].GetData());
+            var cursorPosition = cursor.GetPosition();
+            newInstanceData.Position = new Twinsanity.TwinsanityInterchange.Common.Vector4(-cursorPosition.x, cursorPosition.y, cursorPosition.z, 1.0f);
+            var newInstance = root.NewSceneInstance(newInstanceData);
+            Select(newInstance);
+            transformMode = TransformMode.ROTATE;
+            transformAxis = TransformAxis.NONE;
+        }
 
         public void StartTransform(float x, float y)
         {

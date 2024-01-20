@@ -1,7 +1,10 @@
 ﻿using GlmSharp;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
 using System;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.AssetData.Graphics.SubModels;
 
 namespace TT_Lab.Util
 {
@@ -91,6 +94,48 @@ namespace TT_Lab.Util
             distance = tmin;
             hit = origin + direction * distance;
             return true;
+        }
+
+        //https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+
+        public static bool IntersectRayTriangle(vec3 origin, vec3 direction, vec3 p1, vec3 p2, vec3 p3, ref float distance, ref vec3 hit)
+        {
+            vec3 edge1 = p2 - p1;
+            vec3 edge2 = p3 - p1;
+            vec3 ray_cross_e2 = glm.Cross(direction, edge2);
+            float det = glm.Dot(edge1, ray_cross_e2);
+
+            if (Math.Abs(det) < 0.001f)
+            {
+                return false;
+            }
+
+            float inv_det = 1.0f/ det;
+            vec3 s = origin - p1;
+            float u = inv_det * glm.Dot(s, ray_cross_e2);
+
+            if (u < 0 || u > 1)
+            {
+                return false;
+            }
+
+            vec3 s_cross_e1 = glm.Cross(s, edge1);
+            float v = inv_det * glm.Dot(direction, s_cross_e1);
+
+            if (v < 0 || u + v > 1)
+            {
+                return false;
+            }
+
+            distance = inv_det * glm.Dot(edge2, s_cross_e1);
+
+            if (distance >= 0.001f)
+            {
+                hit = origin + direction * distance;
+                return true;
+            }
+            
+            return false;
         }
     }
 }
