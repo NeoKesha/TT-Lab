@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Wpf;
-using SharpGLTF.Scenes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,7 +65,6 @@ namespace TT_Lab.Editors
             Glcontrol.KeyUp += Glcontrol_KeyUp;
             Glcontrol.MouseWheel += Glcontrol_MouseWheel;
             Glcontrol.MouseDown += Glcontrol_MouseClick;
-            Glcontrol.MouseUp += Glcontrol_MouseReleased;
 
             ContextMenu = new System.Windows.Controls.ContextMenu();
             var settings = new GLWpfControlSettings
@@ -133,11 +131,6 @@ namespace TT_Lab.Editors
             {
                 ContextMenu.IsOpen = true;
             }
-        }
-
-        private void Glcontrol_MouseReleased(Object? sender, MouseEventArgs e)
-        {
-
         }
 
         private void Glcontrol_MouseMove(Object? sender, MouseEventArgs e)
