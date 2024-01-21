@@ -264,10 +264,12 @@ namespace TT_Lab.Rendering
         {
             DrawBox(position, vec3.Zero, vec3.Ones);
         }
+
         public void DrawBox(vec3 position, vec3 rotation, vec3 scale)
         {
             DrawBox(position, rotation, scale, vec4.Ones);
         }
+
         public void DrawBox(vec3 position, vec3 rotation, vec3 scale, vec4 color)
         {
             rotation = rotation * 3.14f / 180.0f;
@@ -284,18 +286,22 @@ namespace TT_Lab.Rendering
             transform *= matrixScale;
             DrawBox(transform, color);
         }
+
         public void DrawBox(mat4 transform, vec4 color)
         {
             primitiveRenderer.DrawBox(transform, color);
         }
+
         public void DrawCircle(vec3 position)
         {
             DrawCircle(position, vec3.Zero, vec3.Ones);
         }
+
         public void DrawCircle(vec3 position, vec3 rotation, vec3 scale)
         {
             DrawCircle(position, rotation, scale, vec4.Ones);
         }
+
         public void DrawCircle(vec3 position, vec3 rotation, vec3 scale, vec4 color)
         {
             rotation = rotation * 3.14f / 180.0f;
@@ -312,14 +318,17 @@ namespace TT_Lab.Rendering
             transform *= matrixScale;
             DrawCircle(transform, color);
         }
+
         public void DrawCircle(mat4 transform, vec4 color)
         {
             primitiveRenderer.DrawCircle(transform, color);
         }
+
         public void DrawLine(vec3 point1, vec3 point2, vec4 color)
         {
             DrawLine(point1, point2, color, WorldTransform);
         }
+
         public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
         {
             var scaleX = (point2 - point1).Length;
@@ -339,14 +348,17 @@ namespace TT_Lab.Rendering
             transform *= mat4.Scale(scale);
             primitiveRenderer.DrawLine(transform, color);
         }
+
         public void DrawSimpleAxis(vec3 position)
         {
             DrawSimpleAxis(position, vec3.Zero);
         }
+
         public void DrawSimpleAxis(vec3 position, vec3 rotation)
         {
             DrawSimpleAxis(position, rotation, vec3.Ones);
         }
+
         public void DrawSimpleAxis(vec3 position, vec3 rotation, vec3 scale)
         {
             rotation = rotation * 3.14f / 180.0f;
@@ -363,10 +375,12 @@ namespace TT_Lab.Rendering
             transform *= matrixScale;
             DrawSimpleAxis(transform);
         }
+
         public void DrawSimpleAxis(mat4 transform)
         {
             primitiveRenderer.DrawSimpleAxis(transform);
         }
+
         public void SetCameraSpeed(float s)
         {
             cameraSpeed = s;
