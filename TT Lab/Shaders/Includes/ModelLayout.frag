@@ -8,6 +8,10 @@ in vec3 Texpos;
 in vec3 Diffuse;
 in vec4 Color;
 in vec3 EyespaceNormal;
+in mat4 Projection;
+in mat4 View;
+in mat4 Model;
+in float Depth;
 
 layout (location = 0) out vec4 outColor;
 

@@ -3,6 +3,8 @@
 
 #include "Includes/ModelLayout.vert" //! #include "ModelLayout.vert"
 
+mat4 GetViewModelMatrix(mat4 view, mat4 model);
+mat4 GetNormalMatrix(mat4 viewModel);
 vec3 ShadeVertex(mat4 normalMat, vec3 vertex, vec3 normal);
 
 vec3 GetVertexOffset(sampler2D offsets, int shapeId, int vertexId)
