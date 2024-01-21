@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Editors.Instance"
              xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Instance"
+             xmlns:baseVm="clr-namespace:TT_Lab.ViewModels"
              xmlns:Controls="clr-namespace:TT_Lab.Controls" x:Name="AiNavPathEditorControl" x:Class="TT_Lab.Editors.Instance.AiNavPathEditor"
              xmlns:base="clr-namespace:TT_Lab.Editors"
              mc:Ignorable="d"
@@ -15,21 +16,26 @@
             <RowDefinition Height="11*"/>
             <RowDefinition Height="34*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
 
         <Controls:LabeledDropList SelectedItem="{Binding ViewModel.LayoutID}" Items="{Binding ViewModel.Layers}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Grid.ColumnSpan="2" Height="48" BoundProperty="LayoutID" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}"/>
-        <UniformGrid Grid.Row="1" Rows="2">
-            <Controls:LabeledDropList SelectedItem="{Binding ViewModel.PathBegin}" Items="{Binding Positions}" x:Name="PathBeginList" DropListName="Path Begin" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}" BoundProperty="PathBegin"/>
-            <Controls:LabeledDropList SelectedItem="{Binding ViewModel.PathEnd}" Items="{Binding Positions}" x:Name="PathEndList" DropListName="Path End" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}" BoundProperty="PathEnd"/>
-        </UniformGrid>
-        <UniformGrid Grid.Row="1" Rows="3" Grid.Column="1">
+        <UniformGrid Grid.Row="1" Rows="5">
+            <Controls:LabeledDropList SelectedItem="{Binding ViewModel.PathBegin}" Items="{Binding Positions}" x:Name="PathBeginList" DropListName="Path Begin" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}" BoundProperty="PathBegin">
+                <Controls:LabeledDropList.ItemTemplate>
+                    <DataTemplate DataType="{x:Type baseVm:AssetViewModel}">
+                        <TextBlock Text="{Binding Alias}"/>
+                    </DataTemplate>
+                </Controls:LabeledDropList.ItemTemplate>
+            </Controls:LabeledDropList>
+            <Controls:LabeledDropList SelectedItem="{Binding ViewModel.PathEnd}" Items="{Binding Positions}" x:Name="PathEndList" DropListName="Path End" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}" BoundProperty="PathEnd">
+                <Controls:LabeledDropList.ItemTemplate>
+                    <DataTemplate DataType="{x:Type baseVm:AssetViewModel}">
+                        <TextBlock Text="{Binding Alias}"/>
+                    </DataTemplate>
+                </Controls:LabeledDropList.ItemTemplate>
+            </Controls:LabeledDropList>
             <Controls:LabeledTextBox Text="{Binding ViewModel.Arg1}" x:Name="Argument1Box" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 1" BoundProperty="Arg1" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}"/>
             <Controls:LabeledTextBox Text="{Binding ViewModel.Arg2}" x:Name="Argument2Box" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 2" BoundProperty="Arg2" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}"/>
             <Controls:LabeledTextBox Text="{Binding ViewModel.Arg3}" x:Name="Argument3Box" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 3" BoundProperty="Arg3" Editor="{Binding ElementName=AiNavPathEditorControl, Mode=OneWay}"/>
         </UniformGrid>
-
     </Grid>
 </base:BaseEditor>

@@ -62,7 +62,7 @@
                         <Controls:LabeledTextBox Text="{Binding ViewModel.RefListIndex}" x:Name="GlobalInstanceRefListIndexBox" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index" BoundProperty="RefListIndex" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}"/>
                     </Grid>
                     <ItemsControl Grid.Row="2">
-                        <Expander x:Name="PosPropsExpander" Header="Positional properties">
+                        <Expander x:Name="PosPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Positional properties">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -76,7 +76,7 @@
                                 </GroupBox>
                             </Grid>
                         </Expander>
-                        <Expander x:Name="StateFlagsExpander" Header="State flags">
+                        <Expander x:Name="StateFlagsExpander" Style="{DynamicResource SimpleExpander}" Header="State flags">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -119,12 +119,12 @@
                                 </UniformGrid>
                             </Grid>
                         </Expander>
-                        <Expander x:Name="LinkedInstancesExpander" Header="Linked instances" MaxHeight="250">
+                        <Expander x:Name="LinkedInstancesExpander" Style="{DynamicResource SimpleExpander}" Header="Linked instances" MaxHeight="250">
                             <Grid>
                                 <ListBox x:Name="LinkedInstancesList" Height="300" SelectionChanged="LinkedInstancesList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type instVm:ObjectInstanceViewModel}">
-                                            <TextBlock Text="{Binding Name}"/>
+                                            <TextBlock Text="{Binding Alias}"/>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                     <ListBox.ContextMenu>
@@ -133,7 +133,7 @@
                                 </ListBox>
                             </Grid>
                         </Expander>
-                        <Expander x:Name="LinkedPositionsExpander" Header="Linked positions" MaxHeight="300">
+                        <Expander x:Name="LinkedPositionsExpander" Style="{DynamicResource SimpleExpander}" Header="Linked positions" MaxHeight="300">
                             <Grid>
                                 <ListBox x:Name="LinkedPositionsList" Height="300" SelectionChanged="LinkedPositionsList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
@@ -147,7 +147,7 @@
                                 </ListBox>
                             </Grid>
                         </Expander>
-                        <Expander x:Name="LinkedPathsExpander" Header="Linked paths">
+                        <Expander x:Name="LinkedPathsExpander" Style="{DynamicResource SimpleExpander}" Header="Linked paths">
                             <Grid>
                                 <ListBox x:Name="LinkedPathsList" Height="300" SelectionChanged="LinkedPathsList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
@@ -167,7 +167,7 @@
             <TabItem x:Name="ExtraPropsTab" Header="Extra properties">
                 <Grid>
                     <ItemsControl>
-                        <Expander x:Name="IntPropsExpander" Header="Integer propeties" IsExpanded="True">
+                        <Expander x:Name="IntPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Integer propeties" IsExpanded="True">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -181,7 +181,7 @@
                                 <Controls:LabeledTextBox Text="{Binding ViewModel.SelectedInt}" x:Name="IntPropBox" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="SelectedInt"/>
                             </Grid>
                         </Expander>
-                        <Expander x:Name="FlagPropsExpander" Header="Flag properties">
+                        <Expander x:Name="FlagPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Flag properties">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -200,7 +200,7 @@
                                 <Controls:LabeledTextBox Text="{Binding ViewModel.SelectedFlag, StringFormat={}{0:X}}" x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1" Editor="{Binding ElementName=ObjectInstanceEditorControl, Mode=OneWay}" BoundProperty="SelectedFlag"/>
                             </Grid>
                         </Expander>
-                        <Expander x:Name="FloatPropsExpander" Header="Float properties">
+                        <Expander x:Name="FloatPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Float properties">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>

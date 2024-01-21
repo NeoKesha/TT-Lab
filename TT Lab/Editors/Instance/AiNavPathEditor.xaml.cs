@@ -32,7 +32,7 @@ namespace TT_Lab.Editors.Instance
             var navPositions = tree.Find(avm => avm.Alias == "AI Navigation Positions");
             foreach (var p in navPositions!.Children)
             {
-                positions.Add((UInt16)p.Asset.ID);
+                positions.Add(p);
             }
             DataContext = new AiPathViewModelSearch(GetViewModel<AiPathViewModel>(), positions);
         }
