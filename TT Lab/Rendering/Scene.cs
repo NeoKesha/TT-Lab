@@ -37,7 +37,7 @@ namespace TT_Lab.Rendering
         private mat4 projectionMat;
         private mat4 viewMat;
         private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
-        private vec3 cameraDirection = new(1, 0, 0);
+        private vec3 cameraDirection = new(0, 0, -1);
         private vec3 cameraUp = new(0, 1, 0);
         private vec2 resolution = new(0, 0);
         private float cameraSpeed = 1.0f;
@@ -388,7 +388,7 @@ namespace TT_Lab.Rendering
             canManipulateCamera = false;
         }
 
-        private vec2 yaw_pitch;
+        private vec2 yaw_pitch = new vec2(-90,0);
         public void RotateView(Vector2 rot)
         {
             if (!canManipulateCamera || rot.Length == 0) return;
