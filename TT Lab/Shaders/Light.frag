@@ -1,6 +1,5 @@
 #include "Includes/ModelLayout.frag"
 
-uniform float Alpha;
 uniform vec3 LightPosition;
 uniform vec3 LightDirection;
 uniform vec3 AmbientMaterial;
@@ -17,7 +16,7 @@ vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
     float sf = max(0.0, dot(N, H));
 
     vec4 color = col * vec4(AmbientMaterial, 1.0) + df * vec4(diffuse, 0.2);// + sf * vec4(SpecularMaterial, 1.0);
-    color *= Alpha;
+    color *= Opacity;
 
     return color;
 }

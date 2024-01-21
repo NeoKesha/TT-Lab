@@ -193,6 +193,7 @@ namespace TT_Lab.Rendering
         {
             program.SetUniformMatrix4("StartProjection", projectionMat.Values1D);
             program.SetUniformMatrix4("StartView", viewMat.Values1D);
+            program.SetUniformMatrix4("StartModel", WorldTransform.Values1D);
             program.SetUniform1("Time", time);
             program.SetUniform2("Resolution", resolution.x, resolution.y);
         }
@@ -241,7 +242,6 @@ namespace TT_Lab.Rendering
             GL.Disable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Multisample);
-            Renderer.PostProcess();
             Unbind();
             timer.Stop();
             time += timer.Elapsed.Microseconds;

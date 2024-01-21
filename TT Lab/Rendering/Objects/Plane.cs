@@ -71,7 +71,7 @@ namespace TT_Lab.Rendering.Objects
         {
             if (texture != null)
             {
-                Root?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 0);
+                Root?.Renderer.RenderProgram.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, texture.Buffer, 0);
             }
             Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
             planeBuffer.Bind();

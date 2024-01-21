@@ -110,7 +110,7 @@ namespace TT_Lab.Rendering
 
         public virtual void SetUniforms(ShaderProgram shader)
         {
-            shader.SetUniformMatrix4("Model", WorldTransform.Values1D);
+            shader.SetUniformMatrix4("StartModel", WorldTransform.Values1D);
         }
     }
 }
