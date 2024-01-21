@@ -1,12 +1,7 @@
 ﻿using GlmSharp;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Util;
 
@@ -48,7 +43,8 @@ namespace TT_Lab.Rendering
             scene.Renderer.RenderProgram.SetUniform3("LightPosition", scene.CameraPosition.x, scene.CameraPosition.y, scene.CameraPosition.z);
             scene.Renderer.RenderProgram.SetUniform3("LightDirection", -scene.CameraDirection.x, scene.CameraDirection.y, scene.CameraDirection.z);
             scene.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
-            if (boxBuffer != null) {
+            if (boxBuffer != null)
+            {
                 boxBuffer.Bind();
                 GL.DrawElements(PrimitiveType.Triangles, boxBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
                 boxBuffer.Unbind();

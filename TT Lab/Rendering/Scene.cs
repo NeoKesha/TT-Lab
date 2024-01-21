@@ -5,20 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using TT_Lab.AssetData.Code;
-using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace TT_Lab.Rendering
 {
@@ -67,7 +61,7 @@ namespace TT_Lab.Rendering
         public Scene(float width, float height, ShaderProgram.LibShader libShader) : base(null)
         {
             Preferences.PreferenceChanged += Preferences_PreferenceChanged;
-            
+
             resolution.x = width;
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
@@ -391,7 +385,7 @@ namespace TT_Lab.Rendering
             canManipulateCamera = false;
         }
 
-        private vec2 yaw_pitch = new vec2(-90,0);
+        private vec2 yaw_pitch = new vec2(-90, 0);
         public void RotateView(Vector2 rot)
         {
             if (!canManipulateCamera || rot.Length == 0) return;
@@ -440,7 +434,7 @@ namespace TT_Lab.Rendering
                 return;
             }
 
-            var camSp = cameraSpeed * (inputController.Shift ?5.0f:1.0f);
+            var camSp = cameraSpeed * (inputController.Shift ? 5.0f : 1.0f);
             foreach (var keyPressed in keysPressed)
             {
                 switch (keyPressed)

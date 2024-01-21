@@ -100,7 +100,7 @@ namespace TT_Lab.Editors
         {
             var sceneInstance = SceneRenderer.Scene.AddObjectInstance(instData);
             var pRend = sceneInstance.GetRenderable();
-        
+
             SceneRenderer.Scene.AddRender(pRend);
             sceneInstances.Add(sceneInstance);
 
@@ -209,14 +209,14 @@ namespace TT_Lab.Editors
                     editingContext.SetGrid();
                     break;
                 case Key.PageUp:
-                    editingContext.MoveCursorGrid(vec3.UnitY); 
+                    editingContext.MoveCursorGrid(vec3.UnitY);
                     break;
                 case Key.PageDown:
                     editingContext.MoveCursorGrid(-vec3.UnitY);
                     break;
                 case Key.Left:
                     editingContext.MoveCursorGrid(-vec3.UnitX);
-                break;
+                    break;
                 case Key.Right:
                     editingContext.MoveCursorGrid(vec3.UnitX);
                     break;

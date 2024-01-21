@@ -1,12 +1,4 @@
 ﻿using GlmSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TT_Lab.AssetData.Instance;
-using TT_Lab.Assets;
-using TT_Lab.Rendering.Buffers;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -19,8 +11,8 @@ namespace TT_Lab.Rendering.Objects
             Enabled = true;
         }
 
-        public void Bind() 
-        { 
+        public void Bind()
+        {
 
         }
 
@@ -59,7 +51,7 @@ namespace TT_Lab.Rendering.Objects
                     if (editingContext.transformAxis == TransformAxis.X)
                     {
                         LocalTransform *= mat4.Translate(0.5f, 0.0f, 0.0f);
-                        LocalTransform *= mat4.Scale(0.5f,0.025f, 0.025f);
+                        LocalTransform *= mat4.Scale(0.5f, 0.025f, 0.025f);
                         Root.DrawBox(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
                     }
                     if (editingContext.transformAxis == TransformAxis.Y)
@@ -110,9 +102,9 @@ namespace TT_Lab.Rendering.Objects
                         Root.DrawCircle(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
                         break;
                     }
-                    
+
             }
-            
+
         }
 
         public void Unbind()

@@ -60,7 +60,7 @@ namespace TT_Lab.Editors.Graphics
             if (e.PropertyName == null) return;
 
             var context = (BlendSkinViewModel)MorphWeightsGrid.DataContext;
-            switch(e.PropertyName)
+            switch (e.PropertyName)
             {
                 case nameof(BlendSkinViewModel.Weight1):
                     blendSkin.SetBlendShapeValue(0, context.Weight1);

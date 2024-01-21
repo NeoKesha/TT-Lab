@@ -58,7 +58,7 @@ namespace TT_Lab.Libraries
                     }
                 }
             }
-            
+
             var result = new List<Meshlet>();
 
             for (var i = 0; i < meshletsBuilt; ++i)

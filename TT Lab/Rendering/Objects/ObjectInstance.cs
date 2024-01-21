@@ -3,17 +3,11 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.Policy;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Util;
 
@@ -135,7 +129,7 @@ namespace TT_Lab.Rendering.Objects
 
         private void SetupModelBuffer(LabURI uri)
         {
-            var assetManager = AssetManager.Get(); 
+            var assetManager = AssetManager.Get();
             var objData = assetManager.GetAssetData<GameObjectData>(uri);
             if (objData.OGISlots[0] == LabURI.Empty)
             {

@@ -365,9 +365,10 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
-            return GetModelBuffer(vectors, faces, new List<Color> {color});
+            return GetModelBuffer(vectors, faces, new List<Color> { color });
         }
-        public static IndexedBufferArray GetLineBuffer(Color color) {
+        public static IndexedBufferArray GetLineBuffer(Color color)
+        {
             List<vec3> vectors = new List<vec3>
             {
                 new vec3(0, 0, 0),
@@ -389,7 +390,7 @@ namespace TT_Lab.Util
                 new vec3(0, 0, 0),
                 new vec3(-1, 0, 0),
                 new vec3(0, 0, 0),
-                new vec3(0, 1, 0),             
+                new vec3(0, 1, 0),
                 new vec3(0, 0, 0),
                 new vec3(0, 0, 1),
             };

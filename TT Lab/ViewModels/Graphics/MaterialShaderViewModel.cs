@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Editors.Graphics;
-using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 using Twinsanity.TwinsanityInterchange.Common;
+using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.ViewModels.Graphics
 {
@@ -76,7 +73,7 @@ namespace TT_Lab.ViewModels.Graphics
         {
             get => alphaTestMethods;
             private set
-            { 
+            {
                 alphaTestMethods = value;
                 NotifyChange();
             }

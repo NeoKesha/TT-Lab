@@ -1,10 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common.Input;
 using System;
-using TT_Lab.AssetData.Graphics;
-using TT_Lab.AssetData.Graphics.SubModels;
 
 namespace TT_Lab.Util
 {
@@ -102,7 +97,7 @@ namespace TT_Lab.Util
                 return false;
             }
 
-            float inv_det = 1.0f/ det;
+            float inv_det = 1.0f / det;
             vec3 s = origin - p1;
             float u = inv_det * glm.Dot(s, ray_cross_e2);
 
@@ -126,7 +121,7 @@ namespace TT_Lab.Util
                 hit = origin + direction * distance;
                 return true;
             }
-            
+
             return false;
         }
     }

@@ -1,10 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System;
-using System.Collections.Generic;
-using TT_Lab.Rendering.Buffers;
-using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Rendering.Objects

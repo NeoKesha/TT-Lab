@@ -1,11 +1,4 @@
 ﻿using GlmSharp;
-using MS.WindowsAPICodePack.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TT_Lab.AssetData.Instance;
 using TT_Lab.Editors;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
@@ -119,7 +112,8 @@ namespace TT_Lab.Rendering
             transforming = true;
         }
 
-        public void EndTransform(float x, float y) {
+        public void EndTransform(float x, float y)
+        {
             if (selectedInstance == null)
             {
                 transforming = false;
@@ -150,7 +144,7 @@ namespace TT_Lab.Rendering
             }
             endPos = new vec2(x, y);
             var delta = (endPos.x - startPos.x) + (startPos.y - endPos.y);
-            
+
             if (transformMode == TransformMode.TRANSLATE)
             {
                 var k = 0.05f;
@@ -158,10 +152,12 @@ namespace TT_Lab.Rendering
                 if (transformAxis == TransformAxis.X)
                 {
                     axis.x = 1.0f;
-                } else if (transformAxis == TransformAxis.Y)
+                }
+                else if (transformAxis == TransformAxis.Y)
                 {
                     axis.y = 1.0f;
-                } else if (transformAxis == TransformAxis.Z)
+                }
+                else if (transformAxis == TransformAxis.Z)
                 {
                     axis.z = 1.0f;
                 }
@@ -187,7 +183,8 @@ namespace TT_Lab.Rendering
 
         public void ToggleTranslate()
         {
-            if (transforming) {
+            if (transforming)
+            {
                 return;
             }
             if (transformMode != TransformMode.TRANSLATE)
@@ -223,7 +220,8 @@ namespace TT_Lab.Rendering
             if (transformAxis == axis)
             {
                 transformAxis = TransformAxis.NONE;
-            } else
+            }
+            else
             {
                 transformAxis = axis;
             }
@@ -253,7 +251,7 @@ namespace TT_Lab.Rendering
             if (transformSpace == TransformSpace.LOCAL)
             {
                 selectedInstance.GetRenderable().LocalTransform = startTransform * mat4.Translate(offset);
-            } 
+            }
             else
             {
                 selectedInstance.GetRenderable().LocalTransform = mat4.Translate(offset) * startTransform;
