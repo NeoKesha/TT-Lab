@@ -193,7 +193,6 @@ namespace TT_Lab.Rendering
         {
             program.SetUniformMatrix4("StartProjection", projectionMat.Values1D);
             program.SetUniformMatrix4("StartView", viewMat.Values1D);
-            program.SetUniformMatrix4("StartModel", modelMat.Values1D);
             program.SetUniform1("Time", time);
             program.SetUniform2("Resolution", resolution.x, resolution.y);
         }
