@@ -14,3 +14,8 @@ vec3 ShadeVertex(mat4 normalMat, vec3 vertex, vec3 normal)
 {
 	return vec3(0.25, 0.2, 0.2);
 }
+
+vec3 PositionVertex(vec3 position, int vertexId)
+{
+	return position;
+}

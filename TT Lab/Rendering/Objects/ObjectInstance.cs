@@ -77,7 +77,7 @@ namespace TT_Lab.Rendering.Objects
 
         public void Bind()
         {
-            Root.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
             Root.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
             Root.Renderer.RenderProgram.SetUniform3("LightPosition", Root.CameraPosition.x, Root.CameraPosition.y, Root.CameraPosition.z);
             Root.Renderer.RenderProgram.SetUniform3("LightDirection", -Root.CameraDirection.x, Root.CameraDirection.y, Root.CameraDirection.z);

@@ -6,6 +6,7 @@
 mat4 GetViewModelMatrix(mat4 view, mat4 model);
 mat4 GetNormalMatrix(mat4 viewModel);
 vec3 ShadeVertex(mat4 normalMat, vec3 vertex, vec3 normal);
+vec3 PositionVertex(vec3 position, int vertexId);
 
 vec3 GetVertexOffset(sampler2D offsets, int shapeId, int vertexId)
 {
@@ -19,7 +20,7 @@ vec3 GetVertexOffset(sampler2D offsets, int shapeId, int vertexId)
 	return vec3(offset.r * BlendShape.x, offset.g * BlendShape.y, offset.b * BlendShape.z);
 }
 
-vec3 PositionVertex(vec3 position, sampler2D offsets, int vertexId, float weights[15])
+vec3 BlendVertex(vec3 position, sampler2D offsets, int vertexId, float weights[15])
 {
 	vec3 resultPosition = position;
 	for (int i = 0; i < MAX_BLENDS; i += 1)

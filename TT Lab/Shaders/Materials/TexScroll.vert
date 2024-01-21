@@ -1,6 +1,8 @@
 #include "Includes/ShadingLibrary.vert" //! #include "../Includes/ShadingLibrary.vert"
 
 uniform int BillboardMode;
+uniform int Deform;
+uniform vec2 DeformSpeed;
 
 mat4 GetViewModelMatrix(mat4 view, mat4 model)
 {
@@ -25,4 +27,14 @@ mat4 GetNormalMatrix(mat4 viewModel)
 vec3 ShadeVertex(mat4 normalMat, vec3 vertex, vec3 normal)
 {
 	return vec3(1.0);
+}
+
+vec3 PositionVertex(vec3 position, int vertexId)
+{
+	float vy = sin(Time + float(vertexId)) * DeformSpeed.y * 0.1;
+	float vx = sin(Time + float(vertexId)) * DeformSpeed.x * 0.1;
+	float vz = sin(Time + float(vertexId)) * DeformSpeed.x * 0.1;
+	vec3 resultPosition = position * vec3(vx + 1.0, vy + 1.0, vz + 1.0);
+
+	return position * (1.0 - Deform) + resultPosition * Deform;
 }

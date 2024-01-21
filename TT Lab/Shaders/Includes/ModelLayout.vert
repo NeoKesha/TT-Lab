@@ -29,4 +29,4 @@ uniform int BlendShapesAmount;
 uniform int ShapeOffset[MAX_BLENDS];
 uniform int ShapeStart;
 uniform float MorphWeights[MAX_BLENDS];
-layout (binding = 2) uniform sampler2D Morphs;
+layout (binding = 6) uniform sampler2D Morphs;

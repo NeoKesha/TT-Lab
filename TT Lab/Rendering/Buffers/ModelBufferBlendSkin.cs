@@ -87,9 +87,8 @@ namespace TT_Lab.Rendering.Buffers
             base.Bind();
 
             var renderProgram = Root.Renderer.RenderProgram;
-            renderProgram.SetUniform1("BlendShapesAmount", blendShapesAmount);
             renderProgram.SetUniform3("BlendShape", -blendShape.X, blendShape.Y, blendShape.Z);
-            renderProgram.SetTextureUniform("Morphs", TextureTarget.Texture2D, morphBuffer.Buffer, 2);
+            renderProgram.SetTextureUniform("Morphs", TextureTarget.Texture2D, morphBuffer.Buffer, 6);
             for (Int32 i = 0; i < blendShapesAmount; i++)
             {
                 renderProgram.SetUniform1($"MorphWeights[{i}]", BlendShapesValues[i]);
