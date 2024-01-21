@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace TT_Lab.Util
 {
-    public class InputController
+    public class InputController : IDisposable
     {
         public bool Shift { get => leftShift | rightShift; }
         public bool Ctrl { get => leftCtrl | rightCtrl; }
@@ -21,6 +21,12 @@ namespace TT_Lab.Util
 
             GlControl.KeyDown += HandleKeyDown;
             GlControl.KeyUp += HandleKeyUp;
+        }
+            
+        public void Dispose()
+        {
+            GlControl.KeyDown -= HandleKeyDown;
+            GlControl.KeyUp -= HandleKeyUp;
         }
 
         public bool IsKeyPressed(Key key)

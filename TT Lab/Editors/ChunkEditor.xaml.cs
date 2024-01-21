@@ -92,7 +92,7 @@ namespace TT_Lab.Editors
             SceneRenderer.Glcontrol.MouseDown -= MouseDown;
             inputController.OnKeyPressed -= KeyPressed;
             SceneRenderer.CloseEditor();
-
+            inputController?.Dispose();
             base.CloseEditor(sender, e);
         }
 

@@ -81,6 +81,7 @@ namespace TT_Lab.Editors
         public void CloseEditor()
         {
             Scene?.Delete();
+            inputController?.Dispose();
         }
 
         private void Glcontrol_DragDrop(Object sender, DragEventArgs e)
