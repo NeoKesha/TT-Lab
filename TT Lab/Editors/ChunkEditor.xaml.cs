@@ -27,7 +27,7 @@ namespace TT_Lab.Editors
         private CollisionData colData;
         //Control keys handling
         private List<Key> pressedKeys = new();
-        private InputController inputController = new InputController();
+        private InputController inputController;
 
         public ChunkEditor() : this(null)
         {
@@ -56,8 +56,7 @@ namespace TT_Lab.Editors
                             SceneRenderer.Glcontrol.MouseMove += MouseMove;
                             SceneRenderer.Glcontrol.MouseUp += MouseUp;
                             SceneRenderer.Glcontrol.MouseDown += MouseDown;
-                            SceneRenderer.Glcontrol.KeyDown += KeyDown;
-                            SceneRenderer.Glcontrol.KeyUp += KeyUp;
+                            
                             editingContext = new EditingContext(SceneRenderer.Scene, this);
                             colData = chunkTree.Find((avm) =>
                             {
@@ -70,6 +69,8 @@ namespace TT_Lab.Editors
                                 var instData = instance.Asset.GetData<ObjectInstanceData>();
                                 sceneInstances.Add(SceneRenderer.Scene.AddObjectInstance(instData));
                             }
+                            inputController = new InputController(SceneRenderer.Glcontrol);
+                            inputController.OnKeyPressed += KeyPressed;
                         }
                         catch (ShaderCompilationException ex)
                         {
@@ -89,8 +90,7 @@ namespace TT_Lab.Editors
             SceneRenderer.Glcontrol.MouseMove -= MouseMove;
             SceneRenderer.Glcontrol.MouseUp -= MouseUp;
             SceneRenderer.Glcontrol.MouseDown -= MouseDown;
-            SceneRenderer.Glcontrol.KeyDown -= KeyDown;
-            SceneRenderer.Glcontrol.KeyUp -= KeyUp;
+            inputController.OnKeyPressed -= KeyPressed;
             SceneRenderer.CloseEditor();
 
             base.CloseEditor(sender, e);
@@ -168,80 +168,69 @@ namespace TT_Lab.Editors
             editingContext.EndTransform((float)pos.X, (float)pos.Y);
         }
 
-        private void KeyDown(Object? sender, KeyEventArgs e)
+        private void KeyPressed(Object sender, KeyEventArgs arg)
         {
-            var key = e.Key;
-            if (pressedKeys.Contains(key))
+            var key = arg.Key;
+            if (key == Key.M)
             {
-                return;
-            }
-
-            pressedKeys.Add(key);
-            inputController.HandleKeyDown(key);
-
-            switch (key)
+                editingContext.ToggleSpace();
+            } 
+            else if (key == Key.T)
             {
-                case Key.M:
-                    editingContext.ToggleSpace();
-                    break;
-                case Key.T:
-                    editingContext.ToggleTranslate();
-                    break;
-                case Key.R:
-                    editingContext.ToggleRotate();
-                    break;
-                case Key.X:
-                    editingContext.SetTransformAxis(TransformAxis.X);
-                    break;
-                case Key.Y:
-                    editingContext.SetTransformAxis(TransformAxis.Y);
-                    break;
-                case Key.Z:
-                    editingContext.SetTransformAxis(TransformAxis.Z);
-                    break;
-                case Key.K:
-                    editingContext.SetPalette(editingContext.selectedInstance);
-                    break;
-                case Key.P:
-                    editingContext.SpawnAtCursor();
-                    break;
-                case Key.G:
-                    editingContext.SetGrid();
-                    break;
-                case Key.PageUp:
-                    editingContext.MoveCursorGrid(vec3.UnitY);
-                    break;
-                case Key.PageDown:
-                    editingContext.MoveCursorGrid(-vec3.UnitY);
-                    break;
-                case Key.Left:
-                    editingContext.MoveCursorGrid(-vec3.UnitX);
-                    break;
-                case Key.Right:
-                    editingContext.MoveCursorGrid(vec3.UnitX);
-                    break;
-                case Key.Up:
-                    editingContext.MoveCursorGrid(vec3.UnitZ);
-                    break;
-                case Key.Down:
-                    editingContext.MoveCursorGrid(-vec3.UnitZ);
-                    break;
-                    //case Key.None:
-                    //    editingContext.transformMode = TransformMode.SCALE;
-                    //    break;
+                editingContext.ToggleTranslate();
             }
-        }
-
-        private void KeyUp(Object? sender, KeyEventArgs e)
-        {
-            var key = e.Key;
-            if (!pressedKeys.Contains(key))
+            else if (key == Key.R)
             {
-                return;
+                editingContext.ToggleRotate();
             }
-
-            pressedKeys.Remove(key);
-            inputController.HandleKeyUp(key);
+            else if (key == Key.X)
+            {
+                editingContext.SetTransformAxis(TransformAxis.X);
+            }
+            else if (key == Key.Y)
+            {
+                editingContext.SetTransformAxis(TransformAxis.Y);
+            }
+            else if (key == Key.Z)
+            {
+                editingContext.SetTransformAxis(TransformAxis.Z);
+            }
+            else if (key == Key.Left)
+            {
+                editingContext.MoveCursorGrid(-vec3.UnitX);
+            }
+            else if (key == Key.Right)
+            {
+                editingContext.MoveCursorGrid(vec3.UnitX);
+            }
+            else if (key == Key.Up)
+            {
+                editingContext.MoveCursorGrid(vec3.UnitZ);
+            }
+            else if (key == Key.Down)
+            {
+                editingContext.MoveCursorGrid(-vec3.UnitZ);
+            }
+            else if (key == Key.PageUp)
+            {
+                editingContext.MoveCursorGrid(vec3.UnitY);
+            }
+            else if (key == Key.PageDown)
+            {
+                editingContext.MoveCursorGrid(-vec3.UnitY);
+            }
+            else if (key == Key.K)
+            {
+                editingContext.SetPalette(editingContext.selectedInstance);
+            }
+            else if (key == Key.P)
+            {
+                editingContext.SpawnAtCursor();
+            }
+            else if (key == Key.G)
+            {
+                editingContext.SetGrid();
+            }
         }
 
         private void MouseSelect(float x, float y)

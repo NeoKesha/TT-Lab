@@ -50,7 +50,6 @@ namespace TT_Lab.Rendering
         private readonly Queue<Action> queuedRenderActions = new();
         private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
         private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
-        private InputController inputController = new InputController();
 
 
         /// <summary>
@@ -420,12 +419,12 @@ namespace TT_Lab.Rendering
             cameraZoom = (z + cameraZoom).Clamp(10.0f, 100.0f);
         }
 
-        public void HandleInputs(List<Key> keysPressed)
+        public void HandleInputs(InputController inputController)
         {
-            inputController.HandleInputs(keysPressed);
+            
         }
 
-        public void Move(List<Key> keysPressed)
+        public void Move(InputController inputController)
         {
             if (!canManipulateCamera) return;
 
@@ -435,29 +434,29 @@ namespace TT_Lab.Rendering
             }
 
             var camSp = cameraSpeed * (inputController.Shift ? 5.0f : 1.0f);
-            foreach (var keyPressed in keysPressed)
+            if (inputController.IsKeyPressed(Key.W))
             {
-                switch (keyPressed)
-                {
-                    case Key.W:
-                        cameraPosition += camSp * cameraDirection;
-                        break;
-                    case Key.S:
-                        cameraPosition -= camSp * cameraDirection;
-                        break;
-                    case Key.A:
-                        cameraPosition -= camSp * glm.Cross(cameraDirection, cameraUp);
-                        break;
-                    case Key.D:
-                        cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
-                        break;
-                    case Key.Q:
-                        cameraPosition.y -= camSp;
-                        break;
-                    case Key.E:
-                        cameraPosition.y += camSp;
-                        break;
-                }
+                cameraPosition += camSp * cameraDirection;
+            }
+            if (inputController.IsKeyPressed(Key.S))
+            {
+                cameraPosition -= camSp * cameraDirection;
+            }
+            if (inputController.IsKeyPressed(Key.A))
+            {
+                cameraPosition -= camSp * glm.Cross(cameraDirection, cameraUp);
+            }
+            if (inputController.IsKeyPressed(Key.D))
+            {
+                cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
+            }
+            if (inputController.IsKeyPressed(Key.Q))
+            {
+                cameraPosition.y -= camSp;
+            }
+            if (inputController.IsKeyPressed(Key.E))
+            {
+                cameraPosition.y += camSp;
             }
         }
 
