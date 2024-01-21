@@ -55,20 +55,9 @@ namespace TT_Lab.Rendering
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
         private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
-        //private readonly List<SceneInstance> sceneInstances = new();
         private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
+        private InputController inputController = new InputController();
 
-        //Control keys handling
-        private bool leftShift = false;
-        private bool rightShift = false;
-        private bool leftCtrl = false;
-        private bool rightCtrl = false;
-        private bool leftAlt = false;
-        private bool rightAlt = false;
-
-        private bool Shift { get => leftShift | rightShift; }
-        private bool Ctrl { get => leftCtrl | rightCtrl; }
-        private bool Alt { get => leftAlt | rightAlt; }
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -78,7 +67,7 @@ namespace TT_Lab.Rendering
         public Scene(float width, float height, ShaderProgram.LibShader libShader) : base(null)
         {
             Preferences.PreferenceChanged += Preferences_PreferenceChanged;
-
+            
             resolution.x = width;
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
@@ -425,34 +414,19 @@ namespace TT_Lab.Rendering
 
         public void HandleInputs(List<Key> keysPressed)
         {
-            //Update control keys
-            leftShift = false;
-            rightShift = false;
-            leftCtrl = false;
-            rightCtrl = false;
-            leftAlt = false;
-            rightAlt = false;
-            foreach (var key in keysPressed)
-            {
-                if (key == Key.LeftAlt) leftAlt = true; 
-                if (key == Key.RightAlt) rightAlt = true;
-                if (key == Key.LeftCtrl) leftCtrl = true; 
-                if (key == Key.RightCtrl) rightCtrl = true;
-                if (key == Key.LeftShift) leftShift = true; 
-                if (key == Key.RightShift) rightShift = true;
-            }
+            inputController.HandleInputs(keysPressed);
         }
 
         public void Move(List<Key> keysPressed)
         {
             if (!canManipulateCamera) return;
 
-            if (Alt || Ctrl)
+            if (inputController.Alt || inputController.Ctrl)
             {
                 return;
             }
 
-            var camSp = cameraSpeed * (Shift?5.0f:1.0f);
+            var camSp = cameraSpeed * (inputController.Shift ?5.0f:1.0f);
             foreach (var keyPressed in keysPressed)
             {
                 switch (keyPressed)

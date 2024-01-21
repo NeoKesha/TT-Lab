@@ -27,16 +27,7 @@ namespace TT_Lab.Editors
         private CollisionData colData;
         //Control keys handling
         private List<Key> pressedKeys = new();
-        private bool leftShift = false;
-        private bool rightShift = false;
-        private bool leftCtrl = false;
-        private bool rightCtrl = false;
-        private bool leftAlt = false;
-        private bool rightAlt = false;
-
-        private bool Shift { get => leftShift | rightShift; }
-        private bool Ctrl { get => leftCtrl | rightCtrl; }
-        private bool Alt { get => leftAlt | rightAlt; }
+        private InputController inputController = new InputController();
 
         public ChunkEditor() : this(null)
         {
@@ -65,8 +56,8 @@ namespace TT_Lab.Editors
                             SceneRenderer.Glcontrol.MouseMove += MouseMove;
                             SceneRenderer.Glcontrol.MouseUp += MouseUp;
                             SceneRenderer.Glcontrol.MouseDown += MouseDown;
-                            SceneRenderer.Glcontrol.KeyDown += KeyUp;
-                            SceneRenderer.Glcontrol.KeyUp += KeyDown;
+                            SceneRenderer.Glcontrol.KeyDown += KeyDown;
+                            SceneRenderer.Glcontrol.KeyUp += KeyUp;
                             editingContext = new EditingContext(SceneRenderer.Scene, this);
                             colData = chunkTree.Find((avm) =>
                             {
@@ -98,8 +89,8 @@ namespace TT_Lab.Editors
             SceneRenderer.Glcontrol.MouseMove -= MouseMove;
             SceneRenderer.Glcontrol.MouseUp -= MouseUp;
             SceneRenderer.Glcontrol.MouseDown -= MouseDown;
-            SceneRenderer.Glcontrol.KeyDown -= KeyUp;
-            SceneRenderer.Glcontrol.KeyUp -= KeyDown;
+            SceneRenderer.Glcontrol.KeyDown -= KeyDown;
+            SceneRenderer.Glcontrol.KeyUp -= KeyUp;
             SceneRenderer.CloseEditor();
 
             base.CloseEditor(sender, e);
@@ -186,12 +177,8 @@ namespace TT_Lab.Editors
             }
 
             pressedKeys.Add(key);
-            if (key == Key.LeftAlt) { leftAlt = true; return; }
-            if (key == Key.RightAlt) { rightAlt = true; return; }
-            if (key == Key.LeftCtrl) { leftCtrl = true; return; }
-            if (key == Key.RightCtrl) { rightCtrl = true; return; }
-            if (key == Key.LeftShift) { leftShift = true; return; }
-            if (key == Key.RightShift) { rightShift = true; return; }
+            inputController.HandleKeyDown(key);
+
             switch (key)
             {
                 case Key.M:
@@ -254,13 +241,7 @@ namespace TT_Lab.Editors
             }
 
             pressedKeys.Remove(key);
-
-            if (key == Key.LeftAlt) { leftAlt = false; return; }
-            if (key == Key.RightAlt) { rightAlt = false; return; }
-            if (key == Key.LeftCtrl) { leftCtrl = false; return; }
-            if (key == Key.RightCtrl) { rightCtrl = false; return; }
-            if (key == Key.LeftShift) { leftShift = false; return; }
-            if (key == Key.RightShift) { rightShift = false; return; }
+            inputController.HandleKeyUp(key);
         }
 
         private void MouseSelect(float x, float y)
@@ -270,7 +251,7 @@ namespace TT_Lab.Editors
 
             editingContext.Deselect();
             SceneInstance result = null;
-            if (!Ctrl)
+            if (!inputController.Ctrl)
             {
                 foreach (var instance in sceneInstances)
                 {
@@ -298,7 +279,7 @@ namespace TT_Lab.Editors
                     if (MathExtension.IntersectRayTriangle(rayOrigin, rayDirection, new vec3(-p1.X, p1.Y, p1.Z), new vec3(-p2.X, p2.Y, p2.Z), new vec3(-p3.X, p3.Y, p3.Z), ref distance, ref hit))
                     {
                         editingContext.SetCursorCoordinates(hit);
-                        if (Ctrl)
+                        if (inputController.Ctrl)
                         {
                             editingContext.SpawnAtCursor();
                         }
