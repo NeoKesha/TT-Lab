@@ -22,12 +22,12 @@ namespace TT_Lab.Rendering.Objects
         public Plane(Scene root, vec3 position) : base(root)
         {
             planeBuffer = BufferGeneration.GetModelBuffer(
-                new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
+                new List<vec3>
                 {
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1 + position.x, 1 + position.y, -1 + position.z),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1 + position.x, 1 + position.y, -1 + position.z),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1 + position.x, -1 + position.y, -1 + position.z),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1 + position.x, -1 + position.y, -1 + position.z)
+                    new vec3(1 + position.x, 1 + position.y, -1 + position.z),
+                    new vec3(-1 + position.x, 1 + position.y, -1 + position.z),
+                    new vec3(-1 + position.x, -1 + position.y, -1 + position.z),
+                    new vec3(1 + position.x, -1 + position.y, -1 + position.z)
                 },
                 new List<AssetData.Graphics.SubModels.IndexedFace>
                 {
@@ -35,12 +35,12 @@ namespace TT_Lab.Rendering.Objects
                     new AssetData.Graphics.SubModels.IndexedFace(new int[] { 2, 3, 0 })
                 },
                 new List<System.Drawing.Color> { System.Drawing.Color.White },
-                new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
+                new List<vec3>
                 {
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(0, 0, 0),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 0, 0),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 1, 0),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(0, 1, 0)
+                    new vec3(0, 0, 0),
+                    new vec3(1, 0, 0),
+                    new vec3(1, 1, 0),
+                    new vec3(0, 1, 0)
                 });
         }
 
@@ -83,7 +83,7 @@ namespace TT_Lab.Rendering.Objects
             planeBuffer.Delete();
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

@@ -80,6 +80,7 @@ namespace TT_Lab.Rendering.Renderers
             Scene.SetGlobalUniforms(wboitShader);
             foreach (var @object in objects)
             {
+                @object.SetUniforms(wboitShader);
                 @object.Render();
             }
             wboitShader.Unbind();
@@ -105,6 +106,7 @@ namespace TT_Lab.Rendering.Renderers
             Scene.SetGlobalUniforms(opaqueShader);
             foreach (var @object in objects)
             {
+                @object.SetUniforms(opaqueShader);
                 @object.Render();
             }
             opaqueShader.Unbind();
@@ -112,7 +114,7 @@ namespace TT_Lab.Rendering.Renderers
 
         public void PostProcess()
         {
-            
+
         }
     }
 }

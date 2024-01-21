@@ -6,13 +6,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using TT_Lab.AssetData.Code;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace TT_Lab.Rendering
 {
@@ -30,9 +37,8 @@ namespace TT_Lab.Rendering
         // Rendering matrices and settings
         private mat4 projectionMat;
         private mat4 viewMat;
-        private mat4 modelMat;
         private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
-        private vec3 cameraDirection = new(0, 0, -1);
+        private vec3 cameraDirection = new(1, 0, 0);
         private vec3 cameraUp = new(0, 1, 0);
         private vec2 resolution = new(1, 1);
         private float time = 0.0f;
@@ -52,7 +58,21 @@ namespace TT_Lab.Rendering
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
+        private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
+        //private readonly List<SceneInstance> sceneInstances = new();
+        private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
 
+        //Control keys handling
+        private bool leftShift = false;
+        private bool rightShift = false;
+        private bool leftCtrl = false;
+        private bool rightCtrl = false;
+        private bool leftAlt = false;
+        private bool rightAlt = false;
+
+        private bool Shift { get => leftShift | rightShift; }
+        private bool Ctrl { get => leftCtrl | rightCtrl; }
+        private bool Alt { get => leftAlt | rightAlt; }
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -69,7 +89,6 @@ namespace TT_Lab.Rendering
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-            modelMat = mat4.Scale(new vec3(1.0f));
 
             this.fragmentLibraryShader = fragmentLibraryShader;
             this.vertexLibraryShader = vertexLibraryShader;
@@ -78,6 +97,8 @@ namespace TT_Lab.Rendering
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
             SetupTransparencyRender();
+
+            primitiveRenderer.Init(this);
         }
 
         /// <summary>
@@ -89,20 +110,22 @@ namespace TT_Lab.Rendering
         public Scene(List<AssetViewModel> sceneTree, float width, float height) :
             this(width, height, ShaderStorage.LibraryFragmentShaders.Light)
         {
+            LocalTransform = mat4.Identity;
+
             // Collision renderer
             var colData = sceneTree.Find((avm) =>
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
             var colRender = new Objects.Collision(this, colData);
-            objectsOpaque.Add(colRender);
+            AddRender(colRender, false);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
             foreach (var pos in positions!.Children)
             {
                 var pRend = new Objects.Position(this, (PositionViewModel)pos);
-                objectsOpaque.Add(pRend);
+                AddRender(pRend, false);
             }
 
             // Triggers renderer
@@ -110,8 +133,30 @@ namespace TT_Lab.Rendering
             foreach (var trg in triggers!.Children)
             {
                 var trRend = new Objects.Trigger(this, (TriggerViewModel)trg);
-                objectsTransparent.Add(trRend);
+                AddRender(trRend);
             }
+        }
+
+        public SceneInstance AddObjectInstance(ObjectInstanceData instData)
+        {
+            var sceneInstance = new SceneInstance(instData, modelBufferCache, this);
+            var pRend = sceneInstance.GetRenderable();
+
+            AddRender(pRend);
+            return sceneInstance;
+        }
+
+        public vec3 GetCameraPosition()
+        {
+            return cameraPosition;
+        }
+
+        public vec3 GetRayFromViewport(float x, float y)
+        {
+            var win = new vec3(x, resolution.y - y, 0.0f);
+            var view = new vec4(0, 0, resolution.x, resolution.y);
+            var worldPos = mat4.UnProject(win, viewMat, projectionMat, view);
+            return glm.Normalized(worldPos - cameraPosition);
         }
 
         /// <summary>
@@ -121,7 +166,8 @@ namespace TT_Lab.Rendering
         /// <param name="transparent">Whether the object is transparent and goes through translucency pipeline</param>
         public void AddRender(IRenderable renderObj, bool transparent = true)
         {
-            queuedRenderActions.Enqueue(() => {
+            queuedRenderActions.Enqueue(() =>
+            {
                 if (transparent)
                 {
                     objectsTransparent.Add(renderObj);
@@ -130,6 +176,7 @@ namespace TT_Lab.Rendering
                 {
                     objectsOpaque.Add(renderObj);
                 }
+                AddChild(renderObj);
             });
         }
 
@@ -183,6 +230,8 @@ namespace TT_Lab.Rendering
             // Render all objects
             Renderer.RenderOpaque(objectsOpaque);
             Renderer.Render(objectsTransparent);
+            // Render HUD
+
             // Post process effects
             GL.Disable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
@@ -197,6 +246,11 @@ namespace TT_Lab.Rendering
             Unbind();
             timer.Stop();
             time += timer.Elapsed.Microseconds;
+        }
+
+        protected override void RenderSelf()
+        {
+
         }
 
         public void Bind()
@@ -223,9 +277,126 @@ namespace TT_Lab.Rendering
             }
             objectsTransparent.Clear();
             objectsOpaque.Clear();
+            foreach (var modelBuffers in modelBufferCache.Values)
+            {
+                foreach (var buffer in modelBuffers)
+                {
+                    buffer.Delete();
+                }
+                modelBuffers.Clear();
+            }
+            modelBufferCache.Clear();
+            primitiveRenderer.Terminate();
             Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
         }
 
+        public void DrawBox(vec3 position)
+        {
+            DrawBox(position, vec3.Zero, vec3.Ones);
+        }
+        public void DrawBox(vec3 position, vec3 rotation, vec3 scale)
+        {
+            DrawBox(position, rotation, scale, vec4.Ones);
+        }
+        public void DrawBox(vec3 position, vec3 rotation, vec3 scale, vec4 color)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = WorldTransform;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawBox(transform, color);
+        }
+        public void DrawBox(mat4 transform, vec4 color)
+        {
+            primitiveRenderer.DrawBox(transform, color);
+        }
+        public void DrawCircle(vec3 position)
+        {
+            DrawCircle(position, vec3.Zero, vec3.Ones);
+        }
+        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale)
+        {
+            DrawCircle(position, rotation, scale, vec4.Ones);
+        }
+        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale, vec4 color)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = WorldTransform;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawCircle(transform, color);
+        }
+        public void DrawCircle(mat4 transform, vec4 color)
+        {
+            primitiveRenderer.DrawCircle(transform, color);
+        }
+        public void DrawLine(vec3 point1, vec3 point2, vec4 color)
+        {
+            DrawLine(point1, point2, color, WorldTransform);
+        }
+        public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
+        {
+            var scaleX = (point2 - point1).Length;
+            vec3 direction = (point2 - point1).Normalized;
+            vec3 scale = new vec3(scaleX, 1.0f, 1.0f);
+            mat4 matrixPosition = mat4.Translate(point1.x, point1.y, point1.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            var angleXZ = (float)glm.Angle(new vec2(direction.x, direction.z));
+            var angleY = glm.Acos(glm.Dot(direction, new vec3(direction.x, 0, direction.z)));
+            matrixRotationX = mat4.RotateX(0);
+            matrixRotationY = mat4.RotateY(angleXZ);
+            matrixRotationZ = mat4.RotateZ(-angleY);
+
+            mat4 transform = parent;
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= mat4.Scale(scale);
+            primitiveRenderer.DrawLine(transform, color);
+        }
+        public void DrawSimpleAxis(vec3 position)
+        {
+            DrawSimpleAxis(position, vec3.Zero);
+        }
+        public void DrawSimpleAxis(vec3 position, vec3 rotation)
+        {
+            DrawSimpleAxis(position, rotation, vec3.Ones);
+        }
+        public void DrawSimpleAxis(vec3 position, vec3 rotation, vec3 scale)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = mat4.Identity;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawSimpleAxis(transform);
+        }
+        public void DrawSimpleAxis(mat4 transform)
+        {
+            primitiveRenderer.DrawSimpleAxis(transform);
+        }
         public void SetCameraSpeed(float s)
         {
             cameraSpeed = s;
@@ -273,20 +444,34 @@ namespace TT_Lab.Rendering
 
         public void HandleInputs(List<Key> keysPressed)
         {
-
+            //Update control keys
+            leftShift = false;
+            rightShift = false;
+            leftCtrl = false;
+            rightCtrl = false;
+            leftAlt = false;
+            rightAlt = false;
+            foreach (var key in keysPressed)
+            {
+                if (key == Key.LeftAlt) leftAlt = true;
+                if (key == Key.RightAlt) rightAlt = true;
+                if (key == Key.LeftCtrl) leftCtrl = true;
+                if (key == Key.RightCtrl) rightCtrl = true;
+                if (key == Key.LeftShift) leftShift = true;
+                if (key == Key.RightShift) rightShift = true;
+            }
         }
 
         public void Move(List<Key> keysPressed)
         {
             if (!canManipulateCamera) return;
 
-            var camSp = cameraSpeed;
-
-            if (keysPressed.Contains(Key.LeftShift) || keysPressed.Contains(Key.RightShift))
+            if (Alt || Ctrl)
             {
-                camSp *= 5;
+                return;
             }
 
+            var camSp = cameraSpeed * (Shift ? 5.0f : 1.0f);
             foreach (var keyPressed in keysPressed)
             {
                 switch (keyPressed)
@@ -302,6 +487,12 @@ namespace TT_Lab.Rendering
                         break;
                     case Key.D:
                         cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
+                        break;
+                    case Key.Q:
+                        cameraPosition.y -= camSp;
+                        break;
+                    case Key.E:
+                        cameraPosition.y += camSp;
                         break;
                 }
             }

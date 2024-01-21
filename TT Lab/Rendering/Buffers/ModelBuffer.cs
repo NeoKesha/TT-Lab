@@ -85,7 +85,7 @@ namespace TT_Lab.Rendering.Buffers
             Root.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             for (var i = 0; i < modelBuffers.Count; ++i)

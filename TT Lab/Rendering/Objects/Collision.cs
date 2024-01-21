@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using GlmSharp;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace TT_Lab.Rendering.Objects
         public Collision(Scene root, CollisionData colData) : base(root)
         {
             collisionBuffer = BufferGeneration.GetModelBuffer(
-                colData.Vectors.Select(v => new Twinsanity.TwinsanityInterchange.Common.Vector3(v.X, v.Y, v.Z)).ToList(),
+                colData.Vectors.Select(v => new vec3(v.X, v.Y, v.Z)).ToList(),
                 colData.Triangles.Select(t => t.Face).ToList(),
                 CollisionSurface.DefaultColors.ToList().Select(c => System.Drawing.Color.FromArgb((int)c.ToARGB())).ToList(),
                 null,
@@ -36,7 +37,7 @@ namespace TT_Lab.Rendering.Objects
             collisionBuffer.Delete();
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);

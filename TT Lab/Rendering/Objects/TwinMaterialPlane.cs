@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using GlmSharp;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,12 +19,12 @@ namespace TT_Lab.Rendering.Objects
         private TwinMaterialPlane(Scene root) : base(root)
         {
             planeBuffer = BufferGeneration.GetModelBuffer(
-                new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
+                new List<vec3>
                 {
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 1, -1),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, 1, -1),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(-1, -1, -1),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, -1, -1)
+                    new vec3(1, 1, -1),
+                    new vec3(-1, 1, -1),
+                    new vec3(-1, -1, -1),
+                    new vec3(1, -1, -1)
                 },
                 new List<AssetData.Graphics.SubModels.IndexedFace>
                 {
@@ -31,12 +32,12 @@ namespace TT_Lab.Rendering.Objects
                     new AssetData.Graphics.SubModels.IndexedFace(new int[] { 2, 3, 0 })
                 },
                 new List<System.Drawing.Color> { System.Drawing.Color.White },
-                new List<Twinsanity.TwinsanityInterchange.Common.Vector3>
+                new List<vec3>
                 {
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(0, 0, 0),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 0, 0),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(1, 1, 0),
-                    new Twinsanity.TwinsanityInterchange.Common.Vector3(0, 1, 0)
+                    new vec3(0, 0, 0),
+                    new vec3(1, 0, 0),
+                    new vec3(1, 1, 0),
+                    new vec3(0, 1, 0)
                 });
         }
 
@@ -70,7 +71,7 @@ namespace TT_Lab.Rendering.Objects
             }
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
