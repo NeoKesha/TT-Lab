@@ -24,6 +24,8 @@ namespace TT_Lab.Rendering
         private Scene root;
         private ChunkEditor editor;
         private Gizmo gizmo;
+        private vec3 gridStep = new vec3();
+        private mat4 gridRotation = new mat4();
 
         public EditingContext(Scene root, ChunkEditor editor)
         {
@@ -48,6 +50,26 @@ namespace TT_Lab.Rendering
             selectedInstance = instance;
             selectedInstance?.Select();
             selectedInstance?.GetRenderable().AddChild(gizmo);
+        }
+
+        public void SetGrid()
+        {
+            if (selectedInstance == null)
+            {
+                return;
+            }
+            gridStep.x = selectedInstance.GetSize().x;
+            gridStep.y = selectedInstance.GetSize().y;
+            gridStep.z = selectedInstance.GetSize().z;
+            gridRotation = selectedInstance.GetRenderable().LocalTransform.ToQuaternion.ToMat4;
+            SetCursorCoordinates(selectedInstance.GetPosition());
+        }
+
+        public void MoveCursorGrid(vec3 offset)
+        {
+            var cursorPos = cursor.GetPosition();
+            cursorPos += (gridRotation * new vec4(offset * gridStep, 1.0f)).xyz;
+            SetCursorCoordinates(cursorPos);
         }
 
         public bool IsInstanceSelected()

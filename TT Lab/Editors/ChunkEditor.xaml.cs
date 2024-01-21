@@ -218,6 +218,27 @@ namespace TT_Lab.Editors
                 case Key.P:
                     editingContext.SpawnAtCursor();
                     break;
+                case Key.G:
+                    editingContext.SetGrid();
+                    break;
+                case Key.PageUp:
+                    editingContext.MoveCursorGrid(vec3.UnitY); 
+                    break;
+                case Key.PageDown:
+                    editingContext.MoveCursorGrid(-vec3.UnitY);
+                    break;
+                case Key.Left:
+                    editingContext.MoveCursorGrid(-vec3.UnitX);
+                break;
+                case Key.Right:
+                    editingContext.MoveCursorGrid(vec3.UnitX);
+                    break;
+                case Key.Up:
+                    editingContext.MoveCursorGrid(vec3.UnitZ);
+                    break;
+                case Key.Down:
+                    editingContext.MoveCursorGrid(-vec3.UnitZ);
+                    break;
                     //case Key.None:
                     //    editingContext.transformMode = TransformMode.SCALE;
                     //    break;
