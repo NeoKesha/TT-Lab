@@ -27,7 +27,7 @@ namespace TT_Lab.Rendering.Objects
             {
                 return;
             }
-            var selectedInstance = editingContext.selectedInstance;
+            var selectedRenderable = editingContext.selectedRenderable;
             TransformSpace transformSpace = editingContext.transformSpace;
             TransformMode transformMode = editingContext.transformMode;
             switch (transformSpace)
@@ -36,7 +36,7 @@ namespace TT_Lab.Rendering.Objects
                     LocalTransform = mat4.Identity;
                     break;
                 case TransformSpace.WORLD:
-                    var quat = selectedInstance.GetRenderable().LocalTransform.ToQuaternion;
+                    var quat = selectedRenderable.LocalTransform.ToQuaternion;
                     LocalTransform = quat.ToMat4.Inverse;
                     break;
             }
