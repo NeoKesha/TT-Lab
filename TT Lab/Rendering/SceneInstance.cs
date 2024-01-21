@@ -30,14 +30,16 @@ namespace TT_Lab.Rendering
             rotation = new vec3(instanceData.RotationX.GetRotation(), instanceData.RotationY.GetRotation(), instanceData.RotationZ.GetRotation());
             var assetManager = AssetManager.Get();
             var objData = assetManager.GetAssetData<GameObjectData>(instanceData.ObjectId);
-            if (objData.OGISlots[0] != LabURI.Empty)
+            foreach (var uri in objData.OGISlots)
             {
-                var ogiData = assetManager.GetAssetData<OGIData>(objData.OGISlots[0]);
+                if (uri == LabURI.Empty) continue;
+                var ogiData = assetManager.GetAssetData<OGIData>(uri);
                 size = new vec3();
                 size.x = ogiData.BoundingBox[1].X - ogiData.BoundingBox[0].X;
                 size.y = ogiData.BoundingBox[1].Y - ogiData.BoundingBox[0].Y;
                 size.z = ogiData.BoundingBox[1].Z - ogiData.BoundingBox[0].Z;
                 offset = new vec3(ogiData.BoundingBox[0].X, ogiData.BoundingBox[0].Y, ogiData.BoundingBox[0].Z);
+                break;
             }
         }
 
