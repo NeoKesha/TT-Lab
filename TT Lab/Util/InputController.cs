@@ -27,6 +27,7 @@ namespace TT_Lab.Util
         {
             GlControl.KeyDown -= HandleKeyDown;
             GlControl.KeyUp -= HandleKeyUp;
+            GC.SuppressFinalize(this);
         }
 
         public bool IsKeyPressed(Key key)
