@@ -1,21 +1,17 @@
 ﻿using GlmSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TT_Lab.Rendering.Objects
 {
     internal class EditorCursor : BaseRenderable
     {
         vec3? pos = null;
-        public EditorCursor(Scene root) : base(root) { 
-            
+        public EditorCursor(Scene root) : base(root)
+        {
+
         }
         public void Bind()
         {
-            
+
         }
 
         public void Delete()
@@ -28,7 +24,7 @@ namespace TT_Lab.Rendering.Objects
             pos = newPos;
             LocalTransform = mat4.Translate(pos.Value) * mat4.Scale(0.1f);
         }
-        
+
         public vec3 GetPosition()
         {
             return pos.Value;
@@ -43,7 +39,7 @@ namespace TT_Lab.Rendering.Objects
 
             Root.DrawBox(WorldTransform, new vec4(0.5f, 0.0f, 1.0f, 1.0f));
 
-            
+
         }
 
         public void Unbind()

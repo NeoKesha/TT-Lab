@@ -6,20 +6,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using TT_Lab.AssetData.Code;
-using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
-using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 using TT_Lab.ViewModels.Instance;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace TT_Lab.Rendering
 {
@@ -38,7 +32,7 @@ namespace TT_Lab.Rendering
         private mat4 projectionMat;
         private mat4 viewMat;
         private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
-        private vec3 cameraDirection = new(1, 0, 0);
+        private vec3 cameraDirection = new(0, 0, -1);
         private vec3 cameraUp = new(0, 1, 0);
         private vec2 resolution = new(1, 1);
         private float time = 0.0f;
@@ -59,20 +53,8 @@ namespace TT_Lab.Rendering
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
         private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
-        //private readonly List<SceneInstance> sceneInstances = new();
         private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
 
-        //Control keys handling
-        private bool leftShift = false;
-        private bool rightShift = false;
-        private bool leftCtrl = false;
-        private bool rightCtrl = false;
-        private bool leftAlt = false;
-        private bool rightAlt = false;
-
-        private bool Shift { get => leftShift | rightShift; }
-        private bool Ctrl { get => leftCtrl | rightCtrl; }
-        private bool Alt { get => leftAlt | rightAlt; }
 
         /// <summary>
         /// Constructor to setup the matrices
@@ -293,10 +275,12 @@ namespace TT_Lab.Rendering
         {
             DrawBox(position, vec3.Zero, vec3.Ones);
         }
+
         public void DrawBox(vec3 position, vec3 rotation, vec3 scale)
         {
             DrawBox(position, rotation, scale, vec4.Ones);
         }
+
         public void DrawBox(vec3 position, vec3 rotation, vec3 scale, vec4 color)
         {
             rotation = rotation * 3.14f / 180.0f;
@@ -313,18 +297,22 @@ namespace TT_Lab.Rendering
             transform *= matrixScale;
             DrawBox(transform, color);
         }
+
         public void DrawBox(mat4 transform, vec4 color)
         {
             primitiveRenderer.DrawBox(transform, color);
         }
+
         public void DrawCircle(vec3 position)
         {
             DrawCircle(position, vec3.Zero, vec3.Ones);
         }
+
         public void DrawCircle(vec3 position, vec3 rotation, vec3 scale)
         {
             DrawCircle(position, rotation, scale, vec4.Ones);
         }
+
         public void DrawCircle(vec3 position, vec3 rotation, vec3 scale, vec4 color)
         {
             rotation = rotation * 3.14f / 180.0f;
@@ -341,14 +329,17 @@ namespace TT_Lab.Rendering
             transform *= matrixScale;
             DrawCircle(transform, color);
         }
+
         public void DrawCircle(mat4 transform, vec4 color)
         {
             primitiveRenderer.DrawCircle(transform, color);
         }
+
         public void DrawLine(vec3 point1, vec3 point2, vec4 color)
         {
             DrawLine(point1, point2, color, WorldTransform);
         }
+
         public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
         {
             var scaleX = (point2 - point1).Length;
@@ -368,14 +359,17 @@ namespace TT_Lab.Rendering
             transform *= mat4.Scale(scale);
             primitiveRenderer.DrawLine(transform, color);
         }
+
         public void DrawSimpleAxis(vec3 position)
         {
             DrawSimpleAxis(position, vec3.Zero);
         }
+
         public void DrawSimpleAxis(vec3 position, vec3 rotation)
         {
             DrawSimpleAxis(position, rotation, vec3.Ones);
         }
+
         public void DrawSimpleAxis(vec3 position, vec3 rotation, vec3 scale)
         {
             rotation = rotation * 3.14f / 180.0f;
@@ -392,10 +386,12 @@ namespace TT_Lab.Rendering
             transform *= matrixScale;
             DrawSimpleAxis(transform);
         }
+
         public void DrawSimpleAxis(mat4 transform)
         {
             primitiveRenderer.DrawSimpleAxis(transform);
         }
+
         public void SetCameraSpeed(float s)
         {
             cameraSpeed = s;
@@ -406,7 +402,7 @@ namespace TT_Lab.Rendering
             canManipulateCamera = false;
         }
 
-        private vec2 yaw_pitch;
+        private vec2 yaw_pitch = new vec2(-90, 0);
         public void RotateView(Vector2 rot)
         {
             if (!canManipulateCamera || rot.Length == 0) return;
@@ -441,59 +437,44 @@ namespace TT_Lab.Rendering
             cameraZoom = (z + cameraZoom).Clamp(10.0f, 100.0f);
         }
 
-        public void HandleInputs(List<Key> keysPressed)
+        public void HandleInputs(InputController inputController)
         {
-            //Update control keys
-            leftShift = false;
-            rightShift = false;
-            leftCtrl = false;
-            rightCtrl = false;
-            leftAlt = false;
-            rightAlt = false;
-            foreach (var key in keysPressed)
-            {
-                if (key == Key.LeftAlt) leftAlt = true;
-                if (key == Key.RightAlt) rightAlt = true;
-                if (key == Key.LeftCtrl) leftCtrl = true;
-                if (key == Key.RightCtrl) rightCtrl = true;
-                if (key == Key.LeftShift) leftShift = true;
-                if (key == Key.RightShift) rightShift = true;
-            }
+
         }
 
-        public void Move(List<Key> keysPressed)
+        public void Move(InputController inputController)
         {
             if (!canManipulateCamera) return;
 
-            if (Alt || Ctrl)
+            if (inputController.Alt || inputController.Ctrl)
             {
                 return;
             }
 
-            var camSp = cameraSpeed * (Shift ? 5.0f : 1.0f);
-            foreach (var keyPressed in keysPressed)
+            var camSp = cameraSpeed * (inputController.Shift ? 5.0f : 1.0f);
+            if (inputController.IsKeyPressed(Key.W))
             {
-                switch (keyPressed)
-                {
-                    case Key.W:
-                        cameraPosition += camSp * cameraDirection;
-                        break;
-                    case Key.S:
-                        cameraPosition -= camSp * cameraDirection;
-                        break;
-                    case Key.A:
-                        cameraPosition -= camSp * glm.Cross(cameraDirection, cameraUp);
-                        break;
-                    case Key.D:
-                        cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
-                        break;
-                    case Key.Q:
-                        cameraPosition.y -= camSp;
-                        break;
-                    case Key.E:
-                        cameraPosition.y += camSp;
-                        break;
-                }
+                cameraPosition += camSp * cameraDirection;
+            }
+            if (inputController.IsKeyPressed(Key.S))
+            {
+                cameraPosition -= camSp * cameraDirection;
+            }
+            if (inputController.IsKeyPressed(Key.A))
+            {
+                cameraPosition -= camSp * glm.Cross(cameraDirection, cameraUp);
+            }
+            if (inputController.IsKeyPressed(Key.D))
+            {
+                cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
+            }
+            if (inputController.IsKeyPressed(Key.Q))
+            {
+                cameraPosition.y -= camSp;
+            }
+            if (inputController.IsKeyPressed(Key.E))
+            {
+                cameraPosition.y += camSp;
             }
         }
 

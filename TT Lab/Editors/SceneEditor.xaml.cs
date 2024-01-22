@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Wpf;
-using SharpGLTF.Scenes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using TT_Lab.Controls;
 using TT_Lab.Rendering;
+using TT_Lab.Util;
 
 namespace TT_Lab.Editors
 {
@@ -17,7 +17,7 @@ namespace TT_Lab.Editors
     /// </summary>
     public partial class SceneEditor : System.Windows.Controls.UserControl
     {
-        private List<Key> pressedKeys = new();
+        private InputController inputController;
         private Point mousePos;
 
         public event EventHandler RendererInit;
@@ -62,11 +62,10 @@ namespace TT_Lab.Editors
             Glcontrol.DragEnter += Glcontrol_DragEnter;
             Glcontrol.DragOver += Glcontrol_DragDrop;
             Glcontrol.MouseMove += Glcontrol_MouseMove;
-            Glcontrol.KeyDown += Glcontrol_KeyDown;
-            Glcontrol.KeyUp += Glcontrol_KeyUp;
             Glcontrol.MouseWheel += Glcontrol_MouseWheel;
             Glcontrol.MouseDown += Glcontrol_MouseClick;
-            Glcontrol.MouseUp += Glcontrol_MouseReleased;
+
+            inputController = new InputController(Glcontrol);
 
             ContextMenu = new System.Windows.Controls.ContextMenu();
             var settings = new GLWpfControlSettings
@@ -86,14 +85,13 @@ namespace TT_Lab.Editors
             Glcontrol.DragEnter -= Glcontrol_DragEnter;
             Glcontrol.DragOver -= Glcontrol_DragDrop;
             Glcontrol.MouseMove -= Glcontrol_MouseMove;
-            Glcontrol.KeyDown -= Glcontrol_KeyDown;
-            Glcontrol.KeyUp -= Glcontrol_KeyUp;
             Glcontrol.MouseWheel -= Glcontrol_MouseWheel;
             Glcontrol.MouseDown -= Glcontrol_MouseClick;
             Glcontrol.Initialized -= Glcontrol_Init;
             Glcontrol.Render -= Glcontrol_Paint;
 
             Scene?.Delete();
+            inputController?.Dispose();
         }
 
         private void Glcontrol_DragDrop(Object sender, DragEventArgs e)
@@ -123,33 +121,12 @@ namespace TT_Lab.Editors
             Scene?.ZoomView(e.Delta);
         }
 
-        private void Glcontrol_KeyUp(Object? sender, KeyEventArgs e)
-        {
-            if (pressedKeys.Contains(e.Key))
-            {
-                pressedKeys.Remove(e.Key);
-            }
-        }
-
-        private void Glcontrol_KeyDown(Object? sender, KeyEventArgs e)
-        {
-            if (!pressedKeys.Contains(e.Key))
-            {
-                pressedKeys.Add(e.Key);
-            }
-        }
-
         private void Glcontrol_MouseClick(Object? sender, MouseEventArgs e)
         {
             if (e.RightButton == MouseButtonState.Pressed && ContextMenu.Items.Count != 0)
             {
                 ContextMenu.IsOpen = true;
             }
-        }
-
-        private void Glcontrol_MouseReleased(Object? sender, MouseEventArgs e)
-        {
-
         }
 
         private void Glcontrol_MouseMove(Object? sender, MouseEventArgs e)
@@ -177,8 +154,8 @@ namespace TT_Lab.Editors
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Scene?.PreRender();
-            Scene?.HandleInputs(pressedKeys);
-            Scene?.Move(pressedKeys);
+            Scene?.HandleInputs(inputController);
+            Scene?.Move(inputController);
             Scene?.Render();
             Scene?.PostRender();
 

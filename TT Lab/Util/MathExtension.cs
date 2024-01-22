@@ -1,10 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common.Input;
 using System;
-using TT_Lab.AssetData.Graphics;
-using TT_Lab.AssetData.Graphics.SubModels;
 
 namespace TT_Lab.Util
 {
@@ -15,14 +10,6 @@ namespace TT_Lab.Util
             if (val.CompareTo(min) < 0) return min;
             else if (val.CompareTo(max) > 0) return max;
             return val;
-        }
-
-        public static float[] Matrix4ToArray(Matrix4 matrix)
-        {
-            return new float[] { matrix.M11, matrix.M12, matrix.M13, matrix.M14,
-                                 matrix.M21, matrix.M22, matrix.M23, matrix.M24,
-                                 matrix.M31, matrix.M32, matrix.M33, matrix.M34,
-                                 matrix.M41, matrix.M42, matrix.M43, matrix.M44,};
         }
 
         //https://gamedev.stackexchange.com/questions/96459/fast-ray-sphere-collision-code
@@ -110,7 +97,7 @@ namespace TT_Lab.Util
                 return false;
             }
 
-            float inv_det = 1.0f/ det;
+            float inv_det = 1.0f / det;
             vec3 s = origin - p1;
             float u = inv_det * glm.Dot(s, ray_cross_e2);
 
@@ -134,7 +121,7 @@ namespace TT_Lab.Util
                 hit = origin + direction * distance;
                 return true;
             }
-            
+
             return false;
         }
     }

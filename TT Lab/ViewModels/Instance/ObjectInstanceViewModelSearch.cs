@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace TT_Lab.ViewModels.Instance
 {
@@ -39,7 +34,7 @@ namespace TT_Lab.ViewModels.Instance
                 NotifyChange();
             }
         }
-        
+
         public ObservableCollection<object> Behaviours
         {
             get => _behaviours;

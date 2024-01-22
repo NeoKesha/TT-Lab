@@ -1,7 +1,6 @@
 ﻿using AdonisUI.Controls;
 using System;
 using System.Diagnostics;
-using System.Windows;
 
 namespace TT_Lab
 {

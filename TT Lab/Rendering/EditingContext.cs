@@ -1,11 +1,4 @@
 ﻿using GlmSharp;
-using MS.WindowsAPICodePack.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TT_Lab.AssetData.Instance;
 using TT_Lab.Editors;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
@@ -15,6 +8,7 @@ namespace TT_Lab.Rendering
     public class EditingContext
     {
         public SceneInstance? selectedInstance;
+        public BaseRenderable? selectedRenderable;
         public TransformSpace transformSpace = TransformSpace.LOCAL;
         public TransformMode transformMode = TransformMode.SELECTION;
         public TransformAxis transformAxis = TransformAxis.NONE;
@@ -24,6 +18,8 @@ namespace TT_Lab.Rendering
         private Scene root;
         private ChunkEditor editor;
         private Gizmo gizmo;
+        private vec3 gridStep = new vec3();
+        private mat4 gridRotation = new mat4();
 
         public EditingContext(Scene root, ChunkEditor editor)
         {
@@ -40,6 +36,7 @@ namespace TT_Lab.Rendering
             selectedInstance?.Deselect();
             selectedInstance?.GetRenderable().RemoveChild(gizmo);
             selectedInstance = null;
+            selectedRenderable = null;
         }
 
         public void Select(SceneInstance instance)
@@ -47,7 +44,28 @@ namespace TT_Lab.Rendering
             Deselect();
             selectedInstance = instance;
             selectedInstance?.Select();
-            selectedInstance?.GetRenderable().AddChild(gizmo);
+            selectedRenderable = selectedInstance?.GetRenderable();
+            selectedRenderable?.AddChild(gizmo);
+        }
+
+        public void SetGrid()
+        {
+            if (selectedInstance == null)
+            {
+                return;
+            }
+            gridStep.x = selectedInstance.GetSize().x;
+            gridStep.y = selectedInstance.GetSize().y;
+            gridStep.z = selectedInstance.GetSize().z;
+            gridRotation = selectedRenderable.LocalTransform.ToQuaternion.ToMat4;
+            SetCursorCoordinates(selectedInstance.GetPosition());
+        }
+
+        public void MoveCursorGrid(vec3 offset)
+        {
+            var cursorPos = cursor.GetPosition();
+            cursorPos += (gridRotation * new vec4(offset * gridStep, 1.0f)).xyz;
+            SetCursorCoordinates(cursorPos);
         }
 
         public bool IsInstanceSelected()
@@ -93,11 +111,12 @@ namespace TT_Lab.Rendering
                 return;
             }
             startPos = new vec2(x, y);
-            startTransform = selectedInstance.GetRenderable().LocalTransform;
+            startTransform = selectedRenderable.LocalTransform;
             transforming = true;
         }
 
-        public void EndTransform(float x, float y) {
+        public void EndTransform(float x, float y)
+        {
             if (selectedInstance == null)
             {
                 transforming = false;
@@ -110,8 +129,8 @@ namespace TT_Lab.Rendering
             UpdateTransform(x, y);
             transforming = false;
             var data = selectedInstance.GetData();
-            var pos = selectedInstance.GetRenderable().WorldTransform.Column3.xyz;
-            var rot = selectedInstance.GetRenderable().WorldTransform.ToQuaternion.EulerAngles * 180.0f / 3.14f;
+            var pos = selectedRenderable.WorldTransform.Column3.xyz;
+            var rot = selectedRenderable.WorldTransform.ToQuaternion.EulerAngles * 180.0f / 3.14f;
             data.Position.X = -pos.x;
             data.Position.Y = pos.y;
             data.Position.Z = pos.z;
@@ -128,7 +147,7 @@ namespace TT_Lab.Rendering
             }
             endPos = new vec2(x, y);
             var delta = (endPos.x - startPos.x) + (startPos.y - endPos.y);
-            
+
             if (transformMode == TransformMode.TRANSLATE)
             {
                 var k = 0.05f;
@@ -136,10 +155,12 @@ namespace TT_Lab.Rendering
                 if (transformAxis == TransformAxis.X)
                 {
                     axis.x = 1.0f;
-                } else if (transformAxis == TransformAxis.Y)
+                }
+                else if (transformAxis == TransformAxis.Y)
                 {
                     axis.y = 1.0f;
-                } else if (transformAxis == TransformAxis.Z)
+                }
+                else if (transformAxis == TransformAxis.Z)
                 {
                     axis.z = 1.0f;
                 }
@@ -165,7 +186,8 @@ namespace TT_Lab.Rendering
 
         public void ToggleTranslate()
         {
-            if (transforming) {
+            if (transforming)
+            {
                 return;
             }
             if (transformMode != TransformMode.TRANSLATE)
@@ -201,7 +223,8 @@ namespace TT_Lab.Rendering
             if (transformAxis == axis)
             {
                 transformAxis = TransformAxis.NONE;
-            } else
+            }
+            else
             {
                 transformAxis = axis;
             }
@@ -230,11 +253,11 @@ namespace TT_Lab.Rendering
         {
             if (transformSpace == TransformSpace.LOCAL)
             {
-                selectedInstance.GetRenderable().LocalTransform = startTransform * mat4.Translate(offset);
-            } 
+                selectedRenderable.LocalTransform = startTransform * mat4.Translate(offset);
+            }
             else
             {
-                selectedInstance.GetRenderable().LocalTransform = mat4.Translate(offset) * startTransform;
+                selectedRenderable.LocalTransform = mat4.Translate(offset) * startTransform;
             }
         }
 
@@ -242,11 +265,11 @@ namespace TT_Lab.Rendering
         {
             if (transformSpace == TransformSpace.LOCAL)
             {
-                selectedInstance.GetRenderable().LocalTransform = startTransform * mat4.RotateX(value * 3.14f / 180.0f);
+                selectedRenderable.LocalTransform = startTransform * mat4.RotateX(value * 3.14f / 180.0f);
             }
             else
             {
-                selectedInstance.GetRenderable().LocalTransform = startTransform;
+                selectedRenderable.LocalTransform = startTransform;
                 var localRotation = startTransform.ToQuaternion.ToMat4;
                 selectedInstance.GetRenderable().LocalTransform *= localRotation.Inverse;
                 selectedInstance.GetRenderable().LocalTransform *= mat4.RotateX(value * 3.14f / 180.0f);
@@ -258,15 +281,15 @@ namespace TT_Lab.Rendering
         {
             if (transformSpace == TransformSpace.LOCAL)
             {
-                selectedInstance.GetRenderable().LocalTransform = startTransform * mat4.RotateY(value * 3.14f / 180.0f);
+                selectedRenderable.LocalTransform = startTransform * mat4.RotateY(value * 3.14f / 180.0f);
             }
             else
             {
-                selectedInstance.GetRenderable().LocalTransform = startTransform;
+                selectedRenderable.LocalTransform = startTransform;
                 var localRotation = startTransform.ToQuaternion.ToMat4;
-                selectedInstance.GetRenderable().LocalTransform *= localRotation.Inverse;
-                selectedInstance.GetRenderable().LocalTransform *= mat4.RotateY(value * 3.14f / 180.0f);
-                selectedInstance.GetRenderable().LocalTransform *= localRotation;
+                selectedRenderable.LocalTransform *= localRotation.Inverse;
+                selectedRenderable.LocalTransform *= mat4.RotateY(value * 3.14f / 180.0f);
+                selectedRenderable.LocalTransform *= localRotation;
             }
         }
 
@@ -274,15 +297,15 @@ namespace TT_Lab.Rendering
         {
             if (transformSpace == TransformSpace.LOCAL)
             {
-                selectedInstance.GetRenderable().LocalTransform = startTransform * mat4.RotateZ(value * 3.14f / 180.0f);
+                selectedRenderable.LocalTransform = startTransform * mat4.RotateZ(value * 3.14f / 180.0f);
             }
             else
             {
-                selectedInstance.GetRenderable().LocalTransform = startTransform;
+                selectedRenderable.LocalTransform = startTransform;
                 var localRotation = startTransform.ToQuaternion.ToMat4;
-                selectedInstance.GetRenderable().LocalTransform *= localRotation.Inverse;
-                selectedInstance.GetRenderable().LocalTransform *= mat4.RotateZ(value * 3.14f / 180.0f);
-                selectedInstance.GetRenderable().LocalTransform *= localRotation;
+                selectedRenderable.LocalTransform *= localRotation.Inverse;
+                selectedRenderable.LocalTransform *= mat4.RotateZ(value * 3.14f / 180.0f);
+                selectedRenderable.LocalTransform *= localRotation;
             }
         }
     }

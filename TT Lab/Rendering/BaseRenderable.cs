@@ -1,9 +1,6 @@
 ﻿using GlmSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering
@@ -40,16 +37,19 @@ namespace TT_Lab.Rendering
             }
         }
 
-        public bool Enabled { get => enabled; set { 
-               if (value)
+        public bool Enabled
+        {
+            get => enabled; set
+            {
+                if (value)
                 {
                     Enable();
-                } 
+                }
                 else
                 {
                     Disable();
                 }
-            } 
+            }
         }
 
         public BaseRenderable(Scene root)
