@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TT_Lab.Assets;
-using TT_Lab.MeshProcessor;
 using TT_Lab.Util;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;

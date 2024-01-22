@@ -1,9 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+﻿using GlmSharp;
 using System;
-using System.Collections.Generic;
-using TT_Lab.Rendering.Buffers;
-using TT_Lab.Util;
 using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Rendering.Objects
@@ -12,49 +8,51 @@ namespace TT_Lab.Rendering.Objects
     {
         private uint id;
         private int layid;
-        private Vector4 pos;
-        private IndexedBufferArray positionBuffer;
+        private vec3 position;
+        private vec4 color;
 
         public Position(Scene root, PositionViewModel pos) : base(root)
         {
             id = pos.Asset.ID;
             layid = (int)pos.LayoutID;
-            this.pos = new Vector4(pos.Position.X, pos.Position.Y, pos.Position.Z, pos.Position.W);
-            positionBuffer = BufferGeneration.GetCubeBuffer(this.pos.Xyz, 0.3f, new List<System.Drawing.Color> { System.Drawing.Color.FromArgb(layid * 255 / 7, 100, 200) });
+            position = new vec3(-pos.Position.X, pos.Position.Y, pos.Position.Z);
             pos.PropertyChanged += Pos_PropertyChanged;
+            color = new vec4();
+            System.Drawing.Color tmp = System.Drawing.Color.FromArgb(layid * 255 / 7, 100, 200);
+            color.x = tmp.R / 255.0f;
+            color.y = tmp.G / 255.0f;
+            color.z = tmp.B / 255.0f;
+            color.w = tmp.A / 255.0f;
+            LocalTransform = mat4.Translate(position);
+            LocalTransform *= mat4.Scale(0.25f);
         }
 
         private void Pos_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.PropertyName) && (e.PropertyName == "IsSelected" || e.PropertyName == "IsDirty")) return;
             var vm = (PositionViewModel)sender!;
-            positionBuffer.Delete();
             layid = (int)vm.LayoutID;
-            pos = new Vector4(vm.Position.X, vm.Position.Y, vm.Position.Z, vm.Position.W);
-            positionBuffer = BufferGeneration.GetCubeBuffer(pos.Xyz, 0.3f, new List<System.Drawing.Color> { System.Drawing.Color.FromArgb(layid * 255 / 7, 100, 200) });
+            position = new vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z);
+            LocalTransform = mat4.Translate(position);
+            LocalTransform *= mat4.Scale(0.25f);
         }
 
         public void Bind()
         {
-            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
-            positionBuffer.Bind();
+
         }
 
         public void Delete()
         {
-            positionBuffer.Delete();
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
-            Bind();
-            GL.DrawElements(PrimitiveType.Triangles, positionBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-            Unbind();
+            Root.DrawBox(WorldTransform, color);
         }
 
         public void Unbind()
         {
-            positionBuffer.Unbind();
         }
     }
 }

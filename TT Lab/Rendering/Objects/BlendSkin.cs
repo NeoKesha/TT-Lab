@@ -1,15 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using TT_Lab.AssetData.Graphics;
-using TT_Lab.Assets;
+﻿using TT_Lab.AssetData.Graphics;
 using TT_Lab.Rendering.Buffers;
-using TT_Lab.Util;
-using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -33,7 +23,7 @@ namespace TT_Lab.Rendering.Objects
             model.Delete();
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             model.Render();
         }

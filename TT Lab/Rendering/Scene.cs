@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
@@ -29,7 +30,6 @@ namespace TT_Lab.Rendering
         // Rendering matrices and settings
         private mat4 projectionMat;
         private mat4 viewMat;
-        private mat4 modelMat;
         private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
         private vec3 cameraDirection = new(0, 0, -1);
         private vec3 cameraUp = new(0, 1, 0);
@@ -48,6 +48,8 @@ namespace TT_Lab.Rendering
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
+        private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
+        private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
 
 
         /// <summary>
@@ -63,7 +65,6 @@ namespace TT_Lab.Rendering
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-            modelMat = mat4.Scale(new vec3(1.0f));
 
             this.libShader = libShader;
             ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
@@ -71,6 +72,8 @@ namespace TT_Lab.Rendering
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
             SetupTransparencyRender();
+
+            primitiveRenderer.Init(this);
         }
 
         /// <summary>
@@ -82,20 +85,22 @@ namespace TT_Lab.Rendering
         public Scene(List<AssetViewModel> sceneTree, float width, float height) :
             this(width, height, new ShaderProgram.LibShader { Path = "Shaders\\Light.frag", Type = ShaderType.FragmentShader })
         {
+            LocalTransform = mat4.Identity;
+
             // Collision renderer
             var colData = sceneTree.Find((avm) =>
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
             var colRender = new Objects.Collision(this, colData);
-            objectsOpaque.Add(colRender);
+            AddRender(colRender, false);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
             foreach (var pos in positions!.Children)
             {
                 var pRend = new Objects.Position(this, (PositionViewModel)pos);
-                objectsOpaque.Add(pRend);
+                AddRender(pRend, false);
             }
 
             // Triggers renderer
@@ -103,8 +108,30 @@ namespace TT_Lab.Rendering
             foreach (var trg in triggers!.Children)
             {
                 var trRend = new Objects.Trigger(this, (TriggerViewModel)trg);
-                objectsTransparent.Add(trRend);
+                AddRender(trRend);
             }
+        }
+
+        public SceneInstance AddObjectInstance(ObjectInstanceData instData)
+        {
+            var sceneInstance = new SceneInstance(instData, modelBufferCache, this);
+            var pRend = sceneInstance.GetRenderable();
+
+            AddRender(pRend);
+            return sceneInstance;
+        }
+
+        public vec3 GetCameraPosition()
+        {
+            return cameraPosition;
+        }
+
+        public vec3 GetRayFromViewport(float x, float y)
+        {
+            var win = new vec3(x, resolution.y - y, 0.0f);
+            var view = new vec4(0, 0, resolution.x, resolution.y);
+            var worldPos = mat4.UnProject(win, viewMat, projectionMat, view);
+            return glm.Normalized(worldPos - cameraPosition);
         }
 
         /// <summary>
@@ -114,7 +141,8 @@ namespace TT_Lab.Rendering
         /// <param name="transparent">Whether the object is transparent and goes through translucency pipeline</param>
         public void AddRender(IRenderable renderObj, bool transparent = true)
         {
-            queuedRenderActions.Enqueue(() => {
+            queuedRenderActions.Enqueue(() =>
+            {
                 if (transparent)
                 {
                     objectsTransparent.Add(renderObj);
@@ -123,6 +151,7 @@ namespace TT_Lab.Rendering
                 {
                     objectsOpaque.Add(renderObj);
                 }
+                AddChild(renderObj);
             });
         }
 
@@ -135,11 +164,10 @@ namespace TT_Lab.Rendering
         /// Sets the matrix uniforms for object's rendering in 3D scene
         /// </summary>
         /// <param name="program"></param>
-        public void SetPVMNShaderUniforms(ShaderProgram program)
+        public void SetProjectViewShaderUniforms(ShaderProgram program)
         {
             program.SetUniformMatrix4("Projection", projectionMat.Values1D);
             program.SetUniformMatrix4("View", viewMat.Values1D);
-            program.SetUniformMatrix4("Model", modelMat.Values1D);
         }
 
         public void SetResolution(float width, float height)
@@ -173,12 +201,19 @@ namespace TT_Lab.Rendering
             // Render all objects
             Renderer.RenderOpaque(objectsOpaque);
             Renderer.Render(objectsTransparent);
+            // Render HUD
+
             // Reset modes
             GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Multisample);
             Unbind();
+        }
+
+        protected override void RenderSelf()
+        {
+
         }
 
         public void Bind()
@@ -205,7 +240,138 @@ namespace TT_Lab.Rendering
             }
             objectsTransparent.Clear();
             objectsOpaque.Clear();
+            foreach (var modelBuffers in modelBufferCache.Values)
+            {
+                foreach (var buffer in modelBuffers)
+                {
+                    buffer.Delete();
+                }
+                modelBuffers.Clear();
+            }
+            modelBufferCache.Clear();
+            primitiveRenderer.Terminate();
             Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
+        }
+
+        public void DrawBox(vec3 position)
+        {
+            DrawBox(position, vec3.Zero, vec3.Ones);
+        }
+
+        public void DrawBox(vec3 position, vec3 rotation, vec3 scale)
+        {
+            DrawBox(position, rotation, scale, vec4.Ones);
+        }
+
+        public void DrawBox(vec3 position, vec3 rotation, vec3 scale, vec4 color)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = WorldTransform;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawBox(transform, color);
+        }
+
+        public void DrawBox(mat4 transform, vec4 color)
+        {
+            primitiveRenderer.DrawBox(transform, color);
+        }
+
+        public void DrawCircle(vec3 position)
+        {
+            DrawCircle(position, vec3.Zero, vec3.Ones);
+        }
+
+        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale)
+        {
+            DrawCircle(position, rotation, scale, vec4.Ones);
+        }
+
+        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale, vec4 color)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = WorldTransform;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawCircle(transform, color);
+        }
+
+        public void DrawCircle(mat4 transform, vec4 color)
+        {
+            primitiveRenderer.DrawCircle(transform, color);
+        }
+
+        public void DrawLine(vec3 point1, vec3 point2, vec4 color)
+        {
+            DrawLine(point1, point2, color, WorldTransform);
+        }
+
+        public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
+        {
+            var scaleX = (point2 - point1).Length;
+            vec3 direction = (point2 - point1).Normalized;
+            vec3 scale = new vec3(scaleX, 1.0f, 1.0f);
+            mat4 matrixPosition = mat4.Translate(point1.x, point1.y, point1.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            var angleXZ = (float)glm.Angle(new vec2(direction.x, direction.z));
+            var angleY = glm.Acos(glm.Dot(direction, new vec3(direction.x, 0, direction.z)));
+            matrixRotationX = mat4.RotateX(0);
+            matrixRotationY = mat4.RotateY(angleXZ);
+            matrixRotationZ = mat4.RotateZ(-angleY);
+
+            mat4 transform = parent;
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= mat4.Scale(scale);
+            primitiveRenderer.DrawLine(transform, color);
+        }
+
+        public void DrawSimpleAxis(vec3 position)
+        {
+            DrawSimpleAxis(position, vec3.Zero);
+        }
+
+        public void DrawSimpleAxis(vec3 position, vec3 rotation)
+        {
+            DrawSimpleAxis(position, rotation, vec3.Ones);
+        }
+
+        public void DrawSimpleAxis(vec3 position, vec3 rotation, vec3 scale)
+        {
+            rotation = rotation * 3.14f / 180.0f;
+            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
+            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
+            matrixRotationX = mat4.RotateX(rotation.x);
+            matrixRotationY = mat4.RotateY(rotation.y);
+            matrixRotationZ = mat4.RotateZ(rotation.z);
+            mat4 matrixScale = mat4.Scale(scale);
+            mat4 transform = mat4.Identity;
+
+            transform *= matrixPosition;
+            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
+            transform *= matrixScale;
+            DrawSimpleAxis(transform);
+        }
+
+        public void DrawSimpleAxis(mat4 transform)
+        {
+            primitiveRenderer.DrawSimpleAxis(transform);
         }
 
         public void SetCameraSpeed(float s)
@@ -218,7 +384,7 @@ namespace TT_Lab.Rendering
             canManipulateCamera = false;
         }
 
-        private vec2 yaw_pitch;
+        private vec2 yaw_pitch = new vec2(-90, 0);
         public void RotateView(Vector2 rot)
         {
             if (!canManipulateCamera || rot.Length == 0) return;
@@ -253,39 +419,44 @@ namespace TT_Lab.Rendering
             cameraZoom = (z + cameraZoom).Clamp(10.0f, 100.0f);
         }
 
-        public void HandleInputs(List<Key> keysPressed)
+        public void HandleInputs(InputController inputController)
         {
-
+            
         }
 
-        public void Move(List<Key> keysPressed)
+        public void Move(InputController inputController)
         {
             if (!canManipulateCamera) return;
 
-            var camSp = cameraSpeed;
-
-            if (keysPressed.Contains(Key.LeftShift) || keysPressed.Contains(Key.RightShift))
+            if (inputController.Alt || inputController.Ctrl)
             {
-                camSp *= 5;
+                return;
             }
 
-            foreach (var keyPressed in keysPressed)
+            var camSp = cameraSpeed * (inputController.Shift ? 5.0f : 1.0f);
+            if (inputController.IsKeyPressed(Key.W))
             {
-                switch (keyPressed)
-                {
-                    case Key.W:
-                        cameraPosition += camSp * cameraDirection;
-                        break;
-                    case Key.S:
-                        cameraPosition -= camSp * cameraDirection;
-                        break;
-                    case Key.A:
-                        cameraPosition -= camSp * glm.Cross(cameraDirection, cameraUp);
-                        break;
-                    case Key.D:
-                        cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
-                        break;
-                }
+                cameraPosition += camSp * cameraDirection;
+            }
+            if (inputController.IsKeyPressed(Key.S))
+            {
+                cameraPosition -= camSp * cameraDirection;
+            }
+            if (inputController.IsKeyPressed(Key.A))
+            {
+                cameraPosition -= camSp * glm.Cross(cameraDirection, cameraUp);
+            }
+            if (inputController.IsKeyPressed(Key.D))
+            {
+                cameraPosition += camSp * glm.Cross(cameraDirection, cameraUp);
+            }
+            if (inputController.IsKeyPressed(Key.Q))
+            {
+                cameraPosition.y -= camSp;
+            }
+            if (inputController.IsKeyPressed(Key.E))
+            {
+                cameraPosition.y += camSp;
             }
         }
 

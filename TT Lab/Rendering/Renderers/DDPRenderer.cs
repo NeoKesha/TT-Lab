@@ -145,7 +145,7 @@ namespace TT_Lab.Rendering.Renderers
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Ext.BlendEquation(BlendEquationMode.Max);
             ddpInitShader.Bind();
-            Scene.SetPVMNShaderUniforms(ddpInitShader);
+            Scene.SetProjectViewShaderUniforms(ddpInitShader);
             foreach (var @object in objects)
             {
                 @object.Render();
@@ -181,7 +181,7 @@ namespace TT_Lab.Rendering.Renderers
                 ddpPeelShader.Bind();
                 ddpPeelShader.SetTextureUniform("DepthBlenderTex", TextureTarget.TextureRectangleArb, dualDepthTex[prevId].Buffer, 0);
                 ddpPeelShader.SetTextureUniform("FrontBlenderTex", TextureTarget.TextureRectangleArb, dualFrontBlenderTex[prevId].Buffer, 1);
-                Scene.SetPVMNShaderUniforms(ddpPeelShader);
+                Scene.SetProjectViewShaderUniforms(ddpPeelShader);
                 foreach (var @object in objects)
                 {
                     @object.Render();

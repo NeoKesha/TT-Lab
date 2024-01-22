@@ -1,10 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
 
@@ -12,7 +9,7 @@ namespace TT_Lab.Rendering.Buffers
 {
     public class ModelBufferBlendSkin : ModelBuffer
     {
-        
+
         public Single[] BlendShapesValues { get; set; }
 
         readonly Int32 blendShapesAmount;
@@ -96,7 +93,7 @@ namespace TT_Lab.Rendering.Buffers
             }
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             var renderProgram = Root.Renderer.RenderProgram;

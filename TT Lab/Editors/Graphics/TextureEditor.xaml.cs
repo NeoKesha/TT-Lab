@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Graphics;
-using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.Editors.Graphics
 {

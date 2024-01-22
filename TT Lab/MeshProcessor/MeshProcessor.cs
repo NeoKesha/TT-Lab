@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Libraries;
-using static Meshoptimizer.Meshopt;
 
 namespace TT_Lab.MeshProcessor
 {

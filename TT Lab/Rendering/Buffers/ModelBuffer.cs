@@ -1,7 +1,6 @@
-﻿using System;
+﻿using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using OpenTK.Graphics.OpenGL;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Util;
@@ -85,7 +84,7 @@ namespace TT_Lab.Rendering.Buffers
             Root.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
         }
 
-        public override void Render()
+        protected override void RenderSelf()
         {
             Bind();
             for (var i = 0; i < modelBuffers.Count; ++i)
