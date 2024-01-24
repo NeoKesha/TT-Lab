@@ -148,7 +148,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 // Save the batches into their respective vertex parts
                 for (Int32 j = 0; j < verts; j++)
                 {
-                    var color = new Vector4(
+                    var color = new Color(
                         (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryX() & 0xFF) + 127, 255)),
                         (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryY() & 0xFF) + 127, 255)),
                         (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryZ() & 0xFF) + 127, 255)),
@@ -156,7 +156,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         );
                     Vertexes.Add(positionVertexBatch[j]);
                     UVW.Add(uvVertexBatch[j]);
-                    Colors.Add(color);
+                    Colors.Add(Vector4.FromColor(color));
                     SkinJoints.Add(jointInfos[j]);
                 }
 

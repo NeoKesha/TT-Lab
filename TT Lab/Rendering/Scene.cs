@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using TT_Lab.AssetData.Instance;
@@ -33,22 +34,25 @@ namespace TT_Lab.Rendering
         private vec3 cameraPosition = new(0.0f, 0.0f, 0.0f);
         private vec3 cameraDirection = new(0, 0, -1);
         private vec3 cameraUp = new(0, 1, 0);
-        private vec2 resolution = new(0, 0);
+        private vec2 resolution = new(1, 1);
+        private float time = 0.0f;
         private float cameraSpeed = 1.0f;
         private float cameraZoom = 90.0f;
         private bool canManipulateCamera = true;
-        private ShaderProgram.LibShader libShader;
+        private ShaderStorage.LibraryFragmentShaders fragmentLibraryShader;
+        private ShaderStorage.LibraryVertexShaders vertexLibraryShader;
+        private Stopwatch timer = new();
 
         // Scene rendering
-        private readonly List<IRenderable> objectsTransparent = new();
-        private readonly List<IRenderable> objectsOpaque = new();
+        private readonly List<IRenderable> renderableObjects = new();
         private readonly TextureBuffer colorTextureNT = new(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebufferNT = new();
         private readonly RenderBuffer depthRenderbuffer = new();
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
-        private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
+        private readonly Dictionary<LabURI, List<ModelBuffer>> modelBufferCache = new();
+        //private readonly List<SceneInstance> sceneInstances = new();
         private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
 
 
@@ -57,16 +61,19 @@ namespace TT_Lab.Rendering
         /// </summary>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(float width, float height, ShaderProgram.LibShader libShader) : base(null)
+        public Scene(float width, float height, ShaderStorage.LibraryFragmentShaders fragmentLibraryShader, ShaderStorage.LibraryVertexShaders vertexLibraryShader = ShaderStorage.LibraryVertexShaders.VertexShading) : base(null)
         {
             Preferences.PreferenceChanged += Preferences_PreferenceChanged;
+
+            ShaderStorage.BuildShaderCache();
 
             resolution.x = width;
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
 
-            this.libShader = libShader;
+            this.fragmentLibraryShader = fragmentLibraryShader;
+            this.vertexLibraryShader = vertexLibraryShader;
             ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
             framebufferNT.Bind();
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
@@ -83,7 +90,7 @@ namespace TT_Lab.Rendering
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
         public Scene(List<AssetViewModel> sceneTree, float width, float height) :
-            this(width, height, new ShaderProgram.LibShader { Path = "Shaders\\Light.frag", Type = ShaderType.FragmentShader })
+            this(width, height, ShaderStorage.LibraryFragmentShaders.Light)
         {
             LocalTransform = mat4.Identity;
 
@@ -93,14 +100,14 @@ namespace TT_Lab.Rendering
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
             var colRender = new Objects.Collision(this, colData);
-            AddRender(colRender, false);
+            AddRender(colRender);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
             foreach (var pos in positions!.Children)
             {
                 var pRend = new Objects.Position(this, (PositionViewModel)pos);
-                AddRender(pRend, false);
+                AddRender(pRend);
             }
 
             // Triggers renderer
@@ -139,18 +146,11 @@ namespace TT_Lab.Rendering
         /// </summary>
         /// <param name="renderObj">Object to add</param>
         /// <param name="transparent">Whether the object is transparent and goes through translucency pipeline</param>
-        public void AddRender(IRenderable renderObj, bool transparent = true)
+        public void AddRender(IRenderable renderObj)
         {
             queuedRenderActions.Enqueue(() =>
             {
-                if (transparent)
-                {
-                    objectsTransparent.Add(renderObj);
-                }
-                else
-                {
-                    objectsOpaque.Add(renderObj);
-                }
+                renderableObjects.Add(renderObj);
                 AddChild(renderObj);
             });
         }
@@ -161,13 +161,18 @@ namespace TT_Lab.Rendering
         }
 
         /// <summary>
-        /// Sets the matrix uniforms for object's rendering in 3D scene
+        /// Sets the uniforms that are accessible throughout every shader
         /// </summary>
         /// <param name="program"></param>
-        public void SetProjectViewShaderUniforms(ShaderProgram program)
+        public void SetGlobalUniforms(ShaderProgram program)
         {
-            program.SetUniformMatrix4("Projection", projectionMat.Values1D);
-            program.SetUniformMatrix4("View", viewMat.Values1D);
+            program.SetUniformMatrix4("StartProjection", projectionMat.Values1D);
+            program.SetUniformMatrix4("StartView", viewMat.Values1D);
+            program.SetUniformMatrix4("StartModel", WorldTransform.Values1D);
+            program.SetUniform1("Time", time);
+            program.SetUniform2("Resolution", resolution.x, resolution.y);
+            program.SetUniform3("LightPosition", CameraPosition.x, CameraPosition.y, CameraPosition.z);
+            program.SetUniform3("LightDirection", -CameraDirection.x, CameraDirection.y, CameraDirection.z);
         }
 
         public void SetResolution(float width, float height)
@@ -177,8 +182,9 @@ namespace TT_Lab.Rendering
             ReallocateFramebuffer((int)width, (int)height);
         }
 
-        public override void Render()
+        public override void Render(ShaderProgram? _s = null, bool _b = false)
         {
+            timer = Stopwatch.StartNew();
             foreach (var a in queuedRenderActions)
             {
                 a.Invoke();
@@ -199,19 +205,25 @@ namespace TT_Lab.Rendering
             GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
             GL.ClearBuffer(ClearBuffer.Depth, 0, ref clearDepth);
             // Render all objects
-            Renderer.RenderOpaque(objectsOpaque);
-            Renderer.Render(objectsTransparent);
+            Renderer.Render(renderableObjects);
             // Render HUD
 
+            // Post process effects
+            GL.Disable(EnableCap.Blend);
+            GL.Disable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Multisample);
+            Renderer.PostProcess();
             // Reset modes
             GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Multisample);
             Unbind();
+            timer.Stop();
+            time += timer.Elapsed.Microseconds;
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
 
         }
@@ -230,16 +242,11 @@ namespace TT_Lab.Rendering
             framebufferNT.Delete();
             depthRenderbuffer.Delete();
             Renderer.Delete();
-            foreach (var @object in objectsOpaque)
+            foreach (var @object in renderableObjects)
             {
                 @object.Delete();
             }
-            foreach (var @object in objectsTransparent)
-            {
-                @object.Delete();
-            }
-            objectsTransparent.Clear();
-            objectsOpaque.Clear();
+            renderableObjects.Clear();
             foreach (var modelBuffers in modelBufferCache.Values)
             {
                 foreach (var buffer in modelBuffers)
@@ -421,7 +428,7 @@ namespace TT_Lab.Rendering
 
         public void HandleInputs(InputController inputController)
         {
-            
+
         }
 
         public void Move(InputController inputController)
@@ -462,11 +469,7 @@ namespace TT_Lab.Rendering
 
         public void PreRender()
         {
-            foreach (var @object in objectsOpaque)
-            {
-                @object.PreRender();
-            }
-            foreach (var @object in objectsTransparent)
+            foreach (var @object in renderableObjects)
             {
                 @object.PreRender();
             }
@@ -474,11 +477,7 @@ namespace TT_Lab.Rendering
 
         public void PostRender()
         {
-            foreach (var @object in objectsOpaque)
-            {
-                @object.PostRender();
-            }
-            foreach (var @object in objectsTransparent)
+            foreach (var @object in renderableObjects)
             {
                 @object.PostRender();
             }
@@ -517,8 +516,8 @@ namespace TT_Lab.Rendering
             Renderer?.Delete();
             Renderer = method switch
             {
-                RenderSwitches.TranslucencyMethod.WBOIT => new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y, libShader),
-                _ => new DDPRenderer(resolution.x, resolution.y, libShader),
+                RenderSwitches.TranslucencyMethod.WBOIT => new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y, fragmentLibraryShader, vertexLibraryShader),
+                _ => new BasicRenderer(fragmentLibraryShader, vertexLibraryShader)
             };
             Renderer.Scene = this;
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

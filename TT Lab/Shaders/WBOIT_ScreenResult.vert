@@ -1,4 +1,5 @@
-#version 410 compatibility
+#version 450 core
+
 const vec2 p[4] = vec2[4]
 (
      vec2(-1, -1),

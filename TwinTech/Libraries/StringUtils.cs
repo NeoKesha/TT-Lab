@@ -19,12 +19,28 @@ namespace Twinsanity.Libraries
         static public string GetStringAfter(String src, String str)
         {
             int pos = src.IndexOf(str) + str.Length - 1;
-            return src.Substring(pos + 1);
+            return src[(pos + 1)..];
         }
         static public string GetStringBefore(String src, String str)
         {
             int pos = src.IndexOf(str) + str.Length - 1;
-            return src.Substring(0, pos);
+            return src[..pos];
+        }
+        static public int GetIndexAfter(String src, String str)
+        {
+            return GetIndexAfter(src, str, 0);
+        }
+        static public int GetIndexAfter(String src, String str, int startIndex)
+        {
+            return src.IndexOf(str, startIndex) + str.Length;
+        }
+        static public int GetIndexBefore(String src, String str)
+        {
+            return GetIndexBefore(src, str, 0);
+        }
+        static public int GetIndexBefore(String src, String str, int startIndex)
+        {
+            return src.IndexOf(str, startIndex);
         }
         static public string GetTabulatedString(String src, Int32 tabs)
         {

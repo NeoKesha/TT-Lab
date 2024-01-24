@@ -38,11 +38,9 @@ namespace TT_Lab.Rendering
             {
                 return;
             }
-            scene.Renderer.RenderProgram.SetUniform1("Alpha", color.w);
+            scene.Renderer.RenderProgram.SetUniform1("Opacity", color.w);
             scene.Renderer.RenderProgram.SetUniform3("AmbientMaterial", color.x, color.y, color.z);
-            scene.Renderer.RenderProgram.SetUniform3("LightPosition", scene.CameraPosition.x, scene.CameraPosition.y, scene.CameraPosition.z);
-            scene.Renderer.RenderProgram.SetUniform3("LightDirection", -scene.CameraDirection.x, scene.CameraDirection.y, scene.CameraDirection.z);
-            scene.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
+            scene.Renderer.RenderProgram.SetUniformMatrix4("StartModel", transform.Values1D);
             if (boxBuffer != null)
             {
                 boxBuffer.Bind();
@@ -57,11 +55,9 @@ namespace TT_Lab.Rendering
             {
                 return;
             }
-            scene.Renderer.RenderProgram.SetUniform1("Alpha", color.w);
+            scene.Renderer.RenderProgram.SetUniform1("Opacity", color.w);
             scene.Renderer.RenderProgram.SetUniform3("AmbientMaterial", color.x, color.y, color.z);
-            scene.Renderer.RenderProgram.SetUniform3("LightPosition", scene.CameraPosition.x, scene.CameraPosition.y, scene.CameraPosition.z);
-            scene.Renderer.RenderProgram.SetUniform3("LightDirection", -scene.CameraDirection.x, scene.CameraDirection.y, scene.CameraDirection.z);
-            scene.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
+            scene.Renderer.RenderProgram.SetUniformMatrix4("StartModel", transform.Values1D);
             if (ringBuffer != null)
             {
                 var idx = (int)Math.Ceiling(segment * (RING_SEGMENT_RESOLUTION - 1));
@@ -77,11 +73,9 @@ namespace TT_Lab.Rendering
             {
                 return;
             }
-            scene.Renderer.RenderProgram.SetUniform1("Alpha", color.w);
+            scene.Renderer.RenderProgram.SetUniform1("Opacity", color.w);
             scene.Renderer.RenderProgram.SetUniform3("AmbientMaterial", color.x, color.y, color.z);
-            scene.Renderer.RenderProgram.SetUniform3("LightPosition", scene.CameraPosition.x, scene.CameraPosition.y, scene.CameraPosition.z);
-            scene.Renderer.RenderProgram.SetUniform3("LightDirection", -scene.CameraDirection.x, scene.CameraDirection.y, scene.CameraDirection.z);
-            scene.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
+            scene.Renderer.RenderProgram.SetUniformMatrix4("StartModel", transform.Values1D);
             if (lineBuffer != null)
             {
                 lineBuffer.Bind();
@@ -96,11 +90,9 @@ namespace TT_Lab.Rendering
             {
                 return;
             }
-            scene.Renderer.RenderProgram.SetUniform1("Alpha", 1.0f);
+            scene.Renderer.RenderProgram.SetUniform1("Opacity", 1.0f);
             scene.Renderer.RenderProgram.SetUniform3("AmbientMaterial", 1.0f, 1.0f, 1.0f);
-            scene.Renderer.RenderProgram.SetUniform3("LightPosition", scene.CameraPosition.x, scene.CameraPosition.y, scene.CameraPosition.z);
-            scene.Renderer.RenderProgram.SetUniform3("LightDirection", -scene.CameraDirection.x, scene.CameraDirection.y, scene.CameraDirection.z);
-            scene.Renderer.RenderProgram.SetUniformMatrix4("Model", transform.Values1D);
+            scene.Renderer.RenderProgram.SetUniformMatrix4("StartModel", transform.Values1D);
             if (simpleAxisBuffer != null)
             {
                 simpleAxisBuffer.Bind();

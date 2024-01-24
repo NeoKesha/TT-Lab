@@ -30,6 +30,7 @@ namespace TT_Lab.Command
             if (_tabToClose != null)
             {
                 _tabsContainer.Items.Remove(_tabToClose);
+                _tabToClose = null;
                 return;
             }
             if (_tabsContainer.SelectedIndex != -1)

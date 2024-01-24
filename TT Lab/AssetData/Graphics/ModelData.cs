@@ -246,7 +246,6 @@ namespace TT_Lab.AssetData.Graphics
                         if (vertexes.Colors1 != null)
                         {
                             ver.EmitColor = vertexes.Colors1[i].ToTwin();
-                            ver.EmitColor = new Vector4(ver.EmitColor.X * 255, ver.EmitColor.Y * 255, ver.EmitColor.Z * 255, ver.EmitColor.W * 255);
                         }
                         submodel.Add(ver);
                     }

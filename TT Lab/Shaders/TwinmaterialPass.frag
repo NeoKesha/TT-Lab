@@ -1,17 +1,15 @@
-#version 410 compatibility
+#include "Includes/ModelLayout.frag"
 
-uniform float Alpha;
 uniform int TexturesAmount;
-uniform sampler2D tex[5];
-uniform int AlphaBlending[5];
-uniform bool AlphaTest[5];
-uniform float AlphaCompare[5];
-uniform int AlphaCompareMethod[5];
-uniform float FIX[5];
-uniform int SpecColA[5];
-uniform int SpecColB[5];
-uniform int SpecAlphaC[5];
-uniform int SpecColD[5];
+uniform int AlphaBlending[MAX_TEXTURES];
+uniform bool AlphaTest[MAX_TEXTURES];
+uniform float AlphaCompare[MAX_TEXTURES];
+uniform int AlphaCompareMethod[MAX_TEXTURES];
+uniform float FIX[MAX_TEXTURES];
+uniform int SpecColA[MAX_TEXTURES];
+uniform int SpecColB[MAX_TEXTURES];
+uniform int SpecAlphaC[MAX_TEXTURES];
+uniform int SpecColD[MAX_TEXTURES];
 
 
 vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
@@ -19,7 +17,7 @@ vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
 	vec4 color = vec4(1.0);
 	for (int i = 0; i < TexturesAmount; ++i)
 	{
-		vec4 texCol = texture(tex[i], vec2(texCoord.s, texCoord.t));
+		vec4 texCol = texture(Texture[i], vec2(texCoord.s, texCoord.t));
 		if (AlphaBlending[i] == 1) {
 			vec4 colorA = vec4(0.0);
 			vec4 colorB = vec4(0.0);
@@ -55,6 +53,6 @@ vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
 			color = texCol;
 		}
 	}
-	color *= Alpha;
+	color *= Opacity;
 	return color;
 }

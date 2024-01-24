@@ -12,35 +12,44 @@ namespace TT_Lab.Util
     {
         public static IndexedBufferArray GetModelBuffer(List<Vertex> vertexes, List<IndexedFace> faces, bool generateUvs = true)
         {
+            var positions = vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList();
+            var colors = vertexes.Select((v) =>
+            {
+                var col = v.Color.GetColor();
+                if (v.HasEmitColor)
+                {
+                    var emitCol = v.EmitColor.GetColor();
+                    col.R = (Byte)Math.Min(col.R + emitCol.R, 255);
+                    col.G = (Byte)Math.Min(col.G + emitCol.G, 255);
+                    col.B = (Byte)Math.Min(col.B + emitCol.B, 255);
+                    col.A = (Byte)Math.Min(col.A + emitCol.A, 255);
+                }
+                return Color.FromArgb((int)col.ToARGB());
+            }).ToList();
+
             if (generateUvs)
             {
-                return GetModelBuffer(vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), faces,
-                    vertexes.Select((v) =>
-                    {
-                        var col = v.Color.GetColor();
-                        return Color.FromArgb((int)col.ToARGB());
-                    }).ToList(),
-                    vertexes.Select(v => new vec3(v.UV.X, v.UV.Y, v.UV.Z)).ToList(),
-                    vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
-            }
-
-            if (vertexes.Select(v => v.HasNormals).Any())
-            {
-                return GetModelBuffer(vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), faces,
-                    vertexes.Select((v) =>
-                    {
-                        var col = v.Color.GetColor();
-                        return Color.FromArgb((int)col.ToARGB());
-                    }).ToList(),
-                    vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
-            }
-
-            return GetModelBuffer(vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), faces,
-                vertexes.Select((v) =>
+                if (vertexes.Where(v => v.HasNormals).Any())
                 {
-                    var col = v.Color.GetColor();
-                    return Color.FromArgb((int)col.ToARGB());
-                }).ToList());
+                    return GetModelBuffer(positions, faces,
+                        colors,
+                        vertexes.Select(v => new vec3(v.UV.X, v.UV.Y, v.UV.Z)).ToList(),
+                        vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
+                }
+
+                return GetModelBuffer(positions, faces,
+                    colors,
+                    vertexes.Select(v => new vec3(v.UV.X, v.UV.Y, v.UV.Z)).ToList());
+            }
+
+            if (vertexes.Where(v => v.HasNormals).Any())
+            {
+                return GetModelBuffer(positions, faces,
+                    colors,
+                    vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
+            }
+
+            return GetModelBuffer(positions, faces, colors);
         }
 
         public static IndexedBufferArray GetModelBuffer(List<vec3> vectors, List<IndexedFace> faces, List<Color> colors,

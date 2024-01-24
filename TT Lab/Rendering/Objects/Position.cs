@@ -1,5 +1,6 @@
 ﻿using GlmSharp;
 using System;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels.Instance;
 
 namespace TT_Lab.Rendering.Objects
@@ -46,7 +47,7 @@ namespace TT_Lab.Rendering.Objects
         {
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Root.DrawBox(WorldTransform, color);
         }

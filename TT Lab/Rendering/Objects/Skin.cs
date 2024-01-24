@@ -1,5 +1,6 @@
 ﻿using TT_Lab.AssetData.Graphics;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -18,9 +19,8 @@ namespace TT_Lab.Rendering.Objects
             model.Delete();
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
-            model.Render();
         }
     }
 }

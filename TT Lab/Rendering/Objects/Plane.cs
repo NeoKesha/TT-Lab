@@ -6,6 +6,7 @@ using System.Drawing;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
@@ -71,9 +72,9 @@ namespace TT_Lab.Rendering.Objects
         {
             if (texture != null)
             {
-                Root?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 0);
+                Root?.Renderer.RenderProgram.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, texture.Buffer, 0);
             }
-            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
+            Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
             planeBuffer.Bind();
         }
 
@@ -83,7 +84,7 @@ namespace TT_Lab.Rendering.Objects
             planeBuffer.Delete();
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

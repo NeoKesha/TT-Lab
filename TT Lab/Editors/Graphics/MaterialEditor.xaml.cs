@@ -68,8 +68,7 @@ namespace TT_Lab.Editors.Graphics
         void ResetViewer()
         {
             MaterialViewer.Scene?.Delete();
-            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.Glcontrol.ActualWidth, (float)MaterialViewer.Glcontrol.ActualWidth,
-                new Rendering.Shaders.ShaderProgram.LibShader { Type = OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, Path = "Shaders\\TwinmaterialPass.frag" });
+            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.Glcontrol.ActualWidth, (float)MaterialViewer.Glcontrol.ActualWidth, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TwinmaterialPass);
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
             var viewModel = GetViewModel<MaterialViewModel>();

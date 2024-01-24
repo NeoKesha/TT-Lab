@@ -16,55 +16,29 @@ namespace TT_Lab.Rendering.Shaders
         private readonly Shader shadeLibShaderFrag;
         private Action? uniformSetAction;
 
-        public struct LibShader
-        {
-            public string Path;
-            public ShaderType Type;
-        }
-
         /// <summary>
-        /// Creates the shader program.
+        /// Creates the shader program from the precompiled shaders
         /// </summary>
-        /// <param Name="vertexShaderSource">The vertex shader source.</param>
-        /// <param Name="fragmentShaderSource">The fragment shader source.</param>
+        /// <param name="vertex">Precompiled vertex shader</param>
+        /// <param name="fragment">Precompiled fragment shader</param>
+        /// <param name="vertexLibrary">Precompiled vertex library shader for additional vertex shading</param>
+        /// <param name="fragmentLibrary">Precompiled fragment library shader for additional pixel shading</param>
         /// <exception cref="ShaderCompilationException"></exception>
-        public ShaderProgram(string vertexShaderSource, string fragmentShaderSource, LibShader? fragShader = null, LibShader? vertShader = null)
+        public ShaderProgram(Shader vertex, Shader fragment, Shader vertexLibrary, Shader fragmentLibrary)
         {
-            //  Create the shaders.
-            ProcessIncludes(ref vertexShaderSource);
-            ProcessIncludes(ref fragmentShaderSource);
-            vertexShader = new Shader(ShaderType.VertexShader, vertexShaderSource);
-            fragmentShader = new Shader(ShaderType.FragmentShader, fragmentShaderSource);
+            vertexShader = vertex;
+            fragmentShader = fragment;
+            shadeLibShaderVert = vertexLibrary;
+            shadeLibShaderFrag = fragmentLibrary;
 
-            //  Create the program, attach the shaders.
             shaderProgramObject = (uint)GL.CreateProgram();
             GL.AttachShader((int)shaderProgramObject, vertexShader.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
-            // Library shaders
-            if (!vertShader.HasValue)
-            {
-                shadeLibShaderVert = new Shader(ShaderType.VertexShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\VertexShading.vert"));
-            }
-            else
-            {
-                shadeLibShaderVert = new Shader(vertShader.Value.Type, Util.ManifestResourceLoader.LoadTextFile(vertShader.Value.Path));
-            }
-            if (!fragShader.HasValue)
-            {
-                shadeLibShaderFrag = new Shader(ShaderType.FragmentShader, Util.ManifestResourceLoader.LoadTextFile("Shaders\\DDP_shade_default.frag"));
-            }
-            else
-            {
-                shadeLibShaderFrag = new Shader(fragShader.Value.Type, Util.ManifestResourceLoader.LoadTextFile(fragShader.Value.Path));
-            }
             GL.AttachShader((int)shaderProgramObject, shadeLibShaderVert.ShaderObject);
             GL.AttachShader((int)shaderProgramObject, shadeLibShaderFrag.ShaderObject);
 
-            //  Now we can link the program.
             GL.LinkProgram(shaderProgramObject);
 
-            //  Now that we've compiled and linked the shader, check it's link status. If it's not linked properly, we're
-            //  going to throw an exception.
             if (!GetLinkStatus())
             {
                 throw new ShaderCompilationException(string.Format("Failed to link shader program with ID {0}.", shaderProgramObject), GetInfoLog());
@@ -85,8 +59,12 @@ namespace TT_Lab.Rendering.Shaders
         {
             GL.DetachShader((int)shaderProgramObject, vertexShader.ShaderObject);
             GL.DetachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
+            GL.DetachShader((int)shaderProgramObject, shadeLibShaderFrag.ShaderObject);
+            GL.DetachShader((int)shaderProgramObject, shadeLibShaderVert.ShaderObject);
             vertexShader.Delete();
             fragmentShader.Delete();
+            shadeLibShaderFrag.Delete();
+            shadeLibShaderVert.Delete();
             GL.DeleteProgram(shaderProgramObject);
             shaderProgramObject = 0;
         }
@@ -146,6 +124,11 @@ namespace TT_Lab.Rendering.Shaders
             GL.Uniform1(GetUniformLocation(uniformName), v1);
         }
 
+        public void SetUniform2(string uniformName, float v1, float v2)
+        {
+            GL.Uniform2(GetUniformLocation(uniformName), v1, v2);
+        }
+
         public void SetUniform3(string uniformName, float v1, float v2, float v3)
         {
             GL.Uniform3(GetUniformLocation(uniformName), v1, v2, v3);
@@ -194,17 +177,6 @@ namespace TT_Lab.Rendering.Shaders
         }
 
         private uint shaderProgramObject;
-
-        private void ProcessIncludes(ref string shaderText)
-        {
-            while (StringUtils.GetStringInBetween(shaderText, "#include \"", "\"") != String.Empty)
-            {
-                var includePath = StringUtils.GetStringInBetween(shaderText, "#include \"", "\"");
-                var includeLoadPath = $"Shaders\\{includePath}";
-                var includeText = Util.ManifestResourceLoader.LoadTextFile(includeLoadPath);
-                shaderText = shaderText.Replace($"#include \"{includePath}\"", includeText);
-            }
-        }
 
         /// <summary>
         /// A mapping of uniform Names to locations. This allows us to very easily specify 
