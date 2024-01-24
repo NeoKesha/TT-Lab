@@ -6,6 +6,7 @@ using System.Drawing;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
@@ -83,7 +84,7 @@ namespace TT_Lab.Rendering.Objects
             planeBuffer.Delete();
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

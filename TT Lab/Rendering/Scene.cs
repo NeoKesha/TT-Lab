@@ -44,15 +44,15 @@ namespace TT_Lab.Rendering
         private Stopwatch timer = new();
 
         // Scene rendering
-        private readonly List<IRenderable> objectsTransparent = new();
-        private readonly List<IRenderable> objectsOpaque = new();
+        private readonly List<IRenderable> renderableObjects = new();
         private readonly TextureBuffer colorTextureNT = new(TextureTarget.Texture2DMultisample);
         private readonly FrameBuffer framebufferNT = new();
         private readonly RenderBuffer depthRenderbuffer = new();
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
-        private readonly Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache = new();
+        private readonly Dictionary<LabURI, List<ModelBuffer>> modelBufferCache = new();
+        //private readonly List<SceneInstance> sceneInstances = new();
         private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
 
 
@@ -100,14 +100,14 @@ namespace TT_Lab.Rendering
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
             var colRender = new Objects.Collision(this, colData);
-            AddRender(colRender, false);
+            AddRender(colRender);
 
             // Positions renderer
             var positions = sceneTree.Find(avm => avm.Alias == "Positions");
             foreach (var pos in positions!.Children)
             {
                 var pRend = new Objects.Position(this, (PositionViewModel)pos);
-                AddRender(pRend, false);
+                AddRender(pRend);
             }
 
             // Triggers renderer
@@ -146,18 +146,11 @@ namespace TT_Lab.Rendering
         /// </summary>
         /// <param name="renderObj">Object to add</param>
         /// <param name="transparent">Whether the object is transparent and goes through translucency pipeline</param>
-        public void AddRender(IRenderable renderObj, bool transparent = true)
+        public void AddRender(IRenderable renderObj)
         {
             queuedRenderActions.Enqueue(() =>
             {
-                if (transparent)
-                {
-                    objectsTransparent.Add(renderObj);
-                }
-                else
-                {
-                    objectsOpaque.Add(renderObj);
-                }
+                renderableObjects.Add(renderObj);
                 AddChild(renderObj);
             });
         }
@@ -178,6 +171,8 @@ namespace TT_Lab.Rendering
             program.SetUniformMatrix4("StartModel", WorldTransform.Values1D);
             program.SetUniform1("Time", time);
             program.SetUniform2("Resolution", resolution.x, resolution.y);
+            program.SetUniform3("LightPosition", CameraPosition.x, CameraPosition.y, CameraPosition.z);
+            program.SetUniform3("LightDirection", -CameraDirection.x, CameraDirection.y, CameraDirection.z);
         }
 
         public void SetResolution(float width, float height)
@@ -187,7 +182,7 @@ namespace TT_Lab.Rendering
             ReallocateFramebuffer((int)width, (int)height);
         }
 
-        public override void Render()
+        public override void Render(ShaderProgram? _s = null, bool _b = false)
         {
             timer = Stopwatch.StartNew();
             foreach (var a in queuedRenderActions)
@@ -210,8 +205,7 @@ namespace TT_Lab.Rendering
             GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
             GL.ClearBuffer(ClearBuffer.Depth, 0, ref clearDepth);
             // Render all objects
-            Renderer.RenderOpaque(objectsOpaque);
-            Renderer.Render(objectsTransparent);
+            Renderer.Render(renderableObjects);
             // Render HUD
 
             // Post process effects
@@ -229,7 +223,7 @@ namespace TT_Lab.Rendering
             time += timer.Elapsed.Microseconds;
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
 
         }
@@ -248,16 +242,11 @@ namespace TT_Lab.Rendering
             framebufferNT.Delete();
             depthRenderbuffer.Delete();
             Renderer.Delete();
-            foreach (var @object in objectsOpaque)
+            foreach (var @object in renderableObjects)
             {
                 @object.Delete();
             }
-            foreach (var @object in objectsTransparent)
-            {
-                @object.Delete();
-            }
-            objectsTransparent.Clear();
-            objectsOpaque.Clear();
+            renderableObjects.Clear();
             foreach (var modelBuffers in modelBufferCache.Values)
             {
                 foreach (var buffer in modelBuffers)
@@ -480,11 +469,7 @@ namespace TT_Lab.Rendering
 
         public void PreRender()
         {
-            foreach (var @object in objectsOpaque)
-            {
-                @object.PreRender();
-            }
-            foreach (var @object in objectsTransparent)
+            foreach (var @object in renderableObjects)
             {
                 @object.PreRender();
             }
@@ -492,11 +477,7 @@ namespace TT_Lab.Rendering
 
         public void PostRender()
         {
-            foreach (var @object in objectsOpaque)
-            {
-                @object.PostRender();
-            }
-            foreach (var @object in objectsTransparent)
+            foreach (var @object in renderableObjects)
             {
                 @object.PostRender();
             }

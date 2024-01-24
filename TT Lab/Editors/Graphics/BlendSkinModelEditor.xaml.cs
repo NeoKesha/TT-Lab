@@ -45,12 +45,12 @@ namespace TT_Lab.Editors.Graphics
 
         private void SceneRenderer_RendererInit()
         {
-            SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.Glcontrol.ActualWidth, (float)SceneRenderer.Glcontrol.ActualHeight, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
+            SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.Glcontrol.ActualWidth, (float)SceneRenderer.Glcontrol.ActualHeight, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var blendSkinData = GetAssetData<BlendSkinData>();
             blendSkin = new(SceneRenderer.Scene, blendSkinData);
-            SceneRenderer.Scene.AddRender(blendSkin, false);
+            SceneRenderer.Scene.AddRender(blendSkin);
 
             ((BlendSkinViewModel)MorphWeightsGrid.DataContext).PropertyChanged += BlendSkinModelEditor_PropertyChanged;
         }

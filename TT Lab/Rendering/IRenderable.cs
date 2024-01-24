@@ -15,13 +15,15 @@ namespace TT_Lab.Rendering
         mat4 WorldTransform { get; }
         mat4 LocalTransform { get; set; }
         void PreRender() { }
-        void SetUniforms(ShaderProgram shader);
-        void Render();
+        void Render(ShaderProgram shader, bool transparent);
         void PostRender() { }
         void AddChild(IRenderable child);
         void RemoveChild(IRenderable child);
+        void EnableAlphaBlending();
+        void DisableAlphaBlending();
+        bool HasAlphaBlending();
         void Enable();
         void Disable();
-        public void UpdateTransform();
+        void UpdateTransform();
     }
 }

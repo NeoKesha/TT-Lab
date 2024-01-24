@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TT_Lab.AssetData.Graphics;
+using TT_Lab.Rendering.Shaders;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.Rendering.Buffers
@@ -79,40 +80,44 @@ namespace TT_Lab.Rendering.Buffers
             morphDataHandle.Free();
         }
 
-        public override void Bind()
+        public override void SetUniforms(ShaderProgram shader)
         {
-            base.Bind();
+            base.SetUniforms(shader);
 
-            var renderProgram = Root.Renderer.RenderProgram;
-            renderProgram.SetUniform3("BlendShape", -blendShape.X, blendShape.Y, blendShape.Z);
-            renderProgram.SetTextureUniform("Morphs", TextureTarget.Texture2D, morphBuffer.Buffer, 6);
+            shader.SetUniform3("BlendShape", -blendShape.X, blendShape.Y, blendShape.Z);
+            shader.SetTextureUniform("Morphs", TextureTarget.Texture2D, morphBuffer.Buffer, 6);
             for (Int32 i = 0; i < blendShapesAmount; i++)
             {
-                renderProgram.SetUniform1($"MorphWeights[{i}]", BlendShapesValues[i]);
+                shader.SetUniform1($"MorphWeights[{i}]", BlendShapesValues[i]);
             }
         }
 
-        protected override void RenderSelf()
+        public override void Bind()
+        {
+            base.Bind();
+        }
+
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
-            var renderProgram = Root.Renderer.RenderProgram;
             var shapeStart = 0;
             for (var i = 0; i < modelBuffers.Count; ++i)
             {
                 if (textureBuffers.TryGetValue(i, out TextureBuffer? value))
                 {
-                    renderProgram.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, value.Buffer, 0);
+                    shader.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, value.Buffer, 0);
                 }
                 for (var j = 0; j < blendShapesAmount; j++)
                 {
-                    renderProgram.SetUniform1($"ShapeOffset[{j}]", morphShapesOffsets[(j, i)]);
+                    shader.SetUniform1($"ShapeOffset[{j}]", morphShapesOffsets[(j, i)]);
                 }
-                renderProgram.SetUniform1("ShapeStart", morphStartOffset[i]);
+                shader.SetUniform1("ShapeStart", morphStartOffset[i]);
                 modelBuffers[i].Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffers[i].Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
                 modelBuffers[i].Unbind();
                 shapeStart += modelBuffers[i].Indices.Length * blendShapesAmount;
             }
+            shader.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, 0, 0);
             Unbind();
         }
 

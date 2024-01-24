@@ -50,6 +50,7 @@ namespace TT_Lab.Controls
 
         public void Close()
         {
+            CommandBindings.Clear();
             CloseTab?.Invoke(this, new EventArgs());
         }
 

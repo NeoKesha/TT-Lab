@@ -48,7 +48,7 @@ namespace TT_Lab.Editors.Graphics
 
             var rm = GetAssetData<RigidModelData>();
             RigidModel model = new RigidModel(SceneRenderer.Scene, rm);
-            SceneRenderer.Scene.AddRender(model, false);
+            SceneRenderer.Scene.AddRender(model);
         }
 
         private void ResetMaterialViewer()

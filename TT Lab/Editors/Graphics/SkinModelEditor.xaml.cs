@@ -43,12 +43,12 @@ namespace TT_Lab.Editors.Graphics
         private void SceneRenderer_RendererInit()
         {
             SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.Glcontrol.ActualWidth, (float)SceneRenderer.Glcontrol.ActualHeight,
-                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
+                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
             var skinData = GetAssetData<SkinData>();
             Skin model = new(SceneRenderer.Scene, skinData);
-            SceneRenderer.Scene.AddRender(model, false);
+            SceneRenderer.Scene.AddRender(model);
         }
 
         private void ResetMaterialViewer()

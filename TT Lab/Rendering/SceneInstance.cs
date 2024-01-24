@@ -17,7 +17,7 @@ namespace TT_Lab.Rendering
         vec3 offset;
         vec3 size;
 
-        public SceneInstance(ObjectInstanceData instanceData, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache, Scene parent)
+        public SceneInstance(ObjectInstanceData instanceData, Dictionary<LabURI, List<ModelBuffer>> modelBufferCache, Scene parent)
         {
             this.instanceData = instanceData;
             instanceRender = new ObjectInstance(parent, instanceData, modelBufferCache);

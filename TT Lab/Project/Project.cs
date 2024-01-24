@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Global;
 using TT_Lab.Assets;
@@ -888,9 +889,9 @@ namespace TT_Lab.Project
                                 let asset = assetManager.GetAsset(assetUri)
                                 where asset.Name == "Chunks"
                                 select asset).First().GetData<FolderData>();
-            UInt32 totalScenes = 0;
-            UInt32 currentSceneCount = 0;
-            ResolveAndWriteChunks(factory, chunksFolder, ref totalScenes, ref currentSceneCount);
+            UInt32 totalGlobals = 0;
+            UInt32 currentGlobalsCount = 0;
+            ResolveAndWriteChunks(factory, chunksFolder, ref totalGlobals, ref currentGlobalsCount);
 
             Log.WriteLine("Writing Extras...");
             System.IO.Directory.SetCurrentDirectory("../Extras");
@@ -899,46 +900,16 @@ namespace TT_Lab.Project
                                  where assetManager.GetAsset(asset) is Folder
                                  let folder = assetManager.GetAsset<Folder>(asset)
                                  where ArchivesLayout.ExtrasFolders.Contains(folder.Name)
-                                 select folder).ToList();
+                                 select asset).ToList();
             var mcdonaldsAssset = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
                                    let asset = assetManager.GetAsset(assetUri)
                                    where asset.Name == "McDonalds01"
                                    select asset).First();
-            Log.WriteLine($"Writing {mcdonaldsAssset.Name}...");
+
+            Log.WriteLine($"Writing ({++currentGlobalsCount}/{++totalGlobals}) {mcdonaldsAssset.Name}...");
             mcdonaldsAssset.ExportToFile(factory);
 
-            foreach (var folder in extrasFolders)
-            {
-                var folderData = folder.GetData().To<FolderData>();
-                System.IO.Directory.CreateDirectory(folder.Name);
-                System.IO.Directory.SetCurrentDirectory(folder.Name);
-                if (folder.Name == "Storyboards")
-                {
-                    foreach (var child in folderData.Children)
-                    {
-                        var childFolder = assetManager.GetAsset(child);
-                        System.IO.Directory.CreateDirectory(childFolder.Name);
-                        System.IO.Directory.SetCurrentDirectory(childFolder.Name);
-                        foreach (var psmUri in childFolder.GetData<FolderData>().Children)
-                        {
-                            var psm = assetManager.GetAsset(psmUri);
-                            Log.WriteLine($"Writing {psm.Name}...");
-                            psm.ExportToFile(factory);
-                        }
-                        System.IO.Directory.SetCurrentDirectory("..");
-                    }
-                }
-                else
-                {
-                    foreach (var psmUri in folderData.Children)
-                    {
-                        var psm = assetManager.GetAsset(psmUri);
-                        Log.WriteLine($"Writing {psm.Name}...");
-                        psm.ExportToFile(factory);
-                    }
-                }
-                System.IO.Directory.SetCurrentDirectory("..");
-            }
+            ResolveGlobalAssets(factory, extrasFolders, ref totalGlobals, ref currentGlobalsCount);
 
             System.IO.Directory.SetCurrentDirectory("../Language");
             Log.WriteLine("Writing Language...");
@@ -946,82 +917,24 @@ namespace TT_Lab.Project
                                    where assetManager.GetAsset(asset) is Folder
                                    let folder = assetManager.GetAsset<Folder>(asset)
                                    where ArchivesLayout.LanguageFolder.Contains(folder.Name)
-                                   select folder).ToList();
-            foreach (var folder in languageFolders)
-            {
-                var folderData = folder.GetData().To<FolderData>();
-                System.IO.Directory.CreateDirectory(folder.Name);
-                System.IO.Directory.SetCurrentDirectory(folder.Name);
-                if (folder.Name == "Titles")
-                {
-                    foreach (var child in folderData.Children)
-                    {
-                        var childFolder = assetManager.GetAsset(child);
-                        System.IO.Directory.CreateDirectory(childFolder.Name);
-                        System.IO.Directory.SetCurrentDirectory(childFolder.Name);
-                        foreach (var psmUri in childFolder.GetData<FolderData>().Children)
-                        {
-                            var psm = assetManager.GetAsset(psmUri);
-                            Log.WriteLine($"Writing {psm.Name}...");
-                            psm.ExportToFile(factory);
-                        }
-                        System.IO.Directory.SetCurrentDirectory("..");
-                    }
-                }
-                else
-                {
-                    if (folder.Name == "Loading" || folder.Name == "Legal" || folder.Name == "GameOver")
-                    {
-                        foreach (var psmUri in folderData.Children)
-                        {
-                            var psm = assetManager.GetAsset(psmUri);
-                            Log.WriteLine($"Writing {psm.Name}...");
-                            psm.ExportToFile(factory);
-                        }
-                    }
-                    else if (folder.Name == "AgentLab" || folder.Name == "Code")
-                    {
-                        foreach (var txtUri in folderData.Children)
-                        {
-                            var txt = assetManager.GetAsset(txtUri);
-                            Log.WriteLine($"Writing {txt.Name}...");
-                            txt.GetData<TextFileData>().Save($"{txt.Name}.txt");
-                        }
-                    }
-                    else
-                    {
-                        foreach (var uri in folderData.Children)
-                        {
-                            var file = assetManager.GetAsset(uri);
-                            Log.WriteLine($"Writing {file.Name}...");
-                            if (file.Name == "CreditNew")
-                            {
-                                file.ExportToFile(factory);
-                            }
-                            else
-                            {
-                                file.GetData<TextFileData>().Save($"{file.Name}.txt");
-                            }
-                        }
-                    }
-                }
-                System.IO.Directory.SetCurrentDirectory("..");
-            }
+                                   select asset).ToList();
+
+            ResolveGlobalAssets(factory, languageFolders, ref totalGlobals, ref currentGlobalsCount);
 
             System.IO.Directory.SetCurrentDirectory("../Startup");
             Log.WriteLine("Writing Startup...");
             var startupAssets = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
                                  let asset = assetManager.GetAsset(assetUri)
-                                 where asset is not Folder
+                                 where asset is not ChunkFolder
                                  where ArchivesLayout.StartupItems.Contains(asset.Name)
-                                 select asset).ToList();
+                                 select assetUri).ToList();
 
             var defaultChunk = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
                                 let asset = assetManager.GetAsset(assetUri)
                                 where asset is ChunkFolder
                                 where ArchivesLayout.StartupItems.Contains(asset.Name)
                                 select asset).First();
-            Log.WriteLine("Writing default...");
+            Log.WriteLine($"Writing ({++currentGlobalsCount}/{++totalGlobals}) default...");
             var @default = factory.GenerateDefault();
             defaultChunk.ResolveChunkResources(factory, @default);
             // Default is a special case where we need to put in the meshes which are actually shadows
@@ -1041,45 +954,37 @@ namespace TT_Lab.Project
             defaultWriter.Flush();
             defaultWriter.Close();
 
-            foreach (var asset in startupAssets)
-            {
-                Log.WriteLine($"Writing {asset.Name}...");
-                if (asset.Name == "LevelSelect")
-                {
-                    asset.GetData<TextFileData>().Save($"{asset.Name}.txt");
-                }
-                else if (asset.Name == "Crash")
-                {
-                    asset.GetData<SaveIconData>().Save($"{asset.Name}.ico");
-                }
-                else
-                {
-                    asset.ExportToFile(factory);
-                }
-            }
+            ResolveGlobalAssets(factory, startupAssets, ref totalGlobals, ref currentGlobalsCount);
 
-            var fontsFolder = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
-                               let asset = assetManager.GetAsset(assetUri)
-                               where asset is Folder
-                               where asset is not ChunkFolder
-                               where ArchivesLayout.StartupItems.Contains(asset.Name)
-                               select asset).First();
-            System.IO.Directory.CreateDirectory(fontsFolder.Name);
-            System.IO.Directory.SetCurrentDirectory(fontsFolder.Name);
-            foreach (var fontUri in fontsFolder.GetData<FolderData>().Children)
-            {
-                var font = assetManager.GetAsset(fontUri);
-                Log.WriteLine($"Writing {font.Name}...");
-                font.ExportToFile(factory);
-            }
-
-            System.IO.Directory.SetCurrentDirectory("../../..");
+            System.IO.Directory.SetCurrentDirectory("../..");
             Log.WriteLine("Finished writing test files!");
         }
 
         public void PackAssetsXbox()
         {
             throw new NotImplementedException();
+        }
+
+        private void ResolveGlobalAssets(ITwinItemFactory factory, List<LabURI> assets, ref UInt32 totalGlobals, ref UInt32 currentGlobalsCount)
+        {
+            var assetManager = AssetManager.Get();
+            totalGlobals += (UInt32)assets.Select(assetManager.GetAsset).Where(a => a is not Folder).Count();
+            foreach (var item in assets)
+            {
+                var folder = assetManager.GetAsset(item);
+                if (folder is not Folder)
+                {
+                    currentGlobalsCount++;
+                    Log.WriteLine($"Writing ({currentGlobalsCount}/{totalGlobals}) {folder.Name}...");
+                    folder.ExportToFile(factory);
+                    continue;
+                }
+
+                System.IO.Directory.CreateDirectory(folder.Name);
+                System.IO.Directory.SetCurrentDirectory(folder.Name);
+                ResolveGlobalAssets(factory, folder.GetData<FolderData>().Children, ref totalGlobals, ref currentGlobalsCount);
+                System.IO.Directory.SetCurrentDirectory("..");
+            }
         }
 
         private void ResolveAndWriteChunks(ITwinItemFactory factory, FolderData currentFolder, ref UInt32 scenesTotal, ref UInt32 currentSceneCount)

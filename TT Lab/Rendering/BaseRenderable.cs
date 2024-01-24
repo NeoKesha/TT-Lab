@@ -1,6 +1,7 @@
 ﻿using GlmSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering
@@ -11,8 +12,12 @@ namespace TT_Lab.Rendering
         private mat4 localTransform;
         private IRenderable? parent;
         private bool enabled;
+        private bool alphaBlendingEnabled = false;
+
+        private bool AlphaBlendingEnabled => Opacity < 1.0f || alphaBlendingEnabled;
 
         public Scene Root { get; set; }
+
         public IRenderable? Parent
         {
             get => parent;
@@ -21,12 +26,16 @@ namespace TT_Lab.Rendering
                 parent = value;
             }
         }
+
         public List<IRenderable> Children { get; set; } = new();
+
         public Single Opacity { get; set; } = 1.0f;
+
         public mat4 WorldTransform
         {
             get => cachedWorldTransform;
         }
+
         public mat4 LocalTransform
         {
             get => localTransform;
@@ -39,7 +48,8 @@ namespace TT_Lab.Rendering
 
         public bool Enabled
         {
-            get => enabled; set
+            get => enabled;
+            set
             {
                 if (value)
                 {
@@ -70,20 +80,24 @@ namespace TT_Lab.Rendering
             }
         }
 
-        public virtual void Render()
+        public virtual void Render(ShaderProgram shader, bool transparent)
         {
-            RenderSelf();
+            if (transparent == AlphaBlendingEnabled)
+            {
+                SetUniforms(shader);
+                RenderSelf(shader);
+            }
             foreach (var child in Children)
             {
                 if (!child.Enabled)
                 {
                     continue;
                 }
-                child?.Render();
+                child.Render(shader, transparent);
             }
         }
 
-        protected abstract void RenderSelf();
+        protected abstract void RenderSelf(ShaderProgram shader);
 
         public void Enable()
         {
@@ -111,6 +125,21 @@ namespace TT_Lab.Rendering
         public virtual void SetUniforms(ShaderProgram shader)
         {
             shader.SetUniformMatrix4("StartModel", WorldTransform.Values1D);
+        }
+
+        public Boolean HasAlphaBlending()
+        {
+            return AlphaBlendingEnabled || Children.Where(c => c.HasAlphaBlending()).Any();
+        }
+
+        public void EnableAlphaBlending()
+        {
+            alphaBlendingEnabled = true;
+        }
+
+        public void DisableAlphaBlending()
+        {
+            alphaBlendingEnabled = false;
         }
     }
 }

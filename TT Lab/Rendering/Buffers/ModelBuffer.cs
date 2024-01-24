@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 
@@ -37,6 +38,11 @@ namespace TT_Lab.Rendering.Buffers
 
                 modelBuffers.Add(BufferGeneration.GetModelBuffer(model.Vertexes[i], model.Faces[i]));
                 var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
+                var alphaBlendingEnabled = matData.Shaders[texturedShaderIndex].ABlending == TwinShader.AlphaBlending.ON;
+                if (alphaBlendingEnabled)
+                {
+                    EnableAlphaBlending();
+                }
                 textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
             }
         }
@@ -56,11 +62,16 @@ namespace TT_Lab.Rendering.Buffers
                 var buffer = BufferGeneration.GetModelBuffer(subSkin.Vertexes, subSkin.Faces);
                 modelBuffers.Add(buffer);
                 var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
+                var alphaBlendingEnabled = matData.Shaders[texturedShaderIndex].ABlending == TwinShader.AlphaBlending.ON;
+                if (alphaBlendingEnabled)
+                {
+                    EnableAlphaBlending();
+                }
                 textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
             }
         }
 
-        public ModelBuffer(Scene root, BlendSkinData blendSkin) : base(root)
+        protected ModelBuffer(Scene root, BlendSkinData blendSkin) : base(root)
         {
             foreach (var blend in blendSkin.Blends)
             {
@@ -73,30 +84,39 @@ namespace TT_Lab.Rendering.Buffers
                     if (texturedShaderIndex != -1)
                     {
                         var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
+                        var alphaBlendingEnabled = matData.Shaders[texturedShaderIndex].ABlending == TwinShader.AlphaBlending.ON;
+                        if (alphaBlendingEnabled)
+                        {
+                            EnableAlphaBlending();
+                        }
                         textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
                     }
                 }
             }
         }
 
-        public virtual void Bind()
+        public override void SetUniforms(ShaderProgram shader)
         {
-            Root.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
         }
 
-        protected override void RenderSelf()
+        public virtual void Bind()
+        {
+        }
+
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
             for (var i = 0; i < modelBuffers.Count; ++i)
             {
                 if (textureBuffers.TryGetValue(i, out TextureBuffer? value))
                 {
-                    Root?.Renderer.RenderProgram.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, value.Buffer, 0);
+                    shader.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, value.Buffer, 0);
                 }
                 modelBuffers[i].Bind();
                 GL.DrawElements(PrimitiveType.Triangles, modelBuffers[i].Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
                 modelBuffers[i].Unbind();
             }
+            shader.SetTextureUniform("Texture[0]", TextureTarget.Texture2D, 0, 0);
             Unbind();
         }
 

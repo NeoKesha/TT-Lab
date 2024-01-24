@@ -59,6 +59,7 @@ namespace TT_Lab.Editors
 
         public virtual void CloseEditor(Object? sender, EventArgs e)
         {
+            AcceptNewPropValuePredicate.Clear();
             return;
         }
 

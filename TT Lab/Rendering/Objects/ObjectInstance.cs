@@ -9,21 +9,22 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {
     public class ObjectInstance : BaseRenderable
     {
-        List<IndexedBufferArray> modelBuffers = new List<IndexedBufferArray>();
-        Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache;
+        List<ModelBuffer> modelBuffers = new List<ModelBuffer>();
+        Dictionary<LabURI, List<ModelBuffer>> modelBufferCache;
 
         Vector3 ambientColor = new Vector3();
         private vec3 pos = new vec3();
         private vec3 rot = new vec3();
         bool selected;
 
-        public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<IndexedBufferArray>> modelBufferCache) : base(root)
+        public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<ModelBuffer>> modelBufferCache) : base(root)
         {
             this.modelBufferCache = modelBufferCache;
             var objURI = instance.ObjectId;
@@ -55,26 +56,24 @@ namespace TT_Lab.Rendering.Objects
 
         public void Select()
         {
-            ambientColor.X = 0.1f;
-            ambientColor.Y = 0.6f;
-            ambientColor.Z = 0.1f;
+            ambientColor.X = 0.5f;
+            ambientColor.Y = 0.5f;
+            ambientColor.Z = 0.5f;
+            Opacity = 0.5f;
             selected = true;
         }
 
         public void Deselect()
         {
-            ambientColor.X = 0.5f;
-            ambientColor.Y = 0.5f;
-            ambientColor.Z = 0.5f;
+            ambientColor.X = 0.0f;
+            ambientColor.Y = 0.0f;
+            ambientColor.Z = 0.0f;
+            Opacity = 1.0f;
             selected = false;
         }
 
         public void Bind()
         {
-            Root.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
-            Root.Renderer.RenderProgram.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
-            Root.Renderer.RenderProgram.SetUniform3("LightPosition", Root.CameraPosition.x, Root.CameraPosition.y, Root.CameraPosition.z);
-            Root.Renderer.RenderProgram.SetUniform3("LightDirection", -Root.CameraDirection.x, Root.CameraDirection.y, Root.CameraDirection.z);
         }
 
         public void Delete()
@@ -82,13 +81,31 @@ namespace TT_Lab.Rendering.Objects
             modelBuffers.Clear();
         }
 
-        protected override void RenderSelf()
+        public override void SetUniforms(ShaderProgram shader)
+        {
+            base.SetUniforms(shader);
+
+            shader.SetUniform1("Opacity", Opacity);
+            shader.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
+        }
+
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
+            // Have to blend buffers at render time because of caching
+            var blendBuffers = Opacity < 1.0f;
             foreach (var modelBuffer in modelBuffers)
             {
                 modelBuffer.Bind();
-                GL.DrawElements(PrimitiveType.Triangles, modelBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+                if (blendBuffers)
+                {
+                    modelBuffer.EnableAlphaBlending();
+                }
+                modelBuffer.Render(shader, HasAlphaBlending());
+                if (blendBuffers)
+                {
+                    modelBuffer.DisableAlphaBlending();
+                }
                 modelBuffer.Unbind();
             }
             Unbind();
@@ -143,23 +160,20 @@ namespace TT_Lab.Rendering.Objects
                     continue;
                 }
                 var rigidModelData = assetManager.GetAssetData<RigidModelData>(rigidModel);
-                var modelData = assetManager.GetAssetData<ModelData>(rigidModelData.Model);
-                for (var i = 0; i < modelData.Vertexes.Count; ++i)
-                {
-                    modelBuffers.Add(BufferGeneration.GetModelBuffer(modelData.Vertexes[i].Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), modelData.Faces[i],
-                    modelData.Vertexes[i].Select((v) =>
-                    {
-                        var col = v.Color.GetColor();
-                        var emit = v.EmitColor;
-                        col.R = (Byte)Math.Min(col.R + emit.X, 255);
-                        col.G = (Byte)Math.Min(col.G + emit.Y, 255);
-                        col.B = (Byte)Math.Min(col.B + emit.Z, 255);
-                        return System.Drawing.Color.FromArgb((int)col.ToARGB());
-                    }).ToList()));
-                }
+                modelBuffers.Add(new ModelBuffer(Root, rigidModelData));
+            }
+            if (ogiData.Skin != LabURI.Empty)
+            {
+                var skin = assetManager.GetAssetData<SkinData>(ogiData.Skin);
+                modelBuffers.Add(new ModelBuffer(Root, skin));
+            }
+            if (ogiData.BlendSkin != LabURI.Empty)
+            {
+                var blendSkin = assetManager.GetAssetData<BlendSkinData>(ogiData.BlendSkin);
+                modelBuffers.Add(new ModelBufferBlendSkin(Root, blendSkin));
             }
 
-            var cacheList = new List<IndexedBufferArray>();
+            var cacheList = new List<ModelBuffer>();
             foreach (var buffer in modelBuffers)
             {
                 cacheList.Add(buffer);

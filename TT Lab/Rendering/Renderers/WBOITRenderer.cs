@@ -59,6 +59,14 @@ namespace TT_Lab.Rendering.Renderers
 
         public void Render(List<IRenderable> objects)
         {
+            opaqueShader.Bind();
+            Scene.SetGlobalUniforms(opaqueShader);
+            foreach (var @object in objects)
+            {
+                @object.Render(opaqueShader, false);
+            }
+            opaqueShader.Unbind();
+
             framebuffer.Bind();
             float[] clearColor = { 0f, 0f, 0f, 0f };
             float clearAlpha = 1f;
@@ -80,8 +88,7 @@ namespace TT_Lab.Rendering.Renderers
             Scene.SetGlobalUniforms(wboitShader);
             foreach (var @object in objects)
             {
-                @object.SetUniforms(wboitShader);
-                @object.Render();
+                @object.Render(wboitShader, true);
             }
             wboitShader.Unbind();
             GL.DepthMask(true);
@@ -98,18 +105,6 @@ namespace TT_Lab.Rendering.Renderers
             GL.Enable(EnableCap.Multisample);
             GL.Disable(EnableCap.DepthTest);
             GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
-        }
-
-        public void RenderOpaque(List<IRenderable> objects)
-        {
-            opaqueShader.Bind();
-            Scene.SetGlobalUniforms(opaqueShader);
-            foreach (var @object in objects)
-            {
-                @object.SetUniforms(opaqueShader);
-                @object.Render();
-            }
-            opaqueShader.Unbind();
         }
 
         public void PostProcess()

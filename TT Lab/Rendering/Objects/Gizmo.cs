@@ -1,4 +1,5 @@
 ﻿using GlmSharp;
+using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -21,7 +22,7 @@ namespace TT_Lab.Rendering.Objects
 
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
             if (editingContext.selectedInstance == null)
             {

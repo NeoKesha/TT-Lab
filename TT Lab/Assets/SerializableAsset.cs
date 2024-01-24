@@ -116,7 +116,7 @@ namespace TT_Lab.Assets
             return item;
         }
 
-        public void ExportToFile(Factory.ITwinItemFactory factory)
+        public virtual void ExportToFile(Factory.ITwinItemFactory factory)
         {
             PreResolveResources();
             var item = Export(factory);

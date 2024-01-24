@@ -71,7 +71,7 @@ namespace TT_Lab.Rendering.Objects
             }
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
             GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);

@@ -398,11 +398,12 @@ namespace Twinsanity.PS2Hardware
                                 var compiledColors = new List<Vector4>(emitColors.Count);
                                 foreach (var c in emitColors)
                                 {
+                                    var toColor = c.GetColor();
                                     var compiledColor = new Vector4();
-                                    compiledColor.SetBinaryX((UInt32)c.X >> 1);
-                                    compiledColor.SetBinaryY((UInt32)c.Y >> 1);
-                                    compiledColor.SetBinaryZ((UInt32)c.Z >> 1);
-                                    compiledColor.SetBinaryW((UInt32)c.W >> 1);
+                                    compiledColor.SetBinaryX((UInt32)toColor.R >> 1);
+                                    compiledColor.SetBinaryY((UInt32)toColor.G >> 1);
+                                    compiledColor.SetBinaryZ((UInt32)toColor.B >> 1);
+                                    compiledColor.SetBinaryW((UInt32)toColor.A >> 1);
                                     compiledColors.Add(compiledColor);
                                 }
                                 interpreter.Pack(compiledColors, packedEmits, PackFormat.V4_8);
@@ -504,11 +505,12 @@ namespace Twinsanity.PS2Hardware
                             var compiledColors = new List<Vector4>(colors.Count);
                             foreach (var c in colors)
                             {
+                                var toColor = c.GetColor();
                                 var compiledColor = new Vector4();
-                                compiledColor.SetBinaryX((UInt32)c.X >> 1);
-                                compiledColor.SetBinaryY((UInt32)c.Y >> 1);
-                                compiledColor.SetBinaryZ((UInt32)c.Z >> 1);
-                                compiledColor.SetBinaryW((UInt32)c.W >> 1);
+                                compiledColor.SetBinaryX((UInt32)toColor.R >> 1);
+                                compiledColor.SetBinaryY((UInt32)toColor.G >> 1);
+                                compiledColor.SetBinaryZ((UInt32)toColor.B >> 1);
+                                compiledColor.SetBinaryW((UInt32)toColor.A >> 1);
                                 compiledColors.Add(compiledColor);
                             }
 

@@ -1,4 +1,5 @@
 ﻿using GlmSharp;
+using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -30,7 +31,7 @@ namespace TT_Lab.Rendering.Objects
             return pos.Value;
         }
 
-        protected override void RenderSelf()
+        protected override void RenderSelf(ShaderProgram shader)
         {
             if (pos == null)
             {
@@ -38,8 +39,6 @@ namespace TT_Lab.Rendering.Objects
             }
 
             Root.DrawBox(WorldTransform, new vec4(0.5f, 0.0f, 1.0f, 1.0f));
-
-
         }
 
         public void Unbind()

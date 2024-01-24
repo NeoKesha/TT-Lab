@@ -5,6 +5,7 @@ using System.Linq;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
@@ -36,15 +37,18 @@ namespace TT_Lab.Rendering.Objects
             collisionBuffer.Delete();
         }
 
-        protected override void RenderSelf()
+        public override void SetUniforms(ShaderProgram shader)
+        {
+            base.SetUniforms(shader);
+
+            shader.SetUniform1("Opacity", Opacity);
+            shader.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
+            shader.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
+        }
+
+        protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
-            Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
-            // Fragment program uniforms
-            Root?.Renderer.RenderProgram.SetUniform3("AmbientMaterial", 0.55f, 0.45f, 0.45f);
-            Root?.Renderer.RenderProgram.SetUniform3("SpecularMaterial", 0.5f, 0.5f, 0.5f);
-            Root?.Renderer.RenderProgram.SetUniform3("LightPosition", Root.CameraPosition.x, Root.CameraPosition.y, Root.CameraPosition.z);
-            Root?.Renderer.RenderProgram.SetUniform3("LightDirection", -Root.CameraDirection.x, Root.CameraDirection.y, Root.CameraDirection.z);
             // Draw collision
             GL.DrawElements(PrimitiveType.Triangles, collisionBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Unbind();

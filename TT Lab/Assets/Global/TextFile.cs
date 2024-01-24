@@ -1,13 +1,14 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Global;
+using TT_Lab.Assets.Factory;
 
 namespace TT_Lab.Assets.Global
 {
     public class TextFile : SerializableAsset
     {
         protected override String DataExt => ".txt";
-        protected override String TwinDataExt => ".txt";
+        protected override String TwinDataExt => "txt";
         public override UInt32 Section => throw new NotImplementedException();
 
         public TextFile() { }
@@ -26,6 +27,11 @@ namespace TT_Lab.Assets.Global
                 IsLoaded = true;
             }
             return assetData;
+        }
+
+        public override void ExportToFile(ITwinItemFactory factory)
+        {
+            GetData().Save($"{Name}.{TwinDataExt}");
         }
 
         public override Type GetEditorType()

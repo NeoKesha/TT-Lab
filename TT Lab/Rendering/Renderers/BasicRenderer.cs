@@ -32,12 +32,8 @@ namespace TT_Lab.Rendering.Renderers
             Scene.SetGlobalUniforms(RenderProgram);
             foreach (var @object in objects)
             {
-                @object.Render();
+                @object.Render(RenderProgram, false);
             }
-        }
-
-        public void RenderOpaque(List<IRenderable> objects)
-        {
         }
 
         public void PostProcess()
