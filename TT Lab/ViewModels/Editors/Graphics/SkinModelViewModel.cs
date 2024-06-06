@@ -13,14 +13,18 @@ namespace TT_Lab.ViewModels.Editors.Graphics
     {
         private Int32 _selectedMaterial;
         private String _materialName;
-        private SceneEditorViewModel _sceneRenderer;
-        private SceneEditorViewModel _materialViewer;
         private readonly IEventAggregator _eventAggregator;
+
+        private enum SceneIndex : int
+        {
+            Skin,
+            Material
+        }
 
         public SkinModelViewModel(IEventAggregator eventAggregator)
         {
-            _sceneRenderer = IoC.Get<SceneEditorViewModel>();
-            _materialViewer = IoC.Get<SceneEditorViewModel>();
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
             _materialName = "NO MATERIAL";
             _eventAggregator = eventAggregator;
         }
@@ -114,12 +118,12 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         public SceneEditorViewModel SceneRenderer
         {
-            get => _sceneRenderer;
+            get => Scenes[(int)SceneIndex.Skin];
         }
 
         public SceneEditorViewModel MaterialViewer
         {
-            get => _materialViewer;
+            get => Scenes[(int)SceneIndex.Material];
         }
 
         public String MaterialName

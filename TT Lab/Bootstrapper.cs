@@ -16,7 +16,19 @@ namespace TT_Lab
         public Bootstrapper()
         {
             Initialize();
-            LogManager.GetLog = type => new DebugLog(type);
+
+            var filters = new List<string>
+            {
+                "MouseMoved",
+                "DragEntered",
+                "MouseWheelMoved",
+                "RendererRender",
+                "DragDropped",
+                "LogViewerScroll",
+                "AssetBlockMouseMove",
+                "AssetBlockMouseDown"
+            };
+            LogManager.GetLog = type => new Logger(type, filters);
         }
 
         protected override void Configure()
