@@ -74,7 +74,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         private void InitMaterialViewer()
         {
             MaterialViewer.Scene?.Delete();
-            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualWidth, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TwinmaterialPass);
+            MaterialViewer.Scene = new Rendering.Scene(MaterialViewer.GlControl.Context, (float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualWidth, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TwinmaterialPass);
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
             List<Bitmap> textures = new();

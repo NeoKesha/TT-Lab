@@ -40,7 +40,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                 var allVertexes = new List<Vertex>();
                 var allIndices = new List<IndexedFace>();
                 var indiceAccessor = 0;
-                var blendShape = (Vector3)mesh.Extras.Deserialize(typeof(Vector3));
+                var blendShape = mesh.Extras.AsValue().GetValue<Vector3>();
                 var primitive = mesh.Primitives[0];
                 var vertexes = primitive.GetVertexColumns();
                 var indices = primitive.GetTriangleIndices();

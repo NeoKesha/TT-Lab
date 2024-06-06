@@ -100,12 +100,12 @@
     <PackageReference Include="Caliburn.Micro" Version="4.0.212" />
     <PackageReference Include="DotNetProjects.SVGImage" Version="5.1.1" />
     <PackageReference Include="GlmSharpStd" Version="0.9.8" />
-    <PackageReference Include="Meshoptimizer.NET" Version="1.0.3" />
+    <PackageReference Include="Meshoptimizer.NET" Version="1.0.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="OpenTK" Version="4.7.5" />
-    <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0030" />
-    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0030" />
+    <PackageReference Include="OpenTK" Version="4.8.2" />
+    <PackageReference Include="SharpGLTF.Core" Version="1.0.0" />
+    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />

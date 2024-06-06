@@ -1,6 +1,7 @@
 ﻿using GlmSharp;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,6 +29,9 @@ namespace TT_Lab.Rendering
         public int RenderFramebuffer { get; set; }
         public TextureBuffer ColorTextureNT { get => colorTextureNT; }
 
+        private IGraphicsContext gContext;
+        private ShaderStorage shaderStorage = new();
+
         // Rendering matrices and settings
         private mat4 projectionMat;
         private mat4 viewMat;
@@ -46,9 +50,9 @@ namespace TT_Lab.Rendering
 
         // Scene rendering
         private readonly List<IRenderable> renderableObjects = new();
-        private readonly TextureBuffer colorTextureNT = new(TextureTarget.Texture2DMultisample);
-        private readonly FrameBuffer framebufferNT = new();
-        private readonly RenderBuffer depthRenderbuffer = new();
+        private readonly TextureBuffer colorTextureNT;
+        private readonly FrameBuffer framebufferNT;
+        private readonly RenderBuffer depthRenderbuffer;
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
@@ -62,11 +66,18 @@ namespace TT_Lab.Rendering
         /// </summary>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(float width, float height, ShaderStorage.LibraryFragmentShaders fragmentLibraryShader, ShaderStorage.LibraryVertexShaders vertexLibraryShader = ShaderStorage.LibraryVertexShaders.VertexShading) : base(null)
+        public Scene(IGraphicsContext context, float width, float height, ShaderStorage.LibraryFragmentShaders fragmentLibraryShader, ShaderStorage.LibraryVertexShaders vertexLibraryShader = ShaderStorage.LibraryVertexShaders.VertexShading) : base(null)
         {
             Preferences.PreferenceChanged += Preferences_PreferenceChanged;
 
-            ShaderStorage.BuildShaderCache();
+            gContext = context;
+            gContext.MakeCurrent();
+
+            colorTextureNT = new(TextureTarget.Texture2DMultisample);
+            framebufferNT = new();
+            depthRenderbuffer = new();
+
+            shaderStorage.BuildShaderCache();
 
             inputController = Caliburn.Micro.IoC.Get<InputController>();
 
@@ -84,6 +95,8 @@ namespace TT_Lab.Rendering
             SetupTransparencyRender();
 
             primitiveRenderer.Init(this);
+
+            gContext.MakeNoneCurrent();
         }
 
         /// <summary>
@@ -92,9 +105,11 @@ namespace TT_Lab.Rendering
         /// <param name="sceneTree">Tree of chunk resources collision data, positions, cameras, etc.</param>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(Caliburn.Micro.BindableCollection<ResourceTreeElementViewModel> sceneTree, float width, float height) :
-            this(width, height, ShaderStorage.LibraryFragmentShaders.Light)
+        public Scene(IGraphicsContext context, Caliburn.Micro.BindableCollection<ResourceTreeElementViewModel> sceneTree, float width, float height) :
+            this(context, width, height, ShaderStorage.LibraryFragmentShaders.Light)
         {
+            context.MakeCurrent();
+
             LocalTransform = mat4.Identity;
 
             // Collision renderer
@@ -104,6 +119,8 @@ namespace TT_Lab.Rendering
             })!.Asset.GetData<CollisionData>();
             var colRender = new Objects.Collision(this, colData);
             AddRender(colRender);
+
+            context.MakeNoneCurrent();
 
             // Positions renderer
             //var positions = sceneTree.First(avm => avm.Alias == "Positions");
@@ -186,6 +203,7 @@ namespace TT_Lab.Rendering
 
         public override void Render(ShaderProgram? _s = null, bool _b = false)
         {
+            gContext.MakeCurrent();
             timer = Stopwatch.StartNew();
             foreach (var a in queuedRenderActions)
             {
@@ -201,7 +219,6 @@ namespace TT_Lab.Rendering
             GL.DepthMask(true);
             GL.DepthFunc(DepthFunction.Lequal);
             framebufferNT.Bind();
-            Bind();
             float[] clearColorNT = System.Drawing.Color.LightGray.ToArray();
             float clearDepth = 1f;
             GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
@@ -518,8 +535,8 @@ namespace TT_Lab.Rendering
             Renderer?.Delete();
             Renderer = method switch
             {
-                RenderSwitches.TranslucencyMethod.WBOIT => new WBOITRenderer(depthRenderbuffer, resolution.x, resolution.y, fragmentLibraryShader, vertexLibraryShader),
-                _ => new BasicRenderer(fragmentLibraryShader, vertexLibraryShader)
+                RenderSwitches.TranslucencyMethod.WBOIT => new WBOITRenderer(shaderStorage, depthRenderbuffer, resolution.x, resolution.y, fragmentLibraryShader, vertexLibraryShader),
+                _ => new BasicRenderer(shaderStorage, fragmentLibraryShader, vertexLibraryShader)
             };
             Renderer.Scene = this;
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

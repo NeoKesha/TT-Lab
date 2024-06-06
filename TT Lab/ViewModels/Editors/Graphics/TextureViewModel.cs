@@ -74,7 +74,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitTextureViewer()
         {
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GlControl.ActualWidth, (float)TextureViewer.GlControl.ActualHeight,
+            TextureViewer.Scene = new Rendering.Scene(TextureViewer.GlControl.Context, (float)TextureViewer.GlControl.ActualWidth, (float)TextureViewer.GlControl.ActualHeight,
                 Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();

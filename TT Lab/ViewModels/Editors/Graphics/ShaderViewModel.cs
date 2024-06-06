@@ -155,7 +155,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 var texData = AssetManager.Get().GetAsset(texId).GetData<TextureData>();
                 bitmap = texData.Bitmap;
             }
-            TextureViewer.Scene = new Rendering.Scene((float)TextureViewer.GlControl.ActualWidth, (float)TextureViewer.GlControl.ActualHeight,
+            TextureViewer.Scene = new Rendering.Scene(TextureViewer.GlControl.Context, (float)TextureViewer.GlControl.ActualWidth, (float)TextureViewer.GlControl.ActualHeight,
                 ShaderStorage.LibraryFragmentShaders.TexturePass);
             TextureViewer.Scene.SetCameraSpeed(0);
             TextureViewer.Scene.DisableCameraManipulation();

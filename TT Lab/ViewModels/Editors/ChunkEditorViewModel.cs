@@ -273,7 +273,7 @@ namespace TT_Lab.ViewModels.Editors
             {
                 try
                 {
-                    sceneEditor.Scene = new Scene(chunkTree, (float)sceneEditor.GlControl.ActualWidth, (float)sceneEditor.GlControl.ActualHeight);
+                    sceneEditor.Scene = new Scene(sceneEditor.GlControl.Context, chunkTree, (float)sceneEditor.GlControl.ActualWidth, (float)sceneEditor.GlControl.ActualHeight);
 
                     editingContext = new EditingContext(sceneEditor.Scene, this);
                     colData = chunkTree.First((avm) =>

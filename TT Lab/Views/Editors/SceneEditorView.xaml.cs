@@ -66,6 +66,12 @@ namespace TT_Lab.Views.Editors
 
         private void GlControl_Render(System.TimeSpan obj)
         {
+            if (GlControlView.Context == null)
+            {
+                return;
+            }
+
+            GlControlView.Context.MakeCurrent();
             RaiseEvent(new RenderEventArgs(obj));
         }
 

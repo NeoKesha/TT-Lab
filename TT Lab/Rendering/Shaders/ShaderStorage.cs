@@ -5,16 +5,16 @@ using System.Linq;
 
 namespace TT_Lab.Rendering.Shaders
 {
-    public static class ShaderStorage
+    public class ShaderStorage
     {
-        private static readonly Dictionary<StoredVertexShaders, Shader> compiledVertexShaders = new();
-        private static readonly Dictionary<StoredFragmentShaders, Shader> compiledFragmentShaders = new();
-        private static readonly Dictionary<LibraryVertexShaders, Shader> compiledLibraryVertexShaders = new();
-        private static readonly Dictionary<LibraryFragmentShaders, Shader> compiledLibraryFragmentShaders = new();
-        private static readonly Dictionary<String, ShaderProgram> compiledPrograms = new();
-        private static bool cacheBuilt = false;
+        private readonly Dictionary<StoredVertexShaders, Shader> compiledVertexShaders = new();
+        private readonly Dictionary<StoredFragmentShaders, Shader> compiledFragmentShaders = new();
+        private readonly Dictionary<LibraryVertexShaders, Shader> compiledLibraryVertexShaders = new();
+        private readonly Dictionary<LibraryFragmentShaders, Shader> compiledLibraryFragmentShaders = new();
+        private readonly Dictionary<String, ShaderProgram> compiledPrograms = new();
+        private bool cacheBuilt = false;
 
-        public static void BuildShaderCache()
+        public void BuildShaderCache()
         {
             if (cacheBuilt) return;
 
@@ -63,7 +63,7 @@ namespace TT_Lab.Rendering.Shaders
             Log.WriteLine("Compiled shaders...");
         }
 
-        public static void ClearShaderCache()
+        public void ClearShaderCache()
         {
             compiledPrograms.ToList().ForEach(kv => kv.Value.Delete());
             compiledPrograms.Clear();
@@ -73,11 +73,11 @@ namespace TT_Lab.Rendering.Shaders
             compiledLibraryVertexShaders.Clear();
         }
 
-        public static ShaderProgram BuildShaderProgram(StoredVertexShaders vertex, StoredFragmentShaders fragment, LibraryVertexShaders libraryVertex = LibraryVertexShaders.VertexShading, LibraryFragmentShaders libraryFragment = LibraryFragmentShaders.Pass)
+        public ShaderProgram BuildShaderProgram(StoredVertexShaders vertex, StoredFragmentShaders fragment, LibraryVertexShaders libraryVertex = LibraryVertexShaders.VertexShading, LibraryFragmentShaders libraryFragment = LibraryFragmentShaders.Pass)
         {
             var resultProgramName = $"{vertex}{fragment}{libraryVertex}{libraryFragment}";
             if (compiledPrograms.TryGetValue(resultProgramName, out ShaderProgram? shaderProgram))
-            {
+            { 
                 return shaderProgram;
             }
 

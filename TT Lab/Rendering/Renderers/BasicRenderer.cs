@@ -12,9 +12,9 @@ namespace TT_Lab.Rendering.Renderers
 
         private ShaderProgram renderShader;
 
-        public BasicRenderer(ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
+        public BasicRenderer(ShaderStorage storage, ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
         {
-            renderShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
+            renderShader = storage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
         }
 
         public void Delete()

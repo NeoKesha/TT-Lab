@@ -122,7 +122,7 @@ namespace TT_Lab.AssetData.Graphics
                 {
                     var mesh = new MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"blend_subskin_{index++}");
                     var blendShapeInfo = System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape);
-                    mesh.Extras = SharpGLTF.IO.JsonContent.Serialize(blendModel.BlendShape);
+                    mesh.Extras = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape));
 
                     foreach (var face in blendModel.Faces)
                     {

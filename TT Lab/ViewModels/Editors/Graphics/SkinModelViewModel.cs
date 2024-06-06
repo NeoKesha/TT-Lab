@@ -59,29 +59,33 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitSceneRenderer()
         {
-            SceneRenderer.Scene = new Rendering.Scene((float)SceneRenderer.GlControl.ActualWidth, (float)SceneRenderer.GlControl.ActualHeight,
+            SceneRenderer.Scene = new Rendering.Scene(SceneRenderer.GlControl.Context, (float)SceneRenderer.GlControl.ActualWidth, (float)SceneRenderer.GlControl.ActualHeight,
                 Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
 
+            SceneRenderer.GlControl.Context.MakeCurrent();
             var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
             Skin model = new(SceneRenderer.Scene, rm);
             SceneRenderer.Scene.AddRender(model);
+            SceneRenderer.GlControl.Context.MakeNoneCurrent();
         }
 
         private void InitMaterialViewer()
         {
             MaterialViewer.Scene?.Delete();
 
-            MaterialViewer.Scene = new Rendering.Scene((float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualHeight,
+            MaterialViewer.Scene = new Rendering.Scene(MaterialViewer.GlControl.Context, (float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualHeight,
                 Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
             MaterialViewer.Scene.SetCameraSpeed(0);
             MaterialViewer.Scene.DisableCameraManipulation();
 
+            MaterialViewer.GlControl.Context.MakeCurrent();
             var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
             var matData = AssetManager.Get().GetAsset(rm.SubSkins[_selectedMaterial].Material).GetData<MaterialData>();
             MaterialName = matData.Name;
             var texPlane = new Plane(MaterialViewer.Scene, matData);
             MaterialViewer.Scene.AddRender(texPlane);
+            MaterialViewer.GlControl.Context.MakeNoneCurrent();
         }
 
         public override void LoadData()

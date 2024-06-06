@@ -18,11 +18,11 @@ namespace TT_Lab.Rendering.Renderers
         private readonly ShaderProgram wboitShader;
         private readonly ShaderProgram opaqueShader;
 
-        public WBOITRenderer(RenderBuffer depthBuffer, float width, float height, ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
+        public WBOITRenderer(ShaderStorage storage, RenderBuffer depthBuffer, float width, float height, ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
         {
-            resultImageShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.WboitScreenResult, ShaderStorage.StoredFragmentShaders.WboitScreenResult, vertexLib, fragmentLib);
-            wboitShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.WboitBlend, ShaderStorage.StoredFragmentShaders.WboitBlend, vertexLib, fragmentLib);
-            opaqueShader = ShaderStorage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
+            resultImageShader = storage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.WboitScreenResult, ShaderStorage.StoredFragmentShaders.WboitScreenResult, vertexLib, fragmentLib);
+            wboitShader = storage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.WboitBlend, ShaderStorage.StoredFragmentShaders.WboitBlend, vertexLib, fragmentLib);
+            opaqueShader = storage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
 
             ReallocateFramebuffer((int)width, (int)height);
             framebuffer.Bind();
