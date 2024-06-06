@@ -59,6 +59,9 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitSceneRenderer()
         {
+            SceneRenderer.GlControl.Context.MakeCurrent();
+            SceneRenderer.Scene?.Delete();
+
             SceneRenderer.Scene = new Rendering.Scene(SceneRenderer.GlControl.Context, (float)SceneRenderer.GlControl.ActualWidth, (float)SceneRenderer.GlControl.ActualHeight,
                 Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
             SceneRenderer.Scene.SetCameraSpeed(0.2f);
@@ -72,6 +75,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitMaterialViewer()
         {
+            MaterialViewer.GlControl.Context.MakeCurrent();
             MaterialViewer.Scene?.Delete();
 
             MaterialViewer.Scene = new Rendering.Scene(MaterialViewer.GlControl.Context, (float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualHeight,
