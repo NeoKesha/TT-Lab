@@ -1,9 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Editors.Graphics;
-using TT_Lab.ViewModels;
-using TT_Lab.ViewModels.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -22,19 +20,9 @@ namespace TT_Lab.Assets.Graphics
         {
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            return typeof(MaterialEditor);
+            return typeof(MaterialViewModel);
         }
 
         public override AbstractAssetData GetData()
@@ -46,12 +34,6 @@ namespace TT_Lab.Assets.Graphics
                 IsLoaded = true;
             }
             return assetData;
-        }
-
-        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
-        {
-            viewModel ??= new MaterialViewModel(URI, parent);
-            return viewModel;
         }
     }
 }

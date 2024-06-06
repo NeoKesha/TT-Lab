@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using System.Threading.Tasks;
 using TT_Lab.Project;
 
@@ -15,20 +16,20 @@ namespace TT_Lab.Command
 
         public void Execute(Object? parameter = null)
         {
-            if (!ProjectManagerSingleton.PM.ProjectOpened) return;
+            if (!IoC.Get<ProjectManager>().ProjectOpened) return;
 
-            ProjectManagerSingleton.PM.WorkableProject = false;
+            IoC.Get<ProjectManager>().WorkableProject = false;
             Task.Factory.StartNew(() =>
             {
                 try
                 {
                     Log.WriteLine($"Saving project...");
                     var now = DateTime.Now;
-                    var pr = ProjectManagerSingleton.PM.FullProjectTree;
-                    foreach (var viewModel in pr)
-                    {
-                        viewModel.Save(null);
-                    }
+                    var pr = IoC.Get<ProjectManager>().FullProjectTree;
+                    //foreach (var viewModel in pr)
+                    //{
+                    //    viewModel.Save(null);
+                    //}
                     Log.WriteLine($"Saved project in {DateTime.Now - now}");
                 }
                 catch (Exception ex)
@@ -37,7 +38,7 @@ namespace TT_Lab.Command
                 }
                 finally
                 {
-                    ProjectManagerSingleton.PM.WorkableProject = true;
+                    IoC.Get<ProjectManager>().WorkableProject = true;
                 }
             });
         }

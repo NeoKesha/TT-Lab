@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.Assets.Factory;
+using TT_Lab.ViewModels;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
@@ -84,16 +85,6 @@ namespace TT_Lab.Assets
             assetData.Load(System.IO.Path.Combine("assets", SavePath, Data));
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
             throw new NotImplementedException();
@@ -124,6 +115,15 @@ namespace TT_Lab.Assets
             return order++;
         }
 
+        public override ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        {
+            if (viewModel == null)
+            {
+                viewModel = base.GetResourceTreeElement(parent);
+                viewModel.BuildChildren(this);
+            }
+            return viewModel;
+        }
 
     }
 }

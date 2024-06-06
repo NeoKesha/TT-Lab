@@ -1,9 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
-using TT_Lab.Editors.Instance;
-using TT_Lab.ViewModels;
-using TT_Lab.ViewModels.Instance;
+using TT_Lab.ViewModels.Editors.Instance;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
@@ -22,19 +20,9 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            return typeof(PositionEditor);
+            return typeof(PositionViewModel);
         }
 
         public override AbstractAssetData GetData()
@@ -46,12 +34,6 @@ namespace TT_Lab.Assets.Instance
                 IsLoaded = true;
             }
             return assetData;
-        }
-
-        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
-        {
-            viewModel ??= new PositionViewModel(URI, parent);
-            return viewModel;
         }
     }
 }

@@ -33,6 +33,10 @@ namespace TT_Lab.Assets.Factory
                 });
             }
             await Task.WhenAll(tasks);
+            foreach (var task in tasks)
+            {
+                task.Dispose();
+            }
             return assets;
         }
 

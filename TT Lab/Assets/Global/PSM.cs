@@ -43,15 +43,5 @@ namespace TT_Lab.Assets.Global
         {
             throw new NotImplementedException();
         }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

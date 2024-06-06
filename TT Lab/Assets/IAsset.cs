@@ -40,6 +40,8 @@ namespace TT_Lab.Assets
         [JsonProperty(Required = Required.Always)]
         String Name { get; set; }
 
+        String IconPath { get; }
+
         /// <summary>
         /// Whether asset's data is in raw form
         /// </summary>
@@ -127,18 +129,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Returns asset's viewmodel for editing
         /// </summary>
-        AssetViewModel GetViewModel(AssetViewModel? parent = null);
-
-        /// <summary>
-        /// Return asset's viewmodel as a specific type
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        T GetViewModel<T>(AssetViewModel? parent = null) where T : AssetViewModel
-        {
-            return (T)GetViewModel(parent);
-        }
+        ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null);
 
         /// <summary>
         /// Disposes of the contained data if it was loaded
@@ -181,12 +172,12 @@ namespace TT_Lab.Assets
         void RegenerateURI(Boolean needVariant);
 
         /// <summary>
-        /// Dump on disk in JSON format
+        /// Save the data to disk
         /// </summary>
         void Serialize();
 
         /// <summary>
-        /// Convert JSON format to the project asset object
+        /// Read data from the disk
         /// </summary>
         void Deserialize(String json);
 
@@ -194,18 +185,6 @@ namespace TT_Lab.Assets
         /// Called if asset needs to do anything else after being deserialized
         /// </summary>
         void PostDeserialize();
-
-        /// <summary>
-        /// Converts given data to raw game's data
-        /// </summary>
-        /// <param name="data">Data to convert</param>
-        void ToRaw(Byte[] data);
-
-        /// <summary>
-        /// Converts raw data to a general format
-        /// </summary>
-        /// <returns>Data in the format</returns>
-        Byte[] ToFormat();
 
         /// <summary>
         /// Finishes import on Project Creation stage

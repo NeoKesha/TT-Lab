@@ -29,7 +29,7 @@ namespace TT_Lab.AssetData.Code
             return;
         }
 
-        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
         {
             using FileStream fs = new(dataPath, FileMode.Create, FileAccess.Write);
             using BinaryWriter writer = new(fs);

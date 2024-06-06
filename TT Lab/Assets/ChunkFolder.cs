@@ -1,6 +1,6 @@
 ﻿using System;
 using TT_Lab.AssetData;
-using TT_Lab.Editors;
+using TT_Lab.ViewModels.Editors;
 
 namespace TT_Lab.Assets
 {
@@ -34,7 +34,7 @@ namespace TT_Lab.Assets
 
         public override Type GetEditorType()
         {
-            return typeof(ChunkEditor);
+            return typeof(ChunkEditorViewModel);
         }
     }
 }

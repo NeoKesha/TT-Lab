@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using Twinsanity.Libraries;
 // Credits to https://github.com/dwmkerr/sharpgl
 namespace TT_Lab.Rendering.Shaders
 {

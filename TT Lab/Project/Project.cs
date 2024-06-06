@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Caliburn.Micro;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using TT_Lab.AssetData;
-using TT_Lab.AssetData.Global;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
@@ -148,6 +147,10 @@ namespace TT_Lab.Project
                 });
             }
             Task.WaitAll(tasks);
+            foreach (var task in tasks)
+            {
+                task.Dispose();
+            }
 
             // Skins and blend skins are serialized without multithreading because of accessing and changing current directory
             // and needing all the materials and textures serialized
@@ -197,7 +200,7 @@ namespace TT_Lab.Project
                 throw new ProjectException("The provided version of the project is not supported!");
             }
             System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(projectPath)!);
-            ProjectManagerSingleton.PM.OpenedProject = pr;
+            IoC.Get<ProjectManager>().OpenedProject = pr;
 
             var taskList = new List<Task<Dictionary<LabURI, IAsset>>>();
             // Deserialize assets
@@ -208,6 +211,10 @@ namespace TT_Lab.Project
                 taskList.Add(AssetFactory.GetAssets(assetFiles));
             }
             Task.WaitAll(taskList.ToArray());
+            foreach (var task in taskList.ToArray())
+            {
+                task.Dispose();
+            }
             Log.WriteLine("Finished opening assets...");
             Dictionary<LabURI, IAsset> assets = new();
             pr.AssetManager = new();

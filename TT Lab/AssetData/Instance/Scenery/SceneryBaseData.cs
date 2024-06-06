@@ -7,7 +7,7 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
-using TT_Lab.ViewModels.Instance.Scenery;
+using TT_Lab.ViewModels.Editors.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;

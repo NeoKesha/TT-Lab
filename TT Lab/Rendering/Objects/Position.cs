@@ -1,7 +1,8 @@
 ﻿using GlmSharp;
 using System;
+using TT_Lab.Assets;
 using TT_Lab.Rendering.Shaders;
-using TT_Lab.ViewModels.Instance;
+using TT_Lab.ViewModels.Editors.Instance;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -11,10 +12,12 @@ namespace TT_Lab.Rendering.Objects
         private int layid;
         private vec3 position;
         private vec4 color;
+        private PositionViewModel positionViewModel;
 
         public Position(Scene root, PositionViewModel pos) : base(root)
         {
-            id = pos.Asset.ID;
+            var asset = AssetManager.Get().GetAsset(pos.EditableResource);
+            id = asset.ID;
             layid = (int)pos.LayoutID;
             position = new vec3(-pos.Position.X, pos.Position.Y, pos.Position.Z);
             pos.PropertyChanged += Pos_PropertyChanged;
@@ -26,6 +29,7 @@ namespace TT_Lab.Rendering.Objects
             color.w = tmp.A / 255.0f;
             LocalTransform = mat4.Translate(position);
             LocalTransform *= mat4.Scale(0.25f);
+            positionViewModel = pos;
         }
 
         private void Pos_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -45,6 +49,7 @@ namespace TT_Lab.Rendering.Objects
 
         public void Delete()
         {
+            positionViewModel.PropertyChanged -= Pos_PropertyChanged;
         }
 
         protected override void RenderSelf(ShaderProgram shader)

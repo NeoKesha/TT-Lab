@@ -50,7 +50,7 @@ namespace TT_Lab.AssetData.Graphics
             Meshes.Clear();
         }
 
-        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
         {
             var material = new SharpGLTF.Materials.MaterialBuilder()
                 .WithDoubleSide(true)

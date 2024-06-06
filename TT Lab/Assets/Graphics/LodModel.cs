@@ -19,16 +19,6 @@ namespace TT_Lab.Assets.Graphics
         {
         }
 
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
             throw new NotImplementedException();

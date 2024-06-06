@@ -8,7 +8,7 @@ namespace TT_Lab.Controls
     /// <summary>
     /// Interaction logic for LabeledTextBox.xaml
     /// </summary>
-    public partial class LabeledTextBox : BoundUserControl
+    public partial class LabeledTextBox : UserControl
     {
         [Description("Name of the textbox displayed above."), Category("Common Properties")]
         public string TextBoxName
@@ -50,16 +50,6 @@ namespace TT_Lab.Controls
             InitializeComponent();
         }
 
-        private void BaseTextBox_UndoPerformed(Object sender, EventArgs e)
-        {
-            InvokeUndo();
-        }
-
-        private void BaseTextBox_RedoPerformed(Object sender, EventArgs e)
-        {
-            InvokeRedo();
-        }
-
         private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LabeledTextBox control = d as LabeledTextBox;
@@ -71,12 +61,6 @@ namespace TT_Lab.Controls
             LabeledTextBox control = d as LabeledTextBox;
             control.DisplayText = control.Text;
             Log.WriteLine($"Changed text in {control.Name} to {(string)e.NewValue}");
-        }
-
-        private void TextContainer_TextChanged(Object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(BoundProperty)) return;
-            InvokePropChange(TextContainer.Text, Text);
         }
     }
 }

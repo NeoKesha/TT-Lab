@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
-using TT_Lab.ViewModels.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -19,7 +19,7 @@ namespace TT_Lab.Rendering.Objects
         private int AlphaBlending = 0;
         private int uniIndex = -1;
 
-        public TwinMaterial(ShaderProgram program, string textureUniformName, Bitmap bitmap, LabShaderViewModel viewModel, int texUnitPos, int uniIndex = -1)
+        public TwinMaterial(ShaderProgram program, string textureUniformName, Bitmap bitmap, ShaderViewModel viewModel, int texUnitPos, int uniIndex = -1)
         {
             this.uniIndex = uniIndex;
             _shader = program;

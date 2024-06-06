@@ -12,6 +12,11 @@
             return new System.Numerics.Vector4(twinVec.X, twinVec.Y, twinVec.Z, twinVec.W);
         }
 
+        public static GlmSharp.vec4 ToGLM(this Twinsanity.TwinsanityInterchange.Common.Vector4 twinVec)
+        {
+            return new GlmSharp.vec4(twinVec.X, twinVec.Y, twinVec.Z, twinVec.W);
+        }
+
         public static OpenTK.Mathematics.Vector3 ToGL(this Twinsanity.TwinsanityInterchange.Common.Vector3 twinVec)
         {
             return new OpenTK.Mathematics.Vector3(twinVec.X, twinVec.Y, twinVec.Z);
@@ -20,6 +25,11 @@
         public static System.Numerics.Vector3 ToSystem(this Twinsanity.TwinsanityInterchange.Common.Vector3 twinVec)
         {
             return new System.Numerics.Vector3(twinVec.X, twinVec.Y, twinVec.Z);
+        }
+
+        public static GlmSharp.vec3 ToGLM(this Twinsanity.TwinsanityInterchange.Common.Vector3 twinVec)
+        {
+            return new GlmSharp.vec3(twinVec.X, twinVec.Y, twinVec.Z);
         }
     }
 }

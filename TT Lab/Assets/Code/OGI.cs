@@ -17,20 +17,11 @@ namespace TT_Lab.Assets.Code
             assetData = new OGIData(ogi);
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
             throw new NotImplementedException();
         }
+
         public override AbstractAssetData GetData()
         {
             if (!IsLoaded || assetData.Disposed)

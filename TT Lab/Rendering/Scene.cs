@@ -13,7 +13,7 @@ using TT_Lab.Rendering.Renderers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
-using TT_Lab.ViewModels.Instance;
+using TT_Lab.ViewModels.Editors.Instance;
 
 namespace TT_Lab.Rendering
 {
@@ -42,6 +42,7 @@ namespace TT_Lab.Rendering
         private ShaderStorage.LibraryFragmentShaders fragmentLibraryShader;
         private ShaderStorage.LibraryVertexShaders vertexLibraryShader;
         private Stopwatch timer = new();
+        private readonly InputController inputController;
 
         // Scene rendering
         private readonly List<IRenderable> renderableObjects = new();
@@ -67,6 +68,8 @@ namespace TT_Lab.Rendering
 
             ShaderStorage.BuildShaderCache();
 
+            inputController = Caliburn.Micro.IoC.Get<InputController>();
+
             resolution.x = width;
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
@@ -89,13 +92,13 @@ namespace TT_Lab.Rendering
         /// <param name="sceneTree">Tree of chunk resources collision data, positions, cameras, etc.</param>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(List<AssetViewModel> sceneTree, float width, float height) :
+        public Scene(Caliburn.Micro.BindableCollection<ResourceTreeElementViewModel> sceneTree, float width, float height) :
             this(width, height, ShaderStorage.LibraryFragmentShaders.Light)
         {
             LocalTransform = mat4.Identity;
 
             // Collision renderer
-            var colData = sceneTree.Find((avm) =>
+            var colData = sceneTree.First((avm) =>
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
@@ -103,20 +106,20 @@ namespace TT_Lab.Rendering
             AddRender(colRender);
 
             // Positions renderer
-            var positions = sceneTree.Find(avm => avm.Alias == "Positions");
-            foreach (var pos in positions!.Children)
-            {
-                var pRend = new Objects.Position(this, (PositionViewModel)pos);
-                AddRender(pRend);
-            }
+            //var positions = sceneTree.First(avm => avm.Alias == "Positions");
+            //foreach (var pos in positions!.Children)
+            //{
+            //    var pRend = new Objects.Position(this, (PositionViewModel)pos);
+            //    AddRender(pRend);
+            //}
 
-            // Triggers renderer
-            var triggers = sceneTree.Find(avm => avm.Alias == "Triggers");
-            foreach (var trg in triggers!.Children)
-            {
-                var trRend = new Objects.Trigger(this, (TriggerViewModel)trg);
-                AddRender(trRend);
-            }
+            //// Triggers renderer
+            //var triggers = sceneTree.First(avm => avm.Alias == "Triggers");
+            //foreach (var trg in triggers!.Children)
+            //{
+            //    var trRend = new Objects.Trigger(this, (TriggerViewModel)trg);
+            //    AddRender(trRend);
+            //}
         }
 
         public SceneInstance AddObjectInstance(ObjectInstanceData instData)
@@ -145,7 +148,6 @@ namespace TT_Lab.Rendering
         /// Adds new renderable object to the scene. Safe to do anywhere. Object will be added to the render on next render frame.
         /// </summary>
         /// <param name="renderObj">Object to add</param>
-        /// <param name="transparent">Whether the object is transparent and goes through translucency pipeline</param>
         public void AddRender(IRenderable renderObj)
         {
             queuedRenderActions.Enqueue(() =>
@@ -431,7 +433,7 @@ namespace TT_Lab.Rendering
 
         }
 
-        public void Move(InputController inputController)
+        public void Move()
         {
             if (!canManipulateCamera) return;
 

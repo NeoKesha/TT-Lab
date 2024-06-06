@@ -40,20 +40,10 @@ namespace TT_Lab.Assets.Global
 
         public override void ExportToFile(ITwinItemFactory factory)
         {
-            GetData().Save($"{Name}.{TwinDataExt}");
+            GetData().SaveInCurrentDirectory($"{Name}.{TwinDataExt}");
         }
 
         public override Type GetEditorType()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();
         }

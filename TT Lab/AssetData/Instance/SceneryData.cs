@@ -72,13 +72,13 @@ namespace TT_Lab.AssetData.Instance
             Sceneries.Clear();
         }
 
-        public override void Save(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             settings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             };
-            base.Save(dataPath, settings);
+            base.SaveInternal(dataPath, settings);
         }
 
         protected override void LoadInternal(String dataPath, JsonSerializerSettings? settings = null)

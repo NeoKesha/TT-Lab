@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Caliburn.Micro;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Project;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData
@@ -19,7 +21,7 @@ namespace TT_Lab.AssetData
         public void Load(String dataPath, JsonSerializerSettings? settings = null)
         {
             var workingDirectory = System.IO.Directory.GetCurrentDirectory();
-            System.IO.Directory.SetCurrentDirectory(Project.ProjectManagerSingleton.PM.OpenedProject!.ProjectPath);
+            System.IO.Directory.SetCurrentDirectory(IoC.Get<ProjectManager>().OpenedProject!.ProjectPath);
             LoadInternal(dataPath, settings);
             System.IO.Directory.SetCurrentDirectory(workingDirectory);
         }
@@ -32,7 +34,20 @@ namespace TT_Lab.AssetData
             disposedValue = false;
         }
 
-        public virtual void Save(String dataPath, JsonSerializerSettings? settings = null)
+        public void Save(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            var workingDirectory = System.IO.Directory.GetCurrentDirectory();
+            System.IO.Directory.SetCurrentDirectory($"{IoC.Get<ProjectManager>().OpenedProject!.ProjectPath}\\assets");
+            SaveInternal(dataPath, settings);
+            System.IO.Directory.SetCurrentDirectory(workingDirectory);
+        }
+
+        public void SaveInCurrentDirectory(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            SaveInternal(dataPath, settings);
+        }
+
+        protected virtual void SaveInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using System.IO.FileStream fs = new(dataPath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using System.IO.BinaryWriter writer = new(fs);

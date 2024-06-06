@@ -9,7 +9,7 @@ namespace TT_Lab.Command
         private readonly object target;
         private readonly string propName;
         private readonly string startPath;
-        private readonly Window owner;
+        private readonly Window? owner;
 
         public SelectFolderCommand(object target, string textStoragePropName, string startPath = "")
         {
@@ -18,13 +18,13 @@ namespace TT_Lab.Command
             propName = textStoragePropName;
         }
 
-        public SelectFolderCommand(Window owner, object target, string textStoragePropName, string startPath = "")
+        public SelectFolderCommand(Window? owner, object target, string textStoragePropName, string startPath = "")
             : this(target, textStoragePropName, startPath)
         {
             this.owner = owner;
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         public bool CanExecute(object? parameter)
         {
@@ -33,7 +33,7 @@ namespace TT_Lab.Command
 
         public void Execute(object? parameter = null)
         {
-            using CommonOpenFileDialog ofd = new CommonOpenFileDialog
+            using CommonOpenFileDialog ofd = new()
             {
                 IsFolderPicker = true,
                 InitialDirectory = startPath

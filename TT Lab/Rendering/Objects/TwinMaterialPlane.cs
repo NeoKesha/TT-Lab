@@ -6,7 +6,7 @@ using System.Drawing;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
-using TT_Lab.ViewModels.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -41,7 +41,7 @@ namespace TT_Lab.Rendering.Objects
                 });
         }
 
-        public TwinMaterialPlane(Scene root, ShaderProgram shader, Bitmap[] textures, LabShaderViewModel[] viewModels, int texAmt = 1) : this(root)
+        public TwinMaterialPlane(Scene root, ShaderProgram shader, Bitmap[] textures, ShaderViewModel[] viewModels, int texAmt = 1) : this(root)
         {
             if (texAmt > 5) texAmt = 5;
             this.texAmt = texAmt;

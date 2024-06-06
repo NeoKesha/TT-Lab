@@ -1,8 +1,9 @@
 ﻿using GlmSharp;
 using OpenTK.Mathematics;
 using System;
+using TT_Lab.Assets;
 using TT_Lab.Rendering.Shaders;
-using TT_Lab.ViewModels.Instance;
+using TT_Lab.ViewModels.Editors.Instance;
 
 namespace TT_Lab.Rendering.Objects
 {
@@ -20,8 +21,9 @@ namespace TT_Lab.Rendering.Objects
 
         public Trigger(Scene root, TriggerViewModel tvm) : base(root)
         {
+            var asset = AssetManager.Get().GetAsset(tvm.EditableResource);
             Opacity = 0.4f;
-            id = tvm.Asset.ID;
+            id = asset.ID;
             layid = (int)tvm.LayoutID;
             viewModel = tvm;
             viewModel.PropertyChanged += Tvm_PropertyChanged;

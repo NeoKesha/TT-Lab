@@ -1,7 +1,7 @@
 ﻿using GlmSharp;
-using TT_Lab.Editors;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
+using TT_Lab.ViewModels.Editors;
 
 namespace TT_Lab.Rendering
 {
@@ -16,12 +16,12 @@ namespace TT_Lab.Rendering
         private SceneInstance[] palette = new SceneInstance[9];
         private int currentPaletteIndex = 0;
         private Scene root;
-        private ChunkEditor editor;
+        private ChunkEditorViewModel editor;
         private Gizmo gizmo;
         private vec3 gridStep = new vec3();
         private mat4 gridRotation = new mat4();
 
-        public EditingContext(Scene root, ChunkEditor editor)
+        public EditingContext(Scene root, ChunkEditorViewModel editor)
         {
             this.root = root;
             this.editor = editor;

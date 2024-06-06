@@ -1,16 +1,12 @@
 ﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
-using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {

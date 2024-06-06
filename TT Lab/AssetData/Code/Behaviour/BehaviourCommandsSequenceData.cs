@@ -25,7 +25,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
         public String Code { get; set; }
         public List<UInt32> BehaviourGraphIds { get; set; }
 
-        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
         {
             using FileStream fs = new(dataPath, FileMode.Create, FileAccess.Write);
             using BinaryWriter writer = new(fs);

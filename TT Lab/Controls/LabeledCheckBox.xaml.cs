@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace TT_Lab.Controls
 {
     /// <summary>
     /// Interaction logic for LabeledCheckBox.xaml
     /// </summary>
-    public partial class LabeledCheckBox : BoundUserControl
+    public partial class LabeledCheckBox : UserControl
     {
         public LabeledCheckBox()
         {
@@ -92,18 +93,6 @@ namespace TT_Lab.Controls
                 control.CheckboxLabel.Visibility = Visibility.Visible;
                 control.CheckBox.Content = String.Empty;
             }
-        }
-
-        private void CheckBox_Checked(Object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(BoundProperty)) return;
-            InvokePropChange(true, false);
-        }
-
-        private void CheckBox_Unchecked(Object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(BoundProperty)) return;
-            InvokePropChange(false, true);
         }
     }
 }

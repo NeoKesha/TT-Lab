@@ -10,7 +10,7 @@ namespace TT_Lab.Controls
     /// <summary>
     /// Interaction logic for LabeledDropList.xaml
     /// </summary>
-    public partial class LabeledDropList : BoundUserControl
+    public partial class LabeledDropList : UserControl
     {
 
         [Description("Name of the droplist displayed above."), Category("Common Properties")]
@@ -136,12 +136,6 @@ namespace TT_Lab.Controls
         {
             LabeledDropList control = d as LabeledDropList;
             control.DisplaySelectedItem = e.NewValue;
-        }
-
-        private void DropList_SelectionChanged(Object sender, SelectionChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(BoundProperty)) return;
-            InvokePropChange(DropList.SelectedItem, SelectedItem);
         }
     }
 }

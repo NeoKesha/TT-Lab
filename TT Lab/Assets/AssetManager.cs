@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -105,7 +106,7 @@ namespace TT_Lab.Assets
         /// <returns>AssetManager for the currently opened project</returns>
         public static AssetManager Get()
         {
-            return ProjectManagerSingleton.PM.OpenedProject!.AssetManager;
+            return IoC.Get<ProjectManager>().OpenedProject!.AssetManager;
         }
 
         /// <summary>

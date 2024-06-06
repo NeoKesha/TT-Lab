@@ -1,6 +1,6 @@
 ﻿using System;
 using TT_Lab.Assets;
-using TT_Lab.ViewModels.Instance.Scenery;
+using TT_Lab.ViewModels.Editors.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 
 namespace TT_Lab.AssetData.Instance.Scenery

@@ -16,12 +16,13 @@ namespace TT_Lab.Assets
         public abstract UInt32 Section { get; }
 
         protected AbstractAssetData assetData;
-        protected AssetViewModel viewModel;
+        protected ResourceTreeElementViewModel viewModel;
 
         public Type Type { get; set; }
 
         public String Name { get; set; }
         public Boolean Raw { get; set; }
+        public virtual String IconPath => "/Resources/Icons/Common Node.svg";
         public String Data { get; set; }
         public UInt32 ID { get; set; }
         public String Alias { get; set; }
@@ -94,8 +95,6 @@ namespace TT_Lab.Assets
 
         public virtual void PostDeserialize() { }
 
-        public abstract void ToRaw(Byte[] data);
-        public abstract Byte[] ToFormat();
         public abstract Type GetEditorType();
         public abstract AbstractAssetData GetData();
 
@@ -158,9 +157,9 @@ namespace TT_Lab.Assets
             resolveTraversed = false;
         }
 
-        public virtual AssetViewModel GetViewModel(AssetViewModel? parent = null)
+        public virtual ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
         {
-            viewModel ??= new AssetViewModel(URI, parent);
+            viewModel ??= new ResourceTreeElementViewModel(URI, parent);
             return viewModel;
         }
     }

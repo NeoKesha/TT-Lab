@@ -43,7 +43,7 @@ namespace TT_Lab.AssetData.Graphics
             Blends.Clear();
         }
 
-        public override void Save(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityBlendSkin");
             var root = new SharpGLTF.Scenes.NodeBuilder("blend_skin_root");

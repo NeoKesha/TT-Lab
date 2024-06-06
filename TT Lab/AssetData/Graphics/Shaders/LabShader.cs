@@ -3,7 +3,7 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Util;
-using TT_Lab.ViewModels.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.ShaderAnimation;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
@@ -54,7 +54,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
 
         public LabShader() { }
 
-        public LabShader(LabShaderViewModel vm)
+        public LabShader(ShaderViewModel vm)
         {
             ShaderType = vm.Type;
             IntParam = vm.IntParam;

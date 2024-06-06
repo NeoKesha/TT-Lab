@@ -29,6 +29,39 @@
     <None Remove="Images\AfroGod.png" />
     <None Remove="Images\boat_guy.png" />
     <None Remove="Images\God_Messenger.png" />
+    <None Remove="Resources\Icons\AI Path.svg" />
+    <None Remove="Resources\Icons\AI Position.svg" />
+    <None Remove="Resources\Icons\Animation.svg" />
+    <None Remove="Resources\Icons\Behavior Tree Start.svg" />
+    <None Remove="Resources\Icons\Blend Skin.svg" />
+    <None Remove="Resources\Icons\Camera.svg" />
+    <None Remove="Resources\Icons\Chunk Link.svg" />
+    <None Remove="Resources\Icons\Collision Surface.svg" />
+    <None Remove="Resources\Icons\Collision.svg" />
+    <None Remove="Resources\Icons\Command Sequence.svg" />
+    <None Remove="Resources\Icons\Common Node.svg" />
+    <None Remove="Resources\Icons\Font.svg" />
+    <None Remove="Resources\Icons\Game Object.svg" />
+    <None Remove="Resources\Icons\Instance Template.svg" />
+    <None Remove="Resources\Icons\Instance.svg" />
+    <None Remove="Resources\Icons\LOD.svg" />
+    <None Remove="Resources\Icons\Material.svg" />
+    <None Remove="Resources\Icons\Mesh.svg" />
+    <None Remove="Resources\Icons\Model.svg" />
+    <None Remove="Resources\Icons\OGI.svg" />
+    <None Remove="Resources\Icons\Particle Emitter.svg" />
+    <None Remove="Resources\Icons\Path.svg" />
+    <None Remove="Resources\Icons\Position.svg" />
+    <None Remove="Resources\Icons\PSM.svg" />
+    <None Remove="Resources\Icons\PTC.svg" />
+    <None Remove="Resources\Icons\Save.svg" />
+    <None Remove="Resources\Icons\SFX.svg" />
+    <None Remove="Resources\Icons\Skin Mesh.svg" />
+    <None Remove="Resources\Icons\Skybox.svg" />
+    <None Remove="Resources\Icons\Text File.svg" />
+    <None Remove="Resources\Icons\Texture.svg" />
+    <None Remove="Resources\Icons\Trigger.svg" />
+    <None Remove="Resources\Icons\UI Sound Library.svg" />
     <None Remove="Resources\InterDisplay-Black.ttf" />
     <None Remove="Resources\InterDisplay-BlackItalic.ttf" />
     <None Remove="Resources\InterDisplay-Bold.ttf" />
@@ -64,6 +97,8 @@
   <ItemGroup>
     <PackageReference Include="AdonisUI" Version="1.17.1" />
     <PackageReference Include="AdonisUI.ClassicTheme" Version="1.17.1" />
+    <PackageReference Include="Caliburn.Micro" Version="4.0.212" />
+    <PackageReference Include="DotNetProjects.SVGImage" Version="5.1.1" />
     <PackageReference Include="GlmSharpStd" Version="0.9.8" />
     <PackageReference Include="Meshoptimizer.NET" Version="1.0.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
@@ -184,6 +219,39 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Icons\AI Path.svg" />
+    <Resource Include="Resources\Icons\AI Position.svg" />
+    <Resource Include="Resources\Icons\Animation.svg" />
+    <Resource Include="Resources\Icons\Behavior Tree Start.svg" />
+    <Resource Include="Resources\Icons\Blend Skin.svg" />
+    <Resource Include="Resources\Icons\Camera.svg" />
+    <Resource Include="Resources\Icons\Chunk Link.svg" />
+    <Resource Include="Resources\Icons\Collision Surface.svg" />
+    <Resource Include="Resources\Icons\Collision.svg" />
+    <Resource Include="Resources\Icons\Command Sequence.svg" />
+    <Resource Include="Resources\Icons\Common Node.svg" />
+    <Resource Include="Resources\Icons\Font.svg" />
+    <Resource Include="Resources\Icons\Game Object.svg" />
+    <Resource Include="Resources\Icons\Instance Template.svg" />
+    <Resource Include="Resources\Icons\Instance.svg" />
+    <Resource Include="Resources\Icons\LOD.svg" />
+    <Resource Include="Resources\Icons\Material.svg" />
+    <Resource Include="Resources\Icons\Mesh.svg" />
+    <Resource Include="Resources\Icons\Model.svg" />
+    <Resource Include="Resources\Icons\OGI.svg" />
+    <Resource Include="Resources\Icons\Particle Emitter.svg" />
+    <Resource Include="Resources\Icons\Path.svg" />
+    <Resource Include="Resources\Icons\Position.svg" />
+    <Resource Include="Resources\Icons\PSM.svg" />
+    <Resource Include="Resources\Icons\PTC.svg" />
+    <Resource Include="Resources\Icons\Save.svg" />
+    <Resource Include="Resources\Icons\SFX.svg" />
+    <Resource Include="Resources\Icons\Skin Mesh.svg" />
+    <Resource Include="Resources\Icons\Skybox.svg" />
+    <Resource Include="Resources\Icons\Text File.svg" />
+    <Resource Include="Resources\Icons\Texture.svg" />
+    <Resource Include="Resources\Icons\Trigger.svg" />
+    <Resource Include="Resources\Icons\UI Sound Library.svg" />
     <Resource Include="Resources\InterDisplay-Black.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -242,6 +310,7 @@
 
   <ItemGroup>
     <Folder Include="Shaders\Materials\" />
+    <Folder Include="ViewModels\Editors\Code\OGI\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Renderers

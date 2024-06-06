@@ -16,19 +16,9 @@ namespace TT_Lab.Assets.Code
             assetData = new AnimationData(animation);
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            return typeof(Editors.Code.AnimationEditor);
+            throw new NotImplementedException();
         }
 
         public override AbstractAssetData GetData()

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Caliburn.Micro;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,44 +8,39 @@ using System.Windows.Data;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
+using TT_Lab.Project.Messages;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 
 namespace TT_Lab.Project
 {
-    // Wrapper for keeping ProjectManager singleton and keep the ability to have ProjectManager as an observable object
-    public static class ProjectManagerSingleton
+    public class ProjectManager
     {
-        private static ProjectManager _pm;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly object _treeLock = new();
 
-        public static ProjectManager PM
-        {
-            get
-            {
-                _pm ??= new ProjectManager();
-                return _pm;
-            }
-            private set
-            {
-                _pm = value;
-            }
-        }
-    }
-
-    public class ProjectManager : ObservableObject
-    {
-        private IProject _openedProject;
+        private IProject? _openedProject;
         private CommandManager _commandManager = new();
-        private MenuItem[] _recentMenus = Array.Empty<MenuItem>();
-        private List<AssetViewModel> _projectTree = new();
-        private List<AssetViewModel> _internalTree = new();
+        private BindableCollection<MenuItem> _recentMenus = new();
+        private BindableCollection<ResourceTreeElementViewModel> _projectTree = new();
+        private BindableCollection<ResourceTreeElementViewModel> _internalTree = new();
         private bool _workableProject = false;
         private string _searchAsset = "";
-        private object _treeLock = new();
 
-        public ProjectManager()
+
+        public ProjectManager(IEventAggregator eventAggregator)
         {
             BindingOperations.EnableCollectionSynchronization(_projectTree, _treeLock);
+            _eventAggregator = eventAggregator;
+
+            var recents = Properties.Settings.Default.RecentProjects;
+            if (recents != null)
+            {
+                for (var i = 0; i < recents.Count; ++i)
+                {
+                    _recentMenus.Add(GenerateRecentMenu(recents[i]!));
+                }
+            }
         }
 
         public IProject? OpenedProject
@@ -57,7 +52,7 @@ namespace TT_Lab.Project
             set
             {
                 _openedProject = value;
-                NotifyChange("OpenedProject");
+                _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage());
             }
         }
 
@@ -72,7 +67,7 @@ namespace TT_Lab.Project
                 if (value != _workableProject)
                 {
                     _workableProject = value;
-                    NotifyChange("WorkableProject");
+                    _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage());
                 }
             }
         }
@@ -89,7 +84,7 @@ namespace TT_Lab.Project
                 {
                     _searchAsset = value;
                     DoSearch();
-                    NotifyChange("SearchAsset");
+                    _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage());
                 }
             }
         }
@@ -98,19 +93,21 @@ namespace TT_Lab.Project
         {
             lock (_treeLock)
             {
-                ProjectTree = new List<AssetViewModel>();
+                ProjectTree = new BindableCollection<ResourceTreeElementViewModel>();
             }
-            _internalTree.ForEach((a) =>
+
+            foreach (var item in _internalTree)
             {
-                a.ClearChildren();
-            });
+                item.ClearChildren();
+            }
+
             if (_searchAsset == string.Empty)
             {
-                _internalTree.ForEach((a) =>
+                foreach (var item in _internalTree)
                 {
-                    a.IsExpanded = false;
-                    a.LoadChildrenBack();
-                });
+                    item.IsExpanded = false;
+                    item.LoadChildrenBack();
+                }
                 lock (_treeLock)
                 {
                     ProjectTree.AddRange(_internalTree);
@@ -134,10 +131,10 @@ namespace TT_Lab.Project
                     }
                 }
             }
-            NotifyChange("ProjectTree");
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
         }
 
-        private AssetViewModel? FilterAsset(AssetViewModel asset, String filter)
+        private ResourceTreeElementViewModel? FilterAsset(ResourceTreeElementViewModel asset, String filter)
         {
             if (asset.GetInternalChildren() == null)
             {
@@ -165,7 +162,7 @@ namespace TT_Lab.Project
             return asset;
         }
 
-        public List<AssetViewModel> ProjectTree
+        public BindableCollection<ResourceTreeElementViewModel> ProjectTree
         {
             get
             {
@@ -185,7 +182,7 @@ namespace TT_Lab.Project
             }
         }
 
-        public List<AssetViewModel> FullProjectTree
+        public BindableCollection<ResourceTreeElementViewModel> FullProjectTree
         {
             get => _internalTree;
         }
@@ -198,26 +195,10 @@ namespace TT_Lab.Project
             }
         }
 
-        public MenuItem[] RecentlyOpened
+        public BindableCollection<MenuItem> RecentlyOpened
         {
             get
             {
-                var recents = Properties.Settings.Default.RecentProjects;
-                if (recents != null)
-                {
-                    var menus = new MenuItem[recents.Count];
-                    for (var i = 0; i < recents.Count; ++i)
-                    {
-                        menus[i] = new MenuItem
-                        {
-                            Header = $"{i + 1}. {recents[i]}",
-                            Command = new OpenProjectCommand(recents[i]!),
-                            HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
-                            VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                        };
-                    }
-                    _recentMenus = menus;
-                }
                 return _recentMenus;
             }
         }
@@ -226,7 +207,7 @@ namespace TT_Lab.Project
         {
             get
             {
-                return RecentlyOpened.Length != 0;
+                return RecentlyOpened.Count != 0;
             }
         }
 
@@ -304,8 +285,8 @@ namespace TT_Lab.Project
 
                 AddRecentlyOpened(OpenedProject.ProjectPath);
                 WorkableProject = true;
-                NotifyChange("ProjectOpened");
-                NotifyChange("ProjectTitle");
+                _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
+                _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
                 GC.Collect();
                 Log.WriteLine($"Project created in {DateTime.Now - projCreateStart}");
 #if !DEBUG
@@ -320,16 +301,29 @@ namespace TT_Lab.Project
 
         public void OpenProject(string path)
         {
+            if (OpenedProject != null)
+            {
+                CloseProject();
+            }
+
             Log.Clear();
 #if !DEBUG
             try
             {
 #endif
+            // Check if path even exists to begin with
+            if (!Directory.Exists(path))
+            {
+                RemoveRecentlyOpened(path);
+                return;
+            }
             // Check for PS2 and XBox project root files
             if (Directory.GetFiles(path, "*.tson").Length == 0 && Directory.GetFiles(path, "*.xson").Length == 0)
             {
-                throw new Exception("No project root found!");
+                RemoveRecentlyOpened(path);
+                return;
             }
+
             if (Directory.GetFiles(path, "*.tson").Length != 0)
             {
                 var prFile = Directory.GetFiles(path, "*.tson")[0];
@@ -344,8 +338,8 @@ namespace TT_Lab.Project
                     Log.WriteLine($"Building project tree...");
                     BuildProjectTree();
                     WorkableProject = true;
-                    NotifyChange("ProjectOpened");
-                    NotifyChange("ProjectTitle");
+                    _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
+                    _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
                     GC.Collect();
 #if !DEBUG
                         }
@@ -381,11 +375,15 @@ namespace TT_Lab.Project
         public void CloseProject()
         {
             OpenedProject = null;
+            WorkableProject = false;
             ProjectTree.Clear();
+            _internalTree.Clear();
             Log.Clear();
-            NotifyChange("ProjectOpened");
-            NotifyChange("ProjectTitle");
-            NotifyChange("ProjectTree");
+            GC.Collect();
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(WorkableProject)));
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
         }
 
         public void ExecuteCommand(ICommand command)
@@ -405,39 +403,46 @@ namespace TT_Lab.Project
 
         private void BuildProjectTree()
         {
-            ProjectTree = (from asset in OpenedProject!.AssetManager.GetAssets()
-                           where asset is Folder
-                           let folder = (Folder)asset
-                           where folder.GetData().To<FolderData>().Parent == null
-                           orderby folder.Order
-                           select folder.GetViewModel()).ToList();
+            var tree = (from asset in OpenedProject!.AssetManager.GetAssets()
+                        where asset is Folder
+                        let folder = (Folder)asset
+                        where folder.GetData().To<FolderData>().Parent == null
+                        orderby folder.Order
+                        select folder.GetResourceTreeElement());
+            ProjectTree = new BindableCollection<ResourceTreeElementViewModel>(tree);
             _internalTree.AddRange(ProjectTree);
-            NotifyChange("ProjectTree");
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
         }
 
         private void AddRecentlyOpened(string path)
         {
-            if (Properties.Settings.Default.RecentProjects == null)
+            var recents = Properties.Settings.Default.RecentProjects;
+            if (recents == null)
             {
-                Properties.Settings.Default.RecentProjects = new System.Collections.Specialized.StringCollection();
+                recents = new System.Collections.Specialized.StringCollection();
+                Properties.Settings.Default.RecentProjects = recents;
             }
-            if (!Properties.Settings.Default.RecentProjects.Contains(path))
+            if (!recents.Contains(path))
             {
-                Properties.Settings.Default.RecentProjects.Insert(0, path);
+                recents.Insert(0, path);
+                RecentlyOpened.Insert(0, GenerateRecentMenu(path));
                 // Store only last 10 paths
-                if (Properties.Settings.Default.RecentProjects.Count > 10)
+                if (recents.Count > 10)
                 {
-                    Properties.Settings.Default.RecentProjects.RemoveAt(10);
+                    recents.RemoveAt(10);
+                    RecentlyOpened.RemoveAt(10);
                 }
             }
             else
             {
-                var index = Properties.Settings.Default.RecentProjects.IndexOf(path);
-                Properties.Settings.Default.RecentProjects.RemoveAt(index);
-                Properties.Settings.Default.RecentProjects.Insert(0, path);
+                var index = recents.IndexOf(path);
+                recents.RemoveAt(index);
+                RecentlyOpened.RemoveAt(index);
+                recents.Insert(0, path);
+                RecentlyOpened.Insert(0, GenerateRecentMenu(path));
             }
-            NotifyChange("RecentlyOpened");
-            NotifyChange("HasRecents");
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(RecentlyOpened)));
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(HasRecents)));
         }
 
         private void RemoveRecentlyOpened(string path)
@@ -445,9 +450,22 @@ namespace TT_Lab.Project
             if (Properties.Settings.Default.RecentProjects == null || !Properties.Settings.Default.RecentProjects.Contains(path)) return;
 
             var recents = Properties.Settings.Default.RecentProjects;
+            var recentIdx = recents.IndexOf(path);
             recents.Remove(path);
-            NotifyChange("RecentlyOpened");
-            NotifyChange("HasRecents");
+            RecentlyOpened.RemoveAt(recentIdx);
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(RecentlyOpened)));
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(HasRecents)));
+        }
+
+        private static MenuItem GenerateRecentMenu(String recentPath)
+        {
+            return new MenuItem
+            {
+                Header = $"{recentPath}",
+                Command = new OpenProjectCommand(recentPath),
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+            };
         }
     }
 }
