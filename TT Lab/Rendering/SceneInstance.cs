@@ -1,4 +1,5 @@
 ﻿using GlmSharp;
+using SharpGL;
 using System.Collections.Generic;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Instance;
@@ -17,10 +18,10 @@ namespace TT_Lab.Rendering
         vec3 offset;
         vec3 size;
 
-        public SceneInstance(ObjectInstanceData instanceData, Dictionary<LabURI, List<ModelBuffer>> modelBufferCache, Scene parent)
+        public SceneInstance(OpenGL gl, GLWindow window, ObjectInstanceData instanceData, Dictionary<LabURI, List<ModelBuffer>> modelBufferCache, Scene parent)
         {
             this.instanceData = instanceData;
-            instanceRender = new ObjectInstance(parent, instanceData, modelBufferCache);
+            instanceRender = new ObjectInstance(gl, window, parent, instanceData, modelBufferCache);
             position = new vec3(-instanceData.Position.X, instanceData.Position.Y, instanceData.Position.Z);
             rotation = new vec3(instanceData.RotationX.GetRotation(), instanceData.RotationY.GetRotation(), instanceData.RotationZ.GetRotation());
             var assetManager = AssetManager.Get();

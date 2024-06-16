@@ -56,7 +56,7 @@ namespace TT_Lab.ViewModels.Editors
             var sceneInstance = sceneEditor.Scene.AddObjectInstance(instData);
             var pRend = sceneInstance.GetRenderable();
 
-            sceneEditor.Scene.AddRender(pRend);
+            sceneEditor.Scene.AddChild(pRend);
             sceneInstances.Add(sceneInstance);
 
             //TODO: actually add instance
@@ -114,7 +114,7 @@ namespace TT_Lab.ViewModels.Editors
             {
                 return;
             }
-            var pos = e.GetPosition(sceneEditor.GlControl);
+            var pos = e.GetPosition(sceneEditor.RenderControl);
             editingContext.UpdateTransform((float)pos.X, (float)pos.Y);
         }
 
@@ -124,7 +124,7 @@ namespace TT_Lab.ViewModels.Editors
             {
                 return;
             }
-            var pos = e.GetPosition(sceneEditor.GlControl);
+            var pos = e.GetPosition(sceneEditor.RenderControl);
             if (editingContext.transformMode == TransformMode.SELECTION || editingContext.transformAxis == TransformAxis.NONE)
             {
                 MouseSelect((float)pos.X, (float)pos.Y);
@@ -137,7 +137,7 @@ namespace TT_Lab.ViewModels.Editors
 
         private void MouseUp(Object? sender, MouseEventArgs e)
         {
-            var pos = e.GetPosition(sceneEditor.GlControl);
+            var pos = e.GetPosition(sceneEditor.RenderControl);
             editingContext.EndTransform((float)pos.X, (float)pos.Y);
         }
 
@@ -259,8 +259,6 @@ namespace TT_Lab.ViewModels.Editors
 
         public Task HandleAsync(RendererInitializedMessage message, CancellationToken cancellationToken)
         {
-            Debug.Assert(sceneEditor.GlControl != null, "Renderer initialized but not???");
-
             var assetManager = AssetManager.Get();
             var chunkAss = assetManager.GetAsset(EditableResource).GetResourceTreeElement();
             var chunk = chunkAss.GetAsset<ChunkFolder>();
@@ -273,20 +271,25 @@ namespace TT_Lab.ViewModels.Editors
             {
                 try
                 {
-                    sceneEditor.Scene = new Scene(sceneEditor.GlControl.Context, chunkTree, (float)sceneEditor.GlControl.ActualWidth, (float)sceneEditor.GlControl.ActualHeight);
+                    sceneEditor.SceneCreator = (GLWindow glControl) =>
+                    {
+                        var scene = new Scene(glControl.RenderContext, glControl, chunkTree, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
 
-                    editingContext = new EditingContext(sceneEditor.Scene, this);
-                    colData = chunkTree.First((avm) =>
-                    {
-                        return avm.Asset.Type == typeof(Assets.Instance.Collision);
-                    })!.Asset.GetData<CollisionData>();
-                    var manager = AssetManager.Get();
-                    var instances = chunkTree.First(avm => avm.Alias == "Instances");
-                    foreach (var instance in instances!.Children)
-                    {
-                        var instData = instance.Asset.GetData<ObjectInstanceData>();
-                        sceneInstances.Add(sceneEditor.Scene.AddObjectInstance(instData));
-                    }
+                        editingContext = new EditingContext(glControl.RenderContext, glControl, scene, this);
+                        colData = chunkTree.First((avm) =>
+                        {
+                            return avm.Asset.Type == typeof(Assets.Instance.Collision);
+                        })!.Asset.GetData<CollisionData>();
+                        var manager = AssetManager.Get();
+                        var instances = chunkTree.First(avm => avm.Alias == "Instances");
+                        foreach (var instance in instances!.Children)
+                        {
+                            var instData = instance.Asset.GetData<ObjectInstanceData>();
+                            sceneInstances.Add(scene.AddObjectInstance(instData));
+                        }
+
+                        return scene;
+                    };
                 }
                 catch (ShaderCompilationException ex)
                 {
@@ -308,7 +311,11 @@ namespace TT_Lab.ViewModels.Editors
                 return Task.FromResult(false);
             }
 
-            sceneEditor.Scene.SetCameraPosition(message.NewCameraPosition);
+            var renderWindow = sceneEditor.RenderControl?.GetRenderWindow();
+            renderWindow?.DeferToRender(() =>
+            {
+                sceneEditor.Scene.SetCameraPosition(message.NewCameraPosition);
+            });
 
             return Task.FromResult(true);
         }

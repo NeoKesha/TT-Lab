@@ -10,13 +10,14 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
-    public class TextureViewModel : ResourceEditorViewModel, IHandle<RendererInitializedMessage>
+    public class TextureViewModel : ResourceEditorViewModel
     {
         private Bitmap? _texture;
         private ITwinTexture.TextureFunction _texFun;
@@ -33,10 +34,11 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             _pixelFormats = new ObservableCollection<object>(Enum.GetValues(typeof(ITwinTexture.TexturePixelFormat)).Cast<object>());
         }
 
-        public TextureViewModel(IEventAggregator eventAggregator)
+        public TextureViewModel()
         {
             _textureViewer = IoC.Get<SceneEditorViewModel>();
-            eventAggregator.SubscribeOnUIThread(this);
+
+            InitTextureViewer();
         }
 
         protected override void Save()
@@ -65,22 +67,21 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             return base.OnDeactivateAsync(close, cancellationToken);
         }
 
-        public Task HandleAsync(RendererInitializedMessage message, CancellationToken cancellationToken)
-        {
-            InitTextureViewer();
-
-            return Task.FromResult(true);
-        }
-
         private void InitTextureViewer()
         {
-            TextureViewer.Scene = new Rendering.Scene(TextureViewer.GlControl.Context, (float)TextureViewer.GlControl.ActualWidth, (float)TextureViewer.GlControl.ActualHeight,
-                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
-            TextureViewer.Scene.SetCameraSpeed(0);
-            TextureViewer.Scene.DisableCameraManipulation();
+            TextureViewer.SceneCreator = (GLWindow glControl) =>
+            {
+                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
 
-            var texPlane = new Plane(TextureViewer.Scene, AssetManager.Get().GetAssetData<TextureData>(EditableResource).Bitmap);
-            TextureViewer.Scene.AddRender(texPlane);
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0);
+                scene.DisableCameraManipulation();
+
+                var texPlane = new Plane(glControl.RenderContext, glControl, scene, AssetManager.Get().GetAssetData<TextureData>(EditableResource).Bitmap);
+                scene.AddChild(texPlane);
+
+                return scene;
+            };
         }
 
         public void ReplaceButton()

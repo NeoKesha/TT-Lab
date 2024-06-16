@@ -1,7 +1,5 @@
 ﻿using Caliburn.Micro;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
-using OpenTK.Wpf;
+using GlmSharp;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -17,8 +15,8 @@ namespace TT_Lab.ViewModels.Editors
 {
     public class SceneEditorViewModel : Conductor<object>
     {
-        private readonly IEventAggregator _eventAggregator;
-        private GLWpfControl? _glControl;
+        private GLWindow? _glControl;
+        private EmbededRender? _render;
         private Scene? _scene;
         private Point mousePos;
 
@@ -27,46 +25,37 @@ namespace TT_Lab.ViewModels.Editors
         public Scene? Scene
         {
             get => _scene;
-            set
+        }
+
+        public EmbededRender? RenderControl
+        {
+            get => _render;
+            private set
             {
-                if (_scene != value)
-                {
-                    _scene = value;
-                    NotifyOfPropertyChange();
-                }
-                if (_scene != null && _glControl != null)
-                {
-                    _scene.RenderFramebuffer = _glControl.Framebuffer;
-                    NotifyOfPropertyChange();
-                }
+                _render = value;
             }
         }
 
-        public GLWpfControl? GlControl => _glControl;
-
-        public SceneEditorViewModel(IEventAggregator eventAggregator)
+        public Func<GLWindow, Scene>? SceneCreator
         {
-            _eventAggregator = eventAggregator;
+            private get;
+            set;
+        }
+
+        public SceneEditorViewModel()
+        {
         }
 
         protected override Task OnDeactivateAsync(System.Boolean close, CancellationToken cancellationToken)
         {
-            if (close)
+            if (close && _glControl != null)
             {
-                Scene?.Delete();
+                _glControl.Cleanup();
+                _glControl = null;
+                _scene = null;
             }
 
             return base.OnDeactivateAsync(close, cancellationToken);
-        }
-
-        protected override Task OnActivateAsync(CancellationToken cancellationToken)
-        {
-            base.OnActivateAsync(cancellationToken);
-
-            Debug.Assert(_glControl != null, "Renderer was not initialized somehow");
-            _eventAggregator.PublishOnUIThreadAsync(new RendererInitializedMessage(this, _glControl), cancellationToken);
-
-            return Task.FromResult(true);
         }
 
         public void DragDrop(DragEventArgs e)
@@ -98,51 +87,30 @@ namespace TT_Lab.ViewModels.Editors
 
         public void MouseMoved(MouseEventArgs e)
         {
-            var curMousePos = e.GetPosition(_glControl);
+            var curMousePos = e.GetPosition(_render);
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
-                Scene?.RotateView(new Vector2((float)(curMousePos.X - mousePos.X), (float)(mousePos.Y - curMousePos.Y)));
+                _glControl?.RotateView(new vec2((float)(curMousePos.X - mousePos.X), (float)(mousePos.Y - curMousePos.Y)));
             }
             mousePos = curMousePos;
         }
 
-        public void RendererInitialized(GLWpfControl glControl)
-        {
-            Scene?.Delete();
-            _glControl = glControl;
-        }
-
-        public void RendererRender(RenderEventArgs delta)
+        public void RendererInitialized(EmbededRender embededRender)
         {
             if (_glControl == null)
             {
-                return;
+                _glControl = embededRender.GetRenderWindow();
+
+                if (SceneCreator == null)
+                {
+                    Debug.WriteLine("WARNING: SceneCreator is not set! NO SCENE WILL BE RENDERED");
+                }
+
+                if (_glControl != null && SceneCreator != null)
+                {
+                    _glControl.CreateScene(SceneCreator);
+                }
             }
-
-            if (Scene != null)
-            {
-                Scene.RenderFramebuffer = _glControl.Framebuffer;
-            }
-            GL.ClearColor(Color4.LightGray);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-
-            Scene?.PreRender();
-            Scene?.Move();
-            Scene?.Render();
-            Scene?.PostRender();
-
-            GL.Finish();
-        }
-
-        public void RenderSizeChanged()
-        {
-            if (_glControl == null)
-            {
-                return;
-            }
-
-            Scene?.SetResolution((float)_glControl.ActualWidth, (float)_glControl.ActualHeight);
-            _eventAggregator.PublishOnUIThreadAsync(new RendererInitializedMessage(this, _glControl));
         }
     }
 }

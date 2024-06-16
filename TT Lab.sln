@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TT Lab", "TT Lab\TT Lab.csp
 		{14348117-4503-49CD-94F9-1852069543E3} = {14348117-4503-49CD-94F9-1852069543E3}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GLWpfControl", "GLWpfControl\src\GLWpfControl\GLWpfControl.csproj", "{FA7C1291-E0F8-4C2F-8964-DE992B00E568}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,14 +43,6 @@ Global
 		{640EEAEC-CB84-4499-B5A9-E084CAB68D91}.Release|Any CPU.Build.0 = Release|Any CPU
 		{640EEAEC-CB84-4499-B5A9-E084CAB68D91}.Release|x64.ActiveCfg = Release|x64
 		{640EEAEC-CB84-4499-B5A9-E084CAB68D91}.Release|x64.Build.0 = Release|x64
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Debug|x64.Build.0 = Debug|Any CPU
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Release|x64.ActiveCfg = Release|Any CPU
-		{FA7C1291-E0F8-4C2F-8964-DE992B00E568}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

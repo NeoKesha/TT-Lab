@@ -1,11 +1,17 @@
-﻿using OpenTK.Graphics.OpenGL;
-// Credits to https://github.com/dwmkerr/sharpgl
+﻿// Credits to https://github.com/dwmkerr/sharpgl
+using SharpGL;
+using System;
+
 namespace TT_Lab.Rendering.Buffers
 {
     public class IndexBuffer : IGLObject
     {
-        public IndexBuffer()
+        public OpenGL GL { get; private set; }
+
+        public IndexBuffer(OpenGL gl)
         {
+            GL = gl;
+
             //  Generate the vertex array.
             uint[] ids = new uint[1];
             GL.GenBuffers(1, ids);
@@ -14,22 +20,28 @@ namespace TT_Lab.Rendering.Buffers
 
         public void SetData(uint[] rawData)
         {
-            GL.BufferData(BufferTarget.ElementArrayBuffer, rawData.Length * sizeof(uint), rawData, BufferUsageHint.StaticDraw);
+            unsafe
+            {
+                fixed (uint* rawDataPtr = rawData)
+                {
+                    GL.BufferData(OpenGL.GL_ELEMENT_ARRAY_BUFFER, rawData.Length, new IntPtr(rawDataPtr), OpenGL.GL_STATIC_DRAW);
+                }
+            }
         }
 
         public void Bind()
         {
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, bufferObject);
+            GL.BindBuffer(OpenGL.GL_ELEMENT_ARRAY_BUFFER, bufferObject);
         }
 
         public void Unbind()
         {
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+            GL.BindBuffer(OpenGL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
 
         public void Delete()
         {
-            GL.DeleteBuffer(bufferObject);
+            GL.DeleteBuffers(1, new uint[] { bufferObject });
         }
 
         public bool IsCreated() { return bufferObject != 0; }

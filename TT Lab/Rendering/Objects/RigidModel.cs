@@ -1,4 +1,5 @@
-﻿using TT_Lab.AssetData.Graphics;
+﻿using SharpGL;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
 
@@ -8,9 +9,9 @@ namespace TT_Lab.Rendering.Objects
     {
         ModelBuffer model;
 
-        public RigidModel(Scene root, RigidModelData rigid) : base(root)
+        public RigidModel(OpenGL gl, GLWindow window, Scene root, RigidModelData rigid) : base(gl, window, root)
         {
-            model = new ModelBuffer(root, rigid);
+            model = new ModelBuffer(GL, window, root, rigid);
             AddChild(model);
         }
 

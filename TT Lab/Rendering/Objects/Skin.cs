@@ -1,4 +1,5 @@
-﻿using TT_Lab.AssetData.Graphics;
+﻿using SharpGL;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
 
@@ -8,9 +9,9 @@ namespace TT_Lab.Rendering.Objects
     {
         ModelBuffer model;
 
-        public Skin(Scene root, SkinData skin) : base(root)
+        public Skin(OpenGL gl, GLWindow window, Scene root, SkinData skin) : base(gl, window, root)
         {
-            model = new ModelBuffer(root, skin);
+            model = new ModelBuffer(GL, window, root, skin);
             AddChild(model);
         }
 

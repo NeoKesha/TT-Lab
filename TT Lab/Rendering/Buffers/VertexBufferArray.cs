@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using SharpGL;
+
 // Credits to https://github.com/dwmkerr/sharpgl
 namespace TT_Lab.Rendering.Buffers
 {
@@ -9,8 +10,12 @@ namespace TT_Lab.Rendering.Buffers
     /// </summary>
     public class VertexBufferArray : IGLObject
     {
-        public VertexBufferArray()
+        public OpenGL GL { get; private set; }
+
+        public VertexBufferArray(OpenGL gl)
         {
+            GL = gl;
+
             //  Generate the vertex array.
             uint[] ids = new uint[1];
             GL.GenVertexArrays(1, ids);

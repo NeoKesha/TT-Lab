@@ -1,29 +1,35 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using SharpGL;
 
 namespace TT_Lab.Rendering.Buffers
 {
     public class RenderBuffer : IGLObject
     {
+        public OpenGL GL { get; private set; }
+
         private uint renderBuffer;
 
-        public RenderBuffer()
+        public RenderBuffer(OpenGL gl)
         {
-            renderBuffer = (uint)GL.GenRenderbuffer();
+            GL = gl;
+
+            var buffer = new uint[1];
+            GL.GenRenderbuffersEXT(1, buffer);
+            renderBuffer = buffer[0];
         }
 
         public void Bind()
         {
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, renderBuffer);
+            GL.BindRenderbufferEXT(OpenGL.GL_RENDERBUFFER, renderBuffer);
         }
 
         public void Delete()
         {
-            GL.DeleteRenderbuffer(renderBuffer);
+            GL.DeleteRenderbuffersEXT(1, new uint[] { renderBuffer });
         }
 
         public void Unbind()
         {
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+            GL.BindRenderbufferEXT(OpenGL.GL_RENDERBUFFER, 0);
         }
 
         public uint Buffer

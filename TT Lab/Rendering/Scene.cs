@@ -1,7 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
+using SharpGL;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,14 +21,8 @@ namespace TT_Lab.Rendering
     /// </summary>
     public class Scene : BaseRenderable
     {
-        public IRenderer Renderer { get; private set; }
         public vec3 CameraPosition { get => cameraPosition; }
         public vec3 CameraDirection { get => cameraDirection; }
-        public int RenderFramebuffer { get; set; }
-        public TextureBuffer ColorTextureNT { get => colorTextureNT; }
-
-        private IGraphicsContext gContext;
-        private ShaderStorage shaderStorage = new();
 
         // Rendering matrices and settings
         private mat4 projectionMat;
@@ -43,22 +35,12 @@ namespace TT_Lab.Rendering
         private float cameraSpeed = 1.0f;
         private float cameraZoom = 90.0f;
         private bool canManipulateCamera = true;
-        private ShaderStorage.LibraryFragmentShaders fragmentLibraryShader;
-        private ShaderStorage.LibraryVertexShaders vertexLibraryShader;
-        private Stopwatch timer = new();
         private readonly InputController inputController;
-
-        // Scene rendering
-        private readonly List<IRenderable> renderableObjects = new();
-        private readonly TextureBuffer colorTextureNT;
-        private readonly FrameBuffer framebufferNT;
-        private readonly RenderBuffer depthRenderbuffer;
 
         // Misc helper stuff
         private readonly Queue<Action> queuedRenderActions = new();
         private readonly Dictionary<LabURI, List<ModelBuffer>> modelBufferCache = new();
         //private readonly List<SceneInstance> sceneInstances = new();
-        private readonly PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
 
 
         /// <summary>
@@ -66,37 +48,14 @@ namespace TT_Lab.Rendering
         /// </summary>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(IGraphicsContext context, float width, float height, ShaderStorage.LibraryFragmentShaders fragmentLibraryShader, ShaderStorage.LibraryVertexShaders vertexLibraryShader = ShaderStorage.LibraryVertexShaders.VertexShading) : base(null)
+        public Scene(OpenGL gl, GLWindow window, float width, float height) : base(gl, window, null)
         {
-            Preferences.PreferenceChanged += Preferences_PreferenceChanged;
-
-            gContext = context;
-            gContext.MakeCurrent();
-
-            colorTextureNT = new(TextureTarget.Texture2DMultisample);
-            framebufferNT = new();
-            depthRenderbuffer = new();
-
-            shaderStorage.BuildShaderCache();
-
             inputController = Caliburn.Micro.IoC.Get<InputController>();
 
             resolution.x = width;
             resolution.y = height;
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-
-            this.fragmentLibraryShader = fragmentLibraryShader;
-            this.vertexLibraryShader = vertexLibraryShader;
-            ReallocateFramebuffer((int)resolution.x, (int)resolution.y);
-            framebufferNT.Bind();
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, colorTextureNT.Buffer, 0);
-            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthRenderbuffer.Buffer);
-            SetupTransparencyRender();
-
-            primitiveRenderer.Init(this);
-
-            gContext.MakeNoneCurrent();
         }
 
         /// <summary>
@@ -105,11 +64,9 @@ namespace TT_Lab.Rendering
         /// <param name="sceneTree">Tree of chunk resources collision data, positions, cameras, etc.</param>
         /// <param name="width">Viewport render width</param>
         /// <param name="height">Viewport render height</param>
-        public Scene(IGraphicsContext context, Caliburn.Micro.BindableCollection<ResourceTreeElementViewModel> sceneTree, float width, float height) :
-            this(context, width, height, ShaderStorage.LibraryFragmentShaders.Light)
+        public Scene(OpenGL gl, GLWindow window, Caliburn.Micro.BindableCollection<ResourceTreeElementViewModel> sceneTree, float width, float height) :
+            this(gl, window, width, height)
         {
-            context.MakeCurrent();
-
             LocalTransform = mat4.Identity;
 
             // Collision renderer
@@ -117,10 +74,8 @@ namespace TT_Lab.Rendering
             {
                 return avm.Asset.Type == typeof(Assets.Instance.Collision);
             })!.Asset.GetData<CollisionData>();
-            var colRender = new Objects.Collision(this, colData);
-            AddRender(colRender);
-
-            context.MakeNoneCurrent();
+            var colRender = new Objects.Collision(gl, window, this, colData);
+            AddChild(colRender);
 
             // Positions renderer
             //var positions = sceneTree.First(avm => avm.Alias == "Positions");
@@ -141,10 +96,10 @@ namespace TT_Lab.Rendering
 
         public SceneInstance AddObjectInstance(ObjectInstanceData instData)
         {
-            var sceneInstance = new SceneInstance(instData, modelBufferCache, this);
+            var sceneInstance = new SceneInstance(GL, Window, instData, modelBufferCache, this);
             var pRend = sceneInstance.GetRenderable();
 
-            AddRender(pRend);
+            AddChild(pRend);
             return sceneInstance;
         }
 
@@ -165,12 +120,20 @@ namespace TT_Lab.Rendering
         /// Adds new renderable object to the scene. Safe to do anywhere. Object will be added to the render on next render frame.
         /// </summary>
         /// <param name="renderObj">Object to add</param>
+        [Obsolete("Use AddChild method instead", true)]
         public void AddRender(IRenderable renderObj)
         {
             queuedRenderActions.Enqueue(() =>
             {
-                renderableObjects.Add(renderObj);
                 AddChild(renderObj);
+            });
+        }
+
+        public override void AddChild(IRenderable child)
+        {
+            queuedRenderActions.Enqueue(() =>
+            {
+                base.AddChild(child);
             });
         }
 
@@ -194,52 +157,16 @@ namespace TT_Lab.Rendering
             program.SetUniform3("LightDirection", -CameraDirection.x, CameraDirection.y, CameraDirection.z);
         }
 
-        public void SetResolution(float width, float height)
-        {
-            resolution.x = width;
-            resolution.y = height;
-            ReallocateFramebuffer((int)width, (int)height);
-        }
-
         public override void Render(ShaderProgram? _s = null, bool _b = false)
         {
-            gContext.MakeCurrent();
-            timer = Stopwatch.StartNew();
             foreach (var a in queuedRenderActions)
             {
                 a.Invoke();
             }
             queuedRenderActions.Clear();
             UpdateMatrices();
-            Bind();
-            GL.CullFace(CullFaceMode.FrontAndBack);
-            GL.Enable(EnableCap.DepthTest);
-            //GL.Enable(EnableCap.Blend);
-            GL.Enable(EnableCap.Multisample);
-            GL.DepthMask(true);
-            GL.DepthFunc(DepthFunction.Lequal);
-            framebufferNT.Bind();
-            float[] clearColorNT = System.Drawing.Color.LightGray.ToArray();
-            float clearDepth = 1f;
-            GL.ClearBuffer(ClearBuffer.Color, 0, clearColorNT);
-            GL.ClearBuffer(ClearBuffer.Depth, 0, ref clearDepth);
-            // Render all objects
-            Renderer.Render(renderableObjects);
-            // Render HUD
-
-            // Post process effects
-            GL.Disable(EnableCap.Blend);
-            GL.Disable(EnableCap.DepthTest);
-            GL.Disable(EnableCap.Multisample);
-            Renderer.PostProcess();
-            // Reset modes
-            GL.CullFace(CullFaceMode.Back);
-            GL.Disable(EnableCap.Blend);
-            GL.Disable(EnableCap.DepthTest);
-            GL.Disable(EnableCap.Multisample);
-            Unbind();
-            timer.Stop();
-            time += timer.Elapsed.Microseconds;
+            SetGlobalUniforms(_s);
+            base.Render(_s, _b);
         }
 
         protected override void RenderSelf(ShaderProgram shader)
@@ -247,25 +174,8 @@ namespace TT_Lab.Rendering
 
         }
 
-        public void Bind()
-        {
-        }
-
-        public void Unbind()
-        {
-        }
-
         public void Delete()
         {
-            colorTextureNT.Delete();
-            framebufferNT.Delete();
-            depthRenderbuffer.Delete();
-            Renderer.Delete();
-            foreach (var @object in renderableObjects)
-            {
-                @object.Delete();
-            }
-            renderableObjects.Clear();
             foreach (var modelBuffers in modelBufferCache.Values)
             {
                 foreach (var buffer in modelBuffers)
@@ -275,129 +185,6 @@ namespace TT_Lab.Rendering
                 modelBuffers.Clear();
             }
             modelBufferCache.Clear();
-            primitiveRenderer.Terminate();
-            Preferences.PreferenceChanged -= Preferences_PreferenceChanged;
-        }
-
-        public void DrawBox(vec3 position)
-        {
-            DrawBox(position, vec3.Zero, vec3.Ones);
-        }
-
-        public void DrawBox(vec3 position, vec3 rotation, vec3 scale)
-        {
-            DrawBox(position, rotation, scale, vec4.Ones);
-        }
-
-        public void DrawBox(vec3 position, vec3 rotation, vec3 scale, vec4 color)
-        {
-            rotation = rotation * 3.14f / 180.0f;
-            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
-            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
-            matrixRotationX = mat4.RotateX(rotation.x);
-            matrixRotationY = mat4.RotateY(rotation.y);
-            matrixRotationZ = mat4.RotateZ(rotation.z);
-            mat4 matrixScale = mat4.Scale(scale);
-            mat4 transform = WorldTransform;
-
-            transform *= matrixPosition;
-            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-            transform *= matrixScale;
-            DrawBox(transform, color);
-        }
-
-        public void DrawBox(mat4 transform, vec4 color)
-        {
-            primitiveRenderer.DrawBox(transform, color);
-        }
-
-        public void DrawCircle(vec3 position)
-        {
-            DrawCircle(position, vec3.Zero, vec3.Ones);
-        }
-
-        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale)
-        {
-            DrawCircle(position, rotation, scale, vec4.Ones);
-        }
-
-        public void DrawCircle(vec3 position, vec3 rotation, vec3 scale, vec4 color)
-        {
-            rotation = rotation * 3.14f / 180.0f;
-            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
-            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
-            matrixRotationX = mat4.RotateX(rotation.x);
-            matrixRotationY = mat4.RotateY(rotation.y);
-            matrixRotationZ = mat4.RotateZ(rotation.z);
-            mat4 matrixScale = mat4.Scale(scale);
-            mat4 transform = WorldTransform;
-
-            transform *= matrixPosition;
-            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-            transform *= matrixScale;
-            DrawCircle(transform, color);
-        }
-
-        public void DrawCircle(mat4 transform, vec4 color)
-        {
-            primitiveRenderer.DrawCircle(transform, color);
-        }
-
-        public void DrawLine(vec3 point1, vec3 point2, vec4 color)
-        {
-            DrawLine(point1, point2, color, WorldTransform);
-        }
-
-        public void DrawLine(vec3 point1, vec3 point2, vec4 color, mat4 parent)
-        {
-            var scaleX = (point2 - point1).Length;
-            vec3 direction = (point2 - point1).Normalized;
-            vec3 scale = new vec3(scaleX, 1.0f, 1.0f);
-            mat4 matrixPosition = mat4.Translate(point1.x, point1.y, point1.z);
-            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
-            var angleXZ = (float)glm.Angle(new vec2(direction.x, direction.z));
-            var angleY = glm.Acos(glm.Dot(direction, new vec3(direction.x, 0, direction.z)));
-            matrixRotationX = mat4.RotateX(0);
-            matrixRotationY = mat4.RotateY(angleXZ);
-            matrixRotationZ = mat4.RotateZ(-angleY);
-
-            mat4 transform = parent;
-            transform *= matrixPosition;
-            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-            transform *= mat4.Scale(scale);
-            primitiveRenderer.DrawLine(transform, color);
-        }
-
-        public void DrawSimpleAxis(vec3 position)
-        {
-            DrawSimpleAxis(position, vec3.Zero);
-        }
-
-        public void DrawSimpleAxis(vec3 position, vec3 rotation)
-        {
-            DrawSimpleAxis(position, rotation, vec3.Ones);
-        }
-
-        public void DrawSimpleAxis(vec3 position, vec3 rotation, vec3 scale)
-        {
-            rotation = rotation * 3.14f / 180.0f;
-            mat4 matrixPosition = mat4.Translate(position.x, position.y, position.z);
-            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
-            matrixRotationX = mat4.RotateX(rotation.x);
-            matrixRotationY = mat4.RotateY(rotation.y);
-            matrixRotationZ = mat4.RotateZ(rotation.z);
-            mat4 matrixScale = mat4.Scale(scale);
-            mat4 transform = mat4.Identity;
-
-            transform *= matrixPosition;
-            transform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-            transform *= matrixScale;
-            DrawSimpleAxis(transform);
-        }
-
-        public void DrawSimpleAxis(mat4 transform)
-        {
-            primitiveRenderer.DrawSimpleAxis(transform);
         }
 
         public void SetCameraSpeed(float s)
@@ -411,13 +198,13 @@ namespace TT_Lab.Rendering
         }
 
         private vec2 yaw_pitch = new vec2(-90, 0);
-        public void RotateView(Vector2 rot)
+        public void RotateView(vec2 rot)
         {
             if (!canManipulateCamera || rot.Length == 0) return;
 
-            rot.Normalize();
-            yaw_pitch.x += rot.X;
-            yaw_pitch.y += rot.Y;
+            rot = rot.Normalized;
+            yaw_pitch.x += rot.x;
+            yaw_pitch.y += rot.y;
 
             // Avoid gimbal lock
             if (yaw_pitch.y > 89f)
@@ -486,60 +273,10 @@ namespace TT_Lab.Rendering
             }
         }
 
-        public void PreRender()
-        {
-            foreach (var @object in renderableObjects)
-            {
-                @object.PreRender();
-            }
-        }
-
-        public void PostRender()
-        {
-            foreach (var @object in renderableObjects)
-            {
-                @object.PostRender();
-            }
-        }
-
         private void UpdateMatrices()
         {
             projectionMat = mat4.Perspective(glm.Radians(cameraZoom), resolution.x / resolution.y, 0.1f, 1000.0f);
             viewMat = mat4.LookAt(cameraPosition, cameraPosition + cameraDirection, cameraUp);
-        }
-
-        private void ReallocateFramebuffer(int width, int height)
-        {
-            colorTextureNT.Bind();
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, 4, PixelInternalFormat.Rgb16f, width, height, true);
-            depthRenderbuffer.Bind();
-            GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, 4, RenderbufferStorage.DepthComponent, width, height);
-            Renderer?.ReallocateFramebuffer(width, height);
-        }
-
-        private void Preferences_PreferenceChanged(Object? sender, Preferences.PreferenceChangedArgs e)
-        {
-            if (e.PreferenceName == Preferences.TranslucencyMethod)
-            {
-                // Update renderer on next render frame
-                queuedRenderActions.Enqueue(() =>
-                {
-                    SetupTransparencyRender();
-                });
-            }
-        }
-
-        private void SetupTransparencyRender()
-        {
-            var method = Preferences.GetPreference<RenderSwitches.TranslucencyMethod>(Preferences.TranslucencyMethod);
-            Renderer?.Delete();
-            Renderer = method switch
-            {
-                RenderSwitches.TranslucencyMethod.WBOIT => new WBOITRenderer(shaderStorage, depthRenderbuffer, resolution.x, resolution.y, fragmentLibraryShader, vertexLibraryShader),
-                _ => new BasicRenderer(shaderStorage, fragmentLibraryShader, vertexLibraryShader)
-            };
-            Renderer.Scene = this;
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
     }
 }

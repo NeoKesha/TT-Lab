@@ -8,6 +8,7 @@ namespace TT_Lab.Rendering
     public interface IRenderable : IGLObject
     {
         Scene Root { get; set; }
+        GLWindow Window { get; }
         IRenderable? Parent { get; set; }
         bool Enabled { get; set; }
         List<IRenderable> Children { get; set; }

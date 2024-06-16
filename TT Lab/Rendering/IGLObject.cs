@@ -2,6 +2,7 @@
 {
     public interface IGLObject
     {
+        SharpGL.OpenGL GL { get; }
         void Bind() { }
         void Unbind() { }
         void Delete() { }

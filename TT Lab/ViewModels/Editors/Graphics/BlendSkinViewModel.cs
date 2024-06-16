@@ -5,33 +5,26 @@ using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
-    public class BlendSkinViewModel : ResourceEditorViewModel, IHandle<RendererInitializedMessage>
+    public class BlendSkinViewModel : ResourceEditorViewModel
     {
-        private readonly IEventAggregator _eventAggregator;
         private Single[] shapeWeights;
         private Rendering.Objects.BlendSkin blendSkin;
-        private SceneEditorViewModel _sceneRenderer;
-        private SceneEditorViewModel _materialViewer;
         private Int32 _selectedMaterial;
         private String _materialName;
 
-        public BlendSkinViewModel(IEventAggregator eventAggregator)
+        public BlendSkinViewModel()
         {
             shapeWeights = new Single[15];
             _materialName = "NO MATERIAL";
-            _eventAggregator = eventAggregator;
-            _sceneRenderer = IoC.Get<SceneEditorViewModel>();
-            _materialViewer = IoC.Get<SceneEditorViewModel>();
-            Activated += BlendSkinViewModel_Activated;
-        }
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
 
-        private void BlendSkinViewModel_Activated(Object? sender, ActivationEventArgs e)
-        {
-            ActivateItemAsync(MaterialViewer);
-            ActivateItemAsync(SceneRenderer);
+            InitMaterialViewer();
+            InitSceneRenderer();
         }
 
         public override void LoadData()
@@ -42,23 +35,6 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         protected override void Save()
         {
             return;
-        }
-
-        protected override async Task OnActivateAsync(CancellationToken cancellationToken)
-        {
-            _eventAggregator.SubscribeOnUIThread(this);
-
-            await base.OnActivateAsync(cancellationToken);
-        }
-
-        protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
-        {
-            DeactivateItemAsync(MaterialViewer, close, cancellationToken);
-            DeactivateItemAsync(SceneRenderer, close, cancellationToken);
-
-            _eventAggregator.Unsubscribe(this);
-
-            return base.OnDeactivateAsync(close, cancellationToken);
         }
 
         public void PrevMatButton()
@@ -83,52 +59,56 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             InitMaterialViewer();
         }
 
-        public Task HandleAsync(RendererInitializedMessage message, CancellationToken cancellationToken)
-        {
-            if (message.Renderer == SceneRenderer)
-            {
-                InitSceneRenderer();
-            }
-            else if (message.Renderer == MaterialViewer)
-            {
-                InitMaterialViewer();
-            }
-
-            return Task.FromResult(true);
-        }
-
         private void InitSceneRenderer()
         {
-            SceneRenderer.Scene = new Rendering.Scene(SceneRenderer.GlControl.Context, (float)SceneRenderer.GlControl.ActualWidth, (float)SceneRenderer.GlControl.ActualHeight, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
-            SceneRenderer.Scene.SetCameraSpeed(0.2f);
+            SceneRenderer.SceneCreator = (GLWindow glControl) =>
+            {
+                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0.2f);
 
-            var blendSkinData = AssetManager.Get().GetAssetData<BlendSkinData>(EditableResource);
-            blendSkin = new(SceneRenderer.Scene, blendSkinData);
-            SceneRenderer.Scene.AddRender(blendSkin);
+                var blendSkinData = AssetManager.Get().GetAssetData<BlendSkinData>(EditableResource);
+                blendSkin = new(glControl.RenderContext, glControl, scene, blendSkinData);
+                scene.AddChild(blendSkin);
+
+                return scene;
+            };
         }
 
         private void InitMaterialViewer()
         {
-            MaterialViewer.Scene = new Rendering.Scene(MaterialViewer.GlControl.Context, (float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualHeight,
-                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
-            MaterialViewer.Scene.SetCameraSpeed(0);
-            MaterialViewer.Scene.DisableCameraManipulation();
+            MaterialViewer.SceneCreator = (GLWindow glControl) =>
+            {
+                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
 
-            var blendSkinData = AssetManager.Get().GetAssetData<BlendSkinData>(EditableResource);
-            var matData = AssetManager.Get().GetAsset(blendSkinData.Blends[_selectedMaterial].Material).GetData<MaterialData>();
-            MaterialName = matData.Name;
-            var texPlane = new Rendering.Objects.Plane(MaterialViewer.Scene, matData);
-            MaterialViewer.Scene.AddRender(texPlane);
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0);
+                scene.DisableCameraManipulation();
+
+                var blendSkinData = AssetManager.Get().GetAssetData<BlendSkinData>(EditableResource);
+                var matData = AssetManager.Get().GetAsset(blendSkinData.Blends[_selectedMaterial].Material).GetData<MaterialData>();
+                MaterialName = matData.Name;
+                var texPlane = new Rendering.Objects.Plane(glControl.RenderContext, glControl, scene, matData);
+                scene.AddChild(texPlane);
+
+                return scene;
+            };
+        }
+
+        private enum SceneIndex : int
+        {
+            BlendSkin,
+            Material
         }
 
         public SceneEditorViewModel SceneRenderer
         {
-            get => _sceneRenderer;
+            get => Scenes[(int)SceneIndex.BlendSkin];
         }
 
         public SceneEditorViewModel MaterialViewer
         {
-            get => _materialViewer;
+            get => Scenes[(int)SceneIndex.Material];
         }
 
         public String MaterialName

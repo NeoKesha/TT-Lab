@@ -1,16 +1,27 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using SharpGL;
 using System;
 using System.Collections.Generic;
+using TT_Lab.Extensions;
 using Twinsanity.Libraries;
 // Credits to https://github.com/dwmkerr/sharpgl
 namespace TT_Lab.Rendering.Shaders
 {
     public class Shader
     {
-        public Shader(ShaderType shaderType, string source)
+        private OpenGL GL;
+
+        public enum ShaderType : uint
         {
+            VertexShader = OpenGL.GL_VERTEX_SHADER,
+            FragmentShader = OpenGL.GL_FRAGMENT_SHADER,
+        }
+
+        public Shader(OpenGL gl, ShaderType shaderType, string source)
+        {
+            GL = gl;
+
             //  Create the OpenGL shader object.
-            shaderObject = GL.CreateShader(shaderType);
+            shaderObject = GL.CreateShader((uint)shaderType);
 
             // Remove all the comments
             ProcessComments(ref source);
@@ -41,22 +52,13 @@ namespace TT_Lab.Rendering.Shaders
         public bool GetCompileStatus()
         {
             int[] parameters = new int[] { 0 };
-            GL.GetShader(shaderObject, ShaderParameter.CompileStatus, parameters);
+            GL.GetShader(shaderObject, OpenGL.GL_COMPILE_STATUS, parameters);
             return parameters[0] == 1;
         }
 
         public string GetInfoLog()
         {
-            //  Get the info log length.
-            int[] infoLength = new int[] { 0 };
-            GL.GetShader(ShaderObject,
-                ShaderParameter.InfoLogLength, infoLength);
-            int bufSize = infoLength[0];
-
-            //  Get the compile info.
-            GL.GetShaderInfoLog(shaderObject, bufSize, out infoLength[0], out string il);
-
-            return il;
+            return GL.GetShaderInfoLog(shaderObject);
         }
 
         private static void ProcessIncludes(ref string shaderText)
@@ -102,12 +104,12 @@ namespace TT_Lab.Rendering.Shaders
         /// <summary>
         /// The OpenGL shader object.
         /// </summary>
-        private int shaderObject;
+        private uint shaderObject;
 
         /// <summary>
         /// Gets the shader object.
         /// </summary>
-        public int ShaderObject
+        public uint ShaderObject
         {
             get { return shaderObject; }
         }

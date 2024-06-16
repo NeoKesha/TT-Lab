@@ -5,78 +5,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
-        xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
+        xmlns:embededRender="clr-namespace:TT_Lab.Controls"
         x:Class="TT_Lab.Views.Editors.SceneEditorView"
         mc:Ignorable="d"
         x:Name="SceneEditorViewControl"
         d:DesignHeight="450" d:DesignWidth="800">
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="SizeChanged">
-            <cal:ActionMessage MethodName="RenderSizeChanged"/>
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Render">
-            <cal:ActionMessage MethodName="RendererRender">
-                <cal:Parameter Value="$eventArgs"/>
-            </cal:ActionMessage>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <Grid>
         <GroupBox x:Name="SceneHeader" Header="Scene viewer" AllowDrop="True">
-            <glWpfControl:GLWpfControl x:Name="GlControlView" Margin="0" AllowDrop="True" cal:Message.Attach="[Event Render] = [Action RendererRender($eventArgs)]">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Loaded">
-                        <cal:ActionMessage MethodName="RendererInitialized">
-                            <cal:Parameter Value="$source"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <!--<i:EventTrigger EventName="Render">
-                        <cal:ActionMessage MethodName="RendererRender">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>-->
-                    <i:EventTrigger EventName="DragEnter">
-                        <cal:ActionMessage MethodName="DragEntered">
-                            <cal:Parameter Value="{Binding ElementName=SceneEditorViewControl, Path=AllowDrop}"/>
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="Drop">
-                        <cal:ActionMessage MethodName="DragDropped">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseMove">
-                        <cal:ActionMessage MethodName="MouseMoved">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseWheel">
-                        <cal:ActionMessage MethodName="MouseWheelMoved">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <!--<i:EventTrigger EventName="MouseDown">
-                        <cal:ActionMessage MethodName="MouseButtonPressed">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseUp">
-                        <cal:ActionMessage MethodName="MouseButtonReleased">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="KeyUp">
-                        <cal:ActionMessage MethodName="KeyboardPressed">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="KeyDown">
-                        <cal:ActionMessage MethodName="KeyboardReleased">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>-->
-                </i:Interaction.Triggers>
-            </glWpfControl:GLWpfControl>
+            <Grid>
+                <embededRender:EmbededRender x:Name="GlControlView" Margin="0" AllowDrop="True">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="OpenGLInitialized">
+                            <cal:ActionMessage MethodName="RendererInitialized">
+                                <cal:Parameter Value="$source"/>
+                            </cal:ActionMessage>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </embededRender:EmbededRender>
+            </Grid>
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="DragEnter">
+                    <cal:ActionMessage MethodName="DragEntered">
+                        <cal:Parameter Value="{Binding ElementName=SceneEditorViewControl, Path=AllowDrop}"/>
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="Drop">
+                    <cal:ActionMessage MethodName="DragDropped">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseMove">
+                    <cal:ActionMessage MethodName="MouseMoved">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseWheel">
+                    <cal:ActionMessage MethodName="MouseWheelMoved">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <!--<i:EventTrigger EventName="MouseDown">
+                    <cal:ActionMessage MethodName="MouseButtonPressed">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseUp">
+                    <cal:ActionMessage MethodName="MouseButtonReleased">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="KeyUp">
+                    <cal:ActionMessage MethodName="KeyboardPressed">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="KeyDown">
+                    <cal:ActionMessage MethodName="KeyboardReleased">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>-->
+            </i:Interaction.Triggers>
         </GroupBox>
     </Grid>
 </UserControl>

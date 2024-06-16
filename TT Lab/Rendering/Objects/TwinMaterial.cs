@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using SharpGL;
+using System.Drawing;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels.Editors.Graphics;
@@ -7,6 +8,8 @@ namespace TT_Lab.Rendering.Objects
 {
     public class TwinMaterial : IGLObject
     {
+        public OpenGL GL { get; private set; }
+
         private TextureBuffer _texture;
         private string _texName;
         private ShaderProgram _shader;
@@ -19,13 +22,15 @@ namespace TT_Lab.Rendering.Objects
         private int AlphaBlending = 0;
         private int uniIndex = -1;
 
-        public TwinMaterial(ShaderProgram program, string textureUniformName, Bitmap bitmap, ShaderViewModel viewModel, int texUnitPos, int uniIndex = -1)
+        public TwinMaterial(OpenGL gl, ShaderProgram program, string textureUniformName, Bitmap bitmap, ShaderViewModel viewModel, int texUnitPos, int uniIndex = -1)
         {
+            GL = gl;
+
             this.uniIndex = uniIndex;
             _shader = program;
             _texName = textureUniformName;
             this.texUnitPos = texUnitPos;
-            _texture = new TextureBuffer(bitmap.Width, bitmap.Height, bitmap);
+            _texture = new TextureBuffer(GL, bitmap.Width, bitmap.Height, bitmap);
             AlphaBlending = viewModel.AlphaBlending ? 1 : 0;
             FIX = viewModel.FixedAlphaValue;
             SpecColA = (int)viewModel.SpecOfColA;
@@ -38,7 +43,7 @@ namespace TT_Lab.Rendering.Objects
         {
             if (uniIndex != -1)
             {
-                _shader.SetTextureUniform($"{_texName}[{uniIndex}]", OpenTK.Graphics.OpenGL.TextureTarget.Texture2D, _texture.Buffer, (uint)texUnitPos);
+                _shader.SetTextureUniform($"{_texName}[{uniIndex}]", TextureBuffer.TextureTarget.Texture2D, _texture.Buffer, (uint)texUnitPos);
                 _shader.SetUniform1($"AlphaBlending[{uniIndex}]", AlphaBlending);
                 _shader.SetUniform1($"FIX[{uniIndex}]", FIX / 255f);
                 _shader.SetUniform1($"SpecColA[{uniIndex}]", SpecColA);
@@ -48,7 +53,7 @@ namespace TT_Lab.Rendering.Objects
             }
             else
             {
-                _shader.SetTextureUniform($"{_texName}", OpenTK.Graphics.OpenGL.TextureTarget.Texture2D, _texture.Buffer, (uint)texUnitPos);
+                _shader.SetTextureUniform($"{_texName}", TextureBuffer.TextureTarget.Texture2D, _texture.Buffer, (uint)texUnitPos);
                 _shader.SetUniform1($"AlphaBlending", AlphaBlending);
                 _shader.SetUniform1($"FIX", FIX / 255f);
                 _shader.SetUniform1($"SpecColA", SpecColA);

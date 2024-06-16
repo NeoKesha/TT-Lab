@@ -3,32 +3,44 @@ using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.Assets;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
-    public class ModelViewModel : ResourceEditorViewModel, IHandle<RendererInitializedMessage>
+    public class ModelViewModel : ResourceEditorViewModel
     {
-        private SceneEditorViewModel _sceneRenderer;
-
-        public ModelViewModel(IEventAggregator eventAggregator)
+        public ModelViewModel()
         {
-            _sceneRenderer = IoC.Get<SceneEditorViewModel>();
-            eventAggregator.SubscribeOnUIThread(this);
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
+
+            InitSceneRenderer();
         }
 
-        public Task HandleAsync(RendererInitializedMessage message, CancellationToken cancellationToken)
+        protected override Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            SceneRenderer.Scene = new Rendering.Scene(SceneRenderer.GlControl.Context, (float)SceneRenderer.GlControl.ActualWidth, (float)SceneRenderer.GlControl.ActualHeight, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
-            SceneRenderer.Scene.SetCameraSpeed(0.2f);
-            Rendering.Objects.Model m = new(SceneRenderer.Scene, AssetManager.Get().GetAssetData<AssetData.Graphics.ModelData>(EditableResource));
-            SceneRenderer.Scene.AddRender(m);
+            InitSceneRenderer();
 
-            return Task.FromResult(true);
+            return base.OnActivateAsync(cancellationToken);
+        }
+
+        private void InitSceneRenderer()
+        {
+            SceneRenderer.SceneCreator = (GLWindow glControl) =>
+            {
+                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
+
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0.2f);
+                Rendering.Objects.Model m = new(glControl.RenderContext, glControl, scene, AssetManager.Get().GetAssetData<AssetData.Graphics.ModelData>(EditableResource));
+                scene.AddChild(m);
+
+                return scene;
+            };
         }
 
         public SceneEditorViewModel SceneRenderer
         {
-            get => _sceneRenderer;
+            get => Scenes[0];
         }
 
         public override void LoadData()

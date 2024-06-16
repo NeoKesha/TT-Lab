@@ -1,6 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+﻿using GlmSharp;
+using SharpGL;
 using System;
+using System.Linq;
 // Credits to https://github.com/dwmkerr/sharpgl
 namespace TT_Lab.Rendering.Buffers
 {
@@ -13,8 +14,12 @@ namespace TT_Lab.Rendering.Buffers
     /// </remarks>
     public class VertexBuffer : IGLObject
     {
-        public VertexBuffer()
+        public OpenGL GL { get; private set; }
+
+        public VertexBuffer(OpenGL gl)
         {
+            GL = gl;
+
             //  Generate the vertex array.
             uint[] ids = new uint[1];
             GL.GenBuffers(1, ids);
@@ -24,40 +29,43 @@ namespace TT_Lab.Rendering.Buffers
         public void SetData(uint attributeIndex, float[] rawData, bool isNormalised, int stride)
         {
             //  Set the data, specify its shape and assign it to a vertex attribute (so shaders can bind to it).
-            GL.BufferData(BufferTarget.ArrayBuffer, rawData.Length * sizeof(float), rawData, BufferUsageHint.StaticDraw);
-            GL.VertexAttribPointer(attributeIndex, stride, VertexAttribPointerType.Float, isNormalised, 0, IntPtr.Zero);
+            GL.BufferData(OpenGL.GL_ARRAY_BUFFER, rawData, OpenGL.GL_STATIC_DRAW);
+            GL.VertexAttribPointer(attributeIndex, stride, OpenGL.GL_FLOAT, isNormalised, 0, IntPtr.Zero);
             GL.EnableVertexAttribArray(attributeIndex);
         }
 
         public void SetDataArray(uint attributeIndex, float[] rawData, bool isNormalised, int stride)
         {
             //  Set the data, specify its shape and assign it to a vertex attribute (so shaders can bind to it).
-            GL.BufferData(BufferTarget.ArrayBuffer, rawData.Length * sizeof(float), rawData, BufferUsageHint.StaticDraw);
-            GL.VertexAttribPointer(attributeIndex, stride, VertexAttribPointerType.Float, isNormalised, 0, IntPtr.Zero);
-            GL.EnableVertexArrayAttrib(vertexBufferObject, attributeIndex);
+            GL.BufferData(OpenGL.GL_ARRAY_BUFFER, rawData, OpenGL.GL_STATIC_DRAW);
+            GL.VertexAttribPointer(attributeIndex, stride, OpenGL.GL_FLOAT, isNormalised, 0, IntPtr.Zero);
+            Bind();
+            GL.EnableVertexAttribArray(attributeIndex);
+            Unbind();
         }
 
-        public void SetData(uint attributeIndex, Vector3[] data, bool isNormalised, int stride)
+        public void SetData(uint attributeIndex, vec3[] data, bool isNormalised, int stride)
         {
+            var floats = data.SelectMany(x => x.Values).ToArray();
             //  Set the data, specify its shape and assign it to a vertex attribute (so shaders can bind to it).
-            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float) * 3, data, BufferUsageHint.StaticDraw);
-            GL.VertexAttribPointer(attributeIndex, stride, VertexAttribPointerType.Float, isNormalised, 0, IntPtr.Zero);
+            GL.BufferData(OpenGL.GL_ARRAY_BUFFER, floats, OpenGL.GL_STATIC_DRAW);
+            GL.VertexAttribPointer(attributeIndex, stride, OpenGL.GL_FLOAT, isNormalised, 0, IntPtr.Zero);
             GL.EnableVertexAttribArray(attributeIndex);
         }
 
         public void Bind()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
+            GL.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferObject);
         }
 
         public void Unbind()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(OpenGL.GL_ARRAY_BUFFER, 0);
         }
 
         public void Delete()
         {
-            GL.DeleteBuffer(vertexBufferObject);
+            GL.DeleteBuffers(1, new uint[] { vertexBufferObject });
         }
 
         public bool IsCreated() { return vertexBufferObject != 0; }

@@ -1,4 +1,5 @@
 ﻿using GlmSharp;
+using SharpGL;
 using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
@@ -6,7 +7,7 @@ namespace TT_Lab.Rendering.Objects
     internal class Gizmo : BaseRenderable
     {
         private EditingContext editingContext;
-        public Gizmo(Scene root, EditingContext editingContext) : base(root)
+        public Gizmo(OpenGL gl, GLWindow window, Scene root, EditingContext editingContext) : base(gl, window, root)
         {
             this.editingContext = editingContext;
             Enabled = true;
@@ -45,39 +46,39 @@ namespace TT_Lab.Rendering.Objects
             {
                 case TransformMode.SELECTION:
                     LocalTransform *= mat4.Scale(0.25f);
-                    Root.DrawBox(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
+                    Window.DrawBox(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
                     break;
                 case TransformMode.TRANSLATE:
-                    Root.DrawSimpleAxis(WorldTransform);
+                    Window.DrawSimpleAxis(WorldTransform);
                     if (editingContext.transformAxis == TransformAxis.X)
                     {
                         LocalTransform *= mat4.Translate(0.5f, 0.0f, 0.0f);
                         LocalTransform *= mat4.Scale(0.5f, 0.025f, 0.025f);
-                        Root.DrawBox(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
+                        Window.DrawBox(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
                     }
                     if (editingContext.transformAxis == TransformAxis.Y)
                     {
                         LocalTransform *= mat4.Translate(0.0f, 0.5f, 0.0f);
                         LocalTransform *= mat4.Scale(0.025f, 0.5f, 0.025f);
-                        Root.DrawBox(WorldTransform, new vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                        Window.DrawBox(WorldTransform, new vec4(0.0f, 1.0f, 0.0f, 1.0f));
                     }
                     if (editingContext.transformAxis == TransformAxis.Z)
                     {
                         LocalTransform *= mat4.Translate(0.0f, 0.0f, 0.5f);
                         LocalTransform *= mat4.Scale(0.025f, 0.025f, 0.5f);
-                        Root.DrawBox(WorldTransform, new vec4(0.0f, 0.0f, 1.0f, 1.0f));
+                        Window.DrawBox(WorldTransform, new vec4(0.0f, 0.0f, 1.0f, 1.0f));
                     }
                     break;
                 case TransformMode.SCALE:
                     {
-                        Root.DrawSimpleAxis(WorldTransform);
+                        Window.DrawSimpleAxis(WorldTransform);
                         var localTransformCopy = LocalTransform;
                         LocalTransform = localTransformCopy * mat4.Translate(1.0f, 0.0f, 0.0f) * mat4.Scale(0.1f);
-                        Root.DrawBox(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
+                        Window.DrawBox(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
                         LocalTransform = localTransformCopy * mat4.Translate(0.0f, 1.0f, 0.0f) * mat4.Scale(0.1f);
-                        Root.DrawBox(WorldTransform, new vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                        Window.DrawBox(WorldTransform, new vec4(0.0f, 1.0f, 0.0f, 1.0f));
                         LocalTransform = localTransformCopy * mat4.Translate(0.0f, 0.0f, 1.0f) * mat4.Scale(0.1f);
-                        Root.DrawBox(WorldTransform, new vec4(0.0f, 0.0f, 1.0f, 1.0f));
+                        Window.DrawBox(WorldTransform, new vec4(0.0f, 0.0f, 1.0f, 1.0f));
                         break;
                     }
                 case TransformMode.ROTATE:
@@ -87,20 +88,20 @@ namespace TT_Lab.Rendering.Objects
                         {
                             LocalTransform *= mat4.Scale(1.25f);
                         }
-                        Root.DrawCircle(WorldTransform, new vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                        Window.DrawCircle(WorldTransform, new vec4(0.0f, 1.0f, 0.0f, 1.0f));
                         LocalTransform = localTransformCopy * mat4.RotateX(3.14f / 2.0f);
                         if (editingContext.transformAxis == TransformAxis.Z)
                         {
                             LocalTransform *= mat4.Scale(1.25f);
                         }
-                        Root.DrawCircle(WorldTransform, new vec4(0.0f, 0.0f, 1.0f, 1.0f));
+                        Window.DrawCircle(WorldTransform, new vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
                         LocalTransform = localTransformCopy * mat4.RotateZ(3.14f / 2.0f);
                         if (editingContext.transformAxis == TransformAxis.X)
                         {
                             LocalTransform *= mat4.Scale(1.25f);
                         }
-                        Root.DrawCircle(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
+                        Window.DrawCircle(WorldTransform, new vec4(1.0f, 0.0f, 0.0f, 1.0f));
                         break;
                     }
 

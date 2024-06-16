@@ -16,6 +16,9 @@ namespace TT_Lab.Assets
         private AssetStorage _assets = new();
         private AssetStorage _importAssets = new();
 
+        // TODO: Check if locks are required to access assets for thread-safety
+        //private object assetAccessLock = new object();
+
         public AssetManager() { }
 
         public AssetManager(Dictionary<LabURI, IAsset> assets)

@@ -5,7 +5,7 @@ namespace TT_Lab.Rendering.Renderers
 {
     public interface IRenderer
     {
-        Scene Scene { get; set; }
+        SharpGL.OpenGL GL { get; }
         ShaderProgram RenderProgram { get; }
         void Render(List<IRenderable> objects);
         void PostProcess();

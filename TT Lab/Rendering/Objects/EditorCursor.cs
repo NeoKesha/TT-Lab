@@ -1,4 +1,5 @@
 ﻿using GlmSharp;
+using SharpGL;
 using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
@@ -6,10 +7,12 @@ namespace TT_Lab.Rendering.Objects
     internal class EditorCursor : BaseRenderable
     {
         vec3? pos = null;
-        public EditorCursor(Scene root) : base(root)
+
+        public EditorCursor(OpenGL gl, GLWindow window, Scene root) : base(gl, window, root)
         {
 
         }
+
         public void Bind()
         {
 
@@ -38,7 +41,7 @@ namespace TT_Lab.Rendering.Objects
                 return;
             }
 
-            Root.DrawBox(WorldTransform, new vec4(0.5f, 0.0f, 1.0f, 1.0f));
+            Window.DrawBox(WorldTransform, new vec4(0.5f, 0.0f, 1.0f, 1.0f));
         }
 
         public void Unbind()

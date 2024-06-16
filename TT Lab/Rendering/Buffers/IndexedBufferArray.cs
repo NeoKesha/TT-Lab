@@ -1,4 +1,6 @@
-﻿namespace TT_Lab.Rendering.Buffers
+﻿using SharpGL;
+
+namespace TT_Lab.Rendering.Buffers
 {
     /// <summary>
     /// Stores buffered indices for Element rendering. Works just like VertexBufferArray
@@ -6,12 +8,16 @@
     /// <seealso cref="VertexBufferArray"/>
     public class IndexedBufferArray : IGLObject
     {
+        public OpenGL GL { get; private set; }
+
         public VertexBufferArray Buffer;
         public uint[] Indices;
 
-        public IndexedBufferArray()
+        public IndexedBufferArray(OpenGL gl)
         {
-            Buffer = new VertexBufferArray();
+            GL = gl;
+
+            Buffer = new VertexBufferArray(gl);
             Indices = System.Array.Empty<System.UInt32>();
         }
 

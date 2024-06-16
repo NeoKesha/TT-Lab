@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using SharpGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace TT_Lab.Rendering.Shaders
         private readonly Dictionary<String, ShaderProgram> compiledPrograms = new();
         private bool cacheBuilt = false;
 
-        public void BuildShaderCache()
+        public void BuildShaderCache(OpenGL gl)
         {
             if (cacheBuilt) return;
 
@@ -25,37 +25,37 @@ namespace TT_Lab.Rendering.Shaders
             var textLoader = Util.ManifestResourceLoader.LoadTextFile;
 
             // Library fragment shaders
-            var texScrollShader = new Shader(ShaderType.FragmentShader, textLoader($"{mPath}TexScroll.frag"));
+            var texScrollShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{mPath}TexScroll.frag"));
             compiledLibraryFragmentShaders.Add(LibraryFragmentShaders.TexScroll, texScrollShader);
-            var lightShader = new Shader(ShaderType.FragmentShader, textLoader($"{sPath}Light.frag"));
+            var lightShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{sPath}Light.frag"));
             compiledLibraryFragmentShaders.Add(LibraryFragmentShaders.Light, lightShader);
-            var passShader = new Shader(ShaderType.FragmentShader, textLoader($"{sPath}Pass.frag"));
+            var passShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{sPath}Pass.frag"));
             compiledLibraryFragmentShaders.Add(LibraryFragmentShaders.Pass, passShader);
-            var texturePassShader = new Shader(ShaderType.FragmentShader, textLoader($"{sPath}TexturePass.Frag"));
+            var texturePassShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{sPath}TexturePass.Frag"));
             compiledLibraryFragmentShaders.Add(LibraryFragmentShaders.TexturePass, texturePassShader);
-            var twinmaterialPassShader = new Shader(ShaderType.FragmentShader, textLoader($"{sPath}TwinmaterialPass.frag"));
+            var twinmaterialPassShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{sPath}TwinmaterialPass.frag"));
             compiledLibraryFragmentShaders.Add(LibraryFragmentShaders.TwinmaterialPass, twinmaterialPassShader);
 
             // Library vertex shaders
-            var vertexShadingShader = new Shader(ShaderType.VertexShader, textLoader($"{sPath}VertexShading.vert"));
+            var vertexShadingShader = new Shader(gl, Shader.ShaderType.VertexShader, textLoader($"{sPath}VertexShading.vert"));
             compiledLibraryVertexShaders.Add(LibraryVertexShaders.VertexShading, vertexShadingShader);
-            var texScrollVertShader = new Shader(ShaderType.VertexShader, textLoader($"{mPath}TexScroll.vert"));
+            var texScrollVertShader = new Shader(gl, Shader.ShaderType.VertexShader, textLoader($"{mPath}TexScroll.vert"));
             compiledLibraryVertexShaders.Add(LibraryVertexShaders.TexScroll, texScrollVertShader);
 
             // Fragment shaders
-            var modelTexturedShader = new Shader(ShaderType.FragmentShader, textLoader($"{sPath}ModelTextured.frag"));
+            var modelTexturedShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{sPath}ModelTextured.frag"));
             compiledFragmentShaders.Add(StoredFragmentShaders.ModelTextured, modelTexturedShader);
-            var wboitBlendShader = new Shader(ShaderType.FragmentShader, textLoader($"{sPath}WBOIT_blend.frag"));
+            var wboitBlendShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{sPath}WBOIT_blend.frag"));
             compiledFragmentShaders.Add(StoredFragmentShaders.WboitBlend, wboitBlendShader);
-            var wboitScreenResultShader = new Shader(ShaderType.FragmentShader, textLoader($"{sPath}WBOIT_ScreenResult.frag"));
+            var wboitScreenResultShader = new Shader(gl, Shader.ShaderType.FragmentShader, textLoader($"{sPath}WBOIT_ScreenResult.frag"));
             compiledFragmentShaders.Add(StoredFragmentShaders.WboitScreenResult, wboitScreenResultShader);
 
             // Vertex shaders
-            var modelRenderShader = new Shader(ShaderType.VertexShader, textLoader($"{sPath}ModelRender.vert"));
+            var modelRenderShader = new Shader(gl, Shader.ShaderType.VertexShader, textLoader($"{sPath}ModelRender.vert"));
             compiledVertexShaders.Add(StoredVertexShaders.ModelRender, modelRenderShader);
-            var wboitBlendVertShader = new Shader(ShaderType.VertexShader, textLoader($"{sPath}WBOIT_blend.vert"));
+            var wboitBlendVertShader = new Shader(gl, Shader.ShaderType.VertexShader, textLoader($"{sPath}WBOIT_blend.vert"));
             compiledVertexShaders.Add(StoredVertexShaders.WboitBlend, wboitBlendVertShader);
-            var wboitScreenResultVertShader = new Shader(ShaderType.VertexShader, textLoader($"{sPath}WBOIT_ScreenResult.vert"));
+            var wboitScreenResultVertShader = new Shader(gl, Shader.ShaderType.VertexShader, textLoader($"{sPath}WBOIT_ScreenResult.vert"));
             compiledVertexShaders.Add(StoredVertexShaders.WboitScreenResult, wboitScreenResultVertShader);
 
             cacheBuilt = true;
@@ -73,7 +73,7 @@ namespace TT_Lab.Rendering.Shaders
             compiledLibraryVertexShaders.Clear();
         }
 
-        public ShaderProgram BuildShaderProgram(StoredVertexShaders vertex, StoredFragmentShaders fragment, LibraryVertexShaders libraryVertex = LibraryVertexShaders.VertexShading, LibraryFragmentShaders libraryFragment = LibraryFragmentShaders.Pass)
+        public ShaderProgram BuildShaderProgram(OpenGL gl, StoredVertexShaders vertex, StoredFragmentShaders fragment, LibraryVertexShaders libraryVertex = LibraryVertexShaders.VertexShading, LibraryFragmentShaders libraryFragment = LibraryFragmentShaders.Pass)
         {
             var resultProgramName = $"{vertex}{fragment}{libraryVertex}{libraryFragment}";
             if (compiledPrograms.TryGetValue(resultProgramName, out ShaderProgram? shaderProgram))
@@ -81,7 +81,7 @@ namespace TT_Lab.Rendering.Shaders
                 return shaderProgram;
             }
 
-            var program = new ShaderProgram(compiledVertexShaders[vertex], compiledFragmentShaders[fragment], compiledLibraryVertexShaders[libraryVertex], compiledLibraryFragmentShaders[libraryFragment]);
+            var program = new ShaderProgram(gl, compiledVertexShaders[vertex], compiledFragmentShaders[fragment], compiledLibraryVertexShaders[libraryVertex], compiledLibraryFragmentShaders[libraryFragment]);
             compiledPrograms.Add(resultProgramName, program);
 
             return program;

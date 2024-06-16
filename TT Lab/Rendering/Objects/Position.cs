@@ -1,5 +1,7 @@
 ﻿using GlmSharp;
+using SharpGL;
 using System;
+using System.Diagnostics;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.ViewModels.Editors.Instance;
@@ -14,7 +16,7 @@ namespace TT_Lab.Rendering.Objects
         private vec4 color;
         private PositionViewModel positionViewModel;
 
-        public Position(Scene root, PositionViewModel pos) : base(root)
+        public Position(OpenGL gl, GLWindow window, Scene root, PositionViewModel pos) : base(gl, window, root)
         {
             var asset = AssetManager.Get().GetAsset(pos.EditableResource);
             id = asset.ID;
@@ -34,8 +36,14 @@ namespace TT_Lab.Rendering.Objects
 
         private void Pos_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.PropertyName) && (e.PropertyName == "IsSelected" || e.PropertyName == "IsDirty")) return;
-            var vm = (PositionViewModel)sender!;
+            if (!string.IsNullOrEmpty(e.PropertyName) && (e.PropertyName == "IsSelected" || e.PropertyName == "IsDirty"))
+            {
+                return;
+            }
+
+            Debug.Assert(sender is PositionViewModel, "Property changed didn't come from a Position object!");
+
+            var vm = (PositionViewModel)sender;
             layid = (int)vm.LayoutID;
             position = new vec3(-vm.Position.X, vm.Position.Y, vm.Position.Z);
             LocalTransform = mat4.Translate(position);
@@ -54,7 +62,7 @@ namespace TT_Lab.Rendering.Objects
 
         protected override void RenderSelf(ShaderProgram shader)
         {
-            Root.DrawBox(WorldTransform, color);
+            Window.DrawBox(WorldTransform, color);
         }
 
         public void Unbind()

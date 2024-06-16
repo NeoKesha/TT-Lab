@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpGL;
+using System;
 using System.Collections.Generic;
 using TT_Lab.Rendering.Shaders;
 
@@ -6,15 +7,15 @@ namespace TT_Lab.Rendering.Renderers
 {
     public class BasicRenderer : IRenderer
     {
-        public Scene Scene { get; set; }
-
+        public OpenGL GL { get; private set; }
         public ShaderProgram RenderProgram => renderShader;
 
         private ShaderProgram renderShader;
 
-        public BasicRenderer(ShaderStorage storage, ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
+        public BasicRenderer(OpenGL gl, ShaderStorage storage, ShaderStorage.LibraryFragmentShaders fragmentLib, ShaderStorage.LibraryVertexShaders vertexLib)
         {
-            renderShader = storage.BuildShaderProgram(ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
+            GL = gl;
+            renderShader = storage.BuildShaderProgram(GL, ShaderStorage.StoredVertexShaders.ModelRender, ShaderStorage.StoredFragmentShaders.ModelTextured, vertexLib, fragmentLib);
         }
 
         public void Delete()
@@ -28,7 +29,6 @@ namespace TT_Lab.Rendering.Renderers
 
         public void Render(List<IRenderable> objects)
         {
-            Scene.SetGlobalUniforms(RenderProgram);
             foreach (var @object in objects)
             {
                 @object.Render(RenderProgram, false);

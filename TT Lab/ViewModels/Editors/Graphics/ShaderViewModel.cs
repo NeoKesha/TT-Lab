@@ -7,6 +7,7 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
@@ -17,7 +18,7 @@ using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
-    public class ShaderViewModel : Conductor<IScreen>.Collection.AllActive, IHandle<RendererInitializedMessage>, IHaveParentEditor<MaterialViewModel>
+    public class ShaderViewModel : Conductor<IScreen>.Collection.AllActive, IHaveParentEditor<MaterialViewModel>
     {
         private SceneEditorViewModel _textureViewer;
 
@@ -61,7 +62,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         private Vector4ViewModel _unkVec2;
         private Vector4ViewModel _unkVec3;
 
-        public ShaderViewModel(IEventAggregator eventAggregator, MaterialViewModel materialEditor)
+        public ShaderViewModel(MaterialViewModel materialEditor)
         {
             ParentEditor = materialEditor;
 
@@ -73,10 +74,10 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             _texID = LabURI.Empty;
             _textureViewer = IoC.Get<SceneEditorViewModel>();
 
-            eventAggregator.SubscribeOnUIThread(this);
+            InitTextureViewer();
         }
 
-        public ShaderViewModel(IEventAggregator eventAggregator, LabShader shader, MaterialViewModel materialEditor) : this(eventAggregator, materialEditor)
+        public ShaderViewModel(LabShader shader, MaterialViewModel materialEditor) : this(materialEditor)
         {
             Type = shader.ShaderType;
             _intParam = shader.IntParam;
@@ -121,13 +122,6 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             _unkVec3 = new Vector4ViewModel(shader.UnkVector3);
         }
 
-        public Task HandleAsync(RendererInitializedMessage message, CancellationToken cancellationToken)
-        {
-            InitTextureViewer();
-
-            return Task.FromResult(true);
-        }
-
         public void ShaderViewModelFileDrop(Controls.FileDropEventArgs e)
         {
             if (string.IsNullOrEmpty(e.File))
@@ -143,24 +137,31 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitTextureViewer()
         {
-            var texId = TexID;
-            var hasMapping = TxtMapping;
-            Bitmap bitmap;
-            if (texId == LabURI.Empty || !hasMapping)
+            TextureViewer.SceneCreator = (GLWindow glControl) =>
             {
-                bitmap = MiscUtils.GetBoatGuy();
-            }
-            else
-            {
-                var texData = AssetManager.Get().GetAsset(texId).GetData<TextureData>();
-                bitmap = texData.Bitmap;
-            }
-            TextureViewer.Scene = new Rendering.Scene(TextureViewer.GlControl.Context, (float)TextureViewer.GlControl.ActualWidth, (float)TextureViewer.GlControl.ActualHeight,
-                ShaderStorage.LibraryFragmentShaders.TexturePass);
-            TextureViewer.Scene.SetCameraSpeed(0);
-            TextureViewer.Scene.DisableCameraManipulation();
-            var texPlane = new Plane(TextureViewer.Scene, bitmap);
-            TextureViewer.Scene.AddRender(texPlane);
+                glControl.SetRendererLibraries(ShaderStorage.LibraryFragmentShaders.TexturePass);
+
+                var texId = TexID;
+                var hasMapping = TxtMapping;
+                Bitmap bitmap;
+                if (texId == LabURI.Empty || !hasMapping)
+                {
+                    bitmap = MiscUtils.GetBoatGuy();
+                }
+                else
+                {
+                    var texData = AssetManager.Get().GetAsset(texId).GetData<TextureData>();
+                    bitmap = texData.Bitmap;
+                }
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0);
+                scene.DisableCameraManipulation();
+
+                var texPlane = new Plane(glControl.RenderContext, glControl, scene, bitmap);
+                scene.AddChild(texPlane);
+
+                return scene;
+            };
         }
 
         public MaterialViewModel ParentEditor { get; set; }

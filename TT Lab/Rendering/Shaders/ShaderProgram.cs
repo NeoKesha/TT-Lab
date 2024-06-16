@@ -1,6 +1,8 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using SharpGL;
 using System;
 using System.Collections.Generic;
+using TT_Lab.Extensions;
+using TT_Lab.Rendering.Buffers;
 // Credits to https://github.com/dwmkerr/sharpgl
 namespace TT_Lab.Rendering.Shaders
 {
@@ -9,6 +11,8 @@ namespace TT_Lab.Rendering.Shaders
     /// </summary>
     public class ShaderProgram : IGLObject
     {
+        public OpenGL GL { get; private set; }
+
         private readonly Shader vertexShader;
         private readonly Shader fragmentShader;
         private readonly Shader shadeLibShaderVert;
@@ -23,18 +27,20 @@ namespace TT_Lab.Rendering.Shaders
         /// <param name="vertexLibrary">Precompiled vertex library shader for additional vertex shading</param>
         /// <param name="fragmentLibrary">Precompiled fragment library shader for additional pixel shading</param>
         /// <exception cref="ShaderCompilationException"></exception>
-        public ShaderProgram(Shader vertex, Shader fragment, Shader vertexLibrary, Shader fragmentLibrary)
+        public ShaderProgram(OpenGL gl, Shader vertex, Shader fragment, Shader vertexLibrary, Shader fragmentLibrary)
         {
+            GL = gl;
+
             vertexShader = vertex;
             fragmentShader = fragment;
             shadeLibShaderVert = vertexLibrary;
             shadeLibShaderFrag = fragmentLibrary;
 
-            shaderProgramObject = (uint)GL.CreateProgram();
-            GL.AttachShader((int)shaderProgramObject, vertexShader.ShaderObject);
-            GL.AttachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
-            GL.AttachShader((int)shaderProgramObject, shadeLibShaderVert.ShaderObject);
-            GL.AttachShader((int)shaderProgramObject, shadeLibShaderFrag.ShaderObject);
+            shaderProgramObject = GL.CreateProgram();
+            GL.AttachShader(shaderProgramObject, vertexShader.ShaderObject);
+            GL.AttachShader(shaderProgramObject, fragmentShader.ShaderObject);
+            GL.AttachShader(shaderProgramObject, shadeLibShaderVert.ShaderObject);
+            GL.AttachShader(shaderProgramObject, shadeLibShaderFrag.ShaderObject);
 
             GL.LinkProgram(shaderProgramObject);
 
@@ -56,10 +62,10 @@ namespace TT_Lab.Rendering.Shaders
 
         public void Delete()
         {
-            GL.DetachShader((int)shaderProgramObject, vertexShader.ShaderObject);
-            GL.DetachShader((int)shaderProgramObject, fragmentShader.ShaderObject);
-            GL.DetachShader((int)shaderProgramObject, shadeLibShaderFrag.ShaderObject);
-            GL.DetachShader((int)shaderProgramObject, shadeLibShaderVert.ShaderObject);
+            GL.DetachShader(shaderProgramObject, vertexShader.ShaderObject);
+            GL.DetachShader(shaderProgramObject, fragmentShader.ShaderObject);
+            GL.DetachShader(shaderProgramObject, shadeLibShaderFrag.ShaderObject);
+            GL.DetachShader(shaderProgramObject, shadeLibShaderVert.ShaderObject);
             vertexShader.Delete();
             fragmentShader.Delete();
             shadeLibShaderFrag.Delete();
@@ -86,21 +92,13 @@ namespace TT_Lab.Rendering.Shaders
         public bool GetLinkStatus()
         {
             int[] parameters = new int[] { 0 };
-            GL.GetProgram(shaderProgramObject, GetProgramParameterName.LinkStatus, parameters);
+            GL.GetProgram(shaderProgramObject, OpenGL.GL_LINK_STATUS, parameters);
             return parameters[0] == 1;
         }
 
         public string GetInfoLog()
         {
-            //  Get the info log length.
-            int[] infoLength = new int[] { 0 };
-            GL.GetProgram(shaderProgramObject, GetProgramParameterName.InfoLogLength, infoLength);
-            int bufSize = infoLength[0];
-
-            //  Get the compile info.
-            GL.GetProgramInfoLog((int)shaderProgramObject, bufSize, out infoLength[0], out string il);
-
-            return il;
+            return GL.GetProgramInfoLog(shaderProgramObject);
         }
 
         public void AssertValid()
@@ -143,12 +141,12 @@ namespace TT_Lab.Rendering.Shaders
             GL.UniformMatrix4(GetUniformLocation(uniformName), 1, false, m);
         }
 
-        public void SetTextureUniform(string uniformName, TextureTarget target, uint texId, uint texUnit)
+        public void SetTextureUniform(string uniformName, TextureBuffer.TextureTarget target, uint texId, uint texUnit)
         {
-            GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + texUnit));
-            GL.BindTexture(target, texId);
+            GL.ActiveTexture(OpenGL.GL_TEXTURE0 + texUnit);
+            GL.BindTexture((uint)target, texId);
             GL.Uniform1(GetUniformLocation(uniformName), (int)texUnit);
-            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.ActiveTexture(OpenGL.GL_TEXTURE0);
         }
 
         public int GetUniformLocation(string uniformName)

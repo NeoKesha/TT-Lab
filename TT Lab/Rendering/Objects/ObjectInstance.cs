@@ -1,5 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Mathematics;
+using SharpGL;
 using System.Collections.Generic;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
@@ -12,15 +12,15 @@ namespace TT_Lab.Rendering.Objects
 {
     public class ObjectInstance : BaseRenderable
     {
-        List<ModelBuffer> modelBuffers = new List<ModelBuffer>();
-        Dictionary<LabURI, List<ModelBuffer>> modelBufferCache;
+        private List<ModelBuffer> modelBuffers = new();
+        private Dictionary<LabURI, List<ModelBuffer>> modelBufferCache;
 
-        Vector3 ambientColor = new Vector3();
-        private vec3 pos = new vec3();
-        private vec3 rot = new vec3();
-        bool selected;
+        private vec3 ambientColor = new();
+        private vec3 pos = new();
+        private vec3 rot = new();
+        private bool selected;
 
-        public ObjectInstance(Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<ModelBuffer>> modelBufferCache) : base(root)
+        public ObjectInstance(OpenGL gl, GLWindow window, Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<ModelBuffer>> modelBufferCache) : base(gl, window, root)
         {
             this.modelBufferCache = modelBufferCache;
             var objURI = instance.ObjectId;
@@ -52,18 +52,18 @@ namespace TT_Lab.Rendering.Objects
 
         public void Select()
         {
-            ambientColor.X = 0.5f;
-            ambientColor.Y = 0.5f;
-            ambientColor.Z = 0.5f;
+            ambientColor.x = 0.5f;
+            ambientColor.y = 0.5f;
+            ambientColor.z = 0.5f;
             Opacity = 0.5f;
             selected = true;
         }
 
         public void Deselect()
         {
-            ambientColor.X = 0.0f;
-            ambientColor.Y = 0.0f;
-            ambientColor.Z = 0.0f;
+            ambientColor.x = 0.0f;
+            ambientColor.y = 0.0f;
+            ambientColor.z = 0.0f;
             Opacity = 1.0f;
             selected = false;
         }
@@ -82,7 +82,7 @@ namespace TT_Lab.Rendering.Objects
             base.SetUniforms(shader);
 
             shader.SetUniform1("Opacity", Opacity);
-            shader.SetUniform3("AmbientMaterial", ambientColor.X, ambientColor.Y, ambientColor.Z);
+            shader.SetUniform3("AmbientMaterial", ambientColor.x, ambientColor.y, ambientColor.z);
         }
 
         protected override void RenderSelf(ShaderProgram shader)
@@ -156,17 +156,17 @@ namespace TT_Lab.Rendering.Objects
                     continue;
                 }
                 var rigidModelData = assetManager.GetAssetData<RigidModelData>(rigidModel);
-                modelBuffers.Add(new ModelBuffer(Root, rigidModelData));
+                modelBuffers.Add(new ModelBuffer(GL, Window, Root, rigidModelData));
             }
             if (ogiData.Skin != LabURI.Empty)
             {
                 var skin = assetManager.GetAssetData<SkinData>(ogiData.Skin);
-                modelBuffers.Add(new ModelBuffer(Root, skin));
+                modelBuffers.Add(new ModelBuffer(GL, Window, Root, skin));
             }
             if (ogiData.BlendSkin != LabURI.Empty)
             {
                 var blendSkin = assetManager.GetAssetData<BlendSkinData>(ogiData.BlendSkin);
-                modelBuffers.Add(new ModelBufferBlendSkin(Root, blendSkin));
+                modelBuffers.Add(new ModelBufferBlendSkin(GL, Window, Root, blendSkin));
             }
 
             var cacheList = new List<ModelBuffer>();

@@ -1,4 +1,5 @@
 ﻿using GlmSharp;
+using SharpGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace TT_Lab.Rendering
 
         private bool AlphaBlendingEnabled => Opacity < 1.0f || alphaBlendingEnabled;
 
+        public OpenGL GL { get; private set; }
+        public GLWindow Window { get; private set; }
         public Scene Root { get; set; }
 
         public IRenderable? Parent
@@ -62,8 +65,10 @@ namespace TT_Lab.Rendering
             }
         }
 
-        public BaseRenderable(Scene root)
+        public BaseRenderable(OpenGL gl, GLWindow window, Scene root)
         {
+            GL = gl;
+            Window = window;
             Root = root;
             parent = root;
             localTransform = mat4.Identity;

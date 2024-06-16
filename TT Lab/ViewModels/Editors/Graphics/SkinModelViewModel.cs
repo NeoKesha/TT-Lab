@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
-    public class SkinModelViewModel : ResourceEditorViewModel, IHandle<RendererInitializedMessage>
+    public class SkinModelViewModel : ResourceEditorViewModel
     {
         private Int32 _selectedMaterial;
         private String _materialName;
-        private readonly IEventAggregator _eventAggregator;
 
         private enum SceneIndex : int
         {
@@ -21,75 +21,51 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             Material
         }
 
-        public SkinModelViewModel(IEventAggregator eventAggregator)
+        public SkinModelViewModel()
         {
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
             _materialName = "NO MATERIAL";
-            _eventAggregator = eventAggregator;
-        }
 
-        protected override Task OnActivateAsync(CancellationToken cancellationToken)
-        {
-            _eventAggregator.SubscribeOnUIThread(this);
-
-            return base.OnActivateAsync(cancellationToken);
-        }
-
-        protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
-        {
-            _eventAggregator.Unsubscribe(this);
-
-            return base.OnDeactivateAsync(close, cancellationToken);
-        }
-
-        public Task HandleAsync(RendererInitializedMessage message, CancellationToken cancellationToken)
-        {
-            if (message.Renderer == SceneRenderer)
-            {
-                InitSceneRenderer();
-            }
-            else if (message.Renderer == MaterialViewer)
-            {
-                InitMaterialViewer();
-            }
-
-            return Task.FromResult(true);
+            InitMaterialViewer();
+            InitSceneRenderer();
         }
 
         private void InitSceneRenderer()
         {
-            SceneRenderer.GlControl.Context.MakeCurrent();
-            SceneRenderer.Scene?.Delete();
+            SceneRenderer.SceneCreator = (GLWindow glControl) =>
+            {
+                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
 
-            SceneRenderer.Scene = new Rendering.Scene(SceneRenderer.GlControl.Context, (float)SceneRenderer.GlControl.ActualWidth, (float)SceneRenderer.GlControl.ActualHeight,
-                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
-            SceneRenderer.Scene.SetCameraSpeed(0.2f);
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0.2f);
 
-            SceneRenderer.GlControl.Context.MakeCurrent();
-            var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
-            Skin model = new(SceneRenderer.Scene, rm);
-            SceneRenderer.Scene.AddRender(model);
-            SceneRenderer.GlControl.Context.MakeNoneCurrent();
+                var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
+                Skin model = new(glControl.RenderContext, glControl, scene, rm);
+                scene.AddChild(model);
+
+                return scene;
+            };
         }
 
         private void InitMaterialViewer()
         {
-            MaterialViewer.GlControl.Context.MakeCurrent();
-            MaterialViewer.Scene?.Delete();
+            MaterialViewer.SceneCreator = (GLWindow glControl) =>
+            {
+                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
 
-            MaterialViewer.Scene = new Rendering.Scene(MaterialViewer.GlControl.Context, (float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualHeight,
-                Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
-            MaterialViewer.Scene.SetCameraSpeed(0);
-            MaterialViewer.Scene.DisableCameraManipulation();
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0);
+                scene.DisableCameraManipulation();
 
-            MaterialViewer.GlControl.Context.MakeCurrent();
-            var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
-            var matData = AssetManager.Get().GetAsset(rm.SubSkins[_selectedMaterial].Material).GetData<MaterialData>();
-            MaterialName = matData.Name;
-            var texPlane = new Plane(MaterialViewer.Scene, matData);
-            MaterialViewer.Scene.AddRender(texPlane);
-            MaterialViewer.GlControl.Context.MakeNoneCurrent();
+                var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
+                var matData = AssetManager.Get().GetAsset(rm.SubSkins[_selectedMaterial].Material).GetData<MaterialData>();
+                MaterialName = matData.Name;
+                var texPlane = new Plane(glControl.RenderContext, glControl, scene, matData);
+                scene.AddChild(texPlane);
+
+                return scene;
+            };
         }
 
         public override void LoadData()

@@ -1,5 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Mathematics;
+using SharpGL;
 using System;
 using TT_Lab.Assets;
 using TT_Lab.Rendering.Shaders;
@@ -19,7 +19,7 @@ namespace TT_Lab.Rendering.Objects
 
         private TriggerViewModel viewModel;
 
-        public Trigger(Scene root, TriggerViewModel tvm) : base(root)
+        public Trigger(OpenGL gl, GLWindow window, Scene root, TriggerViewModel tvm) : base(gl, window, root)
         {
             var asset = AssetManager.Get().GetAsset(tvm.EditableResource);
             Opacity = 0.4f;
@@ -41,9 +41,9 @@ namespace TT_Lab.Rendering.Objects
             pos = new vec3(-viewModel.Position.X, viewModel.Position.Y, viewModel.Position.Z);
             scale = new vec3(viewModel.Scale.X, viewModel.Scale.Y, viewModel.Scale.Z);
 
-            var q = new Quaternion(viewModel.Rotation.X, viewModel.Rotation.Y, viewModel.Rotation.Z, viewModel.Rotation.W);
-            var tmp = q.ToEulerAngles();
-            rotation = new vec3(tmp.X, tmp.Y, tmp.Z);
+            var q = new quat(viewModel.Rotation.X, viewModel.Rotation.Y, viewModel.Rotation.Z, viewModel.Rotation.W);
+            var tmp = q.EulerAngles;
+            rotation = new vec3((float)tmp.x, (float)tmp.y, (float)tmp.z);
 
             var trgColor = System.Drawing.Color.DarkOrange;
             trgColor = System.Drawing.Color.FromArgb(100, trgColor.R >> 1, trgColor.G >> 1, trgColor.B >> 1);
@@ -73,7 +73,7 @@ namespace TT_Lab.Rendering.Objects
 
         protected override void RenderSelf(ShaderProgram shader)
         {
-            Root.DrawBox(WorldTransform, color);
+            Window.DrawBox(WorldTransform, color);
         }
 
         public void Unbind()

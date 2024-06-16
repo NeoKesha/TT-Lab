@@ -1,4 +1,5 @@
 ﻿using GlmSharp;
+using SharpGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,7 +11,7 @@ namespace TT_Lab.Util
 {
     public static class BufferGeneration
     {
-        public static IndexedBufferArray GetModelBuffer(List<Vertex> vertexes, List<IndexedFace> faces, bool generateUvs = true)
+        public static IndexedBufferArray GetModelBuffer(OpenGL GL, List<Vertex> vertexes, List<IndexedFace> faces, bool generateUvs = true)
         {
             var positions = vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList();
             var colors = vertexes.Select((v) =>
@@ -31,28 +32,28 @@ namespace TT_Lab.Util
             {
                 if (vertexes.Where(v => v.HasNormals).Any())
                 {
-                    return GetModelBuffer(positions, faces,
+                    return GetModelBuffer(GL, positions, faces,
                         colors,
                         vertexes.Select(v => new vec3(v.UV.X, v.UV.Y, v.UV.Z)).ToList(),
                         vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
                 }
 
-                return GetModelBuffer(positions, faces,
+                return GetModelBuffer(GL, positions, faces,
                     colors,
                     vertexes.Select(v => new vec3(v.UV.X, v.UV.Y, v.UV.Z)).ToList());
             }
 
             if (vertexes.Where(v => v.HasNormals).Any())
             {
-                return GetModelBuffer(positions, faces,
+                return GetModelBuffer(GL, positions, faces,
                     colors,
                     vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
             }
 
-            return GetModelBuffer(positions, faces, colors);
+            return GetModelBuffer(GL, positions, faces, colors);
         }
 
-        public static IndexedBufferArray GetModelBuffer(List<vec3> vectors, List<IndexedFace> faces, List<Color> colors,
+        public static IndexedBufferArray GetModelBuffer(OpenGL GL, List<vec3> vectors, List<IndexedFace> faces, List<Color> colors,
             List<vec4>? preCalcNormals = null, Func<List<Color>, int, float[]>? colorSelector = null)
         {
             var vertices = new List<float>();
@@ -126,23 +127,23 @@ namespace TT_Lab.Util
                 }
             }
 
-            var buffer = new IndexedBufferArray();
+            var buffer = new IndexedBufferArray(GL);
             buffer.Bind();
 
-            var indexBuffer = new IndexBuffer();
+            var indexBuffer = new IndexBuffer(GL);
             indexBuffer.Bind();
             indexBuffer.SetData(indices.ToArray());
             buffer.Indices = indices.ToArray();
 
-            var vertexBuffer = new VertexBuffer();
+            var vertexBuffer = new VertexBuffer(GL);
             vertexBuffer.Bind();
             vertexBuffer.SetData(0, vertices.ToArray(), false, 3);
 
-            var colorBuffer = new VertexBuffer();
+            var colorBuffer = new VertexBuffer(GL);
             colorBuffer.Bind();
             colorBuffer.SetData(1, vertColors.ToArray(), false, 4);
 
-            var normalBuffer = new VertexBuffer();
+            var normalBuffer = new VertexBuffer(GL);
             normalBuffer.Bind();
             normalBuffer.SetData(2, normals.SelectMany(v => v.ToArray()).ToArray(), false, 3);
 
@@ -151,7 +152,7 @@ namespace TT_Lab.Util
             return buffer;
         }
 
-        public static IndexedBufferArray GetLineBuffer(List<vec3> vectors, List<IndexedFace> faces, List<Color> colors)
+        public static IndexedBufferArray GetLineBuffer(OpenGL GL, List<vec3> vectors, List<IndexedFace> faces, List<Color> colors)
         {
             var vertices = new List<float>();
             var vert3s = new List<vec3>();
@@ -199,23 +200,23 @@ namespace TT_Lab.Util
                 normals[i] = normals[i].Normalized;
             }
 
-            var buffer = new IndexedBufferArray();
+            var buffer = new IndexedBufferArray(GL);
             buffer.Bind();
 
-            var indexBuffer = new IndexBuffer();
+            var indexBuffer = new IndexBuffer(GL);
             indexBuffer.Bind();
             indexBuffer.SetData(indices.ToArray());
             buffer.Indices = indices.ToArray();
 
-            var vertexBuffer = new VertexBuffer();
+            var vertexBuffer = new VertexBuffer(GL);
             vertexBuffer.Bind();
             vertexBuffer.SetData(0, vertices.ToArray(), false, 3);
 
-            var colorBuffer = new VertexBuffer();
+            var colorBuffer = new VertexBuffer(GL);
             colorBuffer.Bind();
             colorBuffer.SetData(1, vertColors.ToArray(), false, 4);
 
-            var normalBuffer = new VertexBuffer();
+            var normalBuffer = new VertexBuffer(GL);
             normalBuffer.Bind();
             normalBuffer.SetData(2, normals.SelectMany(v => v.ToArray()).ToArray(), false, 3);
 
@@ -224,7 +225,7 @@ namespace TT_Lab.Util
             return buffer;
         }
 
-        public static IndexedBufferArray GetModelBuffer(List<vec3> vectors, List<IndexedFace> faces, List<Color> colors, List<vec3> uvs,
+        public static IndexedBufferArray GetModelBuffer(OpenGL GL, List<vec3> vectors, List<IndexedFace> faces, List<Color> colors, List<vec3> uvs,
             List<vec4>? normals = null)
         {
             var uvVecs = new List<float>();
@@ -245,10 +246,10 @@ namespace TT_Lab.Util
                 uvVecs.AddRange(vec3.ToArray());
             }
 
-            var bufferArray = GetModelBuffer(vectors, faces, colors, normals);
+            var bufferArray = GetModelBuffer(GL, vectors, faces, colors, normals);
             bufferArray.Bind();
 
-            var uvBuffer = new VertexBuffer();
+            var uvBuffer = new VertexBuffer(GL);
             uvBuffer.Bind();
             uvBuffer.SetData(3, uvVecs.ToArray(), true, 3);
 
@@ -257,7 +258,7 @@ namespace TT_Lab.Util
             return bufferArray;
         }
 
-        public static IndexedBufferArray GetCubeBuffer(vec3 position = default, vec3 scale = default, quat rotation = default, List<Color>? colors = null)
+        public static IndexedBufferArray GetCubeBuffer(OpenGL GL, vec3 position = default, vec3 scale = default, quat rotation = default, List<Color>? colors = null)
         {
             colors ??= new List<Color> { Color.LightGray };
             float[] cubeVertecies = {
@@ -340,15 +341,15 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
-            return GetModelBuffer(vectors, faces, colors);
+            return GetModelBuffer(GL, vectors, faces, colors);
         }
 
-        public static IndexedBufferArray GetCubeBuffer(vec3 position = default, float scale = 1.0f, List<Color>? colors = null)
+        public static IndexedBufferArray GetCubeBuffer(OpenGL GL, vec3 position = default, float scale = 1.0f, List<Color>? colors = null)
         {
-            return GetCubeBuffer(position, new vec3(scale, scale, scale), default, colors);
+            return GetCubeBuffer(GL, position, new vec3(scale, scale, scale), default, colors);
         }
 
-        public static IndexedBufferArray GetCircleBuffer(Color color, float segmentPart = 1.0f, float thickness = 0.1f, int resolution = 16)
+        public static IndexedBufferArray GetCircleBuffer(OpenGL GL, Color color, float segmentPart = 1.0f, float thickness = 0.1f, int resolution = 16)
         {
             var segment = 2 * Math.PI * segmentPart;
             List<vec3> vectors = new List<vec3>();
@@ -374,9 +375,9 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
-            return GetModelBuffer(vectors, faces, new List<Color> { color });
+            return GetModelBuffer(GL, vectors, faces, new List<Color> { color });
         }
-        public static IndexedBufferArray GetLineBuffer(Color color)
+        public static IndexedBufferArray GetLineBuffer(OpenGL GL, Color color)
         {
             List<vec3> vectors = new List<vec3>
             {
@@ -389,10 +390,10 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
-            return GetModelBuffer(vectors, faces, new List<Color> { color });
+            return GetModelBuffer(GL, vectors, faces, new List<Color> { color });
         }
 
-        public static IndexedBufferArray GetSimpleAxisBuffer()
+        public static IndexedBufferArray GetSimpleAxisBuffer(OpenGL GL)
         {
             List<vec3> vectors = new List<vec3>
             {
@@ -417,7 +418,7 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 1, i } });
             }
-            return GetLineBuffer(vectors, faces, colors);
+            return GetLineBuffer(GL, vectors, faces, colors);
         }
     }
 }

@@ -20,14 +20,14 @@ namespace TT_Lab.Libraries
             var vertexAccessor = new uint[meshletAmount.ToUInt32() * maxVertecies.ToUInt32()];
             var trianglesAccessor = new byte[vertexAccessor.Length * meshletAmount.ToUInt32() * 3];
             var meshlets = new Meshoptimizer.Meshopt.Meshlet[meshletAmount];
-            var positionsGl = positions.Select(p => p.Position.ToGL());
+            var positionsGl = positions.Select(p => p.Position.ToGLM());
             var positionsArray = new float[positionsGl.Count() * 3];
             var index = 0;
             foreach (var position in positionsGl)
             {
-                positionsArray[index++] = position.X;
-                positionsArray[index++] = position.Y;
-                positionsArray[index++] = position.Z;
+                positionsArray[index++] = position.x;
+                positionsArray[index++] = position.y;
+                positionsArray[index++] = position.z;
             }
 
             var meshletsBuilt = 0U;

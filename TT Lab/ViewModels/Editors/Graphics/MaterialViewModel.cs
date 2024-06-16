@@ -11,26 +11,25 @@ using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
-    public class MaterialViewModel : ResourceEditorViewModel, IHandle<RendererInitializedMessage>
+    public class MaterialViewModel : ResourceEditorViewModel
     {
-        private readonly IEventAggregator _eventAggregator;
-        private readonly SceneEditorViewModel _materialViewer;
-
         private AppliedShaders _activatedShaders;
         private UInt32 _dmaChainIndex;
         private String _name;
         private BindableCollection<ShaderViewModel> _shaders;
 
-        public MaterialViewModel(IEventAggregator eventAggregator)
+        public MaterialViewModel()
         {
-            _eventAggregator = eventAggregator;
-            _materialViewer = IoC.Get<SceneEditorViewModel>();
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
+
+            InitMaterialViewer();
         }
 
         protected override void Save()
@@ -58,7 +57,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             _shaders = new BindableCollection<ShaderViewModel>();
             foreach (var shader in _matData.Shaders)
             {
-                var shaderViewModel = new ShaderViewModel(_eventAggregator, shader, this);
+                var shaderViewModel = new ShaderViewModel(shader, this);
                 _shaders.Add(shaderViewModel);
             }
             AddShaderCommand = new AddItemToListCommand<ShaderViewModel>(Shaders, 5);
@@ -66,33 +65,35 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             CloneShaderCommand = new CloneItemIntoCollectionCommand<ShaderViewModel>(Shaders, 5);
         }
 
-        public Task HandleAsync(RendererInitializedMessage message, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
         private void InitMaterialViewer()
         {
-            MaterialViewer.Scene?.Delete();
-            MaterialViewer.Scene = new Rendering.Scene(MaterialViewer.GlControl.Context, (float)MaterialViewer.GlControl.ActualWidth, (float)MaterialViewer.GlControl.ActualWidth, Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TwinmaterialPass);
-            MaterialViewer.Scene.SetCameraSpeed(0);
-            MaterialViewer.Scene.DisableCameraManipulation();
-            List<Bitmap> textures = new();
-            for (var i = 0; i < Shaders.Count; ++i)
+            MaterialViewer.SceneCreator = (GLWindow glControl) =>
             {
-                var tex = Shaders[i].TexID;
-                if (tex == LabURI.Empty)
+                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TwinmaterialPass);
+
+                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
+                scene.SetCameraSpeed(0);
+                scene.DisableCameraManipulation();
+
+                List<Bitmap> textures = new();
+                for (var i = 0; i < Shaders.Count; ++i)
                 {
-                    textures.Add(MiscUtils.GetBoatGuy());
+                    var tex = Shaders[i].TexID;
+                    if (tex == LabURI.Empty)
+                    {
+                        textures.Add(MiscUtils.GetBoatGuy());
+                    }
+                    else
+                    {
+                        var texData = AssetManager.Get().GetAssetData<TextureData>(tex);
+                        textures.Add(texData.Bitmap);
+                    }
                 }
-                else
-                {
-                    var texData = AssetManager.Get().GetAssetData<TextureData>(tex);
-                    textures.Add(texData.Bitmap);
-                }
-            }
-            TwinMaterialPlane plane = new(MaterialViewer.Scene, MaterialViewer.Scene.Renderer.RenderProgram, textures.ToArray(), Shaders.ToArray(), Shaders.Count);
-            MaterialViewer.Scene.AddRender(plane);
+                TwinMaterialPlane plane = new(glControl.RenderContext, glControl, scene, glControl.Renderer.RenderProgram, textures.ToArray(), Shaders.ToArray(), Shaders.Count);
+                scene.AddChild(plane);
+
+                return scene;
+            };
         }
 
         public AddItemToListCommand<ShaderViewModel> AddShaderCommand { private set; get; }
@@ -101,7 +102,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         public SceneEditorViewModel MaterialViewer
         {
-            get => _materialViewer;
+            get => Scenes[0];
         }
 
         public AppliedShaders ActivatedShaders

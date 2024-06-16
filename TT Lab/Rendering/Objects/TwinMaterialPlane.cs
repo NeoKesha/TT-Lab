@@ -1,5 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
+using SharpGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,9 +16,9 @@ namespace TT_Lab.Rendering.Objects
         private TwinMaterial[] materialBuffers = new TwinMaterial[5];
         private int texAmt;
 
-        private TwinMaterialPlane(Scene root) : base(root)
+        private TwinMaterialPlane(OpenGL gl, GLWindow window, Scene root) : base(gl, window, root)
         {
-            planeBuffer = BufferGeneration.GetModelBuffer(
+            planeBuffer = BufferGeneration.GetModelBuffer(GL,
                 new List<vec3>
                 {
                     new vec3(1, 1, -1),
@@ -41,13 +41,13 @@ namespace TT_Lab.Rendering.Objects
                 });
         }
 
-        public TwinMaterialPlane(Scene root, ShaderProgram shader, Bitmap[] textures, ShaderViewModel[] viewModels, int texAmt = 1) : this(root)
+        public TwinMaterialPlane(OpenGL gl, GLWindow window, Scene root, ShaderProgram shader, Bitmap[] textures, ShaderViewModel[] viewModels, int texAmt = 1) : this(gl, window, root)
         {
             if (texAmt > 5) texAmt = 5;
             this.texAmt = texAmt;
             for (var i = 0; i < texAmt; ++i)
             {
-                materialBuffers[i] = new TwinMaterial(shader, "Texture", textures[i], viewModels[i], 3 + i, i);
+                materialBuffers[i] = new TwinMaterial(GL, shader, "Texture", textures[i], viewModels[i], 3 + i, i);
             }
         }
 
@@ -57,8 +57,8 @@ namespace TT_Lab.Rendering.Objects
             {
                 materialBuffers[i].Bind();
             }
-            Root?.Renderer.RenderProgram.SetUniform1("Opacity", Opacity);
-            Root?.Renderer.RenderProgram.SetUniform1("TexturesAmount", texAmt);
+            Window.Renderer?.RenderProgram.SetUniform1("Opacity", Opacity);
+            Window.Renderer?.RenderProgram.SetUniform1("TexturesAmount", texAmt);
             planeBuffer.Bind();
         }
 
@@ -74,7 +74,7 @@ namespace TT_Lab.Rendering.Objects
         protected override void RenderSelf(ShaderProgram shader)
         {
             Bind();
-            GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            GL.DrawElements(OpenGL.GL_TRIANGLES, planeBuffer.Indices.Length, OpenGL.GL_UNSIGNED_INT, IntPtr.Zero);
             Unbind();
         }
 

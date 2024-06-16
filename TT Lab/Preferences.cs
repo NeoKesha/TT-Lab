@@ -11,6 +11,9 @@ namespace TT_Lab
     /// </summary>
     public static class Preferences
     {
+        /// <summary>
+        /// This method is static so don't forget to unsubscribe from it anywhere where you subscribe to it otherwise memory leaks will happen
+        /// </summary>
         public static event EventHandler<PreferenceChangedArgs>? PreferenceChanged;
 
         private static readonly Dictionary<string, object> Settings = new();
@@ -46,6 +49,11 @@ namespace TT_Lab
 
         public static void SetPreference<T>(string prefName, T value) where T : class
         {
+            if (Settings[prefName] == value)
+            {
+                return;
+            }
+
             Settings[prefName] = value;
             PreferenceChanged?.Invoke(null, new PreferenceChangedArgs { PreferenceName = prefName });
         }

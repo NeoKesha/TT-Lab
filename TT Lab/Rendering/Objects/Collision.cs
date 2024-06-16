@@ -1,5 +1,5 @@
 ﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
+using SharpGL;
 using System;
 using System.Linq;
 using TT_Lab.AssetData.Instance;
@@ -14,9 +14,9 @@ namespace TT_Lab.Rendering.Objects
     {
         IndexedBufferArray collisionBuffer;
 
-        public Collision(Scene root, CollisionData colData) : base(root)
+        public Collision(OpenGL gl, GLWindow window, Scene root, CollisionData colData) : base(gl, window, root)
         {
-            collisionBuffer = BufferGeneration.GetModelBuffer(
+            collisionBuffer = BufferGeneration.GetModelBuffer(GL,
                 colData.Vectors.Select(v => new vec3(v.X, v.Y, v.Z)).ToList(),
                 colData.Triangles.Select(t => t.Face).ToList(),
                 CollisionSurface.DefaultColors.ToList().Select(c => System.Drawing.Color.FromArgb((int)c.ToARGB())).ToList(),
@@ -50,7 +50,7 @@ namespace TT_Lab.Rendering.Objects
         {
             Bind();
             // Draw collision
-            GL.DrawElements(PrimitiveType.Triangles, collisionBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            GL.DrawElements(OpenGL.GL_TRIANGLES, collisionBuffer.Indices.Length, OpenGL.GL_UNSIGNED_INT, IntPtr.Zero);
             Unbind();
         }
 
