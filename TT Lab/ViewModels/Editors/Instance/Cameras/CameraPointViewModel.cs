@@ -13,6 +13,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
         {
             var cameraPoint = (CameraPoint)cam;
             point = new Vector4ViewModel(cameraPoint.Point);
+            DirtyTracker.AddChild(point);
         }
 
         public override void Save(CameraSubBase? cam)

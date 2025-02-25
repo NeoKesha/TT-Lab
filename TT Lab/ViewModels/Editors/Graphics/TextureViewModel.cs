@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using org.ogre;
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -9,7 +10,7 @@ using System.Windows;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
-using TT_Lab.Project.Messages;
+using TT_Lab.Attributes;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
@@ -37,23 +38,27 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         public TextureViewModel()
         {
             _textureViewer = IoC.Get<SceneEditorViewModel>();
+            _textureViewer.SceneHeaderModel = "Texture viewer";
+            Scenes.Add(_textureViewer);
 
             InitTextureViewer();
         }
 
         protected override void Save()
         {
-            var asset = AssetManager.Get().GetAsset<Texture>(EditableResource);
+            var asset = AssetManager.Get().GetAsset<Assets.Graphics.Texture>(EditableResource);
             var data = (TextureData)asset.GetData();
             data.Bitmap = Texture;
             asset.PixelFormat = PixelStorageFormat;
             asset.TextureFunction = TextureFunction;
             asset.GenerateMipmaps = GenerateMipmaps;
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
-            var asset = AssetManager.Get().GetAsset<Texture>(EditableResource);
+            var asset = AssetManager.Get().GetAsset<Assets.Graphics.Texture>(EditableResource);
             _pixelFormat = asset.PixelFormat;
             _texFun = asset.TextureFunction;
             _generateMipmaps = asset.GenerateMipmaps;
@@ -69,18 +74,22 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitTextureViewer()
         {
-            TextureViewer.SceneCreator = (GLWindow glControl) =>
+            TextureViewer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
 
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0);
-                scene.DisableCameraManipulation();
-
-                var texPlane = new Plane(glControl.RenderContext, glControl, scene, AssetManager.Get().GetAssetData<TextureData>(EditableResource).Bitmap);
-                scene.AddChild(texPlane);
-
-                return scene;
+                var plane = sceneManager.getRootSceneNode().createChildSceneNode();
+                var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
+                Rendering.MaterialManager.CreateOrGetMaterial("DiffuseTexture", out var material);
+                Rendering.MaterialManager.SetupMaterialPlainTexture(material, EditableResource);
+                entity.setMaterial(material);
+                entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                plane.attachObject(entity);
+                plane.scale(0.05f, 0.05f, 1f);
             };
         }
 
@@ -157,6 +166,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             get => _textureViewer;
         }
 
+        [MarkDirty]
         public Bitmap Texture
         {
             get
@@ -165,14 +175,12 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 _texture ??= (Bitmap)asset.GetData<TextureData>().Bitmap.Clone();
                 return _texture;
             }
-            set
-            {
+            set =>
                 //_texture?.Dispose();
                 _texture = (Bitmap)value.Clone();
-                IsDirty = true;
-            }
         }
 
+        [MarkDirty]
         public ITwinTexture.TextureFunction TextureFunction
         {
             get
@@ -184,12 +192,13 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 if (value != _texFun)
                 {
                     _texFun = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public ITwinTexture.TexturePixelFormat PixelStorageFormat
         {
             get
@@ -201,12 +210,13 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 if (value != _pixelFormat)
                 {
                     _pixelFormat = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean GenerateMipmaps
         {
             get
@@ -219,7 +229,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 if (value != _generateMipmaps)
                 {
                     _generateMipmaps = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }

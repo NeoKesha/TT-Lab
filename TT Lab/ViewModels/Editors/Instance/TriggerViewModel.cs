@@ -2,6 +2,7 @@
 using System;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Command;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
@@ -12,10 +13,10 @@ namespace TT_Lab.ViewModels.Editors.Instance
     public class TriggerViewModel : InstanceSectionResourceEditorViewModel
     {
         private Enums.TriggerActivatorObjects _objActivatorMask;
-        private Vector4ViewModel _position;
-        private Vector4ViewModel _rotation;
-        private Vector4ViewModel _scale;
-        private BindableCollection<LabURI> _instances;
+        private Vector4ViewModel _position = new();
+        private Vector4ViewModel _rotation = new();
+        private Vector4ViewModel _scale = new(1, 1, 1, 1);
+        private BindableCollection<PrimitiveWrapperViewModel<LabURI>> _instances = new();
         private UInt32 _header;
         private Single _unkFloat;
         private Enums.Layouts _layId;
@@ -26,23 +27,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
 
         public TriggerViewModel(Enums.Layouts layoutId, TriggerData data)
         {
-            _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
-            _instances = new BindableCollection<LabURI>();
-            foreach (var inst in data.Instances)
-            {
-                _instances.Add(inst);
-            }
-            _position = new Vector4ViewModel(data.Position);
-            _rotation = new Vector4ViewModel(data.Rotation);
-            _scale = new Vector4ViewModel(data.Scale);
-            _header = data.Header;
-            _unkFloat = data.UnkFloat;
-            _triggerMessage1 = data.TriggerMessage1;
-            _triggerMessage2 = data.TriggerMessage2;
-            _triggerMessage3 = data.TriggerMessage3;
-            _triggerMessage4 = data.TriggerMessage4;
-            _layId = layoutId;
-            DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
+            ConstructFromData(layoutId, data);
         }
 
         protected override void Save()
@@ -51,29 +36,15 @@ namespace TT_Lab.ViewModels.Editors.Instance
             asset.LayoutID = (int)LayoutID;
             var data = asset.GetData<TriggerData>();
             Save(data);
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<TriggerData>();
-            _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
-            _instances = new BindableCollection<LabURI>();
-            foreach (var inst in data.Instances)
-            {
-                _instances.Add(inst);
-            }
-            _position = new Vector4ViewModel(data.Position);
-            _rotation = new Vector4ViewModel(data.Rotation);
-            _scale = new Vector4ViewModel(data.Scale);
-            _header = data.Header;
-            _unkFloat = data.UnkFloat;
-            _triggerMessage1 = data.TriggerMessage1;
-            _triggerMessage2 = data.TriggerMessage2;
-            _triggerMessage3 = data.TriggerMessage3;
-            _triggerMessage4 = data.TriggerMessage4;
-            _layId = MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value);
-            DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
+            ConstructFromData(MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID), data);
         }
 
         public void Save(TriggerData data)
@@ -87,7 +58,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             data.Instances.Clear();
             foreach (var inst in Instances)
             {
-                data.Instances.Add(inst);
+                data.Instances.Add(inst.Value);
             }
             data.TriggerMessage1 = TriggerMessage1;
             data.TriggerMessage2 = TriggerMessage2;
@@ -95,8 +66,34 @@ namespace TT_Lab.ViewModels.Editors.Instance
             data.TriggerMessage4 = TriggerMessage4;
         }
 
+        private void ConstructFromData(Enums.Layouts layoutId, TriggerData data)
+        {
+            _objActivatorMask = MiscUtils.ConvertEnum<Enums.TriggerActivatorObjects>(data.ObjectActivatorMask);
+            _instances = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
+            DirtyTracker.AddBindableCollection(_instances);
+            foreach (var inst in data.Instances)
+            {
+                _instances.Add(new PrimitiveWrapperViewModel<LabURI>(inst));
+            }
+            _position = new Vector4ViewModel(data.Position);
+            _rotation = new Vector4ViewModel(data.Rotation);
+            _scale = new Vector4ViewModel(data.Scale);
+            DirtyTracker.AddChild(_position);
+            DirtyTracker.AddChild(_rotation);
+            DirtyTracker.AddChild(_scale);
+            _header = data.Header;
+            _unkFloat = data.UnkFloat;
+            _triggerMessage1 = data.TriggerMessage1;
+            _triggerMessage2 = data.TriggerMessage2;
+            _triggerMessage3 = data.TriggerMessage3;
+            _triggerMessage4 = data.TriggerMessage4;
+            _layId = layoutId;
+            DeleteInstanceFromListCommand = new DeleteItemFromListCommand(_instances);
+        }
+
         public DeleteItemFromListCommand DeleteInstanceFromListCommand { get; private set; }
 
+        [MarkDirty]
         public Enums.Layouts LayoutID
         {
             get => _layId;
@@ -105,12 +102,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (_layId != value)
                 {
                     _layId = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public Enums.TriggerActivatorObjects ObjectActivatorMask
         {
             get => _objActivatorMask;
@@ -119,12 +117,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != _objActivatorMask)
                 {
                     _objActivatorMask = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByPlayableCharacter
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.PlayableCharacter);
@@ -133,13 +132,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByPlayableCharacter)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.PlayableCharacter, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByPickups
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Pickups);
@@ -148,13 +148,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByPickups)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Pickups, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByCrates
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Crates);
@@ -163,13 +164,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByCrates)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Crates, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByCreatures
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Creatures);
@@ -178,13 +180,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByCreatures)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Creatures, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByGenericObjects
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.GenericObjects);
@@ -193,13 +196,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByGenericObjects)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.GenericObjects, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByGrabbables
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Grabbables);
@@ -208,13 +212,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByGrabbables)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Grabbables, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByPayGates
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.PayGates);
@@ -223,13 +228,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByPayGates)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.PayGates, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByGraples
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Graples);
@@ -238,13 +244,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByGraples)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Graples, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean ActivateByProjectiles
         {
             get => _objActivatorMask.HasFlag(Enums.TriggerActivatorObjects.Projectiles);
@@ -253,7 +260,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != ActivateByProjectiles)
                 {
                     _objActivatorMask = _objActivatorMask.ChangeFlag(Enums.TriggerActivatorObjects.Projectiles, value);
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(ObjectActivatorMask));
                 }
@@ -275,11 +282,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
             get => _scale;
         }
 
-        public BindableCollection<LabURI> Instances
+        public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Instances
         {
             get => _instances;
         }
 
+        [MarkDirty]
         public UInt32 Header
         {
             get => _header;
@@ -288,12 +296,17 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != _header)
                 {
                     _header = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
+                    NotifyOfPropertyChange(nameof(TriggerArgument1Enabled));
+                    NotifyOfPropertyChange(nameof(TriggerArgument2Enabled));
+                    NotifyOfPropertyChange(nameof(TriggerArgument3Enabled));
+                    NotifyOfPropertyChange(nameof(TriggerArgument4Enabled));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean TriggerArgument1Enabled
         {
             get => (_header >> 0xB & 0x1) != 0;
@@ -310,13 +323,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                         var mask = ~(1 << 0xB);
                         _header &= (UInt32)mask;
                     }
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(Header));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean TriggerArgument2Enabled
         {
             get => (_header >> 0x8 & 0x1) != 0;
@@ -333,13 +347,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                         var mask = ~(1 << 0x8);
                         _header &= (UInt32)mask;
                     }
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(Header));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean TriggerArgument3Enabled
         {
             get => (_header >> 0x9 & 0x1) != 0;
@@ -356,13 +371,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                         var mask = ~(1 << 0x9);
                         _header &= (UInt32)mask;
                     }
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(Header));
                 }
             }
         }
 
+        [MarkDirty]
         public Boolean TriggerArgument4Enabled
         {
             get => (_header >> 0xA & 0x1) != 0;
@@ -379,13 +395,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
                         var mask = ~(1 << 0xA);
                         _header &= (UInt32)mask;
                     }
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(nameof(Header));
                 }
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat
         {
             get => _unkFloat;
@@ -394,12 +411,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != _unkFloat)
                 {
                     _unkFloat = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 TriggerMessage1
         {
             get => _triggerMessage1;
@@ -408,12 +426,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != _triggerMessage1)
                 {
                     _triggerMessage1 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 TriggerMessage2
         {
             get => _triggerMessage2;
@@ -422,12 +441,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != _triggerMessage2)
                 {
                     _triggerMessage2 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 TriggerMessage3
         {
             get => _triggerMessage3;
@@ -436,12 +456,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != _triggerMessage3)
                 {
                     _triggerMessage3 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 TriggerMessage4
         {
             get => _triggerMessage4;
@@ -450,7 +471,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (value != _triggerMessage4)
                 {
                     _triggerMessage4 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }

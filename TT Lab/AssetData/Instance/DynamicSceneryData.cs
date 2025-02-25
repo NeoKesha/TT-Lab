@@ -5,12 +5,14 @@ using System.IO;
 using TT_Lab.AssetData.Instance.DynamicScenery;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance
 {
+    [ReferencesAssets]
     public class DynamicSceneryData : AbstractAssetData
     {
         public DynamicSceneryData()

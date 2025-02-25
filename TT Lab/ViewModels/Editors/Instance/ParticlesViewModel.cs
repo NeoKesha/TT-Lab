@@ -8,6 +8,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
 {
     public class ParticlesViewModel : InstanceSectionResourceEditorViewModel
     {
+        public ParticlesViewModel()
+        {
+            DirtyTracker.AddBindableCollection(ParticleTypes);
+            DirtyTracker.AddBindableCollection(ParticleInstances);
+        }
+        
         protected override void Save()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
@@ -26,12 +32,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 inst.Save(i);
                 data.ParticleEmitters.Add(i);
             }
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
-            ParticleTypes = new BindableCollection<ParticleTypeViewModel>();
-            ParticleInstances = new BindableCollection<ParticleInstanceViewModel>();
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<ParticleData>();
             foreach (var type in data.ParticleSystems)
@@ -47,13 +53,11 @@ namespace TT_Lab.ViewModels.Editors.Instance
         public BindableCollection<ParticleTypeViewModel> ParticleTypes
         {
             get;
-            private set;
-        }
+        } = new();
 
         public BindableCollection<ParticleInstanceViewModel> ParticleInstances
         {
             get;
-            private set;
-        }
+        } = new();
     }
 }

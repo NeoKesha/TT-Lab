@@ -961,6 +961,61 @@
     <!--Simple TreeViewItem ToggleButton - + and - button to expand and collapse a TreeViewItem -->
     <Style x:Key="SimpleTreeViewItemToggleButton" d:IsControlPart="True" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}"/>
 
+    <Style x:Key="ExpandCollapseToggleStyle"
+       TargetType="ToggleButton">
+        <Setter Property="Focusable"
+          Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Width="15"
+              Height="13"
+              Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                 Storyboard.TargetName="Collapsed">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                            Value="{x:Static Visibility.Hidden}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                 Storyboard.TargetName="Expanded">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                            Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked" />
+                                <VisualState x:Name="Indeterminate" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Path x:Name="Collapsed"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="1,1,1,1"
+                Data="M 4 0 L 8 4 L 4 8 Z">
+                            <Path.Fill>
+                                <SolidColorBrush Color="Black" />
+                            </Path.Fill>
+                        </Path>
+                        <Path x:Name="Expanded"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="1,1,1,1"
+                Data="M 0 4 L 8 4 L 4 8 Z"
+                Visibility="Hidden">
+                            <Path.Fill>
+                                <SolidColorBrush Color="Black" />
+                            </Path.Fill>
+                        </Path>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--Simple TreeViewItem - The TreeViewItem template has a header which shows the Item and a Body which is an ItemsHost control which expands to show child items-->
     <Style x:Key="SimpleTreeViewItem" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
         <Setter Property="Background" Value="Transparent"/>
@@ -980,7 +1035,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <ToggleButton x:Name="Expander" Style="{DynamicResource SimpleTreeViewItemToggleButton}" IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
+                        <ToggleButton x:Name="Expander" Style="{DynamicResource ExpandCollapseToggleStyle}" IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
                         <Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"/>
                         </Border>

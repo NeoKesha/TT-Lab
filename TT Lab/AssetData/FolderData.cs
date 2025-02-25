@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData
 {
+    [ReferencesAssets]
     public class FolderData : AbstractAssetData
     {
         [JsonProperty(Required = Required.AllowNull)]

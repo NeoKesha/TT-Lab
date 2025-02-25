@@ -6,13 +6,13 @@
              xmlns:local="clr-namespace:TT_Lab.Controls"
              mc:Ignorable="d" 
              HorizontalAlignment="Left" VerticalAlignment="Top">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Label x:Name="TextBoxLabel" Content="Label" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
-        <local:BaseTextBox x:Name="TextContainer" Text="{Binding DisplayText, Mode=TwoWay, ElementName=LabeledTextBoxControl, UpdateSourceTrigger=PropertyChanged}" Margin="0" Grid.Row="1" TextWrapping="NoWrap" VerticalAlignment="Top" UndoPerformed="BaseTextBox_UndoPerformed" RedoPerformed="BaseTextBox_RedoPerformed" TextChanged="TextContainer_TextChanged"/>
-
-    </Grid>
+    <StackPanel Orientation="Vertical">
+        <Label Content="{Binding TextBoxName, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
+        <local:BaseTextBox
+            Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            Margin="0"
+            TextWrapping="NoWrap"
+            VerticalAlignment="Top"
+            IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+    </StackPanel>
 </UserControl>

@@ -9,6 +9,7 @@ using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 
@@ -20,35 +21,36 @@ namespace TT_Lab.Project
         private readonly object _treeLock = new();
 
         private IProject? _openedProject;
-        private CommandManager _commandManager = new();
-        private BindableCollection<MenuItem> _recentMenus = new();
+        private readonly CommandManager _commandManager = new();
+        private OgreWindowManager _ogreWindowManager;
+        private readonly BindableCollection<MenuItem> _recentMenus = new();
         private BindableCollection<ResourceTreeElementViewModel> _projectTree = new();
-        private BindableCollection<ResourceTreeElementViewModel> _internalTree = new();
+        private readonly BindableCollection<ResourceTreeElementViewModel> _internalTree = new();
         private bool _workableProject = false;
         private string _searchAsset = "";
 
 
-        public ProjectManager(IEventAggregator eventAggregator)
+        public ProjectManager(IEventAggregator eventAggregator, OgreWindowManager windowManager)
         {
             BindingOperations.EnableCollectionSynchronization(_projectTree, _treeLock);
             _eventAggregator = eventAggregator;
+            _ogreWindowManager = windowManager;
 
             var recents = Properties.Settings.Default.RecentProjects;
-            if (recents != null)
+            if (recents == null)
             {
-                for (var i = 0; i < recents.Count; ++i)
-                {
-                    _recentMenus.Add(GenerateRecentMenu(recents[i]!));
-                }
+                return;
+            }
+            
+            foreach (var recent in recents)
+            {
+                _recentMenus.Add(GenerateRecentMenu(recent!));
             }
         }
 
         public IProject? OpenedProject
         {
-            get
-            {
-                return _openedProject;
-            }
+            get => _openedProject;
             set
             {
                 _openedProject = value;
@@ -58,10 +60,7 @@ namespace TT_Lab.Project
 
         public bool WorkableProject
         {
-            get
-            {
-                return _workableProject;
-            }
+            get => _workableProject;
             set
             {
                 if (value != _workableProject)
@@ -74,10 +73,7 @@ namespace TT_Lab.Project
 
         public String SearchAsset
         {
-            get
-            {
-                return _searchAsset;
-            }
+            get => _searchAsset;
             set
             {
                 if (value != _searchAsset)
@@ -164,52 +160,19 @@ namespace TT_Lab.Project
 
         public BindableCollection<ResourceTreeElementViewModel> ProjectTree
         {
-            get
-            {
-                return _projectTree;
-            }
-            private set
-            {
-                _projectTree = value;
-            }
+            get => _projectTree;
+            private set => _projectTree = value;
         }
 
-        public bool ProjectOpened
-        {
-            get
-            {
-                return OpenedProject != null;
-            }
-        }
+        public bool ProjectOpened => OpenedProject != null;
 
-        public BindableCollection<ResourceTreeElementViewModel> FullProjectTree
-        {
-            get => _internalTree;
-        }
+        public BindableCollection<ResourceTreeElementViewModel> FullProjectTree => _internalTree;
 
-        public string ProjectTitle
-        {
-            get
-            {
-                return OpenedProject != null ? $"TT Lab - {OpenedProject.Name}" : "TT Lab";
-            }
-        }
+        public string ProjectTitle => OpenedProject != null ? $"TT Lab - {OpenedProject.Name}" : "TT Lab";
 
-        public BindableCollection<MenuItem> RecentlyOpened
-        {
-            get
-            {
-                return _recentMenus;
-            }
-        }
+        public BindableCollection<MenuItem> RecentlyOpened => _recentMenus;
 
-        public bool HasRecents
-        {
-            get
-            {
-                return RecentlyOpened.Count != 0;
-            }
-        }
+        public bool HasRecents => RecentlyOpened.Count != 0;
 
         public void CreateProject(string name, string path, string? discContentPathPS2, string? discContentPathXbox)
         {
@@ -217,9 +180,9 @@ namespace TT_Lab.Project
             DateTime projCreateStart = DateTime.Now;
             var ps2ContentProvided = false;
             var xboxContentProvided = false;
-            if (discContentPathPS2 != null && discContentPathPS2.Length != 0)
+            if (!string.IsNullOrEmpty(discContentPathPS2))
             {
-                var ps2DiscFiles = Directory.GetFiles(discContentPathPS2).Select(s => Path.GetFileName(s)).ToArray();
+                var ps2DiscFiles = Directory.GetFiles(discContentPathPS2).Select(Path.GetFileName).ToArray();
                 // Check for PS2 required root disc files
                 if (!ps2DiscFiles.Contains("System.cnf"))
                 {
@@ -227,9 +190,9 @@ namespace TT_Lab.Project
                 }
                 ps2ContentProvided = true;
             }
-            if (discContentPathXbox != null && discContentPathXbox.Length != 0)
+            if (!string.IsNullOrEmpty(discContentPathXbox))
             {
-                var xboxDiscFiles = Directory.GetFiles(discContentPathXbox).Select(s => Path.GetFileName(s)).ToArray();
+                var xboxDiscFiles = Directory.GetFiles(discContentPathXbox).Select(Path.GetFileName).ToArray();
                 // Check for XBOX required root disc files
                 if (!xboxDiscFiles.Contains("default.xbe"))
                 {
@@ -283,7 +246,11 @@ namespace TT_Lab.Project
                 Log.WriteLine("Building project tree...");
                 BuildProjectTree();
 
-                AddRecentlyOpened(OpenedProject.ProjectPath);
+                Execute.OnUIThread(() =>
+                {
+                    AddRecentlyOpened(OpenedProject.ProjectPath);
+                });
+                
                 WorkableProject = true;
                 _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
                 _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
@@ -340,6 +307,7 @@ namespace TT_Lab.Project
                     WorkableProject = true;
                     _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
                     _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
+                    _ogreWindowManager.AddResourceLocation(OpenedProject!.ProjectPath);
                     GC.Collect();
 #if !DEBUG
                         }
@@ -374,6 +342,11 @@ namespace TT_Lab.Project
 
         public void CloseProject()
         {
+            if (OpenedProject != null)
+            {
+                _ogreWindowManager.RemoveResourceLocation($"{OpenedProject.ProjectPath}/assets");
+            }
+            
             OpenedProject = null;
             WorkableProject = false;
             ProjectTree.Clear();

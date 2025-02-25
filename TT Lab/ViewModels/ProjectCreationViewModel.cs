@@ -42,29 +42,11 @@ namespace TT_Lab.ViewModels
             _discContentIsCurrentValidMap.Add(nameof(XboxDiscContentPath), IsXboxDiscContentPathValid);
         }
 
-        public ICommand SetProjectPathCommand
-        {
-            get
-            {
-                return new SelectFolderCommand(null, this, nameof(ProjectPath));
-            }
-        }
+        public ICommand SetProjectPathCommand => new SelectFolderCommand(null, this, nameof(ProjectPath));
 
-        public ICommand SetPS2DiscContentPathCommand
-        {
-            get
-            {
-                return new SelectFolderCommand(null, this, nameof(PS2DiscContentPath));
-            }
-        }
+        public ICommand SetPS2DiscContentPathCommand => new SelectFolderCommand(null, this, nameof(PS2DiscContentPath));
 
-        public ICommand SetXboxDiscContentPathCommand
-        {
-            get
-            {
-                return new SelectFolderCommand(null, this, nameof(XboxDiscContentPath));
-            }
-        }
+        public ICommand SetXboxDiscContentPathCommand => new SelectFolderCommand(null, this, nameof(XboxDiscContentPath));
 
         public Task Create()
         {
@@ -77,7 +59,7 @@ namespace TT_Lab.ViewModels
                 _projectManager.CloseProject();
             }
             _projectManager.CreateProject(ProjectName, ProjectPath, PS2DiscContentPath, XboxDiscContentPath);
-            return TryCloseAsync();
+
 #if !DEBUG
             }
             catch (Exception ex)
@@ -85,6 +67,7 @@ namespace TT_Lab.ViewModels
                 Log.WriteLine($"Error creating project: {ex.Message}");
             }
 #endif
+            return TryCloseAsync();
         }
 
         public Boolean IsProjectNameValid(String projectName)
@@ -218,20 +201,11 @@ namespace TT_Lab.ViewModels
             return errorList;
         }
 
-        public bool CanCreate
-        {
-            get
-            {
-                return !HasErrors;
-            }
-        }
+        public bool CanCreate => !HasErrors;
 
         public string ProjectName
         {
-            get
-            {
-                return _projectName;
-            }
+            get => _projectName;
             set
             {
                 IsProjectNameValid(value);
@@ -243,10 +217,7 @@ namespace TT_Lab.ViewModels
 
         public string ProjectPath
         {
-            get
-            {
-                return _projectPath;
-            }
+            get => _projectPath;
             set
             {
                 if (IsProjectPathValid(value) && _projectPath != value)
@@ -261,10 +232,7 @@ namespace TT_Lab.ViewModels
 
         public string PS2DiscContentPath
         {
-            get
-            {
-                return _ps2DiscContentPath;
-            }
+            get => _ps2DiscContentPath;
             set
             {
                 if (IsDiscContentPathValid(nameof(XboxDiscContentPath), value) && _ps2DiscContentPath != value)
@@ -279,10 +247,7 @@ namespace TT_Lab.ViewModels
 
         public string XboxDiscContentPath
         {
-            get
-            {
-                return _xboxDiscContentPath;
-            }
+            get => _xboxDiscContentPath;
             set
             {
                 if (IsDiscContentPathValid(nameof(PS2DiscContentPath), value) && _xboxDiscContentPath != value)

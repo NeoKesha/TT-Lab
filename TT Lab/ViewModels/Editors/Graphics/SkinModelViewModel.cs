@@ -1,12 +1,14 @@
 ﻿using Caliburn.Micro;
+using org.ogre;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
-using TT_Lab.Project.Messages;
+using TT_Lab.Assets.Graphics;
 using TT_Lab.Rendering;
+using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Objects;
+using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
@@ -14,6 +16,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
     {
         private Int32 _selectedMaterial;
         private String _materialName;
+        private ModelBuffer? _skin;
 
         private enum SceneIndex : int
         {
@@ -26,6 +29,8 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
             _materialName = "NO MATERIAL";
+            SceneRenderer.SceneHeaderModel = "Skin viewer";
+            MaterialViewer.SceneHeaderModel = "Material viewer";
 
             InitMaterialViewer();
             InitSceneRenderer();
@@ -33,38 +38,38 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitSceneRenderer()
         {
-            SceneRenderer.SceneCreator = (GLWindow glControl) =>
+            SceneRenderer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
 
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0.2f);
-
-                var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
-                Skin model = new(glControl.RenderContext, glControl, scene, rm);
-                scene.AddChild(model);
-
-                return scene;
+                var skin = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
+                _skin = new ModelBuffer(sceneManager, EditableResource, skin);
             };
         }
 
         private void InitMaterialViewer()
         {
-            MaterialViewer.SceneCreator = (GLWindow glControl) =>
+            MaterialViewer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
-
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0);
-                scene.DisableCameraManipulation();
-
-                var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
-                var matData = AssetManager.Get().GetAsset(rm.SubSkins[_selectedMaterial].Material).GetData<MaterialData>();
-                MaterialName = matData.Name;
-                var texPlane = new Plane(glControl.RenderContext, glControl, scene, matData);
-                scene.AddChild(texPlane);
-
-                return scene;
+                // var sceneManager = glControl.GetSceneManager();
+                // var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                // pivot.setPosition(0, 0, 0);
+                // glControl.SetCameraTarget(pivot);
+                // glControl.SetCameraStyle(org.ogre.CameraStyle.CS_ORBIT);
+                //
+                // var sphereNode = sceneManager.getRootSceneNode().createChildSceneNode();
+                // var entity = sceneManager.createEntity(SceneManager.PT_SPHERE);
+                // var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
+                // var materialName = AssetManager.Get().GetAsset(rm.SubSkins[_selectedMaterial].Material).Name;
+                // MaterialName = materialName;
+                // var materialData = AssetManager.Get().GetAssetData<MaterialData>(rm.SubSkins[_selectedMaterial].Material);
+                // var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(materialData);
+                // entity.setMaterial(material.Item2);
+                // sphereNode.attachObject(entity);
+                // sphereNode.scale(0.1f, 0.1f, 0.1f);
             };
         }
 
@@ -86,7 +91,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             {
                 _selectedMaterial = rm.SubSkins.Count - 1;
             }
-            InitMaterialViewer();
+            MaterialViewer.ResetScene();
         }
 
         public void NextMatButton()
@@ -97,7 +102,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             {
                 _selectedMaterial = 0;
             }
-            InitMaterialViewer();
+            MaterialViewer.ResetScene();
         }
 
         public SceneEditorViewModel SceneRenderer

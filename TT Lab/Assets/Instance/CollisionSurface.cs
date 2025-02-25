@@ -44,6 +44,7 @@ namespace TT_Lab.Assets.Instance
         public static Color DefaultColor = new Color(127, 127, 127);
 
         public override UInt32 Section => Constants.LAYOUT_SURFACES_SECTION;
+        public override String IconPath => "Collision_Surface.png";
 
         public CollisionSurface(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinSurface surface) : base(package, id, name, chunk, layId)
         {

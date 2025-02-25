@@ -5,12 +5,14 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using org.ogre;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Command;
-using TT_Lab.Project.Messages;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
@@ -23,77 +25,117 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         private AppliedShaders _activatedShaders;
         private UInt32 _dmaChainIndex;
         private String _name;
-        private BindableCollection<ShaderViewModel> _shaders;
+        private readonly BindableCollection<ShaderViewModel> _shaders = new();
+        private ShaderViewModel _selectedShader;
 
         public MaterialViewModel()
         {
+            DirtyTracker.AddBindableCollection(Shaders);
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
-
+            MaterialViewer.SceneHeaderModel = "Material viewer";
             InitMaterialViewer();
+        }
+
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
+        {
+            foreach (var shaderViewModel in _shaders)
+            {
+                DeactivateItemAsync(shaderViewModel, close, cancellationToken);
+            }
+            
+            return base.OnDeactivateAsync(close, cancellationToken);
+        }
+
+        public void Save(ref MaterialData data)
+        {
+            data.ActivatedShaders = ActivatedShaders;
+            data.DmaChainIndex = DmaChainIndex;
+            data.Name = Name;
+            data.Shaders.Clear();
+            foreach (var svm in Shaders)
+            {
+                var shader = new LabShader();
+                svm.Save(shader);
+                data.Shaders.Add(shader);
+            }
+        }
+
+        public void Copy(ref MaterialData data)
+        {
+            data.ActivatedShaders = ActivatedShaders;
+            data.DmaChainIndex = DmaChainIndex;
+            data.Name = Name;
+            data.Shaders.Clear();
+            foreach (var svm in Shaders)
+            {
+                var shader = new LabShader();
+                svm.Copy(shader);
+                data.Shaders.Add(shader);
+            }
         }
 
         protected override void Save()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<MaterialData>();
-            data.ActivatedShaders = ActivatedShaders;
-            data.DmaChainIndex = DmaChainIndex;
-            data.Name = Name;
-            data.Shaders.Clear();
-            for (var i = 0; i < Shaders.Count; ++i)
-            {
-                var shader = new LabShader(Shaders[i]);
-                data.Shaders.Add(shader);
-            }
+            Save(ref data);
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
-            var _matData = asset.GetData<MaterialData>();
-            _activatedShaders = _matData.ActivatedShaders;
-            _dmaChainIndex = _matData.DmaChainIndex;
-            _name = _matData.Name[..];
-            _shaders = new BindableCollection<ShaderViewModel>();
-            foreach (var shader in _matData.Shaders)
+            var matData = asset.GetData<MaterialData>();
+            _activatedShaders = matData.ActivatedShaders;
+            _dmaChainIndex = matData.DmaChainIndex;
+            _name = new String(matData.Name.AsSpan()[..]);
+            _shaders.Clear();
+            foreach (var shaderViewModel in matData.Shaders.Select(shader => new ShaderViewModel(shader, this)))
             {
-                var shaderViewModel = new ShaderViewModel(shader, this);
                 _shaders.Add(shaderViewModel);
+                Items.Add(shaderViewModel);
             }
-            AddShaderCommand = new AddItemToListCommand<ShaderViewModel>(Shaders, 5);
+
+            AddShaderCommand = new AddItemToListCommand<ShaderViewModel>(Shaders, () => new ShaderViewModel(new LabShader(), this), 5);
             DeleteShaderCommand = new DeleteItemFromListCommand(Shaders);
             CloneShaderCommand = new CloneItemIntoCollectionCommand<ShaderViewModel>(Shaders, 5);
+            CurrentSelectedShader = _shaders[0];
+            
+            PropertyChanged += (sender, args) =>
+            {
+                MaterialViewer.ResetScene();
+            };
         }
 
         private void InitMaterialViewer()
         {
-            MaterialViewer.SceneCreator = (GLWindow glControl) =>
+            MaterialViewer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TwinmaterialPass);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
 
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0);
-                scene.DisableCameraManipulation();
-
-                List<Bitmap> textures = new();
-                for (var i = 0; i < Shaders.Count; ++i)
-                {
-                    var tex = Shaders[i].TexID;
-                    if (tex == LabURI.Empty)
-                    {
-                        textures.Add(MiscUtils.GetBoatGuy());
-                    }
-                    else
-                    {
-                        var texData = AssetManager.Get().GetAssetData<TextureData>(tex);
-                        textures.Add(texData.Bitmap);
-                    }
-                }
-                TwinMaterialPlane plane = new(glControl.RenderContext, glControl, scene, glControl.Renderer.RenderProgram, textures.ToArray(), Shaders.ToArray(), Shaders.Count);
-                scene.AddChild(plane);
-
-                return scene;
+                var plane = sceneManager.getRootSceneNode().createChildSceneNode();
+                var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
+                var asset = AssetManager.Get().GetAsset(EditableResource);
+                var matData = asset.GetData<MaterialData>();
+                var material = TwinMaterialGenerator.GenerateMaterialFromViewModel(this, default, true);
+                entity.setMaterial(material.Item2);
+                entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                plane.attachObject(entity);
+                plane.scale(0.05f, 0.05f, 1f);
             };
+        }
+
+        public void ChangeShaderSettings(RoutedPropertyChangedEventArgs<Object> args)
+        {
+            DeactivateItemAsync(CurrentSelectedShader, false);
+            CurrentSelectedShader = (ShaderViewModel)args.NewValue;
+            DeleteShaderCommand.Index = Shaders.IndexOf(CurrentSelectedShader);
+            CloneShaderCommand.Item = CurrentSelectedShader;
         }
 
         public AddItemToListCommand<ShaderViewModel> AddShaderCommand { private set; get; }
@@ -105,19 +147,36 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             get => Scenes[0];
         }
 
-        public AppliedShaders ActivatedShaders
+        public ShaderViewModel CurrentSelectedShader
         {
-            get => _activatedShaders;
+            get => _selectedShader;
             set
             {
-                if (value != _activatedShaders)
+                if (_selectedShader != value)
                 {
-                    _activatedShaders = value;
-                    IsDirty = true;
+                    _selectedShader = value;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+
+        [MarkDirty]
+        public AppliedShaders ActivatedShaders
+        {
+            get => _activatedShaders;
+            private set
+            {
+                if (value != _activatedShaders)
+                {
+                    _activatedShaders = value;
+                    
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+        
+        [MarkDirty]
         public UInt32 DmaChainIndex
         {
             get => _dmaChainIndex;
@@ -126,11 +185,13 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 if (value != _dmaChainIndex)
                 {
                     _dmaChainIndex = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        
+        [MarkDirty]
         public String Name
         {
             get => _name;
@@ -139,17 +200,12 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 if (value != _name)
                 {
                     _name = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
-        public BindableCollection<ShaderViewModel> Shaders
-        {
-            get => _shaders;
-        }
-
-        public static BindableCollection<MenuItem> TreeContextMenu { get; private set; }
+        public BindableCollection<ShaderViewModel> Shaders => _shaders;
     }
 }

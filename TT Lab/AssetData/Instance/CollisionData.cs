@@ -12,6 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
 namespace TT_Lab.AssetData.Instance
 {
+    // TODO: Add [ReferencesAssets] attribute
     public class CollisionData : AbstractAssetData
     {
         public CollisionData()

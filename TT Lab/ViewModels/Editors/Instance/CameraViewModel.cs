@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Editors.Instance.Cameras;
@@ -106,6 +107,8 @@ namespace TT_Lab.ViewModels.Editors.Instance
             {
                 data.MainCamera2 = null;
             }
+            
+            base.Save();
         }
 
         public override void LoadData()
@@ -113,11 +116,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<CameraData>();
             trigger = new TriggerViewModel(MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value), data.Trigger);
+            DirtyTracker.AddChild(trigger);
             cameraHeader = data.CameraHeader;
             unkShort = data.UnkShort;
             unkFloat1 = data.UnkFloat1;
             unkVector1 = new Vector4ViewModel(data.UnkVector1);
             unkVector2 = new Vector4ViewModel(data.UnkVector2);
+            DirtyTracker.AddChild(unkVector1);
+            DirtyTracker.AddChild(unkVector2);
             ActivateItemAsync(unkVector1);
             ActivateItemAsync(unkVector2);
             unkFloat2 = data.UnkFloat2;
@@ -140,11 +146,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
             {
                 mainCamera1 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera1.GetCameraType()], data.MainCamera1)!;
                 ActivateItemAsync(mainCamera1);
+                DirtyTracker.AddChild(mainCamera1);
             }
             if (data.MainCamera2 != null && subIdToCamVM.ContainsKey(data.MainCamera2.GetCameraType()))
             {
                 mainCamera2 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera2.GetCameraType()], data.MainCamera2)!;
                 ActivateItemAsync(mainCamera2);
+                DirtyTracker.AddChild(mainCamera2);
             }
         }
 
@@ -153,6 +161,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             get => trigger;
         }
 
+        [MarkDirty]
         public UInt32 CameraHeader
         {
             get => cameraHeader;
@@ -161,12 +170,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (cameraHeader != value)
                 {
                     cameraHeader = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkShort
         {
             get => unkShort;
@@ -175,12 +185,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkShort != value)
                 {
                     unkShort = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat1
         {
             get => unkFloat1;
@@ -189,7 +200,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat1 != value)
                 {
                     unkFloat1 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
@@ -205,6 +216,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             get => unkVector2;
         }
 
+        [MarkDirty]
         public Single UnkFloat2
         {
             get => unkFloat2;
@@ -213,12 +225,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat2 != value)
                 {
                     unkFloat2 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat3
         {
             get => unkFloat3;
@@ -227,11 +240,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat3 != value)
                 {
                     unkFloat3 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt1
         {
             get => unkInt1;
@@ -240,11 +254,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt1 != value)
                 {
                     unkInt1 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt2
         {
             get => unkInt2;
@@ -253,11 +268,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt2 != value)
                 {
                     unkInt2 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt3
         {
             get => unkInt3;
@@ -266,11 +282,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt3 != value)
                 {
                     unkInt3 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt4
         {
             get => unkInt4;
@@ -279,11 +296,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt4 != value)
                 {
                     unkInt4 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt5
         {
             get => unkInt5;
@@ -292,11 +310,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt5 != value)
                 {
                     unkInt5 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt6
         {
             get => unkInt6;
@@ -305,11 +324,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt6 != value)
                 {
                     unkInt6 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public Single UnkFloat4
         {
             get => unkFloat4;
@@ -318,11 +338,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat4 != value)
                 {
                     unkFloat4 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public Single UnkFloat5
         {
             get => unkFloat5;
@@ -331,11 +352,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat5 != value)
                 {
                     unkFloat5 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public Single UnkFloat6
         {
             get => unkFloat6;
@@ -344,11 +366,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat6 != value)
                 {
                     unkFloat6 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public Single UnkFloat7
         {
             get => unkFloat7;
@@ -357,11 +380,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat7 != value)
                 {
                     unkFloat7 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt7
         {
             get => unkInt7;
@@ -370,11 +394,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt7 != value)
                 {
                     unkInt7 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public UInt32 UnkInt8
         {
             get => unkInt8;
@@ -383,11 +408,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkInt8 != value)
                 {
                     unkInt8 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public Single UnkFloat8
         {
             get => unkFloat8;
@@ -396,12 +422,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkFloat8 != value)
                 {
                     unkFloat8 = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
-
+        [MarkDirty]
         public Byte UnkByte
         {
             get => unkByte;
@@ -410,7 +436,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (unkByte != value)
                 {
                     unkByte = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }

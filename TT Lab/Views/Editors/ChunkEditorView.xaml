@@ -42,12 +42,15 @@
                 </i:Interaction.Triggers>
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        <TextBlock Style="{DynamicResource TextBlockTreeViewStyle}" Text="{Binding Alias}"/>
+                        <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
+                            <Image Source="{Binding IconPath}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="24" Height="24" Margin="0,0,3,0" Stretch="Uniform"/>
+                            <TextBlock Style="{DynamicResource TextBlockTreeViewStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Alias}"/>
+                        </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-        <ContentControl x:Name="SceneEditor"/>
+        <ContentControl x:Name="SceneEditor" Grid.Column="2" Grid.RowSpan="3"/>
         <GridSplitter Background="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Top" Height="5" ResizeBehavior="PreviousAndNext"/>
         <GroupBox x:Name="ItemEditorContainer" Header="Item editor" Margin="0" Grid.Row="2">
             <ScrollViewer Style="{DynamicResource AdonisScrollViewer}" x:Name="EditorScroll" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">

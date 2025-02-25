@@ -7,6 +7,7 @@ using System.Linq;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using TT_Lab.Extensions;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -19,6 +20,7 @@ namespace TT_Lab.AssetData.Graphics
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
     using VERTEX_BUILDER = VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
 
+    [ReferencesAssets]
     public class BlendSkinData : AbstractAssetData
     {
         public BlendSkinData()

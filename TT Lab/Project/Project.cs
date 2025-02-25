@@ -39,8 +39,6 @@ namespace TT_Lab.Project
     {
         private const string CURRENT_VERSION = "0.2.0";
 
-        private string _version = CURRENT_VERSION;
-
         public AssetManager AssetManager { get; private set; }
 
         public Folder Packages { get; private set; }
@@ -67,15 +65,9 @@ namespace TT_Lab.Project
 
         public DateTime LastModified { get; set; }
 
-        public string Version { get => _version; private set => _version = value; }
+        public string Version { get; private set; } = CURRENT_VERSION;
 
-        public string ProjectPath
-        {
-            get
-            {
-                return System.IO.Path.Combine(Path, Name);
-            }
-        }
+        public string ProjectPath => System.IO.Path.Combine(Path, Name);
 
         public Project()
         {
@@ -121,7 +113,7 @@ namespace TT_Lab.Project
             DateTime startAsset = DateTime.Now;
             foreach (var group in query)
             {
-                if (group.Key.Name == typeof(BlendSkin).Name || group.Key.Name == typeof(Skin).Name)
+                if (group.Key.Name is nameof(BlendSkin) or nameof(Skin))
                     continue;
                 tasks[index++] = Task.Factory.StartNew(() =>
                 {
@@ -231,11 +223,11 @@ namespace TT_Lab.Project
             {
                 asset.Value.PostDeserialize();
             }
-            pr.BasePackage = (Package)assets.Values.Where((a) => a.Name == pr.Name).First();
-            pr.GlobalPackagePS2 = (Package)assets.Values.Where((a) => a.Name == "Global PS2").First();
-            pr.GlobalPackageXbox = (Package)assets.Values.Where((a) => a.Name == "Global XBOX").First();
-            pr.Ps2Package = (Package)assets.Values.Where((a) => a.Name == "PS2").First();
-            pr.XboxPackage = (Package)assets.Values.Where((a) => a.Name == "XBOX").First();
+            pr.BasePackage = (Package)assets.Values.First(a => a.Name == pr.Name);
+            pr.GlobalPackagePS2 = (Package)assets.Values.First(a => a.Name == "Global PS2");
+            pr.GlobalPackageXbox = (Package)assets.Values.First(a => a.Name == "Global XBOX");
+            pr.Ps2Package = (Package)assets.Values.First(a => a.Name == "PS2");
+            pr.XboxPackage = (Package)assets.Values.First(a => a.Name == "XBOX");
         }
 
         public void CreateBasePackages()
@@ -268,7 +260,7 @@ namespace TT_Lab.Project
 
         public void UnpackAssetsPS2()
         {
-            if (DiscContentPathPS2 == null || DiscContentPathPS2.Length == 0)
+            if (string.IsNullOrEmpty(DiscContentPathPS2))
             {
                 Log.WriteLine("No PS2 assets provided, skipped...");
                 return;
@@ -626,8 +618,6 @@ namespace TT_Lab.Project
                     var graphics = chunk.GetItem<PS2AnyGraphicsSection>(graphicsSectionID);
                     ReadSectionItems<Texture, PS2AnyTexturesSection, PS2AnyTexture>
                         (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_TEXTURES_SECTION, texturesFolder);
-                    ReadSectionItems<Skydome, PS2AnySkydomesSection, PS2AnySkydome>
-                        (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_SKYDOMES_SECTION, skydomesFolder);
                     ReadSectionItems<Material, PS2AnyMaterialsSection, PS2AnyMaterial>
                         (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_MATERIALS_SECTION, materialsFolder);
                     ReadSectionItems<Model, PS2AnyModelsSection, PS2AnyModel>
@@ -638,10 +628,12 @@ namespace TT_Lab.Project
                         (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_SKINS_SECTION, skinsFolder);
                     ReadSectionItems<BlendSkin, PS2AnyBlendSkinsSection, PS2AnyBlendSkin>
                         (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_BLEND_SKINS_SECTION, blendSkinsFolder);
-                    ReadSectionItems<LodModel, PS2AnyLODsSection, PS2AnyLOD>
-                        (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_LODS_SECTION, lodsFolder);
                     ReadSectionItems<Mesh, PS2AnyMeshesSection, PS2AnyMesh>
                         (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_MESHES_SECTION, meshesFolder);
+                    ReadSectionItems<LodModel, PS2AnyLODsSection, PS2AnyLOD>
+                        (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_LODS_SECTION, lodsFolder);
+                    ReadSectionItems<Skydome, PS2AnySkydomesSection, PS2AnySkydome>
+                        (assets, graphics, chunkPath, graphicsCheck, Constants.GRAPHICS_SKYDOMES_SECTION, skydomesFolder);
 
                     // Read code stuff
                     var code = chunk.GetItem<PS2AnyCodeSection>(Constants.LEVEL_CODE_SECTION);
@@ -676,7 +668,7 @@ namespace TT_Lab.Project
                                 behaviourChecker.Add(asset.GetHash(), asset.GetID());
                             }
                             // If hash was unique but Twinsanity's ID wasn't then we will mark it with a variant which is gonna be chunk's name
-                            var needVariant = behaviourChecker.Values.Where(e => e == asset.GetID()).Count() > 1 || isDefault;
+                            var needVariant = behaviourChecker.Values.Count(e => e == asset.GetID()) > 1 || isDefault;
                             var isHeader = asset.GetID() % 2 == 0;
                             var type = isHeader ? typeof(BehaviourStarter) : typeof(BehaviourGraph);
                             if (needVariant)
@@ -856,11 +848,12 @@ namespace TT_Lab.Project
 
         public void UnpackAssetsXbox()
         {
-            if (DiscContentPathXbox == null || DiscContentPathXbox.Length == 0)
+            if (string.IsNullOrEmpty(DiscContentPathXbox))
             {
                 Log.WriteLine("No XBox assets provided, skipped...");
                 return;
             }
+            
             throw new NotImplementedException();
         }
 
@@ -975,7 +968,7 @@ namespace TT_Lab.Project
         private void ResolveGlobalAssets(ITwinItemFactory factory, List<LabURI> assets, ref UInt32 totalGlobals, ref UInt32 currentGlobalsCount)
         {
             var assetManager = AssetManager.Get();
-            totalGlobals += (UInt32)assets.Select(assetManager.GetAsset).Where(a => a is not Folder).Count();
+            totalGlobals += (UInt32)assets.Select(assetManager.GetAsset).Count(a => a is not Folder);
             foreach (var item in assets)
             {
                 var folder = assetManager.GetAsset(item);
@@ -997,7 +990,7 @@ namespace TT_Lab.Project
         private void ResolveAndWriteChunks(ITwinItemFactory factory, FolderData currentFolder, ref UInt32 scenesTotal, ref UInt32 currentSceneCount)
         {
             var assetManager = AssetManager.Get();
-            scenesTotal += (UInt32)currentFolder.Children.Select(assetManager.GetAsset).Where(a => a is ChunkFolder).Count();
+            scenesTotal += (UInt32)currentFolder.Children.Select(assetManager.GetAsset).Count(a => a is ChunkFolder);
             foreach (var item in currentFolder.Children)
             {
                 var folder = assetManager.GetAsset(item);
@@ -1068,7 +1061,8 @@ namespace TT_Lab.Project
                 var checker = globalCheck[secId];
                 var hasHash = checker.ContainsKey(asset.GetHash());
                 var isDefault = chunkName.ToLower().Contains("default");
-                if (hasHash && !isDefault)
+                // LODS suck because their hashes can easily collide
+                if (hasHash && !isDefault && secId != Constants.GRAPHICS_LODS_SECTION)
                 {
                     if (!checker.ContainsValue(asset.GetID()))
                     {
@@ -1082,7 +1076,7 @@ namespace TT_Lab.Project
                 }
 
                 // If hash was unique but Twinsanity's ID wasn't then we will mark it with a variant which is gonna be chunk's name
-                var needVariant = checker.Values.Where(e => e == asset.GetID()).Count() > 1 || isDefault;
+                var needVariant = checker.Values.Count(e => e == asset.GetID()) > 1 || isDefault || secId == Constants.GRAPHICS_LODS_SECTION;
                 if (needVariant)
                 {
                     //Log.WriteLine($"Found duplicate Twinsanity ID for {typeof(T).Name} {asset.GetName()} in chunk {chunkName}");

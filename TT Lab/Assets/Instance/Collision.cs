@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Instance
     public class Collision : SerializableInstance
     {
         public override UInt32 Section => Constants.LEVEL_COLLISION_ITEM;
+        public override String IconPath => "Collision.png";
 
         public Collision()
         {

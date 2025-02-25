@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Global;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Global
 {
+    [ReferencesAssets]
     public class FontData : AbstractAssetData
     {
         public FontData()

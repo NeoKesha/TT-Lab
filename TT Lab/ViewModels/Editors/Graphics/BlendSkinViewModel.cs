@@ -1,11 +1,12 @@
 ﻿using Caliburn.Micro;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
+using org.ogre;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
-using TT_Lab.Project.Messages;
 using TT_Lab.Rendering;
+using TT_Lab.Rendering.Objects;
+using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
@@ -22,6 +23,9 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             _materialName = "NO MATERIAL";
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
+
+            SceneRenderer.SceneHeaderModel = "Blend skin viewer";
+            MaterialViewer.SceneHeaderModel = "Material viewer";
 
             InitMaterialViewer();
             InitSceneRenderer();
@@ -45,7 +49,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             {
                 _selectedMaterial = blendSkinData.Blends.Count - 1;
             }
-            InitMaterialViewer();
+            MaterialViewer.ResetScene();
         }
 
         public void NextMatButton()
@@ -56,42 +60,55 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             {
                 _selectedMaterial = 0;
             }
-            InitMaterialViewer();
+            MaterialViewer.ResetScene();
         }
 
         private void InitSceneRenderer()
         {
-            SceneRenderer.SceneCreator = (GLWindow glControl) =>
+            SceneRenderer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0.2f);
-
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.EnableImgui(true);
+                
                 var blendSkinData = AssetManager.Get().GetAssetData<BlendSkinData>(EditableResource);
-                blendSkin = new(glControl.RenderContext, glControl, scene, blendSkinData);
-                scene.AddChild(blendSkin);
+                blendSkin = new BlendSkin(sceneManager, EditableResource, blendSkinData);
 
-                return scene;
+                glControl.OnRender += (sender, args) =>
+                {
+                    ImGui.Begin("Blend Skin");
+                    ImGui.SetWindowPos(new ImVec2(5, 5));
+                    ImGui.Text($"Vertexes: {blendSkinData.Blends.Sum(b => b.Models.Sum(sb => sb.Vertexes.Count))}");
+                    ImGui.Text($"Faces: {blendSkinData.Blends.Sum(b => b.Models.Sum(sb => sb.Faces.Count))}");
+                    ImGui.Text($"Morphs: {blendSkinData.BlendsAmount}");
+                    ImGui.End();
+                };
             };
         }
 
         private void InitMaterialViewer()
         {
-            MaterialViewer.SceneCreator = (GLWindow glControl) =>
+            MaterialViewer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
-
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0);
-                scene.DisableCameraManipulation();
-
-                var blendSkinData = AssetManager.Get().GetAssetData<BlendSkinData>(EditableResource);
-                var matData = AssetManager.Get().GetAsset(blendSkinData.Blends[_selectedMaterial].Material).GetData<MaterialData>();
-                MaterialName = matData.Name;
-                var texPlane = new Rendering.Objects.Plane(glControl.RenderContext, glControl, scene, matData);
-                scene.AddChild(texPlane);
-
-                return scene;
+                // var sceneManager = glControl.GetSceneManager();
+                // var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                // pivot.setPosition(0, 0, 0);
+                // glControl.SetCameraTarget(pivot);
+                // glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
+                //
+                // var sphereNode = sceneManager.getRootSceneNode().createChildSceneNode();
+                // var entity = sceneManager.createEntity(SceneManager.PT_SPHERE);
+                // var blend = AssetManager.Get().GetAssetData<BlendSkinData>(EditableResource);
+                // var materialName = AssetManager.Get().GetAsset(blend.Blends[_selectedMaterial].Material).Name;
+                // MaterialName = materialName;
+                // var materialData = AssetManager.Get().GetAssetData<MaterialData>(blend.Blends[_selectedMaterial].Material);
+                // var hasTexture = materialData.Shaders.Any(s => s.TxtMapping == TwinShader.TextureMapping.ON);
+                // var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(materialData);
+                // entity.setMaterial(material.Item2);
+                // sphereNode.attachObject(entity);
+                // sphereNode.scale(0.1f, 0.1f, 0.1f);
             };
         }
 

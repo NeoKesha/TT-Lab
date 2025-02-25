@@ -12,6 +12,7 @@ namespace TT_Lab.Assets.Code
     {
         protected override String DataExt => ".lab";
         public override UInt32 Section => Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION;
+        public override String IconPath => "Command_Sequence.png";
 
         [JsonProperty(Required = Required.Always)]
         public Dictionary<UInt32, LabURI> BehaviourGraphLinks = new();

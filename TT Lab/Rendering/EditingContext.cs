@@ -1,6 +1,9 @@
 ﻿using GlmSharp;
-using SharpGL;
+using org.ogre;
+using TT_Lab.AssetData.Instance;
+using TT_Lab.Extensions;
 using TT_Lab.Rendering.Objects;
+using TT_Lab.Rendering.Objects.SceneInstances;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors;
 
@@ -8,287 +11,341 @@ namespace TT_Lab.Rendering
 {
     public class EditingContext
     {
-        public SceneInstance? selectedInstance;
-        public BaseRenderable? selectedRenderable;
-        public TransformSpace transformSpace = TransformSpace.LOCAL;
-        public TransformMode transformMode = TransformMode.SELECTION;
-        public TransformAxis transformAxis = TransformAxis.NONE;
-        private EditorCursor cursor;
-        private SceneInstance[] palette = new SceneInstance[9];
-        private int currentPaletteIndex = 0;
-        private Scene root;
-        private ChunkEditorViewModel editor;
-        private Gizmo gizmo;
-        private vec3 gridStep = new vec3();
-        private mat4 gridRotation = new mat4();
-        private GLWindow window;
+        public SceneInstance? SelectedInstance;
+        public MovableObject? SelectedRenderable;
+        public TransformMode TransformMode = TransformMode.SELECTION;
+        public TransformAxis TransformAxis = TransformAxis.NONE;
+        
+        private readonly EditorCursor _cursor;
+        private readonly SceneInstance?[] _palette = new SceneInstance[9];
+        private readonly BillboardSet _positionsBillboards;
+        private readonly BillboardSet _triggersBillboards;
+        private readonly BillboardSet _camerasBillboards;
+        private readonly BillboardSet _instancesBillboards;
+        private int _currentPaletteIndex = 0;
+        private readonly ChunkEditorViewModel _editor;
+        private readonly SceneNode _editCtxNode;
+        private readonly Gizmo _gizmo;
+        private vec3 _gridStep;
+        private mat4 _gridRotation;
+        private readonly SceneManager _sceneManager;
+        private readonly OgreWindow _renderWindow;
 
-        public EditingContext(OpenGL gl, GLWindow window, Scene root, ChunkEditorViewModel editor)
+        public EditingContext(OgreWindow renderWindow, SceneManager sceneManager, ChunkEditorViewModel editor)
         {
-            this.window = window;
-            this.root = root;
-            this.editor = editor;
+            _editor = editor;
+            _renderWindow = renderWindow;
+            _sceneManager = sceneManager;
+            _editCtxNode = sceneManager.getRootSceneNode().createChildSceneNode("EditorContextNode");
+            _cursor = new EditorCursor(this);
+            _gizmo = new Gizmo(sceneManager, this);
+            _positionsBillboards = sceneManager.createBillboardSet("PositionsBillboards");
+            _positionsBillboards.setMaterial(MaterialManager.GetMaterial("BillboardPositions"));
+            _positionsBillboards.setDefaultDimensions(2, 2);
+            _positionsBillboards.setCullIndividually(true);
+            _positionsBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
+            // Set the bounding box to be huge, because otherwise the node itself gets culled out and all billboards stop rendering
+            _positionsBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
+            
+            _triggersBillboards = sceneManager.createBillboardSet("TriggersBillboards");
+            _triggersBillboards.setMaterial(MaterialManager.GetMaterial("BillboardTriggers"));
+            _triggersBillboards.setDefaultDimensions(2, 2);
+            _triggersBillboards.setCullIndividually(true);
+            _triggersBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
+            _triggersBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
+            
+            _camerasBillboards = sceneManager.createBillboardSet("CamerasBillboards");
+            _camerasBillboards.setMaterial(MaterialManager.GetMaterial("BillboardCameras"));
+            _camerasBillboards.setDefaultDimensions(2, 2);
+            _camerasBillboards.setCullIndividually(true);
+            _camerasBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
+            _camerasBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
+            
+            _instancesBillboards = sceneManager.createBillboardSet("InstancesBillboards");
+            _instancesBillboards.setMaterial(MaterialManager.GetMaterial("BillboardInstances"));
+            _instancesBillboards.setDefaultDimensions(2, 2);
+            _instancesBillboards.setCullIndividually(true);
+            _instancesBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
+            _instancesBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
+            
+            // var positionsNode = _editCtxNode.createChildSceneNode("Positions");
+            // positionsNode.attachObject(_positionsBillboards);
+            // var triggersNode = _editCtxNode.createChildSceneNode("Triggers");
+            // triggersNode.attachObject(_triggersBillboards);
 
-            window.DeferToRender(() =>
+            _renderWindow.OnRender += (sender, args) =>
             {
-                cursor = new EditorCursor(gl, window, root);
-                root.AddChild(cursor);
-                gizmo = new Gizmo(gl, window, root, this);
-            });
+                if (SelectedInstance == null)
+                {
+                    return;
+                }
+
+                SelectedInstance.GetRenderable().DrawImGui();
+            };
+        }
+
+        public SceneNode GetEditorNode()
+        {
+            return _editCtxNode;
+        }
+
+        public Entity CreateEntity(MeshPtr mesh)
+        {
+            return _sceneManager.createEntity(mesh);
+        }
+
+        public MovableObject GetPositionBillboards()
+        {
+            return _positionsBillboards;
+        }
+
+        public MovableObject GetInstancesBillboards()
+        {
+            return _instancesBillboards;
+        }
+
+        public MovableObject GetTriggersBillboards()
+        {
+            return _triggersBillboards;
+        }
+
+        public MovableObject GetCamerasBillboards()
+        {
+            return _camerasBillboards;
+        }
+
+        public Billboard CreatePositionBillboard()
+        {
+            return _positionsBillboards.createBillboard(0, 0, 0);
+        }
+
+        public Billboard CreateTriggerBillboard()
+        {
+            return _triggersBillboards.createBillboard(0, 0, 0);
+        }
+
+        public Billboard CreateInstanceBillboard()
+        {
+            return _instancesBillboards.createBillboard(0, 0, 0);
+        }
+
+        public Billboard CreateCameraBillboard()
+        {
+            return _camerasBillboards.createBillboard(0, 0, 0);
         }
 
         public void Deselect()
         {
-            window.DeferToRender(() =>
-            {
-                selectedInstance?.Deselect();
-                selectedInstance?.GetRenderable().RemoveChild(gizmo);
-                selectedInstance = null;
-                selectedRenderable = null;
-            });
+            _renderWindow.SetCameraStyle(CameraStyle.CS_FREELOOK);
+            SelectedInstance?.Deselect();
+            SelectedInstance = null;
+            SelectedRenderable = null;
+            _gizmo.HideGizmo();
         }
 
         public void Select(SceneInstance instance)
         {
-            window.DeferToRender(() =>
+            Deselect();
+            SelectedInstance = instance;
+            SelectedInstance?.Select();
+            SelectedRenderable = SelectedInstance?.GetRenderable();
+            
+            if (SelectedInstance != null)
             {
-                Deselect();
-                selectedInstance = instance;
-                selectedInstance?.Select();
-                selectedRenderable = selectedInstance?.GetRenderable();
-                selectedRenderable?.AddChild(gizmo);
-            });
+                _renderWindow.SetCameraTarget(SelectedInstance.GetRenderable().GetSceneNode());
+                _renderWindow.SetCameraStyle(CameraStyle.CS_ORBIT);
+
+                _gizmo.DetachFromCurrentObject();
+                _gizmo.SwitchGizmo((Gizmo.GizmoType)(int)TransformMode);
+                _gizmo.AttachToObject(SelectedInstance.GetRenderable().GetSceneNode());
+            }
         }
 
         public void SetGrid()
         {
-            window.DeferToRender(() =>
+            if (SelectedInstance == null)
             {
-                if (selectedInstance == null)
-                {
-                    return;
-                }
-                gridStep.x = selectedInstance.GetSize().x;
-                gridStep.y = selectedInstance.GetSize().y;
-                gridStep.z = selectedInstance.GetSize().z;
-                gridRotation = selectedRenderable.LocalTransform.ToQuaternion.ToMat4;
-                SetCursorCoordinates(selectedInstance.GetPosition());
-            });
+                return;
+            }
+            
+            _gridStep.x = SelectedInstance.GetSize().x;
+            _gridStep.y = SelectedInstance.GetSize().y;
+            _gridStep.z = SelectedInstance.GetSize().z;
+            _gridRotation = (new quat(SelectedInstance.GetRotation())).ToMat4;
+            SetCursorCoordinates(SelectedInstance.GetPosition());
         }
 
         public void MoveCursorGrid(vec3 offset)
         {
-            window.DeferToRender(() =>
-            {
-                var cursorPos = cursor.GetPosition();
-                cursorPos += (gridRotation * new vec4(offset * gridStep, 1.0f)).xyz;
-                SetCursorCoordinates(cursorPos);
-            });
+            var cursorPos = _cursor.GetPosition();
+            cursorPos += (_gridRotation * new vec4(offset * _gridStep, 1.0f)).xyz;
+            SetCursorCoordinates(cursorPos);
         }
 
         public bool IsInstanceSelected()
         {
-            return selectedInstance != null;
+            return SelectedInstance != null;
         }
 
         public void SetCursorCoordinates(vec3 pos)
         {
-            window.DeferToRender(() =>
-            {
-                cursor.SetPosition(pos);
-            });
+            _cursor.SetPosition(pos);
         }
 
         public void SetPalette(SceneInstance instance)
         {
-            window.DeferToRender(() =>
-            {
-                palette[currentPaletteIndex] = instance;
-            });
+            _palette[_currentPaletteIndex] = instance;
         }
 
         public void SpawnAtCursor()
         {
-            window.DeferToRender(() =>
+            if (_palette[_currentPaletteIndex] == null)
             {
-                if (palette[currentPaletteIndex] == null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                var newInstanceData = CloneUtils.Clone(palette[currentPaletteIndex].GetData());
-                var cursorPosition = cursor.GetPosition();
-                newInstanceData.Position = new Twinsanity.TwinsanityInterchange.Common.Vector4(-cursorPosition.x, cursorPosition.y, cursorPosition.z, 1.0f);
-                var newInstance = editor.NewSceneInstance(newInstanceData);
-                Select(newInstance);
-                transformMode = TransformMode.ROTATE;
-                transformAxis = TransformAxis.NONE;
-            });
+            var newInstanceData = CloneUtils.Clone(_palette[_currentPaletteIndex]!.GetData<ObjectInstanceData>());
+            var cursorPosition = _cursor.GetPosition();
+            newInstanceData.Position = new Twinsanity.TwinsanityInterchange.Common.Vector4(-cursorPosition.x, cursorPosition.y, cursorPosition.z, 1.0f);
+            var newInstance = _editor.NewSceneInstance(newInstanceData);
+            Select(newInstance);
+            TransformMode = TransformMode.ROTATE;
+            TransformAxis = TransformAxis.NONE;
         }
 
         public void StartTransform(float x, float y)
         {
-            window.DeferToRender(() =>
+            if (SelectedInstance == null)
             {
-                if (selectedInstance == null)
-                {
-                    transforming = false;
-                    return;
-                }
-                if (transforming)
-                {
-                    return;
-                }
-                startPos = new vec2(x, y);
-                startTransform = selectedRenderable.LocalTransform;
-                transforming = true;
-            });
+                transforming = false;
+                return;
+            }
+            if (transforming)
+            {
+                return;
+            }
+            startPos = new vec2(x, y);
+            transforming = true;
         }
 
         public void EndTransform(float x, float y)
         {
-            window.DeferToRender(() =>
+            if (SelectedInstance == null)
             {
-                if (selectedInstance == null)
-                {
-                    transforming = false;
-                    return;
-                }
-                if (!transforming)
-                {
-                    return;
-                }
-                UpdateTransform(x, y);
                 transforming = false;
-                var data = selectedInstance.GetData();
-                var pos = selectedRenderable.WorldTransform.Column3.xyz;
-                var rot = selectedRenderable.WorldTransform.ToQuaternion.EulerAngles * 180.0f / 3.14f;
-                data.Position.X = -pos.x;
-                data.Position.Y = pos.y;
-                data.Position.Z = pos.z;
-                data.RotationX.SetRotation((float)rot.x);
-                data.RotationY.SetRotation((float)rot.y);
-                data.RotationZ.SetRotation((float)rot.z);
-            });
+                return;
+            }
+            if (!transforming)
+            {
+                return;
+            }
+            UpdateTransform(x, y);
+            transforming = false;
+            var pos = SelectedRenderable!.getParentSceneNode().getPosition();
+            var renderQuat = SelectedRenderable.getParentSceneNode().getOrientation();
+            var glmQuat = new quat(renderQuat.x, renderQuat.y, renderQuat.z, renderQuat.w);
+            var rot = glmQuat.EulerAngles * 180.0f / 3.14f;
+            SelectedInstance.SetPositionRotation(new vec3(pos.x, pos.y, pos.z), rot);
         }
 
         public void UpdateTransform(float x, float y)
         {
-            window.DeferToRender(() =>
+            if (SelectedInstance == null || !transforming)
             {
-                if (selectedInstance == null || !transforming)
-                {
-                    return;
-                }
-                endPos = new vec2(x, y);
-                var delta = (endPos.x - startPos.x) + (startPos.y - endPos.y);
+                return;
+            }
+            
+            endPos = new vec2(x, y);
+            var delta = (endPos.x - startPos.x) + (startPos.y - endPos.y);
 
-                if (transformMode == TransformMode.TRANSLATE)
+            if (TransformMode == TransformMode.TRANSLATE)
+            {
+                var k = 0.05f;
+                var axis = new vec3();
+                if (TransformAxis == TransformAxis.X)
                 {
-                    var k = 0.05f;
-                    var axis = new vec3();
-                    if (transformAxis == TransformAxis.X)
-                    {
-                        axis.x = 1.0f;
-                    }
-                    else if (transformAxis == TransformAxis.Y)
-                    {
-                        axis.y = 1.0f;
-                    }
-                    else if (transformAxis == TransformAxis.Z)
-                    {
-                        axis.z = 1.0f;
-                    }
-                    Translate(axis * k * delta);
+                    axis.x = 1.0f;
                 }
-                if (transformMode == TransformMode.ROTATE)
+                else if (TransformAxis == TransformAxis.Y)
                 {
-                    var k = 0.2f;
-                    if (transformAxis == TransformAxis.X)
-                    {
-                        RotateX(k * delta);
-                    }
-                    else if (transformAxis == TransformAxis.Y)
-                    {
-                        RotateY(k * delta);
-                    }
-                    else if (transformAxis == TransformAxis.Z)
-                    {
-                        RotateZ(k * delta);
-                    }
+                    axis.y = 1.0f;
                 }
-            });
+                else if (TransformAxis == TransformAxis.Z)
+                {
+                    axis.z = 1.0f;
+                }
+                Translate(axis * k * delta);
+            }
+            if (TransformMode == TransformMode.ROTATE)
+            {
+                var k = 0.2f;
+                if (TransformAxis == TransformAxis.X)
+                {
+                    RotateX(k * delta);
+                }
+                else if (TransformAxis == TransformAxis.Y)
+                {
+                    RotateY(k * delta);
+                }
+                else if (TransformAxis == TransformAxis.Z)
+                {
+                    RotateZ(k * delta);
+                }
+            }
         }
 
         public void ToggleTranslate()
         {
-            window.DeferToRender(() =>
+            if (transforming)
             {
-                if (transforming)
-                {
-                    return;
-                }
-                if (transformMode != TransformMode.TRANSLATE)
-                {
-                    transformMode = TransformMode.TRANSLATE;
-                }
-                else
-                {
-                    transformMode = TransformMode.SELECTION;
-                }
-                transformAxis = TransformAxis.NONE;
-            });
+                return;
+            }
+            
+            if (TransformMode != TransformMode.TRANSLATE)
+            {
+                TransformMode = TransformMode.TRANSLATE;
+            }
+            else
+            {
+                TransformMode = TransformMode.SELECTION;
+            }
+            TransformAxis = TransformAxis.NONE;
+            _gizmo.SwitchGizmo((Gizmo.GizmoType)(int)TransformMode);
         }
 
         public void ToggleRotate()
         {
-            window.DeferToRender(() =>
+            if (transforming)
             {
-                if (transforming)
-                {
-                    return;
-                }
-                if (transformMode != TransformMode.ROTATE)
-                {
-                    transformMode = TransformMode.ROTATE;
-                }
-                else
-                {
-                    transformMode = TransformMode.SELECTION;
-                }
-                transformAxis = TransformAxis.NONE;
-            });
+                return;
+            }
+            if (TransformMode != TransformMode.ROTATE)
+            {
+                TransformMode = TransformMode.ROTATE;
+            }
+            else
+            {
+                TransformMode = TransformMode.SELECTION;
+            }
+            TransformAxis = TransformAxis.NONE;
+            _gizmo.SwitchGizmo((Gizmo.GizmoType)(int)TransformMode);
         }
 
         public void SetTransformAxis(TransformAxis axis)
         {
-            window.DeferToRender(() =>
+            if (TransformAxis == axis)
             {
-                if (transformAxis == axis)
-                {
-                    transformAxis = TransformAxis.NONE;
-                }
-                else
-                {
-                    transformAxis = axis;
-                }
-                if (transforming)
-                {
-                    UpdateTransform(endPos.x, endPos.y);
-                }
-            });
-        }
-
-        public void ToggleSpace()
-        {
-            window.DeferToRender(() =>
+                TransformAxis = TransformAxis.NONE;
+            }
+            else
             {
-                transformSpace = transformSpace == TransformSpace.WORLD ? TransformSpace.LOCAL : TransformSpace.WORLD;
-                if (transforming)
-                {
-                    UpdateTransform(endPos.x, endPos.y);
-                }
-            });
+                TransformAxis = axis;
+            }
+            _gizmo.HighlightAxis(TransformAxis);
+            if (transforming)
+            {
+                UpdateTransform(endPos.x, endPos.y);
+            }
         }
 
         private mat4 startTransform;
@@ -299,69 +356,23 @@ namespace TT_Lab.Rendering
         //TODO: must affect InstanceData too
         private void Translate(vec3 offset)
         {
-            if (transformSpace == TransformSpace.LOCAL)
-            {
-                selectedRenderable.LocalTransform = startTransform * mat4.Translate(offset);
-            }
-            else
-            {
-                selectedRenderable.LocalTransform = mat4.Translate(offset) * startTransform;
-            }
+            SelectedRenderable.getParentSceneNode().translate(offset.x, offset.y, offset.z);
         }
 
         private void RotateX(float value)
         {
-            if (transformSpace == TransformSpace.LOCAL)
-            {
-                selectedRenderable.LocalTransform = startTransform * mat4.RotateX(value * 3.14f / 180.0f);
-            }
-            else
-            {
-                selectedRenderable.LocalTransform = startTransform;
-                var localRotation = startTransform.ToQuaternion.ToMat4;
-                selectedInstance.GetRenderable().LocalTransform *= localRotation.Inverse;
-                selectedInstance.GetRenderable().LocalTransform *= mat4.RotateX(value * 3.14f / 180.0f);
-                selectedInstance.GetRenderable().LocalTransform *= localRotation;
-            }
+            SelectedRenderable.getParentSceneNode().pitch(new Radian(new Degree(value)));
         }
 
         private void RotateY(float value)
         {
-            if (transformSpace == TransformSpace.LOCAL)
-            {
-                selectedRenderable.LocalTransform = startTransform * mat4.RotateY(value * 3.14f / 180.0f);
-            }
-            else
-            {
-                selectedRenderable.LocalTransform = startTransform;
-                var localRotation = startTransform.ToQuaternion.ToMat4;
-                selectedRenderable.LocalTransform *= localRotation.Inverse;
-                selectedRenderable.LocalTransform *= mat4.RotateY(value * 3.14f / 180.0f);
-                selectedRenderable.LocalTransform *= localRotation;
-            }
+            SelectedRenderable.getParentSceneNode().yaw(new Radian(new Degree(value)));
         }
 
         private void RotateZ(float value)
         {
-            if (transformSpace == TransformSpace.LOCAL)
-            {
-                selectedRenderable.LocalTransform = startTransform * mat4.RotateZ(value * 3.14f / 180.0f);
-            }
-            else
-            {
-                selectedRenderable.LocalTransform = startTransform;
-                var localRotation = startTransform.ToQuaternion.ToMat4;
-                selectedRenderable.LocalTransform *= localRotation.Inverse;
-                selectedRenderable.LocalTransform *= mat4.RotateZ(value * 3.14f / 180.0f);
-                selectedRenderable.LocalTransform *= localRotation;
-            }
+            SelectedRenderable.getParentSceneNode().roll(new Radian(new Degree(value)));
         }
-    }
-
-    public enum TransformSpace
-    {
-        WORLD,
-        LOCAL
     }
 
     public enum TransformMode

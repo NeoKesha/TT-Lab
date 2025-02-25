@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class Path : SerializableInstance
     {
         public override UInt32 Section => Constants.LAYOUT_PATHS_SECTION;
+        public override String IconPath => "Path.png";
 
         public Path(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinPath path) : base(package, id, name, chunk, layId)
         {

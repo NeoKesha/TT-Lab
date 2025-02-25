@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using TT_Lab.Project.Messages.Inputs;
+using TT_Lab.ViewModels.Editors;
 
 namespace TT_Lab.Util
 {
@@ -12,9 +13,10 @@ namespace TT_Lab.Util
         public bool Ctrl { get => leftCtrl | rightCtrl; }
         public bool Alt { get => leftAlt | rightAlt; }
 
-        public InputController(IEventAggregator eventAggregator)
+        public InputController(SceneEditorViewModel sceneEditor)
         {
-            this.eventAggregator = eventAggregator;
+            sceneEditor.OnKeyPressed += HandleKeyDown;
+            sceneEditor.OnKeyPressedUp += HandleKeyUp;
         }
 
         public bool IsKeyPressed(Key key)
@@ -28,7 +30,6 @@ namespace TT_Lab.Util
             if (pressedKeys.Contains(key))
             {
                 KeyReleased(key);
-                eventAggregator.PublishOnUIThreadAsync(new KeyboardPressedMessage(e));
                 pressedKeys.Remove(key);
             }
         }
@@ -39,7 +40,6 @@ namespace TT_Lab.Util
             if (!pressedKeys.Contains(key))
             {
                 KeyPressed(key);
-                eventAggregator.PublishOnUIThreadAsync(new KeyboardReleasedMessage(e));
                 pressedKeys.Add(key);
             }
         }
@@ -72,6 +72,5 @@ namespace TT_Lab.Util
         private bool rightAlt = false;
 
         private readonly List<Key> pressedKeys = new();
-        private readonly IEventAggregator eventAggregator;
     }
 }

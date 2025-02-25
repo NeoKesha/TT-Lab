@@ -25,32 +25,16 @@ namespace TT_Lab.ViewModels.Composite
             return ActivateItemAsync(editor, cancellationToken);
         }
 
-        protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
-        {
-            if (close)
-            {
-                //ActiveItem.SaveChanges();
-            }
-
-            return base.OnDeactivateAsync(close, cancellationToken);
-        }
-
         public LabURI EditableResource
         {
             get => _editableResource;
-            set
-            {
-                _editableResource = value;
-            }
+            set => _editableResource = value;
         }
 
         public Type EditorType
         {
             get => _editorType;
-            set
-            {
-                _editorType = value;
-            }
+            set => _editorType = value;
         }
     }
 }

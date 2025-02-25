@@ -3,22 +3,24 @@ using System;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using org.ogre;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
-using TT_Lab.Project.Messages;
+using TT_Lab.Attributes;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
-using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Interfaces;
 using Twinsanity.TwinsanityInterchange.Common;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
+using Vector4 = Twinsanity.TwinsanityInterchange.Common.Vector4;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
-    public class ShaderViewModel : Conductor<IScreen>.Collection.AllActive, IHaveParentEditor<MaterialViewModel>
+    public class ShaderViewModel : Conductor<IScreen>.Collection.AllActive, IHaveParentEditor<MaterialViewModel>, ISaveableViewModel<LabShader>, IHaveChildrenEditors
     {
         private SceneEditorViewModel _textureViewer;
 
@@ -53,27 +55,35 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         private UInt16 _lodParamL;
         private LabURI _texID;
         private Byte _unkVal1;
-        private Byte _unkVal2;
-        private Byte _unkVal3;
+        private XScrollFormula _xScrollSettings;
+        private YScrollFormula _yScrollSettings;
         private Boolean _unkFlag1;
         private Boolean _unkFlag2;
         private Boolean _unkFlag3;
         private Vector4ViewModel _unkVec1;
         private Vector4ViewModel _unkVec2;
-        private Vector4ViewModel _unkVec3;
+        private Vector4ViewModel _uvScrollSpeed;
+        private bool isDirty;
+        private DirtyTracker dirtyTracker;
 
         public ShaderViewModel(MaterialViewModel materialEditor)
         {
+            dirtyTracker = new DirtyTracker(this);
             ParentEditor = materialEditor;
-
+            
             Type = TwinShader.Type.StandardUnlit;
+            _name = Type.ToString();
             _floatParam = new Single[4];
             _unkVec1 = new Vector4ViewModel();
             _unkVec2 = new Vector4ViewModel();
-            _unkVec3 = new Vector4ViewModel();
+            _uvScrollSpeed = new Vector4ViewModel();
+            dirtyTracker.AddChild(_unkVec1);
+            dirtyTracker.AddChild(_unkVec2);
+            dirtyTracker.AddChild(_uvScrollSpeed);
             _texID = LabURI.Empty;
             _textureViewer = IoC.Get<SceneEditorViewModel>();
-
+            _textureViewer.SceneHeaderModel = "Texture viewer";
+            Items.Add(_textureViewer);
             InitTextureViewer();
         }
 
@@ -112,14 +122,91 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             _lodParamL = shader.LodParamL;
             _texID = shader.TextureId;
             _unkVal1 = shader.UnkVal1;
-            _unkVal2 = shader.UnkVal2;
-            _unkVal3 = shader.UnkVal3;
+            _xScrollSettings = shader.XScrollSettings;
+            _yScrollSettings = shader.YScrollSettings;
             _unkFlag1 = shader.UnkFlag1;
             _unkFlag2 = shader.UnkFlag2;
             _unkFlag3 = shader.UnkFlag3;
+            dirtyTracker.RemoveChild(_unkVec1);
+            dirtyTracker.RemoveChild(_unkVec2);
+            dirtyTracker.RemoveChild(_uvScrollSpeed);
             _unkVec1 = new Vector4ViewModel(shader.UnkVector1);
             _unkVec2 = new Vector4ViewModel(shader.UnkVector2);
-            _unkVec3 = new Vector4ViewModel(shader.UnkVector3);
+            _uvScrollSpeed = new Vector4ViewModel(shader.UvScrollSpeed);
+            dirtyTracker.AddChild(_unkVec1);
+            dirtyTracker.AddChild(_unkVec2);
+            dirtyTracker.AddChild(_uvScrollSpeed);
+        }
+
+        public void Save(LabShader o)
+        {
+            Copy(o);
+            ResetDirty();
+        }
+        
+        
+        public void Copy(LabShader o)
+        {
+            o.ShaderType = Type;
+            o.IntParam = IntParam;
+            o.FloatParam = new Single[4];
+            for (var j = 0; j < 4; ++j)
+            {
+                o.FloatParam[j] = FloatParam[j];
+            }
+            o.ABlending = AlphaBlending ? TwinShader.AlphaBlending.ON : TwinShader.AlphaBlending.OFF;
+            o.AlphaRegSettingsIndex = AlphaRegSettingsIndex;
+            o.ATest = AlphaTest ? TwinShader.AlphaTest.ON : TwinShader.AlphaTest.OFF;
+            o.ATestMethod = AlphaTestMethod;
+            o.AlphaValueToBeComparedTo = AlphaValueToCompareTo;
+            o.ProcessMethodWhenAlphaTestFailed = ProcessAfterATestFailed;
+            o.DAlphaTest = DAlphaTest ? DestinationAlphaTest.ON : DestinationAlphaTest.OFF;
+            o.DAlphaTestMode = DAlphaTestMode;
+            o.DepthTest = DepthTest;
+            o.ShdMethod = ShdMethod;
+            o.TxtMapping = TxtMapping ? TextureMapping.ON : TextureMapping.OFF;
+            o.MethodOfSpecifyingTextureCoordinates = TexCoordSpec;
+            o.Fog = Fog ? Fogging.ON : Fogging.OFF;
+            o.ContextNum = CxtNum;
+            o.UseCustomAlphaRegSettings = UseCustomAlphaRegSettings;
+            o.SpecOfColA = SpecOfColA;
+            o.SpecOfColB = SpecOfColB;
+            o.SpecOfAlphaC = SpecOfAlphaC;
+            o.SpecOfColD = SpecOfColD;
+            o.FixedAlphaValue = FixedAlphaValue;
+            o.TextureFilterWhenTextureIsExpanded = TexFilterWhenTextureIsExpanded;
+            o.AlphaCorrectionValue = AlphaCorrectionValue;
+            o.ZValueDrawingMask = ZValueDrawMask;
+            o.LodParamK = LodParamK;
+            o.LodParamL = LodParamL;
+            o.TextureId = TexID;
+            o.UnkVal1 = UnkVal1;
+            o.XScrollSettings = XScrollSettings;
+            o.YScrollSettings = YScrollSettings;
+            o.UnkFlag1 = UnkFlag1;
+            o.UnkFlag2 = UnkFlag2;
+            o.UnkFlag3 = UnkFlag3;
+            o.UnkVector1 = new Vector4
+            {
+                X = UnkVec1.X,
+                Y = UnkVec1.Y,
+                Z = UnkVec1.Z,
+                W = UnkVec1.W
+            };
+            o.UnkVector2 = new Vector4
+            {
+                X = UnkVec2.X,
+                Y = UnkVec2.Y,
+                Z = UnkVec2.Z,
+                W = UnkVec2.W,
+            };
+            o.UvScrollSpeed = new Vector4
+            {
+                X = UvScrollSpeed.X,
+                Y = UvScrollSpeed.Y,
+                Z = UvScrollSpeed.Z,
+                W = UvScrollSpeed.W,
+            };
         }
 
         public void ShaderViewModelFileDrop(Controls.FileDropEventArgs e)
@@ -135,32 +222,38 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             }
         }
 
+        protected override Task OnActivateAsync(CancellationToken cancellationToken)
+        {
+            ActivateItemAsync(TextureViewer, cancellationToken);
+            
+            return base.OnActivateAsync(cancellationToken);
+        }
+
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
+        {
+            DeactivateItemAsync(TextureViewer, close, cancellationToken);
+            
+            return base.OnDeactivateAsync(close, cancellationToken);
+        }
+
         private void InitTextureViewer()
         {
-            TextureViewer.SceneCreator = (GLWindow glControl) =>
+            TextureViewer.SceneCreator = (glControl) =>
             {
-                glControl.SetRendererLibraries(ShaderStorage.LibraryFragmentShaders.TexturePass);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
 
-                var texId = TexID;
-                var hasMapping = TxtMapping;
-                Bitmap bitmap;
-                if (texId == LabURI.Empty || !hasMapping)
-                {
-                    bitmap = MiscUtils.GetBoatGuy();
-                }
-                else
-                {
-                    var texData = AssetManager.Get().GetAsset(texId).GetData<TextureData>();
-                    bitmap = texData.Bitmap;
-                }
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0);
-                scene.DisableCameraManipulation();
-
-                var texPlane = new Plane(glControl.RenderContext, glControl, scene, bitmap);
-                scene.AddChild(texPlane);
-
-                return scene;
+                var plane = sceneManager.getRootSceneNode().createChildSceneNode();
+                var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
+                Rendering.MaterialManager.CreateOrGetMaterial("DiffuseTexture", out var material);
+                Rendering.MaterialManager.SetupMaterialPlainTexture(material, TexID);
+                entity.setMaterial(material);
+                entity.getSubEntity(0).setCustomParameter(0, new org.ogre.Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                plane.attachObject(entity);
+                plane.scale(0.05f, 0.05f, 1f);
             };
         }
 
@@ -171,6 +264,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             get => _textureViewer;
         }
 
+        [MarkDirty]
         public String Name
         {
             get => _name;
@@ -247,6 +341,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             get => !UseCustomAlphaRegSettings && AlphaBlending;
         }
 
+        [MarkDirty]
         public TwinShader.Type Type
         {
             get => _type;
@@ -266,7 +361,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
-
+        [MarkDirty]
         public UInt32 IntParam
         {
             get => _intParam;
@@ -280,8 +375,10 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             }
         }
 
+        [MarkDirty]
         public Single[] FloatParam { get => _floatParam; private set => _floatParam = value; }
-
+        
+        [MarkDirty]
         public Boolean AlphaBlending
         {
             get => _alphaBlending == TwinShader.AlphaBlending.ON;
@@ -296,7 +393,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
-
+        [MarkDirty]
         public AlphaBlendPresets AlphaRegSettingsIndex
         {
             get => _alphaRegSettingsIndex;
@@ -309,7 +406,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
-
+        [MarkDirty]
         public Boolean AlphaTest
         {
             get => _alphaTest == TwinShader.AlphaTest.ON;
@@ -322,7 +419,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
-
+        [MarkDirty]
         public AlphaTestMethod AlphaTestMethod
         {
             get => _alphaTestMethod;
@@ -335,6 +432,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Byte AlphaValueToCompareTo
         {
             get => _alphaValueToCompareTo;
@@ -347,6 +445,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public ProcessAfterAlphaTestFailed ProcessAfterATestFailed
         {
             get => _processAfterATestFailed;
@@ -359,6 +458,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Boolean DAlphaTest
         {
             get => _dAlphaTest == DestinationAlphaTest.ON;
@@ -371,6 +471,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public DestinationAlphaTestMode DAlphaTestMode
         {
             get => _dAlphaTestMode;
@@ -383,6 +484,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public DepthTestMethod DepthTest
         {
             get => _depthTest;
@@ -395,6 +497,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public ShadingMethod ShdMethod
         {
             get => _shdMethod;
@@ -407,6 +510,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Boolean TxtMapping
         {
             get => _txtMapping == TextureMapping.ON;
@@ -419,6 +523,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public TextureCoordinatesSpecification TexCoordSpec
         {
             get => _texCoordSpec;
@@ -431,6 +536,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Boolean Fog
         {
             get => _fog == Fogging.ON;
@@ -443,6 +549,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Context CxtNum
         {
             get => _cxtNum;
@@ -455,6 +562,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Boolean UseCustomAlphaRegSettings
         {
             get => _useCustomAlphaRegSettings;
@@ -469,6 +577,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public ColorSpecMethod SpecOfColA
         {
             get => _specOfColA;
@@ -481,6 +590,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public ColorSpecMethod SpecOfColB
         {
             get => _specOfColB;
@@ -493,6 +603,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public AlphaSpecMethod SpecOfAlphaC
         {
             get => _specOfAlphaC;
@@ -505,6 +616,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public ColorSpecMethod SpecOfColD
         {
             get => _specOfColD;
@@ -517,6 +629,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Byte FixedAlphaValue
         {
             get => _fixedAlphaValue;
@@ -529,6 +642,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public TextureFilter TexFilterWhenTextureIsExpanded
         {
             get => _texFilterWhenTextureIsExpanded;
@@ -541,6 +655,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Boolean AlphaCorrectionValue
         {
             get => _alphaCorrectionValue;
@@ -553,6 +668,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public ZValueDrawMask ZValueDrawMask
         {
             get => _zValueDrawMask;
@@ -565,6 +681,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public UInt16 LodParamK
         {
             get => _lodParamK;
@@ -577,6 +694,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public UInt16 LodParamL
         {
             get => _lodParamL;
@@ -589,6 +707,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public LabURI TexID
         {
             get => _texID;
@@ -601,6 +720,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Byte UnkVal1
         {
             get => _unkVal1;
@@ -613,30 +733,33 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
-        public Byte UnkVal2
+        [MarkDirty]
+        public XScrollFormula XScrollSettings
         {
-            get => _unkVal2;
+            get => _xScrollSettings;
             set
             {
-                if (_unkVal2 != value)
+                if (_xScrollSettings != value)
                 {
-                    _unkVal2 = value;
+                    _xScrollSettings = value;
                     NotifyOfPropertyChange();
                 }
             }
         }
-        public Byte UnkVal3
+        [MarkDirty]
+        public YScrollFormula YScrollSettings
         {
-            get => _unkVal3;
+            get => _yScrollSettings;
             set
             {
-                if (_unkVal3 != value)
+                if (_yScrollSettings != value)
                 {
-                    _unkVal3 = value;
+                    _yScrollSettings = value;
                     NotifyOfPropertyChange();
                 }
             }
         }
+        [MarkDirty]
         public Boolean UnkFlag1
         {
             get => _unkFlag1;
@@ -649,6 +772,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        [MarkDirty]
         public Boolean UnkFlag2
         {
             get => _unkFlag2;
@@ -661,6 +785,8 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
+        
+        [MarkDirty]
         public Boolean UnkFlag3
         {
             get => _unkFlag3;
@@ -673,41 +799,20 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 }
             }
         }
-        public Vector4ViewModel UnkVec1
+        
+        public Vector4ViewModel UnkVec1 => _unkVec1;
+
+        public Vector4ViewModel UnkVec2 => _unkVec2;
+
+        public Vector4ViewModel UvScrollSpeed => _uvScrollSpeed;
+
+        public void ResetDirty()
         {
-            get => _unkVec1;
-            set
-            {
-                if (_unkVec1 != value)
-                {
-                    _unkVec1 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
+            dirtyTracker.ResetDirty();
         }
-        public Vector4ViewModel UnkVec2
-        {
-            get => _unkVec2;
-            set
-            {
-                if (_unkVec2 != value)
-                {
-                    _unkVec2 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
-        public Vector4ViewModel UnkVec3
-        {
-            get => _unkVec3;
-            set
-            {
-                if (_unkVec3 != value)
-                {
-                    _unkVec3 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+
+        public bool IsDirty => dirtyTracker.IsDirty;
+
+        public DirtyTracker DirtyTracker => dirtyTracker;
     }
 }

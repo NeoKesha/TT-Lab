@@ -2,6 +2,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TT_Lab.Attributes;
+using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Interfaces;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -9,7 +11,7 @@ using Twinsanity.TwinsanityInterchange.Common.Particles;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Particles
 {
-    public class ParticleInstanceViewModel : Conductor<IScreen>, ISaveableViewModel<TwinParticleEmitter>
+    public class ParticleInstanceViewModel : Conductor<IScreen>, ISaveableViewModel<TwinParticleEmitter>, IHaveChildrenEditors
     {
         private UInt32 version;
         private readonly Vector3ViewModel position = new();
@@ -28,14 +30,22 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
         private Single unkFloat2;
         private Single unkFloat3;
         private Int16 unkShort8;
+        private bool isDirty;
+        private DirtyTracker dirtyTracker;
 
-        public ParticleInstanceViewModel() { }
+        public ParticleInstanceViewModel()
+        {
+            dirtyTracker = new DirtyTracker(this);
+            dirtyTracker.AddChild(position);
+        }
 
         public ParticleInstanceViewModel(TwinParticleEmitter pi)
         {
+            dirtyTracker = new DirtyTracker(this);
             version = pi.Version;
             name = new String(pi.Name);
             position = new Vector3ViewModel(pi.Position);
+            dirtyTracker.AddChild(position);
             unkShort1 = pi.UnkShort1;
             unkShort2 = pi.UnkShort2;
             unkShort3 = pi.UnkShort3;
@@ -50,6 +60,25 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             unkFloat1 = pi.UnkFloat1;
             unkFloat2 = pi.UnkFloat2;
             unkFloat3 = pi.UnkFloat3;
+        }
+
+        public void ResetDirty()
+        {
+            dirtyTracker.ResetDirty();
+            IsDirty = false;
+        }
+
+        public bool IsDirty
+        {
+            get => isDirty;
+            set
+            {
+                if (isDirty != value)
+                {
+                    isDirty = value;
+                    NotifyOfPropertyChange();
+                }
+            }
         }
 
         public void Save(TwinParticleEmitter pi)
@@ -76,6 +105,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             pi.UnkFloat1 = UnkFloat1;
             pi.UnkFloat2 = UnkFloat2;
             pi.UnkFloat3 = UnkFloat3;
+            ResetDirty();
         }
 
         protected override Task OnInitializeAsync(CancellationToken cancellationToken)
@@ -85,27 +115,14 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             return base.OnInitializeAsync(cancellationToken);
         }
 
-        public UInt32 Version
-        {
-            get
-            {
-                return version;
-            }
-            set
-            {
-                if (value != version)
-                {
-                    version = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public UInt32 Version => version;
 
         public Vector3ViewModel Position
         {
             get => position;
         }
 
+        [MarkDirty]
         public Int16 UnkShort1
         {
             get
@@ -122,6 +139,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int16 UnkShort2
         {
             get
@@ -138,6 +156,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int16 UnkShort3
         {
             get
@@ -154,6 +173,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int16 UnkShort4
         {
             get
@@ -170,6 +190,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int16 UnkShort5
         {
             get
@@ -186,6 +207,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int32 UnkInt1
         {
             get
@@ -202,6 +224,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public String Name
         {
             get
@@ -218,6 +241,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int32 UnkInt2
         {
             get
@@ -234,6 +258,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int32 UnkInt3
         {
             get
@@ -250,6 +275,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat1
         {
             get
@@ -266,6 +292,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int16 UnkShort6
         {
             get
@@ -282,6 +309,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int16 UnkShort7
         {
             get
@@ -298,6 +326,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat2
         {
             get
@@ -314,6 +343,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat3
         {
             get
@@ -330,6 +360,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int16 UnkShort8
         {
             get
@@ -345,5 +376,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
                 }
             }
         }
+
+        public DirtyTracker DirtyTracker => dirtyTracker;
     }
 }

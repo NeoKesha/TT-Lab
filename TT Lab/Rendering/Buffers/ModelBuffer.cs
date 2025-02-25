@@ -1,143 +1,157 @@
-﻿using SharpGL;
-using SharpGL.Enumerations;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using org.ogre;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
-using TT_Lab.Rendering.Shaders;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Vector4 = org.ogre.Vector4;
 
-namespace TT_Lab.Rendering.Buffers
+namespace TT_Lab.Rendering.Buffers;
+
+public class ModelBuffer
 {
-    public class ModelBuffer : BaseRenderable
+    //protected List<IndexedBufferArray> modelBuffers = new();
+
+    public enum MaterialType
     {
-        protected List<IndexedBufferArray> modelBuffers = new();
-        protected Dictionary<Int32, TextureBuffer> textureBuffers = new();
+        Opaque,
+        Transparent,
+    }
 
-        public ModelBuffer(OpenGL gl, GLWindow window, Scene root, ModelData model) : base(gl, window, root)
+    // These are all the materials that model buffer (exception being Blend Skin) will clone and set needed parameters for its needs which then later can be obtained
+    // to swap the current material for a different one, for example to enable/disable transparency of a model
+    private readonly List<string> _baseMaterials = new()
+    {
+        "DiffuseTexture",
+        "DiffuseTextureTransparent"
+    };
+
+    public List<MeshNodeMaterial> MeshNodes { get; private set; } = new();
+
+    public ModelBuffer(SceneManager sceneManager, string name, ModelData model, TwinMaterialGenerator.ShaderSettings shaderSettings = default) : this(sceneManager, sceneManager.getRootSceneNode(), name, model, shaderSettings)
+    {
+            
+    }
+
+    public ModelBuffer(SceneManager sceneManager, SceneNode parent, string name, ModelData model, TwinMaterialGenerator.ShaderSettings shaderSettings = default)
+    {
+        for (var i = 0; i < model.Vertexes.Count; ++i)
         {
-            for (var i = 0; i < model.Vertexes.Count; ++i)
+            var meshPtr = BufferGeneration.GetModelBuffer($"{name}{i}", model.Vertexes[i], model.Faces[i]);
+            var node = parent.createChildSceneNode();
+            var entity = sceneManager.createEntity(meshPtr);
+            var material = MaterialManager.GetDefault();
+            entity.setMaterial(material);
+            node.attachObject(entity);
+            MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = new List<MaterialPtr> { material } });
+        }
+    }
+
+    public ModelBuffer(SceneManager sceneManager, string name, RigidModelData rigid, TwinMaterialGenerator.ShaderSettings shaderSettings = default) : this(sceneManager, sceneManager.getRootSceneNode(), name, rigid, shaderSettings)
+    {
+            
+    }
+
+    public ModelBuffer(SceneManager sceneManager, SceneNode parent, string name, RigidModelData rigid, TwinMaterialGenerator.ShaderSettings shaderSettings = default)
+    {
+        var model = AssetManager.Get().GetAssetData<ModelData>(rigid.Model);
+        var materials = rigid.Materials;
+        for (var i = 0; i < model.Vertexes.Count; ++i)
+        {
+            var materialName = AssetManager.Get().GetAsset<Assets.Graphics.Material>(materials[i]).Name;
+            var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[i]);
+            // var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
+            // var hasTexture = texturedShaderIndex != -1;
+            var meshPtr = BufferGeneration.GetModelBuffer($"{name}{i}", model.Vertexes[i], model.Faces[i]);
+            var node = parent.createChildSceneNode();
+            var entity = sceneManager.createEntity(meshPtr);
+            var materialList = new List<MaterialPtr>();
+            ushort renderPriority = 0;
+            foreach (var baseMaterial in _baseMaterials)
             {
-                modelBuffers.Add(BufferGeneration.GetModelBuffer(gl, model.Vertexes[i], model.Faces[i], false));
+                // var needsSetup = MaterialManager.CreateOrGetMaterial(materialName, out var material, baseMaterial);
+                // if (hasTexture && needsSetup)
+                // {
+                //     MaterialManager.SetupMaterial(material, matData.Shaders[texturedShaderIndex]);
+                // }
+                var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
+                materialList.Add(material.Item2);
+                renderPriority = material.Item1;
             }
+            entity.setMaterial(materialList[(int)MaterialType.Opaque]);
+            entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, renderPriority);
+            node.attachObject(entity);
+            entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+            MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = materialList });
         }
+    }
 
-        public ModelBuffer(OpenGL gl, GLWindow window, Scene root, RigidModelData rigid) : base(gl, window, root)
+    public ModelBuffer(SceneManager sceneManager, string name, SkinData skin, TwinMaterialGenerator.ShaderSettings shaderSettings = default) : this(sceneManager, sceneManager.getRootSceneNode(), name, skin, shaderSettings)
+    {
+    }
+
+    public ModelBuffer(SceneManager sceneManager, SceneNode parent, string name, SkinData skin, TwinMaterialGenerator.ShaderSettings shaderSettings = default)
+    {
+        var index = 0;
+        foreach (var subSkin in skin.SubSkins)
         {
-            var model = AssetManager.Get().GetAssetData<ModelData>(rigid.Model);
-            var materials = rigid.Materials;
-            for (var i = 0; i < model.Vertexes.Count; ++i)
+            var materialName = AssetManager.Get().GetAsset<Assets.Graphics.Material>(subSkin.Material).Name;
+            var matData = AssetManager.Get().GetAssetData<MaterialData>(subSkin.Material);
+            var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
+            var hasTexture = texturedShaderIndex != -1;
+            var meshPtr = BufferGeneration.GetModelBuffer($"{name}{index++}", subSkin.Vertexes, subSkin.Faces);
+            var node = parent.createChildSceneNode();
+            var entity = sceneManager.createEntity(meshPtr);
+            var materialList = new List<MaterialPtr>();
+            ushort renderPriority = 0;
+            foreach (var baseMaterial in _baseMaterials)
             {
-                var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[i]);
-                var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
-                if (texturedShaderIndex == -1)
-                {
-                    modelBuffers.Add(BufferGeneration.GetModelBuffer(gl, model.Vertexes[i], model.Faces[i], false));
-                    continue;
-                }
-
-                modelBuffers.Add(BufferGeneration.GetModelBuffer(gl, model.Vertexes[i], model.Faces[i]));
-                var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
-                var alphaBlendingEnabled = matData.Shaders[texturedShaderIndex].ABlending == TwinShader.AlphaBlending.ON;
-                if (alphaBlendingEnabled)
-                {
-                    EnableAlphaBlending();
-                }
-                textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(gl, tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
+                // var needsSetup = MaterialManager.CreateOrGetMaterial(materialName, out var material, baseMaterial);
+                // if (hasTexture && needsSetup)
+                // {
+                //     MaterialManager.SetupMaterial(material, matData.Shaders[texturedShaderIndex]);
+                // }
+                var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
+                materialList.Add(material.Item2);
+                renderPriority = material.Item1;
             }
+            entity.setMaterial(materialList[(int)MaterialType.Opaque]);
+            entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, renderPriority);
+            node.attachObject(entity);
+            entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+            MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = materialList });
         }
+    }
 
-        public ModelBuffer(OpenGL gl, GLWindow window, Scene root, SkinData skin) : base(gl, window, root)
+    public struct MeshNodeMaterial
+    {
+        public SceneNode MeshNode;
+        public List<MaterialPtr> Materials;
+    }
+
+    protected ModelBuffer(SceneManager sceneManager, SceneNode parent, string name, BlendSkinData blendSkin, TwinMaterialGenerator.ShaderSettings shaderSettings = default)
+    {
+        var index = 0;
+        foreach (var blend in blendSkin.Blends)
         {
-            foreach (var subSkin in skin.SubSkins)
+            var materialName = AssetManager.Get().GetAsset<Assets.Graphics.Material>(blend.Material).Name;
+            var matData = AssetManager.Get().GetAssetData<MaterialData>(blend.Material);
+            var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
+            var hasTexture = texturedShaderIndex != -1;
+            foreach (var model in blend.Models)
             {
-                var matData = AssetManager.Get().GetAssetData<MaterialData>(subSkin.Material);
-                var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
-                if (texturedShaderIndex == -1)
-                {
-                    modelBuffers.Add(BufferGeneration.GetModelBuffer(gl, subSkin.Vertexes, subSkin.Faces, false));
-                    continue;
-                }
-
-                var buffer = BufferGeneration.GetModelBuffer(gl, subSkin.Vertexes, subSkin.Faces);
-                modelBuffers.Add(buffer);
-                var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
-                var alphaBlendingEnabled = matData.Shaders[texturedShaderIndex].ABlending == TwinShader.AlphaBlending.ON;
-                if (alphaBlendingEnabled)
-                {
-                    EnableAlphaBlending();
-                }
-                textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(gl, tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
+                var meshPtr = BufferGeneration.GetModelBuffer($"{name}_{index}", model.Vertexes, model.Faces);
+                var node = parent.createChildSceneNode();
+                var entity = sceneManager.createEntity(meshPtr);
+                var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
+                entity.setMaterial(material.Item2);
+                entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, material.Item1);
+                node.attachObject(entity);
+                entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = new List<MaterialPtr> { material.Item2, material.Item2 }});
+                index++;
             }
-        }
-
-        protected ModelBuffer(OpenGL gl, GLWindow window, Scene root, BlendSkinData blendSkin) : base(gl, window, root)
-        {
-            foreach (var blend in blendSkin.Blends)
-            {
-                foreach (var model in blend.Models)
-                {
-                    var matData = AssetManager.Get().GetAssetData<MaterialData>(blend.Material);
-                    var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
-                    var buffer = BufferGeneration.GetModelBuffer(gl, model.Vertexes, model.Faces);
-                    modelBuffers.Add(buffer);
-                    if (texturedShaderIndex != -1)
-                    {
-                        var tex = AssetManager.Get().GetAssetData<TextureData>(matData.Shaders[texturedShaderIndex].TextureId);
-                        var alphaBlendingEnabled = matData.Shaders[texturedShaderIndex].ABlending == TwinShader.AlphaBlending.ON;
-                        if (alphaBlendingEnabled)
-                        {
-                            EnableAlphaBlending();
-                        }
-                        textureBuffers.Add(modelBuffers.Count - 1, new TextureBuffer(gl, tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap));
-                    }
-                }
-            }
-        }
-
-        public override void SetUniforms(ShaderProgram shader)
-        {
-        }
-
-        public virtual void Bind()
-        {
-        }
-
-        protected override void RenderSelf(ShaderProgram shader)
-        {
-            Bind();
-            for (var i = 0; i < modelBuffers.Count; ++i)
-            {
-                if (textureBuffers.TryGetValue(i, out TextureBuffer? value))
-                {
-                    shader.SetTextureUniform("Texture[0]", TextureBuffer.TextureTarget.Texture2D, value.Buffer, 0);
-                }
-                modelBuffers[i].Bind();
-                unsafe
-                {
-                    GL.DrawElements(OpenGL.GL_TRIANGLES, modelBuffers[i].Indices.Length, OpenGL.GL_UNSIGNED_INT, IntPtr.Zero);
-                }
-                modelBuffers[i].Unbind();
-            }
-            shader.SetTextureUniform("Texture[0]", TextureBuffer.TextureTarget.Texture2D, 0, 0);
-            Unbind();
-        }
-
-        public virtual void Delete()
-        {
-            foreach (var tex in textureBuffers)
-            {
-                tex.Value.Delete();
-            }
-            foreach (var model in modelBuffers)
-            {
-                model.Delete();
-            }
-        }
-
-        public virtual void Unbind()
-        {
         }
     }
 }

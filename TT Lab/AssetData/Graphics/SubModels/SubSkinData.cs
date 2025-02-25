@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace TT_Lab.AssetData.Graphics.SubModels
 {
+    [ReferencesAssets]
     public class SubSkinData : IDisposable
     {
         public LabURI Material { get; set; }

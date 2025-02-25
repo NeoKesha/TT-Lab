@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class AiPath : SerializableInstance
     {
         public override UInt32 Section => Constants.LAYOUT_AI_PATHS_SECTION;
+        public override String IconPath => "AI_Path.png";
 
         public AiPath(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinAIPath path) : base(package, id, name, chunk, layId)
         {

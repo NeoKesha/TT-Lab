@@ -10,9 +10,8 @@ namespace TT_Lab.ViewModels
 {
     public class ResourceTreeElementViewModel : PropertyChangedBase
     {
-        protected IAsset _asset;
-
-        private ResourceTreeElementViewModel? _parent;
+        private readonly IAsset _asset;
+        private readonly ResourceTreeElementViewModel? _parent;
         private BindableCollection<ResourceTreeElementViewModel>? _children;
         private List<ResourceTreeElementViewModel>? _internalChildren;
         private Boolean _isTargetItem;
@@ -20,34 +19,19 @@ namespace TT_Lab.ViewModels
         private Boolean _isExpanded;
         private Visibility _isVisible;
 
-        public ResourceTreeElementViewModel(LabURI asset) : this(asset, null)
-        {
-        }
-
-        public ResourceTreeElementViewModel(LabURI asset, ResourceTreeElementViewModel? parent)
+        public ResourceTreeElementViewModel(LabURI asset, ResourceTreeElementViewModel? parent = null)
         {
             _asset = AssetManager.Get().GetAsset(asset);
             _parent = parent;
         }
 
 
-        public BindableCollection<ResourceTreeElementViewModel>? Children
-        {
-            get
-            {
-                if (_asset.Type == typeof(ChunkFolder)) return null;
-                return _children;
-            }
-        }
+        public BindableCollection<ResourceTreeElementViewModel>? Children => _asset.Type == typeof(ChunkFolder) ? null : _children;
 
         public void BuildChildren(Folder folder)
         {
             // Build the tree
             var myChildren = folder.GetData().To<FolderData>().Children;
-            var cList = (from child in myChildren
-                         orderby _asset.Order
-                         let c = AssetManager.Get().GetAsset(child)
-                         select c).ToList();
             _children = new BindableCollection<ResourceTreeElementViewModel>(
                 (from child in myChildren
                  orderby _asset.Order
@@ -88,11 +72,7 @@ namespace TT_Lab.ViewModels
 
         public List<ResourceTreeElementViewModel>? GetInternalChildren()
         {
-            if (Children != null)
-            {
-                return _internalChildren;
-            }
-            return null;
+            return Children != null ? _internalChildren : null;
         }
 
         public Boolean IsTargetItem
@@ -108,14 +88,11 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public String IconPath
-        {
-            get => Asset.IconPath;
-        }
+        public String IconPath => $"/Media/LabIcons/{Asset.IconPath}";
 
         public Boolean IsSelected
         {
-            get { return _isSelected; }
+            get => _isSelected;
             set
             {
                 if (value != _isSelected)
@@ -128,7 +105,7 @@ namespace TT_Lab.ViewModels
 
         public Boolean IsExpanded
         {
-            get { return _isExpanded; }
+            get => _isExpanded;
             set
             {
                 if (value != _isExpanded)
@@ -146,7 +123,7 @@ namespace TT_Lab.ViewModels
 
         public Visibility IsVisible
         {
-            get { return _isVisible; }
+            get => _isVisible;
             set
             {
                 if (value != _isVisible)
@@ -162,9 +139,9 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public virtual String Alias
+        public String Alias
         {
-            get { return _asset.Alias; }
+            get => _asset.Alias;
             set
             {
                 if (value != _asset.Alias)
@@ -175,13 +152,7 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public IAsset Asset
-        {
-            get
-            {
-                return _asset;
-            }
-        }
+        public IAsset Asset => _asset;
 
         public T GetAsset<T>() where T : IAsset
         {

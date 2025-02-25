@@ -15,18 +15,35 @@ namespace TT_Lab.AssetData.Code
         {
         }
 
+        public SoundEffectData(string filepath)
+        {
+            LoadInternal(filepath);
+        }
+
         public SoundEffectData(ITwinSound sound) : this()
         {
             SetTwinItem(sound);
         }
 
+        public MemoryStream GetSoundEffectStream()
+        {
+            return soundEffectStream;
+        }
+
+        Byte[] WAVE;
+        MemoryStream soundEffectStream;
         Byte[] PCM;
         UInt32 Frequency;
         Int16 Channels;
 
         protected override void Dispose(Boolean disposing)
         {
-            return;
+            if (!disposing)
+            {
+                return;
+            }
+            
+            soundEffectStream?.Dispose();
         }
 
         protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
@@ -40,7 +57,8 @@ namespace TT_Lab.AssetData.Code
         {
             using FileStream fs = new(dataPath, FileMode.Open, FileAccess.Read);
             using BinaryReader reader = new(fs);
-            PCM = RIFF.LoadRiff(reader, ref Channels, ref Frequency);
+            WAVE = RIFF.LoadRiff(reader, ref PCM, ref Channels, ref Frequency);
+            soundEffectStream = new MemoryStream(WAVE);
         }
 
         public override void Import(LabURI package, String? variant, Int32? layoutId)

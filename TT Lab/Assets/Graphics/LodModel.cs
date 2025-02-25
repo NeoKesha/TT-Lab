@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Graphics
     public class LodModel : SerializableAsset
     {
         public override UInt32 Section => Constants.GRAPHICS_LODS_SECTION;
+        public override String IconPath => "LOD.png";
 
         public LodModel(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinLOD lod) : base(id, Name, package, needVariant, variant)
         {

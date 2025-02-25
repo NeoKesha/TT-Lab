@@ -17,6 +17,7 @@ namespace TT_Lab.Assets.Global
         protected override String DataExt => ".bin";
         protected override String TwinDataExt => "ico";
         public override UInt32 Section => throw new NotImplementedException();
+        public override String IconPath => "Save.png";
 
         public SaveIcon()
         {

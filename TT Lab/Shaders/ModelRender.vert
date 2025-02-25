@@ -4,8 +4,8 @@ void main()
 {
 	mat4 viewModel = GetViewModelMatrix(StartView, StartModel);
     vec3 processedPosition = in_Position;
-	processedPosition = BlendVertex(processedPosition, Morphs, gl_VertexID, MorphWeights);
-	processedPosition = PositionVertex(processedPosition, gl_VertexID);
+//	processedPosition = BlendVertex(processedPosition, Morphs, gl_VertexID, MorphWeights);
+//	processedPosition = PositionVertex(processedPosition, gl_VertexID);
 	Projection = StartProjection;
 	View = StartView;
 	Model = StartModel;

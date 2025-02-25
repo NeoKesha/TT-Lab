@@ -1,6 +1,8 @@
 ﻿using System;
+using Caliburn.Micro;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
@@ -22,9 +24,16 @@ namespace TT_Lab.ViewModels.Editors.Instance
         private UInt16 unkId3;
         private UInt16 landOnParticleSystemId;
         private UInt16 unkId5;
-        private Single[] physicsParameters = new Single[10];
+        private BindableCollection<PrimitiveWrapperViewModel<Single>> physicsParameters = new();
         private Vector4ViewModel unkVec = new();
-        private Vector4ViewModel[] unkBoundingBox = new Vector4ViewModel[2];
+        private BoundingBoxViewModel unkBoundingBox = new();
+
+        public CollisionSurfaceViewModel()
+        {
+            DirtyTracker.AddChild(unkVec);
+            DirtyTracker.AddChild(unkBoundingBox);
+            DirtyTracker.AddBindableCollection(physicsParameters);
+        }
 
         protected override void Save()
         {
@@ -42,7 +51,11 @@ namespace TT_Lab.ViewModels.Editors.Instance
             data.WalkOnParticleSystemId2 = WalkOnParticleSystemId2;
             data.UnkId3 = UnkId3;
             data.LandOnParticleSystemId = LandOnParticleSystemId;
-            data.PhysicsParameters = CloneUtils.CloneArray(PhysicsParameters);
+            data.PhysicsParameters = new Single[10];
+            for (var i = 0; i < 10; i++)
+            {
+                data.PhysicsParameters[i] = PhysicsParameters[i].Value;
+            }
             data.UnkVec = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {
                 X = UnkVec.X,
@@ -52,18 +65,20 @@ namespace TT_Lab.ViewModels.Editors.Instance
             };
             data.UnkBoundingBox[0] = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {
-                X = UnkBoundingBox[0].X,
-                Y = UnkBoundingBox[0].Y,
-                Z = UnkBoundingBox[0].Z,
-                W = UnkBoundingBox[0].W
+                X = UnkBoundingBox.TopLeft.X,
+                Y = UnkBoundingBox.TopLeft.Y,
+                Z = UnkBoundingBox.TopLeft.Z,
+                W = UnkBoundingBox.TopLeft.W
             };
             data.UnkBoundingBox[1] = new Twinsanity.TwinsanityInterchange.Common.Vector4
             {
-                X = UnkBoundingBox[1].X,
-                Y = UnkBoundingBox[1].Y,
-                Z = UnkBoundingBox[1].Z,
-                W = UnkBoundingBox[1].W
+                X = UnkBoundingBox.BottomRight.X,
+                Y = UnkBoundingBox.BottomRight.Y,
+                Z = UnkBoundingBox.BottomRight.Z,
+                W = UnkBoundingBox.BottomRight.W
             };
+            
+            base.Save();
         }
 
         public override void LoadData()
@@ -72,7 +87,10 @@ namespace TT_Lab.ViewModels.Editors.Instance
             var surfData = asset.GetData<CollisionSurfaceData>();
             surfId = surfData.SurfaceID;
             flags = surfData.Flags;
-            physicsParameters = CloneUtils.CloneArray(surfData.PhysicsParameters);
+            foreach (var parameter in surfData.PhysicsParameters)
+            {
+                physicsParameters.Add(new PrimitiveWrapperViewModel<Single>(parameter));
+            }
             stepSoundId1 = surfData.StepSoundId1;
             stepSoundId2 = surfData.StepSoundId2;
             landSoundId1 = surfData.LandSoundId1;
@@ -82,15 +100,16 @@ namespace TT_Lab.ViewModels.Editors.Instance
             walkOnParticleSystemId2 = surfData.WalkOnParticleSystemId2;
             unkId3 = surfData.UnkId3;
             landOnParticleSystemId = surfData.LandOnParticleSystemId;
+            DirtyTracker.RemoveChild(unkVec);
+            DirtyTracker.RemoveChild(unkBoundingBox);
             unkVec = new Vector4ViewModel(surfData.UnkVec);
-            unkBoundingBox = new Vector4ViewModel[2];
-            for (var i = 0; i < unkBoundingBox.Length; ++i)
-            {
-                unkBoundingBox[i] = new Vector4ViewModel(surfData.UnkBoundingBox[i]);
-            }
+            unkBoundingBox = new BoundingBoxViewModel(surfData.UnkBoundingBox);
+            DirtyTracker.AddChild(unkVec);
+            DirtyTracker.AddChild(unkBoundingBox);
             layId = MiscUtils.ConvertEnum<Layouts>(asset.LayoutID!.Value);
         }
 
+        [MarkDirty]
         public Layouts LayoutID
         {
             get => layId;
@@ -99,12 +118,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (layId != value)
                 {
                     layId = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public SurfaceType SurfId
         {
             get => surfId;
@@ -113,12 +133,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (surfId != value)
                 {
                     surfId = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public SurfaceFlags Flags
         {
             get => flags;
@@ -127,12 +148,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (flags != value)
                 {
                     flags = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public LabURI StepSoundId1
         {
             get => stepSoundId1;
@@ -146,6 +168,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public LabURI StepSoundId2
         {
             get => stepSoundId2;
@@ -159,6 +182,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public LabURI LandSoundId1
         {
             get => landSoundId1;
@@ -172,6 +196,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public LabURI LandSoundId2
         {
             get => landSoundId2;
@@ -185,6 +210,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public LabURI UnkSoundId
         {
             get => unkSoundId;
@@ -198,6 +224,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public UInt16 WalkOnParticleSystemId1
         {
             get => walkOnParticleSystemId1;
@@ -211,6 +238,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public UInt16 WalkOnParticleSystemId2
         {
             get => walkOnParticleSystemId2;
@@ -224,6 +252,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkId3
         {
             get => unkId3;
@@ -237,6 +266,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public UInt16 LandOnParticleSystemId
         {
             get => landOnParticleSystemId;
@@ -250,6 +280,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkId5
         {
             get => unkId5;
@@ -263,18 +294,9 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
-        public Single[] PhysicsParameters
+        public BindableCollection<PrimitiveWrapperViewModel<Single>> PhysicsParameters
         {
             get => physicsParameters;
-            set
-            {
-                if (physicsParameters != value)
-                {
-                    physicsParameters = value;
-                    IsDirty = true;
-                    NotifyOfPropertyChange();
-                }
-            }
         }
 
         public Vector4ViewModel UnkVec
@@ -282,7 +304,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             get => unkVec;
         }
 
-        public Vector4ViewModel[] UnkBoundingBox
+        public BoundingBoxViewModel UnkBoundingBox
         {
             get => unkBoundingBox;
         }

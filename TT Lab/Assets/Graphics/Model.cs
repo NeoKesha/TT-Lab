@@ -11,6 +11,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".glb";
         public override UInt32 Section => Constants.GRAPHICS_MODELS_SECTION;
+        public override String IconPath => "Model.png";
 
         public Model(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinModel model) : base(id, Name, package, needVariant, variant)
         {

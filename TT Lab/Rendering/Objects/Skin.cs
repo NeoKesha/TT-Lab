@@ -1,27 +1,21 @@
-﻿using SharpGL;
+﻿using org.ogre;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Skin : BaseRenderable
+    public class Skin : ManualObject
     {
-        ModelBuffer model;
+        //ModelBuffer model;
 
-        public Skin(OpenGL gl, GLWindow window, Scene root, SkinData skin) : base(gl, window, root)
+        public Skin(string name, SkinData skin) : base(name)
         {
-            model = new ModelBuffer(GL, window, root, skin);
-            AddChild(model);
+            //model = new ModelBuffer(GL, window, root, skin);
+            //AddChild(model);
         }
 
         public void Delete()
         {
-            model.Delete();
-        }
-
-        protected override void RenderSelf(ShaderProgram shader)
-        {
+            //model.Delete();
         }
     }
 }

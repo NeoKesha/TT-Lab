@@ -1,5 +1,4 @@
 ﻿using Caliburn.Micro;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.Project;
@@ -25,9 +24,9 @@ namespace TT_Lab.ViewModels
         {
             return Task.Factory.StartNew(() =>
             {
-                if (_activeEditors.TryGetValue(message.ResourceURI, out TabbedEditorViewModel? tabViewModel))
+                if (ActiveEditors.TryGetValue(message.ResourceURI, out TabbedEditorViewModel? tabViewModel))
                 {
-                    ActivateItemAsync(tabViewModel);
+                    ActivateItemAsync(tabViewModel, cancellationToken);
                     return;
                 }
 
@@ -37,9 +36,9 @@ namespace TT_Lab.ViewModels
                     DisplayName = assetManager.GetAsset(message.ResourceURI).Name
                 };
 
-                _activeEditors[message.ResourceURI] = newEditor;
+                ActiveEditors[message.ResourceURI] = newEditor;
 
-                ActivateItemAsync(newEditor);
+                ActivateItemAsync(newEditor, cancellationToken);
             },
             cancellationToken);
         }

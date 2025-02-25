@@ -5,12 +5,14 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Graphics
 {
+    [ReferencesAssets]
     public class SkydomeData : AbstractAssetData
     {
         public SkydomeData()

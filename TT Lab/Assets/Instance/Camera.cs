@@ -11,6 +11,7 @@ namespace TT_Lab.Assets.Instance
     public class Camera : SerializableInstance
     {
         public override UInt32 Section => Constants.LAYOUT_CAMERAS_SECTION;
+        public override String IconPath => "Camera.png";
 
         public Camera(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, ITwinCamera camera) : base(package, id, Name, chunk, layId)
         {
@@ -49,7 +50,7 @@ namespace TT_Lab.Assets.Instance
             }
         }
 
-        public override void Serialize()
+        public override void Serialize(bool setDirectoryToAssets = false)
         {
             if (assetData != null)
             {

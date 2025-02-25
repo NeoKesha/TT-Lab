@@ -4,6 +4,7 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -13,6 +14,7 @@ using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.AssetData.Instance
 {
+    [ReferencesAssets]
     public class CollisionSurfaceData : AbstractAssetData
     {
         public CollisionSurfaceData()

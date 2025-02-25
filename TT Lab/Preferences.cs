@@ -9,6 +9,7 @@ namespace TT_Lab
     /// <summary>
     /// Stores information about user's preferences and settings
     /// </summary>
+    // TODO: Move into IoC container
     public static class Preferences
     {
         /// <summary>

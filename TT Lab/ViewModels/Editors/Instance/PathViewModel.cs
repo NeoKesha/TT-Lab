@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Command;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
@@ -10,9 +11,15 @@ namespace TT_Lab.ViewModels.Editors.Instance
 {
     public class PathViewModel : InstanceSectionResourceEditorViewModel
     {
-        private Enums.Layouts layoutId;
-        private BindableCollection<Vector4ViewModel> points;
-        private BindableCollection<Vector2ViewModel> arguments;
+        private Enums.Layouts _layoutId;
+        private BindableCollection<Vector4ViewModel> _points = new();
+        private BindableCollection<Vector2ViewModel> _arguments = new();
+
+        public PathViewModel()
+        {
+            DirtyTracker.AddBindableCollection(_points);
+            DirtyTracker.AddBindableCollection(_arguments);
+        }
 
         protected override void Save()
         {
@@ -33,25 +40,27 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 p.Save(v);
                 data.Parameters.Add(v);
             }
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var pathData = asset.GetData<PathData>();
-            points = new BindableCollection<Vector4ViewModel>();
+            _points = new BindableCollection<Vector4ViewModel>();
             foreach (var p in pathData.Points)
             {
                 var vm = new Vector4ViewModel(p);
-                points.Add(vm);
+                _points.Add(vm);
             }
-            arguments = new BindableCollection<Vector2ViewModel>();
+            _arguments = new BindableCollection<Vector2ViewModel>();
             foreach (var p in pathData.Parameters)
             {
                 var vm = new Vector2ViewModel(p);
-                arguments.Add(vm);
+                _arguments.Add(vm);
             }
-            layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value);
+            _layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value);
 
             AddArgumentCommand = new AddItemToListCommand<Vector2ViewModel>(Arguments);
             AddPointCommand = new AddItemToListCommand<Vector4ViewModel>(Points);
@@ -64,15 +73,16 @@ namespace TT_Lab.ViewModels.Editors.Instance
         public DeleteItemFromListCommand DeleteArgumentCommand { get; private set; }
         public DeleteItemFromListCommand DeletePointCommand { get; private set; }
 
+        [MarkDirty]
         public Enums.Layouts LayoutID
         {
-            get => layoutId;
+            get => _layoutId;
             set
             {
-                if (value != layoutId)
+                if (value != _layoutId)
                 {
-                    layoutId = value;
-                    IsDirty = true;
+                    _layoutId = value;
+                    
                     NotifyOfPropertyChange();
                 }
             }
@@ -80,12 +90,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
 
         public BindableCollection<Vector4ViewModel> Points
         {
-            get => points;
+            get => _points;
         }
 
         public BindableCollection<Vector2ViewModel> Arguments
         {
-            get => arguments;
+            get => _arguments;
         }
     }
 }

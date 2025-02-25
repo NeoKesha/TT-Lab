@@ -11,34 +11,61 @@ namespace TT_Lab.ViewModels
 {
     public abstract class EditorsViewerViewModel : Conductor<TabbedEditorViewModel>.Collection.OneActive
     {
-        protected readonly Dictionary<LabURI, TabbedEditorViewModel> _activeEditors = new();
+        protected readonly Dictionary<LabURI, TabbedEditorViewModel> ActiveEditors = new();
 
         public virtual Task CloseEditorTab(TabbedEditorViewModel editor)
         {
+            RemoveCurrentActiveEditor();
+            
             return DeactivateItemAsync(editor, true);
+        }
+
+        public virtual void SaveEditorTab(TabbedEditorViewModel editor)
+        {
+            editor.ActiveItem.SaveChanges();
         }
 
         public virtual void Save()
         {
-            foreach (var item in _activeEditors)
+            foreach (var item in ActiveEditors)
             {
                 item.Value.ActiveItem.SaveChanges();
             }
+        }
+
+        protected void RemoveCurrentActiveEditor()
+        {
+            if (ActiveEditors.Count <= 0)
+            {
+                return;
+            }
+            
+            if (ActiveEditors.FirstOrDefault(kv => kv.Value == ActiveItem,
+                    new KeyValuePair<LabURI, TabbedEditorViewModel>(LabURI.Empty, null)).Key == LabURI.Empty)
+            {
+                return;
+            }
+                
+            ActiveEditors.Remove(ActiveEditors.First(kv => kv.Value == ActiveItem).Key);
         }
 
         protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
         {
             DeactivateItemAsync(ActiveItem, close, cancellationToken);
 
-            if (_activeEditors.Count > 0)
+            if (ActiveEditors.Count > 0)
             {
                 if (!close)
                 {
-                    _activeEditors.Remove(_activeEditors.Where(kv => kv.Value == ActiveItem).First().Key);
+                    if (ActiveEditors.FirstOrDefault(kv => kv.Value == ActiveItem,
+                            new KeyValuePair<LabURI, TabbedEditorViewModel>(LabURI.Empty, null)).Key != LabURI.Empty)
+                    {
+                        ActiveEditors.Remove(ActiveEditors.First(kv => kv.Value == ActiveItem).Key);
+                    }
                 }
                 else
                 {
-                    _activeEditors.Clear();
+                    ActiveEditors.Clear();
                 }
             }
 

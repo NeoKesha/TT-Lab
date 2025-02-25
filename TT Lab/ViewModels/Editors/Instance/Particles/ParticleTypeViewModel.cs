@@ -1,7 +1,9 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Interfaces;
@@ -10,7 +12,7 @@ using Twinsanity.TwinsanityInterchange.Common.Particles;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Particles
 {
-    public class ParticleTypeViewModel : Conductor<IScreen>.Collection.AllActive, ISaveableViewModel<TwinParticleSystem>
+    public class ParticleTypeViewModel : Conductor<IScreen>.Collection.AllActive, ISaveableViewModel<TwinParticleSystem>, IHaveChildrenEditors
     {
         private UInt32 version;
         private String name = "Particle Type";
@@ -58,37 +60,55 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
         private Single unkFloat25;
         private Single unkFloat26;
         private BindableCollection<Vector4ViewModel> unkVecs = new();
-        private Int64[] unkLongs1 = Array.Empty<Int64>();
+        private BindableCollection<PrimitiveWrapperViewModel<Int64>> unkLongs1 = new();
         private Single unkFloat27;
         private Single unkFloat28;
         private Single unkFloat29;
         private Single unkFloat30;
-        private Int64[] unkLongs2 = Array.Empty<Int64>();
-        private Int64[] unkLongs3 = Array.Empty<Int64>();
+        private BindableCollection<PrimitiveWrapperViewModel<Int64>> unkLongs2 = new();
+        private BindableCollection<PrimitiveWrapperViewModel<Int64>> unkLongs3 = new();
         private Single unkFloat31;
         private Single unkFloat32;
-        private Int64[] unkLongs4 = Array.Empty<Int64>();
-        private Int64[] unkLongs5 = Array.Empty<Int64>();
-        private Int64[] unkLongs6 = Array.Empty<Int64>();
+        private BindableCollection<PrimitiveWrapperViewModel<Int64>> unkLongs4 = new();
+        private BindableCollection<PrimitiveWrapperViewModel<Int64>> unkLongs5 = new();
+        private BindableCollection<PrimitiveWrapperViewModel<Int64>> unkLongs6 = new();
         private Single unkFloat33;
         private Single unkFloat34;
         private Single unkFloat35;
         private Single unkFloat36;
-        private Int64[] unkLongs7 = Array.Empty<Int64>();
+        private BindableCollection<PrimitiveWrapperViewModel<Int64>> unkLongs7 = new();
         private Byte unkByte8;
         private Byte unkByte9;
         private Single unkFloat37;
-        private Int16[] unkShorts = Array.Empty<Int16>();
+        private BindableCollection<PrimitiveWrapperViewModel<Int16>> unkShorts = new();
         private Single unkFloat38;
         private Single unkFloat39;
         private Single unkFloat40;
         private Int32 unkInt;
         private Vector4ViewModel unkVec3 = new();
+        private bool isDirty;
+        private DirtyTracker dirtyTracker;
 
-        public ParticleTypeViewModel() { }
+        public ParticleTypeViewModel()
+        {
+            dirtyTracker = new DirtyTracker(this);
+            dirtyTracker.AddChild(unkVec1);
+            dirtyTracker.AddChild(unkVec2);
+            dirtyTracker.AddChild(unkVec3);
+            dirtyTracker.AddBindableCollection(unkVecs);
+            dirtyTracker.AddBindableCollection(unkLongs1);
+            dirtyTracker.AddBindableCollection(unkLongs2);
+            dirtyTracker.AddBindableCollection(unkLongs3);
+            dirtyTracker.AddBindableCollection(unkLongs4);
+            dirtyTracker.AddBindableCollection(unkLongs5);
+            dirtyTracker.AddBindableCollection(unkLongs6);
+            dirtyTracker.AddBindableCollection(unkLongs7);
+            dirtyTracker.AddBindableCollection(unkShorts);
+        }
 
         public ParticleTypeViewModel(TwinParticleSystem pt)
         {
+            dirtyTracker = new DirtyTracker(this);
             version = pt.Version;
             name = new String(pt.Name);
             unkByte1 = pt.UnkByte1;
@@ -151,19 +171,82 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             unkVec1 = new Vector3ViewModel(pt.UnkVec1);
             unkVec2 = new Vector3ViewModel(pt.UnkVec2);
             unkVec3 = new Vector4ViewModel(pt.UnkVec3);
+            dirtyTracker.AddChild(unkVec1);
+            dirtyTracker.AddChild(unkVec2);
+            dirtyTracker.AddChild(unkVec3);
             unkVecs = new BindableCollection<Vector4ViewModel>();
+            dirtyTracker.AddBindableCollection(unkVecs);
             for (var i = 0; i < pt.UnkVecs.Length; ++i)
             {
                 unkVecs.Add(new Vector4ViewModel(pt.UnkVecs[i]));
             }
-            unkLongs1 = CloneUtils.CloneArray(pt.UnkLongs1);
-            unkLongs2 = CloneUtils.CloneArray(pt.UnkLongs2);
-            unkLongs3 = CloneUtils.CloneArray(pt.UnkLongs3);
-            unkLongs4 = CloneUtils.CloneArray(pt.UnkLongs4);
-            unkLongs5 = CloneUtils.CloneArray(pt.UnkLongs5);
-            unkLongs6 = CloneUtils.CloneArray(pt.UnkLongs6);
-            unkLongs7 = CloneUtils.CloneArray(pt.UnkLongs7);
-            unkShorts = CloneUtils.CloneArray(pt.UnkShorts);
+            unkLongs1 = new BindableCollection<PrimitiveWrapperViewModel<Int64>>();
+            dirtyTracker.AddBindableCollection(unkLongs1);
+            for (int i = 0; i < pt.UnkLongs1.Length; i++)
+            {
+                unkLongs1.Add(new PrimitiveWrapperViewModel<Int64>(pt.UnkLongs1[i]));
+            }
+            unkLongs2 = new BindableCollection<PrimitiveWrapperViewModel<Int64>>();
+            dirtyTracker.AddBindableCollection(unkLongs2);
+            for (int i = 0; i < pt.UnkLongs2.Length; i++)
+            {
+                unkLongs2.Add(new PrimitiveWrapperViewModel<Int64>(pt.UnkLongs2[i]));
+            }
+            unkLongs3 = new BindableCollection<PrimitiveWrapperViewModel<Int64>>();
+            dirtyTracker.AddBindableCollection(unkLongs3);
+            for (int i = 0; i < pt.UnkLongs3.Length; i++)
+            {
+                unkLongs3.Add(new PrimitiveWrapperViewModel<Int64>(pt.UnkLongs3[i]));
+            }
+            unkLongs4 = new BindableCollection<PrimitiveWrapperViewModel<Int64>>();
+            dirtyTracker.AddBindableCollection(unkLongs4);
+            for (int i = 0; i < pt.UnkLongs4.Length; i++)
+            {
+                unkLongs4.Add(new PrimitiveWrapperViewModel<Int64>(pt.UnkLongs4[i]));
+            }
+            unkLongs5 = new BindableCollection<PrimitiveWrapperViewModel<Int64>>();
+            dirtyTracker.AddBindableCollection(unkLongs5);
+            for (int i = 0; i < pt.UnkLongs5.Length; i++)
+            {
+                unkLongs5.Add(new PrimitiveWrapperViewModel<Int64>(pt.UnkLongs5[i]));
+            }
+            unkLongs6 = new BindableCollection<PrimitiveWrapperViewModel<Int64>>();
+            dirtyTracker.AddBindableCollection(unkLongs6);
+            for (int i = 0; i < pt.UnkLongs6.Length; i++)
+            {
+                unkLongs1.Add(new PrimitiveWrapperViewModel<Int64>(pt.UnkLongs6[i]));
+            }
+            unkLongs1 = new BindableCollection<PrimitiveWrapperViewModel<Int64>>();
+            dirtyTracker.AddBindableCollection(unkLongs7);
+            for (int i = 0; i < pt.UnkLongs7.Length; i++)
+            {
+                unkLongs7.Add(new PrimitiveWrapperViewModel<Int64>(pt.UnkLongs7[i]));
+            }
+            unkShorts = new BindableCollection<PrimitiveWrapperViewModel<Int16>>();
+            dirtyTracker.AddBindableCollection(unkShorts);
+            for (int i = 0; i < pt.UnkShorts.Length; i++)
+            {
+                unkShorts.Add(new PrimitiveWrapperViewModel<Int16>(pt.UnkShorts[i]));
+            }
+        }
+
+        public void ResetDirty()
+        {
+            dirtyTracker.ResetDirty();
+            IsDirty = false;
+        }
+
+        public bool IsDirty
+        {
+            get => isDirty;
+            set
+            {
+                if (isDirty != value)
+                {
+                    isDirty = value;
+                    NotifyOfPropertyChange();
+                }
+            }
         }
 
         public void Save(TwinParticleSystem pt)
@@ -257,14 +340,46 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
                     W = UnkVecs[i].W,
                 };
             }
-            pt.UnkShorts = CloneUtils.CloneArray(UnkShorts);
-            pt.UnkLongs1 = CloneUtils.CloneArray(UnkLongs1);
-            pt.UnkLongs2 = CloneUtils.CloneArray(UnkLongs2);
-            pt.UnkLongs3 = CloneUtils.CloneArray(UnkLongs3);
-            pt.UnkLongs4 = CloneUtils.CloneArray(UnkLongs4);
-            pt.UnkLongs5 = CloneUtils.CloneArray(UnkLongs5);
-            pt.UnkLongs6 = CloneUtils.CloneArray(UnkLongs6);
-            pt.UnkLongs7 = CloneUtils.CloneArray(UnkLongs7);
+            pt.UnkShorts = new Int16[UnkShorts.Count];
+            for (var i = 0; i < UnkShorts.Count; ++i)
+            {
+                pt.UnkShorts[i] = UnkShorts[i].Value;
+            }
+            pt.UnkLongs1 = new Int64[UnkLongs1.Count];
+            for (var i = 0; i < UnkLongs1.Count; ++i)
+            {
+                pt.UnkLongs1[i] = UnkLongs1[i].Value;
+            }
+            pt.UnkLongs2 = new Int64[UnkLongs2.Count];
+            for (var i = 0; i < UnkLongs2.Count; ++i)
+            {
+                pt.UnkLongs2[i] = UnkLongs2[i].Value;
+            }
+            pt.UnkLongs3 = new Int64[UnkLongs3.Count];
+            for (var i = 0; i < UnkLongs3.Count; ++i)
+            {
+                pt.UnkLongs3[i] = UnkLongs3[i].Value;
+            }
+            pt.UnkLongs4 = new Int64[UnkLongs4.Count];
+            for (var i = 0; i < UnkLongs4.Count; ++i)
+            {
+                pt.UnkLongs4[i] = UnkLongs4[i].Value;
+            }
+            pt.UnkLongs5 = new Int64[UnkLongs5.Count];
+            for (var i = 0; i < UnkLongs5.Count; ++i)
+            {
+                pt.UnkLongs5[i] = UnkLongs5[i].Value;
+            }
+            pt.UnkLongs6 = new Int64[UnkLongs6.Count];
+            for (var i = 0; i < UnkLongs6.Count; ++i)
+            {
+                pt.UnkLongs6[i] = UnkLongs6[i].Value;
+            }
+            pt.UnkLongs7 = new Int64[UnkLongs7.Count];
+            for (var i = 0; i < UnkLongs7.Count; ++i)
+            {
+                pt.UnkLongs7[i] = UnkLongs7[i].Value;
+            }
             pt.UnkInt = UnkInt;
         }
 
@@ -282,22 +397,9 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             return base.OnInitializeAsync(cancellationToken);
         }
 
-        public UInt32 Version
-        {
-            get
-            {
-                return version;
-            }
-            set
-            {
-                if (value != version)
-                {
-                    version = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public UInt32 Version => version;
 
+        [MarkDirty]
         public String Name
         {
             get
@@ -314,6 +416,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte1
         {
             get
@@ -330,6 +433,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort1
         {
             get
@@ -346,6 +450,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort2
         {
             get
@@ -362,6 +467,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort3
         {
             get
@@ -378,6 +484,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort4
         {
             get
@@ -394,6 +501,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort5
         {
             get
@@ -410,6 +518,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort6
         {
             get
@@ -426,6 +535,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort7
         {
             get
@@ -442,6 +552,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte2
         {
             get
@@ -458,6 +569,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte3
         {
             get
@@ -474,6 +586,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte4
         {
             get
@@ -490,6 +603,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte5
         {
             get
@@ -506,6 +620,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat1
         {
             get
@@ -522,6 +637,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat2
         {
             get
@@ -538,6 +654,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat3
         {
             get
@@ -554,6 +671,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat4
         {
             get
@@ -570,6 +688,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat5
         {
             get
@@ -586,6 +705,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat6
         {
             get
@@ -602,6 +722,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat7
         {
             get
@@ -628,6 +749,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             get => unkVec2;
         }
 
+        [MarkDirty]
         public Single UnkFloat8
         {
             get
@@ -644,6 +766,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat9
         {
             get
@@ -660,6 +783,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat10
         {
             get
@@ -676,6 +800,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat11
         {
             get
@@ -692,6 +817,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat12
         {
             get
@@ -708,6 +834,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat13
         {
             get
@@ -724,6 +851,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat14
         {
             get
@@ -740,6 +868,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat15
         {
             get
@@ -756,6 +885,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat16
         {
             get
@@ -772,6 +902,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat17
         {
             get
@@ -788,6 +919,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat18
         {
             get
@@ -804,6 +936,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat19
         {
             get
@@ -820,6 +953,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat20
         {
             get
@@ -836,6 +970,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat21
         {
             get
@@ -852,6 +987,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public UInt16 UnkUShort8
         {
             get
@@ -868,6 +1004,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte6
         {
             get
@@ -884,6 +1021,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte7
         {
             get
@@ -900,6 +1038,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat22
         {
             get
@@ -916,6 +1055,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat23
         {
             get
@@ -932,6 +1072,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat24
         {
             get
@@ -948,6 +1089,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat25
         {
             get
@@ -964,6 +1106,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat26
         {
             get
@@ -985,22 +1128,9 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             get => unkVecs;
         }
 
-        public Int64[] UnkLongs1
-        {
-            get
-            {
-                return unkLongs1;
-            }
-            set
-            {
-                if (value != unkLongs1)
-                {
-                    unkLongs1 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int64>> UnkLongs1 => unkLongs1;
 
+        [MarkDirty]
         public Single UnkFloat27
         {
             get
@@ -1017,6 +1147,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat28
         {
             get
@@ -1033,6 +1164,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat29
         {
             get
@@ -1049,6 +1181,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat30
         {
             get
@@ -1065,38 +1198,11 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
-        public Int64[] UnkLongs2
-        {
-            get
-            {
-                return unkLongs2;
-            }
-            set
-            {
-                if (value != unkLongs2)
-                {
-                    unkLongs2 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int64>> UnkLongs2 => unkLongs2;
 
-        public Int64[] UnkLongs3
-        {
-            get
-            {
-                return unkLongs3;
-            }
-            set
-            {
-                if (value != unkLongs3)
-                {
-                    unkLongs3 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int64>> UnkLongs3 => unkLongs3;
 
+        [MarkDirty]
         public Single UnkFloat31
         {
             get
@@ -1113,6 +1219,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat32
         {
             get
@@ -1129,54 +1236,13 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
-        public Int64[] UnkLongs4
-        {
-            get
-            {
-                return unkLongs4;
-            }
-            set
-            {
-                if (value != unkLongs4)
-                {
-                    unkLongs4 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int64>> UnkLongs4 => unkLongs4;
 
-        public Int64[] UnkLongs5
-        {
-            get
-            {
-                return unkLongs5;
-            }
-            set
-            {
-                if (value != unkLongs5)
-                {
-                    unkLongs5 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int64>> UnkLongs5 => unkLongs5;
 
-        public Int64[] UnkLongs6
-        {
-            get
-            {
-                return unkLongs6;
-            }
-            set
-            {
-                if (value != unkLongs6)
-                {
-                    unkLongs6 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int64>> UnkLongs6 => unkLongs6;
 
+        [MarkDirty]
         public Single UnkFloat33
         {
             get
@@ -1193,6 +1259,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat34
         {
             get
@@ -1209,6 +1276,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat35
         {
             get
@@ -1225,6 +1293,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat36
         {
             get
@@ -1241,22 +1310,9 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
-        public Int64[] UnkLongs7
-        {
-            get
-            {
-                return unkLongs7;
-            }
-            set
-            {
-                if (value != unkLongs7)
-                {
-                    unkLongs7 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int64>> UnkLongs7 => unkLongs7;
 
+        [MarkDirty]
         public Byte UnkByte8
         {
             get
@@ -1273,6 +1329,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Byte UnkByte9
         {
             get
@@ -1289,6 +1346,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat37
         {
             get
@@ -1305,22 +1363,9 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
-        public Int16[] UnkShorts
-        {
-            get
-            {
-                return unkShorts;
-            }
-            set
-            {
-                if (value != unkShorts)
-                {
-                    unkShorts = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
+        public BindableCollection<PrimitiveWrapperViewModel<Int16>> UnkShorts => unkShorts;
 
+        [MarkDirty]
         public Single UnkFloat38
         {
             get
@@ -1337,6 +1382,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat39
         {
             get
@@ -1353,6 +1399,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat40
         {
             get
@@ -1369,6 +1416,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
             }
         }
 
+        [MarkDirty]
         public Int32 UnkInt
         {
             get
@@ -1389,5 +1437,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Particles
         {
             get => unkVec3;
         }
+
+        public DirtyTracker DirtyTracker => dirtyTracker;
     }
 }

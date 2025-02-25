@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Global
     {
         protected override String TwinDataExt => "psf";
         public override UInt32 Section => throw new NotImplementedException();
+        public override String IconPath => "Font.png";
 
         public Font() { }
 

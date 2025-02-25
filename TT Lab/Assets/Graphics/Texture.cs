@@ -12,6 +12,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".png";
         public override UInt32 Section => Constants.GRAPHICS_TEXTURES_SECTION;
+        public override String IconPath => "Texture.png";
 
         [JsonProperty(Required = Required.Always)]
         public ITwinTexture.TextureFunction TextureFunction { get; set; }

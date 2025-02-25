@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class Particles : SerializableInstance
     {
         public override UInt32 Section => Constants.LEVEL_PARTICLES_ITEM;
+        public override String IconPath => "Particle_Emitter.png";
 
         public Particles()
         {

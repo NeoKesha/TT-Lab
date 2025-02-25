@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class ObjectInstance : SerializableInstance
     {
         public override UInt32 Section => Constants.LAYOUT_INSTANCES_SECTION;
+        public override String IconPath => "Instance.png";
 
         public ObjectInstance(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinInstance instance) : base(package, id, name, chunk, layId)
         {

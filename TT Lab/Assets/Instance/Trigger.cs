@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class Trigger : SerializableInstance
     {
         public override UInt32 Section => Constants.LAYOUT_TRIGGERS_SECTION;
+        public override String IconPath => "Trigger.png";
 
         public Trigger(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinTrigger trigger) : base(package, id, name, chunk, layId)
         {

@@ -4,6 +4,7 @@ using System.Linq;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.AssetData.Instance.Scenery;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Editors.Instance.Scenery;
 
 namespace TT_Lab.ViewModels.Editors.Instance
@@ -34,6 +35,8 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 SceneryTree.CompileTree(ref list);
                 data.Sceneries = (List<SceneryBaseData>)list;
             }
+            
+            base.Save();
         }
 
         public override void LoadData()
@@ -47,14 +50,63 @@ namespace TT_Lab.ViewModels.Editors.Instance
             if (data.Sceneries.Count != 0)
             {
                 sceneryTree = new SceneryRootViewModel(data.Sceneries[0], data.Sceneries.Skip(1).ToList());
+                DirtyTracker.AddChild(sceneryTree);
                 sceneryTree.BuildTree();
             }
         }
 
-        public String SceneryName { get => sceneryName; set => sceneryName = value; }
-        public UInt32 UnkUInt { get => unkUInt; set => unkUInt = value; }
-        public Byte UnkByte { get => unkByte; set => unkByte = value; }
-        public LabURI Skydome { get => skydome; set => skydome = value; }
+        [MarkDirty]
+        public String SceneryName
+        {
+            get => sceneryName;
+            set
+            {
+                if (sceneryName != value)
+                {
+                    sceneryName = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+        [MarkDirty]
+        public UInt32 UnkUInt
+        {
+            get => unkUInt;
+            set
+            {
+                if (value != unkUInt)
+                {
+                    unkUInt = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+        [MarkDirty]
+        public Byte UnkByte
+        {
+            get => unkByte;
+            set
+            {
+                if (unkByte != value)
+                {
+                    unkByte = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+        [MarkDirty]
+        public LabURI Skydome
+        {
+            get => skydome;
+            set
+            {
+                if (value != skydome)
+                {
+                    skydome = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
         public SceneryRootViewModel? SceneryTree
         {
             get => sceneryTree;

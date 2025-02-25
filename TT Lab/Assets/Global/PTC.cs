@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Global
     {
         protected override String TwinDataExt => "ptc";
         public override UInt32 Section => throw new NotImplementedException();
+        public override String IconPath => "PTC.png";
 
         public PTC() { }
 

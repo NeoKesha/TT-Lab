@@ -1,15 +1,18 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Attributes;
+using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Interfaces;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
 {
-    public class LinkViewModel : Conductor<IScreen>.Collection.AllActive, ISaveableViewModel<ChunkLink>
+    public class LinkViewModel : Conductor<IScreen>.Collection.AllActive, ISaveableViewModel<ChunkLink>, IHaveChildrenEditors
     {
         private Boolean unkFlag;
         private String path;
@@ -21,20 +24,27 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
         private Matrix4ViewModel chunkMatrix;
         private Matrix4ViewModel? loadingWall;
         private BindableCollection<ChunkLinkBoundingBoxBuilderViewModel> boundingBoxBuilders;
+        private bool isDirty;
+        private DirtyTracker dirtyTracker;
 
         public LinkViewModel()
         {
+            dirtyTracker = new DirtyTracker(this);
             path = "levels\\earth\\hub\\beach";
             objectMatrix = new Matrix4ViewModel();
             chunkMatrix = new Matrix4ViewModel();
-            boundingBoxBuilders = new BindableCollection<ChunkLinkBoundingBoxBuilderViewModel>
-            {
-                new()
-            };
+            boundingBoxBuilders = new BindableCollection<ChunkLinkBoundingBoxBuilderViewModel>();
+            dirtyTracker.AddChild(objectMatrix);
+            dirtyTracker.AddChild(chunkMatrix);
+            dirtyTracker.AddBindableCollection(boundingBoxBuilders);
+            
+            boundingBoxBuilders.Add(new ChunkLinkBoundingBoxBuilderViewModel());
         }
 
         public LinkViewModel(ChunkLink link)
         {
+            dirtyTracker = new DirtyTracker(this);
+            
             unkFlag = link.UnkFlag;
             path = link.Path;
             isRendered = link.IsRendered;
@@ -43,14 +53,37 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             keepLoaded = link.KeepLoaded;
             objectMatrix = new Matrix4ViewModel(link.ObjectMatrix);
             chunkMatrix = new Matrix4ViewModel(link.ChunkMatrix);
+            dirtyTracker.AddChild(objectMatrix);
+            dirtyTracker.AddChild(chunkMatrix);
             if (link.LoadingWall != null)
             {
                 loadingWall = new Matrix4ViewModel(link.LoadingWall);
+                dirtyTracker.AddChild(loadingWall);
             }
             boundingBoxBuilders = new BindableCollection<ChunkLinkBoundingBoxBuilderViewModel>();
+            dirtyTracker.AddBindableCollection(boundingBoxBuilders);
             foreach (var builder in link.ChunkLinksCollisionData)
             {
                 boundingBoxBuilders.Add(new ChunkLinkBoundingBoxBuilderViewModel(builder));
+            }
+        }
+
+        public void ResetDirty()
+        {
+            dirtyTracker.ResetDirty();
+            IsDirty = false;
+        }
+
+        public bool IsDirty
+        {
+            get => isDirty;
+            set
+            {
+                if (isDirty != value)
+                {
+                    isDirty = value;
+                    NotifyOfPropertyChange();
+                }
             }
         }
 
@@ -62,6 +95,8 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             link.UnkNum = UnkNum;
             link.IsLoadWallActive = IsLoadWallActive;
             link.KeepLoaded = KeepLoaded;
+            link.ObjectMatrix = new Matrix4();
+            link.ChunkMatrix = new Matrix4();
             ObjectMatrix.Save(link.ObjectMatrix);
             ChunkMatrix.Save(link.ChunkMatrix);
             link.LoadingWall = null;
@@ -77,6 +112,8 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
                 builder.Save(bbb);
                 link.ChunkLinksCollisionData.Add(bbb);
             }
+            
+            ResetDirty();
         }
 
         protected override Task OnInitializeAsync(CancellationToken cancellationToken)
@@ -97,6 +134,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             return base.OnInitializeAsync(cancellationToken);
         }
 
+        [MarkDirty]
         public Boolean UnkFlag
         {
             get => unkFlag;
@@ -110,6 +148,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             }
         }
 
+        [MarkDirty]
         public String Path
         {
             get
@@ -126,6 +165,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             }
         }
 
+        [MarkDirty]
         public Boolean IsRendered
         {
             get
@@ -142,6 +182,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             }
         }
 
+        [MarkDirty]
         public Byte UnkNum
         {
             get
@@ -158,6 +199,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             }
         }
 
+        [MarkDirty]
         public Boolean IsLoadWallActive
         {
             get
@@ -174,6 +216,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
             }
         }
 
+        [MarkDirty]
         public Boolean KeepLoaded
         {
             get
@@ -209,5 +252,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.ChunkLinks
         {
             get => boundingBoxBuilders;
         }
+
+        public DirtyTracker DirtyTracker => dirtyTracker;
     }
 }

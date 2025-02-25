@@ -12,6 +12,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".glb";
         public override UInt32 Section => Constants.GRAPHICS_BLEND_SKINS_SECTION;
+        public override String IconPath => "Blend_Skin.png";
 
         public BlendSkin() { }
 

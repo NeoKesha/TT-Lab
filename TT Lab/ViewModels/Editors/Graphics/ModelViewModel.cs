@@ -1,40 +1,51 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using System.Linq;
+using Caliburn.Micro;
 using System.Threading;
 using System.Threading.Tasks;
+using org.ogre;
 using TT_Lab.Assets;
-using TT_Lab.Project.Messages;
 using TT_Lab.Rendering;
+using TT_Lab.Rendering.Buffers;
+using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
     public class ModelViewModel : ResourceEditorViewModel
     {
+        private ModelBuffer? _model;
+
         public ModelViewModel()
         {
             Scenes.Add(IoC.Get<SceneEditorViewModel>());
-
+            Scenes[0].SceneHeaderModel = "Model viewer";
             InitSceneRenderer();
-        }
-
-        protected override Task OnActivateAsync(CancellationToken cancellationToken)
-        {
-            InitSceneRenderer();
-
-            return base.OnActivateAsync(cancellationToken);
         }
 
         private void InitSceneRenderer()
         {
-            SceneRenderer.SceneCreator = (GLWindow glControl) =>
+            SceneRenderer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.Light);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.EnableImgui(true);
 
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0.2f);
-                Rendering.Objects.Model m = new(glControl.RenderContext, glControl, scene, AssetManager.Get().GetAssetData<AssetData.Graphics.ModelData>(EditableResource));
-                scene.AddChild(m);
+                var model = AssetManager.Get().GetAssetData<AssetData.Graphics.ModelData>(EditableResource);
+                _model = new ModelBuffer(sceneManager, EditableResource, model);
 
-                return scene;
+                glControl.OnRender += (sender, args) =>
+                {
+                    ImGui.Begin("Model Data");
+                    ImGui.SetWindowPos(new ImVec2(5, 5));
+                    ImGui.SetWindowSize(new ImVec2(150, 90));
+                    ImGui.Text($"Vertexes {model.Vertexes.Sum(v => v.Count)}");
+                    ImGui.Text($"Faces {model.Faces.Sum(f => f.Count)}");
+                    ImGui.Text($"Meshes {model.Meshes.Count}");
+                    ImGui.End();
+                };
             };
         }
 

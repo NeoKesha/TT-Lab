@@ -15,7 +15,8 @@ namespace TT_Lab.Command
         public event EventHandler? CanExecuteChanged;
 
         private ObservableCollection<T> _list;
-        private Stack<DelItemInfo> _items = new Stack<DelItemInfo>();
+        private Func<T>? _itemConstructor;
+        private Stack<DelItemInfo> _items = new();
         private Type _item;
         private int _maxItems;
 
@@ -25,6 +26,11 @@ namespace TT_Lab.Command
             _list.CollectionChanged += _list_CollectionChanged;
             _item = typeof(T);
             _maxItems = maxItems;
+        }
+        
+        public AddItemToListCommand(ObservableCollection<T> list, Func<T> itemConstructor, int maxItems = -1) : this(list, maxItems)
+        {
+            _itemConstructor = itemConstructor;
         }
 
         private void _list_CollectionChanged(Object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -39,7 +45,7 @@ namespace TT_Lab.Command
 
         public void Execute(Object? parameter = null)
         {
-            var item = Activator.CreateInstance(_item);
+            var item = _itemConstructor != null ? _itemConstructor() : Activator.CreateInstance(_item);
             _items.Push(new DelItemInfo
             {
                 Index = _list.Count,

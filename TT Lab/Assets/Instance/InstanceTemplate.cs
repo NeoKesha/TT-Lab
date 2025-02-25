@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Instance
     public class InstanceTemplate : SerializableInstance
     {
         public override UInt32 Section => Constants.LAYOUT_TEMPLATES_SECTION;
+        public override String IconPath => "Instance_Template.png";
 
         public InstanceTemplate(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, ITwinTemplate template) : base(package, id, Name, chunk, layId)
         {

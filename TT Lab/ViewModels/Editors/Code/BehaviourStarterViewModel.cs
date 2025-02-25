@@ -2,6 +2,7 @@
 using System.Linq;
 using TT_Lab.AssetData.Code.Behaviour;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 
 namespace TT_Lab.ViewModels.Editors.Code
 {
@@ -9,6 +10,22 @@ namespace TT_Lab.ViewModels.Editors.Code
     {
         private LabURI attachedScript = LabURI.Empty;
         private BindableCollection<BehaviourAssignerViewModel> assigners = new();
+
+        public BehaviourStarterViewModel()
+        {
+            assigners.CollectionChanged += (s, e) =>
+            {
+                if (e.NewItems == null)
+                {
+                    return;
+                }
+
+                foreach (var newItem in e.NewItems.Cast<BehaviourAssignerViewModel>())
+                {
+                    DirtyTracker.AddChild(newItem);
+                }
+            };
+        }
 
         protected override void Save()
         {
@@ -20,26 +37,32 @@ namespace TT_Lab.ViewModels.Editors.Code
             {
                 Behaviour = attachedScript
             };
-            // TODO: Finish this up
+            
             data.Assigners.Add(behaviourAssigner);
             foreach (var assigner in assigners.Skip(1))
             {
-
+                var newAssigner = new BehaviourAssignerData();
+                assigner.Save(newAssigner);
+                data.Assigners.Add(newAssigner);
             }
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
+            
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<BehaviourStarterData>();
             attachedScript = data.Assigners[0].Behaviour;
             assigners.Clear();
             foreach (var assigner in data.Assigners)
             {
-                assigners.Add(new BehaviourAssignerViewModel(assigner));
+                assigners.Add(new BehaviourAssignerViewModel(assigner, this));
             }
         }
 
+        [MarkDirty]
         public LabURI AttachedScript
         {
             get => attachedScript;
@@ -48,7 +71,6 @@ namespace TT_Lab.ViewModels.Editors.Code
                 if (value != attachedScript)
                 {
                     attachedScript = value;
-                    IsDirty = true;
                     NotifyOfPropertyChange();
                 }
             }

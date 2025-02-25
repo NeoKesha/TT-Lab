@@ -27,6 +27,12 @@ namespace TT_Lab.Assets
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         LabURI Package { get; set; }
+        
+        /// <summary>
+        /// All the assets that are referenced by this one
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        List<LabURI> References { get; set; }
 
         /// <summary>
         /// In case of Twinsanity ID collisions the distinct category asset belongs to
@@ -117,6 +123,26 @@ namespace TT_Lab.Assets
         protected AbstractAssetData GetData();
 
         /// <summary>
+        /// Adds new resource reference
+        /// </summary>
+        /// <param name="reference">Resource to reference</param>
+        void AddReference(LabURI reference)
+        {
+            if (reference == LabURI.Empty)
+            {
+                return;
+            }
+            
+            References.Add(reference);
+        }
+
+        /// <summary>
+        /// Removes reference to a resource
+        /// </summary>
+        /// <param name="reference">Resource to remove reference from</param>
+        void RemoveReference(LabURI reference);
+
+        /// <summary>
         /// Loads in asset's data if it's not loaded
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -174,7 +200,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Save the data to disk
         /// </summary>
-        void Serialize();
+        void Serialize(bool setDirectoryToAssets = false);
 
         /// <summary>
         /// Read data from the disk

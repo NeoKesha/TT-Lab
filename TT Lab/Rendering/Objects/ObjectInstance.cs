@@ -1,180 +1,94 @@
 ﻿using GlmSharp;
-using SharpGL;
 using System.Collections.Generic;
+using System.Linq;
+using org.ogre;
 using TT_Lab.AssetData.Code;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Extensions;
 using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Shaders;
+using TT_Lab.Util;
 
-namespace TT_Lab.Rendering.Objects
+namespace TT_Lab.Rendering.Objects;
+
+public class ObjectInstance : EditableObject
 {
-    public class ObjectInstance : BaseRenderable
+    private readonly List<ModelBuffer> modelBuffers = new();
+
+    public ObjectInstance(OgreWindow window, string name, ObjectInstanceData instance) : base(window, name)
     {
-        private List<ModelBuffer> modelBuffers = new();
-        private Dictionary<LabURI, List<ModelBuffer>> modelBufferCache;
+        var objURI = instance.ObjectId;
+        var sceneManager = window.GetSceneManager();
+        SetupModelBuffer(sceneManager, objURI);
 
-        private vec3 ambientColor = new();
-        private vec3 pos = new();
-        private vec3 rot = new();
-        private bool selected;
+        Pos = new vec3(-instance.Position.X, instance.Position.Y, instance.Position.Z);
+        Rot = new vec3(instance.RotationX.GetRotation(), -instance.RotationY.GetRotation(), -instance.RotationZ.GetRotation());
+        AmbientColor = new vec3(0.5f, 0.5f, 0.5f);
+        SetPositionAndRotation();
+    }
 
-        public ObjectInstance(OpenGL gl, GLWindow window, Scene root, ObjectInstanceData instance, Dictionary<LabURI, List<ModelBuffer>> modelBufferCache) : base(gl, window, root)
+    public override void Select()
+    {
+        foreach (var nodeMaterial in modelBuffers.SelectMany(model => model.MeshNodes))
         {
-            this.modelBufferCache = modelBufferCache;
-            var objURI = instance.ObjectId;
-            if (modelBufferCache.ContainsKey(objURI))
-            {
-                SetupModelBufferFromCache(objURI);
-            }
-            else
-            {
-                SetupModelBuffer(objURI);
-            }
-            pos = new vec3(-instance.Position.X, instance.Position.Y, instance.Position.Z);
-            rot = new vec3(instance.RotationX.GetRotation(), instance.RotationY.GetRotation(), instance.RotationZ.GetRotation());
-            SetPositionAndRotation(pos, rot);
-            Deselect();
+            var entity = nodeMaterial.MeshNode.getAttachedObject(0).castEntity();
+            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Transparent]);
+            var subEntity = entity.getSubEntity(0);
+            subEntity.setCustomParameter(0, new Vector4(AmbientColor.x, AmbientColor.y, AmbientColor.z, 0.5f));
+        }
+            
+        base.Select();
+    }
+
+    public override void Deselect()
+    {
+        foreach (var nodeMaterial in modelBuffers.SelectMany(model => model.MeshNodes))
+        {
+            var entity = nodeMaterial.MeshNode.getAttachedObject(0).castEntity();
+            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Opaque]);
+            var subEntity = entity.getSubEntity(0);
+            subEntity.setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+        }
+            
+        base.Deselect();
+    }
+
+    private void SetupModelBuffer(SceneManager sceneManager, LabURI uri)
+    {
+        var assetManager = AssetManager.Get();
+        var objData = assetManager.GetAssetData<GameObjectData>(uri);
+        if (objData.OGISlots.All(ogiUri => ogiUri == LabURI.Empty))
+        {
+            return;
         }
 
-        public void SetPositionAndRotation(vec3 pos, vec3 rot)
+        var ogiURI = objData.OGISlots.First(ogiUri => ogiUri != LabURI.Empty);
+        var ogiData = assetManager.GetAssetData<OGIData>(ogiURI);
+        
+        var skeletonMap = TwinSkeletonManager.CreateSceneNodeSkeleton(SceneNode, ogiURI);
+        var jointIndex = 0;
+        foreach (var rigidModel in ogiData.RigidModelIds)
         {
-            mat4 matrixPosition = mat4.Translate(pos.x, pos.y, pos.z);
-            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
-            rot = rot * 3.14f / 180.0f;
-            matrixRotationX = mat4.RotateX(rot.x);
-            matrixRotationY = mat4.RotateY(rot.y);
-            matrixRotationZ = mat4.RotateZ(rot.z);
-            LocalTransform = matrixPosition;
-            LocalTransform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-        }
-
-        public void Select()
-        {
-            ambientColor.x = 0.5f;
-            ambientColor.y = 0.5f;
-            ambientColor.z = 0.5f;
-            Opacity = 0.5f;
-            selected = true;
-        }
-
-        public void Deselect()
-        {
-            ambientColor.x = 0.0f;
-            ambientColor.y = 0.0f;
-            ambientColor.z = 0.0f;
-            Opacity = 1.0f;
-            selected = false;
-        }
-
-        public void Bind()
-        {
-        }
-
-        public void Delete()
-        {
-            modelBuffers.Clear();
-        }
-
-        public override void SetUniforms(ShaderProgram shader)
-        {
-            base.SetUniforms(shader);
-
-            shader.SetUniform1("Opacity", Opacity);
-            shader.SetUniform3("AmbientMaterial", ambientColor.x, ambientColor.y, ambientColor.z);
-        }
-
-        protected override void RenderSelf(ShaderProgram shader)
-        {
-            Bind();
-            // Have to blend buffers at render time because of caching
-            var blendBuffers = Opacity < 1.0f;
-            foreach (var modelBuffer in modelBuffers)
+            var sceneNode = skeletonMap[ogiData.JointIndices[jointIndex++]];
+            if (rigidModel == LabURI.Empty)
             {
-                modelBuffer.Bind();
-                if (blendBuffers)
-                {
-                    modelBuffer.EnableAlphaBlending();
-                }
-                modelBuffer.Render(shader, HasAlphaBlending());
-                if (blendBuffers)
-                {
-                    modelBuffer.DisableAlphaBlending();
-                }
-                modelBuffer.Unbind();
-            }
-            Unbind();
-        }
-
-        public void Unbind()
-        {
-        }
-
-        private void SetupModelBufferFromCache(LabURI uri)
-        {
-            var cache = modelBufferCache.GetValueOrDefault(uri);
-            if (cache == null)
-            {
-                return;
+                continue;
             }
 
-            foreach (var buffer in cache)
-            {
-                modelBuffers.Add(buffer);
-            }
-            modelBufferCache.Remove(uri);
+            var rigidModelData = assetManager.GetAssetData<RigidModelData>(rigidModel);
+            modelBuffers.Add(new ModelBuffer(sceneManager, sceneNode, rigidModel, rigidModelData));
         }
-        private void ClearCacheEntry(LabURI uri)
+        
+        if (ogiData.Skin != LabURI.Empty)
         {
-            var cache = modelBufferCache.GetValueOrDefault(uri);
-            if (cache == null)
-            {
-                return;
-            }
-
-            modelBuffers.Clear();
-            foreach (var buffer in cache)
-            {
-                buffer.Delete();
-            }
+            var skin = assetManager.GetAssetData<SkinData>(ogiData.Skin);
+            modelBuffers.Add(new ModelBuffer(sceneManager, SceneNode, ogiData.Skin, skin));
         }
-
-        private void SetupModelBuffer(LabURI uri)
+        if (ogiData.BlendSkin != LabURI.Empty)
         {
-            var assetManager = AssetManager.Get();
-            var objData = assetManager.GetAssetData<GameObjectData>(uri);
-            if (objData.OGISlots[0] == LabURI.Empty)
-            {
-                return;
-            }
-            var ogiData = assetManager.GetAssetData<OGIData>(objData.OGISlots[0]);
-            foreach (var rigidModel in ogiData.RigidModelIds)
-            {
-                if (rigidModel == LabURI.Empty)
-                {
-                    continue;
-                }
-                var rigidModelData = assetManager.GetAssetData<RigidModelData>(rigidModel);
-                modelBuffers.Add(new ModelBuffer(GL, Window, Root, rigidModelData));
-            }
-            if (ogiData.Skin != LabURI.Empty)
-            {
-                var skin = assetManager.GetAssetData<SkinData>(ogiData.Skin);
-                modelBuffers.Add(new ModelBuffer(GL, Window, Root, skin));
-            }
-            if (ogiData.BlendSkin != LabURI.Empty)
-            {
-                var blendSkin = assetManager.GetAssetData<BlendSkinData>(ogiData.BlendSkin);
-                modelBuffers.Add(new ModelBufferBlendSkin(GL, Window, Root, blendSkin));
-            }
-
-            var cacheList = new List<ModelBuffer>();
-            foreach (var buffer in modelBuffers)
-            {
-                cacheList.Add(buffer);
-            }
-            modelBufferCache.Add(uri, cacheList);
+            var blendSkin = assetManager.GetAssetData<BlendSkinData>(ogiData.BlendSkin);
+            modelBuffers.Add(new ModelBufferBlendSkin(sceneManager, SceneNode, ogiData.BlendSkin, blendSkin));
         }
     }
 }

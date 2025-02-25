@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Graphics
     public class Material : SerializableAsset
     {
         public override UInt32 Section => Constants.GRAPHICS_MATERIALS_SECTION;
+        public override String IconPath => "LOD.png";
 
         public Material(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinMaterial material) : base(id, name, package, needVariant, variant)
         {

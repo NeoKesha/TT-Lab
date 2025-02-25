@@ -5,18 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Controls"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Label x:Name="ComboBoxName" Content="Label" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-        <ComboBox x:Name="DropList" Margin="0" Grid.Row="1" VerticalAlignment="Top" ItemsSource="{Binding Items}"
-                  SelectedIndex="{Binding DisplaySelectedIndex, Mode=TwoWay, ElementName=DropListControl}"
-                  SelectedItem="{Binding DisplaySelectedItem, ElementName=DropListControl, Mode=TwoWay}"
+    <StackPanel Orientation="Vertical">
+        <Label Content="{Binding DropListName, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <ComboBox Margin="0" VerticalAlignment="Top" ItemsSource="{Binding Items, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                  SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
                   IsReadOnly="True"
-                  ItemTemplate="{Binding ItemTemplate, ElementName=DropListControl}"
                   VirtualizingPanel.IsVirtualizing="True"
-                  VirtualizingPanel.VirtualizationMode="Recycling"/>
-    </Grid>
+                  VirtualizingPanel.VirtualizationMode="Recycling">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding}" 
+                                      ContentTemplate="{Binding ItemTemplate, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </StackPanel>
 </UserControl>

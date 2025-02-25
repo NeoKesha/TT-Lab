@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Views"
-             xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels"
+             xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels.Composite"
              xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
              xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
              mc:Ignorable="d"
@@ -14,9 +14,9 @@
     <Grid>
         <TabControl x:Name="Items">
             <TabControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="{x:Type viewmodels:TabbedEditorViewModel}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding DisplayName}" Margin="0,0,10,0"/>
+                        <TextBlock Text="{Binding DisplayName, Mode=OneWay}" Margin="0,0,10,0"/>
                         <Button Content="X" cal:Message.Attach="CloseEditorTab($dataContext)"/>
                     </StackPanel>
                 </DataTemplate>

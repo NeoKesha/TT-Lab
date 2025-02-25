@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
@@ -18,6 +19,8 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             var baseCam = (CameraLine2)cam;
             lineStart = new Vector4ViewModel(baseCam.LineStart);
             lineEnd = new Vector4ViewModel(baseCam.LineEnd);
+            DirtyTracker.AddChild(lineStart);
+            DirtyTracker.AddChild(lineEnd);
             unkFloat3 = baseCam.UnkFloat3;
             unkFloat4 = baseCam.UnkFloat4;
         }
@@ -63,6 +66,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             get => lineEnd;
         }
 
+        [MarkDirty]
         public Single UnkFloat3
         {
             get => unkFloat3;
@@ -76,6 +80,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat4
         {
             get => unkFloat4;

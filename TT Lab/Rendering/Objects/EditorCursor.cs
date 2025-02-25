@@ -1,52 +1,42 @@
-﻿using GlmSharp;
-using SharpGL;
-using TT_Lab.Rendering.Shaders;
+﻿using System.Drawing;
+using GlmSharp;
+using org.ogre;
+using TT_Lab.Extensions;
+using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {
-    internal class EditorCursor : BaseRenderable
+    internal class EditorCursor
     {
-        vec3? pos = null;
+        private vec3? _pos = null;
+        private SceneNode _cursorNode;
 
-        public EditorCursor(OpenGL gl, GLWindow window, Scene root) : base(gl, window, root)
+        public EditorCursor(EditingContext editingContext)
         {
-
+            _cursorNode = editingContext.GetEditorNode().createChildSceneNode("EditorCursorNode");
+            var cube = BufferGeneration.GetCubeBuffer("EditorCursorCube", Color.Purple);
+            var entity = editingContext.CreateEntity(cube);
+            entity.setMaterial(MaterialManager.GetMaterial("Gizmo"));
+            _cursorNode.attachObject(entity);
+            _cursorNode.setScale(0.2f, 0.2f, 0.2f);
+            _cursorNode.setVisible(false);
         }
 
-        public void Bind()
+        public SceneNode GetCursorNode()
         {
-
-        }
-
-        public void Delete()
-        {
-
+            return _cursorNode;
         }
 
         public void SetPosition(vec3 newPos)
         {
-            pos = newPos;
-            LocalTransform = mat4.Translate(pos.Value) * mat4.Scale(0.1f);
+            _pos = newPos;
+            _cursorNode.setPosition(OgreExtensions.FromGlm(newPos));
+            _cursorNode.setVisible(true);
         }
 
         public vec3 GetPosition()
         {
-            return pos.Value;
-        }
-
-        protected override void RenderSelf(ShaderProgram shader)
-        {
-            if (pos == null)
-            {
-                return;
-            }
-
-            Window.DrawBox(WorldTransform, new vec4(0.5f, 0.0f, 1.0f, 1.0f));
-        }
-
-        public void Unbind()
-        {
-
+            return _pos.Value;
         }
 
     }

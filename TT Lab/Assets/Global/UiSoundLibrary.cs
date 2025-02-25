@@ -8,6 +8,7 @@ namespace TT_Lab.Assets.Global
     public class UiSoundLibrary : SerializableAsset
     {
         public override UInt32 Section => throw new NotImplementedException();
+        public override String IconPath => "UI_Sound_Library.png";
 
         public UiSoundLibrary() { }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -7,7 +8,8 @@ namespace TT_Lab.Util
 {
     public static class MiscUtils
     {
-        private static Bitmap _boatguy;
+        private static Bitmap? _boatguy;
+        private static Dictionary<string, Bitmap> _labIconStorage = new();
 
         public static object? ConvertEnum(Type t, object? o)
         {
@@ -25,8 +27,20 @@ namespace TT_Lab.Util
 
         public static Bitmap GetBoatGuy()
         {
-            _boatguy ??= new Bitmap(ManifestResourceLoader.GetPathInExe("Images\\boat_guy.png"));
+            _boatguy ??= new Bitmap(ManifestResourceLoader.GetPathInExe("Media\\boat_guy.png"));
             return _boatguy;
+        }
+
+        public static Bitmap GetLabIcon(string iconName)
+        {
+            if (_labIconStorage.TryGetValue(iconName, out Bitmap? value))
+            {
+                return value;
+            }
+
+            _labIconStorage.Add(iconName, new Bitmap(ManifestResourceLoader.GetPathInExe($"Media\\LabIcons\\{iconName}.png")));
+
+            return _labIconStorage[iconName];
         }
 
         // Ah yes, WinForms being garbage as usual
@@ -100,5 +114,10 @@ namespace TT_Lab.Util
             state &= ~flags;
             return state;
         }
+    }
+
+    public static class GlobalConsts
+    {
+        public static string OgreGroup => "Project"; 
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TT_Lab.AssetData.Instance.Scenery;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Scenery
@@ -22,7 +23,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Scenery
         {
             foreach (var sc in SceneryTypes)
             {
-                if (sc == ITwinScenery.SceneryType.Node)
+                if (sc.Value == ITwinScenery.SceneryType.Node)
                 {
                     var node = baseTree[0];
                     baseTree = baseTree.Skip(1).ToList();
@@ -30,7 +31,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Scenery
                     Children.Add(newNode);
                     newNode.BuildTree(ref baseTree);
                 }
-                else if (sc == ITwinScenery.SceneryType.Leaf)
+                else if (sc.Value == ITwinScenery.SceneryType.Leaf)
                 {
                     var leaf = baseTree[0];
                     baseTree = baseTree.Skip(1).ToList();
@@ -43,6 +44,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Scenery
             }
         }
 
+        [MarkDirty]
         public UInt32 UnkUInt
         {
             get => unkUInt;

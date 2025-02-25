@@ -4,6 +4,7 @@ using System.Linq;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Instance;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
@@ -11,11 +12,16 @@ namespace TT_Lab.ViewModels.Editors.Instance
 {
     public class AiPathViewModel : InstanceSectionResourceEditorViewModel
     {
-        private BindableCollection<ResourceTreeElementViewModel> positions;
+        private BindableCollection<ResourceTreeElementViewModel> positions = new();
         private Enums.Layouts layId;
-        private LabURI pathBegin;
-        private LabURI pathEnd;
-        private UInt16[] args;
+        private LabURI pathBegin = LabURI.Empty;
+        private LabURI pathEnd = LabURI.Empty;
+        private UInt16[] args = new UInt16[3];
+
+        public AiPathViewModel()
+        {
+            DirtyTracker.AddBindableCollection(positions);
+        }
 
         protected override void Save()
         {
@@ -27,7 +33,8 @@ namespace TT_Lab.ViewModels.Editors.Instance
             data.Args[0] = Arg1;
             data.Args[1] = Arg2;
             data.Args[2] = Arg3;
-            asset.Serialize();
+            
+            base.Save();
         }
 
         public override void LoadData()
@@ -41,7 +48,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
 
             var tree = ParentEditor.ChunkTree;
             var navPositions = tree.First(avm => avm.Alias == "AI Navigation Positions");
-            foreach (var p in navPositions!.Children)
+            foreach (var p in navPositions!.Children!)
             {
                 positions.Add(p);
             }
@@ -52,6 +59,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             get => positions;
         }
 
+        [MarkDirty]
         public Enums.Layouts LayoutID
         {
             get => layId;
@@ -60,12 +68,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (layId != value)
                 {
                     layId = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public ResourceTreeElementViewModel PathBegin
         {
             get => AssetManager.Get().GetAsset(pathBegin).GetResourceTreeElement();
@@ -74,12 +83,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (pathBegin != value.Asset.URI)
                 {
                     pathBegin = value.Asset.URI;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public ResourceTreeElementViewModel PathEnd
         {
             get => AssetManager.Get().GetAsset(pathEnd).GetResourceTreeElement();
@@ -88,12 +98,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (pathEnd != value.Asset.URI)
                 {
                     pathEnd = value.Asset.URI;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 Arg1
         {
             get => args[0];
@@ -102,12 +113,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (args[0] != value)
                 {
                     args[0] = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 Arg2
         {
             get => args[1];
@@ -116,12 +128,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (args[1] != value)
                 {
                     args[1] = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }
         }
 
+        [MarkDirty]
         public UInt16 Arg3
         {
             get => args[2];
@@ -130,7 +143,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (args[2] != value)
                 {
                     args[2] = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }

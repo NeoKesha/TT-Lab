@@ -2,10 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:TT_Lab.Views.Editors.Graphics"
              xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Editors.Graphics"
-             xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             xmlns:controls="clr-namespace:TT_Lab.Controls"
+             d:DataContext="{Binding Source={d:DesignInstance viewModels:MaterialViewModel}}"
              x:Name="MaterialEditorControl"
              x:Class="TT_Lab.Views.Editors.Graphics.MaterialView"
              mc:Ignorable="d"
@@ -20,11 +23,23 @@
             <ColumnDefinition Width="677*"/>
         </Grid.ColumnDefinitions>
         <ContentControl x:Name="MaterialViewer" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
-        <GroupBox Header="Shaders" Grid.Row="1">
-            <TreeView x:Name="ShaderList" Margin="0,0,0,0"
-                      ItemsSource="{Binding Shaders}">
+        <GroupBox Header="Shaders" Grid.Row="1" Grid.Column="0">
+            <TreeView Margin="0,0,0,0"
+                      ItemsSource="{Binding Shaders}"
+                      VirtualizingPanel.IsVirtualizing="True" d:ItemsSource="{d:SampleData ItemCount=5}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <cal:ActionMessage MethodName="ChangeShaderSettings">
+                            <cal:Parameter Value="$eventArgs"/>
+                        </cal:ActionMessage>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <TreeView.ContextMenu>
-                    <ContextMenu x:Name="TreeContextMenu"/>
+                    <ContextMenu x:Name="TreeContextMenu">
+                        <MenuItem Header="Add Shader" Command="{Binding AddShaderCommand}"></MenuItem>
+                        <MenuItem Header="Remove Shader" Command="{Binding DeleteShaderCommand}"></MenuItem>
+                        <MenuItem Header="Clone Shader" Command="{Binding CloneShaderCommand}"></MenuItem>
+                    </ContextMenu>
                 </TreeView.ContextMenu>
                 <TreeView.ItemTemplate>
                     <DataTemplate DataType="{x:Type viewModels:ShaderViewModel}">
@@ -33,7 +48,7 @@
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-        <Grid Grid.Column="1" Grid.RowSpan="2">
+        <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="5*"/>
@@ -45,12 +60,14 @@
                         <ColumnDefinition Width="315*"/>
                         <ColumnDefinition Width="186*"/>
                     </Grid.ColumnDefinitions>
-                    <Controls:LabeledTextBox Text="{Binding ActivatedShaders, Mode=OneWay}" x:Name="MaterialHeaderBox" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Activated shaders" Padding="2,0,0,0"/>
-                    <Controls:LabeledTextBox Text="{Binding Name, Mode=OneWay}" x:Name="MaterialNameBox" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name"/>
-                    <Controls:LabeledTextBox Text="{Binding DmaChainIndex, Mode=OneWay}" x:Name="MaterialDmaIndexBox" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index"/>
+                    <controls:LabeledTextBox Text="{Binding ActivatedShaders, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Activated shaders" Padding="2,0,0,0" IsReadOnly="True"/>
+                    <controls:LabeledTextBox Text="{Binding Name}" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="Name"/>
+                    <controls:LabeledTextBox Text="{Binding DmaChainIndex}" Grid.Column="2" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" TextBoxName="DMA Chain index"/>
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="ShaderSettingsBox" Header="Shader settings" Grid.Row="1" Margin="0,0,0,0"/>
+            <GroupBox x:Name="ShaderSettingsBox" Header="Shader settings" Grid.Row="1" Margin="0,0,0,0">
+                <ContentControl x:Name="CurrentSelectedShader"/>
+            </GroupBox>
         </Grid>
     </Grid>
 </UserControl>

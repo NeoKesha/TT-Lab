@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,54 +12,46 @@ namespace TT_Lab.Controls
         [Description("Name of the textbox displayed above."), Category("Common Properties")]
         public string TextBoxName
         {
-            get { return (string)GetValue(TextBoxNameProperty); }
-            set { SetValue(TextBoxNameProperty, value); }
+            get => (string)GetValue(TextBoxNameProperty);
+            set => SetValue(TextBoxNameProperty, value);
         }
 
         [Description("Input text."), Category("Common Properties")]
-        public string Text
+        public object Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+        
+        [Description("Allows updates only from the bindings"), Category("Common Properties")]
+        public bool IsReadOnly
+        {
+            get => (bool)GetValue(IsReadOnlyProperty);
+            set => SetValue(IsReadOnlyProperty, value);
         }
 
-        public string DisplayText
-        {
-            get { return (string)GetValue(DisplayTextProperty); }
-            set { SetValue(DisplayTextProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for DisplayText.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DisplayTextProperty =
-            DependencyProperty.Register("DisplayText", typeof(string), typeof(LabeledTextBox),
-                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(
+            nameof(IsReadOnly), typeof(bool), typeof(LabeledTextBox), new PropertyMetadata(false));
 
         // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(LabeledTextBox),
-                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnTextChanged)));
+            DependencyProperty.Register(nameof(Text), typeof(object), typeof(LabeledTextBox),
+                new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnTextChanged));
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextBoxNameProperty =
-            DependencyProperty.Register("TextBoxName", typeof(string), typeof(LabeledTextBox),
-                new FrameworkPropertyMetadata("Label", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnNameChanged)));
+            DependencyProperty.Register(nameof(TextBoxName), typeof(string), typeof(LabeledTextBox),
+                new PropertyMetadata("Label"));
 
         public LabeledTextBox()
         {
             InitializeComponent();
         }
-
-        private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            LabeledTextBox control = d as LabeledTextBox;
-            control.TextBoxLabel.Content = e.NewValue;
-        }
-
+        
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            LabeledTextBox control = d as LabeledTextBox;
-            control.DisplayText = control.Text;
-            Log.WriteLine($"Changed text in {control.Name} to {(string)e.NewValue}");
+            var textBox = (LabeledTextBox)d;
+            Log.WriteLine($"Changed text in {textBox.TextBoxName} to {e.NewValue}");
         }
     }
 }

@@ -5,6 +5,7 @@ using System.IO;
 using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
@@ -12,6 +13,7 @@ using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.AssetData.Graphics
 {
+    [ReferencesAssets]
     public class MaterialData : AbstractAssetData
     {
         public MaterialData()

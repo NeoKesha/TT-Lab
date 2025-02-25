@@ -9,11 +9,11 @@ namespace TT_Lab.Command
 
         public class DialogueResult
         {
-            public object Result;
+            public object? Result;
         }
 
         private readonly Type window;
-        private readonly DialogueResult result;
+        private readonly DialogueResult? result;
 
         public OpenDialogueCommand(Type target)
         {

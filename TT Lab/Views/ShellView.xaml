@@ -19,7 +19,7 @@
         mc:Ignorable="d"
         d:DataContext="{Binding Source={d:DesignInstance viewmodels:ShellViewModel}}"
         cal:Bind.AtDesignTime="True"
-        Title="{Binding WindowTitle}" Height="720" Width="1280" MinWidth="854" MinHeight="480">
+        Title="{Binding WindowTitle}" Height="720" Width="1280" MinWidth="854" MinHeight="480" SizeChanged="AdonisWindow_SizeChanged" LocationChanged="AdonisWindow_LocationChanged">
     <i:Interaction.Triggers>
         <Triggers:InputBindingTrigger>
             <Triggers:InputBindingTrigger.InputBinding>
@@ -33,6 +33,11 @@
             </Triggers:InputBindingTrigger.InputBinding>
             <cal:ActionMessage MethodName="SaveProject"/>
         </Triggers:InputBindingTrigger>
+        <i:EventTrigger EventName="Closing">
+            <cal:ActionMessage MethodName="ClosingApplication">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.Style>
         <Style TargetType="adonisControls:AdonisWindow" BasedOn="{StaticResource {x:Type adonisControls:AdonisWindow}}"/>
@@ -208,9 +213,9 @@
                     ItemContainerStyle="{DynamicResource SimpleTreeViewItem}">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <StackPanel Orientation="Horizontal">
-                                    <svg:SVGImage Source="/TT Lab;component/Resources/Icons/Common Node.svg" Margin="3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-                                    <TextBlock x:Name="AssetBlock" Text="{Binding Alias}" Style="{DynamicResource TextBlockTreeViewStyle}">
+                                <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
+                                    <Image Source="{Binding IconPath}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="24" Height="24" Margin="0,0,3,0" Stretch="Uniform"/>
+                                    <TextBlock x:Name="AssetBlock" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Alias}" Style="{DynamicResource TextBlockTreeViewStyle}">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <cal:ActionMessage MethodName="AssetBlockMouseDown">

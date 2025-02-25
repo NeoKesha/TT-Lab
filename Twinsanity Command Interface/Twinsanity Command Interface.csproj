@@ -8,6 +8,7 @@
     <RootNamespace>Twinsanity_Command_Interface</RootNamespace>
     <AssemblyName>Twinsanity Command Interface</AssemblyName>
     <StartupObject>Twinsanity_Command_Interface.Program</StartupObject>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

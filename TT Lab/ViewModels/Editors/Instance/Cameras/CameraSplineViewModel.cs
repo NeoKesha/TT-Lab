@@ -1,7 +1,9 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
@@ -20,16 +22,19 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             var baseCam = (CameraSpline)cam;
             unkFloat3 = baseCam.UnkFloat3;
             pathPoints = new BindableCollection<Vector4ViewModel>();
+            DirtyTracker.AddBindableCollection(pathPoints);
             foreach (var v in baseCam.PathPoints)
             {
                 pathPoints.Add(new Vector4ViewModel(v));
             }
             interpolationPoints = new BindableCollection<Vector4ViewModel>();
+            DirtyTracker.AddBindableCollection(interpolationPoints);
             foreach (var v in baseCam.InterpolationPoints)
             {
                 interpolationPoints.Add(new Vector4ViewModel(v));
             }
             unkData = new BindableCollection<Vector2ViewModel>();
+            DirtyTracker.AddBindableCollection(unkData);
             foreach (var d in baseCam.UnkData)
             {
                 unkData.Add(new Vector2ViewModel(d));
@@ -97,6 +102,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             return base.OnInitializeAsync(cancellationToken);
         }
 
+        [MarkDirty]
         public Single UnkFloat3
         {
             get => unkFloat3;
@@ -125,6 +131,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             get => unkData;
         }
 
+        [MarkDirty]
         public UInt16 UnkShort
         {
             get => unkShort;

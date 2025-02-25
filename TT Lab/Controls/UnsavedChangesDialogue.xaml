@@ -9,7 +9,7 @@
         xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
         xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
         mc:Ignorable="d"
-        Title="Save Changes?" Height="120" Width="286" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
+        Title="Unsaved work!" Height="120" Width="286" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
     <Window.Style>
         <Style TargetType="adonisControls:AdonisWindow" BasedOn="{StaticResource {x:Type adonisControls:AdonisWindow}}"/>
     </Window.Style>
@@ -25,12 +25,12 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="YesButton" Content="Yes" Margin="5" Padding="3" VerticalAlignment="Center" IsDefault="True" Click="YesButton_Click"/>
-                <Button x:Name="DiscardButton" Content="No" Padding="3" Grid.Column="1" Margin="5" VerticalAlignment="Center" Click="DiscardButton_Click"/>
+                <Button x:Name="YesButton" Content="Save" Margin="5" Padding="3" VerticalAlignment="Center" IsDefault="True" Click="YesButton_Click"/>
+                <Button x:Name="DiscardButton" Content="Discard" Padding="3" Grid.Column="1" Margin="5" VerticalAlignment="Center" Click="DiscardButton_Click"/>
                 <Button x:Name="CancelButton" Content="Cancel" Padding="3" Grid.Column="2" Margin="5" VerticalAlignment="Center" IsCancel="True" Click="CancelButton_Click"/>
             </Grid>
         </UniformGrid>
-        <Label Content="There are unsaved changes. Save?" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
+        <Label Grid.Row="0" Content="There are unsaved changes." HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
 
     </Grid>
 </adonisControls:AdonisWindow>

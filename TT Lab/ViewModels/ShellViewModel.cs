@@ -1,16 +1,19 @@
 ﻿using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Controls;
 using TT_Lab.Project;
 using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors;
 
@@ -21,13 +24,16 @@ namespace TT_Lab.ViewModels
         private readonly IWindowManager _windowManager;
         private readonly IEventAggregator _eventAggregator;
         private readonly ProjectManager _projectManager;
+        private readonly OgreWindowManager _ogreWindowManager;
         private readonly Dictionary<String, String> _managerPropsToShellProps = new();
+        private readonly DispatcherTimer _renderTimer = new();
 
-        public ShellViewModel(IWindowManager windowManager, IEventAggregator eventAggregator, ProjectManager projectManager)
+        public ShellViewModel(IWindowManager windowManager, IEventAggregator eventAggregator, ProjectManager projectManager, OgreWindowManager ogreWindowManager)
         {
             _windowManager = windowManager;
             _projectManager = projectManager;
             _eventAggregator = eventAggregator;
+            _ogreWindowManager = ogreWindowManager;
             _eventAggregator.SubscribeOnUIThread(this);
 
             _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectTitle), nameof(WindowTitle));
@@ -36,6 +42,15 @@ namespace TT_Lab.ViewModels
             _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectTree), nameof(ProjectTree));
             _managerPropsToShellProps.Add(nameof(ProjectManager.HasRecents), nameof(HasRecents));
             _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), nameof(SearchAsset));
+
+            _renderTimer.Tick += PerformRender;
+            _renderTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)(1000f / 120));
+            _renderTimer.Start();
+        }
+
+        private void PerformRender(Object? sender, EventArgs e)
+        {
+            _ogreWindowManager.Render();
         }
 
         public Task About()
@@ -53,24 +68,21 @@ namespace TT_Lab.ViewModels
             if (!_projectManager.ProjectOpened) return;
 
             _projectManager.WorkableProject = false;
-            Task.Factory.StartNew(() =>
+            try
             {
-                try
-                {
-                    Log.WriteLine($"Saving project...");
-                    var now = DateTime.Now;
-                    ActiveItem.Save();
-                    Log.WriteLine($"Saved project in {DateTime.Now - now}");
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine($"Error saving project: {ex.Message}");
-                }
-                finally
-                {
-                    _projectManager.WorkableProject = true;
-                }
-            });
+                Log.WriteLine($"Saving project...");
+                var now = DateTime.Now;
+                ActiveItem.Save();
+                Log.WriteLine($"Saved project in {DateTime.Now - now}");
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine($"Error saving project: {ex.Message}");
+            }
+            finally
+            {
+                _projectManager.WorkableProject = true;
+            }
         }
 
         public void AssetBlockMouseDown(object selectedItem, MouseButtonEventArgs e)
@@ -84,7 +96,7 @@ namespace TT_Lab.ViewModels
             {
                 var editorsViewModel = ActiveItem;
                 var asset = (ResourceTreeElementViewModel)selectedItem;
-                if (asset.Asset.Type == typeof(Folder)) return;
+                if (asset.Asset.Type == typeof(Folder) || asset.Asset.Type == typeof(Package)) return;
 
                 if (asset.Asset.Type == typeof(ChunkFolder))
                 {
@@ -119,6 +131,11 @@ namespace TT_Lab.ViewModels
                 Data = asset
             };
             DragDrop.DoDragDrop(projectTree, data, DragDropEffects.Copy);
+        }
+
+        public void ClosingApplication(CancelEventArgs e)
+        {
+            SaveProject();
         }
 
         // Props to https://stackoverflow.com/a/25765336

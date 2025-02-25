@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class AiPosition : SerializableInstance
     {
         public override UInt32 Section => Constants.LAYOUT_AI_POSITIONS_SECTION;
+        public override String IconPath => "AI_Position.png";
 
         public AiPosition(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinAIPosition position) : base(package, id, name, chunk, layId)
         {

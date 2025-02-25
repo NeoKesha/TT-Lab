@@ -3,6 +3,7 @@ using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using TT_Lab.Assets.Factory;
+using TT_Lab.ViewModels.Editors.Code;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
@@ -13,6 +14,7 @@ namespace TT_Lab.Assets.Code
     {
         protected override String DataExt => ".wav";
         public override UInt32 Section => Constants.CODE_SOUND_EFFECTS_SECTION;
+        public override String IconPath => "SFX.png";
 
         [JsonProperty(Required = Required.Always)]
         public UInt32 Header { get; set; }
@@ -43,7 +45,7 @@ namespace TT_Lab.Assets.Code
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
+            return typeof(SoundEffectViewModel);
         }
 
         public override void ResolveChunkResources(ITwinItemFactory factory, ITwinSection section)

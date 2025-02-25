@@ -22,14 +22,16 @@ namespace Twinsanity.Libraries
             writer.Write(pcm.Length);
             writer.Write(pcm);
         }
-        public static byte[] LoadRiff(BinaryReader reader, ref short channels, ref UInt32 samplerate)
+        public static byte[] LoadRiff(BinaryReader reader, ref byte[] pcm, ref short channels, ref UInt32 samplerate)
         {
             reader.BaseStream.Position = 22;
             channels = reader.ReadInt16();
             samplerate = reader.ReadUInt32();
             reader.BaseStream.Position += 12;
             var len = reader.ReadInt32();
-            return reader.ReadBytes(len);
+            pcm = reader.ReadBytes(len);
+            reader.BaseStream.Position = 0;
+            return reader.ReadBytes((int)reader.BaseStream.Length);
         }
     }
 }

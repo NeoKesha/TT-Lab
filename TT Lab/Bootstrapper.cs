@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using TT_Lab.Project;
+using TT_Lab.Project.Messages;
+using TT_Lab.Rendering;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 
@@ -16,7 +18,7 @@ namespace TT_Lab
         public Bootstrapper()
         {
             Initialize();
-
+            
             var filters = new List<string>
             {
                 "MouseMoved",
@@ -31,6 +33,12 @@ namespace TT_Lab
             LogManager.GetLog = type => new Logger(type, filters);
         }
 
+        protected override void OnExit(Object sender, EventArgs e)
+        {
+            _container.GetInstance<OgreWindowManager>().CloseAndTerminateAll();
+            base.OnExit(sender, e);
+        }
+
         protected override void Configure()
         {
             base.Configure();
@@ -39,7 +47,7 @@ namespace TT_Lab
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>()
                 .Singleton<ProjectManager>()
-                .Handler<InputController>((container) => new InputController(container.GetInstance<IEventAggregator>()));
+                .Singleton<OgreWindowManager>();
 
             foreach (var assembly in SelectAssemblies())
             {
@@ -50,6 +58,13 @@ namespace TT_Lab
                     .ForEach(viewModelType => _container.RegisterPerRequest(
                         viewModelType, viewModelType.ToString(), viewModelType));
             }
+        }
+
+        protected override void StartRuntime()
+        {
+            base.StartRuntime();
+
+            _container.GetInstance<OgreWindowManager>().Initialize();
         }
 
         protected override Object GetInstance(Type service, String key)

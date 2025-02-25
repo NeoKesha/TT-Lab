@@ -1,32 +1,21 @@
-﻿using SharpGL;
+﻿using org.ogre;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class BlendSkin : BaseRenderable
+    public class BlendSkin
     {
-        readonly ModelBufferBlendSkin model;
-
-        public BlendSkin(OpenGL gl, GLWindow window, Scene root, BlendSkinData blendSkin) : base(gl, window, root)
+        private readonly ModelBufferBlendSkin _model;
+        
+        public BlendSkin(SceneManager sceneManager, string name, BlendSkinData blendSkin)
         {
-            model = new ModelBufferBlendSkin(gl, window, root, blendSkin);
-            AddChild(model);
+            _model = new ModelBufferBlendSkin(sceneManager, name, blendSkin);
         }
 
         public void SetBlendShapeValue(int index, float value)
         {
-            model.BlendShapesValues[index] = value;
-        }
-
-        public void Delete()
-        {
-            model.Delete();
-        }
-
-        protected override void RenderSelf(ShaderProgram shader)
-        {
+            _model.SetBlendShapeWeight(index, value);
         }
     }
 }

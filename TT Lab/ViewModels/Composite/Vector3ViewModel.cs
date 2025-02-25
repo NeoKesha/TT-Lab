@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Interfaces;
 using Twinsanity.TwinsanityInterchange.Common;
 
@@ -9,6 +10,7 @@ namespace TT_Lab.ViewModels.Composite
         private float _x;
         private float _y;
         private float _z;
+        private bool isDirty;
 
         public Vector3ViewModel() { }
 
@@ -23,6 +25,24 @@ namespace TT_Lab.ViewModels.Composite
         {
         }
 
+        public void ResetDirty()
+        {
+            IsDirty = false;
+        }
+
+        public bool IsDirty
+        {
+            get => isDirty;
+            set
+            {
+                if (isDirty != value)
+                {
+                    isDirty = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         public void Save(Vector3 o)
         {
             o.X = X;
@@ -30,6 +50,7 @@ namespace TT_Lab.ViewModels.Composite
             o.Z = Z;
         }
 
+        [MarkDirty]
         public float X
         {
             get
@@ -43,6 +64,7 @@ namespace TT_Lab.ViewModels.Composite
             }
         }
 
+        [MarkDirty]
         public float Y
         {
             get
@@ -56,6 +78,7 @@ namespace TT_Lab.ViewModels.Composite
             }
         }
 
+        [MarkDirty]
         public float Z
         {
             get

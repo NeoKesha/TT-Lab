@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.ViewModels.Composite;
@@ -10,20 +11,23 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
     public class CameraPathViewModel : BaseCameraViewModel
     {
         private BindableCollection<Vector4ViewModel> pathPoints;
-        private BindableCollection<UInt64> unkData;
+        private BindableCollection<PrimitiveWrapperViewModel<UInt64>> unkData;
 
         public CameraPathViewModel(CameraSubBase cam) : base(cam)
         {
             var baseCam = (CameraPath)cam;
             pathPoints = new BindableCollection<Vector4ViewModel>();
+            DirtyTracker.AddBindableCollection(pathPoints);
             foreach (var v in baseCam.PathPoints)
             {
                 pathPoints.Add(new Vector4ViewModel(v));
             }
-            unkData = new BindableCollection<UInt64>();
+            
+            unkData = new BindableCollection<PrimitiveWrapperViewModel<UInt64>>();
+            DirtyTracker.AddBindableCollection(unkData);
             foreach (var d in baseCam.UnkData)
             {
-                unkData.Add(d);
+                unkData.Add(new PrimitiveWrapperViewModel<UInt64>(d));
             }
         }
 
@@ -45,8 +49,9 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             pathCam.UnkData.Clear();
             foreach (var d in UnkData)
             {
-                pathCam.UnkData.Add(d);
+                pathCam.UnkData.Add(d.Value);
             }
+            
             base.Save(cam);
         }
 
@@ -65,7 +70,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             get => pathPoints;
         }
 
-        public BindableCollection<UInt64> UnkData
+        public BindableCollection<PrimitiveWrapperViewModel<UInt64>> UnkData
         {
             get => unkData;
         }

@@ -236,7 +236,8 @@ namespace Twinsanity.PS2Hardware
                 totalSpaceNeeded += metaVectorCode.GetLength();
 
                 // Scale vector for Twinsanity's skins and blend skins
-                // This is mostly correct and what most skins use in Twinsanity but maybe there is some magic to figure this out?
+                // The first one is vertex position scale which is calculated from vertex data
+                // and UV is always normalized so it can stay the same without needing to recalculate it
                 var scaleVector = new Vector4();
                 scaleVector.SetBinaryX(minSkinCoord); // Vertex position scale
                 scaleVector.SetBinaryY(0x3A000000); // UV scale
@@ -328,7 +329,7 @@ namespace Twinsanity.PS2Hardware
                             for (Int32 j = 0; j < colors.Count; j++)
                             {
                                 var color = colors[j];
-                                color.ScaleAlphaDown();
+                                color.A = (byte)(color.A >> 1);
                                 var uv = uvs[j];
                                 var compiledVector = new Vector4();
                                 compiledVector.SetBinaryX((uv.GetBinaryX() & 0xFFFFFF00) | color.R);
@@ -400,9 +401,9 @@ namespace Twinsanity.PS2Hardware
                                 {
                                     var toColor = c.GetColor();
                                     var compiledColor = new Vector4();
-                                    compiledColor.SetBinaryX((UInt32)toColor.R >> 1);
-                                    compiledColor.SetBinaryY((UInt32)toColor.G >> 1);
-                                    compiledColor.SetBinaryZ((UInt32)toColor.B >> 1);
+                                    compiledColor.SetBinaryX(toColor.R);
+                                    compiledColor.SetBinaryY(toColor.G);
+                                    compiledColor.SetBinaryZ(toColor.B);
                                     compiledColor.SetBinaryW((UInt32)toColor.A >> 1);
                                     compiledColors.Add(compiledColor);
                                 }
@@ -507,9 +508,9 @@ namespace Twinsanity.PS2Hardware
                             {
                                 var toColor = c.GetColor();
                                 var compiledColor = new Vector4();
-                                compiledColor.SetBinaryX((UInt32)toColor.R >> 1);
-                                compiledColor.SetBinaryY((UInt32)toColor.G >> 1);
-                                compiledColor.SetBinaryZ((UInt32)toColor.B >> 1);
+                                compiledColor.SetBinaryX((UInt32)toColor.R);
+                                compiledColor.SetBinaryY((UInt32)toColor.G);
+                                compiledColor.SetBinaryZ((UInt32)toColor.B);
                                 compiledColor.SetBinaryW((UInt32)toColor.A >> 1);
                                 compiledColors.Add(compiledColor);
                             }

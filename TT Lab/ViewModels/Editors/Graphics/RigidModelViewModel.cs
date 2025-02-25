@@ -1,12 +1,14 @@
 ﻿using Caliburn.Micro;
+using org.ogre;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
-using TT_Lab.Project.Messages;
+using TT_Lab.Assets.Graphics;
 using TT_Lab.Rendering;
+using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Objects;
+using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
@@ -14,14 +16,21 @@ namespace TT_Lab.ViewModels.Editors.Graphics
     {
         private Int32 _selectedMaterial;
         private String _materialName;
-        private SceneEditorViewModel _sceneRenderer;
-        private SceneEditorViewModel _materialViewer;
+        private ModelBuffer? _rigidModel;
+
+        private enum SceneIndex : int
+        {
+            Material,
+            Model
+        }
 
         public RigidModelViewModel()
         {
-            _sceneRenderer = IoC.Get<SceneEditorViewModel>();
-            _materialViewer = IoC.Get<SceneEditorViewModel>();
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
+            Scenes.Add(IoC.Get<SceneEditorViewModel>());
             _materialName = "NO MATERIAL";
+            SceneRenderer.SceneHeaderModel = "Model viewer";
+            MaterialViewer.SceneHeaderModel = "Material viewer";
 
             InitMaterialViewer();
             InitSceneRenderer();
@@ -29,38 +38,68 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 
         private void InitSceneRenderer()
         {
-            SceneRenderer.SceneCreator = (GLWindow glControl) =>
+            SceneRenderer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.EnableImgui(true);
 
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0.2f);
-
-                var rm = AssetManager.Get().GetAssetData<RigidModelData>(EditableResource);
-                RigidModel model = new(glControl.RenderContext, glControl, scene, rm);
-                scene.AddChild(model);
-
-                return scene;
+                var assetManager = AssetManager.Get();
+                var model = assetManager.GetAssetData<RigidModelData>(EditableResource);
+                _rigidModel = new ModelBuffer(sceneManager, EditableResource, model);
+                
+                glControl.OnRender += (sender, args) =>
+                {
+                    ImGui.Begin("Rigid Model Data");
+                    ImGui.SetWindowPos(new ImVec2(5, 5));
+                    var linkedModelText = $"Links to model \"{assetManager.GetAsset(model.Model).Name}\"";
+                    ImGui.Text(linkedModelText);
+                    ImGui.Separator();
+                    ImGui.BeginTable("Materials", 1);
+                    ImGui.TableSetupColumn("Linked Materials");
+                    ImGui.TableHeadersRow();
+                    var maxNameLength = linkedModelText.Length;
+                    foreach (var material in model.Materials)
+                    {
+                        ImGui.TableNextColumn();
+                        var matAsset = assetManager.GetAsset(material);
+                        ImGui.Text(matAsset.Name);
+                        if (matAsset.Name.Length > maxNameLength)
+                        {
+                            maxNameLength = matAsset.Name.Length;
+                        }
+                        ImGui.TableNextRow();
+                    }
+                    ImGui.SetWindowSize(new ImVec2(8 * maxNameLength, 75 + model.Materials.Count * 20));
+                    ImGui.EndTable();
+                    ImGui.End();
+                };
             };
         }
 
         private void InitMaterialViewer()
         {
-            MaterialViewer.SceneCreator = (GLWindow glControl) =>
+            MaterialViewer.SceneCreator = glControl =>
             {
-                glControl.SetRendererLibraries(Rendering.Shaders.ShaderStorage.LibraryFragmentShaders.TexturePass);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
 
-                var scene = new Scene(glControl.RenderContext, glControl, (float)glControl.RenderControl.Width, (float)glControl.RenderControl.Height);
-                scene.SetCameraSpeed(0);
-                scene.DisableCameraManipulation();
-
-                var rm = AssetManager.Get().GetAssetData<RigidModelData>(EditableResource);
-                var matData = AssetManager.Get().GetAsset(rm.Materials[_selectedMaterial]).GetData<MaterialData>();
-                MaterialName = matData.Name;
-                var texPlane = new Plane(glControl.RenderContext, glControl, scene, matData);
-                scene.AddChild(texPlane);
-
-                return scene;
+                // var sphereNode = sceneManager.getRootSceneNode().createChildSceneNode();
+                // var entity = sceneManager.createEntity(SceneManager.PT_SPHERE);
+                // var rm = AssetManager.Get().GetAssetData<RigidModelData>(EditableResource);
+                // var materialName = AssetManager.Get().GetAsset(rm.Materials[_selectedMaterial]).Name;
+                // MaterialName = materialName;
+                // var materialData = AssetManager.Get().GetAssetData<MaterialData>(rm.Materials[_selectedMaterial]);
+                // var hasTexture = materialData.Shaders.Any(s => s.TxtMapping == TwinShader.TextureMapping.ON);
+                // var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(materialData);
+                // entity.setMaterial(material);
+                // sphereNode.attachObject(entity);
+                // sphereNode.scale(0.1f, 0.1f, 0.1f);
             };
         }
 
@@ -82,7 +121,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             {
                 _selectedMaterial = rm.Materials.Count - 1;
             }
-            InitMaterialViewer();
+            MaterialViewer.ResetScene();
         }
 
         public void NextMatButton()
@@ -93,18 +132,12 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             {
                 _selectedMaterial = 0;
             }
-            InitMaterialViewer();
+            MaterialViewer.ResetScene();
         }
 
-        public SceneEditorViewModel SceneRenderer
-        {
-            get => _sceneRenderer;
-        }
+        public SceneEditorViewModel SceneRenderer => Scenes[(int)SceneIndex.Model];
 
-        public SceneEditorViewModel MaterialViewer
-        {
-            get => _materialViewer;
-        }
+        public SceneEditorViewModel MaterialViewer => Scenes[(int)SceneIndex.Material];
 
         public String MaterialName
         {

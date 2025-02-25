@@ -2,11 +2,13 @@
 using System;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using static Twinsanity.TwinsanityInterchange.Common.AgentLab.TwinBehaviourAssigner;
 
 namespace TT_Lab.AssetData.Code.Behaviour
 {
+    [ReferencesAssets]
     public class BehaviourAssignerData
     {
         [JsonProperty(Required = Required.Always)]

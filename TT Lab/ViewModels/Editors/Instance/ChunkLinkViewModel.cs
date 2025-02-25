@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
@@ -9,8 +10,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
 {
     public class ChunkLinkViewModel : InstanceSectionResourceEditorViewModel
     {
-        private BindableCollection<LinkViewModel> links;
+        private readonly BindableCollection<LinkViewModel> links = new();
 
+        public ChunkLinkViewModel()
+        {
+            DirtyTracker.AddBindableCollection(links);
+        }
+        
         protected override void Save()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
@@ -22,13 +28,15 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 link.Save(newLink);
                 data.Links.Add(newLink);
             }
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<ChunkLinksData>();
-            links = new BindableCollection<LinkViewModel>();
+            links.Clear();
             foreach (var link in data.Links)
             {
                 links.Add(new LinkViewModel(link));

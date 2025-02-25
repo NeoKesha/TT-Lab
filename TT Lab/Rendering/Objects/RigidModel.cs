@@ -1,27 +1,21 @@
-﻿using SharpGL;
+﻿using org.ogre;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Rendering.Buffers;
-using TT_Lab.Rendering.Shaders;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class RigidModel : BaseRenderable
+    public class RigidModel : ManualObject
     {
-        ModelBuffer model;
+        //ModelBuffer model;
 
-        public RigidModel(OpenGL gl, GLWindow window, Scene root, RigidModelData rigid) : base(gl, window, root)
+        public RigidModel(string name, RigidModelData rigid) : base(name)
         {
-            model = new ModelBuffer(GL, window, root, rigid);
-            AddChild(model);
+            //model = new ModelBuffer(GL, window, root, rigid);
+            //AddChild(model);
         }
 
         public void Delete()
         {
-            model.Delete();
-        }
-
-        protected override void RenderSelf(ShaderProgram shader)
-        {
+            //model.Delete();
         }
     }
 }

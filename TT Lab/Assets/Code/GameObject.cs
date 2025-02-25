@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Code
     public class GameObject : SerializableAsset
     {
         public override UInt32 Section => Constants.CODE_GAME_OBJECTS_SECTION;
+        public override String IconPath => "Game_Object.png";
 
         public GameObject() { }
 

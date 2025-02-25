@@ -3,11 +3,89 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:ttControls="clr-namespace:TT_Lab.Controls"
+             xmlns:local="clr-namespace:TT_Lab.Views.Editors.Graphics"
+             xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Editors.Graphics"
+             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Common;assembly=TwinTech"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             d:DataContext="{Binding Source={d:DesignInstance viewModels:ShaderViewModel}}"
              x:Name="ShaderEditorControl"
              x:Class="TT_Lab.Views.Editors.Graphics.ShaderView"
              mc:Ignorable="d"
              d:DesignHeight="790" d:DesignWidth="1300">
+    <UserControl.Resources>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="AlphaTestMethodsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+AlphaTestMethod"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="ShaderTypesProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+Type"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="ProcessAfterFailedProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+ProcessAfterAlphaTestFailed"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="DestinationAlphaTestModeProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+DestinationAlphaTestMode"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="DepthTestMethodsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+DepthTestMethod"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="ShadingMethodsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+ShadingMethod"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="TextureCoordinatesProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+TextureCoordinatesSpecification"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="TextureFiltersProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+TextureFilter"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="ZValueDrawMaskProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+ZValueDrawMask"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="ColorSpecsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+ColorSpecMethod"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="AlphaSpecsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+AlphaSpecMethod"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="AlphaBlendingPresetsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+AlphaBlendPresets"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="XScrollSettingsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+XScrollFormula"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="YScrollSettingsProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:TwinShader+YScrollFormula"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -17,7 +95,7 @@
             <RowDefinition Height="59*"/>
             <RowDefinition Height="166*"/>
         </Grid.RowDefinitions>
-        <Controls:LabeledDropList Items="{Binding ShaderTypes}" SelectedItem="{Binding ViewModel.Type}" x:Name="ShaderTypeList" DropListName="Type" Width="Auto" Height="Auto"/>
+        <ttControls:LabeledDropList Items="{Binding Source={StaticResource ShaderTypesProvider}}" SelectedItem="{Binding Type, Mode=TwoWay}" DropListName="Type" Width="Auto" Height="Auto"/>
         <Grid x:Name="MainShaderSettingsGrid" Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
@@ -30,28 +108,28 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <UniformGrid x:Name="ShaderSettingsUniGrid" FirstColumn="1" Rows="3" Grid.Row="1" Margin="0,2,0,2">
-                        <Controls:LabeledDropList Items="{Binding AlphaTestMethods}" SelectedItem="{Binding ViewModel.AlphaTestMethod}" x:Name="AlphaTestList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Alpha test method" IsEnabled="{Binding DisplayChecked, ElementName=AlphaTestCheckbox}"/>
-                        <Controls:LabeledDropList Items="{Binding ProcessAfterFailed}" SelectedItem="{Binding ViewModel.ProcessAfterATestFailed}" x:Name="ProcessAfterFailedList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="If alpha test failed" IsEnabled="{Binding DisplayChecked, ElementName=AlphaTestCheckbox}"/>
-                        <Controls:LabeledDropList Items="{Binding DestinationAlphaTest}" SelectedItem="{Binding ViewModel.DAlphaTestMode}" x:Name="DestinationAlphaTestList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Destination alpha test mode" IsEnabled="{Binding DisplayChecked, ElementName=DestinationAlphaTestCheckbox}"/>
-                        <Controls:LabeledDropList Items="{Binding DepthTestMethods}" SelectedItem="{Binding ViewModel.DepthTest}" x:Name="DepthTestMethodList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Depth test method" IsEnabled="{Binding DisplayChecked, ElementName=DestinationAlphaTestCheckbox}"/>
-                        <Controls:LabeledDropList Items="{Binding ShadingMethods}" SelectedItem="{Binding ViewModel.ShdMethod}" x:Name="ShadingMethodList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Shading method"/>
-                        <Controls:LabeledDropList Items="{Binding TextureCoordinates}" SelectedItem="{Binding ViewModel.TexCoordSpec}" x:Name="TextureCoordinateSpecList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Texture coordinates"/>
-                        <Controls:LabeledDropList Items="{Binding TextureFilters}" SelectedItem="{Binding ViewModel.TexFilterWhenTextureIsExpanded}" x:Name="TextureFilterList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Texture filter"/>
-                        <Controls:LabeledDropList Items="{Binding ZvalueDrawMasks}" SelectedItem="{Binding ViewModel.ZValueDrawMask}" x:Name="ZvalueDrawMaskList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Z-Value draw mask"/>
-                        <Controls:LabeledDropList IsEnabled="{Binding ViewModel.CanColorSpec}" Items="{Binding ColorSpecs}" SelectedItem="{Binding ViewModel.SpecOfColA}" x:Name="ColorSpecAList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec A"/>
-                        <Controls:LabeledDropList IsEnabled="{Binding ViewModel.CanColorSpec}" Items="{Binding ColorSpecs}" SelectedItem="{Binding ViewModel.SpecOfColB}" x:Name="ColorSpecBList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec B"/>
-                        <Controls:LabeledDropList IsEnabled="{Binding ViewModel.CanColorSpec}" Items="{Binding AlphaSpecs}" SelectedItem="{Binding ViewModel.SpecOfAlphaC}" x:Name="AlphaSpecCList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Alpha spec C"/>
-                        <Controls:LabeledDropList IsEnabled="{Binding ViewModel.CanColorSpec}" Items="{Binding ColorSpecs}" SelectedItem="{Binding ViewModel.SpecOfColD}" x:Name="ColorSpecDList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec D"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource AlphaTestMethodsProvider}}" SelectedItem="{Binding AlphaTestMethod}" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Alpha test method" IsEnabled="{Binding Checked, ElementName=AlphaTestCheckbox}"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource ProcessAfterFailedProvider}}" SelectedItem="{Binding ProcessAfterATestFailed}" x:Name="ProcessAfterFailedList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="If alpha test failed" IsEnabled="{Binding Checked, ElementName=AlphaTestCheckbox}"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource DestinationAlphaTestModeProvider}}" SelectedItem="{Binding DAlphaTestMode}" x:Name="DestinationAlphaTestList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Destination alpha test mode" IsEnabled="{Binding Checked, ElementName=DestinationAlphaTestCheckbox}"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource DepthTestMethodsProvider}}" SelectedItem="{Binding DepthTest}" x:Name="DepthTestMethodList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Depth test method" IsEnabled="{Binding Checked, ElementName=DestinationAlphaTestCheckbox}"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource ShadingMethodsProvider}}" SelectedItem="{Binding ShdMethod}" x:Name="ShadingMethodList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Shading method"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource TextureCoordinatesProvider}}" SelectedItem="{Binding TexCoordSpec}" x:Name="TextureCoordinateSpecList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Texture coordinates"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource TextureFiltersProvider}}" SelectedItem="{Binding TexFilterWhenTextureIsExpanded}" x:Name="TextureFilterList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Texture filter"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource ZValueDrawMaskProvider}}" SelectedItem="{Binding ZValueDrawMask}" x:Name="ZValueDrawMaskList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Z-Value draw mask"/>
+                        <ttControls:LabeledDropList IsEnabled="{Binding CanColorSpec}" Items="{Binding Source={StaticResource ColorSpecsProvider}}" SelectedItem="{Binding SpecOfColA}" x:Name="ColorSpecAList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec A"/>
+                        <ttControls:LabeledDropList IsEnabled="{Binding CanColorSpec}" Items="{Binding Source={StaticResource ColorSpecsProvider}}" SelectedItem="{Binding SpecOfColB}" x:Name="ColorSpecBList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec B"/>
+                        <ttControls:LabeledDropList IsEnabled="{Binding CanColorSpec}" Items="{Binding Source={StaticResource AlphaSpecsProvider}}" SelectedItem="{Binding SpecOfAlphaC}" x:Name="AlphaSpecCList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Alpha spec C"/>
+                        <ttControls:LabeledDropList IsEnabled="{Binding CanColorSpec}" Items="{Binding Source={StaticResource ColorSpecsProvider}}" SelectedItem="{Binding SpecOfColD}" x:Name="ColorSpecDList" HorizontalAlignment="Stretch" Margin="2,2,2,2" VerticalAlignment="Stretch" DropListName="Color spec D"/>
                     </UniformGrid>
-                    <UniformGrid x:Name="ShaderSettingsDropListUniGrid" Rows="2">
-                        <Controls:LabeledDropList IsEnabled="{Binding ViewModel.UsePresetBlending}" Items="{Binding AlphaBlendingPresets}" SelectedItem="{Binding ViewModel.AlphaRegSettingsIndex}" x:Name="AlphaRegSettingsIndexList" DropListName="Blending preset" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
-                        <Controls:LabeledTextBox Text="{Binding ViewModel.AlphaValueToCompareTo, UpdateSourceTrigger=PropertyChanged}" x:Name="AlphaValueToCompareToBox" TextBoxName="Alpha value to compare to" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" IsEnabled="{Binding DisplayChecked, ElementName=AlphaTestCheckbox}"/>
-                        <Controls:LabeledTextBox Text="{Binding ViewModel.LodParamK, UpdateSourceTrigger=PropertyChanged}" x:Name="LodParamKBox" TextBoxName="LOD Param K" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
-                        <Controls:LabeledTextBox Text="{Binding ViewModel.LodParamL, UpdateSourceTrigger=PropertyChanged}" x:Name="LodParamLBox" TextBoxName="LOD Param L" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
-                        <Controls:LabeledTextBox Text="{Binding ViewModel.FixedAlphaValue, UpdateSourceTrigger=PropertyChanged}" x:Name="FxiedAlphaValueBox" TextBoxName="Fixed alpha value" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
-                        <Controls:LabeledTextBox Text="{Binding ViewModel.UnkVal1, UpdateSourceTrigger=PropertyChanged}" x:Name="UnkVal1Box" TextBoxName="Unk value 1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
-                        <Controls:LabeledTextBox Text="{Binding ViewModel.UnkVal2, UpdateSourceTrigger=PropertyChanged}" x:Name="UnkVal2Box" TextBoxName="Unk value 2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
-                        <Controls:LabeledTextBox Text="{Binding ViewModel.UnkVal3, UpdateSourceTrigger=PropertyChanged}" x:Name="UnkVal3Box" TextBoxName="Unk value 3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
+                    <UniformGrid Grid.Row="0" x:Name="ShaderSettingsDropListUniGrid" Rows="2">
+                        <ttControls:LabeledDropList IsEnabled="{Binding UsePresetBlending}" Items="{Binding Source={StaticResource AlphaBlendingPresetsProvider}}" SelectedItem="{Binding AlphaRegSettingsIndex}" x:Name="AlphaRegSettingsIndexList" DropListName="Blending preset" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
+                        <ttControls:LabeledTextBox Text="{Binding AlphaValueToCompareTo, UpdateSourceTrigger=PropertyChanged}" x:Name="AlphaValueToCompareToBox" TextBoxName="Alpha value to compare to" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" IsEnabled="{Binding DisplayChecked, ElementName=AlphaTestCheckbox}"/>
+                        <ttControls:LabeledTextBox Text="{Binding LodParamK, UpdateSourceTrigger=PropertyChanged}" x:Name="LodParamKBox" TextBoxName="LOD Param K" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
+                        <ttControls:LabeledTextBox Text="{Binding LodParamL, UpdateSourceTrigger=PropertyChanged}" x:Name="LodParamLBox" TextBoxName="LOD Param L" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
+                        <ttControls:LabeledTextBox Text="{Binding FixedAlphaValue, UpdateSourceTrigger=PropertyChanged}" x:Name="FixedAlphaValueBox" TextBoxName="Fixed alpha value" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
+                        <ttControls:LabeledTextBox Text="{Binding UnkVal1, UpdateSourceTrigger=PropertyChanged}" x:Name="UnkVal1Box" TextBoxName="Unk value 1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource XScrollSettingsProvider}}" SelectedItem="{Binding XScrollSettings}" x:Name="XScrollSettings2Box" DropListName="UV X Scroll settings" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
+                        <ttControls:LabeledDropList Items="{Binding Source={StaticResource YScrollSettingsProvider}}" SelectedItem="{Binding YScrollSettings}" x:Name="YScrollSettings3Box" DropListName="UV Y Scroll settings" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2"/>
                     </UniformGrid>
                     <Grid x:Name="ShaderSettingsVectorGrid" Margin="0,0,0,0" Grid.Row="2">
                         <Grid.RowDefinitions>
@@ -59,29 +137,29 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <!--<UniformGrid x:Name="UnkVec1Grid" Rows="1">
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec1.X, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 X" BoundProperty="X" PropertyTarget="{Binding ViewModel.UnkVec1}"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec1.Y, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 Y" BoundProperty="Y" PropertyTarget="{Binding ViewModel.UnkVec1}"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec1.Z, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 Z" BoundProperty="Z" PropertyTarget="{Binding ViewModel.UnkVec1}"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec1.W, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 W" BoundProperty="W" PropertyTarget="{Binding ViewModel.UnkVec1}"/>
+                        <UniformGrid x:Name="UnkVec1Grid" Rows="1">
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec1.X, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 X"/>
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec1.Y, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 Y"/>
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec1.Z, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 Z"/>
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec1.W, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 1 W"/>
                         </UniformGrid>
                         <UniformGrid x:Name="UnkVec2Grid" Grid.Row="1" Rows="1">
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec2.X, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 X" BoundProperty="X" PropertyTarget="{Binding ViewModel.UnkVec2}"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec2.Y, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 Y" BoundProperty="Y" PropertyTarget="{Binding ViewModel.UnkVec2}"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec2.Z, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 Z" BoundProperty="Z" PropertyTarget="{Binding ViewModel.UnkVec2}"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec2.W, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 W" BoundProperty="W" PropertyTarget="{Binding ViewModel.UnkVec2}"/>
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec2.X, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 X"/>
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec2.Y, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 Y"/>
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec2.Z, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 Z"/>
+                            <ttControls:LabeledTextBox Text="{Binding UnkVec2.W, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 2 W"/>
                         </UniformGrid>
                         <UniformGrid x:Name="UnkVec3Grid" Grid.Row="2" Rows="1">
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec3.X, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 3 X"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec3.Y, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 3 Y"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec3.Z, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 3 Z"/>
-                            <Controls:LabeledTextBox Editor="{Binding ElementName=ShaderEditorControl, Mode=OneWay}" Text="{Binding ViewModel.UnkVec3.W, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Unk vector 3 W"/>
-                        </UniformGrid>-->
+                            <ttControls:LabeledTextBox Text="{Binding UvScrollSpeed.X, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Start Scroll Offset X"/>
+                            <ttControls:LabeledTextBox Text="{Binding UvScrollSpeed.Y, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Start Scroll Offset Y"/>
+                            <ttControls:LabeledTextBox Text="{Binding UvScrollSpeed.Z, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Texture Scroll Speed X"/>
+                            <ttControls:LabeledTextBox Text="{Binding UvScrollSpeed.W, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" TextBoxName="Texture Scroll Speed Y"/>
+                        </UniformGrid>
                     </Grid>
                 </Grid>
             </ScrollViewer>
         </Grid>
-        <Grid x:Name="CheckboxSettingsGrid" Grid.Column="1">
+        <Grid Grid.Row="0" x:Name="CheckboxSettingsGrid" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="3*"/>
@@ -89,26 +167,26 @@
             <ContentControl x:Name="TextureViewer" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" AllowDrop="True"/>
             <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <UniformGrid x:Name="CheckboxUniGrid" Rows="2">
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.AlphaBlending}" x:Name="AlphaBlendingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Alpha blending"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.AlphaTest}" x:Name="AlphaTestCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Alpha test"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.DAlphaTest}" x:Name="DestinationAlphaTestCheckbox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CheckBoxName="Destination alpha test"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.TxtMapping}" x:Name="TextureMappingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Texture mapping"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.Fog}" x:Name="FoggingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Fogging"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.UseCustomAlphaRegSettings}" x:Name="UseCustomAlphaRegSettingsCheckbox" CheckBoxName="Custom alpha reg settings"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.AlphaCorrectionValue}" x:Name="AlphaCorrectionValueCheckbox" CheckBoxName="Alpha correction value MSB"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.UnkFlag1}" x:Name="UnkFlag1Checkbox" CheckBoxName="Unk flag 1"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.UnkFlag2}" x:Name="UnkFlag2Checkbox" CheckBoxName="Unk flag 2"/>
-                    <Controls:LabeledCheckBox Checked="{Binding ViewModel.UnkFlag3}" x:Name="UnkFlag3Checkbox" CheckBoxName="Unk flag 3"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding AlphaBlending}" x:Name="AlphaBlendingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Alpha blending"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding AlphaTest}" x:Name="AlphaTestCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Alpha test"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding DAlphaTest}" x:Name="DestinationAlphaTestCheckbox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CheckBoxName="Destination alpha test"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding TxtMapping}" x:Name="TextureMappingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Texture mapping"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding Fog}" x:Name="FoggingCheckbox" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckBoxName="Fogging"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding UseCustomAlphaRegSettings}" x:Name="UseCustomAlphaRegSettingsCheckbox" CheckBoxName="Custom alpha reg settings"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding AlphaCorrectionValue}" x:Name="AlphaCorrectionValueCheckbox" CheckBoxName="Alpha correction value MSB"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding UnkFlag1}" x:Name="UnkFlag1Checkbox" CheckBoxName="Unk flag 1"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding UnkFlag2}" x:Name="UnkFlag2Checkbox" CheckBoxName="Unk flag 2"/>
+                    <ttControls:LabeledCheckBox Checked="{Binding UnkFlag3}" x:Name="UnkFlag3Checkbox" CheckBoxName="Unk flag 3"/>
                 </UniformGrid>
             </ScrollViewer>
         </Grid>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Stretch" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Stretch" HorizontalScrollBarVisibility="Disabled">
             <UniformGrid x:Name="ShaderParamsUniGrid" Columns="1">
-                <Controls:LabeledTextBox IsEnabled="{Binding ViewModel.HasIntParam}" Text="{Binding ViewModel.IntParam, UpdateSourceTrigger=PropertyChanged}" x:Name="IntegerParamBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBoxName="Integer param"/>
-                <Controls:LabeledTextBox IsEnabled="{Binding ViewModel.HasFloatParam1}" Text="{Binding ViewModel.FloatParam[0], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam1Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 1"/>
-                <Controls:LabeledTextBox IsEnabled="{Binding ViewModel.HasFloatParam2}" Text="{Binding ViewModel.FloatParam[1], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam2Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 2"/>
-                <Controls:LabeledTextBox IsEnabled="{Binding ViewModel.HasFloatParam3}" Text="{Binding ViewModel.FloatParam[2], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam3Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 3"/>
-                <Controls:LabeledTextBox IsEnabled="{Binding ViewModel.HasFloatParam4}" Text="{Binding ViewModel.FloatParam[3], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam4Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 4"/>
+                <ttControls:LabeledTextBox IsEnabled="{Binding HasIntParam}" Text="{Binding IntParam, UpdateSourceTrigger=PropertyChanged}" x:Name="IntegerParamBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBoxName="Integer param"/>
+                <ttControls:LabeledTextBox IsEnabled="{Binding HasFloatParam1}" Text="{Binding FloatParam[0], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam1Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 1"/>
+                <ttControls:LabeledTextBox IsEnabled="{Binding HasFloatParam2}" Text="{Binding FloatParam[1], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam2Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 2"/>
+                <ttControls:LabeledTextBox IsEnabled="{Binding HasFloatParam3}" Text="{Binding FloatParam[2], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam3Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 3"/>
+                <ttControls:LabeledTextBox IsEnabled="{Binding HasFloatParam4}" Text="{Binding FloatParam[3], UpdateSourceTrigger=PropertyChanged}" x:Name="FloatParam4Box" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" TextBoxName="Float param 4"/>
             </UniformGrid>
         </ScrollViewer>
 

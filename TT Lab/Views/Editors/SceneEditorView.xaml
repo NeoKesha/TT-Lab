@@ -5,68 +5,53 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
-        xmlns:embededRender="clr-namespace:TT_Lab.Controls"
         x:Class="TT_Lab.Views.Editors.SceneEditorView"
         mc:Ignorable="d"
         x:Name="SceneEditorViewControl"
         d:DesignHeight="450" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="SceneEditorInitialized">
+            <cal:ActionMessage MethodName="RendererInitialized">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="KeyDown">
+            <cal:ActionMessage MethodName="KeyPressed">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="KeyUp">
+            <cal:ActionMessage MethodName="KeyPressedUp">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="MouseDown">
+            <cal:ActionMessage MethodName="MousePressed">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="MouseUp">
+            <cal:ActionMessage MethodName="MousePressedUp">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="MouseWheel">
+            <cal:ActionMessage MethodName="MouseWheelMoved">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="MouseMove">
+            <cal:ActionMessage MethodName="MouseMoved">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
-        <GroupBox x:Name="SceneHeader" Header="Scene viewer" AllowDrop="True">
+        <GroupBox x:Name="SceneHeader" Header="{Binding Path=SceneHeaderModel}" AllowDrop="True">
             <Grid>
-                <embededRender:EmbededRender x:Name="GlControlView" Margin="0" AllowDrop="True">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="OpenGLInitialized">
-                            <cal:ActionMessage MethodName="RendererInitialized">
-                                <cal:Parameter Value="$source"/>
-                            </cal:ActionMessage>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </embededRender:EmbededRender>
+                <!-- This is a placeholder to position and resize the outer window -->
+                <Rectangle x:Name="GlControlView" Margin="0" AllowDrop="True"/>
             </Grid>
-
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="DragEnter">
-                    <cal:ActionMessage MethodName="DragEntered">
-                        <cal:Parameter Value="{Binding ElementName=SceneEditorViewControl, Path=AllowDrop}"/>
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>
-                <i:EventTrigger EventName="Drop">
-                    <cal:ActionMessage MethodName="DragDropped">
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseMove">
-                    <cal:ActionMessage MethodName="MouseMoved">
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseWheel">
-                    <cal:ActionMessage MethodName="MouseWheelMoved">
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>
-                <!--<i:EventTrigger EventName="MouseDown">
-                    <cal:ActionMessage MethodName="MouseButtonPressed">
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseUp">
-                    <cal:ActionMessage MethodName="MouseButtonReleased">
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>
-                <i:EventTrigger EventName="KeyUp">
-                    <cal:ActionMessage MethodName="KeyboardPressed">
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>
-                <i:EventTrigger EventName="KeyDown">
-                    <cal:ActionMessage MethodName="KeyboardReleased">
-                        <cal:Parameter Value="$eventArgs"/>
-                    </cal:ActionMessage>
-                </i:EventTrigger>-->
-            </i:Interaction.Triggers>
         </GroupBox>
     </Grid>
 </UserControl>

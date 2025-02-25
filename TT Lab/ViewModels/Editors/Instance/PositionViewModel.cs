@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -12,6 +13,11 @@ namespace TT_Lab.ViewModels.Editors.Instance
     {
         private Vector4ViewModel position = new();
         private Enums.Layouts layId;
+
+        public PositionViewModel()
+        {
+            DirtyTracker.AddChild(position);
+        }
 
         protected override void Save()
         {
@@ -25,13 +31,17 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 Z = Position.Z,
                 W = Position.W
             };
+            
+            base.Save();
         }
 
         public override void LoadData()
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var posData = asset.GetData<PositionData>();
+            DirtyTracker.RemoveChild(position);
             position = new Vector4ViewModel(posData.Coords);
+            DirtyTracker.AddChild(position);
             layId = MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value);
         }
 
@@ -42,6 +52,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             await ActivateItemAsync(position, cancellationToken);
         }
 
+        [MarkDirty]
         public Enums.Layouts LayoutID
         {
             get => layId;
@@ -50,7 +61,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 if (layId != value)
                 {
                     layId = value;
-                    IsDirty = true;
+                    
                     NotifyOfPropertyChange();
                 }
             }

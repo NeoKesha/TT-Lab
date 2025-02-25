@@ -6,6 +6,7 @@ using TT_Lab.AssetData.Instance.Scenery;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.Lights;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -14,6 +15,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance
 {
+    [ReferencesAssets]
     public class SceneryData : AbstractAssetData
     {
         private readonly static Dictionary<ITwinScenery.SceneryType, Type> scIndexToType = new();
@@ -43,7 +45,7 @@ namespace TT_Lab.AssetData.Instance
         }
 
         [JsonProperty(Required = Required.Always)]
-        public String ChunkPath { get; set; }
+        public String ChunkPath { get; set; } // TODO: Replace with ChunkFolder LabURI reference
         [JsonProperty(Required = Required.Always)]
         public UInt32 FogColor { get; set; }
         [JsonProperty(Required = Required.Always)]

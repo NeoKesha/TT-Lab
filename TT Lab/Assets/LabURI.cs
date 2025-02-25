@@ -1,10 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
+using System.Globalization;
+using Caliburn.Micro;
+using TT_Lab.Project;
 
 namespace TT_Lab.Assets
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class LabURI
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+    public class LabURI : IEquatable<LabURI>, IComparable
     {
         [JsonProperty(Required = Required.Always)]
         private readonly String _uri;
@@ -19,6 +24,13 @@ namespace TT_Lab.Assets
         }
 
         public override String ToString() => _uri;
+        public Int32 CompareTo(object? obj)
+        {
+            var labURI = obj as LabURI;
+            if (labURI == null) return 1;
+
+            return _uri.ToString(CultureInfo.InvariantCulture).CompareTo(labURI._uri.ToString(CultureInfo.InvariantCulture));
+        }
 
         public static LabURI Empty { get => new("res://EMPTY"); }
 
@@ -52,6 +64,16 @@ namespace TT_Lab.Assets
         public override Int32 GetHashCode()
         {
             return _uri.GetHashCode();
+        }
+
+        private String DebuggerDisplay
+        {
+            get
+            {
+                if (this == Empty) return "Empty";
+                if (IoC.Get<ProjectManager>().OpenedProject == null) return _uri;
+                return IoC.Get<ProjectManager>().OpenedProject == null ? _uri : AssetManager.Get().GetAsset(this).Name;
+            }
         }
     }
 }

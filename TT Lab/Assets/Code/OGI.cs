@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Code
     public class OGI : SerializableAsset
     {
         public override UInt32 Section => Constants.CODE_OGIS_SECTION;
+        public override String IconPath => "OGI.png";
 
         public OGI() { }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
 
@@ -24,6 +25,9 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             unkMatrix1 = new Matrix4ViewModel(bossCam.UnkMatrix1);
             unkMatrix2 = new Matrix4ViewModel(bossCam.UnkMatrix2);
             unkVec = new Vector4ViewModel(bossCam.UnkVector);
+            DirtyTracker.AddChild(unkMatrix1);
+            DirtyTracker.AddChild(unkMatrix2);
+            DirtyTracker.AddChild(unkVec);
             unkByte1 = bossCam.UnkByte1;
             unkByte2 = bossCam.UnkByte2;
             unkFloat3 = bossCam.UnkFloat3;
@@ -93,6 +97,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             get => unkVec;
         }
 
+        [MarkDirty]
         public Byte UnkByte1
         {
             get => unkByte1;
@@ -106,6 +111,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat3
         {
             get => unkFloat3;
@@ -119,6 +125,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat4
         {
             get => unkFloat4;
@@ -132,6 +139,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat5
         {
             get => unkFloat5;
@@ -145,6 +153,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             }
         }
 
+        [MarkDirty]
         public Single UnkFloat6
         {
             get => unkFloat6;
@@ -157,7 +166,8 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
                 }
             }
         }
-
+        
+        [MarkDirty]
         public Byte UnkByte2
         {
             get => unkByte2;

@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.ViewModels.Composite;
@@ -16,6 +17,8 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             var baseCam = (CameraZone)cam;
             unkVecs1 = new BindableCollection<Vector4ViewModel>();
             unkVecs2 = new BindableCollection<Vector4ViewModel>();
+            DirtyTracker.AddBindableCollection(unkVecs1);
+            DirtyTracker.AddBindableCollection(unkVecs2);
             for (var i = 0; i < 5; ++i)
             {
                 unkVecs1.Add(new Vector4ViewModel(baseCam.UnkData1[i]));

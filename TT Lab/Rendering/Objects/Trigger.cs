@@ -1,83 +1,43 @@
 ﻿using GlmSharp;
-using SharpGL;
 using System;
+using System.Drawing;
+using org.ogre;
+using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
-using TT_Lab.Rendering.Shaders;
+using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors.Instance;
+using Color = Twinsanity.TwinsanityInterchange.Common.Color;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Trigger : BaseRenderable
+    public class Trigger : ManualObject
     {
+        private readonly SceneNode _triggerNode;
+        private readonly TriggerData _data;
+        private Billboard _billboard;
 
-        private uint id;
-        private int layid;
-        private vec3 pos;
-        private vec3 scale;
-        private vec3 rotation;
-        private vec4 color;
-
-        private TriggerViewModel viewModel;
-
-        public Trigger(OpenGL gl, GLWindow window, Scene root, TriggerViewModel tvm) : base(gl, window, root)
+        public Trigger(string name, SceneNode parentNode, SceneManager sceneManager, Billboard billboard, TriggerData data, KnownColor renderColor = KnownColor.DarkOrange) : base(name)
         {
-            var asset = AssetManager.Get().GetAsset(tvm.EditableResource);
-            Opacity = 0.4f;
-            id = asset.ID;
-            layid = (int)tvm.LayoutID;
-            viewModel = tvm;
-            viewModel.PropertyChanged += Tvm_PropertyChanged;
-            Update();
-        }
-
-        private void Tvm_PropertyChanged(Object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.PropertyName) && e.PropertyName == "IsSelected") return;
+            _billboard = billboard;
+            _triggerNode = parentNode.createChildSceneNode();
+            var color = System.Drawing.Color.FromKnownColor(renderColor);
+            var cubeMesh = BufferGeneration.GetCubeBuffer($"DefaultCube_{color}", System.Drawing.Color.FromArgb((int)(new Color(color.R, color.G, color.B, 64).ToARGB())));
+            var entity = sceneManager.createEntity(cubeMesh);
+            entity.setMaterial(MaterialManager.GetMaterial("ColorOnlyTransparent"));
+            _triggerNode.attachObject(entity);
+            
+            _billboard.setPosition(-data.Position.X, data.Position.Y, data.Position.Z);
+            _billboard.setColour(new ColourValue(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f));
+            
+            _data = data;
             Update();
         }
 
         private void Update()
         {
-            pos = new vec3(-viewModel.Position.X, viewModel.Position.Y, viewModel.Position.Z);
-            scale = new vec3(viewModel.Scale.X, viewModel.Scale.Y, viewModel.Scale.Z);
-
-            var q = new quat(viewModel.Rotation.X, viewModel.Rotation.Y, viewModel.Rotation.Z, viewModel.Rotation.W);
-            var tmp = q.EulerAngles;
-            rotation = new vec3((float)tmp.x, (float)tmp.y, (float)tmp.z);
-
-            var trgColor = System.Drawing.Color.DarkOrange;
-            trgColor = System.Drawing.Color.FromArgb(100, trgColor.R >> 1, trgColor.G >> 1, trgColor.B >> 1);
-            color = new vec4(trgColor.R / 255.0f, trgColor.G / 255.0f, trgColor.B / 255.0f, Opacity);
-
-            mat4 matrixPosition = mat4.Translate(pos.x, pos.y, pos.z);
-            mat4 matrixRotationX, matrixRotationY, matrixRotationZ;
-            matrixRotationX = mat4.RotateX(rotation.x);
-            matrixRotationY = mat4.RotateY(rotation.y);
-            matrixRotationZ = mat4.RotateZ(rotation.z);
-            mat4 matrixScale = mat4.Scale(scale);
-            LocalTransform = mat4.Identity;
-
-            LocalTransform *= matrixPosition;
-            LocalTransform *= matrixRotationZ * matrixRotationY * matrixRotationX;
-            LocalTransform *= matrixScale;
-        }
-
-        public void Bind()
-        {
-        }
-
-        public void Delete()
-        {
-            viewModel.PropertyChanged -= Tvm_PropertyChanged;
-        }
-
-        protected override void RenderSelf(ShaderProgram shader)
-        {
-            Window.DrawBox(WorldTransform, color);
-        }
-
-        public void Unbind()
-        {
+            _triggerNode.setPosition(new Vector3(-_data.Position.X, _data.Position.Y, _data.Position.Z));
+            _triggerNode.setScale(new Vector3(_data.Scale.X, _data.Scale.Y, _data.Scale.Z));
+            _triggerNode.setOrientation(new Quaternion(_data.Rotation.W, _data.Rotation.X, _data.Rotation.Y, _data.Rotation.Z));
         }
     }
 }

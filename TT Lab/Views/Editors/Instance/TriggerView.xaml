@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels.Editors.Instance"
+             d:DataContext="{Binding Source={d:DesignInstance viewmodels:TriggerViewModel}}"
              x:Name="TriggerEditorControl"
              x:Class="TT_Lab.Views.Editors.Instance.TriggerView"
              mc:Ignorable="d" 
@@ -74,10 +76,10 @@
                             <Controls:LabeledTextBox x:Name="Arg2Box" Text="{Binding TriggerMessage2}" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=Arg2EnabledBox}" Margin="0,0,0,11" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Controls:LabeledTextBox x:Name="Arg3Box" Text="{Binding TriggerMessage3}" Grid.Row="2" IsEnabled="{Binding Checked, ElementName=Arg3EnabledBox}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Controls:LabeledTextBox x:Name="Arg4Box" Text="{Binding TriggerMessage4}" Grid.Row="3" IsEnabled="{Binding Checked, ElementName=Arg4EnabledBox}" Margin="0,11,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            <Controls:LabeledCheckBox x:Name="Arg1EnabledBox" Checked="{Binding TriggerArgument1Enabled}" Grid.Column="1" Margin="3,0,-1,11" IsHorizontal="True" CheckBoxName="Enabled" HorizontalContentAlignment="Left"/>
-                            <Controls:LabeledCheckBox x:Name="Arg2EnabledBox" Checked="{Binding TriggerArgument2Enabled}" Grid.Column="1" IsHorizontal="True" CheckBoxName="Enabled" Margin="3,0,0,11" HorizontalContentAlignment="Left"/>
-                            <Controls:LabeledCheckBox x:Name="Arg3EnabledBox" Checked="{Binding TriggerArgument3Enabled}" Grid.Column="1" IsHorizontal="True" CheckBoxName="Enabled" Margin="3,0,0,0" HorizontalContentAlignment="Left"/>
-                            <Controls:LabeledCheckBox x:Name="Arg4EnabledBox" Checked="{Binding TriggerArgument4Enabled}" Grid.Column="1" IsHorizontal="True" CheckBoxName="Enabled" Margin="3,11,0,0" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox x:Name="Arg1EnabledBox" Checked="{Binding TriggerArgument1Enabled}" Grid.Column="1" Margin="3,0,-1,11" LayoutOrientation="Horizontal" CheckBoxName="Enabled" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox x:Name="Arg2EnabledBox" Checked="{Binding TriggerArgument2Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,0,0,11" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox x:Name="Arg3EnabledBox" Checked="{Binding TriggerArgument3Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,0,0,0" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox x:Name="Arg4EnabledBox" Checked="{Binding TriggerArgument4Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,11,0,0" HorizontalContentAlignment="Left"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

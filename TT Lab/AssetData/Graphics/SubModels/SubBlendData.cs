@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -10,6 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace TT_Lab.AssetData.Graphics.SubModels
 {
+    [ReferencesAssets]
     public class SubBlendData : IDisposable
     {
         public LabURI Material { get; set; } = LabURI.Empty;
@@ -40,7 +43,8 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                 var allVertexes = new List<Vertex>();
                 var allIndices = new List<IndexedFace>();
                 var indiceAccessor = 0;
-                var blendShape = mesh.Extras.AsValue().GetValue<Vector3>();
+                var blendShapeJson = mesh.Extras;
+                var blendShape = new Vector3((float)blendShapeJson["X"]!, (float)blendShapeJson["Y"]!, (float)blendShapeJson["Z"]!);
                 var primitive = mesh.Primitives[0];
                 var vertexes = primitive.GetVertexColumns();
                 var indices = primitive.GetTriangleIndices();

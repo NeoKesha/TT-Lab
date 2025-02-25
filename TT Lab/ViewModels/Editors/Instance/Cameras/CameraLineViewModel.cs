@@ -15,6 +15,8 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             var baseCam = (CameraLine)cam;
             lineStart = new Vector4ViewModel(baseCam.LineStart);
             lineEnd = new Vector4ViewModel(baseCam.LineEnd);
+            DirtyTracker.AddChild(lineStart);
+            DirtyTracker.AddChild(lineEnd);
         }
 
         protected override Task OnInitializeAsync(CancellationToken cancellationToken)
