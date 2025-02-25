@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Instance
     public class Collision : SerializableInstance
     {
         public override UInt32 Section => Constants.LEVEL_COLLISION_ITEM;
+        public override String IconPath => "Collision.png";
 
         public Collision()
         {
@@ -17,16 +18,6 @@ namespace TT_Lab.Assets.Instance
         public Collision(LabURI package, UInt32 id, String Name, String chunk, ITwinCollision collisionData) : base(package, id, Name, chunk, null)
         {
             assetData = new CollisionData(collisionData);
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
         }
 
         public override Type GetEditorType()

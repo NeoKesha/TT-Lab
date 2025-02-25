@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -14,6 +15,9 @@ namespace TT_Lab.Assets
     {
         private AssetStorage _assets = new();
         private AssetStorage _importAssets = new();
+
+        // TODO: Check if locks are required to access assets for thread-safety
+        //private object assetAccessLock = new object();
 
         public AssetManager() { }
 
@@ -96,6 +100,11 @@ namespace TT_Lab.Assets
                 return;
             }
 
+            foreach (var pair in _assets)
+            {
+                pair.Value.RemoveReference(uri);
+            }
+
             _assets.Remove(uri);
         }
 
@@ -105,23 +114,22 @@ namespace TT_Lab.Assets
         /// <returns>AssetManager for the currently opened project</returns>
         public static AssetManager Get()
         {
-            return ProjectManagerSingleton.PM.OpenedProject!.AssetManager;
+            return IoC.Get<ProjectManager>().OpenedProject!.AssetManager;
         }
 
         /// <summary>
         /// Obtain a URI explicitly by specifying the package, folder, variant(if needed) and id
         /// </summary>
-        /// <param Name="package">Package</param>
-        /// <param Name="subpackage">Subpackage</param>
-        /// <param Name="folder">Folder</param>
-        /// <param Name="variant">Variant if present</param>
-        /// <param Name="id">ID</param>
+        /// <param name="package">Package</param>
+        /// <param name="folder">Folder</param>
+        /// <param name="variant">Variant if present</param>
+        /// <param name="id">ID</param>
         /// <returns>Found URI.<para/><code>LabURI.Empty</code> if URI was not found</returns>
         public LabURI GetUri(LabURI package, String folder, String? variant, UInt32 id)
         {
             var variantString = variant != null ? $"/{variant}" : "";
 
-            // First with try to find the URI with its variant
+            // First we try to find the URI with its variant
             // If that fails we attempt to find its no variant counterpart
             // Finally we do the same but walk through every dependency the package has
             var resultUri = GetUri($"{package}/{folder}/{id}{variantString}");
@@ -172,13 +180,12 @@ namespace TT_Lab.Assets
         }
 
         /// <summary>
-        /// Get asset by its package, subpackage, folder, variant(if needed) and id
+        /// Get asset by its package, folder, variant(if needed) and id
         /// </summary>
-        /// <param Name="package"></param>
-        /// <param Name="subpackage"></param>
-        /// <param Name="folder"></param>
-        /// <param Name="variant"></param>
-        /// <param Name="id"></param>
+        /// <param name="package"></param>
+        /// <param name="folder"></param>
+        /// <param name="variant"></param>
+        /// <param name="id"></param>
         /// <returns>Any asset</returns>
         public IAsset GetAsset(LabURI package, String folder, String? variant, uint id)
         {
@@ -198,12 +205,11 @@ namespace TT_Lab.Assets
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam Name="T">Specific asset type</typeparam>
-        /// <param Name="package"></param>
-        /// <param Name="subpackage"></param>
-        /// <param Name="folder"></param>
-        /// <param Name="variant"></param>
-        /// <param Name="id"></param>
+        /// <typeparam name="T">Specific asset type</typeparam>
+        /// <param name="package"></param>
+        /// <param name="folder"></param>
+        /// <param name="variant"></param>
+        /// <param name="id"></param>
         /// <returns>Asset of a specific type</returns>
         /// <seealso cref="GetAsset(LabURI, string, string?, uint)"/>
         public T GetAsset<T>(LabURI package, String folder, String? variant, uint id) where T : IAsset
@@ -214,8 +220,8 @@ namespace TT_Lab.Assets
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam Name="T">Specific asset type</typeparam>
-        /// <param Name="labURI"></param>
+        /// <typeparam name="T">Specific asset type</typeparam>
+        /// <param name="labURI"></param>
         /// <returns>Asset of a specific type</returns>
         /// <seealso cref="GetAsset(LabURI)"/>
         public T GetAsset<T>(LabURI labURI) where T : IAsset
@@ -224,14 +230,13 @@ namespace TT_Lab.Assets
         }
 
         /// <summary>
-        /// Get asset data by its package, subpackage, folder, variant(if needed) and id
+        /// Get asset data by its package, folder, variant(if needed) and id
         /// </summary>
-        /// <typeparam Name="T">Specific asset data type</typeparam>
-        /// <param Name="package"></param>
-        /// <param Name="subpackage"></param>
-        /// <param Name="folder"></param>
-        /// <param Name="variant"></param>
-        /// <param Name="id"></param>
+        /// <typeparam name="T">Specific asset data type</typeparam>
+        /// <param name="package"></param>
+        /// <param name="folder"></param>
+        /// <param name="variant"></param>
+        /// <param name="id"></param>
         /// <returns>Data of the asset of a specified type</returns>
         public T GetAssetData<T>(LabURI package, String folder, String? variant, uint id) where T : AbstractAssetData
         {
@@ -241,8 +246,8 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Get asset data by its URI
         /// </summary>
-        /// <typeparam Name="T">Specific asset data type</typeparam>
-        /// <param Name="labURI"></param>
+        /// <typeparam name="T">Specific asset data type</typeparam>
+        /// <param name="labURI"></param>
         /// <returns>Data of the asset of a specified type</returns>
         public T GetAssetData<T>(LabURI labURI) where T : AbstractAssetData
         {

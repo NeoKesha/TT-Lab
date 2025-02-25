@@ -103,10 +103,9 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         var r = Math.Min(e.GetBinaryX() & 0xFF, 255);
                         var g = Math.Min(e.GetBinaryY() & 0xFF, 255);
                         var b = Math.Min(e.GetBinaryZ() & 0xFF, 255);
-                        var a = (e.GetBinaryW() & 0xFF);
+                        var a = (e.GetBinaryW() & 0xFF) << 1;
 
                         Color col = new((byte)r, (byte)g, (byte)b, (byte)a);
-                        col.ScaleAlphaUp();
                         Colors.Add(Vector4.FromColor(col));
 
                         Vector4 uv = new(e);
@@ -135,9 +134,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         var r = Math.Min((byte)(e.GetBinaryX() & 0xFF), (byte)255);
                         var g = Math.Min((byte)(e.GetBinaryY() & 0xFF), (byte)255);
                         var b = Math.Min((byte)(e.GetBinaryZ() & 0xFF), (byte)255);
-                        var a = (byte)(e.GetBinaryW() & 0xFF);
+                        var a = (byte)((e.GetBinaryW() & 0xFF) << 1);
                         Color col = new(r, g, b, a);
-                        col.ScaleAlphaUp();
 
                         EmitColor.Add(Vector4.FromColor(col));
                     }

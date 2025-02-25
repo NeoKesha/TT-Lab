@@ -33,22 +33,27 @@ namespace Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes
             Read(reader, length);
             foreach (var sceneryType in SceneryTypes)
             {
-                // This is pretty tough since these are the only 2 types besides the Root type
-                // of course a Dictionary Int -> Type could work but I decided to opt for simple
-                // if checks since I don't see it worth the effort to make a mess out of Read
-                // method calls.
-                //                                                                      ~Smartkin
-                if (sceneryType == ITwinScenery.SceneryType.Node)
+                switch (sceneryType)
                 {
-                    var newSc = new TwinSceneryNode();
-                    sceneries.Add(newSc);
-                    newSc.Read(reader, length, sceneries);
-                }
-                if (sceneryType == ITwinScenery.SceneryType.Leaf)
-                {
-                    var newSc = new TwinSceneryLeaf();
-                    sceneries.Add(newSc);
-                    newSc.Read(reader, length);
+                    // This is pretty tough since these are the only 2 types besides the Root type
+                    // of course a Dictionary Int -> Type could work but I decided to opt for simple
+                    // if checks since I don't see it worth the effort to make a mess out of Read
+                    // method calls.
+                    //                                                                      ~Smartkin
+                    case ITwinScenery.SceneryType.Node:
+                    {
+                        var newSc = new TwinSceneryNode();
+                        sceneries.Add(newSc);
+                        newSc.Read(reader, length, sceneries);
+                        break;
+                    }
+                    case ITwinScenery.SceneryType.Leaf:
+                    {
+                        var newSc = new TwinSceneryLeaf();
+                        sceneries.Add(newSc);
+                        newSc.Read(reader, length);
+                        break;
+                    }
                 }
             }
         }

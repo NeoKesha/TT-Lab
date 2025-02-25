@@ -6,14 +6,17 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Instance;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
+using Path = TT_Lab.Assets.Instance.Path;
 
 namespace TT_Lab.AssetData.Instance
 {
+    [ReferencesAssets]
     public class ObjectInstanceData : AbstractAssetData
     {
         public ObjectInstanceData()
@@ -85,23 +88,23 @@ namespace TT_Lab.AssetData.Instance
             Instances = new(instance.Instances.Count);
             foreach (var inst in instance.Instances)
             {
-                Instances.Add(assetManager.GetUri(package, typeof(ObjectInstance).Name, variant, layoutId, inst));
+                Instances.Add(assetManager.GetUri(package, nameof(ObjectInstance), variant, layoutId, inst));
             }
             PositionsRelated = instance.PositionsRelated;
             Positions = new(instance.Positions.Count);
             foreach (var pos in instance.Positions)
             {
-                Positions.Add(assetManager.GetUri(package, typeof(Position).Name, variant, layoutId, pos));
+                Positions.Add(assetManager.GetUri(package, nameof(Assets.Instance.Position), variant, layoutId, pos));
             }
             PathsRelated = instance.PathsRelated;
             Paths = new(instance.Paths.Count);
             foreach (var path in instance.Paths)
             {
-                Paths.Add(assetManager.GetUri(package, typeof(Assets.Instance.Path).Name, variant, layoutId, path));
+                Paths.Add(assetManager.GetUri(package, nameof(Path), variant, layoutId, path));
             }
-            ObjectId = assetManager.GetUri(package, typeof(GameObject).Name, variant, instance.ObjectId);
+            ObjectId = assetManager.GetUri(package, nameof(GameObject), variant, instance.ObjectId);
             RefListIndex = instance.RefListIndex;
-            OnSpawnScriptId = assetManager.GetUri(package, typeof(BehaviourStarter).Name, variant, instance.OnSpawnHeaderScriptID);
+            OnSpawnScriptId = assetManager.GetUri(package, nameof(BehaviourStarter), variant, instance.OnSpawnHeaderScriptID);
             StateFlags = instance.StateFlags;
             ParamList1 = CloneUtils.CloneList(instance.ParamList1);
             ParamList2 = CloneUtils.CloneList(instance.ParamList2);
@@ -184,7 +187,7 @@ namespace TT_Lab.AssetData.Instance
             var objectsSection = codeSection.GetItem<ITwinSection>(Constants.CODE_GAME_OBJECTS_SECTION);
             var behavioursSection = codeSection.GetItem<ITwinSection>(Constants.CODE_BEHAVIOURS_SECTION);
 
-            if (layoutID != null && layoutID == Constants.LEVEL_LAYOUT_6_SECTION)
+            if (layoutID is Constants.LEVEL_LAYOUT_6_SECTION)
             {
                 return base.ResolveChunkResouces(factory, section, id, layoutID);
             }

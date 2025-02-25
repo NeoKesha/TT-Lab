@@ -17,7 +17,7 @@ namespace Twinsanity.TwinsanityInterchange.Enumerations
         public const Int32 LEVEL_LAYOUT_8_SECTION = 7;
         public const Int32 LEVEL_PARTICLES_ITEM = 8;
         public const Int32 LEVEL_COLLISION_ITEM = 9;
-        //Senery root level constants
+        //Scenery root level constants
         public const Int32 SCENERY_GRAPHICS_SECTION = 6;
         public const Int32 SCENERY_SECENERY_ITEM = 0;
         public const Int32 SCENERY_UNK_1_ITEM = 1; // Unused by the game

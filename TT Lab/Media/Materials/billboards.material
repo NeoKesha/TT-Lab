@@ -1,0 +1,14 @@
+abstract pass BillboardsPassBase
+{
+    lighting off
+    depth_write off
+    depth_check off
+    cull_hardware none
+    alpha_rejection greater_equal 128
+    lighting off
+    
+    texture_unit
+    {
+        texture $billboardTexture
+    }
+}

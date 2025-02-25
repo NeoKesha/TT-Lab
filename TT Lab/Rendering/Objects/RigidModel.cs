@@ -1,26 +1,21 @@
-﻿using TT_Lab.AssetData.Graphics;
-using TT_Lab.Rendering.Buffers;
+﻿using org.ogre;
+using TT_Lab.AssetData.Graphics;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class RigidModel : BaseRenderable
+    public class RigidModel : ManualObject
     {
-        ModelBuffer model;
+        //ModelBuffer model;
 
-        public RigidModel(Scene root, RigidModelData rigid) : base(root)
+        public RigidModel(string name, RigidModelData rigid) : base(name)
         {
-            model = new ModelBuffer(root, rigid);
-            AddChild(model);
+            //model = new ModelBuffer(GL, window, root, rigid);
+            //AddChild(model);
         }
 
         public void Delete()
         {
-            model.Delete();
-        }
-
-        protected override void RenderSelf()
-        {
-            model.Render();
+            //model.Delete();
         }
     }
 }

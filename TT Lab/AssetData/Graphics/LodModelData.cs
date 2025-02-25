@@ -5,6 +5,7 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -13,6 +14,7 @@ using static Twinsanity.TwinsanityInterchange.Enumerations.Enums;
 
 namespace TT_Lab.AssetData.Graphics
 {
+    [ReferencesAssets]
     public class LodModelData : AbstractAssetData
     {
         public LodModelData()

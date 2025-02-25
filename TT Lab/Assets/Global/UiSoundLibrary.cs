@@ -8,6 +8,7 @@ namespace TT_Lab.Assets.Global
     public class UiSoundLibrary : SerializableAsset
     {
         public override UInt32 Section => throw new NotImplementedException();
+        public override String IconPath => "UI_Sound_Library.png";
 
         public UiSoundLibrary() { }
 
@@ -28,16 +29,6 @@ namespace TT_Lab.Assets.Global
         }
 
         public override Type GetEditorType()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();
         }

@@ -1,0 +1,12 @@
+import * from "billboards.material"
+
+material BillboardPositions
+{
+    technique
+    {
+        pass : BillboardsPassBase
+        {
+            set $billboardTexture "Position.png"
+        }
+    }
+}

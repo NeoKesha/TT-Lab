@@ -9,6 +9,7 @@ using TT_Lab.AssetData.Code.Object;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
@@ -19,6 +20,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace TT_Lab.AssetData.Code
 {
+    [ReferencesAssets]
     public class GameObjectData : AbstractAssetData
     {
         public GameObjectData()

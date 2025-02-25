@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
-using TT_Lab.ViewModels;
-using TT_Lab.ViewModels.Instance;
+using TT_Lab.ViewModels.Editors.Instance;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -25,23 +24,7 @@ namespace TT_Lab.Assets.Instance
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
-        {
-            viewModel ??= new SceneryViewModel(URI, parent);
-            return viewModel;
+            return typeof(SceneryViewModel);
         }
 
         public override AbstractAssetData GetData()

@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Graphics
     public class Skydome : SerializableAsset
     {
         public override UInt32 Section => Constants.GRAPHICS_SKYDOMES_SECTION;
+        public override String IconPath => "Skybox.png";
 
         public Skydome(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinSkydome skydome) : base(id, Name, package, needVariant, variant)
         {
@@ -17,16 +18,6 @@ namespace TT_Lab.Assets.Graphics
 
         public Skydome()
         {
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
         }
 
         public override Type GetEditorType()

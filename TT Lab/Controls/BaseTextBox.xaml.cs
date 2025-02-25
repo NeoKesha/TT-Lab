@@ -26,8 +26,8 @@ namespace TT_Lab.Controls
             base.OnTextChanged(e);
             if (undoBinding == null)
             {
-                undoBinding = new CommandBinding(ApplicationCommands.Undo, new ExecutedRoutedEventHandler(UndoExecuted), null);
-                redoBinding = new CommandBinding(ApplicationCommands.Redo, new ExecutedRoutedEventHandler(RedoExecuted), null);
+                undoBinding = new CommandBinding(ApplicationCommands.Undo, UndoExecuted, null);
+                redoBinding = new CommandBinding(ApplicationCommands.Redo, RedoExecuted, null);
 
                 CommandBindings.Add(undoBinding);
                 CommandBindings.Add(redoBinding);

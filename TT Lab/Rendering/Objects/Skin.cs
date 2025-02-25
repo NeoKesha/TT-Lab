@@ -1,26 +1,21 @@
-﻿using TT_Lab.AssetData.Graphics;
-using TT_Lab.Rendering.Buffers;
+﻿using org.ogre;
+using TT_Lab.AssetData.Graphics;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Skin : BaseRenderable
+    public class Skin : ManualObject
     {
-        ModelBuffer model;
+        //ModelBuffer model;
 
-        public Skin(Scene root, SkinData skin) : base(root)
+        public Skin(string name, SkinData skin) : base(name)
         {
-            model = new ModelBuffer(root, skin);
-            AddChild(model);
+            //model = new ModelBuffer(GL, window, root, skin);
+            //AddChild(model);
         }
 
         public void Delete()
         {
-            model.Delete();
-        }
-
-        protected override void RenderSelf()
-        {
-            model.Render();
+            //model.Delete();
         }
     }
 }

@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.AssetData.Code.Behaviour
 {
+    [ReferencesAssets]
     public class BehaviourStarterData : BehaviourData
     {
         public BehaviourStarterData()

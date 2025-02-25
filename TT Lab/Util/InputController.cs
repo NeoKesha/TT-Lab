@@ -1,33 +1,22 @@
-﻿using OpenTK.Wpf;
+﻿using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using TT_Lab.Project.Messages.Inputs;
+using TT_Lab.ViewModels.Editors;
 
 namespace TT_Lab.Util
 {
-    public class InputController : IDisposable
+    public class InputController
     {
         public bool Shift { get => leftShift | rightShift; }
         public bool Ctrl { get => leftCtrl | rightCtrl; }
         public bool Alt { get => leftAlt | rightAlt; }
 
-        public delegate void KeyPressedHandler(object sender, KeyEventArgs e);
-        public delegate void KeyReleasedHandler(object sender, KeyEventArgs e);
-
-        public event KeyPressedHandler OnKeyPressed;
-        public event KeyReleasedHandler OnKeyReleased;
-        public InputController(GLWpfControl GlControl) { 
-            this.GlControl = GlControl;
-
-            GlControl.KeyDown += HandleKeyDown;
-            GlControl.KeyUp += HandleKeyUp;
-        }
-            
-        public void Dispose()
+        public InputController(SceneEditorViewModel sceneEditor)
         {
-            GlControl.KeyDown -= HandleKeyDown;
-            GlControl.KeyUp -= HandleKeyUp;
-            GC.SuppressFinalize(this);
+            sceneEditor.OnKeyPressed += HandleKeyDown;
+            sceneEditor.OnKeyPressedUp += HandleKeyUp;
         }
 
         public bool IsKeyPressed(Key key)
@@ -41,7 +30,6 @@ namespace TT_Lab.Util
             if (pressedKeys.Contains(key))
             {
                 KeyReleased(key);
-                OnKeyReleased?.Invoke(sender, e);
                 pressedKeys.Remove(key);
             }
         }
@@ -52,7 +40,6 @@ namespace TT_Lab.Util
             if (!pressedKeys.Contains(key))
             {
                 KeyPressed(key);
-                OnKeyPressed?.Invoke(sender, e);
                 pressedKeys.Add(key);
             }
         }
@@ -66,6 +53,7 @@ namespace TT_Lab.Util
             if (key == Key.LeftShift) leftShift = false;
             if (key == Key.RightShift) rightShift = false;
         }
+
         private void KeyPressed(Key key)
         {
             if (key == Key.LeftAlt) leftAlt = true;
@@ -75,6 +63,7 @@ namespace TT_Lab.Util
             if (key == Key.LeftShift) leftShift = true;
             if (key == Key.RightShift) rightShift = true;
         }
+
         private bool leftShift = false;
         private bool rightShift = false;
         private bool leftCtrl = false;
@@ -82,7 +71,6 @@ namespace TT_Lab.Util
         private bool leftAlt = false;
         private bool rightAlt = false;
 
-        private List<Key> pressedKeys = new List<Key>();
-        private GLWpfControl GlControl;
+        private readonly List<Key> pressedKeys = new();
     }
 }

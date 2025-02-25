@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using TT_Lab.Assets;
 using TT_Lab.Util;
-using TT_Lab.ViewModels.Instance.Scenery;
+using TT_Lab.ViewModels.Editors.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -24,7 +25,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryNodeData(SceneryNodeViewModel vm) : base(vm)
         {
-            SceneryTypes = CloneUtils.DeepClone(vm.SceneryTypes);
+            SceneryTypes = CloneUtils.DeepClone(vm.SceneryTypes.ToList().Select(e => e.Value).ToArray());
         }
 
         public override ITwinScenery.SceneryType GetSceneryType()

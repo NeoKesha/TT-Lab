@@ -27,6 +27,12 @@ namespace TT_Lab.Assets
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         LabURI Package { get; set; }
+        
+        /// <summary>
+        /// All the assets that are referenced by this one
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        List<LabURI> References { get; set; }
 
         /// <summary>
         /// In case of Twinsanity ID collisions the distinct category asset belongs to
@@ -39,6 +45,8 @@ namespace TT_Lab.Assets
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         String Name { get; set; }
+
+        String IconPath { get; }
 
         /// <summary>
         /// Whether asset's data is in raw form
@@ -115,6 +123,26 @@ namespace TT_Lab.Assets
         protected AbstractAssetData GetData();
 
         /// <summary>
+        /// Adds new resource reference
+        /// </summary>
+        /// <param name="reference">Resource to reference</param>
+        void AddReference(LabURI reference)
+        {
+            if (reference == LabURI.Empty)
+            {
+                return;
+            }
+            
+            References.Add(reference);
+        }
+
+        /// <summary>
+        /// Removes reference to a resource
+        /// </summary>
+        /// <param name="reference">Resource to remove reference from</param>
+        void RemoveReference(LabURI reference);
+
+        /// <summary>
         /// Loads in asset's data if it's not loaded
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -127,18 +155,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Returns asset's viewmodel for editing
         /// </summary>
-        AssetViewModel GetViewModel(AssetViewModel? parent = null);
-
-        /// <summary>
-        /// Return asset's viewmodel as a specific type
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        T GetViewModel<T>(AssetViewModel? parent = null) where T : AssetViewModel
-        {
-            return (T)GetViewModel(parent);
-        }
+        ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null);
 
         /// <summary>
         /// Disposes of the contained data if it was loaded
@@ -181,12 +198,12 @@ namespace TT_Lab.Assets
         void RegenerateURI(Boolean needVariant);
 
         /// <summary>
-        /// Dump on disk in JSON format
+        /// Save the data to disk
         /// </summary>
-        void Serialize();
+        void Serialize(bool setDirectoryToAssets = false);
 
         /// <summary>
-        /// Convert JSON format to the project asset object
+        /// Read data from the disk
         /// </summary>
         void Deserialize(String json);
 
@@ -194,18 +211,6 @@ namespace TT_Lab.Assets
         /// Called if asset needs to do anything else after being deserialized
         /// </summary>
         void PostDeserialize();
-
-        /// <summary>
-        /// Converts given data to raw game's data
-        /// </summary>
-        /// <param name="data">Data to convert</param>
-        void ToRaw(Byte[] data);
-
-        /// <summary>
-        /// Converts raw data to a general format
-        /// </summary>
-        /// <returns>Data in the format</returns>
-        Byte[] ToFormat();
 
         /// <summary>
         /// Finishes import on Project Creation stage

@@ -2,10 +2,12 @@
 using System;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.AssetData.Code.Object
 {
+    [ReferencesAssets]
     public class ObjectTriggerBehaviourData
     {
         [JsonProperty(Required = Required.Always)]

@@ -1,11 +1,8 @@
-#version 410 compatibility
-
-uniform float Alpha;
-uniform sampler2D tex;
+#include "Includes/ModelLayout.frag"
 
 vec4 ShadeFragment(vec3 texCoord, vec4 col, vec3 diffuse, vec3 eyespaceNormal)
 {
-    vec4 color = texture(tex, vec2(texCoord.s, texCoord.t));
-    color *= Alpha;
+    vec4 color = texture(Texture[0], vec2(texCoord.s, texCoord.t));
+    color *= Opacity;
     return color;
 }

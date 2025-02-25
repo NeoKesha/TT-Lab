@@ -9,22 +9,13 @@ namespace TT_Lab.Assets.Code
     public class GameObject : SerializableAsset
     {
         public override UInt32 Section => Constants.CODE_GAME_OBJECTS_SECTION;
+        public override String IconPath => "Game_Object.png";
 
         public GameObject() { }
 
         public GameObject(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinObject @object) : base(id, Name, package, needVariant, variant)
         {
             assetData = new GameObjectData(@object);
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
         }
 
         public override Type GetEditorType()

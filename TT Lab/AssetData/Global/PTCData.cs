@@ -4,11 +4,13 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
 namespace TT_Lab.AssetData.Global
 {
+    [ReferencesAssets]
     public class PTCData : AbstractAssetData
     {
         public PTCData()
@@ -41,9 +43,9 @@ namespace TT_Lab.AssetData.Global
         {
             var assetManager = AssetManager.Get();
             var ptc = GetTwinItem<ITwinPTC>();
-            var texture = new Texture(package, true, $"{ptc.GetName()}_Texture_{variant}", ptc.TexID, $"{ptc.GetName()}_Texture", ptc.Texture);
+            var texture = new Texture(package, true, $"{ptc.GetName()}_{variant}", ptc.TexID, $"{ptc.GetName()}_Texture", ptc.Texture);
             assetManager.AddAssetToImport(texture);
-            var material = new Material(package, true, $"{ptc.GetName()}_Material_{variant}", ptc.MatID, $"{ptc.GetName()}_Material", ptc.Material);
+            var material = new Material(package, true, $"{ptc.GetName()}_{variant}", ptc.MatID, $"{ptc.GetName()}_Material", ptc.Material);
             assetManager.AddAssetToImport(material);
 
             TextureID = texture.URI;

@@ -6,13 +6,13 @@ using Twinsanity.TwinsanityInterchange.Common;
 
 namespace TT_Lab.AssetData.Instance
 {
-    [JsonObject]
+    [JsonObject] // TODO: Add [ReferencesAssets] attribute
     public class ChunkLink
     {
         [JsonProperty(Required = Required.Always)]
         public Boolean UnkFlag { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public String Path { get; set; }
+        public String Path { get; set; } // TODO: Replace with ChunkFolder LabURI
         [JsonProperty(Required = Required.Always)]
         public Boolean IsRendered { get; set; }
         [JsonProperty(Required = Required.Always)]

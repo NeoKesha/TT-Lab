@@ -9,6 +9,7 @@ namespace TT_Lab.Assets.Global
     {
         protected override String TwinDataExt => "psm";
         public override UInt32 Section => throw new NotImplementedException();
+        public override String IconPath => "PSM.png";
 
         public PSM() { }
 
@@ -40,16 +41,6 @@ namespace TT_Lab.Assets.Global
         }
 
         public override Type GetEditorType()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();
         }

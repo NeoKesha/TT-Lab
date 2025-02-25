@@ -6,12 +6,13 @@ using Twinsanity.TwinsanityInterchange.Common.Collision;
 namespace TT_Lab.AssetData.Instance.Collision
 {
     [JsonObject]
+    // TODO: Add [ReferencesAssets] attribute
     public class CollisionTriangle
     {
         [JsonProperty(Required = Required.Always)]
         public IndexedFace Face { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public Int32 SurfaceIndex { get; set; }
+        public Int32 SurfaceIndex { get; set; } // TODO: Replace with CollisionSurface LabURI reference
 
         public CollisionTriangle()
         {

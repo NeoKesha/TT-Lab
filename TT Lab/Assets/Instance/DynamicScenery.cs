@@ -24,16 +24,6 @@ namespace TT_Lab.Assets.Instance
             throw new NotImplementedException();
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override AbstractAssetData GetData()
         {
             if (!IsLoaded || assetData.Disposed)

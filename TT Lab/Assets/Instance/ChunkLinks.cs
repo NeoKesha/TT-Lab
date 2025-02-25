@@ -1,8 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
-using TT_Lab.ViewModels;
-using TT_Lab.ViewModels.Instance;
+using TT_Lab.ViewModels.Editors.Instance;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -11,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class ChunkLinks : SerializableInstance
     {
         public override UInt32 Section => Constants.SCENERY_LINK_ITEM;
+        public override String IconPath => "Chunk_Link.png";
 
         public ChunkLinks()
         {
@@ -23,23 +23,7 @@ namespace TT_Lab.Assets.Instance
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
-        {
-            viewModel ??= new ChunkLinkViewModel(URI, parent);
-            return viewModel;
+            return typeof(ChunkLinkViewModel);
         }
 
         public override AbstractAssetData GetData()

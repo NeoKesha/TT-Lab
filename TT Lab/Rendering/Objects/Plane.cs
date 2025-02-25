@@ -1,99 +1,84 @@
-﻿using GlmSharp;
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using GlmSharp;
 using System.Drawing;
+using org.ogre;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Assets;
-using TT_Lab.Rendering.Buffers;
-using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class Plane : BaseRenderable
+    [Obsolete("Use Ogre's entity with SceneManager.PT_PLANE as a mesh attached")]
+    public class Plane
     {
-        IndexedBufferArray planeBuffer;
-        TextureBuffer? texture;
+        //IndexedBufferArray planeBuffer;
+        //TextureBuffer? texture;
 
-        public Plane(Scene root) : this(root, new vec3())
+        public Plane() : this(new vec3())
         {
         }
 
-        public Plane(Scene root, vec3 position) : base(root)
+        public Plane(vec3 position)
         {
-            planeBuffer = BufferGeneration.GetModelBuffer(
-                new List<vec3>
-                {
-                    new vec3(1 + position.x, 1 + position.y, -1 + position.z),
-                    new vec3(-1 + position.x, 1 + position.y, -1 + position.z),
-                    new vec3(-1 + position.x, -1 + position.y, -1 + position.z),
-                    new vec3(1 + position.x, -1 + position.y, -1 + position.z)
-                },
-                new List<AssetData.Graphics.SubModels.IndexedFace>
-                {
-                    new AssetData.Graphics.SubModels.IndexedFace(new int[] { 0, 1, 2 }),
-                    new AssetData.Graphics.SubModels.IndexedFace(new int[] { 2, 3, 0 })
-                },
-                new List<System.Drawing.Color> { System.Drawing.Color.White },
-                new List<vec3>
-                {
-                    new vec3(0, 0, 0),
-                    new vec3(1, 0, 0),
-                    new vec3(1, 1, 0),
-                    new vec3(0, 1, 0)
-                });
+            //planeBuffer = BufferGeneration.GetModelBuffer(GL,
+            //    new List<vec3>
+            //    {
+            //        new vec3(1 + position.x, 1 + position.y, -1 + position.z),
+            //        new vec3(-1 + position.x, 1 + position.y, -1 + position.z),
+            //        new vec3(-1 + position.x, -1 + position.y, -1 + position.z),
+            //        new vec3(1 + position.x, -1 + position.y, -1 + position.z)
+            //    },
+            //    new List<AssetData.Graphics.SubModels.IndexedFace>
+            //    {
+            //        new AssetData.Graphics.SubModels.IndexedFace(new int[] { 0, 1, 2 }),
+            //        new AssetData.Graphics.SubModels.IndexedFace(new int[] { 2, 3, 0 })
+            //    },
+            //    new List<System.Drawing.Color> { System.Drawing.Color.White },
+            //    new List<vec3>
+            //    {
+            //        new vec3(0, 0, 0),
+            //        new vec3(1, 0, 0),
+            //        new vec3(1, 1, 0),
+            //        new vec3(0, 1, 0)
+            //    });
         }
 
-        public Plane(Scene root, MaterialData material) : this(root)
+        public Plane(MaterialData material)
         {
-            if (material.Shaders[0].TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON)
-            {
-                var tex = AssetManager.Get().GetAssetData<TextureData>(material.Shaders[0].TextureId);
-                texture = new TextureBuffer(tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap);
-            }
+            //if (material.Shaders[0].TxtMapping == Twinsanity.TwinsanityInterchange.Common.TwinShader.TextureMapping.ON)
+            //{
+            //    var tex = AssetManager.Get().GetAssetData<TextureData>(material.Shaders[0].TextureId);
+            //    texture = new TextureBuffer(GL, tex.Bitmap.Width, tex.Bitmap.Height, tex.Bitmap);
+            //}
         }
 
-        public Plane(Scene root, TextureData tex) : this(root, tex.Bitmap)
+        public Plane(TextureData tex) : this(tex.Bitmap)
         {
         }
 
-        public Plane(Scene root, Bitmap texImage) : this(root)
+        public Plane(Bitmap texImage)
         {
-            texture = new TextureBuffer(texImage.Width, texImage.Height, texImage);
-        }
-
-        public Plane(Scene root, TextureBuffer texture) : this(root)
-        {
-            this.texture = texture;
+            //texture = new TextureBuffer(GL, texImage.Width, texImage.Height, texImage);
         }
 
         public void Bind()
         {
-            if (texture != null)
-            {
-                Root?.Renderer.RenderProgram.SetTextureUniform("tex", TextureTarget.Texture2D, texture.Buffer, 0);
-            }
-            Root?.Renderer.RenderProgram.SetUniform1("Alpha", Opacity);
-            planeBuffer.Bind();
+            //if (texture != null)
+            //{
+            //    Window.Renderer?.RenderProgram.SetTextureUniform("Texture[0]", TbTextureTarget.Texture2D, texture.Buffer, 0);
+            //}
+            //Window.Renderer?.RenderProgram.SetUniform1("Opacity", Opacity);
+            //planeBuffer.Bind();
         }
 
         public void Delete()
         {
-            texture?.Delete();
-            planeBuffer.Delete();
-        }
-
-        protected override void RenderSelf()
-        {
-            Bind();
-            GL.DrawElements(PrimitiveType.Triangles, planeBuffer.Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-            Unbind();
+            //texture?.Delete();
+            //planeBuffer.Delete();
         }
 
         public void Unbind()
         {
-            texture?.Unbind();
-            planeBuffer.Unbind();
+            //texture?.Unbind();
+            //planeBuffer.Unbind();
         }
     }
 }

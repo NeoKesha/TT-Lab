@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.PS2Hardware;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -10,6 +12,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.SubItems;
 
 namespace TT_Lab.AssetData.Graphics.SubModels
 {
+    [ReferencesAssets]
     public class SubBlendData : IDisposable
     {
         public LabURI Material { get; set; } = LabURI.Empty;
@@ -40,7 +43,8 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                 var allVertexes = new List<Vertex>();
                 var allIndices = new List<IndexedFace>();
                 var indiceAccessor = 0;
-                var blendShape = (Vector3)mesh.Extras.Deserialize(typeof(Vector3));
+                var blendShapeJson = mesh.Extras;
+                var blendShape = new Vector3((float)blendShapeJson["X"]!, (float)blendShapeJson["Y"]!, (float)blendShapeJson["Z"]!);
                 var primitive = mesh.Primitives[0];
                 var vertexes = primitive.GetVertexColumns();
                 var indices = primitive.GetTriangleIndices();
@@ -57,7 +61,7 @@ namespace TT_Lab.AssetData.Graphics.SubModels
                             vertexes.Positions[i].ToTwin(),
                             vertexes.Colors0[i].ToTwin(),
                             vertexes.TexCoords0[i].ToTwin());
-                    ver.Color = new Vector4(ver.Color.X * 255, ver.Color.Y * 255, ver.Color.Z * 255, ver.Color.W * 255);
+                    ver.Color = new Vector4(ver.Color.X, ver.Color.Y, ver.Color.Z, ver.Color.W);
                     ver.JointInfo.JointIndex1 = (Int32)vertexes.Joints0[i].X;
                     ver.JointInfo.JointIndex2 = (Int32)vertexes.Joints0[i].Y;
                     ver.JointInfo.JointIndex3 = (Int32)vertexes.Joints0[i].Z;

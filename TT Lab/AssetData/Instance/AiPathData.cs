@@ -4,11 +4,13 @@ using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Instance;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.AssetData.Instance
 {
+    [ReferencesAssets]
     public class AiPathData : AbstractAssetData
     {
         public AiPathData()

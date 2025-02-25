@@ -1,7 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Editors.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -11,6 +11,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".glb";
         public override UInt32 Section => Constants.GRAPHICS_SKINS_SECTION;
+        public override String IconPath => "Skin_Mesh.png";
 
         public Skin() { }
 
@@ -20,19 +21,9 @@ namespace TT_Lab.Assets.Graphics
             Raw = false;
         }
 
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            return typeof(SkinModelEditor);
+            return typeof(SkinModelViewModel);
         }
 
         public override AbstractAssetData GetData()

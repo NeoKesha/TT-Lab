@@ -7,6 +7,7 @@ using System.Linq;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using TT_Lab.Extensions;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -19,6 +20,7 @@ namespace TT_Lab.AssetData.Graphics
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
     using VERTEX_BUILDER = VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
 
+    [ReferencesAssets]
     public class BlendSkinData : AbstractAssetData
     {
         public BlendSkinData()
@@ -43,7 +45,7 @@ namespace TT_Lab.AssetData.Graphics
             Blends.Clear();
         }
 
-        public override void Save(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityBlendSkin");
             var root = new SharpGLTF.Scenes.NodeBuilder("blend_skin_root");
@@ -122,7 +124,7 @@ namespace TT_Lab.AssetData.Graphics
                 {
                     var mesh = new MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"blend_subskin_{index++}");
                     var blendShapeInfo = System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape);
-                    mesh.Extras = SharpGLTF.IO.JsonContent.Serialize(blendModel.BlendShape);
+                    mesh.Extras = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape));
 
                     foreach (var face in blendModel.Faces)
                     {

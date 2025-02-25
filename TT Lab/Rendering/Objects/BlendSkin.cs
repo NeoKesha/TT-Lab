@@ -1,31 +1,21 @@
-﻿using TT_Lab.AssetData.Graphics;
+﻿using org.ogre;
+using TT_Lab.AssetData.Graphics;
 using TT_Lab.Rendering.Buffers;
 
 namespace TT_Lab.Rendering.Objects
 {
-    public class BlendSkin : BaseRenderable
+    public class BlendSkin
     {
-        readonly ModelBufferBlendSkin model;
-
-        public BlendSkin(Scene root, BlendSkinData blendSkin) : base(root)
+        private readonly ModelBufferBlendSkin _model;
+        
+        public BlendSkin(SceneManager sceneManager, string name, BlendSkinData blendSkin)
         {
-            model = new ModelBufferBlendSkin(root, blendSkin);
-            AddChild(model);
+            _model = new ModelBufferBlendSkin(sceneManager, name, blendSkin);
         }
 
         public void SetBlendShapeValue(int index, float value)
         {
-            model.BlendShapesValues[index] = value;
-        }
-
-        public void Delete()
-        {
-            model.Delete();
-        }
-
-        protected override void RenderSelf()
-        {
-            model.Render();
+            _model.SetBlendShapeWeight(index, value);
         }
     }
 }

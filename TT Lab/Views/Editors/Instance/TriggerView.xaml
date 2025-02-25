@@ -1,0 +1,105 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels.Editors.Instance"
+             d:DataContext="{Binding Source={d:DesignInstance viewmodels:TriggerViewModel}}"
+             x:Name="TriggerEditorControl"
+             x:Class="TT_Lab.Views.Editors.Instance.TriggerView"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="350">
+    <Grid>
+        <TabControl>
+            <TabItem x:Name="MainPropertiesTab" Header="Properties">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="4*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="0,0,0,0">
+                        <Grid>
+                            <UniformGrid Rows="1" Margin="0,0,0,0" Grid.Column="1">
+                                <Controls:LabeledDropList x:Name="InstanceLayoutList" SelectedItem="{Binding LayoutID}" Items="{Binding Layers}" DropListName="Instance layout"/>
+                                <Controls:LabeledTextBox x:Name="HeaderBox" Text="{Binding Header, StringFormat={}{0:X}}" TextBoxName="Header" Margin="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <Controls:LabeledTextBox x:Name="UnkFloatBox" Text="{Binding UnkFloat}" TextBoxName="Unknown float" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5"/>
+                            </UniformGrid>
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="0,0,0,0" Grid.Row="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <GroupBox Header="Position" Margin="0,0,0,0">
+                                <ContentControl x:Name="PositionEditorControl"/>
+                            </GroupBox>
+                            <GroupBox Header="Rotation" Margin="0,0,0,0" Grid.Row="1">
+                                <ContentControl x:Name="RotationEditorControl" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
+                            </GroupBox>
+                            <GroupBox Header="Scale" Margin="0,0,0,0" Grid.Row="2">
+                                <ContentControl x:Name="ScaleEditorControl" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
+                            </GroupBox>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="ArgumentsTab" Header="Messages">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Header="Instances" Margin="0,0,0,0">
+                        <ListBox x:Name="InstancesList" d:ItemsSource="{d:SampleData ItemCount=5}">
+                            <ListBox.ContextMenu>
+                                <ContextMenu x:Name="InstancesListContextMenu"/>
+                            </ListBox.ContextMenu>
+                        </ListBox>
+                    </GroupBox>
+                    <GroupBox Grid.Column="1" Header="Messages">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Controls:LabeledTextBox x:Name="Arg1Box" Text="{Binding TriggerMessage1}" TextBoxName="Trigger message 1" IsEnabled="{Binding Checked, ElementName=Arg1EnabledBox}" Margin="0,0,0,11" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox x:Name="Arg2Box" Text="{Binding TriggerMessage2}" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=Arg2EnabledBox}" Margin="0,0,0,11" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox x:Name="Arg3Box" Text="{Binding TriggerMessage3}" Grid.Row="2" IsEnabled="{Binding Checked, ElementName=Arg3EnabledBox}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox x:Name="Arg4Box" Text="{Binding TriggerMessage4}" Grid.Row="3" IsEnabled="{Binding Checked, ElementName=Arg4EnabledBox}" Margin="0,11,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledCheckBox x:Name="Arg1EnabledBox" Checked="{Binding TriggerArgument1Enabled}" Grid.Column="1" Margin="3,0,-1,11" LayoutOrientation="Horizontal" CheckBoxName="Enabled" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox x:Name="Arg2EnabledBox" Checked="{Binding TriggerArgument2Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,0,0,11" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox x:Name="Arg3EnabledBox" Checked="{Binding TriggerArgument3Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,0,0,0" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox x:Name="Arg4EnabledBox" Checked="{Binding TriggerArgument4Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,11,0,0" HorizontalContentAlignment="Left"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="ActivatorsTab" Header="Activators">
+                <Grid Margin="0,0,0,0">
+                    <UniformGrid>
+                        <Controls:LabeledCheckBox x:Name="ActByPlayCharBox" CheckBoxName="Playable character" Checked="{Binding ActivateByPlayableCharacter}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByCollectBox" Margin="0,0,0,0" CheckBoxName="Pickups" Checked="{Binding ActivateByPickups}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByCratesBox" Margin="0,0,0,0" Checked="{Binding ActivateByCrates}" CheckBoxName="Crates"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType3" Margin="0,0,0,0" CheckBoxName="Creatures" Checked="{Binding ActivateByCreatures}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType4" Margin="0,0,0,0" CheckBoxName="Generic objects" Checked="{Binding ActivateByGenericObjects}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType5" Margin="0,0,0,0" CheckBoxName="Grabbables" Checked="{Binding ActivateByGrabbables}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType6" Margin="0,0,0,0" CheckBoxName="Pay Gates" Checked="{Binding ActivateByPayGates}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByType7" Margin="0,0,0,0" CheckBoxName="Graples" Checked="{Binding ActivateByGraples}"/>
+                        <Controls:LabeledCheckBox x:Name="ActByPlayProj" Margin="0,0,0,0" CheckBoxName="Projectiles" Checked="{Binding ActivateByProjectiles}"/>
+                    </UniformGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</UserControl>

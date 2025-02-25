@@ -1,7 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
-using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.Editors.Instance;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM;
 
@@ -10,6 +10,7 @@ namespace TT_Lab.Assets.Instance
     public class Particles : SerializableInstance
     {
         public override UInt32 Section => Constants.LEVEL_PARTICLES_ITEM;
+        public override String IconPath => "Particle_Emitter.png";
 
         public Particles()
         {
@@ -20,25 +21,9 @@ namespace TT_Lab.Assets.Instance
             assetData = new ParticleData(particleData);
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
-        }
-
-        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
-        {
-            viewModel ??= new AssetViewModel(URI, parent);
-            return viewModel;
+            return typeof(ParticlesViewModel);
         }
 
         public override AbstractAssetData GetData()

@@ -1,0 +1,7 @@
+font InterDisplay
+{
+    type truetype
+    source InterDisplay-Regular.ttf
+    size 32
+    resolution 96
+}

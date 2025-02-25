@@ -2,9 +2,7 @@
 using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Editors.Graphics;
-using TT_Lab.ViewModels;
-using TT_Lab.ViewModels.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
 
@@ -14,6 +12,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".png";
         public override UInt32 Section => Constants.GRAPHICS_TEXTURES_SECTION;
+        public override String IconPath => "Texture.png";
 
         [JsonProperty(Required = Required.Always)]
         public ITwinTexture.TextureFunction TextureFunction { get; set; }
@@ -35,19 +34,9 @@ namespace TT_Lab.Assets.Graphics
         {
         }
 
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            return typeof(TextureEditor);
+            return typeof(TextureViewModel);
         }
 
         public override void PreResolveResources()
@@ -68,12 +57,6 @@ namespace TT_Lab.Assets.Graphics
                 IsLoaded = true;
             }
             return assetData;
-        }
-
-        public override AssetViewModel GetViewModel(AssetViewModel? parent = null)
-        {
-            viewModel ??= new TextureViewModel(URI, parent);
-            return viewModel;
         }
     }
 }

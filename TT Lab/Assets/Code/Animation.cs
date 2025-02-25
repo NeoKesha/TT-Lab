@@ -9,6 +9,8 @@ namespace TT_Lab.Assets.Code
     public class Animation : SerializableAsset
     {
         public override UInt32 Section => Constants.CODE_ANIMATIONS_SECTION;
+        public override String IconPath => "Animation.png";
+
         public Animation() { }
 
         public Animation(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinAnimation animation) : base(id, Name, package, needVariant, variant)
@@ -16,19 +18,9 @@ namespace TT_Lab.Assets.Code
             assetData = new AnimationData(animation);
         }
 
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            return typeof(Editors.Code.AnimationEditor);
+            throw new NotImplementedException();
         }
 
         public override AbstractAssetData GetData()

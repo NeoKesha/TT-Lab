@@ -31,7 +31,7 @@ namespace TT_Lab.AssetData.Global
             return;
         }
 
-        public override void Save(String dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(String dataPath, JsonSerializerSettings? settings = null)
         {
             using var fs = new FileStream(dataPath, FileMode.Create, FileAccess.Write);
             using var writer = new BinaryWriter(fs);

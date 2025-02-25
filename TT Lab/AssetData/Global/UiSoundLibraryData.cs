@@ -5,11 +5,13 @@ using TT_Lab.AssetData.Code;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Global
 {
+    [ReferencesAssets]
     public class UiSoundLibraryData : AbstractAssetData
     {
 

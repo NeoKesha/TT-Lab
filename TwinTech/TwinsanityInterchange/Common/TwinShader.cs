@@ -27,8 +27,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public TextureCoordinatesSpecification MethodOfSpecifyingTextureCoordinates;
         public Fogging Fog;
         public Context ContextNum;
-        public byte UnkVal2;
-        public byte UnkVal3;
+        public XScrollFormula XScrollSettings;
+        public YScrollFormula YScrollSettings;
         public bool UseCustomAlphaRegSettings;
         public ColorSpecMethod SpecOfColA;
         public ColorSpecMethod SpecOfColB;
@@ -45,7 +45,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public UInt16 LodParamL { get; set; }
         public Vector4 UnkVector1 { get; set; }
         public Vector4 UnkVector2 { get; set; }
-        public Vector4 UnkVector3 { get; set; }
+        /// <summary>
+        /// Z component contains the U/X scroll speed and W component contains the V/Y scroll speed
+        /// X and Y components are for internal code usage and are used as accumulators
+        /// </summary>
+        public Vector4 UvScrollSpeed { get; set; }
         public UInt32 TextureId { get; set; }
         public TwinShaderAnimation Animation { get; set; }
         public TwinShader()
@@ -53,7 +57,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             FloatParam = new float[4];
             UnkVector1 = new Vector4();
             UnkVector2 = new Vector4();
-            UnkVector3 = new Vector4();
+            UvScrollSpeed = new Vector4();
             Animation = null;
         }
         public int GetLength()
@@ -105,8 +109,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
             MethodOfSpecifyingTextureCoordinates = (TextureCoordinatesSpecification)reader.ReadByte();
             Fog = (Fogging)reader.ReadByte();
             ContextNum = (Context)reader.ReadByte();
-            UnkVal2 = reader.ReadByte();
-            UnkVal3 = reader.ReadByte();
+            XScrollSettings = (XScrollFormula)reader.ReadByte();
+            YScrollSettings = (YScrollFormula)reader.ReadByte();
             UseCustomAlphaRegSettings = reader.ReadBoolean();
             SpecOfColA = (ColorSpecMethod)reader.ReadByte();
             SpecOfColB = (ColorSpecMethod)reader.ReadByte();
@@ -124,7 +128,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             LodParamL = reader.ReadUInt16();
             UnkVector1.Read(reader, Constants.SIZE_VECTOR4);
             UnkVector2.Read(reader, Constants.SIZE_VECTOR4);
-            UnkVector3.Read(reader, Constants.SIZE_VECTOR4);
+            UvScrollSpeed.Read(reader, Constants.SIZE_VECTOR4);
             TextureId = reader.ReadUInt32();
             reader.ReadUInt32(); // ShaderType
             if (hasAnimation)
@@ -178,8 +182,8 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write((byte)MethodOfSpecifyingTextureCoordinates);
             writer.Write((byte)Fog);
             writer.Write((byte)ContextNum);
-            writer.Write(UnkVal2);
-            writer.Write(UnkVal3);
+            writer.Write((byte)XScrollSettings);
+            writer.Write((byte)YScrollSettings);
             writer.Write(UseCustomAlphaRegSettings);
             writer.Write((byte)SpecOfColA);
             writer.Write((byte)SpecOfColB);
@@ -197,7 +201,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(LodParamL);
             UnkVector1.Write(writer);
             UnkVector2.Write(writer);
-            UnkVector3.Write(writer);
+            UvScrollSpeed.Write(writer);
             writer.Write(TextureId);
             writer.Write((UInt32)ShaderType);
             Animation?.Write(writer);
@@ -333,6 +337,22 @@ namespace Twinsanity.TwinsanityInterchange.Common
         {
             UPDATE,
             NOT_UPDATE
+        }
+
+        public enum XScrollFormula
+        {
+            Disabled = 0,
+            Linear = 0x2,
+            LinearPlus_1 = 0x3,
+            LinearPlus_2 = 0x4,
+        }
+
+        public enum YScrollFormula
+        {
+            Disabled = 0,
+            Linear = 0x2,
+            LinearPlus_1 = 0x3,
+            LinearPlus_2 = 0x4,
         }
         #endregion
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
-using TT_Lab.Editors.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
@@ -12,6 +12,7 @@ namespace TT_Lab.Assets.Graphics
     {
         protected override String DataExt => ".glb";
         public override UInt32 Section => Constants.GRAPHICS_BLEND_SKINS_SECTION;
+        public override String IconPath => "Blend_Skin.png";
 
         public BlendSkin() { }
 
@@ -20,19 +21,9 @@ namespace TT_Lab.Assets.Graphics
             assetData = new BlendSkinData(blendSkin);
         }
 
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
         public override Type GetEditorType()
         {
-            return typeof(BlendSkinModelEditor);
+            return typeof(BlendSkinViewModel);
         }
 
         public override void PostResolveResources(Factory.ITwinItemFactory factory, ITwinSection section, ITwinItem? item)

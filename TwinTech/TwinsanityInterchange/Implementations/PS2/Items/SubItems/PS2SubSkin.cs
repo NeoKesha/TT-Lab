@@ -53,7 +53,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 var fields = (data[i + 1][0].GetBinaryX() & 0xFF) / verts;
                 var scaleVec = data[i + 2][0];
 
-                var positioVertexBatch = data[i + VERT_DATA_INDEX];     // Position vectors
+                var positionVertexBatch = data[i + VERT_DATA_INDEX];     // Position vectors
                 var uvVertexBatch = data[i + VERT_DATA_INDEX + 1]; // UV vectors
                 var jointInfosVertexBatch = data[i + VERT_DATA_INDEX + 3]; // Weights and joint indices
                 var colorsVertexBatch = data[i + VERT_DATA_INDEX + 2]; // Color vectors
@@ -61,7 +61,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 // Vertex conversion
                 for (int j = 0; j < verts; ++j)
                 {
-                    var v1 = new Vector4(positioVertexBatch[j]);
+                    var v1 = new Vector4(positionVertexBatch[j]);
                     var v2 = new Vector4(uvVertexBatch[j]);
                     v1.X = (Int32)v1.GetBinaryX();
                     v1.Y = (Int32)v1.GetBinaryY();
@@ -73,7 +73,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                     v2.W = (Int32)v2.GetBinaryW();
                     v1 = v1.Multiply(scaleVec.X);
                     v2 = v2.Multiply(scaleVec.Y);
-                    positioVertexBatch[j] = v1;
+                    positionVertexBatch[j] = v1;
                     uvVertexBatch[j] = v2;
                 }
                 var jointInfos = new List<VertexJointInfo>();
@@ -129,15 +129,15 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 GroupSizes.Add((Int32)verts);
                 for (Int32 j = 0; j < verts; j++)
                 {
-                    var color = new Vector4(
-                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryX() & 0xFF) + 127, 255)),
-                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryY() & 0xFF) + 127, 255)),
-                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryZ() & 0xFF) + 127, 255)),
+                    var color = new Color(
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryX() & 0xFF), 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryY() & 0xFF), 255)),
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryZ() & 0xFF), 255)),
                         (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryW() & 0xFF) + 127, 255))
                         );
-                    Vertexes.Add(positioVertexBatch[j]);
+                    Vertexes.Add(positionVertexBatch[j]);
                     UVW.Add(uvVertexBatch[j]);
-                    Colors.Add(color);
+                    Colors.Add(Vector4.FromColor(color));
                     SkinJoints.Add(jointInfos[j]);
                 }
 

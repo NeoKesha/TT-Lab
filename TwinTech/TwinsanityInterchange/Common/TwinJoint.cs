@@ -13,18 +13,18 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Int32 ChildrenAmt1 { get; set; }
         public Int32 ChildrenAmt2 { get; set; }
         public Vector4 LocalTranslation { get; set; }
-        public Vector4 LocalRotation { get; set; }
         public Vector4 WorldTranslation { get; set; }
-        public Vector4 UnkRotation1 { get; set; }
-        public Vector4 UnkRotation2 { get; set; }
+        public Vector4 LocalRotation { get; set; }
+        public Vector4 UnusedRotation { get; set; }
+        public Vector4 AdditionalAnimationRotation { get; set; }
 
         public TwinJoint()
         {
             LocalTranslation = new Vector4();
-            LocalRotation = new Vector4();
             WorldTranslation = new Vector4();
-            UnkRotation1 = new Vector4();
-            UnkRotation2 = new Vector4();
+            LocalRotation = new Vector4();
+            UnusedRotation = new Vector4();
+            AdditionalAnimationRotation = new Vector4();
         }
         public int GetLength()
         {
@@ -44,10 +44,10 @@ namespace Twinsanity.TwinsanityInterchange.Common
             ChildrenAmt1 = (Int32)(reader.ReadUInt32() & 0xFF);
             ChildrenAmt2 = (Int32)(reader.ReadUInt32() & 0xFF);
             LocalTranslation.Read(reader, Constants.SIZE_VECTOR4);
-            LocalRotation.Read(reader, Constants.SIZE_VECTOR4);
             WorldTranslation.Read(reader, Constants.SIZE_VECTOR4);
-            UnkRotation1.Read(reader, Constants.SIZE_VECTOR4);
-            UnkRotation2.Read(reader, Constants.SIZE_VECTOR4);
+            LocalRotation.Read(reader, Constants.SIZE_VECTOR4);
+            UnusedRotation.Read(reader, Constants.SIZE_VECTOR4);
+            AdditionalAnimationRotation.Read(reader, Constants.SIZE_VECTOR4);
         }
 
         public void Write(BinaryWriter writer)
@@ -58,10 +58,10 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(ChildrenAmt1);
             writer.Write(ChildrenAmt2);
             LocalTranslation.Write(writer);
-            LocalRotation.Write(writer);
             WorldTranslation.Write(writer);
-            UnkRotation1.Write(writer);
-            UnkRotation2.Write(writer);
+            LocalRotation.Write(writer);
+            UnusedRotation.Write(writer);
+            AdditionalAnimationRotation.Write(writer);
         }
     }
 }

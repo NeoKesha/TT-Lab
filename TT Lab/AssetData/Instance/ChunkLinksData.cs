@@ -9,6 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance
 {
+    // TODO: Add [ReferencesAssets] attribute
     public class ChunkLinksData : AbstractAssetData
     {
         public ChunkLinksData()

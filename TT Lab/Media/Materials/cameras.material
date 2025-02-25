@@ -1,0 +1,12 @@
+import * from "billboards.material"
+
+material BillboardCameras
+{
+    technique
+    {
+        pass : BillboardsPassBase
+        {
+            set $billboardTexture "Camera.png"
+        }
+    }
+}

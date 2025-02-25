@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace TT_Lab.Controls
 {
     /// <summary>
     /// Interaction logic for LabeledCheckBox.xaml
     /// </summary>
-    public partial class LabeledCheckBox : BoundUserControl
+    public partial class LabeledCheckBox : UserControl
     {
         public LabeledCheckBox()
         {
@@ -29,81 +30,41 @@ namespace TT_Lab.Controls
         }
 
         [Description("Whether the checkbox label is horizontal or vertical in relation to the checkbox"), Category("Common Properties")]
-        public bool IsHorizontal
+        public Orientation LayoutOrientation
         {
-            get { return (bool)GetValue(IsHorizontalProperty); }
-            set { SetValue(IsHorizontalProperty, value); }
+            get => (Orientation)GetValue(LayoutOrientationProperty);
+            set => SetValue(LayoutOrientationProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for IsHorizontal.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty IsHorizontalProperty =
-            DependencyProperty.Register("IsHorizontal", typeof(bool), typeof(LabeledCheckBox),
-                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnLayoutChanged)));
-
-        public bool DisplayChecked
-        {
-            get { return (bool)GetValue(DisplayCheckedProperty); }
-            set { SetValue(DisplayCheckedProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for DisplayChecked.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DisplayCheckedProperty =
-            DependencyProperty.Register("DisplayChecked", typeof(bool), typeof(LabeledCheckBox),
-                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
-
+        // Using a DependencyProperty as the backing store for LayoutOrientation.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LayoutOrientationProperty =
+            DependencyProperty.Register(nameof(LayoutOrientation), typeof(Orientation), typeof(LabeledCheckBox),
+                new PropertyMetadata(Orientation.Vertical, OnLayoutOrientationChanged));
 
         // Using a DependencyProperty as the backing store for Checked.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CheckedProperty =
-            DependencyProperty.Register("Checked", typeof(bool), typeof(LabeledCheckBox),
-                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnCheckedChanged)));
+            DependencyProperty.Register(nameof(Checked), typeof(bool), typeof(LabeledCheckBox),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CheckBoxNameProperty =
-            DependencyProperty.Register("CheckBoxName", typeof(string), typeof(LabeledCheckBox),
-                new FrameworkPropertyMetadata("Label", FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(OnNameChanged)));
+            DependencyProperty.Register(nameof(CheckBoxName), typeof(string), typeof(LabeledCheckBox), new PropertyMetadata("Label"));
 
-        private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        
+        private static void OnLayoutOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            LabeledCheckBox control = (LabeledCheckBox)d;
-            control.CheckboxLabel.Content = e.NewValue;
-            if (control.IsHorizontal)
+            if (d is LabeledCheckBox control)
             {
-                control.CheckBox.Content = control.CheckboxLabel.Content;
+                control.UpdateOrientation();
             }
         }
 
-        private static void OnCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private void UpdateOrientation()
         {
-            LabeledCheckBox control = (LabeledCheckBox)d;
-            control.DisplayChecked = (bool)e.NewValue;
-        }
-
-        private static void OnLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            LabeledCheckBox control = (LabeledCheckBox)d;
-            control.IsHorizontal = (bool)e.NewValue;
-            if (control.IsHorizontal)
+            if (Content is StackPanel stackPanel)
             {
-                control.CheckboxLabel.Visibility = Visibility.Collapsed;
-                control.CheckBox.Content = control.CheckboxLabel.Content;
+                stackPanel.Orientation = LayoutOrientation;
             }
-            else
-            {
-                control.CheckboxLabel.Visibility = Visibility.Visible;
-                control.CheckBox.Content = String.Empty;
-            }
-        }
-
-        private void CheckBox_Checked(Object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(BoundProperty)) return;
-            InvokePropChange(true, false);
-        }
-
-        private void CheckBox_Unchecked(Object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(BoundProperty)) return;
-            InvokePropChange(false, true);
         }
     }
 }

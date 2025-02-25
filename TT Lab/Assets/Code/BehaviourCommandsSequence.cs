@@ -12,6 +12,7 @@ namespace TT_Lab.Assets.Code
     {
         protected override String DataExt => ".lab";
         public override UInt32 Section => Constants.CODE_BEHAVIOUR_COMMANDS_SEQUENCES_SECTION;
+        public override String IconPath => "Command_Sequence.png";
 
         [JsonProperty(Required = Required.Always)]
         public Dictionary<UInt32, LabURI> BehaviourGraphLinks = new();
@@ -32,16 +33,6 @@ namespace TT_Lab.Assets.Code
             {
                 AssetManager.Get().AddAssetUnsafe(graphLink.Value, this);
             }
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
-        {
-            throw new NotImplementedException();
         }
 
         public override Type GetEditorType()

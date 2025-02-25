@@ -2,19 +2,21 @@
 using System.IO;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
-using TT_Lab.ViewModels.Graphics;
+using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.ShaderAnimation;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 
 namespace TT_Lab.AssetData.Graphics.Shaders
 {
+    [ReferencesAssets]
     public class LabShader
     {
-        public TwinShader.Type ShaderType { get; set; }
+        public TwinShader.Type ShaderType { get; set; } = TwinShader.Type.StandardLit;
         public UInt32 IntParam { get; set; }
-        public Single[] FloatParam { get; set; }
+        public Single[] FloatParam { get; set; } = new Single[4];
         public AlphaBlending ABlending { get; set; }
         public AlphaBlendPresets AlphaRegSettingsIndex { get; set; }
         public AlphaTest ATest { get; set; }
@@ -40,84 +42,20 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public ZValueDrawMask ZValueDrawingMask { get; set; }
         public UInt16 LodParamK { get; set; }
         public UInt16 LodParamL { get; set; }
-        public LabURI TextureId { get; set; }
+        public LabURI TextureId { get; set; } = LabURI.Empty;
         public Byte UnkVal1 { get; set; }
-        public Byte UnkVal2 { get; set; }
-        public Byte UnkVal3 { get; set; }
+        public XScrollFormula XScrollSettings { get; set; }
+        public YScrollFormula YScrollSettings { get; set; }
         public Boolean UnkFlag1 { get; set; }
         public Boolean UnkFlag2 { get; set; }
         public Boolean UnkFlag3 { get; set; }
-        public Vector4 UnkVector1 { get; set; }
-        public Vector4 UnkVector2 { get; set; }
-        public Vector4 UnkVector3 { get; set; }
+        public Vector4 UnkVector1 { get; set; } = new();
+        public Vector4 UnkVector2 { get; set; } = new();
+        public Vector4 UvScrollSpeed { get; set; } = new();
         public TwinShaderAnimation? Animation { get; set; }
 
         public LabShader() { }
-
-        public LabShader(LabShaderViewModel vm)
-        {
-            ShaderType = vm.Type;
-            IntParam = vm.IntParam;
-            FloatParam = new Single[4];
-            for (var j = 0; j < 4; ++j)
-            {
-                FloatParam[j] = vm.FloatParam[j];
-            }
-            ABlending = vm.AlphaBlending ? AlphaBlending.ON : AlphaBlending.OFF;
-            AlphaRegSettingsIndex = vm.AlphaRegSettingsIndex;
-            ATest = vm.AlphaTest ? AlphaTest.ON : AlphaTest.OFF;
-            ATestMethod = vm.AlphaTestMethod;
-            AlphaValueToBeComparedTo = vm.AlphaValueToCompareTo;
-            ProcessMethodWhenAlphaTestFailed = vm.ProcessAfterATestFailed;
-            DAlphaTest = vm.DAlphaTest ? DestinationAlphaTest.ON : DestinationAlphaTest.OFF;
-            DAlphaTestMode = vm.DAlphaTestMode;
-            DepthTest = vm.DepthTest;
-            ShdMethod = vm.ShdMethod;
-            TxtMapping = vm.TxtMapping ? TextureMapping.ON : TextureMapping.OFF;
-            MethodOfSpecifyingTextureCoordinates = vm.TexCoordSpec;
-            Fog = vm.Fog ? Fogging.ON : Fogging.OFF;
-            ContextNum = vm.CxtNum;
-            UseCustomAlphaRegSettings = vm.UseCustomAlphaRegSettings;
-            SpecOfColA = vm.SpecOfColA;
-            SpecOfColB = vm.SpecOfColB;
-            SpecOfAlphaC = vm.SpecOfAlphaC;
-            SpecOfColD = vm.SpecOfColD;
-            FixedAlphaValue = vm.FixedAlphaValue;
-            TextureFilterWhenTextureIsExpanded = vm.TexFilterWhenTextureIsExpanded;
-            AlphaCorrectionValue = vm.AlphaCorrectionValue;
-            ZValueDrawingMask = vm.ZValueDrawMask;
-            LodParamK = vm.LodParamK;
-            LodParamL = vm.LodParamL;
-            TextureId = vm.TexID;
-            UnkVal1 = vm.UnkVal1;
-            UnkVal2 = vm.UnkVal2;
-            UnkVal3 = vm.UnkVal3;
-            UnkFlag1 = vm.UnkFlag1;
-            UnkFlag2 = vm.UnkFlag2;
-            UnkFlag3 = vm.UnkFlag3;
-            UnkVector1 = new Vector4
-            {
-                X = vm.UnkVec1.X,
-                Y = vm.UnkVec1.Y,
-                Z = vm.UnkVec1.Z,
-                W = vm.UnkVec1.W
-            };
-            UnkVector2 = new Vector4
-            {
-                X = vm.UnkVec2.X,
-                Y = vm.UnkVec2.Y,
-                Z = vm.UnkVec2.Z,
-                W = vm.UnkVec2.W,
-            };
-            UnkVector3 = new Vector4
-            {
-                X = vm.UnkVec3.X,
-                Y = vm.UnkVec3.Y,
-                Z = vm.UnkVec3.Z,
-                W = vm.UnkVec3.W,
-            };
-        }
-
+        
         public LabShader(LabURI package, String? variant, TwinShader twinShader)
         {
             ShaderType = twinShader.ShaderType;
@@ -150,14 +88,14 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             LodParamL = twinShader.LodParamL;
             TextureId = (twinShader.TextureId == 0) ? LabURI.Empty : AssetManager.Get().GetUri(package, typeof(Texture).Name, variant, twinShader.TextureId);
             UnkVal1 = twinShader.UnkVal1;
-            UnkVal2 = twinShader.UnkVal2;
-            UnkVal3 = twinShader.UnkVal3;
+            XScrollSettings = twinShader.XScrollSettings;
+            YScrollSettings = twinShader.YScrollSettings;
             UnkFlag1 = twinShader.UnkFlag1;
             UnkFlag2 = twinShader.UnkFlag2;
             UnkFlag3 = twinShader.UnkFlag3;
             UnkVector1 = CloneUtils.Clone(twinShader.UnkVector1);
             UnkVector2 = CloneUtils.Clone(twinShader.UnkVector2);
-            UnkVector3 = CloneUtils.Clone(twinShader.UnkVector3);
+            UvScrollSpeed = CloneUtils.Clone(twinShader.UvScrollSpeed);
             Animation = CloneUtils.DeepClone(twinShader.Animation);
         }
 
@@ -200,8 +138,8 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             writer.Write((byte)MethodOfSpecifyingTextureCoordinates);
             writer.Write((byte)Fog);
             writer.Write((byte)ContextNum);
-            writer.Write(UnkVal2);
-            writer.Write(UnkVal3);
+            writer.Write((byte)XScrollSettings);
+            writer.Write((byte)YScrollSettings);
             writer.Write(UseCustomAlphaRegSettings);
             writer.Write((byte)SpecOfColA);
             writer.Write((byte)SpecOfColB);
@@ -219,7 +157,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
             writer.Write(LodParamL);
             UnkVector1.Write(writer);
             UnkVector2.Write(writer);
-            UnkVector3.Write(writer);
+            UvScrollSpeed.Write(writer);
             writer.Write(TextureId == LabURI.Empty ? 0U : AssetManager.Get().GetAsset(TextureId).ID);
             writer.Write((UInt32)ShaderType);
             Animation?.Write(writer);

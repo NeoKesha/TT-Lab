@@ -1,54 +1,72 @@
 ﻿using GlmSharp;
+using org.ogre;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TT_Lab.AssetData.Graphics.SubModels;
-using TT_Lab.Rendering.Buffers;
 
 namespace TT_Lab.Util
 {
     public static class BufferGeneration
     {
-        public static IndexedBufferArray GetModelBuffer(List<Vertex> vertexes, List<IndexedFace> faces, bool generateUvs = true)
+        public static MeshPtr GetModelBuffer(string name, List<Vertex> vertexes, List<IndexedFace> faces, RenderOperation.OperationType renderStyle = RenderOperation.OperationType.OT_TRIANGLE_LIST, bool generateUvs = true)
         {
+            var positions = vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList();
+            var colors = vertexes.Select((v) =>
+            {
+                var col = v.Color.GetColor();
+                if (!v.HasEmitColor)
+                {
+                    return Color.FromArgb((int)col.ToARGB());
+                }
+                
+                var emitCol = v.EmitColor.GetColor();
+                col.R = (Byte)System.Math.Min(col.R + emitCol.R, 255);
+                col.G = (Byte)System.Math.Min(col.G + emitCol.G, 255);
+                col.B = (Byte)System.Math.Min(col.B + emitCol.B, 255);
+                col.A = (Byte)System.Math.Min(col.A + emitCol.A, 255);
+                return Color.FromArgb((int)col.ToARGB());
+            }).ToList();
+
             if (generateUvs)
             {
-                return GetModelBuffer(vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), faces,
-                    vertexes.Select((v) =>
-                    {
-                        var col = v.Color.GetColor();
-                        return Color.FromArgb((int)col.ToARGB());
-                    }).ToList(),
-                    vertexes.Select(v => new vec3(v.UV.X, v.UV.Y, v.UV.Z)).ToList(),
-                    vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
-            }
-
-            if (vertexes.Select(v => v.HasNormals).Any())
-            {
-                return GetModelBuffer(vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), faces,
-                    vertexes.Select((v) =>
-                    {
-                        var col = v.Color.GetColor();
-                        return Color.FromArgb((int)col.ToARGB());
-                    }).ToList(),
-                    vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
-            }
-
-            return GetModelBuffer(vertexes.Select(v => new vec3(v.Position.X, v.Position.Y, v.Position.Z)).ToList(), faces,
-                vertexes.Select((v) =>
+                if (vertexes.Any(v => v.HasNormals))
                 {
-                    var col = v.Color.GetColor();
-                    return Color.FromArgb((int)col.ToARGB());
-                }).ToList());
+                    return GetModelBuffer(name, positions, faces,
+                        colors,
+                        renderStyle,
+                        vertexes.Select(v => new vec2(v.UV.X, v.UV.Y)).ToList(),
+                        vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
+                }
+
+                return GetModelBuffer(name, positions, faces,
+                    colors, renderStyle,
+                    vertexes.Select(v => new vec2(v.UV.X, v.UV.Y)).ToList());
+            }
+
+            if (vertexes.Any(v => v.HasNormals))
+            {
+                return GetModelBuffer(name, positions, faces,
+                    colors, renderStyle, null,
+                    vertexes.Select(v => new vec4(v.Normal.X, v.Normal.Y, v.Normal.Z, v.Normal.W)).ToList());
+            }
+
+            return GetModelBuffer(name, positions, faces, colors);
         }
 
-        public static IndexedBufferArray GetModelBuffer(List<vec3> vectors, List<IndexedFace> faces, List<Color> colors,
+        public static MeshPtr GetModelBuffer(string name, List<vec3> vectors, List<IndexedFace> faces, List<Color> colors,
+            RenderOperation.OperationType renderStyle = RenderOperation.OperationType.OT_TRIANGLE_LIST, List<vec2>? uvs = null,
             List<vec4>? preCalcNormals = null, Func<List<Color>, int, float[]>? colorSelector = null)
         {
             var vertices = new List<float>();
             var vert3s = new List<vec3>();
-            var vertColors = new List<float>();
+            var vertColors = new List<vec4>();
+            List<vec2>? vertUvs = null;
+            if (uvs != null)
+            {
+                vertUvs = new List<vec2>();
+            }
             var indices = new List<uint>();
             var normals = new List<vec3>(faces.Count * 3);
             var index = 0;
@@ -60,24 +78,30 @@ namespace TT_Lab.Util
                 var v1 = vectors[i1];
                 var v2 = vectors[i2];
                 var v3 = vectors[i3];
+                v1.x = -v1.x;
+                v2.x = -v2.x;
+                v3.x = -v3.x;
                 if (preCalcNormals != null)
                 {
                     var n1 = preCalcNormals[i1];
                     var n2 = preCalcNormals[i2];
                     var n3 = preCalcNormals[i3];
-                    n1.x = -n1.x;
-                    n2.x = -n2.x;
-                    n3.x = -n3.x;
                     normals.Add(n1.xyz);
                     normals.Add(n2.xyz);
                     normals.Add(n3.xyz);
                 }
+                if (uvs != null)
+                {
+                    var uv1 = uvs[i1];
+                    var uv2 = uvs[i2];
+                    var uv3 = uvs[i3];
+                    vertUvs!.Add(uv1);
+                    vertUvs!.Add(uv2);
+                    vertUvs!.Add(uv3);
+                }
                 var vec1 = v1;
                 var vec2 = v2;
                 var vec3 = v3;
-                vec1.x = -vec1.x;
-                vec2.x = -vec2.x;
-                vec3.x = -vec3.x;
                 vert3s.Add(vec1);
                 vert3s.Add(vec2);
                 vert3s.Add(vec3);
@@ -87,9 +111,9 @@ namespace TT_Lab.Util
                 vertices.AddRange(vec1.ToArray());
                 vertices.AddRange(vec2.ToArray());
                 vertices.AddRange(vec3.ToArray());
-                vertColors.AddRange(colorSelector == null ? colors[i1 % colors.Count].ToArray() : colorSelector.Invoke(colors, index));
-                vertColors.AddRange(colorSelector == null ? colors[i2 % colors.Count].ToArray() : colorSelector.Invoke(colors, index));
-                vertColors.AddRange(colorSelector == null ? colors[i3 % colors.Count].ToArray() : colorSelector.Invoke(colors, index));
+                vertColors.Add(new vec4(colorSelector == null ? colors[i1 % colors.Count].ToArray() : colorSelector.Invoke(colors, index)));
+                vertColors.Add(new vec4(colorSelector == null ? colors[i2 % colors.Count].ToArray() : colorSelector.Invoke(colors, index)));
+                vertColors.Add(new vec4(colorSelector == null ? colors[i3 % colors.Count].ToArray() : colorSelector.Invoke(colors, index)));
                 index++;
             }
 
@@ -117,36 +141,128 @@ namespace TT_Lab.Util
                 }
             }
 
-            var buffer = new IndexedBufferArray();
-            buffer.Bind();
-
-            var indexBuffer = new IndexBuffer();
-            indexBuffer.Bind();
-            indexBuffer.SetData(indices.ToArray());
-            buffer.Indices = indices.ToArray();
-
-            var vertexBuffer = new VertexBuffer();
-            vertexBuffer.Bind();
-            vertexBuffer.SetData(0, vertices.ToArray(), false, 3);
-
-            var colorBuffer = new VertexBuffer();
-            colorBuffer.Bind();
-            colorBuffer.SetData(1, vertColors.ToArray(), false, 4);
-
-            var normalBuffer = new VertexBuffer();
-            normalBuffer.Bind();
-            normalBuffer.SetData(2, normals.SelectMany(v => v.ToArray()).ToArray(), false, 3);
-
-            buffer.Unbind();
-
-            return buffer;
+            var resultBuffer = GenerateInterleavedVertexData(vert3s, normals, vertColors, vertUvs);
+            return GenerateMesh(name, (uint)vert3s.Count, resultBuffer, indices, renderStyle, true, uvs != null);
         }
 
-        public static IndexedBufferArray GetLineBuffer(List<vec3> vectors, List<IndexedFace> faces, List<Color> colors)
+        private static List<float> GenerateInterleavedVertexData(List<vec3> positions, List<vec3> normals, List<vec4>? colors = null, List<vec2>? uvs = null)
+        {
+            var resultBuffer = new List<float>();
+            var positionToIndexMap = new Dictionary<vec3, int>();
+            var vertexId = 0;
+            for (var i = 0; i < positions.Count; ++i)
+            {
+                var pos = positions[i];
+                if (!positionToIndexMap.ContainsKey(pos))
+                {
+                    positionToIndexMap.Add(pos, vertexId++);
+                }
+                
+                var normal = normals[i];
+
+                resultBuffer.AddRange(new vec4(pos.xyz, positionToIndexMap[pos]).Values);
+                resultBuffer.AddRange(normal.Values);
+
+                if (colors != null)
+                {
+                    var color = colors[i];
+                    resultBuffer.AddRange(color.Values);
+                }
+                if (uvs != null)
+                {
+                    var uv = uvs[i];
+                    resultBuffer.AddRange(uv.Values);
+                }
+            }
+
+            return resultBuffer;
+        }
+
+        private static bool TryRetrieveMesh(string name, bool createOnFail, out MeshPtr? mesh)
+        {
+            var meshManager = MeshManager.getSingleton();
+            mesh = null;
+
+            if (meshManager.resourceExists(name, GlobalConsts.OgreGroup))
+            {
+                mesh = meshManager.getByName(name);
+                return true;
+            }
+
+            if (createOnFail)
+            {
+                mesh = meshManager.createManual(name, GlobalConsts.OgreGroup);
+            }
+            return false;
+        }
+
+        private static MeshPtr GenerateMesh(string name, uint vertexAmount, List<float> vertexData, List<uint> indexData, RenderOperation.OperationType renderStyle = RenderOperation.OperationType.OT_TRIANGLE_LIST, bool hasColors = false, bool hasUvs = false)
+        {
+            var formattedName = name.Replace(" ", "_");
+            MeshPtr mesh;
+            if (TryRetrieveMesh(formattedName, true, out mesh!))
+            {
+                return mesh;
+            }
+
+            mesh._setBounds(new AxisAlignedBox(new Vector3(-500, -500, -500), new Vector3(500, 500, 500)));
+            mesh.createVertexData();
+            mesh.sharedVertexData.vertexCount = vertexAmount;
+            var vertDecl = mesh.sharedVertexData.vertexDeclaration;
+            var vertBind = mesh.sharedVertexData.vertexBufferBinding;
+
+            var offset = 0U;
+            offset += vertDecl.addElement(0, offset, VertexElementType.VET_FLOAT4, VertexElementSemantic.VES_POSITION).getSize();
+            offset += vertDecl.addElement(0, offset, VertexElementType.VET_FLOAT3, VertexElementSemantic.VES_NORMAL).getSize();
+            if (hasColors)
+            {
+                offset += vertDecl.addElement(0, offset, VertexElementType.VET_FLOAT4, VertexElementSemantic.VES_COLOUR, 0).getSize();
+            }
+            if (hasUvs)
+            {
+                offset += vertDecl.addElement(0, offset, VertexElementType.VET_FLOAT2, VertexElementSemantic.VES_TEXTURE_COORDINATES, 0).getSize();
+            }
+            //offset += vertDecl.addElement(0, offset, VertexElementType.VET_UINT1, VertexElementSemantic.VES_VERTEX_ID).getSize();
+
+            var bufferManager = HardwareBufferManager.getSingleton();
+            var vbuf = bufferManager.createVertexBuffer(offset, vertexAmount, (byte)HardwareBufferUsage.HBU_GPU_ONLY);
+            var resultBufferArray = vertexData.ToArray();
+            unsafe
+            {
+                fixed (float* buffer = resultBufferArray)
+                {
+                    vbuf.writeData(0, vbuf.getSizeInBytes(), new nint(buffer), true);
+                    vertBind.setBinding(0, vbuf);
+                }
+            }
+
+            var ibuf = bufferManager.createIndexBuffer(HardwareIndexBuffer.IndexType.IT_32BIT, (uint)indexData.Count, (byte)HardwareBufferUsage.HBU_GPU_ONLY);
+            var indicesArray = indexData.ToArray();
+            unsafe
+            {
+                fixed (uint* buffer = indicesArray)
+                {
+                    ibuf.writeData(0, ibuf.getSizeInBytes(), new nint(buffer), true);
+                }
+            }
+
+            var subMesh = mesh.createSubMesh();
+            subMesh.useSharedVertices = true;
+            subMesh.operationType = renderStyle;
+            subMesh.indexData.indexBuffer = ibuf;
+            subMesh.indexData.indexCount = (uint)indexData.Count;
+            subMesh.indexData.indexStart = 0;
+
+            mesh.load();
+
+            return mesh;
+        }
+
+        public static MeshPtr GetLineBuffer(string name, List<vec3> vectors, List<IndexedFace> faces, List<Color> colors)
         {
             var vertices = new List<float>();
             var vert3s = new List<vec3>();
-            var vertColors = new List<float>();
+            var vertColors = new List<vec4>();
             var indices = new List<uint>();
             var normals = new List<vec3>(faces.Count * 3);
             var index = 0;
@@ -166,8 +282,8 @@ namespace TT_Lab.Util
                 indices.Add((uint)(vert3s.Count - 2));
                 vertices.AddRange(vec1.ToArray());
                 vertices.AddRange(vec2.ToArray());
-                vertColors.AddRange(colors[i1 % colors.Count].ToArray());
-                vertColors.AddRange(colors[i2 % colors.Count].ToArray());
+                vertColors.Add(new vec4(colors[i1 % colors.Count].ToArray()));
+                vertColors.Add(new vec4(colors[i2 % colors.Count].ToArray()));
                 index++;
             }
 
@@ -190,67 +306,48 @@ namespace TT_Lab.Util
                 normals[i] = normals[i].Normalized;
             }
 
-            var buffer = new IndexedBufferArray();
-            buffer.Bind();
-
-            var indexBuffer = new IndexBuffer();
-            indexBuffer.Bind();
-            indexBuffer.SetData(indices.ToArray());
-            buffer.Indices = indices.ToArray();
-
-            var vertexBuffer = new VertexBuffer();
-            vertexBuffer.Bind();
-            vertexBuffer.SetData(0, vertices.ToArray(), false, 3);
-
-            var colorBuffer = new VertexBuffer();
-            colorBuffer.Bind();
-            colorBuffer.SetData(1, vertColors.ToArray(), false, 4);
-
-            var normalBuffer = new VertexBuffer();
-            normalBuffer.Bind();
-            normalBuffer.SetData(2, normals.SelectMany(v => v.ToArray()).ToArray(), false, 3);
-
-            buffer.Unbind();
-
-            return buffer;
+            var resultBuffer = GenerateInterleavedVertexData(vert3s, normals, vertColors);
+            return GenerateMesh(name, (uint)vert3s.Count, resultBuffer, indices, RenderOperation.OperationType.OT_LINE_LIST, true);
         }
 
-        public static IndexedBufferArray GetModelBuffer(List<vec3> vectors, List<IndexedFace> faces, List<Color> colors, List<vec3> uvs,
-            List<vec4>? normals = null)
+        public static MeshPtr GetPlaneBuffer()
         {
-            var uvVecs = new List<float>();
-
-            foreach (var face in faces)
+            float[] vertices = new float[18] {
+                -100, -100, 0,  // pos
+                100, -100, 0,
+                -100,  100, 0,
+                -100,  100, 0 ,
+                100,  -100, 0 ,
+                100,  100, 0 ,
+            };
+            
+            var vectors = new List<vec3>();
+            var faces = new List<IndexedFace>();
+            var uvs = new List<vec2>()
             {
-                var i1 = face.Indexes![0];
-                var i2 = face.Indexes[1];
-                var i3 = face.Indexes[2];
-                var v1 = uvs[i1];
-                var v2 = uvs[i2];
-                var v3 = uvs[i3];
-                var vec1 = v1;
-                var vec2 = v2;
-                var vec3 = v3;
-                uvVecs.AddRange(vec1.ToArray());
-                uvVecs.AddRange(vec2.ToArray());
-                uvVecs.AddRange(vec3.ToArray());
+                new vec2(0, 0),
+                new vec2(1, 0),
+                new vec2(0, 1),
+                new vec2(0, 1),
+                new vec2(1, 0),
+                new vec2(1, 1),
+            };
+            for (var i = 0; i < vertices.Length; i += 3)
+            {
+                vectors.Add(new vec3(vertices[i], vertices[i + 1], vertices[i + 2]));
+            }
+            for (var i = 0; i < vectors.Count; i += 3)
+            {
+                faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
 
-            var bufferArray = GetModelBuffer(vectors, faces, colors, normals);
-            bufferArray.Bind();
-
-            var uvBuffer = new VertexBuffer();
-            uvBuffer.Bind();
-            uvBuffer.SetData(3, uvVecs.ToArray(), true, 3);
-
-            bufferArray.Unbind();
-
-            return bufferArray;
+            return GetModelBuffer("LAB_DEFAULT_PLANE", vectors, faces, new List<Color> { Color.LightGray }, RenderOperation.OperationType.OT_TRIANGLE_LIST, uvs);
         }
 
-        public static IndexedBufferArray GetCubeBuffer(vec3 position = default, vec3 scale = default, quat rotation = default, List<Color>? colors = null)
+        public static MeshPtr GetCubeBuffer(string name, Color? color = null)
         {
-            colors ??= new List<Color> { Color.LightGray };
+            color ??= Color.LightGray;
+            List<Color> colors = new List<Color> { color.Value };
             float[] cubeVertecies = {
                 -1.0f,-1.0f,-1.0f,
                 -1.0f,-1.0f, 1.0f,
@@ -289,38 +386,7 @@ namespace TT_Lab.Util
                 -1.0f, 1.0f, 1.0f,
                 1.0f,-1.0f, 1.0f
             };
-            // Scale
-            var scaleMat = mat4.Scale(new vec3(scale.x, scale.y, scale.z));
-            for (var i = 0; i < cubeVertecies.Length; i += 3)
-            {
-                var v = new vec4(cubeVertecies[i], cubeVertecies[i + 1], cubeVertecies[i + 2], 1.0f);
-                v = scaleMat * v;
-                cubeVertecies[i] = v.x;
-                cubeVertecies[i + 1] = v.y;
-                cubeVertecies[i + 2] = v.z;
-            }
-            // Rotation
-            if (rotation != default)
-            {
-                var rotMat = rotation.ToMat4;
-                for (var i = 0; i < cubeVertecies.Length; i += 3)
-                {
-                    var v = new vec4(cubeVertecies[i], cubeVertecies[i + 1], cubeVertecies[i + 2], 1.0f);
-                    v = rotMat * v;
-                    v = rotMat * v;
-                    v = rotMat * v;
-                    cubeVertecies[i] = v.x;
-                    cubeVertecies[i + 1] = v.y;
-                    cubeVertecies[i + 2] = v.z;
-                }
-            }
-            // Translation
-            for (var i = 0; i < cubeVertecies.Length; i += 3)
-            {
-                cubeVertecies[i] += position.x;
-                cubeVertecies[i + 1] += position.y;
-                cubeVertecies[i + 2] += position.z;
-            }
+            
             var vectors = new List<vec3>();
             var faces = new List<IndexedFace>();
             for (var i = 0; i < cubeVertecies.Length; i += 3)
@@ -331,19 +397,14 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
-            return GetModelBuffer(vectors, faces, colors);
+            return GetModelBuffer(name, vectors, faces, colors);
         }
 
-        public static IndexedBufferArray GetCubeBuffer(vec3 position = default, float scale = 1.0f, List<Color>? colors = null)
+        public static MeshPtr GetCircleBuffer(string name, Color color, float segmentPart = 1.0f, float thickness = 0.1f, int resolution = 16)
         {
-            return GetCubeBuffer(position, new vec3(scale, scale, scale), default, colors);
-        }
-
-        public static IndexedBufferArray GetCircleBuffer(Color color, float segmentPart = 1.0f, float thickness = 0.1f, int resolution = 16)
-        {
-            var segment = 2 * Math.PI * segmentPart;
+            var segment = 2 * System.Math.PI * segmentPart;
             List<vec3> vectors = new List<vec3>();
-            var step = (2 * Math.PI) / resolution;
+            var step = (2 * System.Math.PI) / resolution;
             var k = 1.0f - thickness;
             for (var i = 0; i <= resolution; ++i)
             {
@@ -352,22 +413,23 @@ namespace TT_Lab.Util
                 {
                     break;
                 }
-                var step2 = Math.Min((i + 1) * step, segment);
-                vectors.Add(new vec3((float)Math.Cos(step1), 0, (float)Math.Sin(step1)));
-                vectors.Add(new vec3((float)Math.Cos(step1) * k, 0, (float)Math.Sin(step1) * k));
-                vectors.Add(new vec3((float)Math.Cos(step2) * k, 0, (float)Math.Sin(step2)));
-                vectors.Add(new vec3((float)Math.Cos(step1), 0, (float)Math.Sin(step1)));
-                vectors.Add(new vec3((float)Math.Cos(step2) * k, 0, (float)Math.Sin(step2) * k));
-                vectors.Add(new vec3((float)Math.Cos(step2), 0, (float)Math.Sin(step2)));
+                var step2 = System.Math.Min((i + 1) * step, segment);
+                vectors.Add(new vec3((float)System.Math.Cos(step1), 0, (float)System.Math.Sin(step1)));
+                vectors.Add(new vec3((float)System.Math.Cos(step1) * k, 0, (float)System.Math.Sin(step1) * k));
+                vectors.Add(new vec3((float)System.Math.Cos(step2) * k, 0, (float)System.Math.Sin(step2)));
+                vectors.Add(new vec3((float)System.Math.Cos(step1), 0, (float)System.Math.Sin(step1)));
+                vectors.Add(new vec3((float)System.Math.Cos(step2) * k, 0, (float)System.Math.Sin(step2) * k));
+                vectors.Add(new vec3((float)System.Math.Cos(step2), 0, (float)System.Math.Sin(step2)));
             }
             var faces = new List<IndexedFace>();
             for (var i = 0; i < vectors.Count; i += 3)
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
-            return GetModelBuffer(vectors, faces, new List<Color> { color });
+            
+            return GetModelBuffer(name, vectors, faces, new List<Color> { color });
         }
-        public static IndexedBufferArray GetLineBuffer(Color color)
+        public static MeshPtr GetLineBuffer(string name, Color color)
         {
             List<vec3> vectors = new List<vec3>
             {
@@ -380,10 +442,10 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 2, i + 1, i } });
             }
-            return GetModelBuffer(vectors, faces, new List<Color> { color });
+            return GetModelBuffer(name, vectors, faces, new List<Color> { color }, RenderOperation.OperationType.OT_LINE_LIST);
         }
 
-        public static IndexedBufferArray GetSimpleAxisBuffer()
+        public static MeshPtr GetSimpleAxisBuffer()
         {
             List<vec3> vectors = new List<vec3>
             {
@@ -408,7 +470,7 @@ namespace TT_Lab.Util
             {
                 faces.Add(new IndexedFace { Indexes = new int[] { i + 1, i } });
             }
-            return GetLineBuffer(vectors, faces, colors);
+            return GetLineBuffer("SimpleAxisMesh", vectors, faces, colors);
         }
     }
 }

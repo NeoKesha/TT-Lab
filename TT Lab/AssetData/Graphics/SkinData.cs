@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
@@ -17,6 +18,7 @@ namespace TT_Lab.AssetData.Graphics
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
     using VERTEX_BUILDER = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
 
+    [ReferencesAssets]
     public class SkinData : AbstractAssetData
     {
         public SkinData()
@@ -37,7 +39,7 @@ namespace TT_Lab.AssetData.Graphics
             SubSkins.Clear();
         }
 
-        public override void Save(string dataPath, JsonSerializerSettings? settings = null)
+        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
         {
             var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanitySkin");
             var root = new SharpGLTF.Scenes.NodeBuilder("skin_root");
@@ -151,7 +153,7 @@ namespace TT_Lab.AssetData.Graphics
                                 vertexes.Positions[i].ToTwin(),
                                 vertexes.Colors0[i].ToTwin(),
                                 vertexes.TexCoords0[i].ToTwin());
-                        ver.Color = new Twinsanity.TwinsanityInterchange.Common.Vector4(ver.Color.X * 255, ver.Color.Y * 255, ver.Color.Z * 255, ver.Color.W * 255);
+                        ver.Color = new Twinsanity.TwinsanityInterchange.Common.Vector4(ver.Color.X, ver.Color.Y, ver.Color.Z, ver.Color.W);
                         ver.JointInfo.JointIndex1 = (Int32)vertexes.Joints0[i].X;
                         ver.JointInfo.JointIndex2 = (Int32)vertexes.Joints0[i].Y;
                         ver.JointInfo.JointIndex3 = (Int32)vertexes.Joints0[i].Z;

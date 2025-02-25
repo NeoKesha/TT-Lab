@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Global;
+using TT_Lab.Assets.Factory;
 
 namespace TT_Lab.Assets.Global
 {
@@ -14,8 +15,9 @@ namespace TT_Lab.Assets.Global
     public class SaveIcon : SerializableAsset
     {
         protected override String DataExt => ".bin";
-        protected override String TwinDataExt => ".ico";
+        protected override String TwinDataExt => "ico";
         public override UInt32 Section => throw new NotImplementedException();
+        public override String IconPath => "Save.png";
 
         public SaveIcon()
         {
@@ -37,17 +39,12 @@ namespace TT_Lab.Assets.Global
             return assetData;
         }
 
+        public override void ExportToFile(ITwinItemFactory factory)
+        {
+            GetData().SaveInCurrentDirectory($"{Name}.{TwinDataExt}");
+        }
+
         public override Type GetEditorType()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Byte[] ToFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToRaw(Byte[] data)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using TT_Lab.Project;
 
 namespace TT_Lab.Command
@@ -25,7 +26,7 @@ namespace TT_Lab.Command
             try
             {
 #endif
-            ProjectManagerSingleton.PM.OpenProject(path);
+            IoC.Get<ProjectManager>().OpenProject(path);
 #if !DEBUG
             }
             catch (Exception ex)

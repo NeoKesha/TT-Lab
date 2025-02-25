@@ -12,6 +12,11 @@ namespace TT_Lab.Util
             return val;
         }
 
+        public static bool IsPowerOfTwo(long x)
+        {
+            return (x != 0) && ((x & (x - 1)) == 0);
+        }
+
         //https://gamedev.stackexchange.com/questions/96459/fast-ray-sphere-collision-code
         public static bool IntersectRaySphere(vec3 origin, vec3 direction, vec3 spherePosition, float radius, ref float distance, ref vec3 hit)
         {

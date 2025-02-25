@@ -6,6 +6,7 @@ namespace TT_Lab.Assets.Code
     public abstract class Behaviour : SerializableAsset
     {
         public override UInt32 Section => Constants.CODE_BEHAVIOURS_SECTION;
+        public override String IconPath => "Behavior_Tree_Start.png";
 
         public Behaviour() { }
 

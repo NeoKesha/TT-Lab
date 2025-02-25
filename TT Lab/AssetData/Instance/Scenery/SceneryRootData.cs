@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using TT_Lab.Assets;
-using TT_Lab.ViewModels.Instance.Scenery;
+using TT_Lab.ViewModels.Editors.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 

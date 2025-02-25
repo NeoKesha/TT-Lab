@@ -6,8 +6,9 @@ using System.Linq;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
-using TT_Lab.ViewModels.Instance.Scenery;
+using TT_Lab.ViewModels.Editors.Instance.Scenery;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Common.ScenerySubtypes;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -16,6 +17,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
 namespace TT_Lab.AssetData.Instance.Scenery
 {
+    [ReferencesAssets]
     public class SceneryBaseData
     {
         [JsonProperty(Required = Required.Always)]
@@ -77,8 +79,8 @@ namespace TT_Lab.AssetData.Instance.Scenery
 
         public SceneryBaseData(BaseSceneryViewModel vm)
         {
-            MeshIDs = CloneUtils.CloneList(vm.Meshes.ToList(), (e) => new(e.GetUri()));
-            LodIDs = CloneUtils.CloneList(vm.Lods.ToList(), (e) => new(e.GetUri()));
+            MeshIDs = CloneUtils.CloneList(vm.Meshes.ToList().Select((e) => e.Value).ToList(), (e) => new(e.GetUri()));
+            LodIDs = CloneUtils.CloneList(vm.Lods.ToList().Select((e) => e.Value).ToList(), (e) => new(e.GetUri()));
             BoundingBoxes = new List<Vector4[]>();
             foreach (var bb in vm.Bbs)
             {
@@ -86,17 +88,17 @@ namespace TT_Lab.AssetData.Instance.Scenery
                 {
                     new Vector4
                     {
-                        X = bb[0].X,
-                        Y = bb[0].Y,
-                        Z = bb[0].Z,
-                        W = bb[0].W,
+                        X = bb.TopLeft.X,
+                        Y = bb.TopLeft.Y,
+                        Z = bb.TopLeft.Z,
+                        W = bb.TopLeft.W,
                     },
                     new Vector4
                     {
-                        X = bb[1].X,
-                        Y = bb[1].Y,
-                        Z = bb[1].Z,
-                        W = bb[1].W,
+                        X = bb.BottomRight.X,
+                        Y = bb.BottomRight.Y,
+                        Z = bb.BottomRight.Z,
+                        W = bb.BottomRight.W,
                     }
                 });
             }
@@ -210,7 +212,7 @@ namespace TT_Lab.AssetData.Instance.Scenery
             var index = 0;
             foreach (var enabler in vm.LightsEnabler)
             {
-                LightsEnabler[index++] = enabler;
+                LightsEnabler[index++] = enabler.Value;
             }
         }
 
