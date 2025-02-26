@@ -151,6 +151,11 @@ namespace TT_Lab.ViewModels
             {
                 DeactivateItemAsync(scene, close, cancellationToken);
             }
+
+            if (close)
+            {
+                SaveChanges();
+            }
             
             var asset = AssetManager.Get().GetAsset(EditableResource);
             if (asset.IsLoaded && close)
