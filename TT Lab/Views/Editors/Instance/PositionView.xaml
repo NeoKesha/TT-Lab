@@ -4,14 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:TT_Lab.Controls"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="InstanceLayouts">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:Enums+Layouts"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
-        <controls:LabeledDropList x:Name="InstanceLayerIDList" SelectedItem="{Binding LayoutID}" Items="{Binding Layers}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout"/>
+        <controls:LabeledDropList x:Name="InstanceLayerIDList" SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout"/>
         <ContentControl HorizontalAlignment="Stretch" Margin="-5,-5,-5,-5" Grid.Row="1" VerticalAlignment="Stretch"/>
     </Grid>
 </UserControl>

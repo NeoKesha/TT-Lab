@@ -8,7 +8,9 @@ using TT_Lab.Assets.Graphics;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Vector4 = org.ogre.Vector4;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
@@ -54,22 +56,23 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         {
             MaterialViewer.SceneCreator = glControl =>
             {
-                // var sceneManager = glControl.GetSceneManager();
-                // var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
-                // pivot.setPosition(0, 0, 0);
-                // glControl.SetCameraTarget(pivot);
-                // glControl.SetCameraStyle(org.ogre.CameraStyle.CS_ORBIT);
-                //
-                // var sphereNode = sceneManager.getRootSceneNode().createChildSceneNode();
-                // var entity = sceneManager.createEntity(SceneManager.PT_SPHERE);
-                // var rm = AssetManager.Get().GetAssetData<SkinData>(EditableResource);
-                // var materialName = AssetManager.Get().GetAsset(rm.SubSkins[_selectedMaterial].Material).Name;
-                // MaterialName = materialName;
-                // var materialData = AssetManager.Get().GetAssetData<MaterialData>(rm.SubSkins[_selectedMaterial].Material);
-                // var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(materialData);
-                // entity.setMaterial(material.Item2);
-                // sphereNode.attachObject(entity);
-                // sphereNode.scale(0.1f, 0.1f, 0.1f);
+                var sceneManager = glControl.GetSceneManager();
+                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                pivot.setPosition(0, 0, 0);
+                glControl.SetCameraTarget(pivot);
+                glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
+
+                var plane = sceneManager.getRootSceneNode().createChildSceneNode();
+                var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
+                var asset = AssetManager.Get().GetAsset(EditableResource);
+                var skinData = asset.GetData<SkinData>();
+                var matData = AssetManager.Get().GetAssetData<MaterialData>(skinData.SubSkins[_selectedMaterial].Material);
+                var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData);
+                MaterialName = matData.Name;
+                entity.setMaterial(material.Item2);
+                entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                plane.attachObject(entity);
+                plane.scale(0.05f, 0.05f, 1f);
             };
         }
 

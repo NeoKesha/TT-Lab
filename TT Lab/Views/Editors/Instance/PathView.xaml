@@ -4,10 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
              x:Name="PathEditorControl"
              x:Class="TT_Lab.Views.Editors.Instance.PathView"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="InstanceLayouts">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:Enums+Layouts"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -19,7 +28,7 @@
             <RowDefinition Height="67*"/>
         </Grid.RowDefinitions>
 
-        <Controls:LabeledDropList Items="{Binding Layers}" SelectedItem="{Binding LayoutID}" x:Name="InstanceLayoutList" Grid.ColumnSpan="2" DropListName="Instance layout"/>
+        <Controls:LabeledDropList Items="{Binding Source={StaticResource InstanceLayouts}}" SelectedItem="{Binding LayoutID}" x:Name="InstanceLayoutList" Grid.ColumnSpan="2" DropListName="Instance layout"/>
         <GroupBox Header="Points" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1">
             <ListBox x:Name="PointsList" ItemsSource="{Binding Points}" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="False" d:ItemsSource="{d:SampleData ItemCount=5}">
                 <ListBox.ContextMenu>

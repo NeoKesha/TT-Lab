@@ -85,7 +85,7 @@ public class SoundEffectViewModel : ResourceEditorViewModel
 
     public void PlaySound()
     {
-        if (_audioPlayer.GetPlaybackState() == PlaybackState.Playing)
+        if (_audioPlayer.IsPlaying)
         {
             StopPlayback();
         }

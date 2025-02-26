@@ -24,6 +24,9 @@ namespace TT_Lab.ViewModels.Editors.Instance
         private UInt16 _triggerMessage2;
         private UInt16 _triggerMessage3;
         private UInt16 _triggerMessage4;
+        
+        public TriggerViewModel()
+        {}
 
         public TriggerViewModel(Enums.Layouts layoutId, TriggerData data)
         {

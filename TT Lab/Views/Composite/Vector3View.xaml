@@ -4,11 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TT_Lab.Controls"
+             xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Composite"
+             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             d:DataContext="{Binding Source={d:DesignInstance viewModels:Vector3ViewModel}}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UniformGrid x:Name="FormationGrid" Columns="3">
-        <local:LabeledTextBox x:Name="X" VerticalAlignment="Center" TextBoxName="X" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-        <local:LabeledTextBox x:Name="Y" VerticalAlignment="Center" TextBoxName="Y" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-        <local:LabeledTextBox x:Name="Z" VerticalAlignment="Center" TextBoxName="Z" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+        <local:LabeledTextBox Text="{Binding X}" VerticalAlignment="Center" TextBoxName="X" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+        <local:LabeledTextBox Text="{Binding Y}" VerticalAlignment="Center" TextBoxName="Y" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+        <local:LabeledTextBox Text="{Binding Z}" VerticalAlignment="Center" TextBoxName="Z" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
     </UniformGrid>
 </UserControl>

@@ -6,40 +6,53 @@
              xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
              xmlns:local="clr-namespace:TT_Lab.Views.Editors.Instance"
              xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Editors.Instance"
-             xmlns:treeVm="clr-namespace:TT_Lab.ViewModels"
+             xmlns:compositeVm="clr-namespace:TT_Lab.ViewModels.Composite"
              xmlns:Controls="clr-namespace:TT_Lab.Controls"
              xmlns:util="clr-namespace:TT_Lab.Util"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
+             xmlns:assets="clr-namespace:TT_Lab.Assets"
+             xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
              x:Name="AiNavPathEditorControl"
              x:Class="TT_Lab.Views.Editors.Instance.AiPathView"
              mc:Ignorable="d"
              d:DataContext="{Binding Source={d:DesignInstance viewModels:AiPathViewModel}}"
              cal:Bind.AtDesignTime="True"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <valueConverters:LabUriConverter x:Key="UriConverter"/>
+        <valueConverters:PrimitiveWrapperConverterLabUri x:Key="WrapperUriConverter"/>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="InstanceLayouts">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:Enums+Layouts"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="11*"/>
             <RowDefinition Height="34*"/>
         </Grid.RowDefinitions>
 
-        <Controls:LabeledDropList Items="{Binding Source={x:Static util:ViewModelUtil.Layers}, Mode=OneTime}" x:Name="LayoutID" VerticalAlignment="Center" DropListName="Instance layout" Grid.ColumnSpan="2" Height="48"/>
+        <Controls:LabeledDropList Items="{Binding Source={StaticResource InstanceLayouts}}" SelectedItem="{Binding LayoutID}" VerticalAlignment="Center" DropListName="Instance layout" Grid.ColumnSpan="2" Height="48"/>
         <UniformGrid Grid.Row="1" Rows="5">
-            <Controls:LabeledDropList x:Name="PathBegin" Items="{Binding Positions}" DropListName="Path Begin">
+            <Controls:LabeledDropList SelectedItem="{Binding PathBegin, Converter={StaticResource WrapperUriConverter}}" Items="{Binding Positions}" DropListName="Path Begin">
                 <Controls:LabeledDropList.ItemTemplate>
-                    <DataTemplate DataType="{x:Type treeVm:ResourceTreeElementViewModel}">
-                        <TextBlock Text="{Binding Alias}"/>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
                     </DataTemplate>
                 </Controls:LabeledDropList.ItemTemplate>
             </Controls:LabeledDropList>
-            <Controls:LabeledDropList x:Name="PathEnd" Items="{Binding Positions}" DropListName="Path End">
+            <Controls:LabeledDropList SelectedItem="{Binding PathEnd, Converter={StaticResource WrapperUriConverter}}" Items="{Binding Positions}" DropListName="Path End">
                 <Controls:LabeledDropList.ItemTemplate>
-                    <DataTemplate DataType="{x:Type treeVm:ResourceTreeElementViewModel}">
-                        <TextBlock Text="{Binding Alias}"/>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
                     </DataTemplate>
                 </Controls:LabeledDropList.ItemTemplate>
             </Controls:LabeledDropList>
-            <Controls:LabeledTextBox x:Name="Arg1" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 1"/>
-            <Controls:LabeledTextBox x:Name="Arg2" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 2"/>
-            <Controls:LabeledTextBox x:Name="Arg3" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 3"/>
+            <Controls:LabeledTextBox Text="{Binding Arg1}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 1"/>
+            <Controls:LabeledTextBox Text="{Binding Arg2}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 2"/>
+            <Controls:LabeledTextBox Text="{Binding Arg3}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 3"/>
         </UniformGrid>
     </Grid>
 </UserControl>

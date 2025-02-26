@@ -136,7 +136,10 @@ namespace TT_Lab.ViewModels
 
             ResetDirty();
             _startedEditing = true;
-            tabDisplayName = (Parent as TabbedEditorViewModel)!.DisplayName;
+            if (Parent is TabbedEditorViewModel tabbedEditorViewModel)
+            {
+                tabDisplayName = tabbedEditorViewModel.DisplayName;
+            }
         }
 
         protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)

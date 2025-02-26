@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              HorizontalAlignment="Left" VerticalAlignment="Top">
     <StackPanel Orientation="Vertical">
-        <Label Content="{Binding TextBoxName, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
+        <Label Content="{Binding TextBoxName, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom"/>
         <local:BaseTextBox
             Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Margin="0"

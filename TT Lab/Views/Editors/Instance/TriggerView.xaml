@@ -5,11 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Controls="clr-namespace:TT_Lab.Controls"
              xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels.Editors.Instance"
+             xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
              d:DataContext="{Binding Source={d:DesignInstance viewmodels:TriggerViewModel}}"
              x:Name="TriggerEditorControl"
              x:Class="TT_Lab.Views.Editors.Instance.TriggerView"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="350">
+    <UserControl.Resources>
+        <valueConverters:LabUriConverter x:Key="UriConverter"/>
+        
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="InstanceLayouts">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:Enums+Layouts"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid>
         <TabControl>
             <TabItem x:Name="MainPropertiesTab" Header="Properties">
@@ -20,8 +32,8 @@
                     </Grid.RowDefinitions>
                     <Grid Margin="0,0,0,0">
                         <Grid>
-                            <UniformGrid Rows="1" Margin="0,0,0,0" Grid.Column="1">
-                                <Controls:LabeledDropList x:Name="InstanceLayoutList" SelectedItem="{Binding LayoutID}" Items="{Binding Layers}" DropListName="Instance layout"/>
+                            <UniformGrid Rows="1" Margin="0,0,0,0">
+                                <Controls:LabeledDropList x:Name="InstanceLayoutList" SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" DropListName="Instance layout"/>
                                 <Controls:LabeledTextBox x:Name="HeaderBox" Text="{Binding Header, StringFormat={}{0:X}}" TextBoxName="Header" Margin="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                 <Controls:LabeledTextBox x:Name="UnkFloatBox" Text="{Binding UnkFloat}" TextBoxName="Unknown float" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5"/>
                             </UniformGrid>
@@ -54,10 +66,15 @@
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
                     <GroupBox Header="Instances" Margin="0,0,0,0">
-                        <ListBox x:Name="InstancesList" d:ItemsSource="{d:SampleData ItemCount=5}">
+                        <ListBox x:Name="InstancesList" ItemsSource="{Binding Instances}" d:ItemsSource="{d:SampleData ItemCount=5}">
                             <ListBox.ContextMenu>
                                 <ContextMenu x:Name="InstancesListContextMenu"/>
                             </ListBox.ContextMenu>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
                         </ListBox>
                     </GroupBox>
                     <GroupBox Grid.Column="1" Header="Messages">
@@ -72,14 +89,14 @@
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <Controls:LabeledTextBox x:Name="Arg1Box" Text="{Binding TriggerMessage1}" TextBoxName="Trigger message 1" IsEnabled="{Binding Checked, ElementName=Arg1EnabledBox}" Margin="0,0,0,11" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            <Controls:LabeledTextBox x:Name="Arg2Box" Text="{Binding TriggerMessage2}" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=Arg2EnabledBox}" Margin="0,0,0,11" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            <Controls:LabeledTextBox x:Name="Arg3Box" Text="{Binding TriggerMessage3}" Grid.Row="2" IsEnabled="{Binding Checked, ElementName=Arg3EnabledBox}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            <Controls:LabeledTextBox x:Name="Arg4Box" Text="{Binding TriggerMessage4}" Grid.Row="3" IsEnabled="{Binding Checked, ElementName=Arg4EnabledBox}" Margin="0,11,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            <Controls:LabeledCheckBox x:Name="Arg1EnabledBox" Checked="{Binding TriggerArgument1Enabled}" Grid.Column="1" Margin="3,0,-1,11" LayoutOrientation="Horizontal" CheckBoxName="Enabled" HorizontalContentAlignment="Left"/>
-                            <Controls:LabeledCheckBox x:Name="Arg2EnabledBox" Checked="{Binding TriggerArgument2Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,0,0,11" HorizontalContentAlignment="Left"/>
-                            <Controls:LabeledCheckBox x:Name="Arg3EnabledBox" Checked="{Binding TriggerArgument3Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,0,0,0" HorizontalContentAlignment="Left"/>
-                            <Controls:LabeledCheckBox x:Name="Arg4EnabledBox" Checked="{Binding TriggerArgument4Enabled}" Grid.Column="1" LayoutOrientation="Horizontal" CheckBoxName="Enabled" Margin="3,11,0,0" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledTextBox Grid.Column="0" x:Name="Arg1Box" Text="{Binding TriggerMessage1}" TextBoxName="Trigger message 1" IsEnabled="{Binding Checked, ElementName=Arg1EnabledBox}" Margin="0,0,0,11" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox Grid.Column="0" x:Name="Arg2Box" Text="{Binding TriggerMessage2}" Grid.Row="1" TextBoxName="Trigger message 2" IsEnabled="{Binding Checked, ElementName=Arg2EnabledBox}" Margin="0,0,0,11" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox Grid.Column="0" x:Name="Arg3Box" Text="{Binding TriggerMessage3}" Grid.Row="2" TextBoxName="Trigger message 3" IsEnabled="{Binding Checked, ElementName=Arg3EnabledBox}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledTextBox Grid.Column="0" x:Name="Arg4Box" Text="{Binding TriggerMessage4}" Grid.Row="3" TextBoxName="Trigger message 4" IsEnabled="{Binding Checked, ElementName=Arg4EnabledBox}" Margin="0,11,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Controls:LabeledCheckBox Grid.Row="0" x:Name="Arg1EnabledBox" Checked="{Binding TriggerArgument1Enabled}" Grid.Column="1" Margin="3,0,-1,11" LayoutOrientation="Vertical" CheckBoxName="Enabled" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox Grid.Row="1" x:Name="Arg2EnabledBox" Checked="{Binding TriggerArgument2Enabled}" Grid.Column="1" LayoutOrientation="Vertical" CheckBoxName="Enabled" Margin="3,0,0,11" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox Grid.Row="2" x:Name="Arg3EnabledBox" Checked="{Binding TriggerArgument3Enabled}" Grid.Column="1" LayoutOrientation="Vertical" CheckBoxName="Enabled" Margin="3,0,0,0" HorizontalContentAlignment="Left"/>
+                            <Controls:LabeledCheckBox Grid.Row="3" x:Name="Arg4EnabledBox" Checked="{Binding TriggerArgument4Enabled}" Grid.Column="1" LayoutOrientation="Vertical" CheckBoxName="Enabled" Margin="3,11,0,0" HorizontalContentAlignment="Left"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

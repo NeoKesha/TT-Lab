@@ -5,13 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:TT_Lab.Views.Editors.Code"
+             xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
              xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
              xmlns:code="clr-namespace:TT_Lab.ViewModels.Editors.Code"
              d:DataContext="{Binding Source={d:DesignInstance code:SoundEffectViewModel}}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600">
     <StackPanel Orientation="Vertical">
-        <Grid>
+        <Grid adonisExtensions:LayerExtension.Layer="1">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -38,10 +39,10 @@
             <TextBlock x:Name="CurrentTime" Margin="0, 0, 0, 5" Grid.Column="0" Grid.Row="1" Text="0:00"></TextBlock>
             <TextBlock x:Name="TotalTimeLength" Margin="0, 0, 0, 5" Grid.Column="1" Grid.Row="1" Text="0:00" TextAlignment="Right"></TextBlock>
         </Grid>
-        <StackPanel Orientation="Horizontal">
+        <UniformGrid Columns="3">
             <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PlaySound" Content="Play"></Button>
             <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PauseSound" Content="Pause"></Button>
             <Button HorizontalAlignment="Stretch" Margin="5" x:Name="ReplaceSound" Content="Replace"></Button>
-        </StackPanel>
+        </UniformGrid>
     </StackPanel>
 </UserControl>

@@ -1,9 +1,11 @@
 ﻿using Caliburn.Micro;
 using System;
+using GlmSharp;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Attributes;
 using TT_Lab.Command;
+using TT_Lab.Project.Messages;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -145,6 +147,9 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 intParams.Add(new PrimitiveWrapperViewModel<UInt32>(i));
             }
             layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value);
+            
+            IoC.Get<IEventAggregator>().PublishOnUIThreadAsync(new ChangeRenderCameraPositionMessage
+                { NewCameraPosition = new vec3(-Position.X, Position.Y, Position.Z) });
         }
 
 

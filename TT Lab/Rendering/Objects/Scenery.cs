@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using GlmSharp;
 using org.ogre;
@@ -23,27 +24,27 @@ public class Scenery : ManualObject
     private void BuildSceneryRenderTree(SceneNode sceneNode, SceneManager sceneManager, SceneryData sceneryData)
     {
         var root = (SceneryRootData)sceneryData.Sceneries[0];
-        sceneryData.Sceneries = sceneryData.Sceneries.Skip(1).ToList();
-        BuildSceneryRenderTreeForNode(sceneNode, sceneManager, root, ref sceneryData);
+        var sceneryTree = sceneryData.Sceneries.Skip(1).ToList();
+        BuildSceneryRenderTreeForNode(sceneNode, sceneManager, root, ref sceneryTree);
     }
 
     private void BuildSceneryRenderTreeForNode(SceneNode sceneNode, SceneManager sceneManager,
-        SceneryNodeData sceneryNode, ref SceneryData sceneryData)
+        SceneryNodeData sceneryNode, ref List<SceneryBaseData> sceneryTree)
     {
         foreach (var sceneryType in sceneryNode.SceneryTypes)
         {
             if (sceneryType == ITwinScenery.SceneryType.Node)
             {
                 var childNode = sceneNode.createChildSceneNode();
-                var data = (SceneryNodeData)sceneryData.Sceneries[0];
-                sceneryData.Sceneries = sceneryData.Sceneries.Skip(1).ToList();
+                var data = (SceneryNodeData)sceneryTree[0];
+                sceneryTree = sceneryTree.Skip(1).ToList();
                 CreateSceneryNodes(childNode, sceneManager, data);
-                BuildSceneryRenderTreeForNode(childNode, sceneManager, data, ref sceneryData);
+                BuildSceneryRenderTreeForNode(childNode, sceneManager, data, ref sceneryTree);
             }
             else if (sceneryType == ITwinScenery.SceneryType.Leaf)
             {
-                var data = sceneryData.Sceneries[0];
-                sceneryData.Sceneries = sceneryData.Sceneries.Skip(1).ToList();
+                var data = sceneryTree[0];
+                sceneryTree = sceneryTree.Skip(1).ToList();
                 CreateSceneryNodes(sceneNode, sceneManager, data);
             }
         }

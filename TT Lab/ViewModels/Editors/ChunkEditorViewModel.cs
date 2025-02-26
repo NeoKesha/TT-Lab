@@ -130,6 +130,7 @@ namespace TT_Lab.ViewModels.Editors
                 CurrentInstanceEditor.EditableResource = asset.Asset.URI;
                 CurrentInstanceEditor.ParentEditor = this;
                 await ActivateItemAsync(CurrentInstanceEditor);
+                NotifyOfPropertyChange(nameof(CurrentInstanceEditor));
             }
             catch (Exception ex)
             {

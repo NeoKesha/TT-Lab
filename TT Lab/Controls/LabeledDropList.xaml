@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TT_Lab.Controls"
              mc:Ignorable="d">
     <StackPanel Orientation="Vertical">
-        <Label Content="{Binding DropListName, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <Label Content="{Binding DropListName, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
         <ComboBox Margin="0" VerticalAlignment="Top" ItemsSource="{Binding Items, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
                   SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"

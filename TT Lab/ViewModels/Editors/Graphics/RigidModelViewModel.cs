@@ -8,7 +8,9 @@ using TT_Lab.Assets.Graphics;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Objects;
+using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Vector4 = org.ogre.Vector4;
 
 namespace TT_Lab.ViewModels.Editors.Graphics
 {
@@ -89,17 +91,17 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 glControl.SetCameraTarget(pivot);
                 glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
 
-                // var sphereNode = sceneManager.getRootSceneNode().createChildSceneNode();
-                // var entity = sceneManager.createEntity(SceneManager.PT_SPHERE);
-                // var rm = AssetManager.Get().GetAssetData<RigidModelData>(EditableResource);
-                // var materialName = AssetManager.Get().GetAsset(rm.Materials[_selectedMaterial]).Name;
-                // MaterialName = materialName;
-                // var materialData = AssetManager.Get().GetAssetData<MaterialData>(rm.Materials[_selectedMaterial]);
-                // var hasTexture = materialData.Shaders.Any(s => s.TxtMapping == TwinShader.TextureMapping.ON);
-                // var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(materialData);
-                // entity.setMaterial(material);
-                // sphereNode.attachObject(entity);
-                // sphereNode.scale(0.1f, 0.1f, 0.1f);
+                var plane = sceneManager.getRootSceneNode().createChildSceneNode();
+                var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
+                var asset = AssetManager.Get().GetAsset(EditableResource);
+                var rigidData = asset.GetData<RigidModelData>();
+                var matData = AssetManager.Get().GetAssetData<MaterialData>(rigidData.Materials[_selectedMaterial]);
+                MaterialName = matData.Name;
+                var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData);
+                entity.setMaterial(material.Item2);
+                entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                plane.attachObject(entity);
+                plane.scale(0.05f, 0.05f, 1f);
             };
         }
 

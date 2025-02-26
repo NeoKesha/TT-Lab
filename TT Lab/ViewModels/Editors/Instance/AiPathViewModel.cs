@@ -6,13 +6,14 @@ using TT_Lab.Assets;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Attributes;
 using TT_Lab.Util;
+using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ViewModels.Editors.Instance
 {
     public class AiPathViewModel : InstanceSectionResourceEditorViewModel
     {
-        private BindableCollection<ResourceTreeElementViewModel> positions = new();
+        private BindableCollection<PrimitiveWrapperViewModel<LabURI>> positions = new();
         private Enums.Layouts layId;
         private LabURI pathBegin = LabURI.Empty;
         private LabURI pathEnd = LabURI.Empty;
@@ -50,11 +51,11 @@ namespace TT_Lab.ViewModels.Editors.Instance
             var navPositions = tree.First(avm => avm.Alias == "AI Navigation Positions");
             foreach (var p in navPositions!.Children!)
             {
-                positions.Add(p);
+                positions.Add(new PrimitiveWrapperViewModel<LabURI>(p.Asset.URI));
             }
         }
 
-        public BindableCollection<ResourceTreeElementViewModel> Positions
+        public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Positions
         {
             get => positions;
         }
@@ -75,14 +76,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
         }
 
         [MarkDirty]
-        public ResourceTreeElementViewModel PathBegin
+        public LabURI PathBegin
         {
-            get => AssetManager.Get().GetAsset(pathBegin).GetResourceTreeElement();
+            get => pathBegin;
             set
             {
-                if (pathBegin != value.Asset.URI)
+                if (pathBegin != value)
                 {
-                    pathBegin = value.Asset.URI;
+                    pathBegin = value;
                     
                     NotifyOfPropertyChange();
                 }
@@ -90,14 +91,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
         }
 
         [MarkDirty]
-        public ResourceTreeElementViewModel PathEnd
+        public LabURI PathEnd
         {
-            get => AssetManager.Get().GetAsset(pathEnd).GetResourceTreeElement();
+            get => pathEnd;
             set
             {
-                if (pathEnd != value.Asset.URI)
+                if (pathEnd != value)
                 {
-                    pathEnd = value.Asset.URI;
+                    pathEnd = value;
                     
                     NotifyOfPropertyChange();
                 }

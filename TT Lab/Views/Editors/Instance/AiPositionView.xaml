@@ -7,13 +7,23 @@
         xmlns:local="clr-namespace:TT_Lab.Views.Editors.Instance"
         xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Editors.Instance"
         xmlns:util="clr-namespace:TT_Lab.Util"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+        xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
         xmlns:Controls="clr-namespace:TT_Lab.Controls"
+        xmlns:compositeViews="clr-namespace:TT_Lab.Views.Composite"
         d:DataContext="{Binding Source={d:DesignInstance viewModels:AiPositionViewModel}}"
         cal:Bind.AtDesignTime="True"
         x:Name="AiNavPositionEditorControl"
         x:Class="TT_Lab.Views.Editors.Instance.AiPositionView"
         mc:Ignorable="d" 
         d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="InstanceLayouts">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:Enums+Layouts"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -23,11 +33,10 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={x:Static util:ViewModelUtil.Layers}, Mode=OneTime}" x:Name="InstanceLayoutList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout"/>
-        <Controls:LabeledTextBox x:Name="Argument" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Argument"/>
-        <GroupBox Grid.Column="1" Header="Position" Grid.RowSpan="2">
-            <ContentControl x:Name="Position"/>
+        <Controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" HorizontalAlignment="Stretch" Margin="5,0,5,0" VerticalAlignment="Center" DropListName="Instance layout"/>
+        <Controls:LabeledTextBox Grid.Column="0" Text="{Binding Argument}" HorizontalAlignment="Stretch" Margin="5,0,5,0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Argument"/>
+        <GroupBox Grid.Row="0" Grid.Column="1" Header="Position" Grid.RowSpan="2">
+            <compositeViews:Vector4View DataContext="{Binding Position}" VerticalLayout="True"/>
         </GroupBox>
-
     </Grid>
 </UserControl>
