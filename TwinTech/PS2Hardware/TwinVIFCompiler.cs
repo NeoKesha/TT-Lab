@@ -212,7 +212,7 @@ namespace Twinsanity.PS2Hardware
                 setCycle.Write(writer);
                 totalSpaceNeeded += setCycle.GetLength();
 
-                // Next up is the meta data vector packed as V2_32. Purpose unknown
+                // Next up is the metadata vector packed as V2_32. Purpose unknown
                 VIFCode metaVectorCode = new()
                 {
                     OP = VIFCodeEnum.UNPACK,
@@ -329,7 +329,7 @@ namespace Twinsanity.PS2Hardware
                             for (Int32 j = 0; j < colors.Count; j++)
                             {
                                 var color = colors[j];
-                                color.A = (byte)(color.A >> 1);
+                                color.A &= 127;
                                 var uv = uvs[j];
                                 var compiledVector = new Vector4();
                                 compiledVector.SetBinaryX((uv.GetBinaryX() & 0xFFFFFF00) | color.R);

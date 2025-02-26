@@ -44,7 +44,7 @@ namespace TT_Lab.ViewModels
             _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), nameof(SearchAsset));
 
             _renderTimer.Tick += PerformRender;
-            _renderTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)(1000f / 120));
+            _renderTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)(1000f / 60));
             _renderTimer.Start();
         }
 

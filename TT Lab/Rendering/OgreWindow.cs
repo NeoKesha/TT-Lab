@@ -158,8 +158,6 @@ namespace TT_Lab.Rendering
 
         public void CreateDefaultScene()
         {
-            MakeCurrent();
-
             var root = _root;
             _sceneManager = root.createSceneManager();
             var shadergen = ShaderGenerator.getSingleton();
@@ -260,32 +258,22 @@ namespace TT_Lab.Rendering
 
         public void EditScene(Action<OgreWindow> action)
         {
-            MakeCurrent();
             action(this);
         }
 
         public void FrameUpdated(FrameEvent frameEvent)
         {
-            MakeCurrent();
             _camera.frameRendered(frameEvent);
         }
 
         public void Render()
         {
-            MakeCurrent();
             ImGuiOverlay.NewFrame();
             OnRender?.Invoke(this, EventArgs.Empty);
-            _internalWindow.render.update(true);
-        }
-
-        public void MakeCurrent()
-        {
-            _internalWindow.render.setActive(true);
         }
 
         public void NotifyWindowChanged()
         {
-            MakeCurrent();
             _internalWindow.render.windowMovedOrResized();
         }
 

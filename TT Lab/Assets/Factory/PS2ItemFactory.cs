@@ -168,12 +168,6 @@ namespace TT_Lab.Assets.Factory
                             };
                             submodel.SkinJoints.Add(jointInfo);
 
-                            foreach (var blendFace in meshlet.BlendFaces!)
-                            {
-                                var blendShape = blendFace.BlendShapes[idx];
-
-                            }
-
                             groupCount++;
                             j++;
                         }

@@ -85,6 +85,11 @@ namespace TT_Lab.ViewModels
 
         public void SaveChanges()
         {
+            if (!IsDirty)
+            {
+                return;
+            }
+            
             ResetDirty();
             
             if (_usingConfirmClose && (_dialogueResult.Result == null || MiscUtils.ConvertEnum<UnsavedChangesDialogue.AnswerResult>(_dialogueResult.Result) == UnsavedChangesDialogue.AnswerResult.DISCARD))
@@ -94,7 +99,7 @@ namespace TT_Lab.ViewModels
             
             Save();
             var asset = AssetManager.Get().GetAsset(EditableResource);
-            asset.Serialize();
+            asset.Serialize(true);
         }
 
         protected virtual void Save()
@@ -145,7 +150,6 @@ namespace TT_Lab.ViewModels
         protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
         {
             _startedEditing = false;
-            DirtyTracker.ResetDirty();
 
             foreach (var scene in Scenes)
             {

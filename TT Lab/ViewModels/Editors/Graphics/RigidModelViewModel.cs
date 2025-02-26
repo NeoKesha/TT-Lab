@@ -56,6 +56,12 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 {
                     ImGui.Begin("Rigid Model Data");
                     ImGui.SetWindowPos(new ImVec2(5, 5));
+                    if (ImGui.IsWindowCollapsed())
+                    {
+                        ImGui.End();
+                        return;
+                    }
+                    
                     var linkedModelText = $"Links to model \"{assetManager.GetAsset(model.Model).Name}\"";
                     ImGui.Text(linkedModelText);
                     ImGui.Separator();
@@ -106,11 +112,6 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         }
 
         public override void LoadData()
-        {
-            return;
-        }
-
-        protected override void Save()
         {
             return;
         }

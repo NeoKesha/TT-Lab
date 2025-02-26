@@ -94,8 +94,7 @@ namespace Twinsanity.PS2Hardware
                     UInt32 dimensions = (UInt32)(vn + 1);
                     UInt32 packet_length = 0;
                     Boolean fill = WL > CL;
-                    Console.WriteLine($"Total per cycle {CL}");
-                    Console.WriteLine($"Write per cycle {WL}");
+                    
                     if (!fill)
                     {
                         UInt32 a = (UInt32)(32 >> vl);
@@ -117,7 +116,7 @@ namespace Twinsanity.PS2Hardware
                         UInt32 f = (UInt32)e;
                         packet_length = 1 + f;
                     }
-                    Console.WriteLine($"VU memory address 0x{addr:x}");
+                    
                     if (AddressOuput.Count == 0)
                     {
                         AddressOuput.Add(new List<ushort>());
@@ -133,11 +132,9 @@ namespace Twinsanity.PS2Hardware
                     Unpack(tmpStack, PureVUMem, fmt, amount, usn, fill, WL, CL, addr);
                     Unpack(tmpStack, vectors, fmt, amount, usn, false, 1, 1, 0);
                     VUMem.Add(vectors);
-                    Console.WriteLine($"UNPACK {((int)packet_length - 1) * 4} bytes into {amount} 128bit vectors using {fmt} format");
                 }
                 else
                 {
-                    Console.WriteLine(vif.OP.ToString());
                     switch (vif.OP)
                     {
                         case VIFCodeEnum.NOP:

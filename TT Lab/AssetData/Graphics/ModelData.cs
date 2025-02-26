@@ -2,7 +2,9 @@
 using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Hjg.Pngcs;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
@@ -52,11 +54,7 @@ namespace TT_Lab.AssetData.Graphics
 
         protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
         {
-            var material = new SharpGLTF.Materials.MaterialBuilder()
-                .WithDoubleSide(true)
-                .WithMetallicRoughnessShader()
-                .WithBaseColor(new System.Numerics.Vector4(1, 1, 1, 1))
-                .WithEmissive(new System.Numerics.Vector3(0.2f, 0.2f, 0.2f));
+            var materials = GenerateMaterials();
 
             var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityMesh");
 
@@ -134,7 +132,7 @@ namespace TT_Lab.AssetData.Graphics
                     var ver1 = submodel[face.Indexes![0]];
                     var ver2 = submodel[face.Indexes[1]];
                     var ver3 = submodel[face.Indexes[2]];
-                    var primitive = mesh.UsePrimitive(material);
+                    var primitive = mesh.UsePrimitive(materials[idx]);
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
@@ -151,7 +149,7 @@ namespace TT_Lab.AssetData.Graphics
                     var ver1 = submodel[face.Indexes![0]];
                     var ver2 = submodel[face.Indexes[1]];
                     var ver3 = submodel[face.Indexes[2]];
-                    var primitive = mesh.UsePrimitive(material);
+                    var primitive = mesh.UsePrimitive(materials[idx]);
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
@@ -168,7 +166,7 @@ namespace TT_Lab.AssetData.Graphics
                     var ver1 = submodel[face.Indexes![0]];
                     var ver2 = submodel[face.Indexes[1]];
                     var ver3 = submodel[face.Indexes[2]];
-                    var primitive = mesh.UsePrimitive(material);
+                    var primitive = mesh.UsePrimitive(materials[idx]);
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
@@ -185,7 +183,7 @@ namespace TT_Lab.AssetData.Graphics
                     var ver1 = submodel[face.Indexes![0]];
                     var ver2 = submodel[face.Indexes[1]];
                     var ver3 = submodel[face.Indexes[2]];
-                    var primitive = mesh.UsePrimitive(material);
+                    var primitive = mesh.UsePrimitive(materials[idx]);
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
@@ -195,23 +193,22 @@ namespace TT_Lab.AssetData.Graphics
             for (var i = 0; i < Vertexes.Count; i++)
             {
                 var submodel = Vertexes[i];
-                var hasNormals = submodel.Where(v => v.HasNormals).Any();
-                var hasEmits = submodel.Where(v => v.HasEmitColor).Any();
-                if (hasNormals && hasEmits)
+                var hasNormals = submodel.Any(v => v.HasNormals);
+                var hasEmits = submodel.Any(v => v.HasEmitColor);
+                switch (hasNormals)
                 {
-                    generateMeshWithVNCEU(i, Faces[i], submodel);
-                }
-                else if (!hasNormals && hasEmits)
-                {
-                    generateMeshWithVCEU(i, Faces[i], submodel);
-                }
-                else if (hasNormals && !hasEmits)
-                {
-                    generateMeshWithVNCU(i, Faces[i], submodel);
-                }
-                else
-                {
-                    generateMeshWithVCU(i, Faces[i], submodel);
+                    case true when hasEmits:
+                        generateMeshWithVNCEU(i, Faces[i], submodel);
+                        break;
+                    case false when hasEmits:
+                        generateMeshWithVCEU(i, Faces[i], submodel);
+                        break;
+                    case true when !hasEmits:
+                        generateMeshWithVNCU(i, Faces[i], submodel);
+                        break;
+                    default:
+                        generateMeshWithVCU(i, Faces[i], submodel);
+                        break;
                 }
             }
 
@@ -317,6 +314,72 @@ namespace TT_Lab.AssetData.Graphics
         public override ITwinItem Export(ITwinItemFactory factory)
         {
             return factory.GenerateModel(Meshes);
+        }
+
+        private List<SharpGLTF.Materials.MaterialBuilder> GenerateMaterials()
+        {
+            var materials = new List<SharpGLTF.Materials.MaterialBuilder>();
+            foreach (var submodel in Vertexes)
+            {
+                var hasEmits = submodel.Any(v => v.HasEmitColor);
+                var material = new SharpGLTF.Materials.MaterialBuilder()
+                    .WithDoubleSide(true);
+                
+                var colorTexture = GenerateColorTexture(submodel);
+                material.WithBaseColor(colorTexture);
+                
+                if (hasEmits)
+                {
+                    var emissionTexture = GenerateEmissionTexture(submodel);
+                    material.WithEmissive(emissionTexture);
+                }
+                
+                materials.Add(material);
+            }
+            
+            return materials;
+        }
+
+        private SharpGLTF.Materials.ImageBuilder GenerateColorTexture(List<Vertex> vertices)
+        {
+            var colors = new List<Byte>();
+
+            foreach (var color in vertices.Select(v => v.Color.GetColor()))
+            {
+                colors.Add(color.A);
+                colors.Add(color.B);
+                colors.Add(color.G);
+                colors.Add(color.R);
+            }
+            
+            using var pngStream = new MemoryStream();
+            var pixelsTotal = colors.Count / 4;
+            var imgInfo = new ImageInfo(pixelsTotal, 1, 8, true);
+            var pngWriter = new PngWriter(pngStream, imgInfo);
+            pngWriter.WriteRowByte(colors.ToArray(), 0);
+
+            return SharpGLTF.Materials.ImageBuilder.From(new SharpGLTF.Memory.MemoryImage(pngStream.ToArray()));
+        }
+
+        private SharpGLTF.Materials.ImageBuilder GenerateEmissionTexture(List<Vertex> vertices)
+        {
+            var emits = new List<Byte>();
+
+            foreach (var emit in vertices.Select(vertex => vertex.EmitColor.GetColor()))
+            {
+                emits.Add(emit.A);
+                emits.Add(emit.B);
+                emits.Add(emit.G);
+                emits.Add(emit.R);
+            }
+
+            using var pngStream = new MemoryStream();
+            var pixelsTotal = emits.Count / 4;
+            var imgInfo = new ImageInfo(pixelsTotal, 1, 8, true);
+            var pngWriter = new PngWriter(pngStream, imgInfo);
+            pngWriter.WriteRowByte(emits.ToArray(), 0);
+
+            return SharpGLTF.Materials.ImageBuilder.From(new SharpGLTF.Memory.MemoryImage(pngStream.ToArray()));
         }
     }
 }

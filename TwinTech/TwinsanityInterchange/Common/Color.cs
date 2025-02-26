@@ -8,6 +8,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
     {
         public Color()
         {
+            AlphaBlendFlag = false;
             A = 255;
             R = 255;
             G = 255;
@@ -15,14 +16,24 @@ namespace Twinsanity.TwinsanityInterchange.Common
         }
         public Color(Byte R, Byte G, Byte B)
         {
+            AlphaBlendFlag = false;
             A = 255;
             this.R = R;
             this.G = G;
             this.B = B;
         }
-        public Color(Byte R, Byte G, Byte B, Byte A)
+        public Color(Byte R, Byte G, Byte B, Byte A, bool useBlendFlag = false)
         {
-            this.A = A;
+            if (useBlendFlag)
+            {
+                AlphaBlendFlag = ((A >> 7) & 1) == 1;
+                this.A = (Byte)((A & 127) * 2 + 1);
+            }
+            else
+            {
+                this.A = A;
+            }
+            
             this.R = R;
             this.G = G;
             this.B = B;
@@ -31,6 +42,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
         public Byte R { get; set; }
         public Byte G { get; set; }
         public Byte B { get; set; }
+        public Boolean AlphaBlendFlag { get; set; }
         public int GetLength()
         {
             return 4;
@@ -47,6 +59,7 @@ namespace Twinsanity.TwinsanityInterchange.Common
             G = reader.ReadByte();
             B = reader.ReadByte();
             A = reader.ReadByte();
+            AlphaBlendFlag = ((A >> 7) & 1) == 1;
         }
 
         public void Write(BinaryWriter writer)
@@ -54,8 +67,16 @@ namespace Twinsanity.TwinsanityInterchange.Common
             writer.Write(R);
             writer.Write(G);
             writer.Write(B);
-            writer.Write(A);
+            if (AlphaBlendFlag)
+            {
+                writer.Write(A | (1 << 7));
+            }
+            else
+            {
+                writer.Write(A);
+            }
         }
+        
         public Vector4 GetVector()
         {
             Vector4 vec = new Vector4();
@@ -83,7 +104,6 @@ namespace Twinsanity.TwinsanityInterchange.Common
             R = (Byte)(R << 1);
             G = (Byte)(G << 1);
             B = (Byte)(B << 1);
-
         }
         public void ScaleAlphaDown()
         {

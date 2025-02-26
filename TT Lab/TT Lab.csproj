@@ -2924,6 +2924,7 @@
     <PackageReference Include="AdonisUI.ClassicTheme" Version="1.17.1" />
     <PackageReference Include="Caliburn.Micro" Version="4.0.212" />
     <PackageReference Include="GlmSharpStd" Version="0.9.8" />
+    <PackageReference Include="Hjg.Pngcs" Version="1.1.4" />
     <PackageReference Include="Meshoptimizer.NET" Version="1.0.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="NAudio" Version="2.2.1" />
