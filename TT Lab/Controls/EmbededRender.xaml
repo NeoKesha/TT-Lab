@@ -9,6 +9,5 @@
              ShowInTaskbar="false"
              WindowStyle="None"
              ResizeMode="NoResize"
-             Focusable="False"
              Background="Black">
 </Window>

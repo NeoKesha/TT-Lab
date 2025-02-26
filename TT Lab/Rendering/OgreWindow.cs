@@ -268,8 +268,16 @@ namespace TT_Lab.Rendering
 
         public void Render()
         {
-            ImGuiOverlay.NewFrame();
+            var overlaysEnabled = _internalWindow.render.getViewport(0).getOverlaysEnabled();
+            if (overlaysEnabled)
+            {
+                ImGuiOverlay.NewFrame();
+            }
             OnRender?.Invoke(this, EventArgs.Empty);
+            if (overlaysEnabled)
+            {
+                ImGui.EndFrame();;
+            }
         }
 
         public void NotifyWindowChanged()
