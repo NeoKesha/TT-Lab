@@ -25,6 +25,11 @@ namespace TT_Lab.ViewModels.Composite
             return ActivateItemAsync(editor, cancellationToken);
         }
 
+        public override Task<Boolean> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            return ActiveItem.CanCloseAsync(cancellationToken);
+        }
+
         public LabURI EditableResource
         {
             get => _editableResource;

@@ -13,11 +13,17 @@ namespace TT_Lab.ViewModels
     {
         protected readonly Dictionary<LabURI, TabbedEditorViewModel> ActiveEditors = new();
 
-        public virtual Task CloseEditorTab(TabbedEditorViewModel editor)
+        public virtual async Task CloseEditorTab(TabbedEditorViewModel editor)
         {
+            var canClose = await editor.CanCloseAsync();
+            if (!canClose)
+            {
+                return;
+            }
+            
             RemoveCurrentActiveEditor();
             
-            return DeactivateItemAsync(editor, true);
+            await DeactivateItemAsync(editor, true);
         }
 
         public virtual void SaveEditorTab(TabbedEditorViewModel editor)

@@ -136,12 +136,6 @@ namespace TT_Lab.ViewModels
             DragDrop.DoDragDrop(projectTree, data, DragDropEffects.Copy);
         }
 
-        // public void ClosingApplication(CancelEventArgs e)
-        // {
-        //     _projectManager.CloseApplication();
-        //     SaveProject();
-        // }
-
         // Props to https://stackoverflow.com/a/25765336
         public void LogViewerScroll(ScrollViewer sv, ScrollChangedEventArgs e)
         {
@@ -169,9 +163,17 @@ namespace TT_Lab.ViewModels
             _projectManager.BuildPs2Project();
         }
 
-        public void CloseProject()
+        public async Task CloseProject()
         {
+            var canClose = await ActiveItem.CanCloseAsync();
+            if (!canClose)
+            {
+                return;
+            }
+
+            await DeactivateItemAsync(ActiveItem, true);
             _projectManager.CloseProject();
+            await ActivateItemAsync(IoC.Get<EditorsViewModel>());
         }
 
         public void OpenProject()

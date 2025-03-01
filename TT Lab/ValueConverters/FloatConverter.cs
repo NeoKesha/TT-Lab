@@ -15,8 +15,8 @@ public class FloatConverter : IValueConverter
         {
             return string.Empty;
         }
-        
-        var result = floatValue.ToString(CultureInfo.InvariantCulture);
+
+        var result = string.Format(CultureInfo.InvariantCulture, "{0:0.################################################################}", floatValue);
         if (leadingDot)
         {
             result += '.';
@@ -34,6 +34,11 @@ public class FloatConverter : IValueConverter
     {
         var stringValue = value as string;
         if (string.IsNullOrEmpty(stringValue))
+        {
+            return null;
+        }
+
+        if (stringValue.EndsWith("e") || stringValue.EndsWith("E") || stringValue.EndsWith("-") || stringValue.EndsWith("+"))
         {
             return null;
         }
@@ -56,8 +61,8 @@ public class FloatConverter : IValueConverter
         }
 
         leadingDot = (dotIndex == stringValue.Length - 1) || (leadingZeros > 0);
-        
-        var parsed = float.TryParse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatValue);
+
+        var parsed = float.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out float floatValue);
         return !parsed ? 0.0f : floatValue;
     }
 }
