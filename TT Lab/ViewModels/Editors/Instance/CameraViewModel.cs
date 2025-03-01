@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Caliburn.Micro;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Attributes;

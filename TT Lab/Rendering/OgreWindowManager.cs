@@ -55,7 +55,7 @@ namespace TT_Lab.Rendering
             var ogreWindow = new OgreWindow(getRoot(), windowHandle);
             var windowName = $"EMBEDDED WINDOW {ogreWindow.GetHashCode()}";
             var newWindow = createWindow(windowName, w, h, miscParams);
-            newWindow.render.setAutoUpdated(true);
+            newWindow.render.setAutoUpdated(false);
             ogreWindow.SetInternalWindow(newWindow);
             ogreWindow.CreateDefaultScene();
             ogreWindow.InitializeImGui(getImGuiInputListener());
@@ -133,12 +133,12 @@ namespace TT_Lab.Rendering
                 timeSinceLastFrame = 1.0f / 60.0f,
             };
             
+            getRoot().renderOneFrame(1.0f / 60.0f);
             foreach (var window in _ogreWindows.Where(window => !window.IsHidden()))
             {
                 window.Render();
                 window.FrameUpdated(evt);
             }
-            getRoot().renderOneFrame(1.0f / 60.0f);
         }
 
         public override Boolean frameRenderingQueued(FrameEvent evt)

@@ -13,18 +13,7 @@ namespace TT_Lab.ViewModels.Editors.Code
 
         public BehaviourStarterViewModel()
         {
-            assigners.CollectionChanged += (s, e) =>
-            {
-                if (e.NewItems == null)
-                {
-                    return;
-                }
-
-                foreach (var newItem in e.NewItems.Cast<BehaviourAssignerViewModel>())
-                {
-                    DirtyTracker.AddChild(newItem);
-                }
-            };
+            DirtyTracker.AddBindableCollection(assigners);
         }
 
         protected override void Save()

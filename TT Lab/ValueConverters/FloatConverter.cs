@@ -1,0 +1,63 @@
+using System;
+using System.Globalization;
+using System.Windows.Data;
+
+namespace TT_Lab.ValueConverters;
+
+public class FloatConverter : IValueConverter
+{
+    private bool leadingDot = false;
+    private int leadingZeros = 0;
+    
+    public Object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not float floatValue)
+        {
+            return string.Empty;
+        }
+        
+        var result = floatValue.ToString(CultureInfo.InvariantCulture);
+        if (leadingDot)
+        {
+            result += '.';
+        }
+
+        for (var i = 0; i < leadingZeros; i++)
+        {
+            result += '0';
+        }
+        
+        return result;
+    }
+
+    public Object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var stringValue = value as string;
+        if (string.IsNullOrEmpty(stringValue))
+        {
+            return null;
+        }
+        
+        var dotIndex = stringValue.IndexOf(".");
+        leadingZeros = 0;
+        if (dotIndex != -1)
+        {
+            for (var i = dotIndex + 1; i < stringValue.Length; i++)
+            {
+                var num = stringValue[i];
+                if (num != '0')
+                {
+                    leadingZeros = 0;
+                    break;
+                }
+                
+                leadingZeros++;
+            }
+        }
+
+        leadingDot = (dotIndex == stringValue.Length - 1) || (leadingZeros > 0);
+        
+        var parsed = float.TryParse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatValue);
+        return !parsed ? 0.0f : floatValue;
+    }
+}

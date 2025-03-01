@@ -6,6 +6,11 @@
              xmlns:controls="clr-namespace:TT_Lab.Controls"
              xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
+             xmlns:viewModel="clr-namespace:TT_Lab.ViewModels.Editors.Instance"
+             xmlns:viewModelResource="clr-namespace:TT_Lab.ViewModels"
+             xmlns:composites="clr-namespace:TT_Lab.Views.Composite"
+             xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
+             d:DataContext="{Binding Source={d:DesignInstance viewModel:PositionViewModel}}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -15,12 +20,14 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="4*"/>
-        </Grid.RowDefinitions>
-        <controls:LabeledDropList x:Name="InstanceLayerIDList" SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout"/>
-        <ContentControl HorizontalAlignment="Stretch" Margin="-5,-5,-5,-5" Grid.Row="1" VerticalAlignment="Stretch"/>
-    </Grid>
+    <GroupBox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="4*"/>
+            </Grid.RowDefinitions>
+            <controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" DropListName="Instance layout"/>
+            <composites:Vector4View VerticalLayout="True" DataContext="{Binding Position}" Grid.Row="1"/>
+        </Grid>
+    </GroupBox>
 </UserControl>

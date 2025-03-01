@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using TT_Lab.Assets;
 using TT_Lab.Command;
@@ -15,6 +16,7 @@ using TT_Lab.Project;
 using TT_Lab.Project.Messages;
 using TT_Lab.Rendering;
 using TT_Lab.Util;
+using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Editors;
 
 namespace TT_Lab.ViewModels
@@ -43,15 +45,16 @@ namespace TT_Lab.ViewModels
             _managerPropsToShellProps.Add(nameof(ProjectManager.HasRecents), nameof(HasRecents));
             _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), nameof(SearchAsset));
 
-            _renderTimer.Tick += PerformRender;
-            _renderTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)(1000f / 60));
-            _renderTimer.Start();
+            CompositionTarget.Rendering += (sender, args) =>
+            {
+                _ogreWindowManager.Render();
+            };
         }
 
-        private void PerformRender(Object? sender, EventArgs e)
-        {
-            _ogreWindowManager.Render();
-        }
+        // private void PerformRender(Object? sender, EventArgs e)
+        // {
+        //     _ogreWindowManager.Render();
+        // }
 
         public Task About()
         {
@@ -133,10 +136,11 @@ namespace TT_Lab.ViewModels
             DragDrop.DoDragDrop(projectTree, data, DragDropEffects.Copy);
         }
 
-        public void ClosingApplication(CancelEventArgs e)
-        {
-            SaveProject();
-        }
+        // public void ClosingApplication(CancelEventArgs e)
+        // {
+        //     _projectManager.CloseApplication();
+        //     SaveProject();
+        // }
 
         // Props to https://stackoverflow.com/a/25765336
         public void LogViewerScroll(ScrollViewer sv, ScrollChangedEventArgs e)
@@ -179,6 +183,11 @@ namespace TT_Lab.ViewModels
                 var open = new OpenProjectCommand(System.IO.Path.GetDirectoryName(proj)!);
                 open.Execute();
             }
+        }
+
+        public override async Task<Boolean> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            return await ActiveItem.CanCloseAsync(cancellationToken);
         }
 
         public Task HandleAsync(ProjectManagerMessage message, CancellationToken cancellationToken)

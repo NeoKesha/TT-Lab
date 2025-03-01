@@ -18,225 +18,228 @@
     <UserControl.Resources>
         <valueConverters:PrimitiveWrapperConverterLabUri x:Key="WrapperUriConverter"/>
         <valueConverters:LabUriConverter x:Key="UriConverter"/>
+        <valueConverters:FloatConverter x:Key="FloatConverter"/>
         <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="InstanceLayouts">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="twinTech:Enums+Layouts"></x:Type>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32*"/>
-            <RowDefinition Height="50*"/>
-            <RowDefinition Height="243*"/>
-        </Grid.RowDefinitions>
-        <TabControl Grid.RowSpan="3" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}">
-            <TabItem x:Name="MainPropsTab" Header="Main properties">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="243*"/>
-                    </Grid.RowDefinitions>
-                    <controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48"/>
-                    <Grid x:Name="MainPropsGrid" Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
+    <GroupBox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32*"/>
+                <RowDefinition Height="50*"/>
+                <RowDefinition Height="243*"/>
+            </Grid.RowDefinitions>
+            <TabControl Grid.RowSpan="3" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}">
+                <TabItem x:Name="MainPropsTab" Header="Main properties">
+                    <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="32*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="243*"/>
                         </Grid.RowDefinitions>
-                        <controls:LabeledDropList SelectedItem="{Binding InstanceObject}" Items="{Binding Objects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True">
-                            <controls:LabeledDropList.ItemTemplate>
-                                <DataTemplate DataType="{x:Type viewModelResource:ResourceTreeElementViewModel}">
-                                    <TextBlock Text="{Binding Alias}"/>
-                                </DataTemplate>
-                            </controls:LabeledDropList.ItemTemplate>
-                        </controls:LabeledDropList>
-                        <Grid Grid.Row="0" Grid.Column="1">
+                        <controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48"/>
+                        <Grid x:Name="MainPropsGrid" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <controls:LabeledDropList SelectedItem="{Binding OnSpawnScript}" Items="{Binding Behaviours}" x:Name="OnSpawnScriptList" Margin="0,0,0,0" DropListName="On spawn script" AllowDrop="True" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=UseOnSpawnScriptBox}">
+                            <controls:LabeledDropList SelectedItem="{Binding InstanceObject}" Items="{Binding Objects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True">
                                 <controls:LabeledDropList.ItemTemplate>
                                     <DataTemplate DataType="{x:Type viewModelResource:ResourceTreeElementViewModel}">
                                         <TextBlock Text="{Binding Alias}"/>
                                     </DataTemplate>
                                 </controls:LabeledDropList.ItemTemplate>
                             </controls:LabeledDropList>
-                            <controls:LabeledCheckBox Grid.Row="0" x:Name="UseOnSpawnScriptBox" HorizontalAlignment="Left" VerticalAlignment="Center" CheckBoxName="Enabled" LayoutOrientation="Horizontal" Checked="{Binding UseOnSpawnScript}"/>
+                            <Grid Grid.Row="0" Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="2*"/>
+                                </Grid.RowDefinitions>
+                                <controls:LabeledDropList SelectedItem="{Binding OnSpawnScript}" Items="{Binding Behaviours}" x:Name="OnSpawnScriptList" Margin="0,0,0,0" DropListName="On spawn script" AllowDrop="True" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=UseOnSpawnScriptBox}">
+                                    <controls:LabeledDropList.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type viewModelResource:ResourceTreeElementViewModel}">
+                                            <TextBlock Text="{Binding Alias}"/>
+                                        </DataTemplate>
+                                    </controls:LabeledDropList.ItemTemplate>
+                                </controls:LabeledDropList>
+                                <controls:LabeledCheckBox Grid.Row="0" x:Name="UseOnSpawnScriptBox" HorizontalAlignment="Left" VerticalAlignment="Center" CheckBoxName="Enabled" LayoutOrientation="Horizontal" Checked="{Binding UseOnSpawnScript}"/>
+                            </Grid>
+                            <controls:LabeledTextBox Grid.Column="0" Text="{Binding RefListIndex}" x:Name="GlobalInstanceRefListIndexBox" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index"/>
                         </Grid>
-                        <controls:LabeledTextBox Grid.Column="0" Text="{Binding RefListIndex}" x:Name="GlobalInstanceRefListIndexBox" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" TextBoxName="Global instance reference index"/>
+                        <ItemsControl Grid.Row="2">
+                            <Expander x:Name="PosPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Positional properties">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <GroupBox Header="Position">
+                                        <composites:Vector4View DataContext="{Binding Position}" VerticalLayout="True" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
+                                    </GroupBox>
+                                    <GroupBox Header="Rotation" Grid.Row="1">
+                                        <composites:Vector3View DataContext="{Binding Rotation}" VerticalLayout="True" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
+                                    </GroupBox>
+                                </Grid>
+                            </Expander>
+                            <Expander x:Name="StateFlagsExpander" Style="{DynamicResource SimpleExpander}" Header="State flags">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <controls:LabeledTextBox x:Name="StateFlagsBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBoxName="HEX input" Text="{Binding StateFlags, StringFormat={}{0:X}}"/>
+                                    <UniformGrid Columns="2" Grid.Row="1">
+                                        <controls:LabeledCheckBox Checked="{Binding Deactivated}" Margin="0,0,0,0" CheckBoxName="Deactivated"/>
+                                        <controls:LabeledCheckBox Checked="{Binding CollisionActive}" Margin="0,0,0,0" CheckBoxName="Collision active"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Visible}" Margin="0,0,0,0" CheckBoxName="Visible"/>
+                                        <controls:LabeledCheckBox Checked="{Binding ShadowActive}" Margin="0,0,0,0" CheckBoxName="Shadows Active"/>
+                                        <controls:LabeledCheckBox Checked="{Binding PlayableCharacterCanMoveAlong}" Margin="0,0,0,0" CheckBoxName="Playable character can move along"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown3}" Margin="0,0,0,0" CheckBoxName="Unknown 3"/>
+                                        <controls:LabeledCheckBox Checked="{Binding SyncCrossChunkState}" Margin="0,0,0,0" CheckBoxName="Sync state across loaded chunks"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown5}" Margin="0,0,0,0" CheckBoxName="Unknown 5"/>
+                                        <controls:LabeledCheckBox Checked="{Binding ReceiveOnTriggerSignals}" Margin="0,0,0,0" CheckBoxName="Receive OnTrigger signals"/>
+                                        <controls:LabeledCheckBox Checked="{Binding CanDamageCharacter}" Margin="0,0,0,0" CheckBoxName="Can damage character"/>
+                                        <controls:LabeledCheckBox Checked="{Binding SolidToBodySlam}" Margin="0,0,0,0" CheckBoxName="Solid to body slam"/>
+                                        <controls:LabeledCheckBox Checked="{Binding SolidToSlide}" Margin="0,0,0,0" CheckBoxName="Solid to slide"/>
+                                        <controls:LabeledCheckBox Checked="{Binding SolidToSpin}" Margin="0,0,0,0" CheckBoxName="Solid to spin"/>
+                                        <controls:LabeledCheckBox Checked="{Binding SolidToTwinSlam}" Margin="0,0,0,0" CheckBoxName="Solid to twin slam"/>
+                                        <controls:LabeledCheckBox Checked="{Binding SolidToThrownCortex}" Margin="0,0,0,0" CheckBoxName="Solid to thrown Cortex"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Targettable}" Margin="0,0,0,0" CheckBoxName="Targettable"/>
+                                        <controls:LabeledCheckBox Checked="{Binding CanAlwaysDamageCharacter}" Margin="0,0,0,0" CheckBoxName="Can always damage character?"/>
+                                        <controls:LabeledCheckBox Checked="{Binding BulletsWillBounceBack}" Margin="0,0,0,0" CheckBoxName="Bullets will bounce back"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown13}" Margin="0,0,0,0" CheckBoxName="Unknown 13"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown14}" Margin="0,0,0,0" CheckBoxName="Unknown 14"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown15}" Margin="0,0,0,0" CheckBoxName="Unknown 15"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown16}" Margin="0,0,0,0" CheckBoxName="Unknown 16"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown17}" Margin="0,0,0,0" CheckBoxName="Unknown 17"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown18}" Margin="0,0,0,0" CheckBoxName="Unknown 18"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown19}" Margin="0,0,0,0" CheckBoxName="Unknown 19"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown20}" Margin="0,0,0,0" CheckBoxName="Unknown 20"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown21}" Margin="0,0,0,0" CheckBoxName="Unknown 21"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown22}" Margin="0,0,0,0" CheckBoxName="Unknown 22"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown23}" Margin="0,0,0,0" CheckBoxName="Unknown 23"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown24}" Margin="0,0,0,0" CheckBoxName="Unknown 24"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown25}" Margin="0,0,0,0" CheckBoxName="Unknown 25"/>
+                                        <controls:LabeledCheckBox Checked="{Binding Unknown26}" Margin="0,0,0,0" CheckBoxName="Unknown 26"/>
+                                    </UniformGrid>
+                                </Grid>
+                            </Expander>
+                            <Expander x:Name="LinkedInstancesExpander" Style="{DynamicResource SimpleExpander}" Header="Linked instances" MaxHeight="250">
+                                <Grid>
+                                    <ListBox ItemsSource="{Binding Instances}" Height="300" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                        <ListBox.ContextMenu>
+                                            <ContextMenu x:Name="LinkedInstancesContextMenu"/>
+                                        </ListBox.ContextMenu>
+                                    </ListBox>
+                                </Grid>
+                            </Expander>
+                            <Expander x:Name="LinkedPositionsExpander" Style="{DynamicResource SimpleExpander}" Header="Linked positions" MaxHeight="300">
+                                <Grid>
+                                    <ListBox x:Name="LinkedPositionsList" ItemsSource="{Binding Positions}" Height="300" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                        <ListBox.ContextMenu>
+                                            <ContextMenu x:Name="LinkedPositionsContextMenu"/>
+                                        </ListBox.ContextMenu>
+                                    </ListBox>
+                                </Grid>
+                            </Expander>
+                            <Expander x:Name="LinkedPathsExpander" Style="{DynamicResource SimpleExpander}" Header="Linked paths">
+                                <Grid>
+                                    <ListBox x:Name="LinkedPathsList" ItemsSource="{Binding Paths}" Height="300" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                        <ListBox.ContextMenu>
+                                            <ContextMenu x:Name="LinkedPathsContextMenu"/>
+                                        </ListBox.ContextMenu>
+                                    </ListBox>
+                                </Grid>
+                            </Expander>
+                        </ItemsControl>
                     </Grid>
-                    <ItemsControl Grid.Row="2">
-                        <Expander x:Name="PosPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Positional properties">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <GroupBox Header="Position">
-                                    <composites:Vector4View DataContext="{Binding Position}" VerticalLayout="True" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
-                                </GroupBox>
-                                <GroupBox Header="Rotation" Grid.Row="1">
-                                    <composites:Vector3View DataContext="{Binding Rotation}" VerticalLayout="True" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
-                                </GroupBox>
-                            </Grid>
-                        </Expander>
-                        <Expander x:Name="StateFlagsExpander" Style="{DynamicResource SimpleExpander}" Header="State flags">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <controls:LabeledTextBox x:Name="StateFlagsBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBoxName="HEX input" Text="{Binding StateFlags, StringFormat={}{0:X}}"/>
-                                <UniformGrid Columns="2" Grid.Row="1">
-                                    <controls:LabeledCheckBox Checked="{Binding Deactivated}" Margin="0,0,0,0" CheckBoxName="Deactivated"/>
-                                    <controls:LabeledCheckBox Checked="{Binding CollisionActive}" Margin="0,0,0,0" CheckBoxName="Collision active"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Visible}" Margin="0,0,0,0" CheckBoxName="Visible"/>
-                                    <controls:LabeledCheckBox Checked="{Binding ShadowActive}" Margin="0,0,0,0" CheckBoxName="Shadows Active"/>
-                                    <controls:LabeledCheckBox Checked="{Binding PlayableCharacterCanMoveAlong}" Margin="0,0,0,0" CheckBoxName="Playable character can move along"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown3}" Margin="0,0,0,0" CheckBoxName="Unknown 3"/>
-                                    <controls:LabeledCheckBox Checked="{Binding SyncCrossChunkState}" Margin="0,0,0,0" CheckBoxName="Sync state across loaded chunks"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown5}" Margin="0,0,0,0" CheckBoxName="Unknown 5"/>
-                                    <controls:LabeledCheckBox Checked="{Binding ReceiveOnTriggerSignals}" Margin="0,0,0,0" CheckBoxName="Receive OnTrigger signals"/>
-                                    <controls:LabeledCheckBox Checked="{Binding CanDamageCharacter}" Margin="0,0,0,0" CheckBoxName="Can damage character"/>
-                                    <controls:LabeledCheckBox Checked="{Binding SolidToBodySlam}" Margin="0,0,0,0" CheckBoxName="Solid to body slam"/>
-                                    <controls:LabeledCheckBox Checked="{Binding SolidToSlide}" Margin="0,0,0,0" CheckBoxName="Solid to slide"/>
-                                    <controls:LabeledCheckBox Checked="{Binding SolidToSpin}" Margin="0,0,0,0" CheckBoxName="Solid to spin"/>
-                                    <controls:LabeledCheckBox Checked="{Binding SolidToTwinSlam}" Margin="0,0,0,0" CheckBoxName="Solid to twin slam"/>
-                                    <controls:LabeledCheckBox Checked="{Binding SolidToThrownCortex}" Margin="0,0,0,0" CheckBoxName="Solid to thrown Cortex"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Targettable}" Margin="0,0,0,0" CheckBoxName="Targettable"/>
-                                    <controls:LabeledCheckBox Checked="{Binding CanAlwaysDamageCharacter}" Margin="0,0,0,0" CheckBoxName="Can always damage character?"/>
-                                    <controls:LabeledCheckBox Checked="{Binding BulletsWillBounceBack}" Margin="0,0,0,0" CheckBoxName="Bullets will bounce back"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown13}" Margin="0,0,0,0" CheckBoxName="Unknown 13"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown14}" Margin="0,0,0,0" CheckBoxName="Unknown 14"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown15}" Margin="0,0,0,0" CheckBoxName="Unknown 15"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown16}" Margin="0,0,0,0" CheckBoxName="Unknown 16"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown17}" Margin="0,0,0,0" CheckBoxName="Unknown 17"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown18}" Margin="0,0,0,0" CheckBoxName="Unknown 18"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown19}" Margin="0,0,0,0" CheckBoxName="Unknown 19"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown20}" Margin="0,0,0,0" CheckBoxName="Unknown 20"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown21}" Margin="0,0,0,0" CheckBoxName="Unknown 21"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown22}" Margin="0,0,0,0" CheckBoxName="Unknown 22"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown23}" Margin="0,0,0,0" CheckBoxName="Unknown 23"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown24}" Margin="0,0,0,0" CheckBoxName="Unknown 24"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown25}" Margin="0,0,0,0" CheckBoxName="Unknown 25"/>
-                                    <controls:LabeledCheckBox Checked="{Binding Unknown26}" Margin="0,0,0,0" CheckBoxName="Unknown 26"/>
-                                </UniformGrid>
-                            </Grid>
-                        </Expander>
-                        <Expander x:Name="LinkedInstancesExpander" Style="{DynamicResource SimpleExpander}" Header="Linked instances" MaxHeight="250">
-                            <Grid>
-                                <ListBox ItemsSource="{Binding Instances}" Height="300" d:ItemsSource="{d:SampleData ItemCount=5}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu x:Name="LinkedInstancesContextMenu"/>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </Grid>
-                        </Expander>
-                        <Expander x:Name="LinkedPositionsExpander" Style="{DynamicResource SimpleExpander}" Header="Linked positions" MaxHeight="300">
-                            <Grid>
-                                <ListBox x:Name="LinkedPositionsList" ItemsSource="{Binding Positions}" Height="300" d:ItemsSource="{d:SampleData ItemCount=5}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu x:Name="LinkedPositionsContextMenu"/>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </Grid>
-                        </Expander>
-                        <Expander x:Name="LinkedPathsExpander" Style="{DynamicResource SimpleExpander}" Header="Linked paths">
-                            <Grid>
-                                <ListBox x:Name="LinkedPathsList" ItemsSource="{Binding Paths}" Height="300" d:ItemsSource="{d:SampleData ItemCount=5}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu x:Name="LinkedPathsContextMenu"/>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </Grid>
-                        </Expander>
-                    </ItemsControl>
-                </Grid>
-            </TabItem>
-            <TabItem x:Name="ExtraPropsTab" Header="Extra properties">
-                <Grid>
-                    <ItemsControl>
-                        <Expander x:Name="IntPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Integer propeties" IsExpanded="True">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding IntParams}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Value}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu x:Name="IntPropsContextMenu"/>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                                <controls:LabeledTextBox Text="{Binding SelectedInt}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch"/>
-                            </Grid>
-                        </Expander>
-                        <Expander x:Name="FlagPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Flag properties">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding FlagParams}" x:Name="FlagPropsList" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Value, StringFormat={}{0:X}}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu x:Name="FlagPropsContextMenu"/>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                                <controls:LabeledTextBox Text="{Binding SelectedFlag, StringFormat={}{0:X}}" x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
-                            </Grid>
-                        </Expander>
-                        <Expander x:Name="FloatPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Float properties">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding FloatParams}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Value}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu x:Name="FloatPropsContextMenu"/>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                                <controls:LabeledTextBox Text="{Binding SelectedFloat}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                            </Grid>
-                        </Expander>
-                    </ItemsControl>
-                </Grid>
-            </TabItem>
-        </TabControl>
-    </Grid>
+                </TabItem>
+                <TabItem x:Name="ExtraPropsTab" Header="Extra properties">
+                    <Grid>
+                        <ItemsControl>
+                            <Expander x:Name="IntPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Integer properties" IsExpanded="True">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <ListBox ItemsSource="{Binding IntParams}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Value}"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                        <ListBox.ContextMenu>
+                                            <ContextMenu x:Name="IntPropsContextMenu"/>
+                                        </ListBox.ContextMenu>
+                                    </ListBox>
+                                    <controls:LabeledTextBox Text="{Binding SelectedInt}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch"/>
+                                </Grid>
+                            </Expander>
+                            <Expander x:Name="FlagPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Flag properties">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <ListBox ItemsSource="{Binding FlagParams}" x:Name="FlagPropsList" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Value, StringFormat={}{0:X}}"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                        <ListBox.ContextMenu>
+                                            <ContextMenu x:Name="FlagPropsContextMenu"/>
+                                        </ListBox.ContextMenu>
+                                    </ListBox>
+                                    <controls:LabeledTextBox Text="{Binding SelectedFlag, StringFormat={}{0:X}}" x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+                                </Grid>
+                            </Expander>
+                            <Expander x:Name="FloatPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Float properties">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <ListBox ItemsSource="{Binding FloatParams}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Value, Converter={StaticResource FloatConverter}}"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                        <ListBox.ContextMenu>
+                                            <ContextMenu x:Name="FloatPropsContextMenu"/>
+                                        </ListBox.ContextMenu>
+                                    </ListBox>
+                                    <controls:LabeledTextBox Text="{Binding SelectedFloat, Converter={StaticResource FloatConverter}}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Expander>
+                        </ItemsControl>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </GroupBox>
 </UserControl>

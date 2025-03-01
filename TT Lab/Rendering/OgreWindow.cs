@@ -276,8 +276,9 @@ namespace TT_Lab.Rendering
             OnRender?.Invoke(this, EventArgs.Empty);
             if (overlaysEnabled)
             {
-                ImGui.EndFrame();;
+                ImGui.EndFrame();
             }
+            _internalWindow.render.update(true);
         }
 
         public void NotifyWindowChanged()

@@ -1,4 +1,5 @@
-﻿using TT_Lab.ViewModels.Interfaces;
+﻿using Caliburn.Micro;
+using TT_Lab.ViewModels.Interfaces;
 
 namespace TT_Lab.ViewModels.Editors.Instance
 {

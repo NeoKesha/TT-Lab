@@ -25,6 +25,21 @@ namespace TT_Lab.ViewModels
             editor.ActiveItem.SaveChanges();
         }
 
+        public override async Task<Boolean> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            var result = true;
+            foreach (var editor in ActiveEditors.Values)
+            {
+                result = await editor.ActiveItem.CanCloseAsync(cancellationToken);
+                if (!result)
+                {
+                    break;
+                }
+            }
+            
+            return result;
+        }
+
         public virtual void Save()
         {
             foreach (var item in ActiveEditors)

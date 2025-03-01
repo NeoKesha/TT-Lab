@@ -3162,4 +3162,12 @@
     <Folder Include="ViewModels\Editors\Code\OGI\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Views\Composite\UnsavedChangesDialogueView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

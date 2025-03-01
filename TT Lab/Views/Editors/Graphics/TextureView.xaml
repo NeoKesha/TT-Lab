@@ -18,27 +18,25 @@
             </cal:ActionMessage>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="25*"/>
-            <RowDefinition Height="187*"/>
-            <RowDefinition Height="13*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid Margin="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1" IsEnabled="False"/>
-            <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1" IsEnabled="False"/>
-            <Controls:LabeledCheckBox Checked="{Binding GenerateMipmaps}" Grid.Column="2" HorizontalAlignment="Left" CheckBoxName="Generate Mipmaps" VerticalAlignment="Center" Margin="5,0,0,0"/>
+    <GroupBox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45*"/>
+                <RowDefinition Height="187*"/>
+                <RowDefinition Height="13*"/>
+            </Grid.RowDefinitions>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Controls:LabeledDropList Items="{Binding TexFuns}" SelectedItem="{Binding TextureFunction}" x:Name="TextureFunctionList" Margin="0" DropListName="Texture function" Padding="1" IsEnabled="False"/>
+                <Controls:LabeledDropList Items="{Binding PixelFormats}" SelectedItem="{Binding PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1" IsEnabled="False"/>
+                <Controls:LabeledCheckBox Checked="{Binding GenerateMipmaps}" Grid.Column="2" HorizontalAlignment="Left" CheckBoxName="Generate Mipmaps" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </Grid>
+            <ContentControl x:Name="TextureViewer" Margin="5" Grid.Row="1" Padding="1"/>
+            <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="2"/>
         </Grid>
-        <ContentControl x:Name="TextureViewer" Margin="0" Grid.Row="1" Padding="1"/>
-        <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="2"/>
-        <Rectangle Grid.Row="0" Grid.RowSpan="3" Stroke="Black" Panel.ZIndex="-100" Fill="#00000000"/>
-    </Grid>
+    </GroupBox>
 </UserControl>

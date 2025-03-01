@@ -6,13 +6,19 @@
              xmlns:local="clr-namespace:TT_Lab.Controls"
              xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Composite"
              xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
              d:DataContext="{Binding Source={d:DesignInstance viewModels:Vector4ViewModel}}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UniformGrid x:Name="FormationGrid" Columns="4">
-        <local:LabeledTextBox Text="{Binding X}" VerticalAlignment="Center" TextBoxName="X" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-        <local:LabeledTextBox Text="{Binding Y}" VerticalAlignment="Center" TextBoxName="Y" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-        <local:LabeledTextBox Text="{Binding Z}" VerticalAlignment="Center" TextBoxName="Z" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-        <local:LabeledTextBox Text="{Binding W}" VerticalAlignment="Center" TextBoxName="W" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-    </UniformGrid>
+    <UserControl.Resources>
+        <valueConverters:FloatConverter x:Key="FloatConverter"/>
+    </UserControl.Resources>
+    <GroupBox>
+        <UniformGrid x:Name="FormationGrid" Columns="4">
+            <local:LabeledTextBox Text="{Binding X, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="X" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+            <local:LabeledTextBox Text="{Binding Y, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="Y" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+            <local:LabeledTextBox Text="{Binding Z, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="Z" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+            <local:LabeledTextBox Text="{Binding W, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="W" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+        </UniformGrid>
+    </GroupBox>
 </UserControl>

@@ -33,11 +33,11 @@
             </Triggers:InputBindingTrigger.InputBinding>
             <cal:ActionMessage MethodName="SaveProject"/>
         </Triggers:InputBindingTrigger>
-        <i:EventTrigger EventName="Closing">
-            <cal:ActionMessage MethodName="ClosingApplication">
-                <cal:Parameter Value="$eventArgs"/>
-            </cal:ActionMessage>
-        </i:EventTrigger>
+        <!-- <i:EventTrigger EventName="Closing"> -->
+        <!--     <cal:ActionMessage MethodName="ClosingApplication"> -->
+        <!--         <cal:Parameter Value="$eventArgs"/> -->
+        <!--     </cal:ActionMessage> -->
+        <!-- </i:EventTrigger> -->
     </i:Interaction.Triggers>
     <Window.Style>
         <Style TargetType="adonisControls:AdonisWindow" BasedOn="{StaticResource {x:Type adonisControls:AdonisWindow}}"/>

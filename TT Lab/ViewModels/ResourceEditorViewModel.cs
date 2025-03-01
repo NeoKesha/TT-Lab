@@ -10,6 +10,7 @@ using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Command;
 using TT_Lab.Controls;
+using TT_Lab.Project;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Editors;
@@ -89,7 +90,7 @@ namespace TT_Lab.ViewModels
             {
                 return;
             }
-            
+ 
             ResetDirty();
             
             if (_usingConfirmClose && (_dialogueResult.Result == null || MiscUtils.ConvertEnum<UnsavedChangesDialogue.AnswerResult>(_dialogueResult.Result) == UnsavedChangesDialogue.AnswerResult.DISCARD))

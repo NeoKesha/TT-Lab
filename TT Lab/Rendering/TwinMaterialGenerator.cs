@@ -69,16 +69,17 @@ public static class TwinMaterialGenerator
             if (shader.ABlending == TwinShader.AlphaBlending.ON)
             {
                 materialText.AppendLine("scene_blend alpha_blend");
+
+                var operation = "add";
                 switch (shader.AlphaRegSettingsIndex)
                 {
                     case TwinShader.AlphaBlendPresets.Mix:
-                        break;
-                    case TwinShader.AlphaBlendPresets.Add:
-                        // materialText.AppendLine("scene_blend_op add");
+                        // TODO: Figure it out???
                         break;
                     case TwinShader.AlphaBlendPresets.Sub:
-                        // materialText.AppendLine("scene_blend_op subtract");
+                        operation = "subtract";
                         break;
+                    case TwinShader.AlphaBlendPresets.Add:
                     case TwinShader.AlphaBlendPresets.Alpha:
                     case TwinShader.AlphaBlendPresets.Zero:
                     case TwinShader.AlphaBlendPresets.Destination:
@@ -86,6 +87,7 @@ public static class TwinMaterialGenerator
                     default:
                         break;
                 }
+                materialText.AppendLine($"scene_blend_op {operation}");
                 // materialText.AppendLine("depth_write off");
             }
             else
@@ -197,8 +199,6 @@ public static class TwinMaterialGenerator
                     break;
                 case TwinShader.Type.UnlitClothDeformation:
                 case TwinShader.Type.UnlitClothDeformation2:
-                    var deformX = shader.FloatParam[0];
-                    var deformY = shader.FloatParam[1];
                     break;
                 case TwinShader.Type.UnlitBillboard:
                     break;

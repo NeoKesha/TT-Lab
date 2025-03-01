@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
 using TT_Lab.Attributes;
@@ -67,9 +68,6 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
 
-        public Vector4ViewModel Position
-        {
-            get => position;
-        }
+        public Vector4ViewModel Position => position;
     }
 }

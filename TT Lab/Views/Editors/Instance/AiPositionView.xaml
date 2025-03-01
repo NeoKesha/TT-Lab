@@ -24,19 +24,21 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" HorizontalAlignment="Stretch" Margin="5,0,5,0" VerticalAlignment="Center" DropListName="Instance layout"/>
-        <Controls:LabeledTextBox Grid.Column="0" Text="{Binding Argument}" HorizontalAlignment="Stretch" Margin="5,0,5,0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Argument"/>
-        <GroupBox Grid.Row="0" Grid.Column="1" Header="Position" Grid.RowSpan="2">
-            <compositeViews:Vector4View DataContext="{Binding Position}" VerticalLayout="True"/>
-        </GroupBox>
-    </Grid>
+    <GroupBox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" HorizontalAlignment="Stretch" Margin="5,0,5,0" VerticalAlignment="Center" DropListName="Instance layout"/>
+            <Controls:LabeledTextBox Grid.Column="0" Text="{Binding Argument}" HorizontalAlignment="Stretch" Margin="5,0,5,0" Grid.Row="1" VerticalAlignment="Center" TextBoxName="Argument"/>
+            <GroupBox Grid.Row="0" Grid.Column="1" Header="Position" Grid.RowSpan="2">
+                <compositeViews:Vector4View DataContext="{Binding Position}" VerticalLayout="True"/>
+            </GroupBox>
+        </Grid>
+    </GroupBox>
 </UserControl>
