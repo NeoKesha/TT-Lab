@@ -91,9 +91,9 @@ namespace TT_Lab.Assets
             RegenerateURI(needVariant);
         }
 
-        public virtual void Serialize(bool setDirectoryToAssets = false, bool saveData = true)
+        public virtual void Serialize(SerializationFlags serializationFlags = SerializationFlags.None)
         {
-            if (setDirectoryToAssets)
+            if (serializationFlags.HasFlag(SerializationFlags.SetDirectoryToAssets))
             {
                 Directory.SetCurrentDirectory($"{IoC.Get<ProjectManager>().OpenedProject!.ProjectPath}\\assets");
             }
@@ -102,17 +102,33 @@ namespace TT_Lab.Assets
             Directory.CreateDirectory(path);
             var variantPath = Variation == null ? "" : Variation.Replace("\\", "_").Replace("/", "_");
             var name = Name.Replace("/", "_").Replace("\\", "_");
-            using FileStream fs = new(Path.Combine(path, $"{name}_{variantPath}.json"), FileMode.Create, FileAccess.Write);
-            using BinaryWriter writer = new(fs);
-            writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
 
             // Created or loaded data needs to be saved on disk but then disposed of since we are not going to need it
             // unless user wishes to edit the exact asset
-            if (assetData != null && saveData)
+            if (assetData != null && serializationFlags.HasFlag(SerializationFlags.SaveData))
             {
                 assetData.Save(Path.Combine(path, Data));
+                if (serializationFlags.HasFlag(SerializationFlags.FixReferences))
+                {
+                    References.Clear();
+                    ExtractReferences(GetData());
+                }
                 assetData.Dispose();
+                IsLoaded = false;
             }
+            
+            if (!serializationFlags.HasFlag(SerializationFlags.SaveData) && serializationFlags.HasFlag(SerializationFlags.FixReferences))
+            {
+                References.Clear();
+                ExtractReferences(GetData());
+                assetData!.Dispose();
+                IsLoaded = false;
+            }
+            
+            using FileStream fs = new(Path.Combine(path, $"{name}_{variantPath}.json"), FileMode.Create, FileAccess.Write);
+            using BinaryWriter writer = new(fs);
+            writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented).ToCharArray());
+            
         }
 
         public virtual void Deserialize(String json)
@@ -121,9 +137,36 @@ namespace TT_Lab.Assets
         }
 
         public virtual void PostDeserialize() { }
+        
+        public void Delete(bool setDirectoryToAssets = false)
+        {
+            AssetManager.Get().RemoveAsset(URI);
+            
+            if (setDirectoryToAssets)
+            {
+                Directory.SetCurrentDirectory($"{IoC.Get<ProjectManager>().OpenedProject!.ProjectPath}\\assets");
+            }
+
+            var path = SavePath;
+            var variantPath = Variation == null ? "" : Variation.Replace("\\", "_").Replace("/", "_");
+            var name = Name.Replace("/", "_").Replace("\\", "_");
+            File.Delete(Path.Combine(path, $"{name}_{variantPath}.json"));
+            File.Delete(Path.Combine(path, Data));
+        }
 
         public abstract Type GetEditorType();
         public abstract AbstractAssetData GetData();
+        
+        public void SetData(AbstractAssetData data)
+        {
+            if (IsLoaded && assetData != null && !assetData.Disposed)
+            {
+                assetData.Dispose();
+            }
+            
+            assetData = data;
+            IsLoaded = true;
+        }
 
         public virtual void Import()
         {
@@ -192,8 +235,10 @@ namespace TT_Lab.Assets
                 return;
             }
             
+            Log.WriteLine($"Found reference {AssetManager.Get().GetAsset(reference).Name} to remove in {Name}");
+            
             RemoveReferencesFromData(GetData(), reference);
-            Serialize();
+            Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData | SerializationFlags.FixReferences);
         }
 
         public async Task<ResourceTreeElementViewModel> GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
@@ -252,7 +297,7 @@ namespace TT_Lab.Assets
                             continue;
                         }
                         
-                        list[i] = LabURI.Empty;
+                        list.RemoveAt(i--);
                         referenceRemoved = true;
                     }
 

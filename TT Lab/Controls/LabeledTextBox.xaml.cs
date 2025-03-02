@@ -48,7 +48,7 @@ namespace TT_Lab.Controls
         // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register(nameof(Text), typeof(object), typeof(LabeledTextBox),
-                new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnTextChanged));
+                new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         // Using a DependencyProperty as the backing store for TextBoxName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextBoxNameProperty =
@@ -58,12 +58,6 @@ namespace TT_Lab.Controls
         public LabeledTextBox()
         {
             InitializeComponent();
-        }
-        
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var textBox = (LabeledTextBox)d;
-            Log.WriteLine($"Changed text in {textBox.TextBoxName} to {e.NewValue}");
         }
         
         private static void OnLayoutOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

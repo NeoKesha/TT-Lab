@@ -32,11 +32,13 @@ namespace TT_Lab.Extensions
 
         public static Matrix4 ToTwin(this mat4 mat)
         {
-            var twinMat = new Matrix4();
-            twinMat[0] = mat.Column0.ToTwin();
-            twinMat[1] = mat.Column1.ToTwin();
-            twinMat[2] = mat.Column2.ToTwin();
-            twinMat[3] = mat.Column3.ToTwin();
+            var twinMat = new Matrix4
+            {
+                Column1 = mat.Column0.ToTwin(),
+                Column2 = mat.Column1.ToTwin(),
+                Column3 = mat.Column2.ToTwin(),
+                Column4 = mat.Column3.ToTwin()
+            };
             return twinMat;
         }
     }

@@ -100,7 +100,7 @@ namespace TT_Lab.ViewModels
             
             Save();
             var asset = AssetManager.Get().GetAsset(EditableResource);
-            asset.Serialize(true);
+            asset.Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData | SerializationFlags.FixReferences);
         }
 
         protected virtual void Save()

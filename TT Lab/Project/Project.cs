@@ -125,7 +125,7 @@ namespace TT_Lab.Project
 #endif
                     foreach (var asset in group)
                     {
-                        asset.Serialize();
+                        asset.Serialize(SerializationFlags.SaveData);
                     }
 #if !DEBUG
                     }
@@ -158,7 +158,7 @@ namespace TT_Lab.Project
 #endif
                 foreach (var asset in group)
                 {
-                    asset.Serialize();
+                    asset.Serialize(SerializationFlags.SaveData);
                 }
 #if !DEBUG
                 }

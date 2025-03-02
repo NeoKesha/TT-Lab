@@ -29,7 +29,16 @@ namespace TT_Lab.Assets.Code
         [JsonProperty(Required = Required.Always)]
         public UInt16 Param4 { get; set; }
 
-        public SoundEffect() { }
+        public SoundEffect()
+        {
+            Header = 3;
+            UnkFlag = 0;
+            Param1 = 32;
+            Param2 = 16;
+            Param3 = 8192;
+            Param4 = Param3;
+            Raw = false;
+        }
 
         public SoundEffect(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinSound sound) : base(id, name, package, needVariant, variant)
         {

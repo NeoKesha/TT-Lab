@@ -51,7 +51,7 @@ namespace TT_Lab.Assets.Instance
             }
         }
 
-        public override void Serialize(bool setDirectoryToAssets = false, bool saveData = true)
+        public override void Serialize(SerializationFlags serializationFlags = SerializationFlags.None)
         {
             if (assetData != null)
             {
@@ -65,7 +65,8 @@ namespace TT_Lab.Assets.Instance
                     Parameters["MainCamera2Type"] = camData.MainCamera2.GetType();
                 }
             }
-            base.Serialize(setDirectoryToAssets, saveData);
+            
+            base.Serialize(serializationFlags);
         }
 
         public override AbstractAssetData GetData()

@@ -158,7 +158,7 @@
                 <TabControl x:Name="LogTabs" Grid.Row="2">
                     <TabItem Header="Log">
                         <Grid>
-                            <ScrollViewer x:Name="LogViewer" Margin="0">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="LogViewer" Margin="0">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="ScrollChanged">
                                         <cal:ActionMessage MethodName="LogViewerScroll">
@@ -167,7 +167,7 @@
                                         </cal:ActionMessage>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                                <TextBox x:Name="LogText" MaxLines="100" TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
+                                <TextBox VerticalScrollBarVisibility="Disabled" x:Name="LogText" MaxLines="50" TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
                             </ScrollViewer>
                         </Grid>
                     </TabItem>

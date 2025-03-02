@@ -127,6 +127,17 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
         _children.Add(a);
     }
 
+    private void RemoveChild(ResourceTreeElementViewModel child)
+    {
+        if (_internalChildren == null || _children == null)
+        {
+            return;
+        }
+        
+        _children.Remove(child);
+        _internalChildren.Remove(child);
+    }
+
     protected void RegisterMenuItem(MenuItemSettings settings = default)
     {
         var newItem = new MenuItem
@@ -157,6 +168,11 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
             Header = "Rename",
             Action = PerformAssetRename,
         });
+        RegisterMenuItem(new MenuItemSettings
+        {
+            Header = "Delete",
+            Action = StartDeletingAsset,
+        });
     }
 
     public async Task CreateContextMenuAction()
@@ -166,8 +182,8 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
             return;
         }
         
-        await Application.Current.Dispatcher.BeginInvoke(CreateContextMenu, DispatcherPriority.Background);
         _contextMenuCreated = true;
+        await Application.Current.Dispatcher.BeginInvoke(CreateContextMenu, DispatcherPriority.Background);
     }
 
     public void StopRenaming()
@@ -199,14 +215,31 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
         }
         
         Alias = NewAlias;
-        Asset.Serialize(true, false);
+        Asset.Serialize(SerializationFlags.SetDirectoryToAssets);
     }
  
-    public void PerformAssetRename()
+    private void PerformAssetRename()
     {
         _isRenaming = true;
         NotifyOfPropertyChange(nameof(IsRenaming));
         NotifyOfPropertyChange(nameof(IsNotRenaming));
+    }
+
+    private void StartDeletingAsset()
+    {
+        DeleteAsset();
+        _parent?.RemoveChild(this);
+        _parent?.ClearChildren();
+        _parent?.LoadChildrenBack();
+    }
+
+    private void DeleteAsset()
+    {
+        _internalChildren?.ForEach(a => a.DeleteAsset());
+        Log.WriteLine($"Deleting asset {Alias}");
+        Asset.Delete(true);
+        _internalChildren?.Clear();
+        _children?.Clear();
     }
 
     public List<ResourceTreeElementViewModel>? GetInternalChildren()

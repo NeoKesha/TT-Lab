@@ -9,6 +9,15 @@ using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.Assets
 {
+    [Flags]
+    public enum SerializationFlags
+    {
+        None = 0,
+        SetDirectoryToAssets = 0x1,
+        SaveData = 0x2,
+        FixReferences = 0x4,
+    }
+    
     [JsonObject(MemberSerialization.OptIn)]
     public interface IAsset
     {
@@ -126,6 +135,12 @@ namespace TT_Lab.Assets
         /// </summary>
         /// <returns>Asset's data</returns>
         protected AbstractAssetData GetData();
+        
+        /// <summary>
+        /// Sets new data for the asset to use
+        /// </summary>
+        /// <param name="data"></param>
+        void SetData(AbstractAssetData data);
 
         /// <summary>
         /// Adds new resource reference
@@ -139,6 +154,7 @@ namespace TT_Lab.Assets
             }
             
             References.Add(reference);
+            Log.WriteLine($"Added reference to {reference} from {Name}");
         }
 
         /// <summary>
@@ -205,7 +221,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Save the data to disk
         /// </summary>
-        void Serialize(bool setDirectoryToAssets = false, bool saveData = true);
+        void Serialize(SerializationFlags serializationFlags = SerializationFlags.None);
 
         /// <summary>
         /// Read data from the disk
@@ -216,6 +232,12 @@ namespace TT_Lab.Assets
         /// Called if asset needs to do anything else after being deserialized
         /// </summary>
         void PostDeserialize();
+
+        /// <summary>
+        /// Deletes the asset from disk drive and all references to it
+        /// </summary>
+        /// <param name="setDirectoryToAssets"></param>
+        void Delete(bool setDirectoryToAssets = false);
 
         /// <summary>
         /// Finishes import on Project Creation stage

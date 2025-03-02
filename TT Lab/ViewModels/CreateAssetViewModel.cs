@@ -14,7 +14,7 @@ public class CreateAssetViewModel : Screen
     private AssetCreationPreviewModel _selectedCreationModel;
     private FolderElementViewModel _selectedFolder;
     
-    public void RegisterAssetToCreate<T>(string displayName, Action<IAsset>? createCallback = null) where T : IAsset, new()
+    public void RegisterAssetToCreate<T>(string displayName, Func<IAsset, AssetCreationStatus>? createCallback = null) where T : IAsset, new()
     {
         CreatableAssets.Add(AssetCreationPreviewModelFactory.CreatePreview<T>(displayName, createCallback));
     }
@@ -34,16 +34,24 @@ public class CreateAssetViewModel : Screen
         newAsset.Package = folder.Package;
         newAsset.ID = TwinIdGeneratorServiceProvider.GetGenerator(SelectedCreationModel.AssetType).GenerateTwinId();
         newAsset.RegenerateLinks(false);
-        SelectedCreationModel.CreateCallback?.Invoke(newAsset);
+        var creationResult = SelectedCreationModel.CreateCallback?.Invoke(newAsset);
+        if (creationResult is AssetCreationStatus.Failed)
+        {
+            Log.WriteLine("Error: Failed to create asset");
+            return Task.CompletedTask;
+        }
         
         folder.AddChild(newAsset);
         AssetManager.Get().AddAsset(newAsset);
-        newAsset.Serialize(true);
-        folder.Serialize(true);
-        
+        newAsset.Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData);
+        folder.Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData | SerializationFlags.FixReferences);
+        Log.WriteLine($"Saved new asset {newAsset.Name}");
+        Log.WriteLine($"Saved new asset in {folder.Name}");
         var task = newAsset.GetResourceTreeElement(parent);
         task.Wait();
         parent.AddNewChild(task.Result);
+        parent.ClearChildren();
+        parent.LoadChildrenBack();
 
         return TryCloseAsync();
     }

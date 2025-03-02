@@ -101,7 +101,7 @@ public class SoundEffectViewModel : ResourceEditorViewModel
         sound.Param2 = _param2;
         sound.Param3 = _param3;
         sound.Param4 = _param4;
-        sound.Serialize(true);
+        sound.Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData);
 
         base.Save();
     }
