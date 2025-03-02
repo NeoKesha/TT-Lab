@@ -13,8 +13,13 @@ namespace TT_Lab.Assets.Code
 
         public Animation() { }
 
-        public Animation(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinAnimation animation) : base(id, Name, package, needVariant, variant)
+        public Animation(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinAnimation? animation = null) : base(id, name, package, needVariant, variant)
         {
+            if (animation == null)
+            {
+                return;
+            }
+            
             assetData = new AnimationData(animation);
         }
 

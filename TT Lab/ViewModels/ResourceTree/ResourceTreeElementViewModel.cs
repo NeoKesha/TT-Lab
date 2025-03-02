@@ -96,15 +96,35 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
         }
     }
 
+    public void AddNewChild(ResourceTreeElementViewModel child)
+    {
+        if (_internalChildren == null || _children == null)
+        {
+            return;
+        }
+        
+        if (_internalChildren.Contains(child))
+        {
+            return;
+        }
+        
+        _internalChildren.Add(child);
+        AddChild(child);
+    }
+
     public void AddChild(ResourceTreeElementViewModel a)
     {
-        if (_internalChildren != null && _children != null)
+        if (_internalChildren == null || _children == null)
         {
-            if (_internalChildren.Contains(a))
-            {
-                _children.Add(a);
-            }
+            return;
         }
+
+        if (!_internalChildren.Contains(a))
+        {
+            return;
+        }
+        
+        _children.Add(a);
     }
 
     protected void RegisterMenuItem(MenuItemSettings settings = default)
@@ -170,9 +190,15 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
         }
         
         _isRenaming = false;
-        Alias = NewAlias;
         NotifyOfPropertyChange(nameof(IsRenaming));
         NotifyOfPropertyChange(nameof(IsNotRenaming));
+        if (string.IsNullOrEmpty(NewAlias))
+        {
+            NewAlias = Alias;
+            return;
+        }
+        
+        Alias = NewAlias;
         Asset.Serialize(true, false);
     }
  

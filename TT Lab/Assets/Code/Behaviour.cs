@@ -8,9 +8,9 @@ namespace TT_Lab.Assets.Code
         public override UInt32 Section => Constants.CODE_BEHAVIOURS_SECTION;
         public override String IconPath => "Behavior_Tree_Start.png";
 
-        public Behaviour() { }
+        protected Behaviour() { }
 
-        public Behaviour(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name) : base(id, Name, package, needVariant, variant)
+        protected Behaviour(LabURI package, Boolean needVariant, String variant, UInt32 id, String name) : base(id, name, package, needVariant, variant)
         {
         }
     }

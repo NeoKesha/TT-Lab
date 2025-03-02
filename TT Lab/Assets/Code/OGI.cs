@@ -13,7 +13,7 @@ namespace TT_Lab.Assets.Code
 
         public OGI() { }
 
-        public OGI(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinOGI ogi) : base(id, Name, package, needVariant, variant)
+        public OGI(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinOGI ogi) : base(id, name, package, needVariant, variant)
         {
             assetData = new OGIData(ogi);
         }

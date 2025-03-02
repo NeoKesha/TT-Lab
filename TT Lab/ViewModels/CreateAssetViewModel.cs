@@ -1,7 +1,9 @@
 using System;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using TT_Lab.Assets;
 using TT_Lab.Models;
+using TT_Lab.ServiceProviders;
 using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.ViewModels;
@@ -10,21 +12,40 @@ public class CreateAssetViewModel : Screen
 {
     private string _assetName = "NewAsset";
     private AssetCreationPreviewModel _selectedCreationModel;
+    private FolderElementViewModel _selectedFolder;
     
-    public void RegisterAssetToCreate<T>(string displayName) where T : IAsset, new()
+    public void RegisterAssetToCreate<T>(string displayName, Action<IAsset>? createCallback = null) where T : IAsset, new()
     {
-        CreatableAssets.Add(AssetCreationPreviewModelFactory.CreatePreview<T>(displayName));
+        CreatableAssets.Add(AssetCreationPreviewModelFactory.CreatePreview<T>(displayName, createCallback));
     }
 
-    public void CreateAssetButton()
+    public void AssignFolder(FolderElementViewModel folder)
+    {
+        _selectedFolder = folder;
+    }
+
+    public Task CreateAssetButton()
     {
         var newAsset = (IAsset)Activator.CreateInstance(SelectedCreationModel.AssetType)!;
-        var parent = (FolderElementViewModel)Parent;
+        newAsset.Name = _assetName;
+        newAsset.Alias = _assetName;
+        var parent = _selectedFolder;
         var folder = parent.GetAsset<Folder>();
+        newAsset.Package = folder.Package;
+        newAsset.ID = TwinIdGeneratorServiceProvider.GetGenerator(SelectedCreationModel.AssetType).GenerateTwinId();
+        newAsset.RegenerateLinks(false);
+        SelectedCreationModel.CreateCallback?.Invoke(newAsset);
+        
         folder.AddChild(newAsset);
+        AssetManager.Get().AddAsset(newAsset);
+        newAsset.Serialize(true);
+        folder.Serialize(true);
+        
         var task = newAsset.GetResourceTreeElement(parent);
         task.Wait();
-        parent.AddChild(task.Result);
+        parent.AddNewChild(task.Result);
+
+        return TryCloseAsync();
     }
 
     protected override void OnViewReady(object view)

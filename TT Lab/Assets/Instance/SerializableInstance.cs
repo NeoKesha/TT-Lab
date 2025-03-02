@@ -10,7 +10,7 @@ namespace TT_Lab.Assets.Instance
 
         private String LayoutPath => LayoutID == null ? "" : $"\\Layout_{LayoutID}";
 
-        public SerializableInstance(LabURI package, UInt32 id, String Name, String chunk, Int32? layId) : base(id, Name, package, true, chunk)
+        protected SerializableInstance(LabURI package, UInt32 id, String name, String chunk, Int32? layId) : base(id, name, package, true, chunk)
         {
             Chunk = chunk;
             LayoutID = layId;

@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Instance
         public override UInt32 Section => Constants.LAYOUT_TEMPLATES_SECTION;
         public override String IconPath => "Instance_Template.png";
 
-        public InstanceTemplate(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, ITwinTemplate template) : base(package, id, Name, chunk, layId)
+        public InstanceTemplate(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinTemplate template) : base(package, id, name, chunk, layId)
         {
             assetData = new InstanceTemplateData(template);
         }

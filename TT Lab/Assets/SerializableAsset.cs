@@ -51,6 +51,7 @@ namespace TT_Lab.Assets
         protected SerializableAsset()
         {
             IsLoaded = false;
+            Raw = true;
             Type = GetType();
         }
 
@@ -68,9 +69,7 @@ namespace TT_Lab.Assets
         {
             Package = package;
             Variation = variant;
-            var variantPath = needVariant ? Variation.Replace("\\", "_").Replace("/", "_") : "";
-            Data = $"{Name.Replace("/", "_").Replace("\\", "_")}_{variantPath}{DataExt}";
-            RegenerateURI(needVariant);
+            RegenerateLinks(needVariant);
         }
 
         public void RegenerateURI(Boolean needVariant)
@@ -78,6 +77,18 @@ namespace TT_Lab.Assets
             var variantAddition = needVariant ? $"/{Variation}" : "";
             var layoutId = LayoutID == null ? "" : $"/{LayoutID}";
             URI = new LabURI($"{Package}/{Type.Name}/{ID}{variantAddition}{layoutId}");
+        }
+
+        public void RegenerateDataName(Boolean needVariant)
+        {
+            var variantPath = needVariant ? Variation.Replace("\\", "_").Replace("/", "_") : "";
+            Data = $"{Name.Replace("/", "_").Replace("\\", "_")}_{variantPath}{DataExt}";
+        }
+
+        public void RegenerateLinks(Boolean needVariant)
+        {
+            RegenerateDataName(needVariant);
+            RegenerateURI(needVariant);
         }
 
         public virtual void Serialize(bool setDirectoryToAssets = false, bool saveData = true)

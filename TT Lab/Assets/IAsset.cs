@@ -200,7 +200,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Regenerates the URI if package, subpackage or variation was changed
         /// </summary>
-        void RegenerateURI(Boolean needVariant);
+        void RegenerateLinks(Boolean needVariant);
 
         /// <summary>
         /// Save the data to disk

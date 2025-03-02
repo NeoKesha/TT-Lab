@@ -10,7 +10,7 @@ namespace TT_Lab.Assets
     public class Folder : SerializableAsset
     {
         public override UInt32 Section => throw new NotImplementedException();
-        private static UInt32 rootOrder = 0;
+        private static UInt32 _rootOrder = 0;
         private UInt32 order = 0;
 
         public Folder()
@@ -20,41 +20,41 @@ namespace TT_Lab.Assets
             assetData = new FolderData();
         }
 
-        public static Folder CreatePackageFolder(Package package, String Name, String? variant = null)
+        public static Folder CreatePackageFolder(Package package, String name, String? variant = null)
         {
-            return new Folder((LabURI)$"res://{package.Name}", Name, variant, package);
+            return new Folder((LabURI)$"res://{package.Name}", name, variant, package);
         }
 
-        public static Folder CreatePackageFolder(Package package, String Name, Folder parent, String? variant = null)
+        public static Folder CreatePackageFolder(Package package, String name, Folder parent, String? variant = null)
         {
-            return new Folder((LabURI)$"res://{package.Name}", Name, variant, parent);
+            return new Folder((LabURI)$"res://{package.Name}", name, variant, parent);
         }
 
-        public static Folder CreatePS2Folder(String Name, String? variant = null)
+        public static Folder CreatePS2Folder(String name, String? variant = null)
         {
-            return new Folder((LabURI)"res://PS2", Name, variant);
+            return new Folder((LabURI)"res://PS2", name, variant);
         }
 
-        public static Folder CreatePS2Folder(String Name, Folder parent, String? variant = null)
+        public static Folder CreatePS2Folder(String name, Folder parent, String? variant = null)
         {
-            return new Folder((LabURI)"res://PS2", Name, variant, parent);
+            return new Folder((LabURI)"res://PS2", name, variant, parent);
         }
 
-        public static Folder CreateXboxFolder(String Name, String? variant = null)
+        public static Folder CreateXboxFolder(String name, String? variant = null)
         {
-            return new Folder((LabURI)"res://XBOX", Name, variant);
+            return new Folder((LabURI)"res://XBOX", name, variant);
         }
 
-        public static Folder CreateXboxFolder(String Name, Folder parent, String? variant = null)
+        public static Folder CreateXboxFolder(String name, Folder parent, String? variant = null)
         {
-            return new Folder((LabURI)"res://XBOX", Name, variant, parent);
+            return new Folder((LabURI)"res://XBOX", name, variant, parent);
         }
 
-        public Folder(LabURI package, String Name, String? variant = null) : this(package, Name, variant, null)
+        public Folder(LabURI package, String name, String? variant = null) : this(package, name, variant, null)
         {
         }
 
-        public Folder(LabURI package, String Name, String? variant = null, Folder? parent = null) : this(package, variant, (UInt32)Guid.NewGuid().GetHashCode(), Name)
+        public Folder(LabURI package, String name, String? variant = null, Folder? parent = null) : this(package, variant, (UInt32)Guid.NewGuid().GetHashCode(), name)
         {
             if (parent != null)
             {
@@ -63,11 +63,11 @@ namespace TT_Lab.Assets
             }
             else
             {
-                Order = rootOrder++;
+                Order = _rootOrder++;
             }
         }
 
-        protected Folder(LabURI package, String? variant, UInt32 id, String Name) : base(id, Name, package, variant != null, variant ?? "")
+        protected Folder(LabURI package, String? variant, UInt32 id, String name) : base(id, name, package, variant != null, variant ?? "")
         {
             IsLoaded = true;
             SkipExport = true;

@@ -254,6 +254,11 @@ namespace TT_Lab.Assets
             return GetAsset(labURI).GetData<T>();
         }
 
+        public ImmutableList<IAsset> GetAllAssetsOf<T>() where T : IAsset
+        {
+            return _assets.Values.Distinct().Where(asset => asset is T).ToImmutableList();
+        }
+
         /// <summary>
         /// 
         /// </summary>

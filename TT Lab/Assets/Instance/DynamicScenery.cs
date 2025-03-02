@@ -14,7 +14,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public DynamicScenery(LabURI package, UInt32 id, String Name, String chunk, ITwinDynamicScenery dynamicScenery) : base(package, id, Name, chunk, null)
+        public DynamicScenery(LabURI package, UInt32 id, String name, String chunk, ITwinDynamicScenery dynamicScenery) : base(package, id, name, chunk, null)
         {
             assetData = new DynamicSceneryData(dynamicScenery);
         }

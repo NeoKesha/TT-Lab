@@ -5,6 +5,7 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code.Behaviour;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.RM2.Code.AgentLab;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace TT_Lab.Assets.Code
 {
@@ -19,7 +20,7 @@ namespace TT_Lab.Assets.Code
 
         public BehaviourCommandsSequence() { }
 
-        public BehaviourCommandsSequence(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, PS2BehaviourCommandsSequence codeModel) : base(id, Name, package, needVariant, variant)
+        public BehaviourCommandsSequence(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinBehaviourCommandsSequence codeModel) : base(id, name, package, needVariant, variant)
         {
             assetData = new BehaviourCommandsSequenceData(codeModel);
             assetData.Import(package, variant, LayoutID);

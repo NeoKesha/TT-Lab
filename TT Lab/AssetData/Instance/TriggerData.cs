@@ -87,7 +87,7 @@ namespace TT_Lab.AssetData.Instance
             Position = CloneUtils.Clone(trigger.Trigger.Position);
             Rotation = CloneUtils.Clone(trigger.Trigger.Rotation);
             Scale = CloneUtils.Clone(trigger.Trigger.Scale);
-            Instances = new(trigger.Trigger.Instances.Count);
+            Instances = new List<LabURI>(trigger.Trigger.Instances.Count);
             foreach (var inst in trigger.Trigger.Instances)
             {
                 Instances.Add(AssetManager.Get().GetUri(package, typeof(ObjectInstance).Name, variant, layoutId, inst));

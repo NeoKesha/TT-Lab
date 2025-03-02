@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Graphics
         public override UInt32 Section => Constants.GRAPHICS_RIGID_MODELS_SECTION;
         public override String IconPath => "Mesh.png";
 
-        public RigidModel(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinRigidModel rigidModel) : base(id, Name, package, needVariant, variant)
+        public RigidModel(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinRigidModel rigidModel) : base(id, name, package, needVariant, variant)
         {
             assetData = new RigidModelData(rigidModel);
         }

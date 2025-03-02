@@ -16,7 +16,7 @@ namespace TT_Lab.Assets.Graphics
 
         public BlendSkin() { }
 
-        public BlendSkin(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinBlendSkin blendSkin) : base(id, Name, package, needVariant, variant)
+        public BlendSkin(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinBlendSkin blendSkin) : base(id, name, package, needVariant, variant)
         {
             assetData = new BlendSkinData(blendSkin);
         }

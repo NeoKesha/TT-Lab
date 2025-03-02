@@ -12,7 +12,7 @@ namespace TT_Lab.Assets.Graphics
 
         public Mesh() { }
 
-        public Mesh(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinMesh mesh) : base(package, needVariant, variant, id, Name, mesh)
+        public Mesh(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinMesh mesh) : base(package, needVariant, variant, id, name, mesh)
         {
             assetData = new MeshData(mesh);
         }

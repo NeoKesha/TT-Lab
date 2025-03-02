@@ -15,7 +15,7 @@ namespace TT_Lab.Assets.Instance
         {
         }
 
-        public Collision(LabURI package, UInt32 id, String Name, String chunk, ITwinCollision collisionData) : base(package, id, Name, chunk, null)
+        public Collision(LabURI package, UInt32 id, String name, String chunk, ITwinCollision collisionData) : base(package, id, name, chunk, null)
         {
             assetData = new CollisionData(collisionData);
         }

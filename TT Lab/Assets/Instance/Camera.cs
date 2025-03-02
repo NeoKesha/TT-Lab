@@ -14,7 +14,7 @@ namespace TT_Lab.Assets.Instance
         public override UInt32 Section => Constants.LAYOUT_CAMERAS_SECTION;
         public override String IconPath => "Camera.png";
 
-        public Camera(LabURI package, UInt32 id, String Name, String chunk, Int32 layId, ITwinCamera camera) : base(package, id, Name, chunk, layId)
+        public Camera(LabURI package, UInt32 id, String name, String chunk, Int32 layId, ITwinCamera camera) : base(package, id, name, chunk, layId)
         {
             assetData = new CameraData(camera);
             Parameters = new Dictionary<string, object?>

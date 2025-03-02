@@ -11,7 +11,7 @@ namespace TT_Lab.Assets.Graphics
         public override UInt32 Section => Constants.GRAPHICS_SKYDOMES_SECTION;
         public override String IconPath => "Skybox.png";
 
-        public Skydome(LabURI package, Boolean needVariant, String variant, UInt32 id, String Name, ITwinSkydome skydome) : base(id, Name, package, needVariant, variant)
+        public Skydome(LabURI package, Boolean needVariant, String variant, UInt32 id, String name, ITwinSkydome skydome) : base(id, name, package, needVariant, variant)
         {
             assetData = new SkydomeData(skydome);
         }

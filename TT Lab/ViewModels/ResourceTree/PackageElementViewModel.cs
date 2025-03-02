@@ -34,7 +34,6 @@ public class PackageElementViewModel : FolderElementViewModel
     protected override void ListCreatableAssets(CreateAssetViewModel createAssetViewModel)
     {
         // Only allow creating folders in packages
-        createAssetViewModel.RegisterAssetToCreate<Folder>("Folder");
     }
 
     public bool IsPackageEnabled

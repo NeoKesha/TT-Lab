@@ -12,17 +12,17 @@ namespace TT_Lab.Assets
             SkipExport = false;
         }
 
-        public ChunkFolder(LabURI package, String Name) : base(package, Name: Name, variant: Name)
+        public ChunkFolder(LabURI package, String name) : base(package, name: name, variant: name)
         {
             SkipExport = false;
         }
 
-        public ChunkFolder(LabURI package, String Name, Folder parent, String? variant = null) : base(package, Name: Name, variant, parent)
+        public ChunkFolder(LabURI package, String name, Folder parent, String? variant = null) : base(package, name: name, variant, parent)
         {
             SkipExport = false;
         }
 
-        protected ChunkFolder(LabURI package, UInt32 id, String Name) : base(package, variant: Name, id, Name: Name)
+        protected ChunkFolder(LabURI package, UInt32 id, String name) : base(package, variant: name, id, name: name)
         {
             SkipExport = false;
         }
