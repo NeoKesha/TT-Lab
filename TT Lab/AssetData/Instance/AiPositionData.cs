@@ -14,6 +14,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public AiPositionData()
         {
+            Coords = new Vector4(0, 0, 0, 1);
         }
 
         public AiPositionData(ITwinAIPosition aiPosition) : this()

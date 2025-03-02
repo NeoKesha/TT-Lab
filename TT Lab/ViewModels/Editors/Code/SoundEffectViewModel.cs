@@ -74,12 +74,13 @@ public class SoundEffectViewModel : ResourceEditorViewModel
         _audioPlayer = new AudioPlayer(_soundStream);
         _audioPlayer.OnPlaybackStopped += () =>
         {
-            if (_audioPlayer.GetPlaybackState() == PlaybackState.Stopped)
+            if (_audioPlayer.GetPlaybackState() != PlaybackState.Stopped)
             {
-                SoundProgress = 0;
-                _progressUpdater.Stop();
+                return;
             }
-            Log.WriteLine($"Sound playback stopped. Playback status: {_audioPlayer.GetPlaybackState()}");
+            
+            SoundProgress = 0;
+            _progressUpdater.Stop();
         };
 
         var sound = AssetManager.Get().GetAsset<SoundEffect>(EditableResource);

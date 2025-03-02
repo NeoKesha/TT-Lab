@@ -12,6 +12,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
     {
         public BehaviourGraphData()
         {
+            Graph = "";
         }
 
         public BehaviourGraphData(ITwinBehaviourGraph mainScript) : base(mainScript)

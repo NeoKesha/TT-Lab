@@ -15,7 +15,6 @@
         xmlns:adonisConverters="clr-namespace:AdonisUI.Converters;assembly=AdonisUI"
         xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
         xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
-        xmlns:svg="https://github.com/dotnetprojects/SVGImage"
         mc:Ignorable="d"
         d:DataContext="{Binding Source={d:DesignInstance viewmodels:ShellViewModel}}"
         cal:Bind.AtDesignTime="True"
@@ -33,11 +32,6 @@
             </Triggers:InputBindingTrigger.InputBinding>
             <cal:ActionMessage MethodName="SaveProject"/>
         </Triggers:InputBindingTrigger>
-        <!-- <i:EventTrigger EventName="Closing"> -->
-        <!--     <cal:ActionMessage MethodName="ClosingApplication"> -->
-        <!--         <cal:Parameter Value="$eventArgs"/> -->
-        <!--     </cal:ActionMessage> -->
-        <!-- </i:EventTrigger> -->
     </i:Interaction.Triggers>
     <Window.Style>
         <Style TargetType="adonisControls:AdonisWindow" BasedOn="{StaticResource {x:Type adonisControls:AdonisWindow}}"/>
@@ -160,19 +154,6 @@
                     <RowDefinition Height="25*"/>
                 </Grid.RowDefinitions>
                 <ContentControl x:Name="ActiveItem"/>
-                <!--<local:EditorsView cal:View.Model="{Binding}" x:Name="EditorsMainView"/>-->
-                <!--<TabControl x:Name="CentralViewerTabs" Margin="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" UseLayoutRounding="False" Style="{DynamicResource MainCenterTabStyle}">
-                    <TabItem x:Name="ScenesViewerTab" Header="Scenes Editors" HorizontalContentAlignment="Stretch" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
-                        <Grid>
-                            <TabControl x:Name="ScenesViewerTabs"/>
-                        </Grid>
-                    </TabItem>
-                    <TabItem x:Name="ResourcesEditorTab" Header="Resources Editors" Margin="0" Style="{DynamicResource MainCenterTabItemStyle}">
-                        <Grid>
-                            <TabControl x:Name="ResourcesEditorTabs"/>
-                        </Grid>
-                    </TabItem>
-                </TabControl>-->
                 <GridSplitter Margin="0" Background="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" Grid.Row="1"/>
                 <TabControl x:Name="LogTabs" Grid.Row="2">
                     <TabItem Header="Log">
@@ -186,7 +167,7 @@
                                         </cal:ActionMessage>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                                <TextBox x:Name="LogText" TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
+                                <TextBox x:Name="LogText" MaxLines="100" TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
                             </ScrollViewer>
                         </Grid>
                     </TabItem>
@@ -215,8 +196,14 @@
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                                 <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
                                     <Image Source="{Binding IconPath}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="24" Height="24" Margin="0,0,3,0" Stretch="Uniform"/>
-                                    <TextBlock x:Name="AssetBlock" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Alias}" Style="{DynamicResource TextBlockTreeViewStyle}">
+                                    <TextBlock x:Name="AssetBlock" Visibility="{Binding IsNotRenaming}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Alias}" Style="{DynamicResource TextBlockTreeViewStyle}">
+                                        <TextBlock.ContextMenu>
+                                            <ContextMenu ItemsSource="{Binding MenuOptions}"/>
+                                        </TextBlock.ContextMenu>
                                         <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="ContextMenuOpening">
+                                                <cal:ActionMessage MethodName="CreateContextMenuAction"/>
+                                            </i:EventTrigger>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <cal:ActionMessage MethodName="AssetBlockMouseDown">
                                                     <cal:Parameter Value="{Binding ElementName=ProjectTree, Path=SelectedItem}"/>
@@ -229,8 +216,26 @@
                                                     <cal:Parameter Value="$eventArgs"/>
                                                 </cal:ActionMessage>
                                             </i:EventTrigger>
+                                            <i:DataTrigger Binding="{Binding IsPackageEnabled}" Value="False">
+                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DisabledForegroundBrush}"></i:ChangePropertyAction>
+                                            </i:DataTrigger>
+                                            <i:DataTrigger Binding="{Binding IsPackageEnabled}" Value="True">
+                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource NormalBrush}"></i:ChangePropertyAction>
+                                            </i:DataTrigger>
                                         </i:Interaction.Triggers>
                                     </TextBlock>
+                                    <TextBox Text="{Binding NewAlias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{Binding IsRenaming}" IsVisibleChanged="UIElement_OnIsVisibleChanged">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="LostFocus">
+                                                <cal:ActionMessage MethodName="StopRenaming"/>
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <cal:ActionMessage MethodName="SaveRenaming">
+                                                    <cal:Parameter Value="$eventArgs"/>
+                                                </cal:ActionMessage>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
                                 </StackPanel>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>

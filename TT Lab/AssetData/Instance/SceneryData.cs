@@ -32,11 +32,11 @@ namespace TT_Lab.AssetData.Instance
             ChunkPath = "levels\\earth\\hub\\beach";
             SkydomeID = LabURI.Empty;
             HasLighting = false;
-            AmbientLights = new();
-            DirectionalLights = new();
-            PointLights = new();
-            NegativeLights = new();
-            Sceneries = new();
+            AmbientLights = new List<AmbientLight>();
+            DirectionalLights = new List<DirectionalLight>();
+            PointLights = new List<PointLight>();
+            NegativeLights = new List<NegativeLight>();
+            Sceneries = new List<SceneryBaseData>();
         }
 
         public SceneryData(ITwinScenery scenery) : this()

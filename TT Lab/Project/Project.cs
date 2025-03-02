@@ -957,7 +957,7 @@ namespace TT_Lab.Project
             ResolveGlobalAssets(factory, startupAssets, ref totalGlobals, ref currentGlobalsCount);
 
             System.IO.Directory.SetCurrentDirectory("../..");
-            Log.WriteLine("Finished writing test files!");
+            Log.WriteLine("Finished writing main archive files!");
         }
 
         public void PackAssetsXbox()

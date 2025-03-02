@@ -15,8 +15,8 @@ namespace TT_Lab.AssetData.Instance
     {
         public PathData()
         {
-            Points = new();
-            Parameters = new();
+            Points = new List<Vector4>();
+            Parameters = new List<Vector2>();
         }
 
         public PathData(ITwinPath path) : this()

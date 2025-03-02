@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using GlmSharp;
+using TT_Lab.Extensions;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 
@@ -35,8 +37,8 @@ namespace TT_Lab.AssetData.Instance
             Path = "levels\\earth\\hub\\beach";
             IsRendered = true;
             IsLoadWallActive = true;
-            ObjectMatrix = new Matrix4();
-            ChunkMatrix = new Matrix4();
+            ObjectMatrix = mat4.Identity.ToTwin();
+            ChunkMatrix = mat4.Identity.ToTwin();
             ChunkLinksCollisionData = new List<TwinChunkLinkBoundingBoxBuilder>();
         }
 

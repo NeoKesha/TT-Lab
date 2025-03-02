@@ -19,6 +19,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public CollisionSurfaceData()
         {
+            SurfaceID = SurfaceType.SURF_DEFAULT;
             PhysicsParameters = new float[10];
             UnkVec = new Vector4();
             UnkBoundingBox = new Vector4[2];

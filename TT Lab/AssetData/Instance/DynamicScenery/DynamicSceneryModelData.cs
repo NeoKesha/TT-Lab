@@ -21,7 +21,13 @@ namespace TT_Lab.AssetData.Instance.DynamicScenery
         public LabURI Mesh { get; set; }
         public Vector4[] BoundingBox { get; set; }
 
-        public DynamicSceneryModelData() { }
+        public DynamicSceneryModelData()
+        {
+            BoundingBoxBuilders = new List<TwinBoundingBoxBuilder>();
+            Animation = new TwinDynamicSceneryAnimation();
+            Mesh = LabURI.Empty;
+            BoundingBox = new[] { new Vector4(0, 0, 0, 1), new Vector4(10, 10, 10, 1) };
+        }
 
         public DynamicSceneryModelData(LabURI package, String? variant, TwinDynamicSceneryModel model)
         {

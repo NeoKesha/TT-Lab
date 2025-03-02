@@ -9,7 +9,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
 namespace TT_Lab.AssetData.Code
 {
-    public class SoundEffectData : AbstractAssetData
+    public sealed class SoundEffectData : AbstractAssetData
     {
         public SoundEffectData()
         {

@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using TT_Lab.AssetData;
 using TT_Lab.Attributes;
 using TT_Lab.Project;
 using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.ResourceTree;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
@@ -49,6 +51,7 @@ namespace TT_Lab.Assets
         protected SerializableAsset()
         {
             IsLoaded = false;
+            Type = GetType();
         }
 
         private SerializableAsset(UInt32 id, String name)
@@ -77,7 +80,7 @@ namespace TT_Lab.Assets
             URI = new LabURI($"{Package}/{Type.Name}/{ID}{variantAddition}{layoutId}");
         }
 
-        public virtual void Serialize(bool setDirectoryToAssets = false)
+        public virtual void Serialize(bool setDirectoryToAssets = false, bool saveData = true)
         {
             if (setDirectoryToAssets)
             {
@@ -94,7 +97,7 @@ namespace TT_Lab.Assets
 
             // Created or loaded data needs to be saved on disk but then disposed of since we are not going to need it
             // unless user wishes to edit the exact asset
-            if (assetData != null)
+            if (assetData != null && saveData)
             {
                 assetData.Save(Path.Combine(path, Data));
                 assetData.Dispose();
@@ -182,10 +185,20 @@ namespace TT_Lab.Assets
             Serialize();
         }
 
-        public virtual ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        public async Task<ResourceTreeElementViewModel> GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
         {
-            viewModel ??= new ResourceTreeElementViewModel(URI, parent);
+            if (viewModel == null)
+            {
+                viewModel = CreateResourceTreeElement(parent);
+                await viewModel.Init();
+            }
+
             return viewModel;
+        }
+
+        protected virtual ResourceTreeElementViewModel CreateResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        {
+            return new ResourceTreeElementViewModel(URI, parent);
         }
 
         private void RemoveReferencesFromData(object? data, LabURI reference)

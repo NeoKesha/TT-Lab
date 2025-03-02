@@ -1,4 +1,6 @@
-﻿using AdonisUI.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
+using AdonisUI.Controls;
 using Caliburn.Micro;
 using TT_Lab.Rendering;
 
@@ -24,6 +26,15 @@ namespace TT_Lab.Views
         private void AdonisWindow_LocationChanged(System.Object sender, System.EventArgs e)
         {
             IoC.Get<OgreWindowManager>().NotifyResizeAllWindows();
+        }
+
+        private void UIElement_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox != null && textBox.IsVisible)
+            {
+                textBox.Focus();
+            }
         }
     }
 }

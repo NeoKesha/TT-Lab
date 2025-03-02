@@ -19,6 +19,10 @@ namespace TT_Lab.AssetData.Instance
     {
         public TriggerData()
         {
+            Position = new Vector4(0, 0, 0, 1);
+            Rotation = new Vector4(0, 0, 0, 1);
+            Scale = new Vector4(1, 1, 1, 1);
+            Instances = new List<LabURI>();
         }
 
         public TriggerData(ITwinTrigger trigger) : this()

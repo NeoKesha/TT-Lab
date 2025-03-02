@@ -25,7 +25,22 @@ namespace TT_Lab.AssetData.Code
     {
         public GameObjectData()
         {
-
+            Name = "NewGameObject";
+            TriggerBehaviours = new List<ObjectTriggerBehaviourData>();
+            OGISlots = new List<LabURI>();
+            AnimationSlots = new List<LabURI>();
+            BehaviourSlots = new List<LabURI>();
+            ObjectSlots = new List<LabURI>();
+            SoundSlots = new List<LabURI>();
+            InstFlags = new List<UInt32>();
+            InstFloats = new List<float>();
+            InstIntegers = new List<UInt32>();
+            RefObjects = new List<LabURI>();
+            RefBehaviours = new List<LabURI>();
+            RefSounds = new List<LabURI>();
+            RefAnimations = new List<LabURI>();
+            RefOGIs = new List<LabURI>();
+            RefBehaviourCommandsSequences = new List<LabURI>();
         }
 
         public GameObjectData(ITwinObject gameObject)
@@ -441,7 +456,7 @@ namespace TT_Lab.AssetData.Code
     {
         public override ITwinBehaviourCommandPack ReadJson(JsonReader reader, Type objectType, ITwinBehaviourCommandPack? existingValue, Boolean hasExistingValue, JsonSerializer serializer)
         {
-            // By default create PS2 behaviour command pack
+            // By default, create PS2 behaviour command pack
             existingValue ??= new PS2BehaviourCommandPack();
             String? str = reader.Value!.ToString();
             using var stream = new MemoryStream();

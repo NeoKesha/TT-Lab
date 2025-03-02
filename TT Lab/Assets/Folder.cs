@@ -2,6 +2,7 @@
 using TT_Lab.AssetData;
 using TT_Lab.Assets.Factory;
 using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.ResourceTree;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
@@ -115,15 +116,9 @@ namespace TT_Lab.Assets
             return order++;
         }
 
-        public override ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        protected override ResourceTreeElementViewModel CreateResourceTreeElement(ResourceTreeElementViewModel? parent = null)
         {
-            if (viewModel == null)
-            {
-                viewModel = base.GetResourceTreeElement(parent);
-                viewModel.BuildChildren(this);
-            }
-            return viewModel;
+            return new FolderElementViewModel(URI, parent);
         }
-
     }
 }

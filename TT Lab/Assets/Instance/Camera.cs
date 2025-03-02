@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.ViewModels.Editors.Instance;
@@ -50,7 +51,7 @@ namespace TT_Lab.Assets.Instance
             }
         }
 
-        public override void Serialize(bool setDirectoryToAssets = false)
+        public override void Serialize(bool setDirectoryToAssets = false, bool saveData = true)
         {
             if (assetData != null)
             {
@@ -64,7 +65,7 @@ namespace TT_Lab.Assets.Instance
                     Parameters["MainCamera2Type"] = camData.MainCamera2.GetType();
                 }
             }
-            base.Serialize();
+            base.Serialize(setDirectoryToAssets, saveData);
         }
 
         public override AbstractAssetData GetData()

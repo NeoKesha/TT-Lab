@@ -15,8 +15,8 @@ namespace TT_Lab.AssetData.Instance
     {
         public ParticleData()
         {
-            ParticleSystems = new();
-            ParticleEmitters = new();
+            ParticleSystems = new List<TwinParticleSystem>();
+            ParticleEmitters = new List<TwinParticleEmitter>();
         }
 
         public ParticleData(ITwinParticle particleData) : this()

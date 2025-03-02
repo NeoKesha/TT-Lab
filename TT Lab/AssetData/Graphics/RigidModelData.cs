@@ -17,6 +17,8 @@ namespace TT_Lab.AssetData.Graphics
     {
         public RigidModelData()
         {
+            Materials = new List<LabURI>();
+            Model = LabURI.Empty;
         }
 
         public RigidModelData(ITwinRigidModel rigidModel) : this()

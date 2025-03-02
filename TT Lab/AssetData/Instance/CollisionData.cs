@@ -17,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public CollisionData()
         {
-            Vectors = new();
+            Vectors = new List<Vector4>();
         }
 
         public CollisionData(ITwinCollision collision) : this()
@@ -28,11 +28,11 @@ namespace TT_Lab.AssetData.Instance
         [JsonProperty(Required = Required.Always)]
         public UInt32 UnkInt { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTrigger> Triggers { get; set; } = new List<Collision.CollisionTrigger>();
+        public List<Collision.CollisionTrigger> Triggers { get; set; } = new();
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.GroupInformation> Groups { get; set; } = new List<Collision.GroupInformation>();
+        public List<Collision.GroupInformation> Groups { get; set; } = new();
         [JsonProperty(Required = Required.Always)]
-        public List<Collision.CollisionTriangle> Triangles { get; set; } = new List<Collision.CollisionTriangle>();
+        public List<Collision.CollisionTriangle> Triangles { get; set; } = new();
         [JsonProperty(Required = Required.Always)]
         public List<Vector4> Vectors { get; set; }
 

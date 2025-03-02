@@ -18,6 +18,7 @@ using TT_Lab.Rendering;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Editors;
+using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.ViewModels
 {
@@ -27,7 +28,7 @@ namespace TT_Lab.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly ProjectManager _projectManager;
         private readonly OgreWindowManager _ogreWindowManager;
-        private readonly Dictionary<String, String> _managerPropsToShellProps = new();
+        private readonly Dictionary<String, List<String>> _managerPropsToShellProps = new();
         private readonly DispatcherTimer _renderTimer = new();
 
         public ShellViewModel(IWindowManager windowManager, IEventAggregator eventAggregator, ProjectManager projectManager, OgreWindowManager ogreWindowManager)
@@ -38,15 +39,20 @@ namespace TT_Lab.ViewModels
             _ogreWindowManager = ogreWindowManager;
             _eventAggregator.SubscribeOnUIThread(this);
 
-            _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectTitle), nameof(WindowTitle));
-            _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectOpened), nameof(ProjectOpened));
-            _managerPropsToShellProps.Add(nameof(ProjectManager.RecentlyOpened), nameof(RecentlyOpened));
-            _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectTree), nameof(ProjectTree));
-            _managerPropsToShellProps.Add(nameof(ProjectManager.HasRecents), nameof(HasRecents));
-            _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), nameof(SearchAsset));
+            _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectTitle), new List<String> { nameof(WindowTitle) });
+            _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectOpened), new List<String> { nameof(ProjectOpened), nameof(TreeOptionsVisibility) });
+            _managerPropsToShellProps.Add(nameof(ProjectManager.RecentlyOpened), new List<String> { nameof(RecentlyOpened) });
+            _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectTree), new List<String> { nameof(ProjectTree) });
+            _managerPropsToShellProps.Add(nameof(ProjectManager.HasRecents), new List<String> { nameof(HasRecents) });
+            _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), new List<String> { nameof(SearchAsset) });
 
             CompositionTarget.Rendering += (sender, args) =>
             {
+                if (!IsActive)
+                {
+                    return;
+                }
+                
                 _ogreWindowManager.Render();
             };
         }
@@ -196,12 +202,15 @@ namespace TT_Lab.ViewModels
         {
             return Task.Factory.StartNew(() =>
                 {
-                    if (!_managerPropsToShellProps.TryGetValue(message.PropertyName, out String? propName))
+                    if (!_managerPropsToShellProps.TryGetValue(message.PropertyName, out List<String>? affectedProps))
                     {
                         return;
                     }
 
-                    NotifyOfPropertyChange(propName);
+                    foreach (var prop in affectedProps)
+                    {
+                        NotifyOfPropertyChange(prop);
+                    }
                 },
                 cancellationToken);
         }
@@ -219,6 +228,7 @@ namespace TT_Lab.ViewModels
                 Properties.Settings.Default.Save();
                 Preferences.Save();
             }
+            
             return base.OnDeactivateAsync(close, cancellationToken);
         }
 
@@ -226,6 +236,8 @@ namespace TT_Lab.ViewModels
         {
             get => _projectManager.RecentlyOpened;
         }
+
+        public Visibility TreeOptionsVisibility => ProjectOpened ? Visibility.Visible : Visibility.Collapsed;
 
         public String WindowTitle
         {

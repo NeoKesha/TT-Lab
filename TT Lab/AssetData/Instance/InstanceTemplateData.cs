@@ -18,6 +18,12 @@ namespace TT_Lab.AssetData.Instance
     {
         public InstanceTemplateData()
         {
+            TemplateName = "New Instance Template";
+            ObjectId = LabURI.Empty;
+            UnkBehaviourIds = new List<LabURI>();
+            Flags = new List<UInt32>();
+            Floats = new List<float>();
+            Ints = new List<UInt32>();
         }
 
         public InstanceTemplateData(ITwinTemplate template) : this()

@@ -15,6 +15,8 @@ namespace TT_Lab.AssetData.Code.Behaviour
     {
         public BehaviourCommandsSequenceData()
         {
+            Code = "";
+            BehaviourGraphIds = new List<UInt32>();
         }
 
         public BehaviourCommandsSequenceData(ITwinBehaviourCommandsSequence codeModel) : this()

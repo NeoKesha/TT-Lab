@@ -17,7 +17,7 @@ namespace TT_Lab.AssetData.Instance
     {
         public DynamicSceneryData()
         {
-            DynamicModels = new();
+            DynamicModels = new List<DynamicSceneryModelData>();
         }
 
         public DynamicSceneryData(ITwinDynamicScenery dynamicScenery) : this()

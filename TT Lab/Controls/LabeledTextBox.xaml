@@ -6,13 +6,16 @@
              xmlns:local="clr-namespace:TT_Lab.Controls"
              mc:Ignorable="d" 
              HorizontalAlignment="Left" VerticalAlignment="Top">
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="{Binding LayoutOrientation, RelativeSource={RelativeSource AncestorType=UserControl}}">
         <Label Content="{Binding TextBoxName, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom"/>
         <local:BaseTextBox
             Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Margin="0"
             TextWrapping="NoWrap"
+            Height="25"
+            MaxLines="1"
             VerticalAlignment="Top"
+            HorizontalAlignment="Stretch"
             IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
     </StackPanel>
 </UserControl>

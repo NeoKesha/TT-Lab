@@ -23,6 +23,7 @@ using TT_Lab.Rendering.Objects.SceneInstances;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors.Instance;
 using TT_Lab.ViewModels.Interfaces;
+using TT_Lab.ViewModels.ResourceTree;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Camera = TT_Lab.Rendering.Objects.Camera;
 using Collision = TT_Lab.Rendering.Objects.Collision;
@@ -387,11 +388,15 @@ namespace TT_Lab.ViewModels.Editors
             _sceneEditor.SceneCreator = glControl =>
             {
                 var assetManager = AssetManager.Get();
-                var chunkAss = assetManager.GetAsset(EditableResource).GetResourceTreeElement();
+                var task = assetManager.GetAsset(EditableResource).GetResourceTreeElement();
+                task.Wait();
+                var chunkAss = task.Result;
                 var chunk = chunkAss.GetAsset<ChunkFolder>();
                 foreach (var item in chunk.GetData().To<FolderData>().Children)
                 {
-                    _chunkTree.Add(assetManager.GetAsset(item).GetResourceTreeElement());
+                    task = assetManager.GetAsset(item).GetResourceTreeElement();
+                    task.Wait();
+                    _chunkTree.Add(task.Result);
                 }
                 _isDefault = chunk.Name.ToLower() == "default";
                 if (_isDefault)

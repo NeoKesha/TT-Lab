@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using GlmSharp;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Attributes;
+using TT_Lab.Extensions;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -21,6 +23,26 @@ namespace TT_Lab.AssetData.Code
     {
         public OGIData()
         {
+            BoundingBox = new[] { new Vector4(0, 0, 0, 1), new Vector4(10, 10, 10, 1) };
+            var rootJoint = new TwinJoint
+            {
+                Index = 0,
+                LocalRotation = new Vector4(0, 0, 0, 1),
+                LocalTranslation = new Vector4(0, 0, 0, 1),
+                ParentIndex = -1
+            };
+            Joints = new List<TwinJoint>
+            {
+                rootJoint
+            };
+            ExitPoints = new List<TwinExitPoint>();
+            JointIndices = new List<Byte> { 0 };
+            RigidModelIds = new List<LabURI> { LabURI.Empty };
+            SkinInverseMatrices = new List<Matrix4> { mat4.Identity.ToTwin() };
+            Skin = LabURI.Empty;
+            BlendSkin = LabURI.Empty;
+            BoundingBoxBuilders = new List<TwinBoundingBoxBuilder>();
+            BoundingBoxBuilderToJointIndex = new List<Byte>();
         }
 
         public OGIData(ITwinOGI ogi) : this()

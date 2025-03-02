@@ -1,5 +1,7 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using TT_Lab.Project.Messages;
 using TT_Lab.Rendering;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.Project
 {
@@ -301,13 +304,16 @@ namespace TT_Lab.Project
                         {
 #endif
                     Log.WriteLine($"Opening project {Path.GetFileName(prFile)}...");
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
                     Project.Deserialize(prFile);
                     Log.WriteLine($"Building project tree...");
-                    BuildProjectTree();
+                    BuildProjectTree().Wait();
                     WorkableProject = true;
                     _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
                     _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
                     _ogreWindowManager.AddResourceLocation(OpenedProject!.ProjectPath);
+                    Log.WriteLine($"Project opened in {stopwatch.Elapsed}");
                     GC.Collect();
 #if !DEBUG
                         }
@@ -374,7 +380,7 @@ namespace TT_Lab.Project
             _commandManager.Redo();
         }
 
-        private void BuildProjectTree()
+        private async Task BuildProjectTree()
         {
             var tree = (from asset in OpenedProject!.AssetManager.GetAssets()
                         where asset is Folder
@@ -382,9 +388,10 @@ namespace TT_Lab.Project
                         where folder.GetData().To<FolderData>().Parent == null
                         orderby folder.Order
                         select folder.GetResourceTreeElement());
-            ProjectTree = new BindableCollection<ResourceTreeElementViewModel>(tree);
+            var resultingTree = await Task.WhenAll(tree);
+            ProjectTree = new BindableCollection<ResourceTreeElementViewModel>(resultingTree);
             _internalTree.AddRange(ProjectTree);
-            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
+            await _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
         }
 
         private void AddRecentlyOpened(string path)
@@ -438,6 +445,8 @@ namespace TT_Lab.Project
                 Command = new OpenProjectCommand(recentPath),
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                 VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                HorizontalContentAlignment = System.Windows.HorizontalAlignment.Stretch,
+                VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
             };
         }
     }

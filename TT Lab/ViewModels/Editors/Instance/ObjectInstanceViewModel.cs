@@ -8,6 +8,7 @@ using TT_Lab.Command;
 using TT_Lab.Project.Messages;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
+using TT_Lab.ViewModels.ResourceTree;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ViewModels.Editors.Instance
@@ -187,35 +188,35 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
         [MarkDirty]
-        public ResourceTreeElementViewModel InstanceObject
+        public LabURI InstanceObject
         {
-            get => AssetManager.Get().GetAsset(objectId).GetResourceTreeElement();
+            get => objectId;
             set
             {
-                if (value.Asset.URI != objectId)
+                if (value != objectId)
                 {
-                    objectId = value.Asset.URI;
+                    objectId = value;
                     
                     NotifyOfPropertyChange();
                 }
             }
         }
         [MarkDirty]
-        public ResourceTreeElementViewModel? OnSpawnScript
+        public LabURI? OnSpawnScript
         {
             get
             {
                 if (onSpawnScriptId != LabURI.Empty)
                 {
-                    return AssetManager.Get().GetAsset(onSpawnScriptId).GetResourceTreeElement();
+                    return onSpawnScriptId;
                 }
                 return null;
             }
             set
             {
-                if (value?.Asset.URI != onSpawnScriptId)
+                if (value != onSpawnScriptId)
                 {
-                    onSpawnScriptId = value == null ? LabURI.Empty : value.Asset.URI;
+                    onSpawnScriptId = value == null ? LabURI.Empty : value;
                     
                     NotifyOfPropertyChange();
                 }

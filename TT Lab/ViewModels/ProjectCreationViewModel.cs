@@ -31,6 +31,7 @@ namespace TT_Lab.ViewModels
         const String PROJECT_NAME_TOO_LONG_ERROR = "Project name must be less than 32 characters long";
         const String PROJECT_PATH_EMPTY_ERROR = "Project path must not be empty";
         const String DISC_CONTENT_PATH_EMPTY_ERROR = "PS2 and XBox disc content paths must not be both empty";
+        const String PROJECT_ALREADY_EXISTS_IN_THAT_PATH = "Project on this path already exists";
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -47,6 +48,18 @@ namespace TT_Lab.ViewModels
         public ICommand SetPS2DiscContentPathCommand => new SelectFolderCommand(null, this, nameof(PS2DiscContentPath));
 
         public ICommand SetXboxDiscContentPathCommand => new SelectFolderCommand(null, this, nameof(XboxDiscContentPath));
+
+        protected override void OnViewReady(object view)
+        {
+            IsProjectNameValid(ProjectName);
+            IsProjectPathValid(ProjectPath);
+            if (IsDiscContentPathValid(nameof(PS2DiscContentPath), PS2DiscContentPath))
+            {
+                return;
+            }
+            
+            IsDiscContentPathValid(nameof(XboxDiscContentPath), XboxDiscContentPath);
+        }
 
         public Task Create()
         {
@@ -112,6 +125,26 @@ namespace TT_Lab.ViewModels
             if (String.IsNullOrEmpty(path))
             {
                 AddError(nameof(ProjectPath), PROJECT_PATH_EMPTY_ERROR);
+                return false;
+            }
+
+            if (Directory.Exists(path + "\\" + ProjectName))
+            {
+                AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
+                return false;
+            }
+            
+            var projectFilesCheck = Directory.GetFiles(path, "*.tson", SearchOption.TopDirectoryOnly);
+            if (projectFilesCheck.Length > 0)
+            {
+                AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
+                return false;
+            }
+            
+            projectFilesCheck = Directory.GetFiles(path, "*.xson", SearchOption.TopDirectoryOnly);
+            if (projectFilesCheck.Length > 0)
+            {
+                AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
                 return false;
             }
 
@@ -210,6 +243,7 @@ namespace TT_Lab.ViewModels
             {
                 IsProjectNameValid(value);
                 _projectName = value;
+                IsProjectPathValid(ProjectPath);
                 NotifyOfPropertyChange(nameof(ProjectName));
                 NotifyOfPropertyChange(nameof(CanCreate));
             }
@@ -222,10 +256,10 @@ namespace TT_Lab.ViewModels
             {
                 if (IsProjectPathValid(value) && _projectPath != value)
                 {
-                    _projectPath = value;
                     Settings.Default.ProjectPath = _projectPath;
-                    NotifyOfPropertyChange(nameof(ProjectPath));
                 }
+                _projectPath = value;
+                NotifyOfPropertyChange(nameof(ProjectPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
             }
         }
@@ -237,10 +271,10 @@ namespace TT_Lab.ViewModels
             {
                 if (IsDiscContentPathValid(nameof(XboxDiscContentPath), value) && _ps2DiscContentPath != value)
                 {
-                    _ps2DiscContentPath = value;
                     Settings.Default.PS2DiscContentPath = _ps2DiscContentPath;
-                    NotifyOfPropertyChange(nameof(PS2DiscContentPath));
                 }
+                _ps2DiscContentPath = value;
+                NotifyOfPropertyChange(nameof(PS2DiscContentPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
             }
         }
@@ -252,10 +286,10 @@ namespace TT_Lab.ViewModels
             {
                 if (IsDiscContentPathValid(nameof(PS2DiscContentPath), value) && _xboxDiscContentPath != value)
                 {
-                    _xboxDiscContentPath = value;
                     Settings.Default.XboxDiscContentPath = _xboxDiscContentPath;
-                    NotifyOfPropertyChange(nameof(XboxDiscContentPath));
                 }
+                _xboxDiscContentPath = value;
+                NotifyOfPropertyChange(nameof(XboxDiscContentPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
             }
         }

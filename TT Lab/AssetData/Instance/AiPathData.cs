@@ -15,6 +15,9 @@ namespace TT_Lab.AssetData.Instance
     {
         public AiPathData()
         {
+            PathBegin = LabURI.Empty;
+            PathEnd = LabURI.Empty;
+            Args = new UInt16[3];
         }
 
         public AiPathData(ITwinAIPath aiPath) : this()

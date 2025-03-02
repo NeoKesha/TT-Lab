@@ -14,6 +14,7 @@ using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Interfaces;
+using TT_Lab.ViewModels.ResourceTree;
 using Twinsanity.TwinsanityInterchange.Common;
 using static Twinsanity.TwinsanityInterchange.Common.TwinShader;
 using Vector4 = Twinsanity.TwinsanityInterchange.Common.Vector4;

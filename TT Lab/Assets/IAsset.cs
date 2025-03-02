@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TT_Lab.AssetData;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
+using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.Assets
 {
@@ -46,6 +48,9 @@ namespace TT_Lab.Assets
         [JsonProperty(Required = Required.Always)]
         String Name { get; set; }
 
+        /// <summary>
+        /// Path to the icon of the asset in the project tree
+        /// </summary>
         String IconPath { get; }
 
         /// <summary>
@@ -155,7 +160,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Returns asset's viewmodel for editing
         /// </summary>
-        ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null);
+        Task<ResourceTreeElementViewModel> GetResourceTreeElement(ResourceTreeElementViewModel? parent = null);
 
         /// <summary>
         /// Disposes of the contained data if it was loaded
@@ -200,7 +205,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Save the data to disk
         /// </summary>
-        void Serialize(bool setDirectoryToAssets = false);
+        void Serialize(bool setDirectoryToAssets = false, bool saveData = true);
 
         /// <summary>
         /// Read data from the disk

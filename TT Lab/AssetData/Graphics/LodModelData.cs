@@ -20,7 +20,7 @@ namespace TT_Lab.AssetData.Graphics
         public LodModelData()
         {
             ModelsDrawDistances = new Int32[3];
-            Meshes = new();
+            Meshes = new List<LabURI>();
         }
 
         public LodModelData(ITwinLOD lod) : this()

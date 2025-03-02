@@ -17,7 +17,7 @@ namespace TT_Lab.AssetData.Graphics
     {
         public SkydomeData()
         {
-            Meshes = new();
+            Meshes = new List<LabURI>();
         }
 
         public SkydomeData(ITwinSkydome skydome) : this()

@@ -582,7 +582,7 @@
                 <ControlTemplate TargetType="{x:Type ComboBox}">
                     <Grid>
                         <!-- The ToggleButton is databound to the ComboBox itself to toggle IsDropDownOpen -->
-                        <ToggleButton Grid.Column="2" Template="{DynamicResource ComboBoxToggleButton}" x:Name="ToggleButton" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
+                        <ToggleButton Template="{DynamicResource ComboBoxToggleButton}" x:Name="ToggleButton" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
                         <ContentPresenter HorizontalAlignment="Left" Margin="3,3,23,3" x:Name="ContentSite" VerticalAlignment="Center" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False"/>
                         
                         <!-- The TextBox must be Named PART_EditableTextBox or ComboBox will not recognize it -->
@@ -748,8 +748,8 @@
     
     <!-- Simple MenuItem - The template uses triggers to provide four different arrangements of menu item which are set via the Role property --> 
     <Style x:Key="SimpleMenuItem" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
-        <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-        <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type Control}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type Control}}}"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
@@ -760,7 +760,7 @@
                         <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
                         <ScrollViewer Margin="1" Style="{DynamicResource SimpleScrollViewer}" Focusable="false" Background="{TemplateBinding Background}">
 
-                            <!-- The StackPanel is used to display the children by setting IsItemsHost to be Trus -->
+                            <!-- The StackPanel is used to display the children by setting IsItemsHost to be True -->
                             <StackPanel Margin="2" IsItemsHost="true"/>
 
                         </ScrollViewer>
@@ -995,19 +995,19 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Margin="1,1,1,1"
-                Data="M 4 0 L 8 4 L 4 8 Z">
+                Data="M 0 0 L 8 4 L 0 8 Z">
                             <Path.Fill>
-                                <SolidColorBrush Color="Black" />
+                                <SolidColorBrush Color="LightGray" />
                             </Path.Fill>
                         </Path>
                         <Path x:Name="Expanded"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Margin="1,1,1,1"
-                Data="M 0 4 L 8 4 L 4 8 Z"
+                Data="M 0 0 L 8 0 L 4 8 Z"
                 Visibility="Hidden">
                             <Path.Fill>
-                                <SolidColorBrush Color="Black" />
+                                <SolidColorBrush Color="LightGray" />
                             </Path.Fill>
                         </Path>
                     </Grid>
@@ -1036,7 +1036,7 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <ToggleButton x:Name="Expander" Style="{DynamicResource ExpandCollapseToggleStyle}" IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
-                        <Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                        <Border Grid.Row="0" Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"/>
                         </Border>
                         <ItemsPresenter Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" x:Name="ItemsHost"/>
@@ -1111,7 +1111,7 @@
         <Setter Property="Visibility" Value="{Binding IsVisible, Mode=TwoWay}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="UseLayoutRounding" Value="True"/>
-        <Setter Property="ItemsControl.ItemsPanel">
+        <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel IsItemsHost="True"/>

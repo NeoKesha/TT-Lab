@@ -23,61 +23,53 @@
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBlock x:Name="AboutData_Description" TextWrapping="Wrap" Margin="0" Style="{DynamicResource AboutTextBlockStyle}"/>
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Version:</TextBlock>
-                <TextBlock Style="{DynamicResource AboutTextBlockStyle}" x:Name="AboutData_Version" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-                <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Authors:</TextBlock>
-                <TextBlock Style="{DynamicResource AboutTextBlockStyle}" x:Name="AboutData_Authors" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
-                <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Special Thanks:</TextBlock>
-                <TextBlock Style="{DynamicResource AboutTextBlockStyle}" x:Name="AboutData_SpecialThanks" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
-                <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Source Code:</TextBlock>
-                <TextBlock Style="{DynamicResource AboutTextBlockStyle}" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center">
-                    <Hyperlink NavigateUri="{Binding AboutData.SourceCodeLink}" RequestNavigate="Hyperlink_RequestNavigate">
-                        <TextBlock Text="{Binding AboutData.SourceCodeLink}"/>
-                    </Hyperlink>
-                </TextBlock>
-                <!--<TextBlock x:Name="CreditsBlock" FontSize="18" TextWrapping="Wrap" Grid.ColumnSpan="2" Grid.RowSpan="5">
-                    Github:
-                    <Hyperlink NavigateUri="https://github.com/NeoKesha/TT-Lab" RequestNavigate="Hyperlink_RequestNavigate">
-                        https://github.com/NeoKesha/TT-Lab
-                    </Hyperlink>
-                    <LineBreak/>
-                    Main Developers: Smartkin, Neo_Kesha
-                    <LineBreak/>
-                    Special Thanks: BetaM, SuperMoe, Marko, GPro
-                </TextBlock>-->
-            </Grid>
-
-        </Grid>
+    <GroupBox>
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Image Source="/Images/God_Messenger.png" Grid.RowSpan="2"/>
-        </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding AboutData.Description}" TextWrapping="Wrap" Margin="0" Style="{DynamicResource AboutTextBlockStyle}"/>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Version:</TextBlock>
+                    <TextBlock Style="{DynamicResource AboutTextBlockStyle}" Text="{Binding AboutData.Version}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+                    <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Authors:</TextBlock>
+                    <TextBlock Style="{DynamicResource AboutTextBlockStyle}" Text="{Binding AboutData.Authors}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+                    <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Special Thanks:</TextBlock>
+                    <TextBlock Style="{DynamicResource AboutTextBlockStyle}" Text="{Binding AboutData.SpecialThanks}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+                    <TextBlock Style="{DynamicResource AboutTextBlockHeaderStyle}" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Source Code:</TextBlock>
+                    <TextBlock Style="{DynamicResource AboutTextBlockStyle}" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center">
+                        <Hyperlink NavigateUri="{Binding AboutData.SourceCodeLink}" RequestNavigate="Hyperlink_RequestNavigate">
+                            <TextBlock Text="{Binding AboutData.SourceCodeLink}"/>
+                        </Hyperlink>
+                    </TextBlock>
+                </Grid>
 
-    </Grid>
+            </Grid>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Image Source="/Images/God_Messenger.png" Grid.RowSpan="2"/>
+            </Grid>
+        </Grid>
+    </GroupBox>
+
 </adonisControls:AdonisWindow>

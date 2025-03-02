@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using TT_Lab.AssetData;
+using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.Assets
 {
@@ -44,6 +45,11 @@ namespace TT_Lab.Assets
         public override Type GetEditorType()
         {
             throw new NotImplementedException();
+        }
+
+        protected override ResourceTreeElementViewModel CreateResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        {
+            return new PackageElementViewModel(URI, parent);
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace TT_Lab.Extensions
+﻿using GlmSharp;
+using Twinsanity.TwinsanityInterchange.Common;
+
+namespace TT_Lab.Extensions
 {
     public static class TwinsanityCommonExtensions
     {
@@ -20,6 +23,21 @@
         public static GlmSharp.vec3 ToGlm(this Twinsanity.TwinsanityInterchange.Common.Vector3 twinVec)
         {
             return new GlmSharp.vec3(twinVec.X, twinVec.Y, twinVec.Z);
+        }
+
+        public static Vector4 ToTwin(this vec4 vec)
+        {
+            return new Vector4(vec.x, vec.y, vec.z, vec.w);
+        }
+
+        public static Matrix4 ToTwin(this mat4 mat)
+        {
+            var twinMat = new Matrix4();
+            twinMat[0] = mat.Column0.ToTwin();
+            twinMat[1] = mat.Column1.ToTwin();
+            twinMat[2] = mat.Column2.ToTwin();
+            twinMat[3] = mat.Column3.ToTwin();
+            return twinMat;
         }
     }
 }

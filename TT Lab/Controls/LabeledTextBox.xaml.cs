@@ -29,6 +29,18 @@ namespace TT_Lab.Controls
             get => (bool)GetValue(IsReadOnlyProperty);
             set => SetValue(IsReadOnlyProperty, value);
         }
+        
+        [Description("Whether the textbox label is horizontal or vertical in relation to the textbox"), Category("Common Properties")]
+        public Orientation LayoutOrientation
+        {
+            get => (Orientation)GetValue(LayoutOrientationProperty);
+            set => SetValue(LayoutOrientationProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for LayoutOrientation.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LayoutOrientationProperty =
+            DependencyProperty.Register(nameof(LayoutOrientation), typeof(Orientation), typeof(LabeledTextBox),
+                new PropertyMetadata(Orientation.Vertical, OnLayoutOrientationChanged));
 
         public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(
             nameof(IsReadOnly), typeof(bool), typeof(LabeledTextBox), new PropertyMetadata(false));
@@ -52,6 +64,22 @@ namespace TT_Lab.Controls
         {
             var textBox = (LabeledTextBox)d;
             Log.WriteLine($"Changed text in {textBox.TextBoxName} to {e.NewValue}");
+        }
+        
+        private static void OnLayoutOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is LabeledTextBox control)
+            {
+                control.UpdateOrientation();
+            }
+        }
+
+        private void UpdateOrientation()
+        {
+            if (Content is StackPanel stackPanel)
+            {
+                stackPanel.Orientation = LayoutOrientation;
+            }
         }
     }
 }

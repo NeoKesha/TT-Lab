@@ -18,7 +18,7 @@ namespace TT_Lab.AssetData.Graphics
     {
         public MaterialData()
         {
-            Shaders = new();
+            Shaders = new List<LabShader>();
             Name = "NewMaterial";
         }
 

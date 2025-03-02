@@ -24,6 +24,18 @@ namespace TT_Lab.AssetData.Instance
             InstancesRelated = 10;
             PathsRelated = 10;
             PositionsRelated = 10;
+            Position = new Vector4(0, 0, 0, 1);
+            RotationX = new TwinIntegerRotation();
+            RotationY = new TwinIntegerRotation();
+            RotationZ = new TwinIntegerRotation();
+            Instances = new List<LabURI>();
+            Positions = new List<LabURI>();
+            Paths = new List<LabURI>();
+            ObjectId = LabURI.Empty;
+            OnSpawnScriptId = LabURI.Empty;
+            ParamList1 = new List<UInt32>();
+            ParamList2 = new List<float>();
+            ParamList3 = new List<UInt32>();
         }
 
         public ObjectInstanceData(ITwinInstance instance) : this()

@@ -17,6 +17,9 @@ namespace TT_Lab.AssetData.Instance
     {
         public CameraData()
         {
+            Trigger = new TriggerData();
+            UnkVector1 = new Vector4(0, 0, 0, 1);
+            UnkVector2 = new Vector4(0, 0, 0, 1);
         }
 
         public CameraData(Type? mainCam1T, Type? mainCam2T)
