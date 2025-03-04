@@ -20,6 +20,7 @@ using TT_Lab.Rendering;
 using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Objects.SceneInstances;
+using TT_Lab.ServiceProviders;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors.Instance;
 using TT_Lab.ViewModels.Interfaces;
@@ -80,6 +81,7 @@ namespace TT_Lab.ViewModels.Editors
             _inputController = new InputController(_sceneEditor);
             eventAggregator.SubscribeOnUIThread(this);
             _dirtyTracker = new DirtyTracker(this);
+            TwinIdGeneratorServiceProvider.RegisterGeneratorServiceForChunk(AssetManager.Get().GetAsset<ChunkFolder>(EditableResource));
             InitScene();
         }
 
@@ -92,6 +94,11 @@ namespace TT_Lab.ViewModels.Editors
 
         protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
         {
+            if (close)
+            {
+                TwinIdGeneratorServiceProvider.DeregisterGeneratorServiceForChunk(AssetManager.Get().GetAsset<ChunkFolder>(EditableResource));
+            }
+            
             _sceneEditor.RemoveInputListener(this);
             
             foreach (var item in Items.Select(s => s).ToArray())

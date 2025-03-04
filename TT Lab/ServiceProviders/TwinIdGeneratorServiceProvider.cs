@@ -4,14 +4,17 @@ using System.Diagnostics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Services;
 using TT_Lab.Services.Implementations;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ServiceProviders;
 
 public static class TwinIdGeneratorServiceProvider
 {
     private static Dictionary<Type, ITwinIdGeneratorService> _idGeneratorServices = new();
+    private static Dictionary<string, Dictionary<Type, ITwinIdGeneratorService>> _chunkIdGeneratorServices = new();
     
     static TwinIdGeneratorServiceProvider()
     {
@@ -49,9 +52,41 @@ public static class TwinIdGeneratorServiceProvider
         _idGeneratorServices.Add(typeof(T), gen);
     }
 
+    public static void RegisterGeneratorServiceForChunk(ChunkFolder chunk)
+    {
+        var chunkGenerators = new Dictionary<Type, ITwinIdGeneratorService>();
+        for (var i = 0; i < (int)Enums.Layouts.LAYER_8 + 1; ++i)
+        {
+            RegisterChunkGenerator<AiPath>((Enums.Layouts)i, chunk, chunkGenerators);
+            RegisterChunkGenerator<AiPosition>((Enums.Layouts)i, chunk, chunkGenerators);
+            RegisterChunkGenerator<Camera>((Enums.Layouts)i, chunk, chunkGenerators);
+            RegisterChunkGenerator<InstanceTemplate>((Enums.Layouts)i, chunk, chunkGenerators);
+            RegisterChunkGenerator<ObjectInstance>((Enums.Layouts)i, chunk, chunkGenerators);
+            RegisterChunkGenerator<Path>((Enums.Layouts)i, chunk, chunkGenerators);
+            RegisterChunkGenerator<Position>((Enums.Layouts)i, chunk, chunkGenerators);
+            RegisterChunkGenerator<Trigger>((Enums.Layouts)i, chunk, chunkGenerators);
+        }
+        _chunkIdGeneratorServices.Add(chunk.Chunk, chunkGenerators);
+    }
+
+    public static void DeregisterGeneratorServiceForChunk(ChunkFolder chunk)
+    {
+        _chunkIdGeneratorServices.Remove(chunk.Chunk);
+    }
+
+    private static void RegisterChunkGenerator<T>(Enums.Layouts layout, ChunkFolder folder, Dictionary<Type, ITwinIdGeneratorService> chunkGenerators) where T : SerializableInstance
+    {
+        chunkGenerators.Add(typeof(T), new TwinIdGeneratorServiceInstance<T>(layout, folder));
+    }
+
     public static ITwinIdGeneratorService GetGenerator<T>() where T : IAsset
     {
         return _idGeneratorServices[typeof(T)];
+    }
+
+    public static ITwinIdGeneratorService GetGeneratorForChunk<T>(ChunkFolder chunk) where T : SerializableInstance
+    {
+        return _chunkIdGeneratorServices[chunk.Chunk][typeof(T)];
     }
 
     public static ITwinIdGeneratorService GetGenerator(Type type)

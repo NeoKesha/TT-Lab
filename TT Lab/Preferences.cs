@@ -23,12 +23,12 @@ namespace TT_Lab
         private static readonly string PrefFilePath;
 
         // List of Named settings
-        public static readonly string TranslucencyMethod = "TranslucencyMethod";
+        public static readonly string SillinessEnabled = "SillinessEnabled";
 
         static Preferences()
         {
             PrefFilePath = Path.Combine(ExePath, PrefFileName);
-            Settings[TranslucencyMethod] = Rendering.RenderSwitches.TranslucencyMethod.WBOIT;
+            Settings[SillinessEnabled] = true;
         }
 
         public static void Save()
@@ -46,6 +46,17 @@ namespace TT_Lab
                 using StreamReader reader = new(settings);
                 JsonConvert.PopulateObject(reader.ReadToEnd(), Settings);
             }
+        }
+
+        public static void SetPreference(string prefName, Boolean value)
+        {
+            if ((Boolean)Settings[prefName] == value)
+            {
+                return;
+            }
+            
+            Settings[prefName] = value;
+            PreferenceChanged?.Invoke(null, new PreferenceChangedArgs { PreferenceName = prefName });
         }
 
         public static void SetPreference<T>(string prefName, T value) where T : class

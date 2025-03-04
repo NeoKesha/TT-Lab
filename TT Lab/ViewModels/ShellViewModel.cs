@@ -47,6 +47,7 @@ namespace TT_Lab.ViewModels
             _managerPropsToShellProps.Add(nameof(ProjectManager.ProjectTree), new List<String> { nameof(ProjectTree) });
             _managerPropsToShellProps.Add(nameof(ProjectManager.HasRecents), new List<String> { nameof(HasRecents) });
             _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), new List<String> { nameof(SearchAsset) });
+            _managerPropsToShellProps.Add(nameof(ProjectManager.IsCreatingProject), new List<String>{ nameof(IsCreatingProject), nameof(SadEasterEggVisibility) });
 
             CompositionTarget.Rendering += PerformRender;
         }
@@ -228,14 +229,18 @@ namespace TT_Lab.ViewModels
 
         protected override async Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
         {
+            if (close)
+            {
+                _deadgeRender = true;
+                Properties.Settings.Default.Save();
+                Preferences.Save();
+            }
+            
             await base.OnDeactivateAsync(close, cancellationToken);
 
             if (!cancellationToken.IsCancellationRequested && close)
             {
-                Properties.Settings.Default.Save();
-                Preferences.Save();
                 _dontRemind = true;
-                
                 CompositionTarget.Rendering -= PerformRender;
             }
             else
@@ -276,5 +281,9 @@ namespace TT_Lab.ViewModels
         {
             get => _projectManager.ProjectOpened;
         }
+
+        public Boolean IsCreatingProject => _projectManager.IsCreatingProject;
+        
+        public Visibility SadEasterEggVisibility => IsCreatingProject && Preferences.GetPreference<Boolean>(Preferences.SillinessEnabled) ? Visibility.Visible : Visibility.Collapsed;
     }
 }

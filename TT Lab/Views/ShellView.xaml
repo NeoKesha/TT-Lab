@@ -15,6 +15,7 @@
         xmlns:adonisConverters="clr-namespace:AdonisUI.Converters;assembly=AdonisUI"
         xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
         xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         d:DataContext="{Binding Source={d:DesignInstance viewmodels:ShellViewModel}}"
         cal:Bind.AtDesignTime="True"
@@ -169,6 +170,7 @@
                                 </i:Interaction.Triggers>
                                 <TextBox VerticalScrollBarVisibility="Disabled" x:Name="LogText" MaxLines="50" TextWrapping="Wrap" AllowDrop="False" IsReadOnly="True"/>
                             </ScrollViewer>
+                            <Image HorizontalAlignment="Right" Margin="10" Visibility="{Binding SadEasterEggVisibility}" gif:ImageBehavior.AnimatedSource="../Images/SadTransparent.gif"/>
                         </Grid>
                     </TabItem>
                 </TabControl>

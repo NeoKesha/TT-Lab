@@ -24,6 +24,7 @@ namespace TT_Lab.Project
         private readonly object _treeLock = new();
 
         private IProject? _openedProject;
+        private bool _isCreatingProject;
         private readonly CommandManager _commandManager = new();
         private OgreWindowManager _ogreWindowManager;
         private readonly BindableCollection<MenuItem> _recentMenus = new();
@@ -57,6 +58,16 @@ namespace TT_Lab.Project
             set
             {
                 _openedProject = value;
+                _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage());
+            }
+        }
+
+        public bool IsCreatingProject
+        {
+            get => _isCreatingProject;
+            set
+            {
+                _isCreatingProject = value;
                 _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage());
             }
         }
@@ -180,6 +191,7 @@ namespace TT_Lab.Project
         public void CreateProject(string name, string path, string? discContentPathPS2, string? discContentPathXbox)
         {
             Log.Clear();
+            IsCreatingProject = true;
             DateTime projCreateStart = DateTime.Now;
             var ps2ContentProvided = false;
             var xboxContentProvided = false;
@@ -255,6 +267,7 @@ namespace TT_Lab.Project
                 });
                 
                 WorkableProject = true;
+                IsCreatingProject = false;
                 _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
                 _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
                 GC.Collect();
@@ -308,7 +321,7 @@ namespace TT_Lab.Project
                     stopwatch.Start();
                     Project.Deserialize(prFile);
                     Log.WriteLine($"Building project tree...");
-                    BuildProjectTree().Wait();
+                    BuildProjectTree();
                     WorkableProject = true;
                     _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectOpened)));
                     _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTitle)));
@@ -380,7 +393,7 @@ namespace TT_Lab.Project
             _commandManager.Redo();
         }
 
-        private async Task BuildProjectTree()
+        private void BuildProjectTree()
         {
             var tree = (from asset in OpenedProject!.AssetManager.GetAssets()
                         where asset is Folder
@@ -390,7 +403,7 @@ namespace TT_Lab.Project
                         select folder.GetResourceTreeElement());
             ProjectTree = new BindableCollection<ResourceTreeElementViewModel>(tree);
             _internalTree.AddRange(ProjectTree);
-            await _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
+            _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
         }
 
         private void AddRecentlyOpened(string path)

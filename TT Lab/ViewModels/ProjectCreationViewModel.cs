@@ -208,7 +208,9 @@ namespace TT_Lab.ViewModels
             {
                 _dataValidatorService.ValidateProperty(value, nameof(ProjectName));
                 _projectName = value;
+                _dataValidatorService.ValidateProperty(ProjectPath, nameof(ProjectPath));
                 NotifyOfPropertyChange(nameof(ProjectName));
+                NotifyOfPropertyChange(nameof(ProjectPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
             }
         }
@@ -218,10 +220,8 @@ namespace TT_Lab.ViewModels
             get => _projectPath;
             set
             {
-                if (_dataValidatorService.ValidateProperty(value) && _projectPath != value)
-                {
-                    Settings.Default.ProjectPath = _projectPath;
-                }
+                _dataValidatorService.ValidateProperty(value);
+                Settings.Default.ProjectPath = _projectPath;
                 _projectPath = value;
                 _dataValidatorService.ValidateProperty(ProjectName, nameof(ProjectName));
                 NotifyOfPropertyChange(nameof(ProjectPath));
@@ -235,10 +235,8 @@ namespace TT_Lab.ViewModels
             get => _ps2DiscContentPath;
             set
             {
-                if (_dataValidatorService.ValidateProperty(value) && _ps2DiscContentPath != value)
-                {
-                    Settings.Default.PS2DiscContentPath = _ps2DiscContentPath;
-                }
+                _dataValidatorService.ValidateProperty(value);
+                Settings.Default.PS2DiscContentPath = _ps2DiscContentPath;
                 _ps2DiscContentPath = value;
                 NotifyOfPropertyChange(nameof(PS2DiscContentPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
@@ -250,10 +248,8 @@ namespace TT_Lab.ViewModels
             get => _xboxDiscContentPath;
             set
             {
-                if (_dataValidatorService.ValidateProperty(value) && _xboxDiscContentPath != value)
-                {
-                    Settings.Default.XboxDiscContentPath = _xboxDiscContentPath;
-                }
+                _dataValidatorService.ValidateProperty(value);
+                Settings.Default.XboxDiscContentPath = _xboxDiscContentPath;
                 _xboxDiscContentPath = value;
                 NotifyOfPropertyChange(nameof(XboxDiscContentPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
