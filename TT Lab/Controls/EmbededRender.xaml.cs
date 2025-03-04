@@ -3,6 +3,8 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Threading;
 using TT_Lab.Rendering;
 
 namespace TT_Lab.Controls
@@ -36,10 +38,15 @@ namespace TT_Lab.Controls
             {
                 return;
             }
-
+            
             Loaded += EmbededRender_Loaded;
             Unloaded += EmbededRender_Unloaded;
             windowManager = IoC.Get<OgreWindowManager>();
+        }
+
+        private void CompositionTargetOnRendering(object? sender, EventArgs e)
+        {
+            Dispatcher.Invoke(() => { }, DispatcherPriority.Render);
         }
 
         public OgreWindow GetRenderWindow()
@@ -56,6 +63,7 @@ namespace TT_Lab.Controls
         {
             SizeChanged += EmbededRender_SizeChanged;
             LocationChanged += EmbededRender_LocationChanged;
+            CompositionTarget.Rendering += CompositionTargetOnRendering;
 
             NotifyOrInitiliazeRenderWindow((int)RenderSize.Width, (int)RenderSize.Height);
             window.SetVisibility(true);
@@ -78,6 +86,7 @@ namespace TT_Lab.Controls
                 window.SetVisibility(false);
             }
 
+            CompositionTarget.Rendering -= CompositionTargetOnRendering;
             LocationChanged -= EmbededRender_LocationChanged;
             SizeChanged -= EmbededRender_SizeChanged;
         }
@@ -104,6 +113,7 @@ namespace TT_Lab.Controls
             {
                 wasInitialized = true;
                 window = windowManager.CreateWindow(new WindowInteropHelper(this).Handle, (uint)width, (uint)height);
+                window.SetOwner(this);
                 RaiseEvent(new EmbedRenderRoutedEventArgs(EmbedRenderInitializedEvent, window));
             }
 

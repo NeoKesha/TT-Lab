@@ -7,6 +7,7 @@
                 xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels"
                 xmlns:models="clr-namespace:TT_Lab.Models"
                 xmlns:controls="clr-namespace:TT_Lab.Controls"
+                xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
                 xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
                 xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
                 d:DataContext="{Binding Source={d:DesignInstance viewmodels:CreateAssetViewModel}}"
@@ -23,7 +24,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <GroupBox Margin="5" Grid.Row="0" Header="Pick asset to create">
-                <ListBox SelectedItem="{Binding SelectedCreationModel, Mode=TwoWay}" ItemsSource="{Binding CreatableAssets}">
+                <ListBox SelectedItem="{Binding SelectedCreationModel, Mode=TwoWay}" SelectionChanged="Selector_OnSelectionChanged" ItemsSource="{Binding CreatableAssets}">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:AssetCreationPreviewModel}">
                             <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
@@ -35,14 +36,9 @@
                 </ListBox>
             </GroupBox>
             <Grid Margin="5" Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="3*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Margin="0, 0, 5, 0" HorizontalAlignment="Center" VerticalAlignment="Center">Asset Name</Label>
-                <TextBox Text="{Binding AssetName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Column="1" MaxHeight="25"/>
+                <TextBox x:Name="AssetName" Loaded="AssetName_OnLoaded" adonisExtensions:WatermarkExtension.Watermark="Asset Name..." Text="{Binding AssetName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnValidationError=True}" MaxHeight="25"/>
             </Grid>
-            <Button x:Name="CreateAssetButton" Margin="5" Grid.Row="2" Content="Create"/>
+            <Button IsDefault="True" IsEnabled="{Binding CanCreate}" x:Name="CreateAssetButton" Margin="5" Grid.Row="2" Content="Create"/>
         </Grid>
     </GroupBox>
 </adonisControls:AdonisWindow>

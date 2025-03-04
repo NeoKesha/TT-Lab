@@ -30,6 +30,8 @@ namespace TT_Lab.ViewModels
         private readonly OgreWindowManager _ogreWindowManager;
         private readonly Dictionary<String, List<String>> _managerPropsToShellProps = new();
         private readonly DispatcherTimer _renderTimer = new();
+        private Boolean _dontRemind = false;
+        private Boolean _deadgeRender = false;
 
         public ShellViewModel(IWindowManager windowManager, IEventAggregator eventAggregator, ProjectManager projectManager, OgreWindowManager ogreWindowManager)
         {
@@ -46,21 +48,18 @@ namespace TT_Lab.ViewModels
             _managerPropsToShellProps.Add(nameof(ProjectManager.HasRecents), new List<String> { nameof(HasRecents) });
             _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), new List<String> { nameof(SearchAsset) });
 
-            CompositionTarget.Rendering += (sender, args) =>
-            {
-                if (!IsActive)
-                {
-                    return;
-                }
-                
-                _ogreWindowManager.Render();
-            };
+            CompositionTarget.Rendering += PerformRender;
         }
 
-        // private void PerformRender(Object? sender, EventArgs e)
-        // {
-        //     _ogreWindowManager.Render();
-        // }
+        private void PerformRender(Object? sender, EventArgs e)
+        {
+            if (_deadgeRender)
+            {
+                return;
+            }
+            
+            _ogreWindowManager.Render();
+        }
 
         public Task About()
         {
@@ -195,6 +194,12 @@ namespace TT_Lab.ViewModels
 
         public override async Task<Boolean> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
         {
+            _deadgeRender = true;
+            if (_dontRemind)
+            {
+                return true;
+            }
+            
             return await ActiveItem.CanCloseAsync(cancellationToken);
         }
 
@@ -221,15 +226,22 @@ namespace TT_Lab.ViewModels
             return base.OnInitializeAsync(cancellationToken);
         }
 
-        protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
+        protected override async Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
         {
-            if (close)
+            await base.OnDeactivateAsync(close, cancellationToken);
+
+            if (!cancellationToken.IsCancellationRequested && close)
             {
                 Properties.Settings.Default.Save();
                 Preferences.Save();
+                _dontRemind = true;
+                
+                CompositionTarget.Rendering -= PerformRender;
             }
-            
-            return base.OnDeactivateAsync(close, cancellationToken);
+            else
+            {
+                _deadgeRender = false;
+            }
         }
 
         public BindableCollection<MenuItem> RecentlyOpened

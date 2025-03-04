@@ -43,7 +43,7 @@ namespace TT_Lab.ViewModels
 
         public ResourceEditorViewModel()
         {
-            _unsavedChangesCommand = new OpenDialogueCommand(typeof(UnsavedChangesDialogue), _dialogueResult);
+            _unsavedChangesCommand = new OpenDialogueCommand(() => new UnsavedChangesDialogue(_dialogueResult, AssetManager.Get().GetAsset(EditableResource).GetResourceTreeElement()));
             DirtyTracker = new DirtyTracker(this, () =>
             {
                 EditorChangesHappened();

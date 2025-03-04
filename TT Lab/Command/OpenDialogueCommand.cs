@@ -12,17 +12,11 @@ namespace TT_Lab.Command
             public object? Result;
         }
 
-        private readonly Type window;
-        private readonly DialogueResult? result;
+        private readonly Func<Window> _getWindow;
 
-        public OpenDialogueCommand(Type target)
+        public OpenDialogueCommand(Func<Window> getWindow)
         {
-            window = target;
-        }
-
-        public OpenDialogueCommand(Type target, DialogueResult resultRef) : this(target)
-        {
-            result = resultRef;
+            _getWindow = getWindow;
         }
 
         public Boolean CanExecute(Object? parameter)
@@ -32,16 +26,7 @@ namespace TT_Lab.Command
 
         public void Execute(Object? parameter = null)
         {
-            Window w;
-            if (result == null)
-            {
-                w = (Window)Activator.CreateInstance(window)!;
-            }
-            else
-            {
-                w = (Window)Activator.CreateInstance(window, result)!;
-            }
-            w.ShowDialog();
+            _getWindow.Invoke().ShowDialog();
         }
 
         public void Unexecute()

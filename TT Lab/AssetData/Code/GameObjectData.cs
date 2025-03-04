@@ -48,7 +48,7 @@ namespace TT_Lab.AssetData.Code
             SetTwinItem(gameObject);
         }
 
-        public GameObjectData(String path) => Load(path, new()
+        public GameObjectData(String path) => Load(path, new JsonSerializerSettings
         {
             Converters = new List<JsonConverter>()
             {

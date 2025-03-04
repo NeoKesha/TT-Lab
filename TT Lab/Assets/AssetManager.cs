@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using TT_Lab.AssetData;
 using TT_Lab.Project;
@@ -254,9 +255,20 @@ namespace TT_Lab.Assets
             return GetAsset(labURI).GetData<T>();
         }
 
+        /// <summary>
+        /// Gets all assets of a particular type
+        /// </summary>
+        /// <typeparam name="T">Asset type deriving from <see cref="IAsset"/> </typeparam>
+        /// <returns></returns>
         public ImmutableList<IAsset> GetAllAssetsOf<T>() where T : IAsset
         {
             return _assets.Values.Distinct().Where(asset => asset is T).ToImmutableList();
+        }
+
+        public ImmutableList<IAsset> GetAllAssetsOf(Type type)
+        {
+            Debug.Assert(type.IsAssignableTo(typeof(IAsset)), $"Given type {type.Name} must implement IAsset");
+            return _assets.Values.Distinct().Where(asset => asset.GetType() == type).ToImmutableList();
         }
 
         /// <summary>

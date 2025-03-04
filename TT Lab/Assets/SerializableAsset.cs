@@ -235,18 +235,16 @@ namespace TT_Lab.Assets
                 return;
             }
             
-            Log.WriteLine($"Found reference {AssetManager.Get().GetAsset(reference).Name} to remove in {Name}");
-            
             RemoveReferencesFromData(GetData(), reference);
             Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData | SerializationFlags.FixReferences);
         }
 
-        public async Task<ResourceTreeElementViewModel> GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        public ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null)
         {
             if (viewModel == null)
             {
                 viewModel = CreateResourceTreeElement(parent);
-                await viewModel.Init();
+                viewModel.Init();
             }
 
             return viewModel;

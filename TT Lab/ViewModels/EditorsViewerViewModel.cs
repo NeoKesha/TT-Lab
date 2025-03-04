@@ -11,18 +11,8 @@ namespace TT_Lab.ViewModels
 {
     public abstract class EditorsViewerViewModel : Conductor<TabbedEditorViewModel>.Collection.OneActive
     {
-        protected readonly Dictionary<LabURI, TabbedEditorViewModel> ActiveEditors = new();
-
         public virtual async Task CloseEditorTab(TabbedEditorViewModel editor)
         {
-            var canClose = await editor.CanCloseAsync();
-            if (!canClose)
-            {
-                return;
-            }
-            
-            RemoveCurrentActiveEditor();
-            
             await DeactivateItemAsync(editor, true);
         }
 
@@ -34,7 +24,7 @@ namespace TT_Lab.ViewModels
         public override async Task<Boolean> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             var result = true;
-            foreach (var editor in ActiveEditors.Values)
+            foreach (var editor in Items)
             {
                 result = await editor.ActiveItem.CanCloseAsync(cancellationToken);
                 if (!result)
@@ -48,47 +38,16 @@ namespace TT_Lab.ViewModels
 
         public virtual void Save()
         {
-            foreach (var item in ActiveEditors)
+            foreach (var item in Items)
             {
-                item.Value.ActiveItem.SaveChanges();
+                item.ActiveItem.SaveChanges();
             }
         }
 
-        protected void RemoveCurrentActiveEditor()
-        {
-            if (ActiveEditors.Count <= 0)
-            {
-                return;
-            }
-            
-            if (ActiveEditors.FirstOrDefault(kv => kv.Value == ActiveItem,
-                    new KeyValuePair<LabURI, TabbedEditorViewModel>(LabURI.Empty, null)).Key == LabURI.Empty)
-            {
-                return;
-            }
-                
-            ActiveEditors.Remove(ActiveEditors.First(kv => kv.Value == ActiveItem).Key);
-        }
 
         protected override Task OnDeactivateAsync(Boolean close, CancellationToken cancellationToken)
         {
             DeactivateItemAsync(ActiveItem, close, cancellationToken);
-
-            if (ActiveEditors.Count > 0)
-            {
-                if (!close)
-                {
-                    if (ActiveEditors.FirstOrDefault(kv => kv.Value == ActiveItem,
-                            new KeyValuePair<LabURI, TabbedEditorViewModel>(LabURI.Empty, null)).Key != LabURI.Empty)
-                    {
-                        ActiveEditors.Remove(ActiveEditors.First(kv => kv.Value == ActiveItem).Key);
-                    }
-                }
-                else
-                {
-                    ActiveEditors.Clear();
-                }
-            }
 
             GC.Collect();
             return base.OnDeactivateAsync(close, cancellationToken);

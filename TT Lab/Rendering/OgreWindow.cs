@@ -7,10 +7,12 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using GlmSharp;
+using TT_Lab.Controls;
 using TT_Lab.Extensions;
 using TT_Lab.Libraries;
 using Cursors = System.Windows.Input.Cursors;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using Math = org.ogre.Math;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace TT_Lab.Rendering
@@ -29,10 +31,10 @@ namespace TT_Lab.Rendering
         private SceneManager _sceneManager;
         private bool _mousePositionIsInvalid = true;
         private Point _mousePrevPos;
-        private Point _nativeMousePrevPos;
         private bool _isClosed = false;
         private bool _canLeftClickToMoveCamera = true;
         private readonly List<InputListener> _inputListeners = new();
+        private EmbededRender _owner;
 
         public event EventHandler? OnRender;
 
@@ -45,6 +47,11 @@ namespace TT_Lab.Rendering
         public void SetInternalWindow(NativeWindowPair internalWindow)
         {
             _internalWindow = internalWindow;
+        }
+
+        public void SetOwner(EmbededRender owner)
+        {
+            _owner = owner;
         }
 
         public NativeWindowPair GetNative()
@@ -87,6 +94,41 @@ namespace TT_Lab.Rendering
             return false;
         }
 
+        private bool WrapCursor(Point cursorPos)
+        {
+            var wrappedCursor = false;
+            
+            var left = (int)_owner.Left;
+            var top = (int)_owner.Top;
+            var right = (int)(_owner.Left + _owner.Width);
+            var bottom = (int)(_owner.Top + _owner.Height);
+            const int border = 5;
+            
+            if (cursorPos.X - border <= left)
+            {
+                OsNative.SetCursorPos(right - border * 2, (int)cursorPos.Y);
+                wrappedCursor = true;
+            }
+            else if (cursorPos.X + border >= right)
+            {
+                OsNative.SetCursorPos(left + border * 2, (int)cursorPos.Y);
+                wrappedCursor = true;
+            }
+
+            if (cursorPos.Y - border <= top)
+            {
+                OsNative.SetCursorPos((int)cursorPos.X, bottom - border * 2);
+                wrappedCursor = true;
+            }
+            else if (cursorPos.Y + border >= bottom)
+            {
+                OsNative.SetCursorPos((int)cursorPos.X, top + border * 2);
+                wrappedCursor = true;
+            }
+
+            return wrappedCursor;
+        }
+
         public bool HandleMouseMove(Point mousePos, MouseEventArgs mouseEvent)
         {
             MakeMousePositionValid(mousePos);
@@ -94,24 +136,30 @@ namespace TT_Lab.Rendering
             using var motionEvent = new MouseMotionEvent();
             motionEvent.x = (int)mousePos.X;
             motionEvent.y = (int)mousePos.Y;
-            motionEvent.xrel = (int)(OsNative.GetMousePosition().X - _nativeMousePrevPos.X);
-            motionEvent.yrel = (int)(OsNative.GetMousePosition().Y - _nativeMousePrevPos.Y);
+            motionEvent.xrel = (int)(mousePos.X - _mousePrevPos.X);
+            motionEvent.yrel = (int)(mousePos.Y - _mousePrevPos.Y);
 
             var eventConsumed = _inputListeners.Any(inputListener => inputListener.mouseMoved(motionEvent));
 
             if (mouseEvent.RightButton == MouseButtonState.Pressed || mouseEvent.LeftButton == MouseButtonState.Pressed)
             {
+                if (Math.RealEqual(motionEvent.xrel, 0, float.Epsilon) ||
+                    Math.RealEqual(motionEvent.yrel, 0, float.Epsilon))
+                {
+                    var screenPosition = _owner.PointToScreen(mousePos);
+                    _mousePositionIsInvalid = WrapCursor(screenPosition);
+                }
+                
                 if (!eventConsumed && (mouseEvent.RightButton == MouseButtonState.Pressed || (mouseEvent.LeftButton == MouseButtonState.Pressed && _canLeftClickToMoveCamera)))
                 {
                     eventConsumed = _camera.mouseMoved(motionEvent);
                 }
-
-                mouseEvent.MouseDevice.OverrideCursor = Cursors.None;
-                OsNative.SetCursorPos((int)_nativeMousePrevPos.X, (int)_nativeMousePrevPos.Y);
+                
+                OsNative.RestrictCursorToWindow(_owner);
             }
             else
             {
-                mouseEvent.MouseDevice.OverrideCursor = Cursors.Arrow;
+                OsNative.FreeCursor();
                 _mousePositionIsInvalid = true;
             }
             
@@ -266,7 +314,7 @@ namespace TT_Lab.Rendering
             _camera.frameRendered(frameEvent);
         }
 
-        public void Render()
+        public void Render(float elapsedTime)
         {
             var overlaysEnabled = _internalWindow.render.getViewport(0).getOverlaysEnabled();
             if (overlaysEnabled)
@@ -319,7 +367,6 @@ namespace TT_Lab.Rendering
             }
             
             _mousePrevPos = mousePos;
-            _nativeMousePrevPos = OsNative.GetMousePosition();
             _mousePositionIsInvalid = false;
         }
     }

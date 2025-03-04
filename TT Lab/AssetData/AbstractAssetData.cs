@@ -30,6 +30,9 @@ namespace TT_Lab.AssetData
         {
             using System.IO.FileStream fs = new(dataPath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             using System.IO.StreamReader reader = new(fs);
+            settings ??= new JsonSerializerSettings();
+            settings.ObjectCreationHandling = ObjectCreationHandling.Replace;
+            
             JsonConvert.PopulateObject(value: reader.ReadToEnd(), target: this, settings);
             disposedValue = false;
         }

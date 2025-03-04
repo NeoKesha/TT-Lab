@@ -16,6 +16,8 @@ namespace TT_Lab.Rendering
         private NativeWindowPair _internalWindow;
         private readonly List<OgreWindow> _ogreWindows = new();
         private bool _isInitialized = false;
+        private bool _isDisposed = false;
+        private Stopwatch _renderWatch = new();
 
         public OgreWindowManager() { }
 
@@ -122,23 +124,31 @@ namespace TT_Lab.Rendering
         /// </summary>
         public void Render()
         {
-            if (_ogreWindows.Count == 0)
+            if (_ogreWindows.Count == 0 || _isDisposed)
             {
                 return;
+            }
+            
+            var elapsed =  System.Math.Max(_renderWatch.ElapsedMilliseconds / 1000.0f, 1.0f / 60.0f);
+            if (Math.RealEqual(elapsed, 0.0f, float.Epsilon))
+            {
+                elapsed = 1.0f / 60.0f;
             }
 
             FrameEvent evt = new()
             {
-                timeSinceLastEvent = 1.0f / 60.0f,
-                timeSinceLastFrame = 1.0f / 60.0f,
+                timeSinceLastEvent = elapsed,
+                timeSinceLastFrame = elapsed,
             };
             
-            getRoot().renderOneFrame(1.0f / 60.0f);
+            getRoot().renderOneFrame(elapsed);
             foreach (var window in _ogreWindows.Where(window => !window.IsHidden()))
             {
-                window.Render();
+                window.Render(elapsed);
                 window.FrameUpdated(evt);
             }
+            
+            _renderWatch.Restart();
         }
 
         public override Boolean frameRenderingQueued(FrameEvent evt)
@@ -186,6 +196,7 @@ namespace TT_Lab.Rendering
             _internalWindow.Dispose();
             closeApp();
             Dispose();
+            _isDisposed = true;
         }
     }
 }

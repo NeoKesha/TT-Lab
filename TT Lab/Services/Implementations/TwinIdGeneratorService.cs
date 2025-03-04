@@ -12,8 +12,12 @@ public class TwinIdGeneratorService<T> : ITwinIdGeneratorService where T : IAsse
     public virtual UInt32 GenerateTwinId()
     {
         var currentlyRegistered = AssetManager.Get().GetAllAssetsOf<T>();
-        var maxId = currentlyRegistered.Max(asset => asset.ID) + 1;
-        return maxId;
+        var id = 1U;
+        while (currentlyRegistered.Any(a => a.ID == id))
+        {
+            id++;
+        }
+        return id;
     }
 }
 
@@ -22,5 +26,20 @@ public class TwinIdGeneratorServiceFolder : TwinIdGeneratorService<Folder>
     public override UInt32 GenerateTwinId()
     {
         return (UInt32)Guid.NewGuid().GetHashCode();
+    }
+}
+
+public class TwinIdGeneratorServiceBehaviour : TwinIdGeneratorService<BehaviourStarter>
+{
+    public override UInt32 GenerateTwinId()
+    {
+        var currentlyRegistered = AssetManager.Get().GetAllAssetsOf<BehaviourStarter>();
+        var id = 2U;
+        while (currentlyRegistered.Any(a => a.ID == id))
+        {
+            id += 2;
+        }
+        
+        return id;
     }
 }

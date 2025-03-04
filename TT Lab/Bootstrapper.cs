@@ -6,6 +6,8 @@ using System.Windows;
 using TT_Lab.Project;
 using TT_Lab.Project.Messages;
 using TT_Lab.Rendering;
+using TT_Lab.Services;
+using TT_Lab.Services.Implementations;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
 
@@ -47,7 +49,8 @@ namespace TT_Lab
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>()
                 .Singleton<ProjectManager>()
-                .Singleton<OgreWindowManager>();
+                .Singleton<OgreWindowManager>()
+                .RegisterPerRequest(typeof(IDataValidatorService), nameof(IDataValidatorService), typeof(DataValidatorService));
 
             foreach (var assembly in SelectAssemblies())
             {

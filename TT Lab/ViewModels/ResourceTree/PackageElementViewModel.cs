@@ -6,6 +6,8 @@ namespace TT_Lab.ViewModels.ResourceTree;
 
 public class PackageElementViewModel : FolderElementViewModel
 {
+    private bool _isEnabled;
+
     public PackageElementViewModel(LabURI asset, ResourceTreeElementViewModel? parent = null) : base(asset, parent)
     {
     }
@@ -36,6 +38,8 @@ public class PackageElementViewModel : FolderElementViewModel
         // Only allow creating folders in packages
     }
 
+    public override bool IsEnabled => IsPackageEnabled;
+
     public bool IsPackageEnabled
     {
         get => ((Package)Asset).Enabled;
@@ -44,7 +48,8 @@ public class PackageElementViewModel : FolderElementViewModel
             if (value != ((Package)Asset).Enabled)
             {
                 ((Package)Asset).Enabled = value;
-                NotifyOfPropertyChange();
+                Asset.Serialize(SerializationFlags.SetDirectoryToAssets);
+                NotifyOfPropertyChange(nameof(IsEnabled));
             }
         }
     }

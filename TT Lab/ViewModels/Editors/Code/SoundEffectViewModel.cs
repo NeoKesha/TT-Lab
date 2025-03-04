@@ -34,18 +34,13 @@ public class SoundEffectViewModel : ResourceEditorViewModel
     
     private AudioPlayer _audioPlayer;
     private MemoryStream _soundStream;
-    private Timer _progressUpdater;
 
     public SoundEffectViewModel()
     {
-        _progressUpdater = new Timer();
-        _progressUpdater.Interval = 15;
-        _progressUpdater.AutoReset = true;
-        _progressUpdater.Elapsed += (s, e) =>
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            NotifyOfPropertyChange(nameof(SoundProgress));
-            NotifyOfPropertyChange(nameof(CurrentTime));
-        };
+            CompositionTarget.Rendering += UpdateTrackUi;
+        });
     }
 
     protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
@@ -53,6 +48,7 @@ public class SoundEffectViewModel : ResourceEditorViewModel
         if (close)
         {
             _audioPlayer.Dispose();
+            CompositionTarget.Rendering -= UpdateTrackUi;
         }
         else
         {
@@ -80,7 +76,6 @@ public class SoundEffectViewModel : ResourceEditorViewModel
             }
             
             SoundProgress = 0;
-            _progressUpdater.Stop();
         };
 
         var sound = AssetManager.Get().GetAsset<SoundEffect>(EditableResource);
@@ -113,13 +108,11 @@ public class SoundEffectViewModel : ResourceEditorViewModel
             StopPlayback();
         }
 
-        _progressUpdater.Start();
         _audioPlayer.Play();
     }
 
     public void PauseSound()
     {
-        _progressUpdater.Stop();
         _audioPlayer.Pause();
         NotifyOfPropertyChange(nameof(SoundProgress));
         NotifyOfPropertyChange(nameof(CurrentTime));
@@ -172,9 +165,19 @@ public class SoundEffectViewModel : ResourceEditorViewModel
             return;
         }
         
-        _progressUpdater.Stop();
         _audioPlayer.Pause();
         _audioPlayer.SetPosition(e.NewValue);
+        NotifyOfPropertyChange(nameof(CurrentTime));
+    }
+
+    private void UpdateTrackUi(object? sender, EventArgs e)
+    {
+        if (!_audioPlayer.IsPlaying)
+        {
+            return;
+        }
+        
+        NotifyOfPropertyChange(nameof(SoundProgress));
         NotifyOfPropertyChange(nameof(CurrentTime));
     }
 
@@ -283,6 +286,5 @@ public class SoundEffectViewModel : ResourceEditorViewModel
     {
         _audioPlayer.Stop();
         SoundProgress = 0;
-        _progressUpdater.Stop();
     }
 }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using TT_Lab.Command;
 using TT_Lab.Project;
 using TT_Lab.Properties;
+using TT_Lab.Services;
 
 namespace TT_Lab.ViewModels
 {
@@ -21,8 +22,8 @@ namespace TT_Lab.ViewModels
         private string _xboxDiscContentPath = Settings.Default.XboxDiscContentPath;
         private readonly IWindowManager _windowManager;
         private readonly ProjectManager _projectManager;
+        private readonly IDataValidatorService _dataValidatorService;
 
-        private readonly Dictionary<String, List<String>> _propertyErrors = new();
         private readonly Dictionary<String, Func<Boolean>> _discContentIsCurrentValidMap = new();
 
         const Int32 PROJECT_NAME_LIMIT = 32;
@@ -30,17 +31,28 @@ namespace TT_Lab.ViewModels
         const String PROJECT_NAME_EMPTY_ERROR = "Project name must not be empty";
         const String PROJECT_NAME_TOO_LONG_ERROR = "Project name must be less than 32 characters long";
         const String PROJECT_PATH_EMPTY_ERROR = "Project path must not be empty";
+        const String PROJECT_WITH_THIS_NAME_IN_THIS_FOLDER_ALREADY_EXISTS_ERROR = "Project with this name in the chosen folder already exists";
         const String DISC_CONTENT_PATH_EMPTY_ERROR = "PS2 and XBox disc content paths must not be both empty";
-        const String PROJECT_ALREADY_EXISTS_IN_THAT_PATH = "Project on this path already exists";
+        const String PROJECT_ALREADY_EXISTS_IN_THAT_PATH = "Project files on this path already exist";
 
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
-        public ProjectCreationViewModel(IWindowManager windowManager, ProjectManager projectManager)
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged
         {
+            add => _dataValidatorService.ErrorsChanged += value;
+            remove => _dataValidatorService.ErrorsChanged -= value;
+        }
+
+        public ProjectCreationViewModel(IWindowManager windowManager, ProjectManager projectManager, IDataValidatorService validatorService)
+        {
+            _dataValidatorService = validatorService;
             _windowManager = windowManager;
             _projectManager = projectManager;
             _discContentIsCurrentValidMap.Add(nameof(PS2DiscContentPath), IsPs2DiscContentPathValid);
             _discContentIsCurrentValidMap.Add(nameof(XboxDiscContentPath), IsXboxDiscContentPathValid);
+            
+            _dataValidatorService.RegisterProperty<string>(nameof(PS2DiscContentPath), (newVal) => IsDiscContentPathValid(nameof(PS2DiscContentPath), newVal));
+            _dataValidatorService.RegisterProperty<string>(nameof(XboxDiscContentPath), (newVal) => IsDiscContentPathValid(nameof(XboxDiscContentPath), newVal));
+            _dataValidatorService.RegisterProperty<string>(nameof(ProjectName), IsProjectNameValid);
+            _dataValidatorService.RegisterProperty<string>(nameof(ProjectPath), IsProjectPathValid);
         }
 
         public ICommand SetProjectPathCommand => new SelectFolderCommand(null, this, nameof(ProjectPath));
@@ -51,14 +63,14 @@ namespace TT_Lab.ViewModels
 
         protected override void OnViewReady(object view)
         {
-            IsProjectNameValid(ProjectName);
-            IsProjectPathValid(ProjectPath);
-            if (IsDiscContentPathValid(nameof(PS2DiscContentPath), PS2DiscContentPath))
+            _dataValidatorService.ValidateProperty(ProjectName, nameof(ProjectName));
+            _dataValidatorService.ValidateProperty(ProjectPath, nameof(ProjectPath));
+            if (_dataValidatorService.ValidateProperty(PS2DiscContentPath, nameof(PS2DiscContentPath)))
             {
                 return;
             }
             
-            IsDiscContentPathValid(nameof(XboxDiscContentPath), XboxDiscContentPath);
+            _dataValidatorService.ValidateProperty(XboxDiscContentPath, nameof(XboxDiscContentPath));
         }
 
         public Task Create()
@@ -71,7 +83,7 @@ namespace TT_Lab.ViewModels
             {
                 _projectManager.CloseProject();
             }
-            _projectManager.CreateProject(ProjectName, ProjectPath, PS2DiscContentPath, XboxDiscContentPath);
+            _projectManager.CreateProject(ProjectName.Trim(), ProjectPath, PS2DiscContentPath, XboxDiscContentPath);
 
 #if !DEBUG
             }
@@ -87,34 +99,44 @@ namespace TT_Lab.ViewModels
         {
             var isValid = true;
 
-            if (String.IsNullOrEmpty(projectName))
+            if (String.IsNullOrEmpty(projectName.Trim()))
             {
-                AddError(nameof(ProjectName), PROJECT_NAME_EMPTY_ERROR);
+                _dataValidatorService.AddError(nameof(ProjectName), PROJECT_NAME_EMPTY_ERROR);
                 isValid = false;
             }
             else
             {
-                RemoveError(nameof(ProjectName), PROJECT_NAME_EMPTY_ERROR);
+                _dataValidatorService.RemoveError(nameof(ProjectName), PROJECT_NAME_EMPTY_ERROR);
             }
 
             if (projectName.Length > PROJECT_NAME_LIMIT)
             {
-                AddError(nameof(ProjectName), PROJECT_NAME_TOO_LONG_ERROR);
+                _dataValidatorService.AddError(nameof(ProjectName), PROJECT_NAME_TOO_LONG_ERROR);
                 isValid = false;
             }
             else
             {
-                RemoveError(nameof(ProjectName), PROJECT_NAME_TOO_LONG_ERROR);
+                _dataValidatorService.RemoveError(nameof(ProjectName), PROJECT_NAME_TOO_LONG_ERROR);
             }
 
             if (projectName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
             {
-                AddError(nameof(ProjectName), PROJECT_NAME_INVALID_CHARS_ERROR);
+                _dataValidatorService.AddError(nameof(ProjectName), PROJECT_NAME_INVALID_CHARS_ERROR);
                 isValid = false;
             }
             else
             {
-                RemoveError(nameof(ProjectName), PROJECT_NAME_INVALID_CHARS_ERROR);
+                _dataValidatorService.RemoveError(nameof(ProjectName), PROJECT_NAME_INVALID_CHARS_ERROR);
+            }
+            
+            if (!string.IsNullOrEmpty(projectName) && Directory.Exists(ProjectPath + "\\" + projectName))
+            {
+                _dataValidatorService.AddError(nameof(ProjectName), PROJECT_WITH_THIS_NAME_IN_THIS_FOLDER_ALREADY_EXISTS_ERROR);
+                isValid = false;
+            }
+            else
+            {
+                _dataValidatorService.RemoveError(nameof(ProjectName), PROJECT_WITH_THIS_NAME_IN_THIS_FOLDER_ALREADY_EXISTS_ERROR);
             }
 
             return isValid;
@@ -124,31 +146,25 @@ namespace TT_Lab.ViewModels
         {
             if (String.IsNullOrEmpty(path))
             {
-                AddError(nameof(ProjectPath), PROJECT_PATH_EMPTY_ERROR);
-                return false;
-            }
-
-            if (Directory.Exists(path + "\\" + ProjectName))
-            {
-                AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
+                _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_PATH_EMPTY_ERROR);
                 return false;
             }
             
             var projectFilesCheck = Directory.GetFiles(path, "*.tson", SearchOption.TopDirectoryOnly);
             if (projectFilesCheck.Length > 0)
             {
-                AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
+                _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
                 return false;
             }
             
             projectFilesCheck = Directory.GetFiles(path, "*.xson", SearchOption.TopDirectoryOnly);
             if (projectFilesCheck.Length > 0)
             {
-                AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
+                _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
                 return false;
             }
 
-            RemoveError(nameof(ProjectPath));
+            _dataValidatorService.RemoveError(nameof(ProjectPath));
             return true;
         }
 
@@ -158,13 +174,13 @@ namespace TT_Lab.ViewModels
 
             if (!_discContentIsCurrentValidMap[otherContentPathProperty]() && String.IsNullOrEmpty(discContentPath))
             {
-                AddError(nameof(PS2DiscContentPath), DISC_CONTENT_PATH_EMPTY_ERROR);
-                AddError(nameof(XboxDiscContentPath), DISC_CONTENT_PATH_EMPTY_ERROR);
+                _dataValidatorService.AddError(nameof(PS2DiscContentPath), DISC_CONTENT_PATH_EMPTY_ERROR);
+                _dataValidatorService.AddError(nameof(XboxDiscContentPath), DISC_CONTENT_PATH_EMPTY_ERROR);
                 return false;
             }
 
-            RemoveError(nameof(PS2DiscContentPath));
-            RemoveError(nameof(XboxDiscContentPath));
+            _dataValidatorService.RemoveError(nameof(PS2DiscContentPath));
+            _dataValidatorService.RemoveError(nameof(XboxDiscContentPath));
             return true;
         }
 
@@ -178,60 +194,9 @@ namespace TT_Lab.ViewModels
             return !String.IsNullOrEmpty(XboxDiscContentPath);
         }
 
-        public void AddError(String propertyName, String message)
-        {
-            if (!_propertyErrors.ContainsKey(propertyName))
-            {
-                _propertyErrors[propertyName] = new List<String>();
-            }
-
-            if (!_propertyErrors[propertyName].Contains(message))
-            {
-                _propertyErrors[propertyName].Add(message);
-                RaiseErrorsChanged(propertyName);
-            }
-        }
-
-        public void RemoveError(String propertyName, String? message = null)
-        {
-            if (!_propertyErrors.TryGetValue(propertyName, out List<String>? errorsList))
-            {
-                return;
-            }
-
-            if (String.IsNullOrEmpty(message))
-            {
-                errorsList.Clear();
-            }
-            else
-            {
-                if (!errorsList.Contains(message))
-                {
-                    return;
-                }
-                errorsList.Remove(message);
-            }
-
-            if (errorsList.Count == 0)
-            {
-                _propertyErrors.Remove(propertyName);
-            }
-            RaiseErrorsChanged(propertyName);
-        }
-
-        public void RaiseErrorsChanged(String propertyName)
-        {
-            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
-
         public IEnumerable GetErrors(String? propertyName)
         {
-            if (String.IsNullOrEmpty(propertyName) || !_propertyErrors.TryGetValue(propertyName, out List<String>? errorList))
-            {
-                return Enumerable.Empty<String>();
-            }
-
-            return errorList;
+            return _dataValidatorService.GetErrors(propertyName);
         }
 
         public bool CanCreate => !HasErrors;
@@ -241,9 +206,8 @@ namespace TT_Lab.ViewModels
             get => _projectName;
             set
             {
-                IsProjectNameValid(value);
+                _dataValidatorService.ValidateProperty(value, nameof(ProjectName));
                 _projectName = value;
-                IsProjectPathValid(ProjectPath);
                 NotifyOfPropertyChange(nameof(ProjectName));
                 NotifyOfPropertyChange(nameof(CanCreate));
             }
@@ -254,12 +218,14 @@ namespace TT_Lab.ViewModels
             get => _projectPath;
             set
             {
-                if (IsProjectPathValid(value) && _projectPath != value)
+                if (_dataValidatorService.ValidateProperty(value) && _projectPath != value)
                 {
                     Settings.Default.ProjectPath = _projectPath;
                 }
                 _projectPath = value;
+                _dataValidatorService.ValidateProperty(ProjectName, nameof(ProjectName));
                 NotifyOfPropertyChange(nameof(ProjectPath));
+                NotifyOfPropertyChange(nameof(ProjectName));
                 NotifyOfPropertyChange(nameof(CanCreate));
             }
         }
@@ -269,7 +235,7 @@ namespace TT_Lab.ViewModels
             get => _ps2DiscContentPath;
             set
             {
-                if (IsDiscContentPathValid(nameof(XboxDiscContentPath), value) && _ps2DiscContentPath != value)
+                if (_dataValidatorService.ValidateProperty(value) && _ps2DiscContentPath != value)
                 {
                     Settings.Default.PS2DiscContentPath = _ps2DiscContentPath;
                 }
@@ -284,7 +250,7 @@ namespace TT_Lab.ViewModels
             get => _xboxDiscContentPath;
             set
             {
-                if (IsDiscContentPathValid(nameof(PS2DiscContentPath), value) && _xboxDiscContentPath != value)
+                if (_dataValidatorService.ValidateProperty(value) && _xboxDiscContentPath != value)
                 {
                     Settings.Default.XboxDiscContentPath = _xboxDiscContentPath;
                 }
@@ -294,6 +260,6 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public Boolean HasErrors => _propertyErrors.Count > 0;
+        public Boolean HasErrors => _dataValidatorService.HasErrors;
     }
 }

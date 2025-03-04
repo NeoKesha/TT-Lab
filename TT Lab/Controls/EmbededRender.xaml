@@ -9,5 +9,5 @@
              ShowInTaskbar="false"
              WindowStyle="None"
              ResizeMode="NoResize"
-             Background="Black">
+             Background="Transparent">
 </Window>

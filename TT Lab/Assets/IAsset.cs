@@ -18,6 +18,9 @@ namespace TT_Lab.Assets
         FixReferences = 0x4,
     }
     
+    /// <summary>
+    /// Interface for all the assets TT Lab manages
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public interface IAsset
     {
@@ -154,7 +157,6 @@ namespace TT_Lab.Assets
             }
             
             References.Add(reference);
-            Log.WriteLine($"Added reference to {reference} from {Name}");
         }
 
         /// <summary>
@@ -176,7 +178,7 @@ namespace TT_Lab.Assets
         /// <summary>
         /// Returns asset's viewmodel for editing
         /// </summary>
-        Task<ResourceTreeElementViewModel> GetResourceTreeElement(ResourceTreeElementViewModel? parent = null);
+        ResourceTreeElementViewModel GetResourceTreeElement(ResourceTreeElementViewModel? parent = null);
 
         /// <summary>
         /// Disposes of the contained data if it was loaded

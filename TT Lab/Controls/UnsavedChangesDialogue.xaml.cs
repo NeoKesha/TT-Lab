@@ -2,6 +2,7 @@
 using System;
 using System.Windows;
 using TT_Lab.Command;
+using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.Controls
 {
@@ -11,6 +12,7 @@ namespace TT_Lab.Controls
     public partial class UnsavedChangesDialogue : AdonisWindow
     {
         OpenDialogueCommand.DialogueResult result;
+        private ResourceTreeElementViewModel viewModel;
 
         public enum AnswerResult
         {
@@ -24,9 +26,10 @@ namespace TT_Lab.Controls
             InitializeComponent();
         }
 
-        public UnsavedChangesDialogue(OpenDialogueCommand.DialogueResult result) : this()
+        public UnsavedChangesDialogue(OpenDialogueCommand.DialogueResult result, ResourceTreeElementViewModel viewModel) : this()
         {
             this.result = result;
+            DataContext = viewModel;
         }
 
         private void YesButton_Click(Object sender, RoutedEventArgs e)

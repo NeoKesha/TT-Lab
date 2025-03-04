@@ -19,10 +19,10 @@ public class FolderElementViewModel : ResourceTreeElementViewModel
     {
     }
 
-    public override async Task Init()
+    public override void Init()
     {
-        await base.Init();
-        await BuildChildren((Folder)Asset);
+        base.Init();
+        BuildChildren((Folder)Asset);
     }
 
     protected override void CreateContextMenu()

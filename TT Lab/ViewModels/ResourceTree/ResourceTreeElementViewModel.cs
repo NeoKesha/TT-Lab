@@ -12,6 +12,9 @@ using Microsoft.Xaml.Behaviors.Core;
 using Newtonsoft.Json;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
+using TT_Lab.Command;
+using TT_Lab.Controls;
+using TT_Lab.Util;
 using Action = System.Action;
 
 namespace TT_Lab.ViewModels.ResourceTree;
@@ -38,7 +41,7 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
     }
     
     private readonly IAsset _asset;
-    private readonly ResourceTreeElementViewModel? _parent;
+    private ResourceTreeElementViewModel? _parent;
     private BindableCollection<ResourceTreeElementViewModel>? _children;
     private BindableCollection<MenuItem> _menuOptions = new();
     private List<ResourceTreeElementViewModel>? _internalChildren;
@@ -59,20 +62,18 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
 
     public BindableCollection<ResourceTreeElementViewModel>? Children => _asset.Type == typeof(ChunkFolder) ? null : _children;
 
-    public virtual Task Init()
+    public virtual void Init()
     {
-        return Task.CompletedTask;
     }
 
-    protected async Task BuildChildren(Folder folder)
+    protected void BuildChildren(Folder folder)
     {
         // Build the tree
         var myChildren = folder.GetData().To<FolderData>().Children;
-        var resourceTasks = (from child in myChildren
+        var children = (from child in myChildren
             orderby _asset.Order
             let c = AssetManager.Get().GetAsset(child)
             select c.GetResourceTreeElement(this));
-        var children = await Task.WhenAll(resourceTasks);
         _children = new BindableCollection<ResourceTreeElementViewModel>(children);
         _internalChildren = new List<ResourceTreeElementViewModel>(_children);
     }
@@ -227,11 +228,25 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
 
     private void StartDeletingAsset()
     {
+        var result = new OpenDialogueCommand.DialogueResult();
+        var showCommandDialogue = new OpenDialogueCommand(() => new DeleteAssetDialogue(result, this));
+        showCommandDialogue.Execute();
+        if (result.Result == null)
+        {
+            return;
+        }
+        var receivedAnswer = MiscUtils.ConvertEnum<DeleteAssetDialogue.DeleteAnswerResult>(result.Result);
+        if (receivedAnswer == DeleteAssetDialogue.DeleteAnswerResult.No)
+        {
+            return;
+        }
+        
         DeleteAsset();
         _parent?.RemoveChild(this);
         _parent?.ClearChildren();
         _parent?.LoadChildrenBack();
-    }
+        _parent?.NotifyOfPropertyChange(nameof(Children));
+   }
 
     private void DeleteAsset()
     {
@@ -342,6 +357,8 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
             }
         }
     }
+    
+    public virtual Boolean IsEnabled => true;
 
     public IAsset Asset => _asset;
 

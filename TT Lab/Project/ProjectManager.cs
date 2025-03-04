@@ -388,8 +388,7 @@ namespace TT_Lab.Project
                         where folder.GetData().To<FolderData>().Parent == null
                         orderby folder.Order
                         select folder.GetResourceTreeElement());
-            var resultingTree = await Task.WhenAll(tree);
-            ProjectTree = new BindableCollection<ResourceTreeElementViewModel>(resultingTree);
+            ProjectTree = new BindableCollection<ResourceTreeElementViewModel>(tree);
             _internalTree.AddRange(ProjectTree);
             await _eventAggregator.PublishOnUIThreadAsync(new ProjectManagerMessage(nameof(ProjectTree)));
         }

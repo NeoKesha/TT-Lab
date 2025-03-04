@@ -119,7 +119,7 @@
     </Window.Resources>
     <Grid x:Name="MainWindowGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="41"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Menu Template="{DynamicResource MainWindowMenuTemplate}" Style="{DynamicResource MainMenuStyle}" x:Name="MainMenu" UseLayoutRounding="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
@@ -130,15 +130,15 @@
                 <MenuItem x:Name="SaveProject" Header="Save all" InputGestureText="Ctrl+Shift+S" IsEnabled="{Binding ProjectOpened}"/>
                 <MenuItem x:Name="CloseProject" Header="Close Project" IsEnabled="{Binding ProjectOpened}"/>
             </MenuItem>
-            <MenuItem x:Name="BuildSubMenu" Header="Build" IsEnabled="{Binding ProjectOpened}" Grid.Column="1">
+            <MenuItem x:Name="BuildSubMenu" Header="Build" IsEnabled="{Binding ProjectOpened}">
                 <MenuItem x:Name="BuildPs2" Header="Build PS2 ISO"/>
                 <MenuItem x:Name="BuildXbox" Header="Build XBox ISO" IsEnabled="False"/>
             </MenuItem>
-            <MenuItem x:Name="ToolsSubMenu" Header="Tools" IsEnabled="False" Grid.Column="2">
+            <MenuItem x:Name="ToolsSubMenu" Header="Tools" IsEnabled="False">
                 <MenuItem/>
             </MenuItem>
-            <MenuItem x:Name="PreferencesMenu" Header="Preferences" IsEnabled="False" Grid.Column="3"/>
-            <MenuItem x:Name="About" Header="About" Grid.Column="4"/>
+            <MenuItem Style="{DynamicResource SimpleMenuItem}" x:Name="PreferencesMenu" Header="Preferences" IsEnabled="False"/>
+            <MenuItem Style="{DynamicResource SimpleMenuItem}" x:Name="About" Header="About"/>
         </Menu>
 
         <Grid x:Name="MainControlsGrid" Grid.Row="1">
@@ -191,36 +191,39 @@
                     Style="{DynamicResource ProjectTreeStyle}" 
                     VirtualizingStackPanel.IsVirtualizing="True"
                     VirtualizingStackPanel.VirtualizationMode="Recycling"
+                    HorizontalContentAlignment="Stretch"
                     ItemContainerStyle="{DynamicResource SimpleTreeViewItem}">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
+                                <StackPanel Background="Transparent" HorizontalAlignment="Stretch" Margin="0,2,0,2" Orientation="Horizontal">
+                                    <StackPanel.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding MenuOptions}"/>
+                                    </StackPanel.ContextMenu>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <cal:ActionMessage MethodName="AssetBlockMouseDown">
+                                                <cal:Parameter Value="{Binding ElementName=ProjectTree, Path=SelectedItem}"/>
+                                                <cal:Parameter Value="$eventArgs"/>
+                                            </cal:ActionMessage>
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="MouseMove">
+                                            <cal:ActionMessage MethodName="AssetBlockMouseMove">
+                                                <cal:Parameter Value="{Binding ElementName=ProjectTree, Mode=OneWay}"/>
+                                                <cal:Parameter Value="$eventArgs"/>
+                                            </cal:ActionMessage>
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="ContextMenuOpening">
+                                            <cal:ActionMessage MethodName="CreateContextMenuAction"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                     <Image Source="{Binding IconPath}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="24" Height="24" Margin="0,0,3,0" Stretch="Uniform"/>
                                     <TextBlock x:Name="AssetBlock" Visibility="{Binding IsNotRenaming}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Alias}" Style="{DynamicResource TextBlockTreeViewStyle}">
-                                        <TextBlock.ContextMenu>
-                                            <ContextMenu ItemsSource="{Binding MenuOptions}"/>
-                                        </TextBlock.ContextMenu>
                                         <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="ContextMenuOpening">
-                                                <cal:ActionMessage MethodName="CreateContextMenuAction"/>
-                                            </i:EventTrigger>
-                                            <i:EventTrigger EventName="MouseDown">
-                                                <cal:ActionMessage MethodName="AssetBlockMouseDown">
-                                                    <cal:Parameter Value="{Binding ElementName=ProjectTree, Path=SelectedItem}"/>
-                                                    <cal:Parameter Value="$eventArgs"/>
-                                                </cal:ActionMessage>
-                                            </i:EventTrigger>
-                                            <i:EventTrigger EventName="MouseMove">
-                                                <cal:ActionMessage MethodName="AssetBlockMouseMove">
-                                                    <cal:Parameter Value="{Binding ElementName=ProjectTree, Mode=OneWay}"/>
-                                                    <cal:Parameter Value="$eventArgs"/>
-                                                </cal:ActionMessage>
-                                            </i:EventTrigger>
-                                            <i:DataTrigger Binding="{Binding IsPackageEnabled}" Value="False">
+                                            <i:DataTrigger Binding="{Binding IsEnabled}" Value="False">
                                                 <i:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DisabledForegroundBrush}"></i:ChangePropertyAction>
                                             </i:DataTrigger>
-                                            <i:DataTrigger Binding="{Binding IsPackageEnabled}" Value="True">
-                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource NormalBrush}"></i:ChangePropertyAction>
+                                            <i:DataTrigger Binding="{Binding IsEnabled}" Value="True">
+                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource LightColorBrush}"></i:ChangePropertyAction>
                                             </i:DataTrigger>
                                         </i:Interaction.Triggers>
                                     </TextBlock>
