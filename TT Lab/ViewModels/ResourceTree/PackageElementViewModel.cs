@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using TT_Lab.Assets;
 
@@ -7,9 +8,17 @@ namespace TT_Lab.ViewModels.ResourceTree;
 public class PackageElementViewModel : FolderElementViewModel
 {
     private bool _isEnabled;
+    private MenuItem _isEnabledItem;
 
     public PackageElementViewModel(LabURI asset, ResourceTreeElementViewModel? parent = null) : base(asset, parent)
     {
+    }
+
+    protected override void Deleted()
+    {
+        BindingOperations.ClearBinding(_isEnabledItem, MenuItem.IsCheckedProperty);
+        
+        base.Deleted();
     }
 
     protected override void CreateContextMenu()
@@ -25,7 +34,8 @@ public class PackageElementViewModel : FolderElementViewModel
             NotifyOnSourceUpdated = true,
             NotifyOnTargetUpdated = true
         };
-        RegisterMenuItem(new MenuItemSettings
+        
+        _isEnabledItem = RegisterMenuItem(new MenuItemSettings
         {
             Header = "Is Enabled",
             IsCheckable = true,

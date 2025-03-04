@@ -66,6 +66,10 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
     {
     }
 
+    protected virtual void Deleted()
+    {
+    }
+
     protected void BuildChildren(Folder folder)
     {
         // Build the tree
@@ -139,7 +143,7 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
         _internalChildren.Remove(child);
     }
 
-    protected void RegisterMenuItem(MenuItemSettings settings = default)
+    protected MenuItem RegisterMenuItem(MenuItemSettings settings = default)
     {
         var newItem = new MenuItem
         {
@@ -160,6 +164,8 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
         }
         
         _menuOptions.Add(newItem);
+
+        return newItem;
     }
 
     protected virtual void CreateContextMenu()
@@ -246,6 +252,8 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
         _parent?.ClearChildren();
         _parent?.LoadChildrenBack();
         _parent?.NotifyOfPropertyChange(nameof(Children));
+        
+        Deleted();
    }
 
     private void DeleteAsset()
