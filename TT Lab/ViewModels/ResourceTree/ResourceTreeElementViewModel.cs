@@ -321,6 +321,8 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
     }
     
     public BindableCollection<MenuItem> MenuOptions => _menuOptions;
+    
+    protected ResourceTreeElementViewModel? Parent => _parent;
 
     public Visibility IsVisible
     {

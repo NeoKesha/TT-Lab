@@ -73,7 +73,7 @@ namespace TT_Lab.AssetData.Graphics
             return factory.GenerateMaterial(ms);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        public override ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var graphicsSection = section.GetParent();
@@ -84,7 +84,7 @@ namespace TT_Lab.AssetData.Graphics
 
                 assetManager.GetAsset(shader.TextureId).ResolveChunkResources(factory, texturesSection);
             }
-            return base.ResolveChunkResouces(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id);
         }
     }
 }

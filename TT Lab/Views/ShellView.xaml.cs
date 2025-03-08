@@ -15,7 +15,6 @@ namespace TT_Lab.Views
         {
             InitializeComponent();
             Log.SetLogBox(LogText);
-            Preferences.Load();
         }
 
         private void AdonisWindow_SizeChanged(System.Object sender, System.Windows.SizeChangedEventArgs e)
@@ -31,7 +30,7 @@ namespace TT_Lab.Views
         private void UIElement_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var textBox = sender as TextBox;
-            if (textBox != null && textBox.IsVisible)
+            if (textBox is { IsVisible: true })
             {
                 textBox.Focus();
             }

@@ -45,6 +45,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Scenery
                     children.Add(new SceneryLeafViewModel(leaf));
                 }
             }
+            ResetDirty();
         }
 
         public void CompileTree(ref IList<SceneryBaseData> sceneryTree)

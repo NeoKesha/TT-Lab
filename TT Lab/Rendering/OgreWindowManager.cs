@@ -194,9 +194,9 @@ namespace TT_Lab.Rendering
             _ogreWindows.Clear();
 
             _internalWindow.Dispose();
+            _isDisposed = true;
             closeApp();
             Dispose();
-            _isDisposed = true;
         }
     }
 }

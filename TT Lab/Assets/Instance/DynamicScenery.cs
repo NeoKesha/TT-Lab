@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.ViewModels.ResourceTree;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.SM;
 
@@ -33,6 +34,11 @@ namespace TT_Lab.Assets.Instance
                 IsLoaded = true;
             }
             return assetData;
+        }
+
+        protected override ResourceTreeElementViewModel CreateResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        {
+            return new DynamicSceneryElementViewModel(URI, parent);
         }
     }
 }

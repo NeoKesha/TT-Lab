@@ -62,7 +62,7 @@ namespace TT_Lab.AssetData.Instance
             return factory.GenerateDynamicScenery(ms);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        public override ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var graphicsSection = section.GetItem<ITwinSection>(Constants.SCENERY_GRAPHICS_SECTION);
@@ -73,7 +73,7 @@ namespace TT_Lab.AssetData.Instance
                 assetManager.GetAsset(model.Mesh).ResolveChunkResources(factory, meshSection);
             }
 
-            return base.ResolveChunkResouces(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id);
         }
     }
 }

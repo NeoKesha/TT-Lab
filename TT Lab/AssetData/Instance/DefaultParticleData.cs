@@ -109,7 +109,7 @@ namespace TT_Lab.AssetData.Instance
             }
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        public override ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var graphicsSection = section.GetItem<ITwinSection>(Constants.LEVEL_GRAPHICS_SECTION);
@@ -129,7 +129,7 @@ namespace TT_Lab.AssetData.Instance
             assetManager.GetAsset(DecalTextureID).ResolveChunkResources(factory, texturesSection);
             assetManager.GetAsset(DecalMaterialID).ResolveChunkResources(factory, materialsSection);
 
-            return base.ResolveChunkResouces(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id);
         }
 
         protected override void Dispose(Boolean disposing)

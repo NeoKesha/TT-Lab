@@ -133,7 +133,7 @@ namespace TT_Lab.AssetData.Instance
             return factory.GenerateTemplate(ms);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        public override ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var root = section.GetRoot();
@@ -148,7 +148,7 @@ namespace TT_Lab.AssetData.Instance
                 assetManager.GetAsset(behaviour).ResolveChunkResources(factory, behavioursSection);
             }
 
-            return base.ResolveChunkResouces(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id);
         }
     }
 }

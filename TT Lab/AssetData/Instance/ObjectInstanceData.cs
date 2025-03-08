@@ -191,7 +191,7 @@ namespace TT_Lab.AssetData.Instance
             return factory.GenerateInstance(ms);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        public override ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var root = section.GetRoot();
@@ -201,7 +201,7 @@ namespace TT_Lab.AssetData.Instance
 
             if (layoutID is Constants.LEVEL_LAYOUT_6_SECTION)
             {
-                return base.ResolveChunkResouces(factory, section, id, layoutID);
+                return base.ResolveChunkResources(factory, section, id, layoutID);
             }
 
             assetManager.GetAsset(ObjectId).ResolveChunkResources(factory, objectsSection);
@@ -212,7 +212,7 @@ namespace TT_Lab.AssetData.Instance
 
             // Positions, paths and instances don't need to be resolved because they are gonna be resolved by themselves anyway
 
-            return base.ResolveChunkResouces(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id);
         }
     }
 }

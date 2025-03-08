@@ -94,6 +94,8 @@ namespace TT_Lab.Project
 
         void CreateBasePackages();
 
+        void CopyDiscContents();
+
         /// <summary>
         /// Unpacks PS2 assets data into project readable format
         /// </summary>

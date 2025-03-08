@@ -42,6 +42,7 @@ namespace TT_Lab.ViewModels.Editors.Instance.Scenery
             {
                 throw new Exception("Houston, we failed to build the scenery tree correctly!");
             }
+            ResetDirty();
         }
 
         [MarkDirty]

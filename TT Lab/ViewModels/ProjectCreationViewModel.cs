@@ -20,6 +20,7 @@ namespace TT_Lab.ViewModels
         private string _projectPath = Settings.Default.ProjectPath;
         private string _ps2DiscContentPath = Settings.Default.PS2DiscContentPath;
         private string _xboxDiscContentPath = Settings.Default.XboxDiscContentPath;
+        private Boolean _copyDiscContents = false;
         private readonly IWindowManager _windowManager;
         private readonly ProjectManager _projectManager;
         private readonly IDataValidatorService _dataValidatorService;
@@ -83,7 +84,7 @@ namespace TT_Lab.ViewModels
             {
                 _projectManager.CloseProject();
             }
-            _projectManager.CreateProject(ProjectName.Trim(), ProjectPath, PS2DiscContentPath, XboxDiscContentPath);
+            _projectManager.CreateProject(ProjectName.Trim(), ProjectPath, PS2DiscContentPath, XboxDiscContentPath, CopyDiscContents);
 
 #if !DEBUG
             }
@@ -149,19 +150,22 @@ namespace TT_Lab.ViewModels
                 _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_PATH_EMPTY_ERROR);
                 return false;
             }
-            
-            var projectFilesCheck = Directory.GetFiles(path, "*.tson", SearchOption.TopDirectoryOnly);
-            if (projectFilesCheck.Length > 0)
+
+            if (Directory.Exists(path))
             {
-                _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
-                return false;
-            }
-            
-            projectFilesCheck = Directory.GetFiles(path, "*.xson", SearchOption.TopDirectoryOnly);
-            if (projectFilesCheck.Length > 0)
-            {
-                _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
-                return false;
+                var projectFilesCheck = Directory.GetFiles(path, "*.tson", SearchOption.TopDirectoryOnly);
+                if (projectFilesCheck.Length > 0)
+                {
+                    _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
+                    return false;
+                }
+
+                projectFilesCheck = Directory.GetFiles(path, "*.xson", SearchOption.TopDirectoryOnly);
+                if (projectFilesCheck.Length > 0)
+                {
+                    _dataValidatorService.AddError(nameof(ProjectPath), PROJECT_ALREADY_EXISTS_IN_THAT_PATH);
+                    return false;
+                }
             }
 
             _dataValidatorService.RemoveError(nameof(ProjectPath));
@@ -253,6 +257,16 @@ namespace TT_Lab.ViewModels
                 _xboxDiscContentPath = value;
                 NotifyOfPropertyChange(nameof(XboxDiscContentPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
+            }
+        }
+
+        public Boolean CopyDiscContents
+        {
+            get => _copyDiscContents;
+            set
+            {
+                _copyDiscContents = value;
+                NotifyOfPropertyChange();
             }
         }
 

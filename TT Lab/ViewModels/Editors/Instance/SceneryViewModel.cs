@@ -51,9 +51,10 @@ namespace TT_Lab.ViewModels.Editors.Instance
             if (data.Sceneries.Count != 0)
             {
                 sceneryTree = new SceneryRootViewModel(data.Sceneries[0], data.Sceneries.Skip(1).ToList());
-                DirtyTracker.AddChild(sceneryTree);
                 sceneryTree.BuildTree();
+                DirtyTracker.AddChild(sceneryTree);
             }
+            ResetDirty();
         }
 
         [MarkDirty]

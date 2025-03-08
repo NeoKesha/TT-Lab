@@ -89,6 +89,7 @@ namespace TT_Lab.Project
             System.IO.Directory.CreateDirectory(ProjectPath);
             System.IO.Directory.SetCurrentDirectory(ProjectPath);
             System.IO.Directory.CreateDirectory("assets");
+            System.IO.Directory.CreateDirectory("disc");
         }
 
         public void Serialize()
@@ -230,23 +231,90 @@ namespace TT_Lab.Project
             pr.XboxPackage = (Package)assets.Values.First(a => a.Name == "XBOX");
         }
 
+        public void CopyDiscContents()
+        {
+            System.IO.Directory.SetCurrentDirectory("disc");
+            
+            if (!string.IsNullOrEmpty(DiscContentPathPS2))
+            {
+                System.IO.Directory.CreateDirectory("ps2");
+                System.IO.Directory.SetCurrentDirectory("ps2");
+                foreach (var dirPath in System.IO.Directory.GetDirectories(DiscContentPathPS2, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (System.IO.Directory.Exists(dirPath.Replace(DiscContentPathPS2 + System.IO.Path.DirectorySeparatorChar, "")))
+                    {
+                        continue;
+                    }
+                    
+                    System.IO.Directory.CreateDirectory(dirPath.Replace(DiscContentPathPS2 + System.IO.Path.DirectorySeparatorChar, ""));
+                }
+
+                foreach (var newPath in System.IO.Directory.GetFiles(DiscContentPathPS2, "*.*", System.IO.SearchOption.AllDirectories))
+                {
+                    System.IO.File.Copy(newPath, newPath.Replace(DiscContentPathPS2 + System.IO.Path.DirectorySeparatorChar, ""), true);
+                }
+                
+                System.IO.Directory.SetCurrentDirectory("../");
+            }
+
+            if (!string.IsNullOrEmpty(DiscContentPathXbox))
+            {
+                System.IO.Directory.CreateDirectory("xbox");
+                System.IO.Directory.SetCurrentDirectory("xbox");
+                foreach (var dirPath in System.IO.Directory.GetDirectories(DiscContentPathXbox, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (System.IO.Directory.Exists(dirPath.Replace(DiscContentPathXbox + System.IO.Path.DirectorySeparatorChar, "")))
+                    {
+                        continue;
+                    }
+                    
+                    System.IO.Directory.CreateDirectory(dirPath.Replace(DiscContentPathXbox + System.IO.Path.DirectorySeparatorChar, ""));
+                }
+
+                foreach (var newPath in System.IO.Directory.GetFiles(DiscContentPathXbox, "*.*", System.IO.SearchOption.AllDirectories))
+                {
+                    System.IO.File.Copy(newPath, newPath.Replace(DiscContentPathXbox + System.IO.Path.DirectorySeparatorChar, ""), true);
+                }
+                
+                System.IO.Directory.SetCurrentDirectory("../");
+            }
+            
+            System.IO.Directory.SetCurrentDirectory("../");
+        }
+
         public void CreateBasePackages()
         {
-            BasePackage = new Package(Name);
+            BasePackage = new Package(Name)
+            {
+                Mark = FolderMark.Locked
+            };
             AssetManager.AddAsset(BasePackage);
-            Packages = new Folder(BasePackage.URI, "Packages", null, BasePackage);
+            Packages = new Folder(BasePackage.URI, "Packages", null, BasePackage)
+            {
+                Mark = FolderMark.Locked
+            };
             AssetManager.AddAsset(Packages);
             GlobalPackagePS2 = new Package("Global PS2", Packages)
             {
-                Variant = ""
+                Variant = "",
+                Mark = FolderMark.Locked
             };
             GlobalPackageXbox = new Package("Global XBOX", Packages)
             {
-                Variant = ""
+                Variant = "",
+                Mark = FolderMark.Locked,
+                Enabled = false
             };
-            Ps2Package = new Package("PS2", Packages);
+            Ps2Package = new Package("PS2", Packages)
+            {
+                Mark = FolderMark.Locked
+            };
             Ps2Package.AddDependency(GlobalPackagePS2.URI);
-            XboxPackage = new Package("XBOX", Packages);
+            XboxPackage = new Package("XBOX", Packages)
+            {
+                Mark = FolderMark.Locked,
+                Enabled = false
+            };
             XboxPackage.AddDependency(GlobalPackageXbox.URI);
             AssetManager.AddAsset(GlobalPackagePS2);
             AssetManager.AddAsset(GlobalPackageXbox);
@@ -271,28 +339,51 @@ namespace TT_Lab.Project
             // Create base package folder for user created assets
             var basePackage = BasePackage;
             var assetsFolder = Folder.CreatePackageFolder(basePackage, "Assets", basePackage.Name);
+            assetsFolder.Mark = FolderMark.Locked;
             var blendSkins = Folder.CreatePackageFolder(basePackage, "Blend Skins", assetsFolder, basePackage.Name);
+            blendSkins.Mark = FolderMark.Locked;
             var skins = Folder.CreatePackageFolder(basePackage, "Skins", assetsFolder, basePackage.Name);
+            skins.Mark = FolderMark.Locked;
             var models = Folder.CreatePackageFolder(basePackage, "Models", assetsFolder, basePackage.Name);
+            models.Mark = FolderMark.Locked;
             var rigidModels = Folder.CreatePackageFolder(basePackage, "Rigid models", assetsFolder, basePackage.Name);
+            rigidModels.Mark = FolderMark.Locked;
             var meshes = Folder.CreatePackageFolder(basePackage, "Meshes", assetsFolder, basePackage.Name);
+            meshes.Mark = FolderMark.Locked;
             var materials = Folder.CreatePackageFolder(basePackage, "Materials", assetsFolder, basePackage.Name);
+            materials.Mark = FolderMark.Locked;
             var lods = Folder.CreatePackageFolder(basePackage, "LODs", assetsFolder, basePackage.Name);
+            lods.Mark = FolderMark.Locked;
             var skydomes = Folder.CreatePackageFolder(basePackage, "Skydomes", assetsFolder, basePackage.Name);
+            skydomes.Mark = FolderMark.Locked;
             var textures = Folder.CreatePackageFolder(basePackage, "Textures", assetsFolder, basePackage.Name);
+            textures.Mark = FolderMark.Locked;
             var animations = Folder.CreatePackageFolder(basePackage, "Animations", assetsFolder, basePackage.Name);
+            animations.Mark = FolderMark.Locked;
             var codeModels = Folder.CreatePackageFolder(basePackage, "Code models", assetsFolder, basePackage.Name);
+            codeModels.Mark = FolderMark.Locked;
             var gameObjects = Folder.CreatePackageFolder(basePackage, "Game objects", assetsFolder, basePackage.Name);
+            gameObjects.Mark = FolderMark.Locked;
             var scripts = Folder.CreatePackageFolder(basePackage, "Scripts", assetsFolder, basePackage.Name);
+            scripts.Mark = FolderMark.Locked;
             var ogis = Folder.CreatePackageFolder(basePackage, "OGIs/Skeletons", assetsFolder, basePackage.Name);
+            ogis.Mark = FolderMark.Locked;
             var sfx = Folder.CreatePackageFolder(basePackage, "Sound Effects", assetsFolder, basePackage.Name);
+            sfx.Mark = FolderMark.Locked;
             var en = Folder.CreatePackageFolder(basePackage, "English Sound Effects", assetsFolder, basePackage.Name);
+            en.Mark = FolderMark.Locked;
             var fr = Folder.CreatePackageFolder(basePackage, "French Sound Effects", assetsFolder, basePackage.Name);
+            fr.Mark = FolderMark.Locked;
             var gr = Folder.CreatePackageFolder(basePackage, "German Sound Effects", assetsFolder, basePackage.Name);
+            gr.Mark = FolderMark.Locked;
             var ita = Folder.CreatePackageFolder(basePackage, "Italian Sound Effects", assetsFolder, basePackage.Name);
+            ita.Mark = FolderMark.Locked;
             var jpn = Folder.CreatePackageFolder(basePackage, "Japanese Sound Effects", assetsFolder, basePackage.Name);
+            jpn.Mark = FolderMark.Locked;
             var spa = Folder.CreatePackageFolder(basePackage, "Spanish Sound Effects", assetsFolder, basePackage.Name);
+            spa.Mark = FolderMark.Locked;
             var chunks = Folder.CreatePackageFolder(basePackage, "Chunks", assetsFolder, basePackage.Name);
+            chunks.Mark = FolderMark.Locked | FolderMark.ChunksOnly;
 
             assets.Add(assetsFolder.URI, assetsFolder);
             assets.Add(blendSkins.URI, blendSkins);
@@ -363,25 +454,45 @@ namespace TT_Lab.Project
 
             // Create Global PS2 package folders for Default.rm2 assets since they can be referenced from anywhere in the project
             var globalAssets = Folder.CreatePackageFolder(GlobalPackagePS2, "Global Assets", GlobalPackagePS2.Name);
+            globalAssets.Mark = FolderMark.Locked;
             var globalBlendSkinsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Blend Skins", globalAssets, GlobalPackagePS2.Name);
+            globalBlendSkinsFolder.Mark = FolderMark.Locked;
             var globalSkinsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Skins", globalAssets, GlobalPackagePS2.Name);
+            globalSkinsFolder.Mark = FolderMark.Locked;
             var globalModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Models", globalAssets, GlobalPackagePS2.Name);
+            globalModelsFolder.Mark = FolderMark.Locked;
             var globalRigidModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Rigid models", globalAssets, GlobalPackagePS2.Name);
+            globalRigidModelsFolder.Mark = FolderMark.Locked;
             var globalMaterialsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Materials", globalAssets, GlobalPackagePS2.Name);
+            globalMaterialsFolder.Mark = FolderMark.Locked;
             var globalTexturesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Textures", globalAssets, GlobalPackagePS2.Name);
+            globalTexturesFolder.Mark = FolderMark.Locked;
             var globalMeshesFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Meshes", globalAssets, GlobalPackagePS2.Name);
+            globalMeshesFolder.Mark = FolderMark.Locked;
             var globalAnimationsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Animations", globalAssets, GlobalPackagePS2.Name);
+            globalAnimationsFolder.Mark = FolderMark.Locked;
             var globalCodeModelsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Code models", globalAssets, GlobalPackagePS2.Name);
+            globalCodeModelsFolder.Mark = FolderMark.Locked;
             var globalGameObjectsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Game objects", globalAssets, GlobalPackagePS2.Name);
+            globalGameObjectsFolder.Mark = FolderMark.Locked;
             var globalScriptsFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Scripts", globalAssets, GlobalPackagePS2.Name);
+            globalScriptsFolder.Mark = FolderMark.Locked;
             var globalOgisFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "OGIs/Skeletons", globalAssets, GlobalPackagePS2.Name);
+            globalOgisFolder.Mark = FolderMark.Locked;
             var globalSfxFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            globalSfxFolder.Mark = FolderMark.Locked;
             var globalEnFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "English Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            globalEnFolder.Mark = FolderMark.Locked;
             var globalFrFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "French Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            globalFrFolder.Mark = FolderMark.Locked;
             var globalGrFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "German Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            globalGrFolder.Mark = FolderMark.Locked;
             var globalItaFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Italian Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            globalItaFolder.Mark = FolderMark.Locked;
             var globalJpnFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Japanese Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            globalJpnFolder.Mark = FolderMark.Locked;
             var globalSpaFolder = Folder.CreatePackageFolder(GlobalPackagePS2, "Spanish Sound Effects", globalAssets, GlobalPackagePS2.Name);
+            globalSpaFolder.Mark = FolderMark.Locked;
 
             assets.Add(globalAssets.URI, globalAssets);
             assets.Add(globalBlendSkinsFolder.URI, globalBlendSkinsFolder);
@@ -407,27 +518,49 @@ namespace TT_Lab.Project
             // Create PS2 package folders for storing assets for display in project tree
             var ps2Package = Ps2Package;
             var ps2BlendSkinsFolder = Folder.CreatePS2Folder("Blend Skins", ps2Package, ps2Package.Name);
+            ps2BlendSkinsFolder.Mark = FolderMark.Locked;
             var ps2SkinsFolder = Folder.CreatePS2Folder("Skins", ps2Package, ps2Package.Name);
+            ps2SkinsFolder.Mark = FolderMark.Locked;
             var ps2ModelsFolder = Folder.CreatePS2Folder("Models", ps2Package, ps2Package.Name);
+            ps2ModelsFolder.Mark = FolderMark.Locked;
             var ps2RigidModelsFolder = Folder.CreatePS2Folder("Rigid models", ps2Package, ps2Package.Name);
+            ps2RigidModelsFolder.Mark = FolderMark.Locked;
             var ps2MeshesFolder = Folder.CreatePS2Folder("Meshes", ps2Package, ps2Package.Name);
+            ps2MeshesFolder.Mark = FolderMark.Locked;
             var ps2MaterialsFolder = Folder.CreatePS2Folder("Materials", ps2Package, ps2Package.Name);
+            ps2MaterialsFolder.Mark = FolderMark.Locked;
             var ps2LodsFolder = Folder.CreatePS2Folder("LODs", ps2Package, ps2Package.Name);
+            ps2LodsFolder.Mark = FolderMark.Locked;
             var ps2SkydomesFolder = Folder.CreatePS2Folder("Skydomes", ps2Package, ps2Package.Name);
+            ps2SkydomesFolder.Mark = FolderMark.Locked;
             var ps2TexturesFolder = Folder.CreatePS2Folder("Textures", ps2Package, ps2Package.Name);
+            ps2TexturesFolder.Mark = FolderMark.Locked;
             var ps2AnimationsFolder = Folder.CreatePS2Folder("Animations", ps2Package, ps2Package.Name);
+            ps2AnimationsFolder.Mark = FolderMark.Locked;
             var ps2CodeModelsFolder = Folder.CreatePS2Folder("Code models", ps2Package, ps2Package.Name);
+            ps2CodeModelsFolder.Mark = FolderMark.Locked;
             var ps2GameObjectsFolder = Folder.CreatePS2Folder("Game objects", ps2Package, ps2Package.Name);
+            ps2GameObjectsFolder.Mark = FolderMark.Locked;
             var ps2ScriptsFolder = Folder.CreatePS2Folder("Scripts", ps2Package, ps2Package.Name);
+            ps2ScriptsFolder.Mark = FolderMark.Locked;
             var ps2OgisFolder = Folder.CreatePS2Folder("OGIs/Skeletons", ps2Package, ps2Package.Name);
+            ps2OgisFolder.Mark = FolderMark.Locked;
             var ps2SfxFolder = Folder.CreatePS2Folder("Sound Effects", ps2Package, ps2Package.Name);
+            ps2SfxFolder.Mark = FolderMark.Locked;
             var ps2EnFolder = Folder.CreatePS2Folder("English Sound Effects", ps2Package, ps2Package.Name);
+            ps2EnFolder.Mark = FolderMark.Locked;
             var ps2FrFolder = Folder.CreatePS2Folder("French Sound Effects", ps2Package, ps2Package.Name);
+            ps2FrFolder.Mark = FolderMark.Locked;
             var ps2GrFolder = Folder.CreatePS2Folder("German Sound Effects", ps2Package, ps2Package.Name);
+            ps2GrFolder.Mark = FolderMark.Locked;
             var ps2ItaFolder = Folder.CreatePS2Folder("Italian Sound Effects", ps2Package, ps2Package.Name);
+            ps2ItaFolder.Mark = FolderMark.Locked;
             var ps2JpnFolder = Folder.CreatePS2Folder("Japanese Sound Effects", ps2Package, ps2Package.Name);
+            ps2JpnFolder.Mark = FolderMark.Locked;
             var ps2SpaFolder = Folder.CreatePS2Folder("Spanish Sound Effects", ps2Package, ps2Package.Name);
+            ps2SpaFolder.Mark = FolderMark.Locked;
             var ps2ChunksFolder = Folder.CreatePS2Folder("Chunks", ps2Package, ps2Package.Name);
+            ps2ChunksFolder.Mark = FolderMark.Locked | FolderMark.ChunksOnly;
 
             assets.Add(ps2BlendSkinsFolder.URI, ps2BlendSkinsFolder);
             assets.Add(ps2SkinsFolder.URI, ps2SkinsFolder);
@@ -763,14 +896,23 @@ namespace TT_Lab.Project
                         // Instance layout
                         var instancePackage = isDefault ? GlobalPackagePS2 : ps2Package;
                         var instFolder = Folder.CreatePackageFolder(instancePackage, "Instances", chunkFolder, chunkPath);
+                        instFolder.Mark = FolderMark.InChunk;
                         var aiPathFolder = Folder.CreatePackageFolder(instancePackage, "AI Navigation Paths", chunkFolder, chunkPath);
+                        aiPathFolder.Mark = FolderMark.InChunk;
                         var aiPosFolder = Folder.CreatePackageFolder(instancePackage, "AI Navigation Positions", chunkFolder, chunkPath);
+                        aiPosFolder.Mark = FolderMark.InChunk;
                         var cameraFolder = Folder.CreatePackageFolder(instancePackage, "Cameras", chunkFolder, chunkPath);
+                        cameraFolder.Mark = FolderMark.InChunk;
                         var colSurfaceFolder = Folder.CreatePackageFolder(instancePackage, "Collision Surfaces", chunkFolder, chunkPath);
+                        colSurfaceFolder.Mark = FolderMark.InChunk;
                         var instTempFolder = Folder.CreatePackageFolder(instancePackage, "Instance Templates", chunkFolder, chunkPath);
+                        instTempFolder.Mark = FolderMark.InChunk;
                         var pathFolder = Folder.CreatePackageFolder(instancePackage, "Paths", chunkFolder, chunkPath);
+                        pathFolder.Mark = FolderMark.InChunk;
                         var posFolder = Folder.CreatePackageFolder(instancePackage, "Positions", chunkFolder, chunkPath);
+                        posFolder.Mark = FolderMark.InChunk;
                         var trgFolder = Folder.CreatePackageFolder(instancePackage, "Triggers", chunkFolder, chunkPath);
+                        trgFolder.Mark = FolderMark.InChunk;
                         assets.Add(instFolder.URI, instFolder);
                         assets.Add(aiPathFolder.URI, aiPathFolder);
                         assets.Add(aiPosFolder.URI, aiPosFolder);
@@ -885,13 +1027,20 @@ namespace TT_Lab.Project
 
             System.IO.Directory.SetCurrentDirectory("Levels");
             Log.WriteLine("Writing Levels...");
-            var chunksFolder = (from assetUri in Ps2Package.GetData().To<FolderData>().Children
-                                let asset = assetManager.GetAsset(assetUri)
-                                where asset.Name == "Chunks"
-                                select asset).First().GetData<FolderData>();
+            var chunksFolder = (from dependencyUri in BasePackage.Dependencies
+                                let dependency = assetManager.GetAsset<Package>(dependencyUri)
+                                where dependency.Enabled
+                                let foldersInPackage = ((IAsset)dependency).GetData<FolderData>().Children
+                                from folderUri in foldersInPackage
+                                let folder = assetManager.GetAsset(folderUri)
+                                where folder.Name == "Chunks"
+                                select folder.GetData<FolderData>()).ToList();
             UInt32 totalGlobals = 0;
             UInt32 currentGlobalsCount = 0;
-            ResolveAndWriteChunks(factory, chunksFolder, ref totalGlobals, ref currentGlobalsCount);
+            foreach (var folder in chunksFolder)
+            {
+                ResolveAndWriteChunks(factory, folder, ref totalGlobals, ref currentGlobalsCount);
+            }
 
             Log.WriteLine("Writing Extras...");
             System.IO.Directory.SetCurrentDirectory("../Extras");
@@ -1001,10 +1150,9 @@ namespace TT_Lab.Project
                     var rm2 = factory.GenerateRM();
                     var sm2 = factory.GenerateSM();
 
-                    foreach (var child in folder.GetData<FolderData>().Children)
+                    foreach (var asset in folder.GetData<FolderData>().Children.Select(child => assetManager.GetAsset(child)))
                     {
-                        var asset = assetManager.GetAsset(child);
-                        if (asset is Scenery || asset is DynamicScenery || asset is ChunkLinks)
+                        if (asset is Scenery or DynamicScenery or ChunkLinks)
                         {
                             asset.ResolveChunkResources(factory, sm2);
                         }

@@ -64,7 +64,7 @@ namespace TT_Lab.Assets.Code
                 assetData = GetData();
             }
 
-            var item = assetData.ResolveChunkResouces(factory, section, ID) as ITwinSound;
+            var item = assetData.ResolveChunkResources(factory, section, ID) as ITwinSound;
             item?.SetID(ID);
             item?.Compile();
             if (item != null)

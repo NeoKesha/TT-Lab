@@ -1,0 +1,16 @@
+<adonisControls:AdonisWindow x:Class="TT_Lab.Views.PreferencesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:TT_Lab.Views"
+        xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+        xmlns:controls="clr-namespace:TT_Lab.Controls"
+        mc:Ignorable="d"
+        Title="Preferences" Height="500" Width="400" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen">
+    <GroupBox>
+        <Grid>
+            <controls:LabeledCheckBox Checked="{Binding AreEasterEggsEnabled}" LayoutOrientation="Horizontal" VerticalAlignment="Top" CheckBoxName="Enable Easter Eggs"/>
+        </Grid>
+    </GroupBox>
+</adonisControls:AdonisWindow>

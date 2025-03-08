@@ -43,8 +43,40 @@
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                         <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu ItemsSource="{Binding MenuOptions}"/>
+                            </StackPanel.ContextMenu>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <cal:ActionMessage MethodName="AssetBlockMouseDown">
+                                        <cal:Parameter Value="{Binding ElementName=ChunkTreeView, Path=SelectedItem}"/>
+                                        <cal:Parameter Value="$eventArgs"/>
+                                    </cal:ActionMessage>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseMove">
+                                    <cal:ActionMessage MethodName="AssetBlockMouseMove">
+                                        <cal:Parameter Value="{Binding ElementName=ChunkTreeView, Mode=OneWay}"/>
+                                        <cal:Parameter Value="$eventArgs"/>
+                                    </cal:ActionMessage>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="ContextMenuOpening">
+                                    <cal:ActionMessage MethodName="CreateContextMenuAction"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                             <Image Source="{Binding IconPath}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="24" Height="24" Margin="0,0,3,0" Stretch="Uniform"/>
-                            <TextBlock Style="{DynamicResource TextBlockTreeViewStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Alias}"/>
+                            <TextBlock Visibility="{Binding IsNotRenaming}" Style="{DynamicResource TextBlockTreeViewStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Alias}"/>
+                            <TextBox Text="{Binding NewAlias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{Binding IsRenaming}" IsVisibleChanged="UIElement_OnIsVisibleChanged">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="LostFocus">
+                                        <cal:ActionMessage MethodName="StopRenaming"/>
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="KeyDown">
+                                        <cal:ActionMessage MethodName="SaveRenaming">
+                                            <cal:Parameter Value="$eventArgs"/>
+                                        </cal:ActionMessage>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBox>
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>

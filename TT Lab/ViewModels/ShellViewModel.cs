@@ -27,7 +27,7 @@ namespace TT_Lab.ViewModels
         private readonly IWindowManager _windowManager;
         private readonly IEventAggregator _eventAggregator;
         private readonly ProjectManager _projectManager;
-        private readonly OgreWindowManager _ogreWindowManager;
+        private OgreWindowManager? _ogreWindowManager;
         private readonly Dictionary<String, List<String>> _managerPropsToShellProps = new();
         private readonly DispatcherTimer _renderTimer = new();
         private Boolean _dontRemind = false;
@@ -49,17 +49,24 @@ namespace TT_Lab.ViewModels
             _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), new List<String> { nameof(SearchAsset) });
             _managerPropsToShellProps.Add(nameof(ProjectManager.IsCreatingProject), new List<String>{ nameof(IsCreatingProject), nameof(SadEasterEggVisibility) });
 
-            CompositionTarget.Rendering += PerformRender;
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                CompositionTarget.Rendering += PerformRender;
+            });
+            
+            
+            Preferences.Load();
         }
 
         private void PerformRender(Object? sender, EventArgs e)
         {
             if (_deadgeRender)
             {
+                Console.WriteLine($"RENDERER IS DEAD BUT HOW DID WE CRASH AND NOT RETURN??? {_deadgeRender}");
                 return;
             }
             
-            _ogreWindowManager.Render();
+            _ogreWindowManager?.Render();
         }
 
         public Task About()
@@ -70,6 +77,11 @@ namespace TT_Lab.ViewModels
         public Task CreateProject()
         {
             return _windowManager.ShowDialogAsync(IoC.Get<ProjectCreationViewModel>());
+        }
+
+        public Task OpenPreferences()
+        {
+            return _windowManager.ShowDialogAsync(IoC.Get<PreferencesViewModel>());
         }
 
         public void SaveProject()
@@ -140,6 +152,18 @@ namespace TT_Lab.ViewModels
                 Data = asset
             };
             DragDrop.DoDragDrop(projectTree, data, DragDropEffects.Copy);
+        }
+
+        public Task StopRendering()
+        {
+            _deadgeRender = true;
+            _ogreWindowManager = null;
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                CompositionTarget.Rendering -= PerformRender;
+            });
+
+            return Task.CompletedTask;
         }
 
         // Props to https://stackoverflow.com/a/25765336

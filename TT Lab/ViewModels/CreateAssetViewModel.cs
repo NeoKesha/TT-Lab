@@ -53,8 +53,7 @@ public class CreateAssetViewModel : Screen, INotifyDataErrorInfo
         var parent = _selectedFolder;
         var folder = parent.GetAsset<Folder>();
         newAsset.Package = folder.Package;
-        // Newly created assets will be attached to the project they were created rather than package
-        // this will help determining if we should merge the assets later
+        // Newly created assets will have their project's variation
         newAsset.Variation = IoC.Get<ProjectManager>().OpenedProject!.BasePackage.ID.ToString();
         newAsset.ID = TwinIdGeneratorServiceProvider.GetGenerator(SelectedCreationModel.AssetType).GenerateTwinId();
         newAsset.RegenerateLinks(true);

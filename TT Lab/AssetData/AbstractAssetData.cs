@@ -97,7 +97,7 @@ namespace TT_Lab.AssetData
 
         public abstract ITwinItem Export(ITwinItemFactory factory);
 
-        public virtual ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        public virtual ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             if (section.ContainsItem(id))
             {

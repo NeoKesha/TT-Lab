@@ -73,7 +73,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
             return factory.GenerateBehaviourStarter(ms);
         }
 
-        public override ITwinItem? ResolveChunkResouces(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
+        public override ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             var assetManager = AssetManager.Get();
             var codeSection = section.GetParent();
@@ -93,7 +93,7 @@ namespace TT_Lab.AssetData.Code.Behaviour
                     Console.WriteLine("WTF HAPPENED???");
                 }
             }
-            return base.ResolveChunkResouces(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id);
         }
     }
 }

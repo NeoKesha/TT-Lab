@@ -33,6 +33,9 @@
             </Triggers:InputBindingTrigger.InputBinding>
             <cal:ActionMessage MethodName="SaveProject"/>
         </Triggers:InputBindingTrigger>
+        <i:EventTrigger EventName="Closing">
+            <cal:ActionMessage MethodName="StopRendering"/>
+        </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.Style>
         <Style TargetType="adonisControls:AdonisWindow" BasedOn="{StaticResource {x:Type adonisControls:AdonisWindow}}"/>
@@ -138,7 +141,7 @@
             <MenuItem x:Name="ToolsSubMenu" Header="Tools" IsEnabled="False">
                 <MenuItem/>
             </MenuItem>
-            <MenuItem Style="{DynamicResource SimpleMenuItem}" x:Name="PreferencesMenu" Header="Preferences" IsEnabled="False"/>
+            <MenuItem Style="{DynamicResource SimpleMenuItem}" x:Name="OpenPreferences" Header="Preferences"/>
             <MenuItem Style="{DynamicResource SimpleMenuItem}" x:Name="About" Header="About"/>
         </Menu>
 
@@ -222,10 +225,10 @@
                                     <TextBlock x:Name="AssetBlock" Visibility="{Binding IsNotRenaming}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Alias}" Style="{DynamicResource TextBlockTreeViewStyle}">
                                         <i:Interaction.Triggers>
                                             <i:DataTrigger Binding="{Binding IsEnabled}" Value="False">
-                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DisabledForegroundBrush}"></i:ChangePropertyAction>
+                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{StaticResource DisabledForegroundBrush}"></i:ChangePropertyAction>
                                             </i:DataTrigger>
                                             <i:DataTrigger Binding="{Binding IsEnabled}" Value="True">
-                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource LightColorBrush}"></i:ChangePropertyAction>
+                                                <i:ChangePropertyAction PropertyName="Foreground" Value="{StaticResource LightColorBrush}"></i:ChangePropertyAction>
                                             </i:DataTrigger>
                                         </i:Interaction.Triggers>
                                     </TextBlock>

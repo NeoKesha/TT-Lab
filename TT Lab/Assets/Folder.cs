@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using TT_Lab.AssetData;
 using TT_Lab.Assets.Factory;
 using TT_Lab.ViewModels;
@@ -7,9 +8,22 @@ using Twinsanity.TwinsanityInterchange.Interfaces;
 
 namespace TT_Lab.Assets
 {
+    [Flags]
+    public enum FolderMark
+    {
+        Normal = 0x0,
+        InChunk = 0x1,
+        Locked = 0x2,
+        ChunksOnly = 0x4,
+    }
+    
     public class Folder : SerializableAsset
     {
         public override UInt32 Section => throw new NotImplementedException();
+        
+        [JsonProperty(Required = Required.Always)]
+        public FolderMark Mark { get; set; } = FolderMark.Normal;
+        
         private static UInt32 _rootOrder = 0;
         private UInt32 order = 0;
 

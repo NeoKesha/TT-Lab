@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 
 namespace TT_Lab.Views.Editors
@@ -11,6 +12,15 @@ namespace TT_Lab.Views.Editors
         public ChunkEditorView()
         {
             InitializeComponent();
+        }
+
+        private void UIElement_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox is { IsVisible: true })
+            {
+                textBox.Focus();
+            }
         }
     }
 }

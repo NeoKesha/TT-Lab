@@ -7,12 +7,16 @@ using TT_Lab.AssetData.Code;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
 using TT_Lab.Assets.Graphics;
+using TT_Lab.Assets.Instance;
 using TT_Lab.Models;
 using TT_Lab.Util;
 using Twinsanity.Libraries;
+using Path = TT_Lab.Assets.Instance.Path;
 
 namespace TT_Lab.ViewModels.ResourceTree;
 
+// TODO: Currently we can't determine if the folder belongs to a chunk.
+// TODO: Need to fix that for proper context menus
 public class FolderElementViewModel : ResourceTreeElementViewModel
 {
     public FolderElementViewModel(LabURI asset, ResourceTreeElementViewModel? parent = null) : base(asset, parent)
@@ -22,6 +26,7 @@ public class FolderElementViewModel : ResourceTreeElementViewModel
     public override void Init()
     {
         base.Init();
+        
         BuildChildren((Folder)Asset);
     }
 
@@ -33,7 +38,11 @@ public class FolderElementViewModel : ResourceTreeElementViewModel
             Action = CreateItem
         });
         
-        base.CreateContextMenu();
+        var mark = ((Folder)Asset).Mark;
+        if (!mark.HasFlag(FolderMark.Locked))
+        {
+            base.CreateContextMenu();
+        }
     }
 
     private void DefaultCreatableAssets(CreateAssetViewModel createAssetViewModel)
@@ -47,7 +56,7 @@ public class FolderElementViewModel : ResourceTreeElementViewModel
         });
     }
 
-    protected virtual void ListCreatableAssets(CreateAssetViewModel createAssetViewModel)
+    private void ListNormalFolderCreatableAssets(CreateAssetViewModel createAssetViewModel)
     {
         createAssetViewModel.RegisterAssetToCreate<SoundEffect>("Sound Effect", asset =>
         {
@@ -65,13 +74,13 @@ public class FolderElementViewModel : ResourceTreeElementViewModel
             RIFF.LoadRiff(reader, ref pcm, ref channels, ref frequency);
             if (channels != 1)
             {
-                Log.WriteLine("ERROR: Stereo sound effects are not supported. Sound wasn't replaced.");
+                Log.WriteLine("ERROR: Stereo sound effects are not supported. Sound wasn't added.");
                 return AssetCreationStatus.Failed;
             }
 
             if (frequency > 48000)
             {
-                Log.WriteLine("ERROR: Sounds over 48000 Hz are not supported. Sound wasn't replaced.");
+                Log.WriteLine("ERROR: Sounds over 48000 Hz are not supported. Sound wasn't added.");
                 return AssetCreationStatus.Failed;
             }
         
@@ -88,6 +97,40 @@ public class FolderElementViewModel : ResourceTreeElementViewModel
         createAssetViewModel.RegisterAssetToCreate<Skydome>("Skydome");
         createAssetViewModel.RegisterAssetToCreate<GameObject>("Game Object");
         createAssetViewModel.RegisterAssetToCreate<BehaviourStarter>("Behaviour");
+    }
+
+    private void ListInstanceCreatableAssets(CreateAssetViewModel createAssetViewModel)
+    {
+        createAssetViewModel.RegisterAssetToCreate<AiPath>("AI Path");
+        createAssetViewModel.RegisterAssetToCreate<AiPosition>("AI Position");
+        createAssetViewModel.RegisterAssetToCreate<Camera>("Camera");
+        createAssetViewModel.RegisterAssetToCreate<CollisionSurface>("Collision Surface");
+        createAssetViewModel.RegisterAssetToCreate<InstanceTemplate>("Instance Template");
+        createAssetViewModel.RegisterAssetToCreate<ObjectInstance>("Object Instance");
+        createAssetViewModel.RegisterAssetToCreate<Path>("Path");
+        createAssetViewModel.RegisterAssetToCreate<Position>("Position");
+        createAssetViewModel.RegisterAssetToCreate<Trigger>("Trigger");
+    }
+
+    protected virtual void ListCreatableAssets(CreateAssetViewModel createAssetViewModel)
+    {
+        var mark = ((Folder)Asset).Mark;
+        if (mark.HasFlag(FolderMark.ChunksOnly))
+        {
+            createAssetViewModel.RegisterAssetToCreate<ChunkFolder>("Chunk");
+            return;
+        }
+
+        if (mark.HasFlag(FolderMark.InChunk))
+        {
+            ListInstanceCreatableAssets(createAssetViewModel);
+            return;
+        }
+        
+        if (mark.HasFlag(FolderMark.Normal))
+        {
+            ListNormalFolderCreatableAssets(createAssetViewModel);
+        }
     }
 
     private void CreateItem()

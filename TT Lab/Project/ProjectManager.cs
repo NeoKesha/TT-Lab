@@ -188,7 +188,7 @@ namespace TT_Lab.Project
 
         public bool HasRecents => RecentlyOpened.Count != 0;
 
-        public void CreateProject(string name, string path, string? discContentPathPS2, string? discContentPathXbox)
+        public void CreateProject(string name, string path, string? discContentPathPS2, string? discContentPathXbox, bool copyDiscContents)
         {
             Log.Clear();
             IsCreatingProject = true;
@@ -201,7 +201,8 @@ namespace TT_Lab.Project
                 // Check for PS2 required root disc files
                 if (!ps2DiscFiles.Contains("System.cnf"))
                 {
-                    throw new Exception("Improper disc content provided!");
+                    Log.WriteLine("ERROR: Improper PS2 disc content provided!");
+                    return;
                 }
                 ps2ContentProvided = true;
             }
@@ -211,17 +212,24 @@ namespace TT_Lab.Project
                 // Check for XBOX required root disc files
                 if (!xboxDiscFiles.Contains("default.xbe"))
                 {
-                    throw new Exception("Improper disc content provided!");
+                    Log.WriteLine("ERROR: Improper XBox disc content provided!");
+                    return;
                 }
                 xboxContentProvided = true;
             }
             if (!ps2ContentProvided && !xboxContentProvided)
             {
-                throw new Exception("No content was provided for creating a new project!");
+                Log.WriteLine("ERROR: No content was provided for creating a new project!");
+                return;
             }
 
             OpenedProject = new Project(name, path, discContentPathPS2, discContentPathXbox);
             OpenedProject.CreateProjectStructure();
+            if (copyDiscContents)
+            {
+                Log.WriteLine("Copying disc contents to project");
+                OpenedProject.CopyDiscContents();
+            }
             // Unpack assets
             Directory.SetCurrentDirectory("assets");
             Task.Factory.StartNew(() =>
