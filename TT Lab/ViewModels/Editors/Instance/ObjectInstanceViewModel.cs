@@ -3,6 +3,7 @@ using System;
 using GlmSharp;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Code;
 using TT_Lab.Attributes;
 using TT_Lab.Command;
 using TT_Lab.Project.Messages;
@@ -16,21 +17,23 @@ namespace TT_Lab.ViewModels.Editors.Instance
     public class ObjectInstanceViewModel : ViewportEditableInstanceViewModel
     {
         private Enums.Layouts layoutId;
-        private BindableCollection<PrimitiveWrapperViewModel<LabURI>> instances = new();
-        private BindableCollection<PrimitiveWrapperViewModel<LabURI>> paths = new();
-        private BindableCollection<PrimitiveWrapperViewModel<LabURI>> positions = new();
+        private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> instances = new();
+        private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> paths = new();
+        private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> positions = new();
         private Boolean useOnSpawnScript;
-        private LabURI objectId = LabURI.Empty;
+        private PrimitiveWrapperViewModel<LabURI> objectId = new(LabURI.Empty);
         private Int16 refListIndex;
-        private LabURI onSpawnScriptId = LabURI.Empty;
+        private PrimitiveWrapperViewModel<LabURI> onSpawnScriptId = new(LabURI.Empty);
         private Enums.InstanceState stateFlags;
-        private BindableCollection<PrimitiveWrapperViewModel<UInt32>> flagParams = new();
-        private BindableCollection<PrimitiveWrapperViewModel<Single>> floatParams = new();
-        private BindableCollection<PrimitiveWrapperViewModel<UInt32>> intParams = new();
+        private readonly BindableCollection<PrimitiveWrapperViewModel<UInt32>> flagParams = new();
+        private readonly BindableCollection<PrimitiveWrapperViewModel<Single>> floatParams = new();
+        private readonly BindableCollection<PrimitiveWrapperViewModel<UInt32>> intParams = new();
         private Int32 _flagIndex;
         private Int32 _floatIndex;
         private Int32 _intIndex;
-
+        private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> behaviours = new();
+        private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> objects = new();
+        
         public ObjectInstanceViewModel()
         {
             DirtyTracker.AddBindableCollection(instances);
@@ -76,12 +79,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
             {
                 data.Paths.Add(p.Value);
             }
-            data.ObjectId = objectId;
+            data.ObjectId = objectId.Value;
             data.RefListIndex = RefListIndex;
             data.OnSpawnScriptId = LabURI.Empty;
             if (UseOnSpawnScript)
             {
-                data.OnSpawnScriptId = onSpawnScriptId;
+                data.OnSpawnScriptId = onSpawnScriptId.Value;
             }
             data.StateFlags = (UInt32)stateFlags;
             data.ParamList1.Clear();
@@ -128,10 +131,10 @@ namespace TT_Lab.ViewModels.Editors.Instance
             {
                 positions.Add(new PrimitiveWrapperViewModel<LabURI>(p));
             }
-            objectId = data.ObjectId;
+            objectId = new PrimitiveWrapperViewModel<LabURI>(data.ObjectId);
             refListIndex = data.RefListIndex;
-            onSpawnScriptId = data.OnSpawnScriptId;
-            useOnSpawnScript = onSpawnScriptId != LabURI.Empty;
+            onSpawnScriptId = new PrimitiveWrapperViewModel<LabURI>(data.OnSpawnScriptId);
+            useOnSpawnScript = onSpawnScriptId.Value != LabURI.Empty;
             stateFlags = MiscUtils.ConvertEnum<Enums.InstanceState>(data.StateFlags);
             foreach (var f in data.ParamList1)
             {
@@ -147,6 +150,20 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
             layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value);
             
+            behaviours.Clear();
+            var behaviourAssets = AssetManager.Get().GetAllAssetsOf<BehaviourStarter>();
+            foreach (var behaviour in behaviourAssets)
+            {
+                behaviours.Add(new PrimitiveWrapperViewModel<LabURI>(behaviour.URI));
+            }
+            
+            objects.Clear();
+            var objectAssets = AssetManager.Get().GetAllAssetsOf<GameObject>();
+            foreach (var gameObject in objectAssets)
+            {
+                objects.Add(new PrimitiveWrapperViewModel<LabURI>(gameObject.URI));
+            }
+
             // IoC.Get<IEventAggregator>().PublishOnUIThreadAsync(new ChangeRenderCameraPositionMessage
             //     { NewCameraPosition = new vec3(-Position.X, Position.Y, Position.Z) });
         }
@@ -161,12 +178,15 @@ namespace TT_Lab.ViewModels.Editors.Instance
         public DeleteItemFromListCommand DeleteLinkedInstanceCommand { get; private set; }
         public DeleteItemFromListCommand DeleteLinkedPositionCommand { get; private set; }
         public DeleteItemFromListCommand DeleteLinkedPathCommand { get; private set; }
+        
+        public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Behaviours => behaviours;
+        public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Objects => objects;
 
         public string Name
         {
             get
             {
-                var obj = AssetManager.Get().GetAsset(objectId);
+                var obj = AssetManager.Get().GetAsset(objectId.Value);
                 var asset = AssetManager.Get().GetAsset(EditableResource);
                 return $"Instance {asset.ID} - {obj.Alias}";
             }
@@ -186,7 +206,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
         [MarkDirty]
-        public LabURI InstanceObject
+        public PrimitiveWrapperViewModel<LabURI> InstanceObject
         {
             get => objectId;
             set
@@ -200,21 +220,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
         [MarkDirty]
-        public LabURI? OnSpawnScript
+        public PrimitiveWrapperViewModel<LabURI>? OnSpawnScript
         {
-            get
-            {
-                if (onSpawnScriptId != LabURI.Empty)
-                {
-                    return onSpawnScriptId;
-                }
-                return null;
-            }
+            get => onSpawnScriptId.Value != LabURI.Empty ? onSpawnScriptId : null;
             set
             {
                 if (value != onSpawnScriptId)
                 {
-                    onSpawnScriptId = value == null ? LabURI.Empty : value;
+                    onSpawnScriptId = value == null ? new PrimitiveWrapperViewModel<LabURI>(LabURI.Empty) : value;
                     
                     NotifyOfPropertyChange();
                 }

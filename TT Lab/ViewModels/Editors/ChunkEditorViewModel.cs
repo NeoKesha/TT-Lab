@@ -181,10 +181,7 @@ namespace TT_Lab.ViewModels.Editors
             }
         }
 
-        public BindableCollection<ResourceTreeElementViewModel> ChunkTree
-        {
-            get => _chunkTree;
-        }
+        public BindableCollection<ResourceTreeElementViewModel> ChunkTree => _chunkTree;
 
         public LabURI EditableResource { get; set; } = LabURI.Empty;
         public SceneEditorViewModel SceneEditor { get => _sceneEditor; set => _sceneEditor = value; }

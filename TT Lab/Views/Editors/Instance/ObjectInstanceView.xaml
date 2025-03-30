@@ -53,8 +53,8 @@
                             </Grid.RowDefinitions>
                             <controls:LabeledDropList SelectedItem="{Binding InstanceObject}" Items="{Binding Objects}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" DropListName="Object" AllowDrop="True">
                                 <controls:LabeledDropList.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type resourceTree:ResourceTreeElementViewModel}">
-                                        <TextBlock Text="{Binding Alias}"/>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
                                     </DataTemplate>
                                 </controls:LabeledDropList.ItemTemplate>
                             </controls:LabeledDropList>
@@ -65,8 +65,8 @@
                                 </Grid.RowDefinitions>
                                 <controls:LabeledDropList SelectedItem="{Binding OnSpawnScript}" Items="{Binding Behaviours}" x:Name="OnSpawnScriptList" Margin="0,0,0,0" DropListName="On spawn script" AllowDrop="True" Grid.Row="1" IsEnabled="{Binding Checked, ElementName=UseOnSpawnScriptBox}">
                                     <controls:LabeledDropList.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type resourceTree:ResourceTreeElementViewModel}">
-                                            <TextBlock Text="{Binding Alias}"/>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
                                         </DataTemplate>
                                     </controls:LabeledDropList.ItemTemplate>
                                 </controls:LabeledDropList>

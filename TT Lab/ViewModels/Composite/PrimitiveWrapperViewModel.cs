@@ -58,6 +58,11 @@ public class PrimitiveWrapperViewModel<T> : PropertyChangedBase, IDirtyMarker, I
         {
             return 1;
         }
+
+        if (obj is T)
+        {
+            return _value.CompareTo(obj);
+        }
         
         return _value.CompareTo(((PrimitiveWrapperViewModel<T>)obj)._value);
     }
@@ -73,6 +78,7 @@ public class PrimitiveWrapperViewModel<T> : PropertyChangedBase, IDirtyMarker, I
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
+        if (obj is T) return _value.Equals(obj);
         if (obj.GetType() != GetType()) return false;
         return Equals((PrimitiveWrapperViewModel<T>)obj);
     }
