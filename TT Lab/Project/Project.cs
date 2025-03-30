@@ -201,7 +201,7 @@ namespace TT_Lab.Project
             {
                 Log.WriteLine($"Opening {dir}...");
                 var assetFiles = System.IO.Directory.GetFiles(dir, "*.json", System.IO.SearchOption.AllDirectories);
-                taskList.Add(AssetFactory.GetAssets(assetFiles));
+                taskList.Add(AssetDeserializerFactory.GetAssets(assetFiles));
             }
             Task.WaitAll(taskList.ToArray());
             foreach (var task in taskList.ToArray())
@@ -865,6 +865,7 @@ namespace TT_Lab.Project
                     else
                     {
                         prevFolder = new ChunkFolder(GlobalPackagePS2.URI, "Default", GlobalPackagePS2, GlobalPackagePS2.Name);
+                        prevFolder.Mark = FolderMark.DefaultOnly;
                         assets.Add(prevFolder.URI, prevFolder);
                     }
                     var chunkFolder = prevFolder;

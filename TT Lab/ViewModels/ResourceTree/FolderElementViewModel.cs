@@ -6,6 +6,7 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Models;
@@ -47,69 +48,36 @@ public class FolderElementViewModel : ResourceTreeElementViewModel
 
     private void DefaultCreatableAssets(CreateAssetViewModel createAssetViewModel)
     {
-        createAssetViewModel.RegisterAssetToCreate<Folder>("Folder", asset =>
-        {
-            var folderData = asset.GetData<FolderData>();
-            folderData.Parent = Asset.URI;
-
-            return AssetCreationStatus.Success;
-        });
+        createAssetViewModel.RegisterAssetToCreate<Folder>("Folder", asset => AssetDataFactory.CreateFolderData(Asset, asset));
     }
 
     private void ListNormalFolderCreatableAssets(CreateAssetViewModel createAssetViewModel)
     {
-        createAssetViewModel.RegisterAssetToCreate<SoundEffect>("Sound Effect", asset =>
-        {
-            var file = MiscUtils.GetFileFromDialogue("Wave File|*.wav");
-            if (string.IsNullOrEmpty(file))
-            {
-                return AssetCreationStatus.Failed;
-            }
-        
-            using FileStream fs = new(file, FileMode.Open, FileAccess.Read);
-            using BinaryReader reader = new(fs);
-            Byte[] pcm = Array.Empty<byte>();
-            short channels = 0;
-            uint frequency = 0;
-            RIFF.LoadRiff(reader, ref pcm, ref channels, ref frequency);
-            if (channels != 1)
-            {
-                Log.WriteLine("ERROR: Stereo sound effects are not supported. Sound wasn't added.");
-                return AssetCreationStatus.Failed;
-            }
-
-            if (frequency > 48000)
-            {
-                Log.WriteLine("ERROR: Sounds over 48000 Hz are not supported. Sound wasn't added.");
-                return AssetCreationStatus.Failed;
-            }
-        
-            fs.Flush();
-            fs.Close();
-            reader.Close();
-
-            var newSoundData = new SoundEffectData(file);
-            asset.SetData(newSoundData);
-            
-            return AssetCreationStatus.Success;
-        });
-        createAssetViewModel.RegisterAssetToCreate<Texture>("Texture");
-        createAssetViewModel.RegisterAssetToCreate<Skydome>("Skydome");
-        createAssetViewModel.RegisterAssetToCreate<GameObject>("Game Object");
-        createAssetViewModel.RegisterAssetToCreate<BehaviourStarter>("Behaviour");
+        createAssetViewModel.RegisterAssetToCreate<SoundEffect>("Sound Effect", AssetDataFactory.CreateSoundEffectData);
+        createAssetViewModel.RegisterAssetToCreate<Texture>("Texture", AssetDataFactory.CreateTextureData);
+        createAssetViewModel.RegisterAssetToCreate<Material>("Material", AssetDataFactory.CreateMaterialData);
+        createAssetViewModel.RegisterAssetToCreate<Skydome>("Skydome", AssetDataFactory.CreateSkydomeData);
+        createAssetViewModel.RegisterAssetToCreate<GameObject>("Game Object", AssetDataFactory.CreateGameObjectData);
+        createAssetViewModel.RegisterAssetToCreate<BehaviourStarter>("Behaviour", AssetDataFactory.CreateBehaviourData);
     }
 
     private void ListInstanceCreatableAssets(CreateAssetViewModel createAssetViewModel)
     {
-        createAssetViewModel.RegisterAssetToCreate<AiPath>("AI Path");
-        createAssetViewModel.RegisterAssetToCreate<AiPosition>("AI Position");
-        createAssetViewModel.RegisterAssetToCreate<Camera>("Camera");
-        createAssetViewModel.RegisterAssetToCreate<CollisionSurface>("Collision Surface");
-        createAssetViewModel.RegisterAssetToCreate<InstanceTemplate>("Instance Template");
-        createAssetViewModel.RegisterAssetToCreate<ObjectInstance>("Object Instance");
-        createAssetViewModel.RegisterAssetToCreate<Path>("Path");
-        createAssetViewModel.RegisterAssetToCreate<Position>("Position");
-        createAssetViewModel.RegisterAssetToCreate<Trigger>("Trigger");
+        var mark = ((Folder)Asset).Mark;
+        if (mark.HasFlag(FolderMark.DefaultOnly))
+        {
+            createAssetViewModel.RegisterAssetToCreate<CollisionSurface>("Collision Surface", AssetDataFactory.CreateCollisionSurfaceData);
+            createAssetViewModel.RegisterAssetToCreate<InstanceTemplate>("Instance Template", AssetDataFactory.CreateInstanceTemplateData);
+            return;
+        }
+        
+        createAssetViewModel.RegisterAssetToCreate<AiPath>("AI Path", AssetDataFactory.CreateAiPathData);
+        createAssetViewModel.RegisterAssetToCreate<AiPosition>("AI Position", AssetDataFactory.CreateAiPositionData);
+        createAssetViewModel.RegisterAssetToCreate<Camera>("Camera", AssetDataFactory.CreateCameraData);
+        createAssetViewModel.RegisterAssetToCreate<ObjectInstance>("Object Instance", AssetDataFactory.CreateObjectInstanceData);
+        createAssetViewModel.RegisterAssetToCreate<Path>("Path", AssetDataFactory.CreatePathData);
+        createAssetViewModel.RegisterAssetToCreate<Position>("Position", AssetDataFactory.CreatePositionData);
+        createAssetViewModel.RegisterAssetToCreate<Trigger>("Trigger", AssetDataFactory.CreateTriggerData);
     }
 
     protected virtual void ListCreatableAssets(CreateAssetViewModel createAssetViewModel)

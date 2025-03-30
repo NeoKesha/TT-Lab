@@ -12,7 +12,7 @@ using TT_Lab.Util;
 
 namespace TT_Lab.Rendering.Objects;
 
-public class ObjectInstance : EditableObject
+public sealed class ObjectInstance : EditableObject
 {
     private readonly List<ModelBuffer> modelBuffers = new();
 
@@ -25,7 +25,7 @@ public class ObjectInstance : EditableObject
         Pos = new vec3(-instance.Position.X, instance.Position.Y, instance.Position.Z);
         Rot = new vec3(instance.RotationX.GetRotation(), -instance.RotationY.GetRotation(), -instance.RotationZ.GetRotation());
         AmbientColor = new vec3(0.5f, 0.5f, 0.5f);
-        SetPositionAndRotation();
+        UpdatePositionAndRotation();
     }
 
     public override void Select()

@@ -53,7 +53,17 @@ namespace TT_Lab.Rendering.Objects
             return transform;
         }
 
-        public virtual void SetPositionAndRotation()
+        public vec3 GetPosition()
+        {
+            return new vec3(SceneNode.getPosition().x, SceneNode.getPosition().y, SceneNode.getPosition().z);
+        }
+
+        public vec3 GetRotation()
+        {
+            return new vec3(SceneNode.getOrientation().getPitch().valueDegrees(), SceneNode.getOrientation().getYaw().valueDegrees(), SceneNode.getOrientation().getRoll().valueDegrees());
+        }
+
+        public virtual void UpdatePositionAndRotation()
         {
             SceneNode.setPosition(OgreExtensions.FromGlm(Pos));
             SceneNode.pitch(new Radian(new Degree(Rot.x)));
@@ -82,8 +92,8 @@ namespace TT_Lab.Rendering.Objects
 
         protected virtual void DrawImGuiInternal()
         {
-            ImGui.Text($"Position: {Pos}");
-            ImGui.Text($"Rotation: {Rot}");
+            ImGui.Text($"Position: {GetPosition()}");
+            ImGui.Text($"Rotation: {GetRotation()}");
         }
     }
 }

@@ -37,11 +37,11 @@
                 <TabItem x:Name="MainPropsTab" Header="Main properties">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="32*"/>
+                            <RowDefinition Height="35*"/>
                             <RowDefinition Height="50*"/>
                             <RowDefinition Height="243*"/>
                         </Grid.RowDefinitions>
-                        <controls:LabeledDropList SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout" Height="48"/>
+                        <controls:LabeledDropList Margin="5" SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout"/>
                         <Grid x:Name="MainPropsGrid" Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>

@@ -15,6 +15,7 @@ namespace TT_Lab.Assets
         InChunk = 0x1,
         Locked = 0x2,
         ChunksOnly = 0x4,
+        DefaultOnly = 0x8,
     }
     
     public class Folder : SerializableAsset

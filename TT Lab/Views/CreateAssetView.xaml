@@ -10,16 +10,26 @@
                 xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
                 xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
                 xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
+                xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
                 d:DataContext="{Binding Source={d:DesignInstance viewmodels:CreateAssetViewModel}}"
                 mc:Ignorable="d"
-                Title="Create Asset..." Height="500" Width="400" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+                Title="Create Asset..." Height="550" Width="400" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Window.Style>
         <Style TargetType="adonisControls:AdonisWindow" BasedOn="{StaticResource {x:Type adonisControls:AdonisWindow}}"/>
     </Window.Style>
+    <Window.Resources>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="InstanceLayouts">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="twinTech:Enums+Layouts"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
     <GroupBox>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
+                <RowDefinition x:Name="LayoutRow" Height="{Binding LayoutRowHeight}"/>
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
@@ -35,10 +45,16 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </GroupBox>
-            <Grid Margin="5" Grid.Row="1">
+            <Grid Visibility="{Binding IsInstance}" Margin="5" Grid.Row="1">
+                <controls:LabeledDropList
+                    Items="{Binding Source={StaticResource InstanceLayouts}}"
+                    SelectedItem="{Binding LayoutID}"
+                    DropListName="Instance Layout"/>
+            </Grid>
+            <Grid Margin="5" Grid.Row="2">
                 <TextBox x:Name="AssetName" Loaded="AssetName_OnLoaded" adonisExtensions:WatermarkExtension.Watermark="Asset Name..." Text="{Binding AssetName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnValidationError=True}" MaxHeight="25"/>
             </Grid>
-            <Button IsDefault="True" IsEnabled="{Binding CanCreate}" x:Name="CreateAssetButton" Margin="5" Grid.Row="2" Content="Create"/>
+            <Button IsDefault="True" IsEnabled="{Binding CanCreate}" x:Name="CreateAssetButton" Margin="5" Grid.Row="3" Content="Create"/>
         </Grid>
     </GroupBox>
 </adonisControls:AdonisWindow>

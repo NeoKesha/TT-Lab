@@ -50,6 +50,7 @@ namespace TT_Lab
                 .Singleton<IEventAggregator, EventAggregator>()
                 .Singleton<ProjectManager>()
                 .Singleton<OgreWindowManager>()
+                .Singleton<IActiveChunkService, ActiveChunkService>()
                 .RegisterPerRequest(typeof(IDataValidatorService), nameof(IDataValidatorService), typeof(DataValidatorService));
 
             foreach (var assembly in SelectAssemblies())

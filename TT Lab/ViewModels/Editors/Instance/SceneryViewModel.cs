@@ -54,6 +54,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
                 sceneryTree.BuildTree();
                 DirtyTracker.AddChild(sceneryTree);
             }
+            
             ResetDirty();
         }
 

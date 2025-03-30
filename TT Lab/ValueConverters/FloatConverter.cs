@@ -13,7 +13,7 @@ public class FloatConverter : IValueConverter
     {
         if (value is not float floatValue)
         {
-            return string.Empty;
+            return null;
         }
 
         var result = string.Format(CultureInfo.InvariantCulture, "{0:0.################################################################}", floatValue);

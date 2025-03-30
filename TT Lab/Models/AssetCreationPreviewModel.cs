@@ -1,27 +1,24 @@
 using System;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
+using TT_Lab.Assets.Instance;
 
 namespace TT_Lab.Models;
-
-public enum AssetCreationStatus
-{
-    Success,
-    Failed,
-}
 
 public class AssetCreationPreviewModel
 {
     private readonly IAsset _asset;
 
-    public AssetCreationPreviewModel(IAsset assetToPreview, string displayName, Func<IAsset, AssetCreationStatus>? createCallback = null)
+    public AssetCreationPreviewModel(IAsset assetToPreview, string displayName, Func<IAsset, AssetCreationStatus>? dataCreator = null)
     {
         _asset = assetToPreview;
         DisplayName = displayName;
-        CreateCallback = createCallback;
+        DataCreator = dataCreator;
     }
     
     public string IconPath => $"/Media/LabIcons/{_asset.IconPath}";
     public string DisplayName { get; }
-    public Func<IAsset, AssetCreationStatus>? CreateCallback { get; }
+    public Func<IAsset, AssetCreationStatus>? DataCreator { get; }
     public Type AssetType => _asset.GetType();
+    public Boolean IsInstance => AssetType.IsAssignableTo(typeof(SerializableInstance));
 }

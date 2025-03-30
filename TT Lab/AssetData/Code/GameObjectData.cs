@@ -26,6 +26,8 @@ namespace TT_Lab.AssetData.Code
         public GameObjectData()
         {
             Name = "NewGameObject";
+            Type = ITwinObject.ObjectType.GenericObject;
+            UnkTypeValue = 1;
             TriggerBehaviours = new List<ObjectTriggerBehaviourData>();
             OGISlots = new List<LabURI>();
             AnimationSlots = new List<LabURI>();

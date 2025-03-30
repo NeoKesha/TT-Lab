@@ -13,6 +13,7 @@ using TT_Lab.AssetData;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Instance;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Instance;
 using TT_Lab.Extensions;
 using TT_Lab.Project.Messages;
@@ -21,6 +22,7 @@ using TT_Lab.Rendering.Buffers;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Objects.SceneInstances;
 using TT_Lab.ServiceProviders;
+using TT_Lab.Services;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors.Instance;
 using TT_Lab.ViewModels.Interfaces;
@@ -44,7 +46,8 @@ namespace TT_Lab.ViewModels.Editors
         private readonly BindableCollection<ResourceTreeElementViewModel> _chunkTree = new();
         private bool _isDefault;
         private bool _isDirty = false;
-        private DirtyTracker _dirtyTracker;
+        private readonly DirtyTracker _dirtyTracker;
+        private readonly IActiveChunkService _activeChunkService;
 
         private EditingContext _editingContext;
         private readonly List<SceneInstance> _sceneInstances = new();
@@ -75,12 +78,13 @@ namespace TT_Lab.ViewModels.Editors
             Lighting = 1 << 11,
         }
 
-        public ChunkEditorViewModel(IEventAggregator eventAggregator)
+        public ChunkEditorViewModel(IEventAggregator eventAggregator, IActiveChunkService activeChunkService)
         {
             _sceneEditor.SceneHeaderModel = "Chunk Viewer";
             _inputController = new InputController(_sceneEditor);
             eventAggregator.SubscribeOnUIThread(this);
             _dirtyTracker = new DirtyTracker(this);
+            _activeChunkService = activeChunkService;
             InitScene();
         }
 
@@ -94,6 +98,7 @@ namespace TT_Lab.ViewModels.Editors
         protected override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             _sceneEditor.AddInputListener(this);
+            _activeChunkService.SetCurrentChunkEditor(this);
             
             return base.OnActivateAsync(cancellationToken);
         }
@@ -106,6 +111,7 @@ namespace TT_Lab.ViewModels.Editors
             }
             
             _sceneEditor.RemoveInputListener(this);
+            _activeChunkService.SetCurrentChunkEditor(null);
             
             foreach (var item in Items.Select(s => s).ToArray())
             {
@@ -115,21 +121,44 @@ namespace TT_Lab.ViewModels.Editors
             return base.OnDeactivateAsync(close, cancellationToken);
         }
 
-        public SceneInstance NewSceneInstance(ObjectInstanceData instData)
+        public SceneInstance NewSceneInstance(Type type, ResourceTreeElementViewModel basedOn)
         {
             Debug.Assert(_sceneEditor.RenderControl?.GetRenderWindow() != null, "Invalid editor state!");
 
-            var sceneInstance = new ObjectSceneInstance(_sceneEditor.RenderControl.GetRenderWindow(), instData);
+            var chunk = AssetManager.Get().GetAsset<ChunkFolder>(EditableResource);
+            var newInstance = AssetFactory.CreateAsset(basedOn.Asset.Type, chunk,
+                $"New {nameof(basedOn.Asset.Type)} {Guid.NewGuid().GetHashCode()}", chunk.Variation,
+                TwinIdGeneratorServiceProvider.GetGeneratorForChunk(basedOn.Asset.Type, chunk.Variation, (Enums.Layouts)basedOn.Asset.LayoutID!),
+                (asset) =>
+                {
+                    asset.SetData(CloneUtils.DeepClone(basedOn.Asset.GetData<AbstractAssetData>()));
+                    return AssetCreationStatus.Success;
+                },
+                (Enums.Layouts)basedOn.Asset.LayoutID)!;
+            AssetManager.Get().AddAsset(newInstance);
+            var sceneInstance = SceneInstanceFactory.CreateSceneInstance(type, _sceneEditor.RenderControl.GetRenderWindow(), _editingContext, newInstance.GetData<AbstractAssetData>(), newInstance.GetResourceTreeElement());
             _sceneInstances.Add(sceneInstance);
-            _instancesNode.addChild(sceneInstance.GetRenderable().getParentSceneNode());
+            _instancesNode.addChild(sceneInstance.GetEditableObject().getParentSceneNode());
 
-            //TODO: actually add instance
+            var parent = chunk.GetResourceTreeElement();
+            parent.AddNewChild(newInstance.GetResourceTreeElement(parent));
+            parent.ClearChildren();
+            parent.LoadChildrenBack();
+            parent.NotifyOfPropertyChange(nameof(parent.Children));
+
             return sceneInstance;
         }
 
         public async void InstanceEditorChanged(RoutedPropertyChangedEventArgs<Object> e)
         {
-            if (e.NewValue == null) return;
+            if (e.NewValue == null)
+            {
+                if (CurrentInstanceEditor != null)
+                {
+                    await DeactivateItemAsync(CurrentInstanceEditor, true);
+                }
+                return;
+            }
             var asset = (ResourceTreeElementViewModel)e.NewValue;
             if (asset.Asset.Type == typeof(Folder)) return;
 
@@ -330,7 +359,7 @@ namespace TT_Lab.ViewModels.Editors
             {
                 foreach (var instance in _sceneInstances)
                 {
-                    if (!instance.GetRenderable().isVisible())
+                    if (!instance.GetEditableObject().isVisible())
                     {
                         continue;
                     }
@@ -383,7 +412,7 @@ namespace TT_Lab.ViewModels.Editors
 
         private bool IsDrawFilterEnabled(DrawFilter filter)
         {
-            return (_drawFilter & filter) == filter;
+            return _drawFilter.HasFlag(filter);
         }
 
         private void EnableDrawFilter(DrawFilter filter)
@@ -423,10 +452,7 @@ namespace TT_Lab.ViewModels.Editors
                 
                 // Currently all stuff is created as is from the data without linking it to view models
                 // TODO: Link all that together so that changes in the editor reflect on the end data
-                _colData = _chunkTree.First((avm) =>
-                {
-                    return avm.Asset.Type == typeof(Assets.Instance.Collision);
-                })!.Asset.GetData<CollisionData>();
+                _colData = _chunkTree.First(avm => avm.Asset.Type == typeof(Assets.Instance.Collision))!.Asset.GetData<CollisionData>();
 
                 _collisionRender = new Collision("CollisionData", sceneManager, _colData);
                 
@@ -437,9 +463,9 @@ namespace TT_Lab.ViewModels.Editors
                 foreach (var instance in instances!.Children)
                 {
                     var instData = instance.Asset.GetData<ObjectInstanceData>();
-                    var objSceneInstance = new ObjectSceneInstance(glControl, instData);
+                    var objSceneInstance = new ObjectSceneInstance(glControl, _editingContext, instData, instance);
                     _sceneInstances.Add(objSceneInstance);
-                    _instancesNode.addChild(objSceneInstance.GetRenderable().getParentSceneNode());
+                    _instancesNode.addChild(objSceneInstance.GetEditableObject().getParentSceneNode());
                 }
                 
                 var scenery = _chunkTree.First(avm => avm.Asset.Section == Constants.SCENERY_SECENERY_ITEM).Asset.GetData<SceneryData>();

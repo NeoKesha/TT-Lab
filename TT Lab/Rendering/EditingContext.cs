@@ -1,11 +1,15 @@
-﻿using GlmSharp;
+﻿using System;
+using System.Windows;
+using GlmSharp;
 using org.ogre;
 using TT_Lab.AssetData.Instance;
+using TT_Lab.Assets;
 using TT_Lab.Extensions;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Rendering.Objects.SceneInstances;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors;
+using TT_Lab.ViewModels.Editors.Instance;
 
 namespace TT_Lab.Rendering
 {
@@ -80,7 +84,7 @@ namespace TT_Lab.Rendering
                     return;
                 }
 
-                SelectedInstance.GetRenderable().DrawImGui();
+                SelectedInstance.GetEditableObject().DrawImGui();
             };
         }
 
@@ -136,6 +140,8 @@ namespace TT_Lab.Rendering
 
         public void Deselect()
         {
+            SelectedInstance?.UnlinkChangesToViewModel((ViewportEditableInstanceViewModel)_editor.CurrentInstanceEditor!);
+            _editor.InstanceEditorChanged(new RoutedPropertyChangedEventArgs<Object>(null, null));
             _renderWindow.SetCameraStyle(CameraStyle.CS_FREELOOK);
             SelectedInstance?.Deselect();
             SelectedInstance = null;
@@ -148,17 +154,24 @@ namespace TT_Lab.Rendering
             Deselect();
             SelectedInstance = instance;
             SelectedInstance?.Select();
-            SelectedRenderable = SelectedInstance?.GetRenderable();
+            SelectedRenderable = SelectedInstance?.GetEditableObject();
             
             if (SelectedInstance != null)
             {
-                _renderWindow.SetCameraTarget(SelectedInstance.GetRenderable().GetSceneNode());
+                _renderWindow.SetCameraTarget(SelectedInstance.GetEditableObject().GetSceneNode());
                 _renderWindow.SetCameraStyle(CameraStyle.CS_ORBIT);
-
+                
+                _editor.InstanceEditorChanged(new RoutedPropertyChangedEventArgs<Object>(null, SelectedInstance.GetViewModel()));
+                SelectedInstance.LinkChangesToViewModel((ViewportEditableInstanceViewModel)_editor.CurrentInstanceEditor!);
                 _gizmo.DetachFromCurrentObject();
                 _gizmo.SwitchGizmo((Gizmo.GizmoType)(int)TransformMode);
-                _gizmo.AttachToObject(SelectedInstance.GetRenderable().GetSceneNode());
+                _gizmo.AttachToObject(SelectedInstance.GetEditableObject().GetSceneNode());
             }
+        }
+
+        public InstanceSectionResourceEditorViewModel? GetCurrentEditor()
+        {
+            return _editor.CurrentInstanceEditor;
         }
 
         public void SetGrid()
@@ -204,10 +217,9 @@ namespace TT_Lab.Rendering
                 return;
             }
 
-            var newInstanceData = CloneUtils.Clone(_palette[_currentPaletteIndex]!.GetData<ObjectInstanceData>());
             var cursorPosition = _cursor.GetPosition();
-            newInstanceData.Position = new Twinsanity.TwinsanityInterchange.Common.Vector4(-cursorPosition.x, cursorPosition.y, cursorPosition.z, 1.0f);
-            var newInstance = _editor.NewSceneInstance(newInstanceData);
+            var newInstance = _editor.NewSceneInstance(_palette[_currentPaletteIndex]!.GetType(), _palette[_currentPaletteIndex]!.GetViewModel());
+            newInstance.SetPositionRotation(cursorPosition, _palette[_currentPaletteIndex]!.GetRotation());
             Select(newInstance);
             TransformMode = TransformMode.ROTATE;
             TransformAxis = TransformAxis.NONE;

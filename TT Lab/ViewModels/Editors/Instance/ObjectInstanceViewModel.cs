@@ -13,11 +13,9 @@ using Twinsanity.TwinsanityInterchange.Enumerations;
 
 namespace TT_Lab.ViewModels.Editors.Instance
 {
-    public class ObjectInstanceViewModel : InstanceSectionResourceEditorViewModel
+    public class ObjectInstanceViewModel : ViewportEditableInstanceViewModel
     {
         private Enums.Layouts layoutId;
-        private Vector4ViewModel position = new();
-        private Vector3ViewModel rotation = new();
         private BindableCollection<PrimitiveWrapperViewModel<LabURI>> instances = new();
         private BindableCollection<PrimitiveWrapperViewModel<LabURI>> paths = new();
         private BindableCollection<PrimitiveWrapperViewModel<LabURI>> positions = new();
@@ -41,8 +39,8 @@ namespace TT_Lab.ViewModels.Editors.Instance
             DirtyTracker.AddBindableCollection(flagParams);
             DirtyTracker.AddBindableCollection(floatParams);
             DirtyTracker.AddBindableCollection(intParams);
-            DirtyTracker.AddChild(position);
-            DirtyTracker.AddChild(rotation);
+            DirtyTracker.AddChild(Position);
+            DirtyTracker.AddChild(Rotation);
             
             AddIntParamCommand = new AddItemToListCommand<PrimitiveWrapperViewModel<UInt32>>(IntParams);
             AddFlagParamCommand = new AddItemToListCommand<PrimitiveWrapperViewModel<UInt32>>(FlagParams);
@@ -109,15 +107,15 @@ namespace TT_Lab.ViewModels.Editors.Instance
         {
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<ObjectInstanceData>();
-            DirtyTracker.RemoveChild(position);
-            position = new Vector4ViewModel(data.Position);
-            DirtyTracker.AddChild(position);
+            DirtyTracker.RemoveChild(Position);
+            Position = new Vector4ViewModel(data.Position);
+            DirtyTracker.AddChild(Position);
             var rotX = data.RotationX.GetRotation();
             var rotY = data.RotationY.GetRotation();
             var rotZ = data.RotationZ.GetRotation();
-            DirtyTracker.RemoveChild(rotation);
-            rotation = new Vector3ViewModel(rotX, rotY, rotZ);
-            DirtyTracker.AddChild(rotation);
+            DirtyTracker.RemoveChild(Rotation);
+            Rotation = new Vector3ViewModel(rotX, rotY, rotZ);
+            DirtyTracker.AddChild(Rotation);
             foreach (var i in data.Instances)
             {
                 instances.Add(new PrimitiveWrapperViewModel<LabURI>(i));
@@ -149,8 +147,8 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
             layoutId = MiscUtils.ConvertEnum<Enums.Layouts>(asset.LayoutID!.Value);
             
-            IoC.Get<IEventAggregator>().PublishOnUIThreadAsync(new ChangeRenderCameraPositionMessage
-                { NewCameraPosition = new vec3(-Position.X, Position.Y, Position.Z) });
+            // IoC.Get<IEventAggregator>().PublishOnUIThreadAsync(new ChangeRenderCameraPositionMessage
+            //     { NewCameraPosition = new vec3(-Position.X, Position.Y, Position.Z) });
         }
 
 
@@ -235,26 +233,6 @@ namespace TT_Lab.ViewModels.Editors.Instance
                     NotifyOfPropertyChange();
                 }
             }
-        }
-        public Vector4ViewModel Position
-        {
-            get
-            {
-                return position;
-            }
-            set
-            {
-                if (value != position)
-                {
-                    position = value;
-                    NotifyOfPropertyChange();
-                    
-                }
-            }
-        }
-        public Vector3ViewModel Rotation
-        {
-            get => rotation;
         }
         public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Instances
         {

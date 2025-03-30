@@ -1,50 +1,39 @@
-﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using TT_Lab.Services;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 
-namespace TT_Lab.Assets.Factory
+namespace TT_Lab.Assets.Factory;
+
+public static class AssetFactory
 {
-    public static class AssetFactory
+    public static IAsset? CreateAsset(Type type, Folder folder, string name, string variation, ITwinIdGeneratorService idGenerator, Func<IAsset, AssetCreationStatus>? dataCreator = null, Enums.Layouts? layout = null)
     {
-        public static async Task<Dictionary<LabURI, IAsset>> GetAssets(string[] jsonAssets)
+        Debug.Assert(type.IsAssignableTo(typeof(IAsset)), $"The type {type.Name} must implement IAsset");
+        var newAsset = (IAsset)Activator.CreateInstance(type)!;
+        newAsset.Name = name;
+        newAsset.Alias = name;
+        newAsset.Package = folder.Package;
+        newAsset.Variation = variation;
+        newAsset.ID = idGenerator.GenerateTwinId();
+        if (layout.HasValue)
         {
-            var assets = new Dictionary<LabURI, IAsset>();
-            var assetMut = new Mutex();
-            var tasks = new Task[jsonAssets.Length];
-            var index = 0;
-            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            foreach (var str in jsonAssets)
-            {
-                tasks[index++] = Task.Factory.StartNew(() =>
-                {
-                    IAsset newAsset;
-                    using System.IO.FileStream fs = new(str, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-                    using System.IO.StreamReader reader = new(fs);
-                    var json = reader.ReadToEnd();
-                    var baseAss = JsonConvert.DeserializeObject<BaseAsset>(json)!;
-                    newAsset = (IAsset)Activator.CreateInstance(baseAss.Type)!;
-                    newAsset.Deserialize(json);
-                    assetMut.WaitOne();
-                    assets.Add(newAsset.URI, newAsset);
-                    assetMut.ReleaseMutex();
-                });
-            }
-            await Task.WhenAll(tasks);
-            foreach (var task in tasks)
-            {
-                task.Dispose();
-            }
-            return assets;
+            newAsset.LayoutID = (int)layout.Value;
         }
-
-        [JsonObject]
-        private class BaseAsset
+        
+        newAsset.RegenerateLinks(true);
+        
+        var dataCreationResult = dataCreator?.Invoke(newAsset);
+        if (dataCreationResult is AssetCreationStatus.Failed)
         {
-            public Type Type { get; set; }
+            return null;
         }
+        
+        folder.AddChild(newAsset);
+        AssetManager.Get().AddAsset(newAsset);
+        newAsset.Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData);
+        folder.Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData | SerializationFlags.FixReferences);
+        
+        return newAsset;
     }
-
 }

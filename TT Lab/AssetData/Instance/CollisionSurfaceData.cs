@@ -22,7 +22,7 @@ namespace TT_Lab.AssetData.Instance
             SurfaceID = SurfaceType.SURF_DEFAULT;
             PhysicsParameters = new float[10];
             UnkVec = new Vector4();
-            UnkBoundingBox = new Vector4[2];
+            UnkBoundingBox = new Vector4[] { new(0, 0, 0, 1), new(10, 10, 10, 1) };
             StepSoundId1 = LabURI.Empty;
             StepSoundId2 = LabURI.Empty;
             LandSoundId1 = LabURI.Empty;

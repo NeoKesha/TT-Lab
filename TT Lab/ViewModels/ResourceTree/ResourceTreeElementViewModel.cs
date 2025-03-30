@@ -41,11 +41,11 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
     }
     
     private readonly IAsset _asset;
-    private ResourceTreeElementViewModel? _parent;
+    private readonly ResourceTreeElementViewModel? _parent;
+    private readonly BindableCollection<MenuItem> _menuOptions = new();
     private BindableCollection<ResourceTreeElementViewModel>? _children;
-    private BindableCollection<MenuItem> _menuOptions = new();
     private List<ResourceTreeElementViewModel>? _internalChildren;
-    private string _newAlias = string.Empty;
+    private string _newAlias;
     private Boolean _isTargetItem;
     private Boolean _isSelected;
     private Boolean _isExpanded;

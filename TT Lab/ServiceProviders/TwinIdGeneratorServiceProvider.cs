@@ -88,6 +88,12 @@ public static class TwinIdGeneratorServiceProvider
     {
         return _chunkIdGeneratorServices[chunk][(layout, typeof(T))];
     }
+    
+    public static ITwinIdGeneratorService GetGeneratorForChunk(Type type, string chunk, Enums.Layouts layout)
+    {
+        Debug.Assert(type.IsAssignableTo(typeof(SerializableInstance)), $"{type} does not implement SerializableInstance");
+        return _chunkIdGeneratorServices[chunk][(layout, type)];
+    }
 
     public static ITwinIdGeneratorService GetGenerator(Type type)
     {

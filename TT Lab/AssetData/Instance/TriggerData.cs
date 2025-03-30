@@ -23,6 +23,7 @@ namespace TT_Lab.AssetData.Instance
             Rotation = new Vector4(0, 0, 0, 1);
             Scale = new Vector4(1, 1, 1, 1);
             Instances = new List<LabURI>();
+            InstanceExtensionValue = 10;
         }
 
         public TriggerData(ITwinTrigger trigger) : this()

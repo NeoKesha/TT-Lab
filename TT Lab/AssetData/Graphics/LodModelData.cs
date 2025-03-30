@@ -19,8 +19,11 @@ namespace TT_Lab.AssetData.Graphics
     {
         public LodModelData()
         {
+            Type = LodType.COMPRESSED;
             ModelsDrawDistances = new Int32[3];
             Meshes = new List<LabURI>();
+            MinDrawDistance = 0;
+            MaxDrawDistance = UInt16.MaxValue;
         }
 
         public LodModelData(ITwinLOD lod) : this()

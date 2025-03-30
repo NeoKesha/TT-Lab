@@ -25,8 +25,10 @@
             <ColumnDefinition Width="40*"/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="119*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="40*"/>
         </Grid.ColumnDefinitions>
-        <GroupBox Header="Chunk tree">
+        <GroupBox Grid.RowSpan="3" Header="Chunk tree">
             <TreeView x:Name="ChunkTreeView" Margin="0"
                 ItemsSource="{Binding ChunkTree}"
                 VirtualizingPanel.IsVirtualizing="True"
@@ -82,13 +84,13 @@
                 </TreeView.ItemTemplate>
             </TreeView>
         </GroupBox>
-        <ContentControl x:Name="SceneEditor" Grid.Column="2" Grid.RowSpan="3"/>
-        <GridSplitter Background="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Top" Height="5" ResizeBehavior="PreviousAndNext"/>
-        <GroupBox x:Name="ItemEditorContainer" Header="Item editor" Margin="0" Grid.Row="2">
+        <ContentControl Grid.Row="0" x:Name="SceneEditor" Grid.Column="2" Grid.RowSpan="3"/>
+        <GroupBox Grid.Column="4" x:Name="ItemEditorContainer" Header="Item editor" Margin="0" Grid.Row="0" Grid.RowSpan="3">
             <ScrollViewer Style="{DynamicResource AdonisScrollViewer}" x:Name="EditorScroll" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <ContentControl x:Name="CurrentInstanceEditor"/>
             </ScrollViewer>
         </GroupBox>
-        <GridSplitter Background="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}" HorizontalAlignment="Center" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="1" Grid.RowSpan="3" Width="5"/>
+        <GridSplitter Grid.Row="0" Background="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}" HorizontalAlignment="Center" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="1" Grid.RowSpan="3" Width="5"/>
+        <GridSplitter Grid.Row="0" Background="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}" HorizontalAlignment="Center" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="3" Grid.RowSpan="3" Width="5"/>
     </Grid>
 </UserControl>
