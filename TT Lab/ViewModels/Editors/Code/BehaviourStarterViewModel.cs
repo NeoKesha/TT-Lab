@@ -9,7 +9,7 @@ namespace TT_Lab.ViewModels.Editors.Code
     public class BehaviourStarterViewModel : ResourceEditorViewModel
     {
         private LabURI attachedScript = LabURI.Empty;
-        private BindableCollection<BehaviourAssignerViewModel> assigners = new();
+        private readonly BindableCollection<BehaviourAssignerViewModel> assigners = new();
 
         public BehaviourStarterViewModel()
         {
@@ -40,7 +40,6 @@ namespace TT_Lab.ViewModels.Editors.Code
 
         public override void LoadData()
         {
-            
             var asset = AssetManager.Get().GetAsset(EditableResource);
             var data = asset.GetData<BehaviourStarterData>();
             attachedScript = data.Assigners[0].Behaviour;

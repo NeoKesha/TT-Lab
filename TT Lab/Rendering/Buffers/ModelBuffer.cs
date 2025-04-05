@@ -41,10 +41,13 @@ public class ModelBuffer
             var meshPtr = BufferGeneration.GetModelBuffer($"{name}{i}", model.Vertexes[i], model.Faces[i]);
             var node = parent.createChildSceneNode();
             var entity = sceneManager.createEntity(meshPtr);
-            var material = MaterialManager.GetDefault();
-            entity.setMaterial(material);
+            var material = new TwinMaterialGenerator.GeneratedMaterial
+            {
+                Material = MaterialManager.GetDefault()
+            };
+            entity.setMaterial(material.Material);
             node.attachObject(entity);
-            MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = new List<MaterialPtr> { material } });
+            MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = new List<TwinMaterialGenerator.GeneratedMaterial> { material } });
         }
     }
 
@@ -66,7 +69,7 @@ public class ModelBuffer
             var meshPtr = BufferGeneration.GetModelBuffer($"{name}{i}", model.Vertexes[i], model.Faces[i]);
             var node = parent.createChildSceneNode();
             var entity = sceneManager.createEntity(meshPtr);
-            var materialList = new List<MaterialPtr>();
+            var materialList = new List<TwinMaterialGenerator.GeneratedMaterial>();
             ushort renderPriority = 0;
             foreach (var baseMaterial in _baseMaterials)
             {
@@ -76,10 +79,10 @@ public class ModelBuffer
                 //     MaterialManager.SetupMaterial(material, matData.Shaders[texturedShaderIndex]);
                 // }
                 var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
-                materialList.Add(material.Item2);
-                renderPriority = material.Item1;
+                materialList.Add(material);
+                renderPriority = material.RenderPriority;
             }
-            entity.setMaterial(materialList[(int)MaterialType.Opaque]);
+            entity.setMaterial(materialList[(int)MaterialType.Opaque].Material);
             entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, renderPriority);
             node.attachObject(entity);
             entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -94,16 +97,17 @@ public class ModelBuffer
     public ModelBuffer(SceneManager sceneManager, SceneNode parent, string name, SkinData skin, TwinMaterialGenerator.ShaderSettings shaderSettings = default)
     {
         var index = 0;
+        shaderSettings.UseSkinning = true;
         foreach (var subSkin in skin.SubSkins)
         {
             var materialName = AssetManager.Get().GetAsset<Assets.Graphics.Material>(subSkin.Material).Name;
             var matData = AssetManager.Get().GetAssetData<MaterialData>(subSkin.Material);
             var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
             var hasTexture = texturedShaderIndex != -1;
-            var meshPtr = BufferGeneration.GetModelBuffer($"{name}{index++}", subSkin.Vertexes, subSkin.Faces);
+            var meshPtr = BufferGeneration.GetModelBuffer($"{name}{index++}", subSkin.Vertexes, subSkin.Faces, RenderOperation.OperationType.OT_TRIANGLE_LIST, true, true);
             var node = parent.createChildSceneNode();
             var entity = sceneManager.createEntity(meshPtr);
-            var materialList = new List<MaterialPtr>();
+            var materialList = new List<TwinMaterialGenerator.GeneratedMaterial>();
             ushort renderPriority = 0;
             foreach (var baseMaterial in _baseMaterials)
             {
@@ -113,10 +117,10 @@ public class ModelBuffer
                 //     MaterialManager.SetupMaterial(material, matData.Shaders[texturedShaderIndex]);
                 // }
                 var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
-                materialList.Add(material.Item2);
-                renderPriority = material.Item1;
+                materialList.Add(material);
+                renderPriority = material.RenderPriority;
             }
-            entity.setMaterial(materialList[(int)MaterialType.Opaque]);
+            entity.setMaterial(materialList[(int)MaterialType.Opaque].Material);
             entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, renderPriority);
             node.attachObject(entity);
             entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -127,12 +131,13 @@ public class ModelBuffer
     public struct MeshNodeMaterial
     {
         public SceneNode MeshNode;
-        public List<MaterialPtr> Materials;
+        public List<TwinMaterialGenerator.GeneratedMaterial> Materials;
     }
 
     protected ModelBuffer(SceneManager sceneManager, SceneNode parent, string name, BlendSkinData blendSkin, TwinMaterialGenerator.ShaderSettings shaderSettings = default)
     {
         var index = 0;
+        shaderSettings.UseSkinning = true;
         foreach (var blend in blendSkin.Blends)
         {
             var materialName = AssetManager.Get().GetAsset<Assets.Graphics.Material>(blend.Material).Name;
@@ -141,15 +146,15 @@ public class ModelBuffer
             var hasTexture = texturedShaderIndex != -1;
             foreach (var model in blend.Models)
             {
-                var meshPtr = BufferGeneration.GetModelBuffer($"{name}_{index}", model.Vertexes, model.Faces);
+                var meshPtr = BufferGeneration.GetModelBuffer($"{name}_{index}", model.Vertexes, model.Faces, RenderOperation.OperationType.OT_TRIANGLE_LIST, true, true);
                 var node = parent.createChildSceneNode();
                 var entity = sceneManager.createEntity(meshPtr);
                 var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
-                entity.setMaterial(material.Item2);
-                entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, material.Item1);
+                entity.setMaterial(material.Material);
+                entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, material.RenderPriority);
                 node.attachObject(entity);
                 entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-                MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = new List<MaterialPtr> { material.Item2, material.Item2 }});
+                MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = new List<TwinMaterialGenerator.GeneratedMaterial> { material, material }});
                 index++;
             }
         }

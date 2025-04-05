@@ -11,6 +11,19 @@ namespace TT_Lab.Util
             else if (val.CompareTo(max) > 0) return max;
             return val;
         }
+        
+        public static float Lerp(float firstFloat, float secondFloat, float by)
+        {
+            return firstFloat * (1 - by) + secondFloat * by;
+        }
+
+        public static vec3 Lerp(vec3 firstVector, vec3 secondVector, float by)
+        {
+            float retX = Lerp(firstVector.x, secondVector.x, by);
+            float retY = Lerp(firstVector.y, secondVector.y, by);
+            float retZ = Lerp(firstVector.z, secondVector.z, by);
+            return new vec3(retX, retY, retZ);
+        }
 
         public static bool IsPowerOfTwo(long x)
         {

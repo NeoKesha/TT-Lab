@@ -19,6 +19,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             get => (transformValue * 16) / (float)(UInt16.MaxValue + 1) * (float)Math.PI * 2;
             set => transformValue = (Int16)((UInt16.MaxValue + 1) * value / (16 * (float)Math.PI * 2));
         }
+        
+        public Int16 PureValue => transformValue;
 
         public Int32 GetLength()
         {

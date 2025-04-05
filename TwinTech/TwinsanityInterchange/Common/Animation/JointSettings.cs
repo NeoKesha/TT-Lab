@@ -9,7 +9,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
     {
         UInt16 flags;
         public Byte FacialShapesAmount { get; set; }
-        public Boolean UnusedFlag { get; set; }
+        public Boolean UseParentJointScale { get; set; }
         public Boolean UseAdditionalRotation { get; set; }
 
         UInt16 transformationChoice;
@@ -42,7 +42,7 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
             flags = reader.ReadUInt16();
             {
                 FacialShapesAmount = (Byte)((flags >> 0x8) & 0xF);
-                UnusedFlag = ((flags >> 0xD) & 0x1) != 0;
+                UseParentJointScale = ((flags >> 0xD) & 0x1) != 0;
                 UseAdditionalRotation = ((flags >> 0xC) & 0x1) != 0;
             }
             transformationChoice = reader.ReadUInt16();
@@ -64,8 +64,8 @@ namespace Twinsanity.TwinsanityInterchange.Common.Animation
         public void Write(BinaryWriter writer)
         {
             UInt16 newFlags = (UInt16)(FacialShapesAmount << 0x8);
-            var hasUnusedFlag = UnusedFlag ? 1 : 0;
-            newFlags |= (UInt16)(hasUnusedFlag << 0xD);
+            var hasUseParentJointScale = UseParentJointScale ? 1 : 0;
+            newFlags |= (UInt16)(hasUseParentJointScale << 0xD);
             var hasUseAdditionalRotation = UseAdditionalRotation ? 1 : 0;
             newFlags |= (UInt16)(hasUseAdditionalRotation << 0xC);
             flags = newFlags;

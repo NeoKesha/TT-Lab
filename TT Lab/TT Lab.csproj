@@ -2921,6 +2921,10 @@
     <Content Include="Images\SadTransparent.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Remove="Media\Programs\skinning.program" />
+    <Content Include="Media\Programs\skinning.program">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using org.ogre;
 using TT_Lab.Project;
 using TT_Lab.Project.Messages;
 using TT_Lab.Rendering;
@@ -10,6 +11,7 @@ using TT_Lab.Services;
 using TT_Lab.Services.Implementations;
 using TT_Lab.Util;
 using TT_Lab.ViewModels;
+using LogManager = Caliburn.Micro.LogManager;
 
 namespace TT_Lab
 {
@@ -69,6 +71,7 @@ namespace TT_Lab
             base.StartRuntime();
 
             _container.GetInstance<OgreWindowManager>().Initialize();
+            org.ogre.LogManager.getSingleton().setMinLogLevel(LogMessageLevel.LML_TRIVIAL);
         }
 
         protected override Object GetInstance(Type service, String key)

@@ -15,8 +15,16 @@ public class OgreExtensions
         return new Quaternion(glmQuat.w, glmQuat.x, glmQuat.y, glmQuat.z);
     }
 
-    public static mat4 FromOgre(Matrix4 mat)
+    public static Matrix4 FromGlm(mat4 glmMat)
     {
+        return new Matrix4(glmMat.m00, glmMat.m10, glmMat.m20, glmMat.m30,
+            glmMat.m01, glmMat.m11, glmMat.m21, glmMat.m31,
+            glmMat.m02, glmMat.m12, glmMat.m22, glmMat.m32,
+            glmMat.m03, glmMat.m13, glmMat.m23, glmMat.m33);
+    }
+
+    public static mat4 FromOgre(Matrix4 mat)
+    { 
         return new mat4(mat.__getitem__(0, 0), mat.__getitem__(1, 0), mat.__getitem__(2, 0), mat.__getitem__(3, 0),
             mat.__getitem__(0, 1), mat.__getitem__(1, 1), mat.__getitem__(2, 1), mat.__getitem__(3, 1),
             mat.__getitem__(0, 2), mat.__getitem__(1, 2), mat.__getitem__(2, 2), mat.__getitem__(3, 2),
@@ -34,6 +42,11 @@ public class OgreExtensions
     public static vec3 FromOgre(Vector3 ogreVec)
     {
         return new vec3(ogreVec.x, ogreVec.y, ogreVec.z);
+    }
+
+    public static quat FromOgre(Quaternion ogreQuat)
+    {
+        return new quat(ogreQuat.x, ogreQuat.y, ogreQuat.z, ogreQuat.w);
     }
 
     public static Quaternion FromGlmVec(vec3 eulerAngles)

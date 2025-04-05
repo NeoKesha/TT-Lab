@@ -33,7 +33,7 @@ public sealed class ObjectInstance : EditableObject
         foreach (var nodeMaterial in modelBuffers.SelectMany(model => model.MeshNodes))
         {
             var entity = nodeMaterial.MeshNode.getAttachedObject(0).castEntity();
-            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Transparent]);
+            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Transparent].Material);
             var subEntity = entity.getSubEntity(0);
             subEntity.setCustomParameter(0, new Vector4(AmbientColor.x, AmbientColor.y, AmbientColor.z, 0.5f));
         }
@@ -46,7 +46,7 @@ public sealed class ObjectInstance : EditableObject
         foreach (var nodeMaterial in modelBuffers.SelectMany(model => model.MeshNodes))
         {
             var entity = nodeMaterial.MeshNode.getAttachedObject(0).castEntity();
-            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Opaque]);
+            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Opaque].Material);
             var subEntity = entity.getSubEntity(0);
             subEntity.setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
         }
@@ -70,7 +70,7 @@ public sealed class ObjectInstance : EditableObject
         var jointIndex = 0;
         foreach (var rigidModel in ogiData.RigidModelIds)
         {
-            var sceneNode = skeletonMap[ogiData.JointIndices[jointIndex++]];
+            var sceneNode = skeletonMap.Bones[ogiData.JointIndices[jointIndex++]].ResidingSceneNode;
             if (rigidModel == LabURI.Empty)
             {
                 continue;

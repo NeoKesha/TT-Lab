@@ -11,26 +11,35 @@ using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
 using Math = System.Math;
+using Matrix4 = org.ogre.Matrix4;
 
 namespace TT_Lab.Rendering;
 
 public static class TwinMaterialGenerator
 {
-    private static Dictionary<string, (ushort, MaterialPtr)> materialToRenderPriorityMap = new();
+    private static Dictionary<string, GeneratedMaterial> materialToRenderPriorityMap = new();
 
+    public struct GeneratedMaterial
+    {
+        public MaterialPtr Material;
+        public ushort RenderPriority;
+        public List<HardwareVertexBufferPtr>? SkinningBonesBuffer;
+    }
+    
     public struct ShaderSettings
     {
         public bool MirrorX { get; set; }
+        public bool UseSkinning { get; set; }
     }
 
-    public static (ushort, MaterialPtr) GenerateMaterialFromViewModel(MaterialViewModel material, ShaderSettings shaderSettings = default, bool forceRebuild = false)
+    public static GeneratedMaterial GenerateMaterialFromViewModel(MaterialViewModel material, ShaderSettings shaderSettings = default, bool forceRebuild = false)
     {
         var matData = new MaterialData();
         material.Copy(ref matData);
         return GenerateMaterialFromTwinMaterial(matData, shaderSettings, forceRebuild);
     }
     
-    public static (ushort, MaterialPtr) GenerateMaterialFromTwinMaterial(MaterialData twinMaterial, ShaderSettings shaderSettings = default, bool forceRebuild = false)
+    public static GeneratedMaterial GenerateMaterialFromTwinMaterial(MaterialData twinMaterial, ShaderSettings shaderSettings = default, bool forceRebuild = false)
     {
         var materialText = new StringBuilder();
         var formattedName = twinMaterial.Name.Replace(" ", "_");
@@ -259,7 +268,8 @@ public static class TwinMaterialGenerator
             }
             materialText.AppendLine($"param_named uScrollSpeedAndAlphaTest float4 {scrollX.ToString(CultureInfo.InvariantCulture)} {scrollY.ToString(CultureInfo.InvariantCulture)} {(passValue / 255.0f).ToString(CultureInfo.InvariantCulture)} {alphaTestFunc}");
             EndBlock(materialText);
-            materialText.AppendLine("vertex_program_ref DiffuseTextureVertShader");
+            var vertexShaderName = shaderSettings.UseSkinning ? "SkinningVertShader" : "DiffuseTextureVertShader";
+            materialText.AppendLine($"vertex_program_ref {vertexShaderName}");
             StartBlock(materialText);
             materialText.AppendLine("param_named_auto elapsedTime time");
             if (shader.ShaderType is TwinShader.Type.UnlitClothDeformation or TwinShader.Type.UnlitClothDeformation2)
@@ -302,14 +312,25 @@ public static class TwinMaterialGenerator
         var resultMaterial = org.ogre.MaterialManager.getSingleton().getByName(materialName);
         resultMaterial.compile();
 
-        materialToRenderPriorityMap.Add(materialName, (renderPriority, resultMaterial));
+        var storedMaterial = new GeneratedMaterial
+        {
+            Material = resultMaterial,
+            RenderPriority = renderPriority
+        };
+        materialToRenderPriorityMap.Add(materialName, storedMaterial);
         
         for (var i = 0; i < twinMaterial.Shaders.Count; i++)
         {
             MaterialManager.SetupMaterialPlainTexture(resultMaterial, twinMaterial.Shaders[i].TextureId, (uint)i);
+
+            if (shaderSettings.UseSkinning)
+            {
+                var shaderParams = storedMaterial.Material.getTechnique(0).getPass(0).getVertexProgramParameters();
+                shaderParams.getConstantDefinitions().save("BRUH.txt");
+            }
         }
         
-        return (renderPriority, resultMaterial);
+        return storedMaterial;
     }
 
     private static void StartBlock(StringBuilder materialText)

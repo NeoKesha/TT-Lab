@@ -107,7 +107,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 var matData = AssetManager.Get().GetAssetData<MaterialData>(blendData.Blends[_selectedMaterial].Material);
                 MaterialName = matData.Name;
                 var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData);
-                entity.setMaterial(material.Item2);
+                entity.setMaterial(material.Material);
                 entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
                 plane.attachObject(entity);
                 plane.scale(0.05f, 0.05f, 1f);

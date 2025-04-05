@@ -16,6 +16,10 @@ uniform mat4 projMatrix;
 uniform vec4 deformSpeed;
 uniform vec4 shaderSettings;
 uniform float elapsedTime;
+
+#ifdef USE_SKINNING
+uniform mat4 boneMatrices[128];
+#endif
         
 #ifdef USE_LIGHTING
  uniform mat4 worldView;  
@@ -28,11 +32,14 @@ uniform float elapsedTime;
 )
 
 void main(
- in vec4 iVertex : POSITION, // 4th component contains vertex ID
- in vec3 iNormal : NORMAL,
+ in vec4 iVertex : POSITION0, // 4th component contains vertex ID
+ in vec3 iNormal : NORMAL0,
  in vec4 iColor : COLOR0,
  in vec2 iUv : TEXCOORD0,
-
+#ifdef USE_SKINNING
+ in vec4 iBlendIndices : POSITION1,
+ in vec4 iBlendWeights : POSITION2,
+#endif
  out vec4 gl_Position : POSITION0,
 #ifdef USE_LIGHTING
  out vec4 oPosition : POSITION1,
@@ -66,6 +73,13 @@ void main(
         float vz = sin(elapsedTime + resultVertex.y) * deformSpeed.x * 0.1;
         resultVertex.xyz *= vec3(vx + 1.0, vy + 1.0, vz + 1.0);
     }
+#ifdef USE_SKINNING
+    vec4 pos1 = mul(boneMatrices[uint(iBlendIndices.x)], resultVertex) * iBlendWeights.x;
+    vec4 pos2 = mul(boneMatrices[uint(iBlendIndices.y)], resultVertex) * iBlendWeights.y;
+    vec4 pos3 = mul(boneMatrices[uint(iBlendIndices.z)], resultVertex) * iBlendWeights.z;
+    resultVertex = pos1 + pos2 + pos3;
+    resultVertex.w = 1.0;
+#endif
     if (shaderSettings.x > 0.0f) {
         resultVertex.x = -resultVertex.x;
     }
