@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using GlmSharp;
+using SharpGLTF.Animations;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
@@ -29,7 +31,7 @@ namespace TT_Lab.AssetData.Code
                 Index = 0,
                 LocalRotation = new Vector4(0, 0, 0, 1),
                 LocalTranslation = new Vector4(0, 0, 0, 1),
-                ParentIndex = -1
+                ParentIndex = 255
             };
             Joints = new List<TwinJoint>
             {
@@ -48,6 +50,82 @@ namespace TT_Lab.AssetData.Code
         public OGIData(ITwinOGI ogi) : this()
         {
             SetTwinItem(ogi);
+        }
+
+        public void ExportGltf(string path, AnimationData? animation)
+        {
+            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanitySkeleton");
+            var root = new SharpGLTF.Scenes.NodeBuilder("model_root");
+            scene.AddNode(root);
+            
+            var nodeMap = new Dictionary<int, (SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>();
+            var rootJoint = new SharpGLTF.Scenes.NodeBuilder();
+            nodeMap.Add(Joints[0].Index, (rootJoint, System.Numerics.Matrix4x4.Identity));
+            root.AddNode(rootJoint);
+            foreach (var joint in Joints.Skip(1))
+            {
+                var parentJoint = nodeMap[joint.ParentIndex].Item1;
+                var jointNode = new SharpGLTF.Scenes.NodeBuilder();
+                jointNode.WithLocalTranslation(new System.Numerics.Vector3(-joint.LocalTranslation.X, joint.LocalTranslation.Y, joint.LocalTranslation.Z))
+                    .WithLocalRotation(new System.Numerics.Quaternion(-joint.LocalRotation.X, joint.LocalRotation.Y, joint.LocalRotation.Z, -joint.LocalRotation.W));
+                parentJoint.AddNode(jointNode);
+                nodeMap.Add(joint.Index, (jointNode, jointNode.GetInverseBindMatrix()));
+            }
+            
+            var nodeList = nodeMap.Values.ToList();
+
+            if (Skin != LabURI.Empty)
+            {
+                var skinData = AssetManager.Get().GetAssetData<SkinData>(Skin);
+                var meshes = skinData.GetMeshes(root, nodeList);
+                foreach (var mesh in meshes)
+                {
+                    scene.AddSkinnedMesh(mesh.Mesh, mesh.Joints.ToArray());
+                }
+            }
+
+            if (BlendSkin != LabURI.Empty)
+            {
+                var blendSkinData = AssetManager.Get().GetAssetData<BlendSkinData>(BlendSkin);
+                var meshes = blendSkinData.GetMeshes(root, nodeList);
+                foreach (var mesh in meshes)
+                {
+                    scene.AddSkinnedMesh(mesh.Mesh, mesh.Joints.ToArray());
+                }
+            }
+
+            var jointIndex = 0;
+            foreach (var rigidModelId in RigidModelIds)
+            {
+                var jointNode = nodeMap[JointIndices[jointIndex++]];
+                if (rigidModelId == LabURI.Empty)
+                {
+                    continue;
+                }
+
+                var rigidModelData = AssetManager.Get().GetAssetData<RigidModelData>(rigidModelId);
+                var model = AssetManager.Get().GetAssetData<ModelData>(rigidModelData.Model);
+                var meshes = model.GetMeshes(jointNode.Item1, rigidModelData.Materials.Select(matUri => AssetManager.Get().GetAssetData<MaterialData>(matUri)).ToList());
+                foreach (var mesh in meshes)
+                {
+                    scene.AddRigidMesh(mesh.Mesh, jointNode.Item1);
+                }
+            }
+            
+            if (animation != null)
+            {
+                for (var i = 0; i < nodeList.Count; i++)
+                {
+                    var node = nodeMap[i];
+                    var keyframes = animation.GetAnimationKeyframesForMainAnimation(i, this);
+                    node.Item1.SetTranslationTrack("EXPORTED_ANIMATION", keyframes.Select(key => key.Translation).CreateSampler());
+                    node.Item1.SetRotationTrack("EXPORTED_ANIMATION", keyframes.Select(key => key.Rotation).CreateSampler());
+                    node.Item1.SetScaleTrack("EXPORTED_ANIMATION", keyframes.Select(key => key.Scale).CreateSampler());
+                }
+            }
+
+            var resultModel = scene.ToGltf2();
+            resultModel.SaveGLB(path);
         }
 
         [JsonProperty(Required = Required.Always)]

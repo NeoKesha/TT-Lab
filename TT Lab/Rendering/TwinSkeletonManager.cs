@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GlmSharp;
@@ -9,15 +10,17 @@ using TT_Lab.Util;
 
 namespace TT_Lab.Rendering;
 
-public class TwinBone
+public sealed class TwinBone : IDisposable
 {
     public SceneNode ResidingSceneNode;
     private Matrix4 inverseBindMatrix;
     private Matrix4 bindingMatrix;
+    private Matrix4 globalTransform;
     
     public TwinBone(SceneNode node)
     {
         ResidingSceneNode = node;
+        globalTransform = Matrix4.IDENTITY;
         bindingMatrix = Matrix4.IDENTITY;
         inverseBindMatrix = Matrix4.IDENTITY;
     }
@@ -39,19 +42,33 @@ public class TwinBone
         Quaternion globalRotation = ResidingSceneNode._getDerivedOrientation();
         Vector3 globalTranslation = ResidingSceneNode._getDerivedPosition();
         
-        var m = new Matrix4();
-        m.makeTransform(globalTranslation, globalScale, globalRotation);
+        globalTransform.makeTransform(globalTranslation, globalScale, globalRotation);
 
-        return m.__mul__(inverseBindMatrix);
+        return globalTransform.__mul__(inverseBindMatrix);
+    }
+
+    public void Dispose()
+    {
+        inverseBindMatrix.Dispose();
+        bindingMatrix.Dispose();
+        globalTransform.Dispose();
     }
 }
 
-public struct TwinSkeleton
+public sealed class TwinSkeleton : IDisposable
 {
     public Dictionary<int, TwinBone> Bones = new();
 
     public TwinSkeleton()
     {
+    }
+
+    public void Dispose()
+    {
+        foreach (var (_, bone) in Bones)
+        {
+            bone.Dispose();
+        }
     }
 }
 

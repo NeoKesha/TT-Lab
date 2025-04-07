@@ -2,14 +2,20 @@
 using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Caliburn.Micro;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Attributes;
+using TT_Lab.Project;
 using TT_Lab.Util;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using AlphaMode = SharpGLTF.Materials.AlphaMode;
+using Texture = TT_Lab.Assets.Graphics.Texture;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -18,6 +24,18 @@ namespace TT_Lab.AssetData.Graphics
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
     using VERTEX_BUILDER = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
 
+    public struct GltfGeometryWrapper
+    {
+        public SharpGLTF.Geometry.IMeshBuilder<SharpGLTF.Materials.MaterialBuilder> Mesh;
+        public List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)> Joints;
+
+        public GltfGeometryWrapper(SharpGLTF.Geometry.IMeshBuilder<SharpGLTF.Materials.MaterialBuilder> mesh, List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)> joints)
+        {
+            Mesh = mesh;
+            Joints = joints;
+        }
+    }
+    
     [ReferencesAssets]
     public class SkinData : AbstractAssetData
     {
@@ -33,22 +51,13 @@ namespace TT_Lab.AssetData.Graphics
 
         public List<SubSkinData> SubSkins { get; set; }
 
-        protected override void Dispose(Boolean disposing)
+        public List<GltfGeometryWrapper> GetMeshes(SharpGLTF.Scenes.NodeBuilder root, List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>? jointTree = null)
         {
-            SubSkins.ForEach(s => s.Dispose());
-            SubSkins.Clear();
-        }
-
-        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
-        {
-            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanitySkin");
-            var root = new SharpGLTF.Scenes.NodeBuilder("skin_root");
-            var materialsUri = new List<LabURI>();
-            scene.AddNode(root);
+            var meshes = new List<GltfGeometryWrapper>();
 
             static VERTEX_BUILDER generateVertexFromTwinVertex(Vertex vertex)
             {
-                return new VERTEX_BUILDER(new VERTEX(vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
+                return new VERTEX_BUILDER(new VERTEX(-vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
                         new COLOR_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
                             new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)),
@@ -79,33 +88,37 @@ namespace TT_Lab.AssetData.Graphics
             }
 
             // Create all the joint nodes
-            List<SharpGLTF.Scenes.NodeBuilder> nodes = new(jointsAmount + 1);
-            var subSkinNodes = new List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>();
-            for (var i = 0; i < nodes.Capacity; ++i)
+            var subSkinNodes = jointTree ?? new List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>();
+            if (jointTree == null)
             {
-                var node = new SharpGLTF.Scenes.NodeBuilder($"joint_{i}");
-                root.AddNode(node);
-                subSkinNodes.Add((node, System.Numerics.Matrix4x4.Identity));
-                nodes.Add(node);
+                for (var i = 0; i < jointsAmount + 1; ++i)
+                {
+                    var node = new SharpGLTF.Scenes.NodeBuilder($"joint_{i}");
+                    root.AddNode(node);
+                    subSkinNodes.Add((node, System.Numerics.Matrix4x4.Identity));
+                }
             }
 
             var index = 0;
             foreach (var subSkin in SubSkins)
             {
                 var twinMaterial = AssetManager.Get().GetAssetData<MaterialData>(subSkin.Material);
-                materialsUri.Add(AssetManager.Get().GetAsset(subSkin.Material).URI);
-                var texture = twinMaterial.Shaders[0].TextureId == LabURI.Empty ? null : AssetManager.Get().GetAsset<Assets.Graphics.Texture>(twinMaterial.Shaders[0].TextureId);
-                var texturePath = texture == null ? null : $"{typeof(Assets.Graphics.Texture).Name}/{texture.Data}";
+                var texture = twinMaterial.Shaders[0].TextureId == LabURI.Empty ? null : AssetManager.Get().GetAsset<Texture>(twinMaterial.Shaders[0].TextureId);
+                var texturePath = texture == null ? null : $"{IoC.Get<ProjectManager>().OpenedProject!.ProjectPath}/assets/{nameof(Texture)}/{texture.Data}";
                 var material = new SharpGLTF.Materials.MaterialBuilder($"Material_{index}")
-                    .WithDoubleSide(true)
-                    .WithAlpha(SharpGLTF.Materials.AlphaMode.OPAQUE);
+                    .WithDoubleSide(true);
                 if (texturePath == null)
                 {
-                    material.WithBaseColor(new System.Numerics.Vector4(1, 1, 1, 1));
+                    material.WithBaseColor(new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1));
                 }
                 else
                 {
                     material.WithBaseColor(texturePath);
+                }
+
+                if (twinMaterial.Shaders[0].ABlending == TwinShader.AlphaBlending.ON)
+                {
+                    material.WithAlpha(AlphaMode.BLEND);
                 }
 
                 var mesh = new SharpGLTF.Geometry.MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"subskin_{index++}");
@@ -119,12 +132,33 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(generateVertexFromTwinVertex(ver1), generateVertexFromTwinVertex(ver2), generateVertexFromTwinVertex(ver3));
                 }
 
-                scene.AddSkinnedMesh(mesh, subSkinNodes.ToArray());
+                meshes.Add(new GltfGeometryWrapper(mesh, subSkinNodes));
+            }
+
+            return meshes;
+        }
+
+        protected override void Dispose(Boolean disposing)
+        {
+            SubSkins.ForEach(s => s.Dispose());
+            SubSkins.Clear();
+        }
+
+        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
+        {
+            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanitySkin");
+            var root = new SharpGLTF.Scenes.NodeBuilder("skin_root");
+            scene.AddNode(root);
+            var meshes = GetMeshes(root);
+            foreach (var mesh in meshes)
+            {
+                scene.AddSkinnedMesh(mesh.Mesh, mesh.Joints.ToArray());
             }
 
             var model = scene.ToGltf2();
             model.SaveGLB(dataPath);
 
+            var materialsUri = SubSkins.Select(subSkin => AssetManager.Get().GetAsset(subSkin.Material).URI).ToList();
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using System.IO.BinaryWriter writer = new(fs);
             writer.Write(JsonConvert.SerializeObject(materialsUri, Formatting.Indented, settings).ToCharArray());
@@ -149,10 +183,12 @@ namespace TT_Lab.AssetData.Graphics
                     var vertexes = primitive.GetVertexColumns();
                     for (var i = 0; i < vertexes.Positions.Count; i++)
                     {
+                        var pos = vertexes.Positions[i].ToTwin();
+                        pos.X = -pos.X;
                         var ver = new Vertex(
-                                vertexes.Positions[i].ToTwin(),
-                                vertexes.Colors0[i].ToTwin(),
-                                vertexes.TexCoords0[i].ToTwin());
+                            pos,
+                            vertexes.Colors0[i].ToTwin(),
+                            vertexes.TexCoords0[i].ToTwin());
                         ver.Color = new Twinsanity.TwinsanityInterchange.Common.Vector4(ver.Color.X, ver.Color.Y, ver.Color.Z, ver.Color.W);
                         ver.JointInfo.JointIndex1 = (Int32)vertexes.Joints0[i].X;
                         ver.JointInfo.JointIndex2 = (Int32)vertexes.Joints0[i].Y;
@@ -166,7 +202,7 @@ namespace TT_Lab.AssetData.Graphics
 
                     foreach (var (idx1, idx2, idx3) in primitive.GetTriangleIndices())
                     {
-                        faces.Add(new IndexedFace(new int[] { idx1, idx2, idx3 }));
+                        faces.Add(new IndexedFace(idx1, idx2, idx3));
                     }
                 }
 
@@ -200,7 +236,7 @@ namespace TT_Lab.AssetData.Graphics
             {
                 assetManager.GetAsset(subSkin.Material).ResolveChunkResources(factory, materialsSection);
             }
-            return base.ResolveChunkResources(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id, layoutID);
         }
     }
 }

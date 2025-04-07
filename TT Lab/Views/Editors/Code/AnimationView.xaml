@@ -41,7 +41,7 @@
                     </Grid.ColumnDefinitions>
                     <Slider x:Name="AnimationTrack"
                             Value="{Binding CurrentAnimationFrame}"
-                            Margin="0, 0, 0, 5"
+                            Margin="0, 0, 0, 0"
                             TickFrequency="1"
                             Minimum="0"
                             Maximum="{Binding TotalFrames}"
@@ -58,11 +58,12 @@
                     <TextBlock x:Name="CurrentAnimationFrame" Margin="0, 0, 0, 5" Grid.Column="0" Grid.Row="1" Text="0"></TextBlock>
                     <TextBlock x:Name="TotalFrames" Margin="0, 0, 0, 5" Grid.Column="1" Grid.Row="1" Text="0" TextAlignment="Right"></TextBlock>
                 </Grid>
-                <UniformGrid Columns="4">
+                <UniformGrid Columns="5">
                     <controls:LabeledTextBox Text="{Binding PlaybackFps}" TextBoxName="Playback FPS" Margin="5" HorizontalAlignment="Stretch"/>
                     <controls:LabeledCheckBox Checked="{Binding Loop}" HorizontalAlignment="Left" CheckBoxName="Loop" LayoutOrientation="Vertical"/>
-                    <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PlayAnimation" Content="Play"></Button>
-                    <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PauseAnimation" Content="Pause"></Button>
+                    <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PlayAnimation" Content="Play"/>
+                    <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PauseAnimation" Content="Pause"/>
+                    <Button HorizontalAlignment="Stretch" Margin="5" x:Name="ExportAnimation" Content="Export"/>
                 </UniformGrid>
             </StackPanel>
         </Grid>

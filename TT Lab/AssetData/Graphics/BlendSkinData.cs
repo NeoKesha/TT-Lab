@@ -4,14 +4,19 @@ using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
 using TT_Lab.Attributes;
 using TT_Lab.Extensions;
+using TT_Lab.Project;
+using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using AlphaMode = SharpGLTF.Materials.AlphaMode;
+using Texture = TT_Lab.Assets.Graphics.Texture;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -36,25 +41,13 @@ namespace TT_Lab.AssetData.Graphics
         public Int32 BlendsAmount { get; set; }
         public List<SubBlendData> Blends { get; set; } = new();
 
-        protected override void Dispose(Boolean disposing)
+        public List<GltfGeometryWrapper> GetMeshes(SharpGLTF.Scenes.NodeBuilder root, List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>? jointTree = null)
         {
-            foreach (var blend in Blends)
-            {
-                blend.Dispose();
-            }
-            Blends.Clear();
-        }
-
-        protected override void SaveInternal(String dataPath, JsonSerializerSettings? settings = null)
-        {
-            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityBlendSkin");
-            var root = new SharpGLTF.Scenes.NodeBuilder("blend_skin_root");
-            var metadata = new Metadata();
-            scene.AddNode(root);
-
+            var meshes = new List<GltfGeometryWrapper>();
+            
             static VERTEX_BUILDER generateVertexFromTwinVertex(Vertex vertex)
             {
-                return new VERTEX_BUILDER(new VERTEX(vertex.Position.ToSystem()),
+                return new VERTEX_BUILDER(new VERTEX(-vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
                         new COLOR_UV(
                             vertex.Color.ToSystem(),
                             new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)),
@@ -89,14 +82,15 @@ namespace TT_Lab.AssetData.Graphics
             }
 
             // Create all the joint nodes
-            List<SharpGLTF.Scenes.NodeBuilder> nodes = new(jointsAmount + 1);
-            var subSkinNodes = new List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>();
-            for (var i = 0; i < nodes.Capacity; ++i)
+            var subSkinNodes = jointTree ?? new List<(SharpGLTF.Scenes.NodeBuilder, System.Numerics.Matrix4x4)>();
+            if (jointTree == null)
             {
-                var node = new SharpGLTF.Scenes.NodeBuilder($"joint_{i}");
-                root.AddNode(node);
-                subSkinNodes.Add((node, System.Numerics.Matrix4x4.Identity));
-                nodes.Add(node);
+                for (var i = 0; i < jointsAmount + 1; ++i)
+                {
+                    var node = new SharpGLTF.Scenes.NodeBuilder($"joint_{i}");
+                    root.AddNode(node);
+                    subSkinNodes.Add((node, System.Numerics.Matrix4x4.Identity));
+                }
             }
 
             var index = 0;
@@ -104,12 +98,10 @@ namespace TT_Lab.AssetData.Graphics
             foreach (var blend in Blends)
             {
                 var twinMaterial = AssetManager.Get().GetAssetData<MaterialData>(blend.Material);
-                metadata.Materials.Add(AssetManager.Get().GetAsset(blend.Material).URI);
                 var texture = twinMaterial.Shaders[0].TextureId == LabURI.Empty ? null : AssetManager.Get().GetAsset<Assets.Graphics.Texture>(twinMaterial.Shaders[0].TextureId);
-                var texturePath = texture == null ? null : $"{typeof(Assets.Graphics.Texture).Name}/{texture.Data}";
+                var texturePath = texture == null ? null : $"{IoC.Get<ProjectManager>().OpenedProject!.ProjectPath}/assets/{nameof(Texture)}/{texture.Data}";
                 var material = new SharpGLTF.Materials.MaterialBuilder($"Material_{materialIndex++}")
-                    .WithDoubleSide(true)
-                    .WithAlpha(SharpGLTF.Materials.AlphaMode.OPAQUE);
+                    .WithDoubleSide(true);
 
                 if (texturePath == null)
                 {
@@ -119,11 +111,15 @@ namespace TT_Lab.AssetData.Graphics
                 {
                     material.WithBaseColor(texturePath);
                 }
+                
+                if (twinMaterial.Shaders[0].ABlending == TwinShader.AlphaBlending.ON)
+                {
+                    material.WithAlpha(AlphaMode.BLEND);
+                }
 
                 foreach (var blendModel in blend.Models)
                 {
                     var mesh = new MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"blend_subskin_{index++}");
-                    var blendShapeInfo = System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape);
                     mesh.Extras = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(blendModel.BlendShape));
 
                     foreach (var face in blendModel.Faces)
@@ -137,45 +133,71 @@ namespace TT_Lab.AssetData.Graphics
 
                     int findVertexIndex(VERTEX vertex)
                     {
-                        var index = -1;
+                        var idx = -1;
                         foreach (var ver in blendModel.Vertexes)
                         {
-                            if (ver.Position.ToSystem() == vertex.Position)
+                            if (new VERTEX(-ver.Position.X, ver.Position.Y, ver.Position.Z) == vertex.Position)
                             {
-                                return index + 1;
+                                return idx + 1;
                             }
 
-                            index++;
+                            idx++;
                         }
 
                         return -1;
                     }
 
-                    var morphs = new List<IMorphTargetBuilder>();
                     for (Int32 i = 0; i < blendModel.BlendFaces.Count; i++)
                     {
                         var blendFace = blendModel.BlendFaces[i];
                         var morph = mesh.UseMorphTarget(i);
-                        morphs.Add(morph);
                         foreach (var vertex in morph.Vertices)
                         {
                             var newVer = vertex;
                             var shapeIndex = findVertexIndex(vertex);
                             var blendVec = blendFace.BlendShapes[shapeIndex].Offset;
-
+                            
                             newVer.Position += new System.Numerics.Vector3(blendVec.X, blendVec.Y, blendVec.Z);
-
                             morph.SetVertex(vertex, newVer);
                         }
                     }
 
-                    scene.AddSkinnedMesh(mesh, subSkinNodes.ToArray());
+                    meshes.Add(new GltfGeometryWrapper(mesh, subSkinNodes));
                 }
+            }
+
+            return meshes;
+        }
+
+        protected override void Dispose(Boolean disposing)
+        {
+            foreach (var blend in Blends)
+            {
+                blend.Dispose();
+            }
+            Blends.Clear();
+        }
+
+        protected override void SaveInternal(String dataPath, JsonSerializerSettings? settings = null)
+        {
+            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityBlendSkin");
+            var root = new SharpGLTF.Scenes.NodeBuilder("blend_skin_root");
+            scene.AddNode(root);
+            
+            var meshes = GetMeshes(root);
+            foreach (var mesh in meshes)
+            {
+                scene.AddSkinnedMesh(mesh.Mesh, mesh.Joints.ToArray());
             }
 
             var model = scene.ToGltf2();
             model.SaveGLB(dataPath);
 
+            var metadata = new Metadata();
+            foreach (var blend in Blends)
+            {
+                metadata.Materials.Add(AssetManager.Get().GetAsset(blend.Material).URI);
+            }
             using System.IO.FileStream fs = new(dataPath + ".meta", System.IO.FileMode.Create, System.IO.FileAccess.Write);
             using System.IO.BinaryWriter writer = new(fs);
             writer.Write(JsonConvert.SerializeObject(metadata, Formatting.Indented, settings).ToCharArray());

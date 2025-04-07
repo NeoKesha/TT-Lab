@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 using Caliburn.Micro;
 using GlmSharp;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using org.ogre;
 using TT_Lab.AssetData.Code;
 using TT_Lab.Assets;
@@ -50,7 +52,7 @@ public class AnimationViewModel : ResourceEditorViewModel
 
         if (close)
         {
-            _ogiRender.Dispose();
+            _ogiRender?.Dispose();
         }
         
         return base.OnDeactivateAsync(close, cancellationToken);
@@ -94,6 +96,28 @@ public class AnimationViewModel : ResourceEditorViewModel
         
         _renderWatch.Start();
         CompositionTarget.Rendering += UpdateAnimationPlayback;
+    }
+    
+    public void PauseAnimation()
+    {
+        _runCounter = 0;
+        _isPlaying = false;
+        _renderWatch.Reset();
+        CompositionTarget.Rendering -= UpdateAnimationPlayback;
+    }
+
+    public void ExportAnimation()
+    {
+        using var sfd = new SaveFileDialog();
+        sfd.Title = "Export Animation";
+        sfd.Filter = "GLB file (*.glb)|*.glb";
+        var result = sfd.ShowDialog();
+        if (result == DialogResult.OK)
+        {
+            var path = sfd.FileName;
+            var ogiData = AssetManager.Get().GetAssetData<OGIData>(_selectedOgi);
+            ogiData.ExportGltf(path, AssetManager.Get().GetAssetData<AnimationData>(EditableResource));
+        }
     }
 
     private void UpdateAnimationPlayback()
@@ -151,6 +175,7 @@ public class AnimationViewModel : ResourceEditorViewModel
 
     private void PerformAnimationForJoint(int nextFrame, int jointIndex, JointSettings jointSettings)
     {
+        // TODO: Use animation's sampler method to reduce code duplication
         var useAddRot = jointSettings.UseAdditionalRotation;
         var transformIndex = jointSettings.TransformationIndex;
         var currentFrameTransformIndex = jointSettings.AnimationTransformationIndex;
@@ -327,14 +352,6 @@ public class AnimationViewModel : ResourceEditorViewModel
     private void UpdateAnimationPlayback(object? sender, EventArgs e)
     {
         UpdateAnimationPlayback();
-    }
-
-    public void PauseAnimation()
-    {
-        _runCounter = 0;
-        _isPlaying = false;
-        _renderWatch.Reset();
-        CompositionTarget.Rendering -= UpdateAnimationPlayback;
     }
 
     private void InitAnimationScene()

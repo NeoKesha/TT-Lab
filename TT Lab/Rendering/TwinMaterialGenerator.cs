@@ -23,7 +23,6 @@ public static class TwinMaterialGenerator
     {
         public MaterialPtr Material;
         public ushort RenderPriority;
-        public List<HardwareVertexBufferPtr>? SkinningBonesBuffer;
     }
     
     public struct ShaderSettings

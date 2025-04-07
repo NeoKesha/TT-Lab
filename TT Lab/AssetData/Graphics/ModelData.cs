@@ -4,14 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
+using Caliburn.Micro;
 using Hjg.Pngcs;
+using SharpGLTF.Scenes;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
+using TT_Lab.Project;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
 using Twinsanity.TwinsanityInterchange.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items;
+using AlphaMode = SharpGLTF.Materials.AlphaMode;
+using Vector4 = Twinsanity.TwinsanityInterchange.Common.Vector4;
 
 namespace TT_Lab.AssetData.Graphics
 {
@@ -52,16 +58,15 @@ namespace TT_Lab.AssetData.Graphics
             Meshes.Clear();
         }
 
-        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
+        public List<GltfGeometryWrapper> GetMeshes(SharpGLTF.Scenes.NodeBuilder root, List<MaterialData>? material = null)
         {
-            var materials = GenerateMaterials();
-
-            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityMesh");
-
+            var meshes = new List<GltfGeometryWrapper>();
+            var materials = GenerateMaterials(material);
+            
             static VERTEX_BUILDER_VNCEU generateVertexFromTwinVertexVNCEU(Vertex vertex)
             {
                 return new VERTEX_BUILDER_VNCEU(new VERTEX_NORMAL(
-                        vertex.Position.X, vertex.Position.Y, vertex.Position.Z,
+                        -vertex.Position.X, vertex.Position.Y, vertex.Position.Z,
                         vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z),
                         new COLOR_EMIT_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
@@ -73,7 +78,7 @@ namespace TT_Lab.AssetData.Graphics
             static VERTEX_BUILDER_VNCU generateVertexFromTwinVertexVNCU(Vertex vertex)
             {
                 return new VERTEX_BUILDER_VNCU(new VERTEX_NORMAL(
-                        vertex.Position.X, vertex.Position.Y, vertex.Position.Z,
+                        -vertex.Position.X, vertex.Position.Y, vertex.Position.Z,
                         vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z),
                         new COLOR_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
@@ -84,7 +89,7 @@ namespace TT_Lab.AssetData.Graphics
             static VERTEX_BUILDER_VCEU generateVertexFromTwinVertexVCEU(Vertex vertex)
             {
                 return new VERTEX_BUILDER_VCEU(new VERTEX(
-                        vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
+                        -vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
                         new COLOR_EMIT_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
                             new System.Numerics.Vector4(vertex.EmitColor.X, vertex.EmitColor.Y, vertex.EmitColor.Z, vertex.EmitColor.W),
@@ -95,7 +100,7 @@ namespace TT_Lab.AssetData.Graphics
             static VERTEX_BUILDER_VCU generateVertexFromTwinVertexVCU(Vertex vertex)
             {
                 return new VERTEX_BUILDER_VCU(new VERTEX(
-                        vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
+                        -vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
                         new COLOR_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
                             new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)
@@ -136,7 +141,7 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                scene.AddRigidMesh(mesh, SharpGLTF.Transforms.AffineTransform.Identity);
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             /// Generate mesh with positions, normals, colors and UV coordinates
@@ -153,7 +158,7 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                scene.AddRigidMesh(mesh, SharpGLTF.Transforms.AffineTransform.Identity);
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             /// Generate mesh with positions, colors, emission and UV coordinates
@@ -170,7 +175,7 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                scene.AddRigidMesh(mesh, SharpGLTF.Transforms.AffineTransform.Identity);
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             /// Generate mesh with positions, colors and UV coordinates
@@ -187,7 +192,7 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                scene.AddRigidMesh(mesh, SharpGLTF.Transforms.AffineTransform.Identity);
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             for (var i = 0; i < Vertexes.Count; i++)
@@ -212,6 +217,20 @@ namespace TT_Lab.AssetData.Graphics
                 }
             }
 
+            return meshes;
+        }
+
+        protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
+        {
+            var scene = new SharpGLTF.Scenes.SceneBuilder("TwinsanityMesh");
+            var root = new SharpGLTF.Scenes.NodeBuilder("rigid_model_root");
+            scene.AddNode(root);
+            var meshes = GetMeshes(root);
+            foreach (var mesh in meshes)
+            {
+                scene.AddRigidMesh(mesh.Mesh, root);
+            }
+
             var model = scene.ToGltf2();
             model.SaveGLB(dataPath);
         }
@@ -232,10 +251,12 @@ namespace TT_Lab.AssetData.Graphics
                     var vertexes = primitive.GetVertexColumns();
                     for (var i = 0; i < vertexes.Positions.Count; i++)
                     {
+                        var pos = vertexes.Positions[i].ToTwin();
+                        pos.X = -pos.X;
                         var ver = new Vertex(
-                                vertexes.Positions[i].ToTwin(),
-                                vertexes.Colors0[i].ToTwin(),
-                                vertexes.TexCoords0[i].ToTwin());
+                            pos,
+                            vertexes.Colors0[i].ToTwin(),
+                            vertexes.TexCoords0[i].ToTwin());
                         if (vertexes.Normals != null)
                         {
                             ver.Normal = vertexes.Normals[i].ToTwin();
@@ -316,49 +337,44 @@ namespace TT_Lab.AssetData.Graphics
             return factory.GenerateModel(Meshes);
         }
 
-        private List<SharpGLTF.Materials.MaterialBuilder> GenerateMaterials()
+        private List<SharpGLTF.Materials.MaterialBuilder> GenerateMaterials(List<MaterialData>? twinMaterials = null)
         {
             var materials = new List<SharpGLTF.Materials.MaterialBuilder>();
+            var index = 0;
             foreach (var submodel in Vertexes)
             {
                 var hasEmits = submodel.Any(v => v.HasEmitColor);
                 var material = new SharpGLTF.Materials.MaterialBuilder()
                     .WithDoubleSide(true);
-                
-                var colorTexture = GenerateColorTexture(submodel);
-                material.WithBaseColor(colorTexture);
-                
-                if (hasEmits)
+                var twinMaterial = twinMaterials?[index++];
+
+                var textureId = twinMaterial?.Shaders[0].TextureId;
+                if (textureId == null || textureId == LabURI.Empty)
                 {
-                    var emissionTexture = GenerateEmissionTexture(submodel);
-                    material.WithEmissive(emissionTexture);
+                    material.WithBaseColor(new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1.0f));
                 }
+                else
+                {
+                    var texture = AssetManager.Get().GetAsset<Assets.Graphics.Texture>(textureId);
+                    var texturePath = $"{IoC.Get<ProjectManager>().OpenedProject!.ProjectPath}/assets/{nameof(Texture)}/{texture.Data}";
+                    material.WithBaseColor(texturePath);
+                }
+                
+                if (twinMaterial?.Shaders[0].ABlending == TwinShader.AlphaBlending.ON)
+                {
+                    material.WithAlpha(AlphaMode.BLEND);
+                }
+
+                // if (hasEmits)
+                // {
+                //     var emissionTexture = GenerateEmissionTexture(submodel);
+                //     material.WithEmissive(emissionTexture);
+                // }
                 
                 materials.Add(material);
             }
             
             return materials;
-        }
-
-        private SharpGLTF.Materials.ImageBuilder GenerateColorTexture(List<Vertex> vertices)
-        {
-            var colors = new List<Byte>();
-
-            foreach (var color in vertices.Select(v => v.Color.GetColor()))
-            {
-                colors.Add(color.A);
-                colors.Add(color.B);
-                colors.Add(color.G);
-                colors.Add(color.R);
-            }
-            
-            using var pngStream = new MemoryStream();
-            var pixelsTotal = colors.Count / 4;
-            var imgInfo = new ImageInfo(pixelsTotal, 1, 8, true);
-            var pngWriter = new PngWriter(pngStream, imgInfo);
-            pngWriter.WriteRowByte(colors.ToArray(), 0);
-
-            return SharpGLTF.Materials.ImageBuilder.From(new SharpGLTF.Memory.MemoryImage(pngStream.ToArray()));
         }
 
         private SharpGLTF.Materials.ImageBuilder GenerateEmissionTexture(List<Vertex> vertices)

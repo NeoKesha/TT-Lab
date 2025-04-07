@@ -83,7 +83,7 @@ namespace TT_Lab.AssetData.Graphics
         public override ITwinItem? ResolveChunkResources(ITwinItemFactory factory, ITwinSection section, UInt32 id, Int32? layoutID = null)
         {
             ResolveResources(factory, section);
-            return base.ResolveChunkResources(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id, layoutID);
         }
     }
 }
