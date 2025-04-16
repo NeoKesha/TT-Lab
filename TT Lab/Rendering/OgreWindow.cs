@@ -182,7 +182,7 @@ namespace TT_Lab.Rendering
                 case MouseButtonState.Pressed:
                     return _inputListeners.Any(inputListener => inputListener.mousePressed(pressEvent)) || _camera.mousePressed(pressEvent);
                 case MouseButtonState.Released:
-                    mouseEvent.MouseDevice.OverrideCursor = Cursors.Arrow;
+                    mouseEvent.MouseDevice.OverrideCursor = null;
                     return _inputListeners.Any(inputListener => inputListener.mouseReleased(pressEvent)) || _camera.mouseReleased(pressEvent);
             }
 
@@ -316,6 +316,11 @@ namespace TT_Lab.Rendering
 
         public void Render(float elapsedTime)
         {
+            if (_isClosed)
+            {
+                return;
+            }
+            
             var overlaysEnabled = _internalWindow.render.getViewport(0).getOverlaysEnabled();
             if (overlaysEnabled)
             {

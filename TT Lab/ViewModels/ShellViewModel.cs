@@ -63,8 +63,16 @@ namespace TT_Lab.ViewModels
                 Debug.WriteLine($"RENDERER IS DEAD BUT HOW DID WE CRASH AND NOT RETURN??? {_deadgeRender}");
                 return;
             }
+
+            if (_ogreWindowManager == null)
+            {
+                return;
+            }
             
-            _ogreWindowManager?.Render();
+            lock (_ogreWindowManager.RenderLockObject)
+            {
+                _ogreWindowManager?.Render();
+            }
         }
 
         public Task About()

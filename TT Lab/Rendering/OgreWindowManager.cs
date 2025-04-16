@@ -18,6 +18,8 @@ namespace TT_Lab.Rendering
         private bool _isInitialized = false;
         private bool _isDisposed = false;
         private Stopwatch _renderWatch = new();
+        
+        public object RenderLockObject = new();
 
         public OgreWindowManager() { }
 
@@ -28,7 +30,13 @@ namespace TT_Lab.Rendering
         {
             Debug.Assert(!_isInitialized, "Can only initialize the OGRE window manager once");
             
-            initApp();
+            createRoot();
+            if (!getRoot().restoreConfig())
+            {
+                getRoot().showConfigDialog(null);
+            }
+            setup();
+
             // ResourceGroupManager.getSingleton().createResourceGroup(GlobalConsts.OgreGroup, true);
             // ResourceGroupManager.getSingleton().addResourceLocation($"{ManifestResourceLoader.GetPathInExe("")}/Media", "FileSystem", GlobalConsts.OgreGroup, true);
             // ResourceGroupManager.getSingleton().initialiseResourceGroup(GlobalConsts.OgreGroup);
@@ -140,6 +148,11 @@ namespace TT_Lab.Rendering
                 timeSinceLastEvent = elapsed,
                 timeSinceLastFrame = elapsed,
             };
+
+            if (Root.getCPtr(getRoot()).Handle == IntPtr.Zero)
+            {
+                return;
+            }
             
             getRoot().renderOneFrame(elapsed);
             foreach (var window in _ogreWindows.Where(window => !window.IsHidden()))
@@ -187,16 +200,20 @@ namespace TT_Lab.Rendering
         /// </summary>
         public void CloseAndTerminateAll()
         {
-            foreach (var window in _ogreWindows)
+            lock (RenderLockObject)
             {
-                window.Close();
-            }
-            _ogreWindows.Clear();
+                foreach (var window in _ogreWindows)
+                {
+                    window.Close();
+                }
 
-            _internalWindow.Dispose();
-            _isDisposed = true;
-            closeApp();
-            Dispose();
+                _ogreWindows.Clear();
+
+                _internalWindow.Dispose();
+                _isDisposed = true;
+                closeApp();
+                Dispose();
+            }
         }
     }
 }
