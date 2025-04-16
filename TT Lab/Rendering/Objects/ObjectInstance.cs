@@ -14,7 +14,7 @@ namespace TT_Lab.Rendering.Objects;
 
 public sealed class ObjectInstance : EditableObject
 {
-    private readonly List<ModelBuffer> modelBuffers = new();
+    private OGI skeleton;
 
     public ObjectInstance(OgreWindow window, string name, ObjectInstanceData instance) : base(window, name)
     {
@@ -30,26 +30,14 @@ public sealed class ObjectInstance : EditableObject
 
     public override void Select()
     {
-        foreach (var nodeMaterial in modelBuffers.SelectMany(model => model.MeshNodes))
-        {
-            var entity = nodeMaterial.MeshNode.getAttachedObject(0).castEntity();
-            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Transparent].Material);
-            var subEntity = entity.getSubEntity(0);
-            subEntity.setCustomParameter(0, new Vector4(AmbientColor.x, AmbientColor.y, AmbientColor.z, 0.5f));
-        }
+        skeleton.ChangeMaterialParameter(0, new Vector4(AmbientColor.x, AmbientColor.y, AmbientColor.z, 0.5f));
             
         base.Select();
     }
 
     public override void Deselect()
     {
-        foreach (var nodeMaterial in modelBuffers.SelectMany(model => model.MeshNodes))
-        {
-            var entity = nodeMaterial.MeshNode.getAttachedObject(0).castEntity();
-            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Opaque].Material);
-            var subEntity = entity.getSubEntity(0);
-            subEntity.setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-        }
+        skeleton.ChangeMaterialParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             
         base.Deselect();
     }
@@ -65,30 +53,7 @@ public sealed class ObjectInstance : EditableObject
 
         var ogiURI = objData.OGISlots.First(ogiUri => ogiUri != LabURI.Empty);
         var ogiData = assetManager.GetAssetData<OGIData>(ogiURI);
-        
-        var skeletonMap = TwinSkeletonManager.CreateSceneNodeSkeleton(SceneNode, ogiURI);
-        var jointIndex = 0;
-        foreach (var rigidModel in ogiData.RigidModelIds)
-        {
-            var sceneNode = skeletonMap.Bones[ogiData.JointIndices[jointIndex++]].ResidingSceneNode;
-            if (rigidModel == LabURI.Empty)
-            {
-                continue;
-            }
-
-            var rigidModelData = assetManager.GetAssetData<RigidModelData>(rigidModel);
-            modelBuffers.Add(new ModelBuffer(sceneManager, sceneNode, rigidModel, rigidModelData));
-        }
-        
-        if (ogiData.Skin != LabURI.Empty)
-        {
-            var skin = assetManager.GetAssetData<SkinData>(ogiData.Skin);
-            modelBuffers.Add(new ModelBuffer(sceneManager, SceneNode, ogiData.Skin, skin));
-        }
-        if (ogiData.BlendSkin != LabURI.Empty)
-        {
-            var blendSkin = assetManager.GetAssetData<BlendSkinData>(ogiData.BlendSkin);
-            modelBuffers.Add(new ModelBufferBlendSkin(sceneManager, SceneNode, ogiData.BlendSkin, blendSkin));
-        }
+        skeleton = new OGI(getName() + "_ogi_skeleton", sceneManager, ogiData);
+        SceneNode.addChild(skeleton.GetSceneNode());
     }
 }

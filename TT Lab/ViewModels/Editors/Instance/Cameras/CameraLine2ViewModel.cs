@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Cameras
 {
@@ -13,6 +14,17 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
         private Vector4ViewModel lineEnd;
         private Single unkFloat3;
         private Single unkFloat4;
+
+        public CameraLine2ViewModel()
+        {
+            CameraType = ITwinCamera.CameraType.CameraLine2;
+            lineStart = new Vector4ViewModel();
+            lineEnd = new Vector4ViewModel();
+            DirtyTracker.AddChild(lineStart);
+            DirtyTracker.AddChild(lineEnd);
+            unkFloat3 = 0;
+            unkFloat4 = 0;
+        }
 
         public CameraLine2ViewModel(CameraSubBase cam) : base(cam)
         {

@@ -4,6 +4,7 @@ using TT_Lab.Attributes;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Interfaces;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Cameras
 {
@@ -15,10 +16,17 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
         private bool isDirty;
         private DirtyTracker dirtyTracker;
 
-        public BaseCameraViewModel(CameraSubBase baseCam)
+        public BaseCameraViewModel()
         {
             dirtyTracker = new DirtyTracker(this);
+            unkFloat1 = 0;
+            unkFloat2 = 0;
+        }
+
+        public BaseCameraViewModel(CameraSubBase baseCam) : this()
+        {
             unkInt = baseCam.UnkInt;
+            CameraType = baseCam.GetCameraType();
             unkFloat1 = baseCam.UnkFloat1;
             unkFloat2 = baseCam.UnkFloat2;
         }
@@ -50,6 +58,8 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
             
             ResetDirty();
         }
+
+        public ITwinCamera.CameraType CameraType { get; protected set; }
 
         [MarkDirty]
         public UInt32 UnkInt

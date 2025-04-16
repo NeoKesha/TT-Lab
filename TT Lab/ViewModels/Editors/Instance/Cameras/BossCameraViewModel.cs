@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Cameras
 {
@@ -18,6 +19,23 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
         private Single unkFloat5;
         private Single unkFloat6;
         private Byte unkByte2;
+
+        public BossCameraViewModel()
+        {
+            CameraType = ITwinCamera.CameraType.BossCamera;
+            unkMatrix1 = new Matrix4ViewModel();
+            unkMatrix2 = new Matrix4ViewModel();
+            unkVec = new Vector4ViewModel();
+            DirtyTracker.AddChild(unkMatrix1);
+            DirtyTracker.AddChild(unkMatrix2);
+            DirtyTracker.AddChild(unkVec);
+            unkByte1 = 0;
+            unkByte2 = 0;
+            unkFloat3 = 0;
+            unkFloat4 = 0;
+            unkFloat5 = 0;
+            unkFloat6 = 0;
+        }
 
         public BossCameraViewModel(CameraSubBase cam) : base(cam)
         {

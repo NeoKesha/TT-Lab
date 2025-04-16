@@ -13,6 +13,7 @@ using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 namespace TT_Lab.AssetData.Instance
 {
     [ReferencesAssets]
+    [JsonObject(ItemTypeNameHandling = TypeNameHandling.Auto, MemberSerialization = MemberSerialization.OptIn)]
     public class CameraData : AbstractAssetData
     {
         public CameraData()

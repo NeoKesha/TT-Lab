@@ -26,11 +26,27 @@ public class OGI : ManualObject
         BuildSkeleton(sceneManager, ogiData);
     }
 
+    public SceneNode GetSceneNode()
+    {
+        return SceneNode;
+    }
+
     public new void Dispose()
     {
         defaultSkeleton.Dispose();
         
         base.Dispose();
+    }
+
+    public void ChangeMaterialParameter(uint index, Vector4 value)
+    {
+        foreach (var nodeMaterial in modelBuffers.SelectMany(model => model.MeshNodes))
+        {
+            var entity = nodeMaterial.MeshNode.getAttachedObject(0).castEntity();
+            entity.setMaterial(nodeMaterial.Materials[(int)ModelBuffer.MaterialType.Opaque].Material);
+            var subEntity = entity.getSubEntity(0);
+            subEntity.setCustomParameter(index, value);
+        }
     }
 
     public void ApplyTransformToJoint(int jointIndex, vec3 position, vec3 scale, quat rotation)

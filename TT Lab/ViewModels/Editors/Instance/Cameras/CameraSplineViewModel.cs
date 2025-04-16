@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Cameras
 {
@@ -16,6 +17,20 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
         private BindableCollection<Vector4ViewModel> interpolationPoints;
         private BindableCollection<Vector2ViewModel> unkData;
         private UInt16 unkShort;
+
+        public CameraSplineViewModel()
+        {
+            CameraType = ITwinCamera.CameraType.CameraSpline;
+            pathPoints = new BindableCollection<Vector4ViewModel>();
+            DirtyTracker.AddBindableCollection(pathPoints);
+            
+            interpolationPoints = new BindableCollection<Vector4ViewModel>();
+            DirtyTracker.AddBindableCollection(interpolationPoints);
+
+            unkData = new BindableCollection<Vector2ViewModel>();
+            DirtyTracker.AddBindableCollection(unkData);
+            unkShort = 0;
+        }
 
         public CameraSplineViewModel(CameraSubBase cam) : base(cam)
         {

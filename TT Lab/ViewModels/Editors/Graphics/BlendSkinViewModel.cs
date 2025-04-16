@@ -94,23 +94,23 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         {
             MaterialViewer.SceneCreator = glControl =>
             {
-                var sceneManager = glControl.GetSceneManager();
-                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
-                pivot.setPosition(0, 0, 0);
-                glControl.SetCameraTarget(pivot);
-                glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
-
-                var plane = sceneManager.getRootSceneNode().createChildSceneNode();
-                var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
-                var asset = AssetManager.Get().GetAsset(EditableResource);
-                var blendData = asset.GetData<BlendSkinData>();
-                var matData = AssetManager.Get().GetAssetData<MaterialData>(blendData.Blends[_selectedMaterial].Material);
-                MaterialName = matData.Name;
-                var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData);
-                entity.setMaterial(material.Material);
-                entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-                plane.attachObject(entity);
-                plane.scale(0.05f, 0.05f, 1f);
+                // var sceneManager = glControl.GetSceneManager();
+                // var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
+                // pivot.setPosition(0, 0, 0);
+                // glControl.SetCameraTarget(pivot);
+                // glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
+                //
+                // var plane = sceneManager.getRootSceneNode().createChildSceneNode();
+                // var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
+                // var asset = AssetManager.Get().GetAsset(EditableResource);
+                // var blendData = asset.GetData<BlendSkinData>();
+                // var matData = AssetManager.Get().GetAssetData<MaterialData>(blendData.Blends[_selectedMaterial].Material);
+                // MaterialName = matData.Name;
+                // var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData);
+                // entity.setMaterial(material.Material);
+                // entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                // plane.attachObject(entity);
+                // plane.scale(0.05f, 0.05f, 1f);
             };
         }
 

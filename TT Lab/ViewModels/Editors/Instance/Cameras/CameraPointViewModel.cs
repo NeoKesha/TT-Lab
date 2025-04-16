@@ -2,12 +2,20 @@
 using System.Threading.Tasks;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Cameras
 {
     public class CameraPointViewModel : BaseCameraViewModel
     {
         private Vector4ViewModel point;
+
+        public CameraPointViewModel()
+        {
+            CameraType = ITwinCamera.CameraType.CameraPoint;
+            point = new Vector4ViewModel();
+            DirtyTracker.AddChild(point);
+        }
 
         public CameraPointViewModel(CameraSubBase cam) : base(cam)
         {

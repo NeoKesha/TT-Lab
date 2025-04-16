@@ -5,6 +5,7 @@ using TT_Lab.AssetData.Graphics;
 using TT_Lab.Assets;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common;
+using Matrix4 = org.ogre.Matrix4;
 using Vector4 = org.ogre.Vector4;
 
 namespace TT_Lab.Rendering.Buffers;
@@ -83,7 +84,7 @@ public class ModelBuffer
                 renderPriority = material.RenderPriority;
             }
             entity.setMaterial(materialList[(int)MaterialType.Opaque].Material);
-            entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, renderPriority);
+            entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, (ushort)(renderPriority + i));
             node.attachObject(entity);
             entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = materialList });
@@ -121,10 +122,19 @@ public class ModelBuffer
                 renderPriority = material.RenderPriority;
             }
             entity.setMaterial(materialList[(int)MaterialType.Opaque].Material);
-            entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, renderPriority);
+            entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, (ushort)(renderPriority + index));
             node.attachObject(entity);
             entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = materialList });
+        }
+        
+        foreach (var meshNode in MeshNodes)
+        {
+            for (var i = 0; i < 128; ++i)
+            {
+                var vertexShader = meshNode.Materials[0].Material.getTechnique(0).getPass(0).getVertexProgramParameters();
+                vertexShader.setNamedConstant($"boneMatrices[{i}]", Matrix4.IDENTITY);
+            }
         }
     }
 
@@ -151,11 +161,20 @@ public class ModelBuffer
                 var entity = sceneManager.createEntity(meshPtr);
                 var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
                 entity.setMaterial(material.Material);
-                entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, material.RenderPriority);
+                entity.setRenderQueueGroupAndPriority((byte)RenderQueueGroupID.RENDER_QUEUE_MAIN, (ushort)(material.RenderPriority + index));
                 node.attachObject(entity);
                 entity.getSubEntity(0).setCustomParameter(0, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
                 MeshNodes.Add(new MeshNodeMaterial { MeshNode = node, Materials = new List<TwinMaterialGenerator.GeneratedMaterial> { material, material }});
                 index++;
+            }
+        }
+        
+        foreach (var meshNode in MeshNodes)
+        {
+            for (var i = 0; i < 128; ++i)
+            {
+                var vertexShader = meshNode.Materials[0].Material.getTechnique(0).getPass(0).getVertexProgramParameters();
+                vertexShader.setNamedConstant($"boneMatrices[{i}]", Matrix4.IDENTITY);
             }
         }
     }

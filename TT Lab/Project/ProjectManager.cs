@@ -197,9 +197,9 @@ namespace TT_Lab.Project
             var xboxContentProvided = false;
             if (!string.IsNullOrEmpty(discContentPathPS2))
             {
-                var ps2DiscFiles = Directory.GetFiles(discContentPathPS2).Select(Path.GetFileName).ToArray();
+                var ps2DiscFiles = Directory.GetFiles(discContentPathPS2).Select(Path.GetFileName).Select(str => str?.ToLower()).ToArray();
                 // Check for PS2 required root disc files
-                if (!ps2DiscFiles.Contains("System.cnf"))
+                if (!ps2DiscFiles.Contains("system.cnf"))
                 {
                     Log.WriteLine("ERROR: Improper PS2 disc content provided!");
                     return;
@@ -208,7 +208,7 @@ namespace TT_Lab.Project
             }
             if (!string.IsNullOrEmpty(discContentPathXbox))
             {
-                var xboxDiscFiles = Directory.GetFiles(discContentPathXbox).Select(Path.GetFileName).ToArray();
+                var xboxDiscFiles = Directory.GetFiles(discContentPathXbox).Select(Path.GetFileName).Select(str => str?.ToLower()).ToArray();
                 // Check for XBOX required root disc files
                 if (!xboxDiscFiles.Contains("default.xbe"))
                 {

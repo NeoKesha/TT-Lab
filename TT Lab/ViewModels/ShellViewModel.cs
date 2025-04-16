@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -49,11 +50,7 @@ namespace TT_Lab.ViewModels
             _managerPropsToShellProps.Add(nameof(ProjectManager.SearchAsset), new List<String> { nameof(SearchAsset) });
             _managerPropsToShellProps.Add(nameof(ProjectManager.IsCreatingProject), new List<String>{ nameof(IsCreatingProject), nameof(SadEasterEggVisibility) });
 
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                CompositionTarget.Rendering += PerformRender;
-            });
-            
+            CompositionTarget.Rendering += PerformRender;
             
             Preferences.Load();
         }
@@ -63,6 +60,7 @@ namespace TT_Lab.ViewModels
             if (_deadgeRender)
             {
                 Console.WriteLine($"RENDERER IS DEAD BUT HOW DID WE CRASH AND NOT RETURN??? {_deadgeRender}");
+                Debug.WriteLine($"RENDERER IS DEAD BUT HOW DID WE CRASH AND NOT RETURN??? {_deadgeRender}");
                 return;
             }
             
@@ -158,10 +156,7 @@ namespace TT_Lab.ViewModels
         {
             _deadgeRender = true;
             _ogreWindowManager = null;
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                CompositionTarget.Rendering -= PerformRender;
-            });
+            CompositionTarget.Rendering -= PerformRender;
 
             return Task.CompletedTask;
         }
@@ -222,10 +217,17 @@ namespace TT_Lab.ViewModels
             _deadgeRender = true;
             if (_dontRemind)
             {
+                await StopRendering();
+                return true;
+            }
+
+            if (await ActiveItem.CanCloseAsync(cancellationToken))
+            {
+                await StopRendering();
                 return true;
             }
             
-            return await ActiveItem.CanCloseAsync(cancellationToken);
+            return false;
         }
 
         public Task HandleAsync(ProjectManagerMessage message, CancellationToken cancellationToken)
@@ -273,17 +275,11 @@ namespace TT_Lab.ViewModels
             }
         }
 
-        public BindableCollection<MenuItem> RecentlyOpened
-        {
-            get => _projectManager.RecentlyOpened;
-        }
+        public BindableCollection<MenuItem> RecentlyOpened => _projectManager.RecentlyOpened;
 
         public Visibility TreeOptionsVisibility => ProjectOpened ? Visibility.Visible : Visibility.Collapsed;
 
-        public String WindowTitle
-        {
-            get => _projectManager.ProjectTitle;
-        }
+        public String WindowTitle => _projectManager.ProjectTitle;
 
         public String SearchAsset
         {
@@ -291,20 +287,11 @@ namespace TT_Lab.ViewModels
             set => _projectManager.SearchAsset = value;
         }
 
-        public Boolean HasRecents
-        {
-            get => _projectManager.HasRecents;
-        }
+        public Boolean HasRecents => _projectManager.HasRecents;
 
-        public BindableCollection<ResourceTreeElementViewModel> ProjectTree
-        {
-            get => _projectManager.ProjectTree;
-        }
+        public BindableCollection<ResourceTreeElementViewModel> ProjectTree => _projectManager.ProjectTree;
 
-        public Boolean ProjectOpened
-        {
-            get => _projectManager.ProjectOpened;
-        }
+        public Boolean ProjectOpened => _projectManager.ProjectOpened;
 
         public Boolean IsCreatingProject => _projectManager.IsCreatingProject;
         

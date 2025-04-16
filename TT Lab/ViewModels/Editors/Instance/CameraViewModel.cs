@@ -38,6 +38,8 @@ namespace TT_Lab.ViewModels.Editors.Instance
         private UInt32 unkInt8;
         private Single unkFloat8;
         private Byte unkByte;
+        private ITwinCamera.CameraType cameraType1 = ITwinCamera.CameraType.Null;
+        private ITwinCamera.CameraType cameraType2 = ITwinCamera.CameraType.Null;
         private BaseCameraViewModel? mainCamera1;
         private BaseCameraViewModel? mainCamera2;
 
@@ -143,17 +145,17 @@ namespace TT_Lab.ViewModels.Editors.Instance
             unkInt8 = data.UnkInt8;
             unkFloat8 = data.UnkFloat8;
             unkByte = data.UnkByte;
+            CameraType1 = ITwinCamera.CameraType.Null;
+            CameraType2 = ITwinCamera.CameraType.Null;
             if (data.MainCamera1 != null && subIdToCamVM.ContainsKey(data.MainCamera1.GetCameraType()))
             {
-                mainCamera1 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera1.GetCameraType()], data.MainCamera1)!;
-                ActivateItemAsync(mainCamera1);
-                DirtyTracker.AddChild(mainCamera1);
+                CameraType1 = data.MainCamera1.GetCameraType();
+                MainCamera1 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera1.GetCameraType()], data.MainCamera1)!;
             }
             if (data.MainCamera2 != null && subIdToCamVM.ContainsKey(data.MainCamera2.GetCameraType()))
             {
-                mainCamera2 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera2.GetCameraType()], data.MainCamera2)!;
-                ActivateItemAsync(mainCamera2);
-                DirtyTracker.AddChild(mainCamera2);
+                CameraType2 = data.MainCamera2.GetCameraType();
+                MainCamera2 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera2.GetCameraType()], data.MainCamera2)!;
             }
         }
 
@@ -446,26 +448,70 @@ namespace TT_Lab.ViewModels.Editors.Instance
         public BaseCameraViewModel? MainCamera1
         {
             get => mainCamera1;
-            set
-            {
-                if (mainCamera1 != value)
-                {
-                    mainCamera1 = value;
-                    NotifyOfPropertyChange();
-                }
-            }
+            set => mainCamera1 = value;
         }
 
         public BaseCameraViewModel? MainCamera2
         {
             get => mainCamera2;
+            set => mainCamera2 = value;
+        }
+
+        public ITwinCamera.CameraType CameraType1
+        {
+            get => cameraType1;
             set
             {
-                if (mainCamera2 != value)
+                if (cameraType1 == value)
                 {
-                    mainCamera2 = value;
-                    NotifyOfPropertyChange();
+                    return;
                 }
+                
+                cameraType1 = value;
+                if (IsDataLoaded)
+                {
+                    UpdateCameraViewModel(ref mainCamera1, nameof(MainCamera1), cameraType1);
+                }
+
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public ITwinCamera.CameraType CameraType2
+        {
+            get => cameraType2;
+            set
+            {
+                if (cameraType2 == value)
+                {
+                    return;
+                }
+                
+                cameraType2 = value;
+                if (IsDataLoaded)
+                {
+                    UpdateCameraViewModel(ref mainCamera2, nameof(MainCamera2), cameraType2);
+                }
+
+                NotifyOfPropertyChange();
+            }
+        }
+
+        private void UpdateCameraViewModel(ref BaseCameraViewModel? cameraViewModel, string nameOfCameraProp, ITwinCamera.CameraType cameraType)
+        {
+            if (subIdToCamVM.TryGetValue(cameraType, out var cameraViewModelType))
+            {
+                cameraViewModel = (BaseCameraViewModel)Activator.CreateInstance(cameraViewModelType)!;
+                DirtyTracker.AddChild(cameraViewModel);
+                ActivateItemAsync(cameraViewModel);
+                NotifyOfPropertyChange(nameOfCameraProp);
+            }
+            else if (cameraViewModel != null)
+            {
+                DeactivateItemAsync(cameraViewModel, true);
+                DirtyTracker.RemoveChild(cameraViewModel);
+                cameraViewModel = null;
+                NotifyOfPropertyChange(nameOfCameraProp);
             }
         }
     }

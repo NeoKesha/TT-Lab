@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Cameras
 {
@@ -12,6 +13,15 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
     {
         private BindableCollection<Vector4ViewModel> pathPoints;
         private BindableCollection<PrimitiveWrapperViewModel<UInt64>> unkData;
+
+        public CameraPathViewModel()
+        {
+            CameraType = ITwinCamera.CameraType.CameraPath;
+            pathPoints = new BindableCollection<Vector4ViewModel>();
+            DirtyTracker.AddBindableCollection(pathPoints);
+            unkData = new BindableCollection<PrimitiveWrapperViewModel<UInt64>>();
+            DirtyTracker.AddBindableCollection(unkData);
+        }
 
         public CameraPathViewModel(CameraSubBase cam) : base(cam)
         {

@@ -367,7 +367,7 @@ public class AnimationViewModel : ResourceEditorViewModel
 
             _ogiRender?.Dispose();
             _ogiRender = new Rendering.Objects.OGI(_selectedOgi, sceneManager, AssetManager.Get().GetAssetData<OGIData>(_selectedOgi));
-            pivot.addChild(_ogiRender.getParentSceneNode());
+            pivot.addChild(_ogiRender.GetSceneNode());
 
             InitImgui(glControl);
             

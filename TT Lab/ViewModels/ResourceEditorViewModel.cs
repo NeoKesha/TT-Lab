@@ -36,6 +36,7 @@ namespace TT_Lab.ViewModels
         private Boolean _usingConfirmClose = false;
 
         protected List<SceneEditorViewModel> Scenes { get; set; } = new();
+        protected Boolean IsDataLoaded { get; private set; }
         
         private ICommand _unsavedChangesCommand;
         private OpenDialogueCommand.DialogueResult _dialogueResult = new();
@@ -122,6 +123,8 @@ namespace TT_Lab.ViewModels
         protected override void OnViewAttached(object view, object context)
         {
             LoadData();
+            
+            IsDataLoaded = true;
             
             base.OnViewAttached(view, context);
         }

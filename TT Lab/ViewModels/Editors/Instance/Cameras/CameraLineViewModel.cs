@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using TT_Lab.ViewModels.Composite;
 using Twinsanity.TwinsanityInterchange.Common.CameraSubtypes;
+using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Layout;
 
 namespace TT_Lab.ViewModels.Editors.Instance.Cameras
 {
@@ -9,6 +10,15 @@ namespace TT_Lab.ViewModels.Editors.Instance.Cameras
     {
         private Vector4ViewModel lineStart;
         private Vector4ViewModel lineEnd;
+
+        public CameraLineViewModel()
+        {
+            CameraType = ITwinCamera.CameraType.CameraLine;
+            lineStart = new Vector4ViewModel();
+            lineEnd = new Vector4ViewModel();
+            DirtyTracker.AddChild(lineStart);
+            DirtyTracker.AddChild(lineEnd);
+        }
 
         public CameraLineViewModel(CameraSubBase cam) : base(cam)
         {
