@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using Caliburn.Micro;
 using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Interfaces;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -49,6 +50,13 @@ namespace TT_Lab.ViewModels.Composite
             o.Y = Y;
             o.Z = Z;
         }
+        
+        public String DisplayString => ToString();
+
+        public override String ToString()
+        {
+            return $"({X}; {Y}; {Z})";
+        }
 
         [MarkDirty]
         public float X
@@ -61,6 +69,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _x = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
 
@@ -75,6 +84,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _y = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
 
@@ -89,6 +99,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _z = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
     }

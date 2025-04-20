@@ -19,6 +19,21 @@ public class PrimitiveWrapperConverter<T> : IValueConverter where T : IComparabl
     }
 }
 
+public class PrimitiveWrapperBackConverter<T> : IValueConverter where T : IComparable
+{
+    private PrimitiveWrapperConverter<T> _converter = new();
+
+    public Object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return _converter.ConvertBack(value, targetType, parameter, culture);
+    }
+
+    public Object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return _converter.Convert(value, targetType, parameter, culture);
+    }
+}
+
 // Because Microsoft didn't implement XAML 2009 standard in compiled markup yet :(
 
 public class PrimitiveWrapperConverterLabUri : PrimitiveWrapperConverter<LabURI>
@@ -38,5 +53,13 @@ public class PrimitiveWrapperConverterSingle : PrimitiveWrapperConverter<Single>
 }
 
 public class PrimitiveWrapperConverterUInt32 : PrimitiveWrapperConverter<UInt32>
+{
+}
+
+public class PrimitiveWrapperConverterUInt64 : PrimitiveWrapperConverter<UInt64>
+{
+}
+
+public class PrimitiveWrapperBackConverterUInt64 : PrimitiveWrapperBackConverter<UInt64>
 {
 }

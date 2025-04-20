@@ -186,7 +186,7 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <ListBox ItemsSource="{Binding IntParams}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                    <ListBox ItemsSource="{Binding IntParams}" SelectedIndex="{Binding IntIndex}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Value}"/>
@@ -205,7 +205,7 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <ListBox ItemsSource="{Binding FlagParams}" x:Name="FlagPropsList" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                    <ListBox ItemsSource="{Binding FlagParams}" SelectedIndex="{Binding FlagIndex}" x:Name="FlagPropsList" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Value, StringFormat={}{0:X}}"/>
@@ -224,7 +224,7 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <ListBox ItemsSource="{Binding FloatParams}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                    <ListBox ItemsSource="{Binding FloatParams}" SelectedIndex="{Binding FloatIndex}" Height="200" d:ItemsSource="{d:SampleData ItemCount=5}">
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Value, Converter={StaticResource FloatConverter}}"/>

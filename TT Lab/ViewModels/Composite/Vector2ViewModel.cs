@@ -47,6 +47,8 @@ namespace TT_Lab.ViewModels.Composite
             o.X = X;
             o.Y = Y;
         }
+        
+        public String DisplayString => ToString();
 
         [MarkDirty]
         public float X
@@ -59,6 +61,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _x = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
 
@@ -73,6 +76,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _y = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
 

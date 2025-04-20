@@ -71,7 +71,15 @@ namespace TT_Lab.ViewModels
             
             lock (_ogreWindowManager.RenderLockObject)
             {
-                _ogreWindowManager?.Render();
+                try
+                {
+                    _ogreWindowManager?.Render();
+                }
+                catch (AccessViolationException ex)
+                {
+                    Console.WriteLine("Bruh literally how?");
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
 

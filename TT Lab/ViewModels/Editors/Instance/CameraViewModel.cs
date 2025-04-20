@@ -151,11 +151,13 @@ namespace TT_Lab.ViewModels.Editors.Instance
             {
                 CameraType1 = data.MainCamera1.GetCameraType();
                 MainCamera1 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera1.GetCameraType()], data.MainCamera1)!;
+                DirtyTracker.AddChild(MainCamera1);
             }
             if (data.MainCamera2 != null && subIdToCamVM.ContainsKey(data.MainCamera2.GetCameraType()))
             {
                 CameraType2 = data.MainCamera2.GetCameraType();
                 MainCamera2 = (BaseCameraViewModel)Activator.CreateInstance(subIdToCamVM[data.MainCamera2.GetCameraType()], data.MainCamera2)!;
+                DirtyTracker.AddChild(MainCamera2);
             }
         }
 

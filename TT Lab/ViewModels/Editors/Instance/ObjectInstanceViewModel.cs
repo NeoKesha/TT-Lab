@@ -752,12 +752,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
         }
         public UInt32 SelectedInt
         {
-            get
-            {
-                if (IntParams.Count == 0)
-                    return 0;
-                return IntParams[_intIndex].Value;
-            }
+            get => IntParams.Count == 0 ? 0 : IntParams[_intIndex].Value;
             set
             {
                 if (_intIndex == -1) return;

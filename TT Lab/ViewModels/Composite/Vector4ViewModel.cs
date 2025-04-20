@@ -48,6 +48,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _x = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
 
@@ -62,6 +63,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _y = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
 
@@ -76,6 +78,7 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _z = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
 
@@ -90,8 +93,11 @@ namespace TT_Lab.ViewModels.Composite
             {
                 _w = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(DisplayString));
             }
         }
+
+        public String DisplayString => ToString();
 
         public override String ToString()
         {

@@ -35,7 +35,7 @@
             </UniformGrid>
             <TabControl Grid.Row="1">
                 <TabItem Header="Parameters">
-                    <ScrollViewer PanningMode="VerticalOnly" PanningRatio="0.9" PanningDeceleration="0.5">
+                    <!-- <ScrollViewer PanningMode="VerticalOnly" PanningRatio="0.9" PanningDeceleration="0.5"> -->
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
@@ -70,7 +70,7 @@
                                 <controls:LabeledTextBox Text="{Binding UnkByte}" HorizontalAlignment="Stretch" TextBoxName="Unknown Byte"></controls:LabeledTextBox>
                             </UniformGrid>
                         </Grid>
-                    </ScrollViewer>
+                    <!-- </ScrollViewer> -->
                 </TabItem>
                 <TabItem Header="Trigger">
                     <local:TriggerView DataContext="{Binding Trigger}"/>
