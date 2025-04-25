@@ -33,9 +33,11 @@ namespace TT_Lab.ViewModels
         private readonly DispatcherTimer _renderTimer = new();
         private Boolean _dontRemind = false;
         private Boolean _deadgeRender = false;
+        private Thread _mainThread;
 
         public ShellViewModel(IWindowManager windowManager, IEventAggregator eventAggregator, ProjectManager projectManager, OgreWindowManager ogreWindowManager)
         {
+            _mainThread = Thread.CurrentThread;
             _windowManager = windowManager;
             _projectManager = projectManager;
             _eventAggregator = eventAggregator;
@@ -57,6 +59,7 @@ namespace TT_Lab.ViewModels
 
         private void PerformRender(Object? sender, EventArgs e)
         {
+            Debug.Assert(Thread.CurrentThread.GetHashCode() == _mainThread.GetHashCode(), "Rendering indeed happens in separate thread.");
             if (_deadgeRender)
             {
                 Console.WriteLine($"RENDERER IS DEAD BUT HOW DID WE CRASH AND NOT RETURN??? {_deadgeRender}");
@@ -105,7 +108,7 @@ namespace TT_Lab.ViewModels
             _projectManager.WorkableProject = false;
             try
             {
-                Log.WriteLine($"Saving project...");
+                Log.WriteLine($"Saving {_projectManager.OpenedProject!.Name}...");
                 var now = DateTime.Now;
                 ActiveItem.Save();
                 Log.WriteLine($"Saved project in {DateTime.Now - now}");
@@ -170,9 +173,12 @@ namespace TT_Lab.ViewModels
 
         public Task StopRendering()
         {
-            _deadgeRender = true;
-            _ogreWindowManager = null;
-            CompositionTarget.Rendering -= PerformRender;
+            lock (_ogreWindowManager!.RenderLockObject)
+            {
+                _deadgeRender = true;
+                _ogreWindowManager.CloseAndTerminateAll();
+                CompositionTarget.Rendering -= PerformRender;
+            }
 
             return Task.CompletedTask;
         }

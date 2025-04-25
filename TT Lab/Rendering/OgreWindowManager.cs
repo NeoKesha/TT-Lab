@@ -46,13 +46,6 @@ namespace TT_Lab.Rendering
             _isInitialized = true;
         }
 
-        public override void shutdown()
-        {
-            CloseAndTerminateAll();
-            
-            base.shutdown();
-        }
-
         /// <summary>
         /// Creates new rendering surface in the designated window with a default scene
         /// </summary>
@@ -207,6 +200,11 @@ namespace TT_Lab.Rendering
         /// </summary>
         public void CloseAndTerminateAll()
         {
+            if (_isDisposed)
+            {
+                return;
+            }
+
             lock (RenderLockObject)
             {
                 foreach (var window in _ogreWindows)

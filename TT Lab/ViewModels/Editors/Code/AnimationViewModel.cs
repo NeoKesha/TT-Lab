@@ -373,7 +373,7 @@ public class AnimationViewModel : ResourceEditorViewModel
             
             InitImgui(glControl);
             
-            //UpdateAnimationPlayback();
+            UpdateAnimationPlayback();
         };
     }
 

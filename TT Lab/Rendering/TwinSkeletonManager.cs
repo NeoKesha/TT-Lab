@@ -15,12 +15,10 @@ public sealed class TwinBone : IDisposable
     public readonly SceneNode ResidingSceneNode;
     private Matrix4 inverseBindMatrix;
     private Matrix4 bindingMatrix;
-    private Matrix4 globalTransform;
     
     public TwinBone(SceneNode node)
     {
         ResidingSceneNode = node;
-        globalTransform = Matrix4.IDENTITY;
         bindingMatrix = Matrix4.IDENTITY;
         inverseBindMatrix = Matrix4.IDENTITY;
     }
@@ -41,17 +39,17 @@ public sealed class TwinBone : IDisposable
         Vector3 globalScale = ResidingSceneNode._getDerivedScale();
         Quaternion globalRotation = ResidingSceneNode._getDerivedOrientation();
         Vector3 globalTranslation = ResidingSceneNode._getDerivedPosition();
-        
-        globalTransform.makeTransform(globalTranslation, globalScale, globalRotation);
 
-        return globalTransform.__mul__(inverseBindMatrix);
+        var m = new Matrix4();
+        m.makeTransform(globalTranslation, globalScale, globalRotation);
+
+        return m.__mul__(inverseBindMatrix);
     }
 
     public void Dispose()
     {
         inverseBindMatrix.Dispose();
         bindingMatrix.Dispose();
-        globalTransform.Dispose();
     }
 }
 

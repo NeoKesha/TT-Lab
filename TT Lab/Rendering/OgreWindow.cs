@@ -366,6 +366,11 @@ namespace TT_Lab.Rendering
 
         public void Close()
         {
+            if (_isClosed)
+            {
+                return;
+            }
+            
             _camera.Dispose();
             _internalWindow.render.setActive(false);
             var shadergen = ShaderGenerator.getSingleton();
