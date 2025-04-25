@@ -70,7 +70,7 @@ public class AnimationViewModel : ResourceEditorViewModel
         _doRunningCounter = Preferences.GetPreference<bool>(Preferences.SillinessEnabled) && asset.ID == 2;
         
         SuitableModels.Clear();
-        var allOgis = AssetManager.Get().GetAllAssetsOf<OGI>().Where(ogi =>
+        var allOgis = AssetManager.Get().GetAllAssetsOf<Assets.Code.OGI>().Where(ogi =>
             ogi.GetData<OGIData>().Joints.Count >= data.MainAnimation.JointSettings.Count).ToList();
         var allOgiUris = allOgis.Select(ogi => ogi.URI).ToList();
         var bestFitIndex = allOgis.FindIndex(ogi => ogi.GetData<OGIData>().Joints.Count == data.MainAnimation.JointSettings.Count);
@@ -368,10 +368,12 @@ public class AnimationViewModel : ResourceEditorViewModel
             _ogiRender?.Dispose();
             _ogiRender = new Rendering.Objects.OGI(_selectedOgi, sceneManager, AssetManager.Get().GetAssetData<OGIData>(_selectedOgi));
             pivot.addChild(_ogiRender.GetSceneNode());
-
+            pivot.setInheritOrientation(false);
+            pivot.setInheritScale(false);
+            
             InitImgui(glControl);
             
-            UpdateAnimationPlayback();
+            //UpdateAnimationPlayback();
         };
     }
 

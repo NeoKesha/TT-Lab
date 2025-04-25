@@ -12,7 +12,7 @@ namespace TT_Lab.Rendering;
 
 public sealed class TwinBone : IDisposable
 {
-    public SceneNode ResidingSceneNode;
+    public readonly SceneNode ResidingSceneNode;
     private Matrix4 inverseBindMatrix;
     private Matrix4 bindingMatrix;
     private Matrix4 globalTransform;
@@ -25,7 +25,7 @@ public sealed class TwinBone : IDisposable
         inverseBindMatrix = Matrix4.IDENTITY;
     }
 
-    public void SetInverseBindingMatrix(mat4 mat)
+    public void SetBindingAndInverseMatrix(mat4 mat)
     {
         bindingMatrix = OgreExtensions.FromGlm(mat);
         inverseBindMatrix = OgreExtensions.FromGlm(mat.Inverse);
@@ -59,10 +59,6 @@ public sealed class TwinSkeleton : IDisposable
 {
     public Dictionary<int, TwinBone> Bones = new();
 
-    public TwinSkeleton()
-    {
-    }
-
     public void Dispose()
     {
         foreach (var (_, bone) in Bones)
@@ -89,7 +85,7 @@ public static class TwinSkeletonManager
         var rootBone = new TwinBone(rootSceneNode);
         boneMap.Add(skeletonData.Joints[0].Index, rootBone);
         var globalTransform = mat4.Identity;
-        rootBone.SetInverseBindingMatrix(globalTransform);
+        rootBone.SetBindingAndInverseMatrix(globalTransform);
         var allOtherJoints = skeletonData.Joints.Skip(1);
         foreach (var joint in allOtherJoints)
         {
@@ -101,10 +97,11 @@ public static class TwinSkeletonManager
             globalTransform *= localTransform;
             var sceneNode = parentBone.ResidingSceneNode.createChildSceneNode();
             sceneNode.setInheritScale(false);
+            sceneNode.setDebugDisplayEnabled(true);
             sceneNode.translate(position, Node.TransformSpace.TS_LOCAL);
             sceneNode.rotate(OgreExtensions.FromGlm(quat), Node.TransformSpace.TS_LOCAL);
             var bone = new TwinBone(sceneNode);
-            bone.SetInverseBindingMatrix(globalTransform);
+            bone.SetBindingAndInverseMatrix(globalTransform);
             boneMap.TryAdd(joint.Index, bone);
         }
         skeleton.Bones = boneMap;

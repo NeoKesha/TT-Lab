@@ -46,6 +46,13 @@ namespace TT_Lab.Rendering
             _isInitialized = true;
         }
 
+        public override void shutdown()
+        {
+            CloseAndTerminateAll();
+            
+            base.shutdown();
+        }
+
         /// <summary>
         /// Creates new rendering surface in the designated window with a default scene
         /// </summary>
@@ -149,7 +156,7 @@ namespace TT_Lab.Rendering
                 timeSinceLastFrame = elapsed,
             };
 
-            if (Root.getCPtr(getRoot()).Handle == IntPtr.Zero)
+            if (Root.getCPtr(getRoot()).Handle == IntPtr.Zero || !getRoot().isInitialised())
             {
                 return;
             }

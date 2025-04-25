@@ -125,6 +125,7 @@ namespace TT_Lab.ViewModels
             LoadData();
             
             IsDataLoaded = true;
+            ResetDirty();
             
             base.OnViewAttached(view, context);
         }

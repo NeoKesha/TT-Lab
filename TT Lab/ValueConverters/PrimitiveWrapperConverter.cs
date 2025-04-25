@@ -60,6 +60,18 @@ public class PrimitiveWrapperConverterUInt64 : PrimitiveWrapperConverter<UInt64>
 {
 }
 
+public class PrimitiveWrapperBackConverterByte : PrimitiveWrapperBackConverter<Byte>
+{
+}
+
+public class PrimitiveWrapperBackConverterInt16 : PrimitiveWrapperBackConverter<Int16>
+{
+}
+
+public class PrimitiveWrapperBackConverterUInt16 : PrimitiveWrapperBackConverter<UInt16>
+{
+}
+
 public class PrimitiveWrapperBackConverterUInt64 : PrimitiveWrapperBackConverter<UInt64>
 {
 }

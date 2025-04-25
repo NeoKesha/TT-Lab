@@ -16,19 +16,21 @@ public class OGI : ManualObject
     private ModelBuffer? skinBuffer = null;
     private ModelBuffer? blendSkinBuffer = null;
     private TwinSkeleton defaultSkeleton = new();
-    private SceneNode SceneNode;
+    private readonly SceneNode mainSceneNode;
+    private readonly SceneNode skeletonNode;
     
     public OGI(string name, SceneManager sceneManager, OGIData ogiData) : base(name)
     {
-        SceneNode = sceneManager.createSceneNode();
-        SceneNode.attachObject(this);
+        mainSceneNode = sceneManager.createSceneNode();
+        mainSceneNode.attachObject(this);
+        skeletonNode = mainSceneNode.createChildSceneNode();
         
         BuildSkeleton(sceneManager, ogiData);
     }
 
     public SceneNode GetSceneNode()
     {
-        return SceneNode;
+        return mainSceneNode;
     }
 
     public new void Dispose()
@@ -82,7 +84,7 @@ public class OGI : ManualObject
     {
         var assetManager = AssetManager.Get();
         
-        defaultSkeleton = TwinSkeletonManager.CreateSceneNodeSkeleton(SceneNode, ogiData);
+        defaultSkeleton = TwinSkeletonManager.CreateSceneNodeSkeleton(skeletonNode, ogiData);
         var jointIndex = 0;
         foreach (var rigidModel in ogiData.RigidModelIds)
         {
@@ -99,13 +101,13 @@ public class OGI : ManualObject
         if (ogiData.Skin != LabURI.Empty)
         {
             var skin = assetManager.GetAssetData<SkinData>(ogiData.Skin);
-            modelBuffers.Add(new ModelBuffer(sceneManager, SceneNode, ogiData.Skin, skin));
+            modelBuffers.Add(new ModelBuffer(sceneManager, skeletonNode, ogiData.Skin, skin));
             skinBuffer = modelBuffers[^1];
         }
         if (ogiData.BlendSkin != LabURI.Empty)
         {
             var blendSkin = assetManager.GetAssetData<BlendSkinData>(ogiData.BlendSkin);
-            modelBuffers.Add(new ModelBufferBlendSkin(sceneManager, SceneNode, ogiData.BlendSkin, blendSkin));
+            modelBuffers.Add(new ModelBufferBlendSkin(sceneManager, skeletonNode, ogiData.BlendSkin, blendSkin));
             blendSkinBuffer = modelBuffers[^1];
         }
     }

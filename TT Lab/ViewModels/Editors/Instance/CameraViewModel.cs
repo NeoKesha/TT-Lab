@@ -503,6 +503,11 @@ namespace TT_Lab.ViewModels.Editors.Instance
         {
             if (subIdToCamVM.TryGetValue(cameraType, out var cameraViewModelType))
             {
+                if (cameraViewModel != null)
+                {
+                    DirtyTracker.RemoveChild(cameraViewModel);
+                }
+                
                 cameraViewModel = (BaseCameraViewModel)Activator.CreateInstance(cameraViewModelType)!;
                 DirtyTracker.AddChild(cameraViewModel);
                 ActivateItemAsync(cameraViewModel);

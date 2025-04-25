@@ -41,6 +41,11 @@ namespace TT_Lab.ViewModels.Composite
             }
         }
 
+        public override String ToString()
+        {
+            return "Matrix";
+        }
+
         public Vector4ViewModel this[int key]
         {
             get
