@@ -95,7 +95,6 @@ public static class TwinSkeletonManager
             globalTransform *= localTransform;
             var sceneNode = parentBone.ResidingSceneNode.createChildSceneNode();
             sceneNode.setInheritScale(false);
-            sceneNode.setDebugDisplayEnabled(true);
             sceneNode.translate(position, Node.TransformSpace.TS_LOCAL);
             sceneNode.rotate(OgreExtensions.FromGlm(quat), Node.TransformSpace.TS_LOCAL);
             var bone = new TwinBone(sceneNode);

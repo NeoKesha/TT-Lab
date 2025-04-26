@@ -207,14 +207,6 @@ namespace TT_Lab.Rendering
 
             lock (RenderLockObject)
             {
-                foreach (var window in _ogreWindows)
-                {
-                    window.Close();
-                }
-
-                _ogreWindows.Clear();
-
-                _internalWindow.Dispose();
                 _isDisposed = true;
                 closeApp();
                 Dispose();

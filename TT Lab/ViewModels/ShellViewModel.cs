@@ -176,7 +176,7 @@ namespace TT_Lab.ViewModels
             lock (_ogreWindowManager!.RenderLockObject)
             {
                 _deadgeRender = true;
-                _ogreWindowManager.CloseAndTerminateAll();
+                // _ogreWindowManager.CloseAndTerminateAll();
                 CompositionTarget.Rendering -= PerformRender;
             }
 

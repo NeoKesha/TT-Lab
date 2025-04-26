@@ -37,7 +37,7 @@ public class BoundingBoxViewModel : Conductor<Vector4ViewModel>.Collection.AllAc
 
     public void ResetDirty()
     {
-        DirtyTracker.MarkDirty();
+        DirtyTracker.ResetDirty();
     }
     
     public Vector4ViewModel TopLeft => topLeft;

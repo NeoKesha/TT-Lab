@@ -87,6 +87,8 @@ public class OGIViewModel : ResourceEditorViewModel
         {
             _boundingBoxBuilderToJoint.Add(new PrimitiveWrapperViewModel<Byte>(bbBuilderToJoint));
         }
+        
+        ResetDirty();
     }
 
     private void InitOGIScene()

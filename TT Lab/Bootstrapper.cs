@@ -37,12 +37,6 @@ namespace TT_Lab
             LogManager.GetLog = type => new Logger(type, filters);
         }
 
-        protected override void OnExit(Object sender, EventArgs e)
-        {
-            _container.GetInstance<OgreWindowManager>().CloseAndTerminateAll();
-            base.OnExit(sender, e);
-        }
-
         protected override void Configure()
         {
             base.Configure();
