@@ -10,6 +10,7 @@
              xmlns:code="clr-namespace:TT_Lab.ViewModels.Editors.Code"
              xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
              xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
+             xmlns:graphics="clr-namespace:TT_Lab.Assets.Graphics"
              d:DataContext="{Binding Source={d:DesignInstance code:OGIViewModel}}"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="1200">
@@ -28,8 +29,10 @@
             <GridSplitter ResizeDirection="Columns" Margin="0" Background="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}" Grid.Column="1"/>
             <ScrollViewer Grid.Column="2">
                 <StackPanel Orientation="Vertical">
-                    <controls:LabeledTextBox TextBoxName="Blend Skin" IsEnabled="False" HorizontalAlignment="Stretch" LayoutOrientation="Horizontal" Text="{Binding BlendSkin, Converter={StaticResource UriConverter}}"/>
-                    <controls:LabeledTextBox Margin="0, 0, 0, 5" HorizontalAlignment="Stretch" TextBoxName="Skin" IsEnabled="False" LayoutOrientation="Horizontal" Text="{Binding Skin, Converter={StaticResource UriConverter}}"/>
+                    <composites:ResourceBrowserOpener LinkedResource="{Binding BlendSkin, Mode=TwoWay}" BrowserName="Blend Skin" BrowseType="{x:Type graphics:BlendSkin}"/>
+                    <composites:ResourceBrowserOpener LinkedResource="{Binding Skin, Mode=TwoWay}" BrowserName="Skin" BrowseType="{x:Type graphics:Skin}" Margin="0, 0, 0, 5"/>
+                    <!-- <controls:LabeledTextBox TextBoxName="Blend Skin" IsEnabled="False" HorizontalAlignment="Stretch" LayoutOrientation="Horizontal" Text="{Binding BlendSkin, Converter={StaticResource UriConverter}}"/> -->
+                    <!-- <controls:LabeledTextBox Margin="0, 0, 0, 5" HorizontalAlignment="Stretch" TextBoxName="Skin" IsEnabled="False" LayoutOrientation="Horizontal" Text="{Binding Skin, Converter={StaticResource UriConverter}}"/> -->
                     <composites:BoundingBoxView DataContext="{Binding BoundingBox}"/>
                     <Expander Style="{DynamicResource SimpleExpander}" Header="Joints">
                         <StackPanel Orientation="Vertical">

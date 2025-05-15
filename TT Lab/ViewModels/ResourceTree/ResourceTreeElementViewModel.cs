@@ -184,6 +184,7 @@ public class ResourceTreeElementViewModel : PropertyChangedBase
 
     public async Task CreateContextMenuAction()
     {
+        // TODO: Rework this so menu gets recreated because if you click on many resources the memory consumption is gonna be pretty high
         if (_contextMenuCreated)
         {
             return;

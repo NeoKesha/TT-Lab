@@ -103,6 +103,8 @@ public class OGIViewModel : ResourceEditorViewModel
             glControl.EnableImgui(true);
 
             _ogiData = AssetManager.Get().GetAssetData<OGIData>(EditableResource);
+            _ogiData.BlendSkin = _blendSkin;
+            _ogiData.Skin = _skin;
             _ogiRender = new Rendering.Objects.OGI(EditableResource, sceneManager, _ogiData);
             pivot.addChild(_ogiRender.GetSceneNode());
             pivot.setInheritOrientation(false);
@@ -138,6 +140,7 @@ public class OGIViewModel : ResourceEditorViewModel
             if (_skin != value)
             {
                 _skin = value;
+                OGIScene.ResetScene();
                 NotifyOfPropertyChange();
             }
         }
@@ -152,6 +155,7 @@ public class OGIViewModel : ResourceEditorViewModel
             if (_blendSkin != value)
             {
                 _blendSkin = value;
+                OGIScene.ResetScene();
                 NotifyOfPropertyChange();
             }
         }
