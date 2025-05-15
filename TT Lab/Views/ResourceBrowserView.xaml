@@ -7,6 +7,7 @@
              xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels"
              xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
              xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
+             xmlns:extensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
              d:DataContext="{Binding Source={d:DesignInstance viewmodels:ResourceBrowserViewModel}}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -20,11 +21,16 @@
     <GroupBox>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
                 <RowDefinition/>
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
-            <GroupBox Grid.Row="0">
-                <ListBox SelectedItem="{Binding SelectedLink, Mode=TwoWay}" ItemsSource="{Binding ResourcesToBrowse}">
+            <TextBox
+                extensions:WatermarkExtension.Watermark="Search"
+                Text="{Binding SearchAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxLines="1"
+                />
+            <GroupBox Grid.Row="1">
+                <ListBox SelectedItem="{Binding SelectedLink, Mode=TwoWay}" ItemsSource="{Binding ResourcesToBrowseView}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
@@ -34,7 +40,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </GroupBox>
-            <Button x:Name="Link" Content="Link" Grid.Row="1"/>
+            <Button x:Name="Link" Content="Link" Grid.Row="2"/>
         </Grid>
     </GroupBox>
 </controls:AdonisWindow>

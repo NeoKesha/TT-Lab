@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,8 +12,6 @@ namespace TT_Lab.Views.Composite;
 
 public partial class ResourceBrowserOpener : UserControl
 {
-    public event EventHandler? OnBrowseClicked;
-    
     public static readonly DependencyProperty BrowseTypeProperty = DependencyProperty.Register(
         nameof(BrowseType), typeof(Type), typeof(ResourceBrowserOpener), new PropertyMetadata(typeof(IAsset)));
 
@@ -36,12 +35,21 @@ public partial class ResourceBrowserOpener : UserControl
     }
 
     public static readonly DependencyProperty LinkedResourceProperty = DependencyProperty.Register(
-        nameof(LinkedResource), typeof(LabURI), typeof(ResourceBrowserOpener), new PropertyMetadata(LabURI.Empty));
+        nameof(LinkedResource), typeof(LabURI), typeof(ResourceBrowserOpener), new FrameworkPropertyMetadata(LabURI.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     public LabURI LinkedResource
     {
         get => (LabURI)GetValue(LinkedResourceProperty);
         set => SetValue(LinkedResourceProperty, value);
+    }
+
+    public static readonly DependencyProperty ResourcesToBrowseProperty = DependencyProperty.Register(
+        nameof(ResourcesToBrowse), typeof(ObservableCollection<LabURI>), typeof(ResourceBrowserOpener), new PropertyMetadata(default(ObservableCollection<LabURI>?)));
+
+    public ObservableCollection<LabURI>? ResourcesToBrowse
+    {
+        get => (ObservableCollection<LabURI>?)GetValue(ResourcesToBrowseProperty);
+        set => SetValue(ResourcesToBrowseProperty, value);
     }
     
     public ResourceBrowserOpener()
@@ -51,7 +59,7 @@ public partial class ResourceBrowserOpener : UserControl
 
     private void OnOpenBrowser(object sender, RoutedEventArgs e)
     {
-        var linkBrowser = new ResourceBrowserViewModel(BrowseType);
+        var linkBrowser = ResourcesToBrowse == null ? new ResourceBrowserViewModel(BrowseType) : new ResourceBrowserViewModel(ResourcesToBrowse);
         var windowManager = IoC.Get<IWindowManager>();
         var linkBrowserWindow = windowManager.ShowDialogAsync(linkBrowser);
         linkBrowserWindow.Wait();

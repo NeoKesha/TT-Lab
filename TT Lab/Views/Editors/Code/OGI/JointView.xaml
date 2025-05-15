@@ -12,7 +12,7 @@
              d:DesignHeight="800" d:DesignWidth="300">
     <GroupBox>
         <StackPanel Orientation="Vertical">
-            <controls:LabeledTextBox Margin="0, 0, 0, 10" Text="{Binding ReactId}" HorizontalAlignment="Stretch" TextBoxName="Reaction ID"/>
+            <controls:LabeledTextBox LayoutOrientation="Horizontal" Margin="0, 0, 0, 10" Text="{Binding ReactId}" HorizontalAlignment="Stretch" TextBoxName="Reaction ID"/>
             <GroupBox Header="Additional Animation Rotation">
                 <composites:Vector4View DataContext="{Binding AdditionalAnimationRotation}"/>
             </GroupBox>

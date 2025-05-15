@@ -31,8 +31,6 @@
                 <StackPanel Orientation="Vertical">
                     <composites:ResourceBrowserOpener LinkedResource="{Binding BlendSkin, Mode=TwoWay}" BrowserName="Blend Skin" BrowseType="{x:Type graphics:BlendSkin}"/>
                     <composites:ResourceBrowserOpener LinkedResource="{Binding Skin, Mode=TwoWay}" BrowserName="Skin" BrowseType="{x:Type graphics:Skin}" Margin="0, 0, 0, 5"/>
-                    <!-- <controls:LabeledTextBox TextBoxName="Blend Skin" IsEnabled="False" HorizontalAlignment="Stretch" LayoutOrientation="Horizontal" Text="{Binding BlendSkin, Converter={StaticResource UriConverter}}"/> -->
-                    <!-- <controls:LabeledTextBox Margin="0, 0, 0, 5" HorizontalAlignment="Stretch" TextBoxName="Skin" IsEnabled="False" LayoutOrientation="Horizontal" Text="{Binding Skin, Converter={StaticResource UriConverter}}"/> -->
                     <composites:BoundingBoxView DataContext="{Binding BoundingBox}"/>
                     <Expander Style="{DynamicResource SimpleExpander}" Header="Joints">
                         <StackPanel Orientation="Vertical">

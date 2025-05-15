@@ -15,9 +15,9 @@
     </UserControl.Resources>
     <GroupBox>
         <UniformGrid x:Name="FormationGrid" Columns="3">
-            <local:LabeledTextBox Text="{Binding X, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="X" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-            <local:LabeledTextBox Text="{Binding Y, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="Y" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
-            <local:LabeledTextBox Text="{Binding Z, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="Z" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+            <local:LabeledTextBox LayoutOrientation="Horizontal" Text="{Binding X, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="X" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+            <local:LabeledTextBox LayoutOrientation="Horizontal" Text="{Binding Y, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="Y" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
+            <local:LabeledTextBox LayoutOrientation="Horizontal" Text="{Binding Z, Converter={StaticResource FloatConverter}}" VerticalAlignment="Center" TextBoxName="Z" Margin="5,5,5,5" HorizontalAlignment="Stretch"/>
         </UniformGrid>
     </GroupBox>
 </UserControl>

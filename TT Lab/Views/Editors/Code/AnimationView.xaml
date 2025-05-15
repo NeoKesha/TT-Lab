@@ -7,6 +7,7 @@
         xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
         xmlns:code="clr-namespace:TT_Lab.ViewModels.Editors.Code"
         xmlns:controls="clr-namespace:TT_Lab.Controls"
+        xmlns:composites="clr-namespace:TT_Lab.Views.Composite"
         xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
         x:Class="TT_Lab.Views.Editors.Code.AnimationView"
         d:DataContext="{Binding Source={d:DesignInstance code:AnimationViewModel}}"
@@ -23,13 +24,14 @@
             </Grid.RowDefinitions>
             <ContentControl Grid.Row="0" Margin="5" x:Name="AnimationScene"/>
             <StackPanel Margin="5" Grid.Row="1" Orientation="Vertical">
-                <controls:LabeledDropList SelectedItem="{Binding SelectedOgi}" Items="{Binding SuitableModels}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="5" VerticalAlignment="Stretch" DropListName="Model Picker" AllowDrop="True">
-                    <controls:LabeledDropList.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource UriConverter}}"/>
-                        </DataTemplate>
-                    </controls:LabeledDropList.ItemTemplate>
-                </controls:LabeledDropList>
+                <composites:ResourceBrowserOpener LinkedResource="{Binding SelectedOgi}" ResourcesToBrowse="{Binding SuitableModels}" Margin="5" BrowserName="Model Picker"/>
+                <!-- <controls:LabeledDropList LayoutOrientation="Horizontal" SelectedItem="{Binding SelectedOgi}" Items="{Binding SuitableModels}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="5" VerticalAlignment="Stretch" DropListName="Model Picker" AllowDrop="True"> -->
+                <!--     <controls:LabeledDropList.ItemTemplate> -->
+                <!--         <DataTemplate> -->
+                <!--             <TextBlock Text="{Binding Converter={StaticResource UriConverter}}"/> -->
+                <!--         </DataTemplate> -->
+                <!--     </controls:LabeledDropList.ItemTemplate> -->
+                <!-- </controls:LabeledDropList> -->
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
@@ -59,8 +61,8 @@
                     <TextBlock x:Name="TotalFrames" Margin="0, 0, 0, 5" Grid.Column="1" Grid.Row="1" Text="0" TextAlignment="Right"></TextBlock>
                 </Grid>
                 <UniformGrid Columns="5">
-                    <controls:LabeledTextBox Text="{Binding PlaybackFps}" TextBoxName="Playback FPS" Margin="5" HorizontalAlignment="Stretch"/>
-                    <controls:LabeledCheckBox Checked="{Binding Loop}" HorizontalAlignment="Left" CheckBoxName="Loop" LayoutOrientation="Vertical"/>
+                    <controls:LabeledTextBox LayoutOrientation="Horizontal" Text="{Binding PlaybackFps}" TextBoxName="Playback FPS" Margin="5" HorizontalAlignment="Stretch"/>
+                    <controls:LabeledCheckBox Checked="{Binding Loop}" HorizontalAlignment="Left" CheckBoxName="Loop" LayoutOrientation="Horizontal"/>
                     <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PlayAnimation" Content="Play"/>
                     <Button HorizontalAlignment="Stretch" Margin="5" x:Name="PauseAnimation" Content="Pause"/>
                     <Button HorizontalAlignment="Stretch" Margin="5" x:Name="ExportAnimation" Content="Export"/>
