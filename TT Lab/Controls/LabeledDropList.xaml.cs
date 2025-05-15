@@ -49,6 +49,13 @@ namespace TT_Lab.Controls
             set => SetValue(ItemTemplateProperty, value);
         }
         
+        [Description("Whether the textbox label is horizontal or vertical in relation to the textbox"), Category("Common Properties")]
+        public Orientation LayoutOrientation
+        {
+            get => (Orientation)GetValue(LayoutOrientationProperty);
+            set => SetValue(LayoutOrientationProperty, value);
+        }
+        
         // Dependency Property for ItemTemplate
         public static readonly DependencyProperty ItemTemplateProperty =
             DependencyProperty.Register(nameof(ItemTemplate), typeof(DataTemplate), typeof(LabeledDropList),
@@ -73,27 +80,45 @@ namespace TT_Lab.Controls
         public static readonly DependencyProperty DropListNameProperty =
             DependencyProperty.Register(nameof(DropListName), typeof(string), typeof(LabeledDropList),
                 new PropertyMetadata("Label"));
+        
+        // Using a DependencyProperty as the backing store for LayoutOrientation.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LayoutOrientationProperty =
+            DependencyProperty.Register(nameof(LayoutOrientation), typeof(Orientation), typeof(LabeledDropList),
+                new PropertyMetadata(Orientation.Vertical, OnLayoutOrientationChanged));
 
         public LabeledDropList()
         {
             InitializeComponent();
-            EnsureDefaultTemplate();
         }
         
-        private void EnsureDefaultTemplate()
+        private static void OnLayoutOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ItemTemplate ??= CreateDefaultTemplate();
+            if (d is not LabeledDropList control)
+            {
+                return;
+            }
+            
+            var orientation = (Orientation)e.NewValue;
+            control.UpdateOrientation(orientation);
         }
 
-        // Create a default ItemTemplate (displays text normally)
-        private static DataTemplate CreateDefaultTemplate()
+        private void UpdateOrientation(Orientation orientation)
         {
-            string xaml =
-                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
-                "<TextBlock Text='{Binding}'/>" +
-                "</DataTemplate>";
-
-            return (DataTemplate)XamlReader.Parse(xaml);
+            if (Content is not DockPanel)
+            {
+                return;
+            }
+            
+            switch (orientation)
+            {
+                case Orientation.Horizontal:
+                    DockPanel.SetDock(LblDropBoxName, Dock.Left);
+                    break;
+                case Orientation.Vertical:
+                    DockPanel.SetDock(LblDropBoxName, Dock.Top);
+                    break;
+            }
+            ElementContainer.UpdateLayout();
         }
     }
 }

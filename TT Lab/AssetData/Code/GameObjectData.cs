@@ -82,7 +82,7 @@ namespace TT_Lab.AssetData.Code
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> SoundSlots { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public UInt32 InstanceStateFlags { get; set; }
+        public Enums.InstanceState InstanceStateFlags { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<UInt32> InstFlags { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -338,7 +338,7 @@ namespace TT_Lab.AssetData.Code
             writeUriList(ObjectSlots);
             writeUriList(SoundSlots);
 
-            writer.Write(InstanceStateFlags);
+            writer.Write((UInt32)InstanceStateFlags);
 
             void writeParamsList<T>(IList<T> list, Action<T> writeFunc)
             {

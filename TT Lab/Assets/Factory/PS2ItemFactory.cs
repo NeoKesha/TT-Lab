@@ -400,7 +400,7 @@ namespace TT_Lab.Assets.Factory
             fillList(gameObject.ObjectSlots, reader.ReadUInt16);
             fillList(gameObject.SoundSlots, reader.ReadUInt16);
 
-            gameObject.InstanceStateFlags = reader.ReadUInt32();
+            gameObject.InstanceStateFlags = (Enums.InstanceState)reader.ReadUInt32();
 
             fillList(gameObject.InstFlags, reader.ReadUInt32);
             fillList(gameObject.InstFloats, reader.ReadSingle);

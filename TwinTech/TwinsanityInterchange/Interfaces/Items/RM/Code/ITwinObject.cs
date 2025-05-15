@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Twinsanity.TwinsanityInterchange.Common;
+using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
 
 namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
@@ -96,7 +97,7 @@ namespace Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code
         /// <summary>
         /// The default state flags for the instance of this object <seealso cref="Twinsanity.TwinsanityInterchange.Enumerations.Enums.InstanceState"/>
         /// </summary>
-        UInt32 InstanceStateFlags { get; set; }
+        Enums.InstanceState InstanceStateFlags { get; set; }
         /// <summary>
         /// Default instance flags for the instance of this object
         /// </summary>

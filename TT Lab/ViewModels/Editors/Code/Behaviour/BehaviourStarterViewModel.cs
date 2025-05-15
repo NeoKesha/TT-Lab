@@ -4,7 +4,7 @@ using TT_Lab.AssetData.Code.Behaviour;
 using TT_Lab.Assets;
 using TT_Lab.Attributes;
 
-namespace TT_Lab.ViewModels.Editors.Code
+namespace TT_Lab.ViewModels.Editors.Code.Behaviour
 {
     public class BehaviourStarterViewModel : ResourceEditorViewModel
     {

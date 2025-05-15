@@ -237,16 +237,6 @@ namespace TT_Lab.Rendering
             var vp = _internalWindow.render.addViewport(_mainCamera);
             vp.setOverlaysEnabled(false);
             vp.setBackgroundColour(new ColourValue(.3f, .3f, .3f));
-            
-            // var overlayCamera = _sceneManager.createCamera("OverlayCamera");
-            // overlayCamera.setAutoAspectRatio(true);
-            //
-            // var overlayCamNode = _sceneManager.getRootSceneNode().createChildSceneNode("OverlayCameraNode");
-            // overlayCamNode.attachObject(overlayCamera);
-            //
-            // var overlayViewport = _internalWindow.render.addViewport(overlayCamera, 1);
-            // overlayViewport.setOverlaysEnabled(false);
-            // overlayViewport.setBackgroundColour(new ColourValue(.3f, .3f, .3f));
         }
 
         public void EnableImgui(bool enable)

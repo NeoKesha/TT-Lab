@@ -7,7 +7,7 @@ using TT_Lab.Util;
 using TT_Lab.ViewModels.Interfaces;
 using static Twinsanity.TwinsanityInterchange.Common.AgentLab.TwinBehaviourAssigner;
 
-namespace TT_Lab.ViewModels.Editors.Code
+namespace TT_Lab.ViewModels.Editors.Code.Behaviour
 {
     public class BehaviourAssignerViewModel : Screen, IHaveParentEditor<BehaviourStarterViewModel>, ISaveableViewModel<BehaviourAssignerData>
     {

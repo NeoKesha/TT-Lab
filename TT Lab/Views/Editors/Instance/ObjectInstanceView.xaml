@@ -41,7 +41,7 @@
                             <RowDefinition Height="50*"/>
                             <RowDefinition Height="243*"/>
                         </Grid.RowDefinitions>
-                        <controls:LabeledDropList Margin="5" SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout"/>
+                        <controls:LabeledDropList LayoutOrientation="Horizontal" Margin="5" SelectedItem="{Binding LayoutID}" Items="{Binding Source={StaticResource InstanceLayouts}}" x:Name="InstanceLayoutList" VerticalAlignment="Center" DropListName="Instance layout"/>
                         <Grid x:Name="MainPropsGrid" Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
@@ -196,7 +196,7 @@
                                             <ContextMenu x:Name="IntPropsContextMenu"/>
                                         </ListBox.ContextMenu>
                                     </ListBox>
-                                    <controls:LabeledTextBox Text="{Binding SelectedInt}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch"/>
+                                    <controls:LabeledTextBox LayoutOrientation="Horizontal" Text="{Binding SelectedInt}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch"/>
                                 </Grid>
                             </Expander>
                             <Expander x:Name="FlagPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Flag properties">
@@ -215,7 +215,7 @@
                                             <ContextMenu x:Name="FlagPropsContextMenu"/>
                                         </ListBox.ContextMenu>
                                     </ListBox>
-                                    <controls:LabeledTextBox Text="{Binding SelectedFlag, StringFormat={}{0:X}}" x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+                                    <controls:LabeledTextBox LayoutOrientation="Horizontal" Text="{Binding SelectedFlag, StringFormat={}{0:X}}" x:Name="FlagPropBox" TextBoxName="Value" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
                                 </Grid>
                             </Expander>
                             <Expander x:Name="FloatPropsExpander" Style="{DynamicResource SimpleExpander}" Header="Float properties">
@@ -234,7 +234,7 @@
                                             <ContextMenu x:Name="FloatPropsContextMenu"/>
                                         </ListBox.ContextMenu>
                                     </ListBox>
-                                    <controls:LabeledTextBox Text="{Binding SelectedFloat, Converter={StaticResource FloatConverter}}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    <controls:LabeledTextBox LayoutOrientation="Horizontal" Text="{Binding SelectedFloat, Converter={StaticResource FloatConverter}}" Grid.Row="1" TextBoxName="Value" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                                 </Grid>
                             </Expander>
                         </ItemsControl>

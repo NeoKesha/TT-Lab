@@ -1,6 +1,7 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.AssetData.Code;
+using TT_Lab.ViewModels.Editors.Code;
 using Twinsanity.TwinsanityInterchange.Enumerations;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code;
 
@@ -20,7 +21,7 @@ namespace TT_Lab.Assets.Code
 
         public override Type GetEditorType()
         {
-            throw new NotImplementedException();
+            return typeof(GameObjectViewModel);
         }
 
         public override AbstractAssetData GetData()

@@ -47,6 +47,7 @@
             </GroupBox>
             <Grid Visibility="{Binding IsInstance}" Margin="5" Grid.Row="1">
                 <controls:LabeledDropList
+                    LayoutOrientation="Horizontal"
                     Items="{Binding Source={StaticResource InstanceLayouts}}"
                     SelectedItem="{Binding LayoutID}"
                     DropListName="Instance Layout"/>

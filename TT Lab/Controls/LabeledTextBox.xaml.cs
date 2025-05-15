@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -62,18 +63,32 @@ namespace TT_Lab.Controls
         
         private static void OnLayoutOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is LabeledTextBox control)
+            if (d is not LabeledTextBox control)
             {
-                control.UpdateOrientation();
+                return;
             }
+            
+            var orientation = (Orientation)e.NewValue;
+            control.UpdateOrientation(orientation);
         }
 
-        private void UpdateOrientation()
+        private void UpdateOrientation(Orientation orientation)
         {
-            if (Content is StackPanel stackPanel)
+            if (Content is not DockPanel)
             {
-                stackPanel.Orientation = LayoutOrientation;
+                return;
             }
+            
+            switch (orientation)
+            {
+                case Orientation.Horizontal:
+                    DockPanel.SetDock(LblTextBoxName, Dock.Left);
+                    break;
+                case Orientation.Vertical:
+                    DockPanel.SetDock(LblTextBoxName, Dock.Top);
+                    break;
+            }
+            ElementContainer.UpdateLayout();
         }
     }
 }
