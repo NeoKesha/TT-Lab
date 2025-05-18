@@ -127,6 +127,8 @@ public partial class EditableListBox : UserControl
         d.SetValue(DataTriggerAttachedValueProperty, value);
     }
 
+    public int Zero => 0;
+
     public EditableListBox()
     {
         InitializeComponent();

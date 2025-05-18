@@ -4,9 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:converters="clr-namespace:TT_Lab.ValueConverters"
              xmlns:local="clr-namespace:TT_Lab.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:EditableListBoxButtonEnabledConverter x:Key="ButtonEnabledConverter"></converters:EditableListBoxButtonEnabledConverter>
+    </UserControl.Resources>
     <GroupBox>
         <GroupBox.Header>
             <DockPanel LastChildFill="False">
@@ -29,36 +33,22 @@
                         </i:Interaction.Triggers>
                     </Button>
                     <Button Click="OnDeleteItemClick" ToolTip="Delete Item" Margin="1" Content="-">
-                        <i:Interaction.Triggers>
-                            <i:DataTrigger Value="{x:Null}" Binding="{Binding SelectedItem, ElementName=ItemsStorage}">
-                                <i:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-                            </i:DataTrigger>
-                            <i:DataTrigger Value="{x:Null}" Binding="{Binding SelectedItem, ElementName=ItemsStorage}" Comparison="NotEqual">
-                                <i:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-                            </i:DataTrigger>
-                        </i:Interaction.Triggers>
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource ButtonEnabledConverter}" ConverterParameter="{x:Static i:ComparisonConditionType.GreaterThan}">
+                                <Binding ElementName="ItemsStorage" Path="SelectedItem"/>
+                                <Binding ElementName="ItemsStorage" Path="Items.Count"/>
+                                <Binding Path="Zero" FallbackValue="0" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Button.IsEnabled>
                     </Button>
                     <Button Click="OnDuplicateItemClick" ToolTip="Duplicate Item" Margin="1" Content="*">
-                        <i:Interaction.Triggers>
-                            <i:DataTrigger Value="{x:Null}" Binding="{Binding SelectedItem, ElementName=ItemsStorage}">
-                                <i:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-                            </i:DataTrigger>
-                            <i:DataTrigger Value="{x:Null}" Binding="{Binding SelectedItem, ElementName=ItemsStorage}" Comparison="NotEqual">
-                                <i:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-                            </i:DataTrigger>
-                            <i:DataTrigger
-                                Binding="{Binding Items.Count, ElementName=ItemsStorage, FallbackValue=0}"
-                                local:EditableListBox.DataTriggerAttachedValue="{Binding SizeLimit, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=-1, PresentationTraceSources.TraceLevel=High}"
-                                Comparison="GreaterThanOrEqual">
-                                <i:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-                            </i:DataTrigger>
-                            <i:DataTrigger
-                                Binding="{Binding Items.Count, ElementName=ItemsStorage, FallbackValue=0}"
-                                local:EditableListBox.DataTriggerAttachedValue="{Binding SizeLimit, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=-1, PresentationTraceSources.TraceLevel=High}"
-                                Comparison="LessThan">
-                                <i:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-                            </i:DataTrigger>
-                        </i:Interaction.Triggers>
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource ButtonEnabledConverter}" ConverterParameter="{x:Static i:ComparisonConditionType.LessThan}">
+                                <Binding ElementName="ItemsStorage" Path="SelectedItem"/>
+                                <Binding ElementName="ItemsStorage" Path="Items.Count"/>
+                                <Binding Path="SizeLimit" RelativeSource="{RelativeSource AncestorType=UserControl}" FallbackValue="-1" PresentationTraceSources.TraceLevel="High"/>
+                            </MultiBinding>
+                        </Button.IsEnabled>
                     </Button>
                 </UniformGrid>
             </DockPanel>
