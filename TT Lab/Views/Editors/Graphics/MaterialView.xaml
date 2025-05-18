@@ -12,7 +12,7 @@
              x:Name="MaterialEditorControl"
              x:Class="TT_Lab.Views.Editors.Graphics.MaterialView"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="900">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="62*"/>
@@ -23,31 +23,38 @@
             <ColumnDefinition Width="677*"/>
         </Grid.ColumnDefinitions>
         <ContentControl x:Name="MaterialViewer" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
-        <GroupBox Header="Shaders" Grid.Row="1" Grid.Column="0">
-            <TreeView Margin="0,0,0,0"
-                      ItemsSource="{Binding Shaders}"
-                      VirtualizingPanel.IsVirtualizing="True" d:ItemsSource="{d:SampleData ItemCount=5}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedItemChanged">
-                        <cal:ActionMessage MethodName="ChangeShaderSettings">
-                            <cal:Parameter Value="$eventArgs"/>
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <TreeView.ContextMenu>
-                    <ContextMenu x:Name="TreeContextMenu">
-                        <MenuItem Header="Add Shader" Command="{Binding AddShaderCommand}"></MenuItem>
-                        <MenuItem Header="Remove Shader" Command="{Binding DeleteShaderCommand}"></MenuItem>
-                        <MenuItem Header="Clone Shader" Command="{Binding CloneShaderCommand}"></MenuItem>
-                    </ContextMenu>
-                </TreeView.ContextMenu>
-                <TreeView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type viewModels:ShaderViewModel}">
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
-        </GroupBox>
+        <controls:EditableListBox Grid.Row="1" Grid.Column="0" ListBoxName="Shaders" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            Items="{Binding Shaders}"
+            SizeLimit="5">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectedItemChanged">
+                    <cal:ActionMessage MethodName="ChangeShaderSettings">
+                        <cal:Parameter Value="$eventArgs"/>
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="AddItem">
+                    <i:InvokeCommandAction Command="{Binding AddShaderCommand}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="DeleteItem">
+                    <i:InvokeCommandAction Command="{Binding DeleteShaderCommand}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="DuplicateItem">
+                    <i:InvokeCommandAction Command="{Binding CloneShaderCommand}"></i:InvokeCommandAction>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <controls:EditableListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type viewModels:ShaderViewModel}">
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </controls:EditableListBox.ItemTemplate>
+            <controls:EditableListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add Shader" Command="{Binding AddShaderCommand}"></MenuItem>
+                    <MenuItem Header="Remove Shader" Command="{Binding DeleteShaderCommand}"></MenuItem>
+                    <MenuItem Header="Clone Shader" Command="{Binding CloneShaderCommand}"></MenuItem>
+                </ContextMenu>
+            </controls:EditableListBox.ContextMenu>
+        </controls:EditableListBox>
         <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>

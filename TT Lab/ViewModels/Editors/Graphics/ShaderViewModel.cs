@@ -717,6 +717,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 if (_texID != value)
                 {
                     _texID = value;
+                    TextureViewer.ResetScene();
                     NotifyOfPropertyChange();
                 }
             }

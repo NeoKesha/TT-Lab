@@ -13,6 +13,7 @@ using TT_Lab.AssetData.Graphics.Shaders;
 using TT_Lab.Assets;
 using TT_Lab.Attributes;
 using TT_Lab.Command;
+using TT_Lab.Controls;
 using TT_Lab.Rendering;
 using TT_Lab.Rendering.Objects;
 using TT_Lab.Util;
@@ -130,10 +131,15 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             };
         }
 
-        public void ChangeShaderSettings(RoutedPropertyChangedEventArgs<Object> args)
+        public void ChangeShaderSettings(SelectedItemChangedEventArgs args)
         {
+            if (args.GetSelectedItem<ShaderViewModel>() == null)
+            {
+                return;
+            }
+            
             DeactivateItemAsync(CurrentSelectedShader, false);
-            CurrentSelectedShader = (ShaderViewModel)args.NewValue;
+            CurrentSelectedShader = args.GetSelectedItem<ShaderViewModel>()!;
             DeleteShaderCommand.Index = Shaders.IndexOf(CurrentSelectedShader);
             CloneShaderCommand.Item = CurrentSelectedShader;
         }
