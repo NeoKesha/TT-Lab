@@ -26,8 +26,8 @@ namespace TT_Lab.ViewModels.Editors.Graphics
         private Boolean _generateMipmaps;
         private SceneEditorViewModel _textureViewer;
 
-        static private ObservableCollection<object> _textureFunctions;
-        static private ObservableCollection<object> _pixelFormats;
+        private static ObservableCollection<object> _textureFunctions;
+        private static ObservableCollection<object> _pixelFormats;
 
         static TextureViewModel()
         {
@@ -52,6 +52,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             asset.PixelFormat = PixelStorageFormat;
             asset.TextureFunction = TextureFunction;
             asset.GenerateMipmaps = GenerateMipmaps;
+            asset.Serialize(SerializationFlags.SetDirectoryToAssets | SerializationFlags.SaveData);
             
             base.Save();
         }
@@ -134,6 +135,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                     return;
                 }
                 Texture = image;
+                NotifyOfPropertyChange(nameof(Texture));
             }
             else if (e.Data != null)
             {
@@ -141,6 +143,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 {
                     var texAsset = AssetManager.Get().GetAsset((LabURI)e.Data.Data);
                     Texture = texAsset.GetData<TextureData>().Bitmap;
+                    NotifyOfPropertyChange(nameof(Texture));
                     Log.WriteLine($"Replacing with texture: {texAsset.Alias}");
                 }
                 catch (Exception)
@@ -148,7 +151,8 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                     Log.WriteLine($"Unsupported texture");
                 }
             }
-            InitTextureViewer();
+            
+            TextureViewer.ResetScene();
         }
 
         public static ObservableCollection<object> TexFuns
@@ -175,9 +179,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 _texture ??= (Bitmap)asset.GetData<TextureData>().Bitmap.Clone();
                 return _texture;
             }
-            set =>
-                //_texture?.Dispose();
-                _texture = (Bitmap)value.Clone();
+            set => _texture = (Bitmap)value.Clone();
         }
 
         [MarkDirty]

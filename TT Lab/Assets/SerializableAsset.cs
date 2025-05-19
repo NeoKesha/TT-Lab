@@ -32,6 +32,7 @@ namespace TT_Lab.Assets
         public Boolean Raw { get; set; }
         public virtual String IconPath => "Common_Node.png";
         public String Data { get; set; }
+        public String FullDataPath => $"{IoC.Get<ProjectManager>().OpenedProject!.ProjectPath}\\assets\\{SavePath}\\{Data}";
         public UInt32 ID { get; set; }
         public String Alias { get; set; }
         public String Chunk { get; set; }

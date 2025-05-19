@@ -173,7 +173,8 @@
                         <RowDefinition/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
-                    <ContentControl DockPanel.Dock="Top" x:Name="TextureViewer" HorizontalAlignment="Stretch" Margin="5" VerticalAlignment="Stretch" AllowDrop="True"/>
+                    <Image DockPanel.Dock="Top" Source="{Binding TexturePath, FallbackValue=/Images/God_Messenger.png}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <!-- <ContentControl DockPanel.Dock="Top" x:Name="TextureViewer" HorizontalAlignment="Stretch" Margin="5" VerticalAlignment="Stretch" AllowDrop="True"/> -->
                     <composites:ResourceBrowserOpener Grid.Row="1" DockPanel.Dock="Bottom" BrowserName="Texture" BrowseType="{x:Type graphics:Texture}" LinkedResource="{Binding TexID}"/>
                 </Grid>
                 <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">

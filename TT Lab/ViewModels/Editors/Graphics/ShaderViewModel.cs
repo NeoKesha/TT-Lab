@@ -23,8 +23,6 @@ namespace TT_Lab.ViewModels.Editors.Graphics
 {
     public class ShaderViewModel : Conductor<IScreen>.Collection.AllActive, IHaveParentEditor<MaterialViewModel>, ISaveableViewModel<LabShader>, IHaveChildrenEditors
     {
-        private SceneEditorViewModel _textureViewer;
-
         private String _name = "Shader";
         private TwinShader.Type _type;
         private UInt32 _intParam;
@@ -82,10 +80,6 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             dirtyTracker.AddChild(_unkVec2);
             dirtyTracker.AddChild(_uvScrollSpeed);
             _texID = LabURI.Empty;
-            _textureViewer = IoC.Get<SceneEditorViewModel>();
-            _textureViewer.SceneHeaderModel = "Texture viewer";
-            Items.Add(_textureViewer);
-            InitTextureViewer();
         }
 
         public ShaderViewModel(LabShader shader, MaterialViewModel materialEditor) : this(materialEditor)
@@ -210,60 +204,7 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             };
         }
 
-        public void ShaderViewModelFileDrop(Controls.FileDropEventArgs e)
-        {
-            if (string.IsNullOrEmpty(e.File))
-            {
-                var data = e.Data.Data as ResourceTreeElementViewModel;
-                if (data.Asset.Type.Name == "Texture")
-                {
-                    TexID = data.Asset.URI;
-                    InitTextureViewer();
-                }
-            }
-        }
-
-        protected override Task OnActivateAsync(CancellationToken cancellationToken)
-        {
-            ActivateItemAsync(TextureViewer, cancellationToken);
-            
-            return base.OnActivateAsync(cancellationToken);
-        }
-
-        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
-        {
-            DeactivateItemAsync(TextureViewer, close, cancellationToken);
-            
-            return base.OnDeactivateAsync(close, cancellationToken);
-        }
-
-        private void InitTextureViewer()
-        {
-            TextureViewer.SceneCreator = (glControl) =>
-            {
-                var sceneManager = glControl.GetSceneManager();
-                var pivot = sceneManager.getRootSceneNode().createChildSceneNode();
-                pivot.setPosition(0, 0, 0);
-                glControl.SetCameraTarget(pivot);
-                glControl.SetCameraStyle(CameraStyle.CS_ORBIT);
-
-                var plane = sceneManager.getRootSceneNode().createChildSceneNode();
-                var entity = sceneManager.createEntity(BufferGeneration.GetPlaneBuffer());
-                Rendering.MaterialManager.CreateOrGetMaterial("DiffuseTexture", out var material);
-                Rendering.MaterialManager.SetupMaterialPlainTexture(material, TexID);
-                entity.setMaterial(material);
-                entity.getSubEntity(0).setCustomParameter(0, new org.ogre.Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-                plane.attachObject(entity);
-                plane.scale(0.05f, 0.05f, 1f);
-            };
-        }
-
         public MaterialViewModel ParentEditor { get; set; }
-
-        public SceneEditorViewModel TextureViewer
-        {
-            get => _textureViewer;
-        }
 
         [MarkDirty]
         public String Name
@@ -279,10 +220,9 @@ namespace TT_Lab.ViewModels.Editors.Graphics
             }
         }
 
-        public Boolean HasIntParam
-        {
-            get => _type == TwinShader.Type.UnlitClothDeformation || _type == TwinShader.Type.UnlitClothDeformation2;
-        }
+        public string TexturePath => TexID == LabURI.Empty ? ManifestResourceLoader.GetPathInExe("Media\\boat_guy.png") : AssetManager.Get().GetAsset(TexID).FullDataPath;
+
+        public Boolean HasIntParam => _type is TwinShader.Type.UnlitClothDeformation or TwinShader.Type.UnlitClothDeformation2;
 
         public Boolean HasFloatParam1
         {
@@ -717,8 +657,8 @@ namespace TT_Lab.ViewModels.Editors.Graphics
                 if (_texID != value)
                 {
                     _texID = value;
-                    TextureViewer.ResetScene();
                     NotifyOfPropertyChange();
+                    NotifyOfPropertyChange(nameof(TexturePath));
                 }
             }
         }

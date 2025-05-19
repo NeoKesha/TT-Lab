@@ -76,6 +76,8 @@ namespace TT_Lab.Assets
         /// </summary>
         [JsonProperty(Required = Required.AllowNull)]
         String Data { get; set; }
+        
+        String FullDataPath { get; }
 
         /// <summary>
         /// Name for the asset to display in project tree

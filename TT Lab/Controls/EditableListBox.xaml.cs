@@ -80,7 +80,7 @@ public partial class EditableListBox : UserControl
     }
 
     public static readonly DependencyProperty SizeLimitProperty = DependencyProperty.Register(
-        nameof(SizeLimit), typeof(int), typeof(EditableListBox), new PropertyMetadata(-1));
+        nameof(SizeLimit), typeof(int), typeof(EditableListBox), new PropertyMetadata(int.MaxValue));
 
     public int SizeLimit
     {

@@ -7,10 +7,14 @@
         xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
         xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Editors.Graphics"
         xmlns:Controls="clr-namespace:TT_Lab.Controls"
+        xmlns:converters="clr-namespace:TT_Lab.ValueConverters"
         x:Class="TT_Lab.Views.Editors.Graphics.TextureView"
         d:DataContext="{Binding Source={d:DesignInstance viewModels:TextureViewModel}}"
         mc:Ignorable="d" 
         d:DesignHeight="450" d:DesignWidth="800" AllowDrop="True">
+    <UserControl.Resources>
+        <converters:BitmapImageConverter x:Key="BitmapImageConverter"></converters:BitmapImageConverter>
+    </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Drop">
             <cal:ActionMessage MethodName="TextureViewerDrop">
@@ -21,9 +25,9 @@
     <GroupBox>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="45*"/>
-                <RowDefinition Height="187*"/>
-                <RowDefinition Height="13*"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
@@ -35,7 +39,7 @@
                 <Controls:LabeledDropList LayoutOrientation="Horizontal" VerticalAlignment="Center" Items="{Binding PixelFormats}" SelectedItem="{Binding PixelStorageFormat}" x:Name="PSMList" Margin="0" DropListName="Pixel storage format" Grid.Column="1" Padding="1" IsEnabled="False"/>
                 <Controls:LabeledCheckBox LayoutOrientation="Horizontal" Checked="{Binding GenerateMipmaps}" Grid.Column="2" HorizontalAlignment="Left" CheckBoxName="Generate Mipmaps" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </Grid>
-            <ContentControl x:Name="TextureViewer" Margin="5" Grid.Row="1" Padding="1"/>
+            <Image Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Source="{Binding Texture, Converter={StaticResource BitmapImageConverter}}"></Image>
             <Button x:Name="ReplaceButton" Content="Replace" Margin="0" Grid.Row="2"/>
         </Grid>
     </GroupBox>

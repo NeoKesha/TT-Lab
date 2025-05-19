@@ -41,10 +41,11 @@ public static class TwinMaterialGenerator
     public static GeneratedMaterial GenerateMaterialFromTwinMaterial(MaterialData twinMaterial, ShaderSettings shaderSettings = default, bool forceRebuild = false)
     {
         var materialText = new StringBuilder();
+        var ogreMaterialManager = org.ogre.MaterialManager.getSingleton();
         var formattedName = twinMaterial.Name.Replace(" ", "_");
         formattedName = formattedName.Remove(formattedName.Length - 1, 1);
         var materialName = $"{formattedName}_{twinMaterial.GetHashCode()}";
-        if (org.ogre.MaterialManager.getSingleton().resourceExists(materialName))
+        if (ogreMaterialManager.resourceExists(materialName))
         {
             if (!forceRebuild)
             {
@@ -52,7 +53,7 @@ public static class TwinMaterialGenerator
             }
             
             materialToRenderPriorityMap.Remove(materialName);
-            org.ogre.MaterialManager.getSingleton().remove(materialName);
+            ogreMaterialManager.remove(materialName);
         }
 
         ushort renderPriority = 0;
@@ -321,12 +322,6 @@ public static class TwinMaterialGenerator
         for (var i = 0; i < twinMaterial.Shaders.Count; i++)
         {
             MaterialManager.SetupMaterialPlainTexture(resultMaterial, twinMaterial.Shaders[i].TextureId, (uint)i);
-
-            if (shaderSettings.UseSkinning)
-            {
-                var shaderParams = storedMaterial.Material.getTechnique(0).getPass(0).getVertexProgramParameters();
-                shaderParams.getConstantDefinitions().save("BRUH.txt");
-            }
         }
         
         return storedMaterial;
