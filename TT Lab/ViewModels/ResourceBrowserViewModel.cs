@@ -17,14 +17,14 @@ public class ResourceBrowserViewModel : Screen
         _resourcesToBrowse = new BindableCollection<LabURI> { LabURI.Empty };
         SelectedLink = _resourcesToBrowse[0];
         _resourcesToBrowse.AddRange(AssetManager.Get().GetAllAssetsOf(browseType).Select(a => a.URI));
-        _resourcesToBrowseView = _resourcesToBrowse;
+        _resourcesToBrowseView = new BindableCollection<LabURI>(_resourcesToBrowse.Order());
     }
     
     public ResourceBrowserViewModel(IEnumerable<LabURI> resourcesToBrowse)
     {
         _resourcesToBrowse = new BindableCollection<LabURI>(resourcesToBrowse);
         SelectedLink = _resourcesToBrowse[0];
-        _resourcesToBrowseView = _resourcesToBrowse;
+        _resourcesToBrowseView = new BindableCollection<LabURI>(_resourcesToBrowse.Order());
     }
 
     public void Link()
@@ -34,17 +34,26 @@ public class ResourceBrowserViewModel : Screen
 
     private void DoSearch()
     {
-        _resourcesToBrowseView = new BindableCollection<LabURI>(_resourcesToBrowse.Where(uri =>
+        if (_searchAsset == string.Empty)
         {
-            if (uri == LabURI.Empty)
+            _resourcesToBrowseView = _resourcesToBrowse;
+        }
+        else
+        {
+            _resourcesToBrowseView = new BindableCollection<LabURI>(_resourcesToBrowse.Where(uri =>
             {
-                return LabURI.Empty.ToString().Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase);
-            }
-            
-            var asset = AssetManager.Get().GetAsset(uri);
-            return asset.Name.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase)
-                   || asset.Alias.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase);
-        }));
+                if (uri == LabURI.Empty)
+                {
+                    return LabURI.Empty.ToString().Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase);
+                }
+
+                var asset = AssetManager.Get().GetAsset(uri);
+                return asset.Name.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase)
+                       || asset.Alias.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase);
+            }));
+        }
+
+        _resourcesToBrowseView = new BindableCollection<LabURI>(_resourcesToBrowseView.Order());
         NotifyOfPropertyChange(nameof(ResourcesToBrowseView));
     }
 

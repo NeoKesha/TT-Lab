@@ -133,7 +133,7 @@ namespace TT_Lab.Rendering
             }
             
             var technique = material.getTechnique(0);
-            var textureName = AssetManager.Get().GetAsset<Assets.Graphics.Texture>(textureUri).Name.Replace(" ", "_");
+            var textureName = AssetManager.Get().GetAsset<Assets.Graphics.Texture>(textureUri).Data.Replace(" ", "_");
             var textureManager = TextureManager.getSingleton();
             if (!textureManager.resourceExists(textureName, GlobalConsts.OgreGroup))
             {

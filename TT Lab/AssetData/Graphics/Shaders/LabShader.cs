@@ -25,7 +25,7 @@ namespace TT_Lab.AssetData.Graphics.Shaders
         public ProcessAfterAlphaTestFailed ProcessMethodWhenAlphaTestFailed { get; set; }
         public DestinationAlphaTest DAlphaTest { get; set; }
         public DestinationAlphaTestMode DAlphaTestMode { get; set; }
-        public DepthTestMethod DepthTest { get; set; }
+        public DepthTestMethod DepthTest { get; set; } = DepthTestMethod.ALWAYS;
         public ShadingMethod ShdMethod { get; set; }
         public TextureMapping TxtMapping { get; set; }
         public TextureCoordinatesSpecification MethodOfSpecifyingTextureCoordinates { get; set; }

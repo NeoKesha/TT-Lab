@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -7,6 +8,7 @@ using GlmSharp;
 using org.ogre;
 using TT_Lab.AssetData.Graphics;
 using TT_Lab.AssetData.Graphics.Shaders;
+using TT_Lab.Assets;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Editors.Graphics;
 using Twinsanity.TwinsanityInterchange.Common;
@@ -35,17 +37,20 @@ public static class TwinMaterialGenerator
     {
         var matData = new MaterialData();
         material.Copy(ref matData);
-        return GenerateMaterialFromTwinMaterial(matData, shaderSettings, forceRebuild);
+        var originalHashCode = AssetManager.Get().GetAssetData<MaterialData>(material.EditableResource).GetHashCode();
+        return GenerateMaterialFromTwinMaterial(matData, shaderSettings, forceRebuild, originalHashCode);
     }
     
-    public static GeneratedMaterial GenerateMaterialFromTwinMaterial(MaterialData twinMaterial, ShaderSettings shaderSettings = default, bool forceRebuild = false)
+    [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize")]
+    public static GeneratedMaterial GenerateMaterialFromTwinMaterial(MaterialData twinMaterial, ShaderSettings shaderSettings = default, bool forceRebuild = false, int hash = -1)
     {
         var materialText = new StringBuilder();
         var ogreMaterialManager = org.ogre.MaterialManager.getSingleton();
         var formattedName = twinMaterial.Name.Replace(" ", "_");
         formattedName = formattedName.Remove(formattedName.Length - 1, 1);
-        var materialName = $"{formattedName}_{twinMaterial.GetHashCode()}";
-        if (ogreMaterialManager.resourceExists(materialName))
+        var hashCode = hash == -1 ? twinMaterial.GetHashCode() : hash;
+        var materialName = $"{formattedName}_{hashCode}";
+        if (ogreMaterialManager.resourceExists(materialName, GlobalConsts.OgreGroup))
         {
             if (!forceRebuild)
             {
@@ -53,7 +58,7 @@ public static class TwinMaterialGenerator
             }
             
             materialToRenderPriorityMap.Remove(materialName);
-            ogreMaterialManager.remove(materialName);
+            ogreMaterialManager.remove(materialName, GlobalConsts.OgreGroup);
         }
 
         ushort renderPriority = 0;
@@ -177,7 +182,15 @@ public static class TwinMaterialGenerator
             // Setup texture
             materialText.AppendLine("texture_unit");
             StartBlock(materialText);
-            materialText.AppendLine("texture \"boat_guy.png\"");
+            // materialText.AppendLine("texture \"boat_guy.png\"");
+            if (shader.TextureFilterWhenTextureIsExpanded == TwinShader.TextureFilter.LINEAR)
+            {
+                materialText.AppendLine("filtering bilinear");
+            }
+            else
+            {
+                materialText.AppendLine("filtering none");
+            }
             switch (shader.ShaderType)
             {
                 case TwinShader.Type.StandardUnlit:
@@ -300,7 +313,7 @@ public static class TwinMaterialGenerator
             {
                 var dataStream = new MemoryDataStream(new IntPtr(ptr), (uint)memStream.Length, false, true);
                 var dataPtr = new DataStreamPtr(dataStream);
-                org.ogre.MaterialManager.getSingleton().parseScript(dataPtr, GlobalConsts.OgreGroup);
+                ogreMaterialManager.parseScript(dataPtr, GlobalConsts.OgreGroup);
                 dataPtr.Dispose();
                 // HACK: Because of garbage collector the MemoryDataStream would be deleted a 2nd time,
                 // but technically it was deleted from disposing DataStreamPtr earlier
@@ -309,7 +322,7 @@ public static class TwinMaterialGenerator
             }
         }
 
-        var resultMaterial = org.ogre.MaterialManager.getSingleton().getByName(materialName);
+        var resultMaterial = ogreMaterialManager.getByName(materialName);
         resultMaterial.compile();
 
         var storedMaterial = new GeneratedMaterial

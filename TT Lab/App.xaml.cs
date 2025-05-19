@@ -7,9 +7,5 @@ namespace TT_Lab
     /// </summary>
     public partial class App : Application
     {
-        public App()
-        {
-            System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Information;
-        }
     }
 }

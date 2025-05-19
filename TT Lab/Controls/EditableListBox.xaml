@@ -20,13 +20,13 @@
                         <i:Interaction.Triggers>
                             <i:DataTrigger
                                 Binding="{Binding Items.Count, ElementName=ItemsStorage, FallbackValue=0}"
-                                local:EditableListBox.DataTriggerAttachedValue="{Binding SizeLimit, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=-1, PresentationTraceSources.TraceLevel=High}"
+                                local:EditableListBox.DataTriggerAttachedValue="{Binding SizeLimit, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=-1}"
                                 Comparison="GreaterThanOrEqual">
                                 <i:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
                             </i:DataTrigger>
                             <i:DataTrigger
                                 Binding="{Binding Items.Count, ElementName=ItemsStorage, FallbackValue=0}"
-                                local:EditableListBox.DataTriggerAttachedValue="{Binding SizeLimit, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=-1, PresentationTraceSources.TraceLevel=High}"
+                                local:EditableListBox.DataTriggerAttachedValue="{Binding SizeLimit, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=-1}"
                                 Comparison="LessThan">
                                 <i:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
                             </i:DataTrigger>
