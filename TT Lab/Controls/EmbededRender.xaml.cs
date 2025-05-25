@@ -44,10 +44,10 @@ namespace TT_Lab.Controls
             windowManager = IoC.Get<OgreWindowManager>();
         }
 
-        private void CompositionTargetOnRendering(object? sender, EventArgs e)
-        {
-            Dispatcher.Invoke(() => { }, DispatcherPriority.Render);
-        }
+        // private void CompositionTargetOnRendering(object? sender, EventArgs e)
+        // {
+        //     Dispatcher.Invoke(() => { }, DispatcherPriority.Render);
+        // }
 
         public OgreWindow GetRenderWindow()
         {
@@ -63,7 +63,7 @@ namespace TT_Lab.Controls
         {
             SizeChanged += EmbededRender_SizeChanged;
             LocationChanged += EmbededRender_LocationChanged;
-            CompositionTarget.Rendering += CompositionTargetOnRendering;
+            // CompositionTarget.Rendering += CompositionTargetOnRendering;
 
             NotifyOrInitiliazeRenderWindow((int)RenderSize.Width, (int)RenderSize.Height);
             window.SetVisibility(true);
@@ -86,7 +86,7 @@ namespace TT_Lab.Controls
                 window.SetVisibility(false);
             }
 
-            CompositionTarget.Rendering -= CompositionTargetOnRendering;
+            // CompositionTarget.Rendering -= CompositionTargetOnRendering;
             LocationChanged -= EmbededRender_LocationChanged;
             SizeChanged -= EmbededRender_SizeChanged;
         }

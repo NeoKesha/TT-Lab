@@ -2,6 +2,7 @@ using System.IO;
 using Caliburn.Micro;
 using TT_Lab.AssetData.Code.Behaviour;
 using TT_Lab.Assets;
+using TT_Lab.Attributes;
 using TT_Lab.Util;
 using TT_Lab.ViewModels.Interfaces;
 using Twinsanity.TwinsanityInterchange.Interfaces.Items.RM.Code.AgentLab;
@@ -21,6 +22,7 @@ public class BehaviourCommandPackViewModel : Screen, IHaveParentEditor<GameObjec
         _dirtyTracker = new DirtyTracker(this);
     }
 
+    [MarkDirty]
     public string Code
     {
         get => code;
@@ -36,7 +38,12 @@ public class BehaviourCommandPackViewModel : Screen, IHaveParentEditor<GameObjec
     
     public void Save(ITwinBehaviourCommandPack o)
     {
-        using var reader = new StreamReader(code);
+        using var memStream = new MemoryStream();
+        using var writer = new StreamWriter(memStream);
+        writer.Write(Code);
+        writer.Flush();
+        using var reader = new StreamReader(memStream);
+        memStream.Position = 0;
         o.ReadText(reader);
     }
 

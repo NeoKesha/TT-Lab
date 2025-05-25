@@ -25,13 +25,6 @@
             <ContentControl Grid.Row="0" Margin="5" x:Name="AnimationScene"/>
             <StackPanel Margin="5" Grid.Row="1" Orientation="Vertical">
                 <composites:ResourceBrowserOpener LinkedResource="{Binding SelectedOgi}" ResourcesToBrowse="{Binding SuitableModels}" Margin="5" BrowserName="Model Picker"/>
-                <!-- <controls:LabeledDropList LayoutOrientation="Horizontal" SelectedItem="{Binding SelectedOgi}" Items="{Binding SuitableModels}" x:Name="ObjectList" HorizontalAlignment="Stretch" Margin="5" VerticalAlignment="Stretch" DropListName="Model Picker" AllowDrop="True"> -->
-                <!--     <controls:LabeledDropList.ItemTemplate> -->
-                <!--         <DataTemplate> -->
-                <!--             <TextBlock Text="{Binding Converter={StaticResource UriConverter}}"/> -->
-                <!--         </DataTemplate> -->
-                <!--     </controls:LabeledDropList.ItemTemplate> -->
-                <!-- </controls:LabeledDropList> -->
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>

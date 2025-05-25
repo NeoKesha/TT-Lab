@@ -24,9 +24,12 @@ namespace TT_Lab.Assets
         
         [JsonProperty(Required = Required.Always)]
         public FolderMark Mark { get; set; } = FolderMark.Normal;
-        
+
+        public override string IconPath => "Folder.png";
+
         private static UInt32 _rootOrder = 0;
         private UInt32 order = 0;
+        private string _iconPath;
 
         public Folder()
         {

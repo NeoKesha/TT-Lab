@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Threading;
 using TT_Lab.Controls;
 using TT_Lab.Rendering;
 
@@ -28,6 +29,7 @@ namespace TT_Lab.Views.Editors
         private EmbededRender? _renderer;
         private Window? _mainWindow;
         private Point _placeholderPosition;
+        private bool _isListeningToInput = false;
 
         public SceneEditorView()
         {
@@ -51,32 +53,68 @@ namespace TT_Lab.Views.Editors
             _mainWindow.StateChanged += MainWindow_StateChanged;
             _mainWindow.SizeChanged += MainWindow_SizeChanged;
 
+            var windowCreated = _renderer != null;
             if (_renderer == null)
             {
-                _placeholderPosition = GlControlView.TransformToAncestor(_mainWindow).Transform(new Point(0, 0));
-                _renderer = new EmbededRender
-                {
-                    Owner = _mainWindow,
-                    Width = Math.Ceiling(GlControlView.ActualWidth),
-                    Height = Math.Ceiling(GlControlView.ActualHeight),
-                    Top = _mainWindow.Top + _placeholderPosition.Y,
-                    Left = _mainWindow.Left + _placeholderPosition.X,
-                };
-                _renderer.Show();
-                RaiseEvent(new SceneEditorRoutedEventArgs(SceneEditorInitializedEvent, _renderer));
+                windowCreated = CreateRenderWindow();
             }
-            else
+            else if (_renderer != null)
             {
                 RepositionRenderer();
                 _renderer.Show();
             }
 
-            _renderer.KeyUp += _renderer_KeyUp;
+            if (!windowCreated)
+            {
+                return;
+            }
+
+            StartListeningToInput();
+        }
+
+        private bool CreateRenderWindow()
+        {
+            if (!GlControlView.IsDescendantOf(_mainWindow!))
+            {
+                var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+                timer.Start();
+                timer.Tick += (sender, args) =>
+                {
+                    timer.Stop();
+                    CreateRenderWindow();
+                };
+                return false;
+            }
+            
+            _placeholderPosition = GlControlView.TransformToAncestor(_mainWindow!).Transform(new Point(0, 0));
+            _renderer = new EmbededRender
+            {
+                Owner = _mainWindow,
+                Width = Math.Ceiling(GlControlView.ActualWidth),
+                Height = Math.Ceiling(GlControlView.ActualHeight),
+                Top = _mainWindow.Top + _placeholderPosition.Y,
+                Left = _mainWindow.Left + _placeholderPosition.X,
+            };
+            _renderer.Show();
+            RaiseEvent(new SceneEditorRoutedEventArgs(SceneEditorInitializedEvent, _renderer));
+            StartListeningToInput();
+            return true;
+        }
+
+        private void StartListeningToInput()
+        {
+            if (_isListeningToInput)
+            {
+                return;
+            }
+            
+            _renderer!.KeyUp += _renderer_KeyUp;
             _renderer.KeyDown += _renderer_KeyDown;
             _renderer.MouseDown += _renderer_MouseDown;
             _renderer.MouseUp += _renderer_MouseUp;
             _renderer.MouseMove += _renderer_MouseMove;
             _renderer.MouseWheel += _renderer_MouseWheel;
+            _isListeningToInput = true;
         }
 
         private void _renderer_MouseUp(Object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -143,6 +181,7 @@ namespace TT_Lab.Views.Editors
             _renderer.Height = Math.Ceiling(GlControlView.ActualHeight);
             _renderer.Top = windowPos.Y + _placeholderPosition.Y;
             _renderer.Left = windowPos.X + _placeholderPosition.X;
+            _renderer.GetRenderWindow()?.NotifyWindowChanged();
         }
 
         private Point GetWindowActualPosition(Window window)
@@ -171,6 +210,7 @@ namespace TT_Lab.Views.Editors
             _mainWindow.StateChanged -= MainWindow_StateChanged;
             _mainWindow.SizeChanged -= MainWindow_SizeChanged;
             _mainWindow = null;
+            _isListeningToInput = false;
 
             if (_renderer != null)
             {

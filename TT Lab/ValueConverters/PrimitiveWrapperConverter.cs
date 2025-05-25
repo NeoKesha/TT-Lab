@@ -75,3 +75,7 @@ public class PrimitiveWrapperBackConverterUInt16 : PrimitiveWrapperBackConverter
 public class PrimitiveWrapperBackConverterUInt64 : PrimitiveWrapperBackConverter<UInt64>
 {
 }
+
+public class PrimitiveWrapperBackConverterLabUri : PrimitiveWrapperBackConverter<LabURI>
+{
+}

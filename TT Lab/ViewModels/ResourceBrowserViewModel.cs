@@ -49,7 +49,8 @@ public class ResourceBrowserViewModel : Screen
 
                 var asset = AssetManager.Get().GetAsset(uri);
                 return asset.Name.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase)
-                       || asset.Alias.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase);
+                       || asset.Alias.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase)
+                       || asset.Data.Contains(_searchAsset, StringComparison.CurrentCultureIgnoreCase);
             }));
         }
 

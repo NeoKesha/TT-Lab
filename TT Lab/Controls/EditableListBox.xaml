@@ -46,7 +46,7 @@
                             <MultiBinding Converter="{StaticResource ButtonEnabledConverter}" ConverterParameter="{x:Static i:ComparisonConditionType.LessThan}">
                                 <Binding ElementName="ItemsStorage" Path="SelectedItem"/>
                                 <Binding ElementName="ItemsStorage" Path="Items.Count"/>
-                                <Binding Path="SizeLimit" RelativeSource="{RelativeSource AncestorType=UserControl}" FallbackValue="-1" PresentationTraceSources.TraceLevel="High"/>
+                                <Binding Path="SizeLimit" RelativeSource="{RelativeSource AncestorType=UserControl}" FallbackValue="-1"/>
                             </MultiBinding>
                         </Button.IsEnabled>
                     </Button>
@@ -54,10 +54,17 @@
             </DockPanel>
         </GroupBox.Header>
         <ListBox
+            HorizontalContentAlignment="Stretch"
             x:Name="ItemsStorage"
             d:ItemsSource="{d:SampleData ItemCount=5}"
             SelectionChanged="OnItemsStorageSelectionChanged"
             ItemsSource="{Binding Items, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            ItemTemplate="{Binding ItemTemplate, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+            ItemTemplate="{Binding ItemTemplate, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
     </GroupBox>
 </UserControl>

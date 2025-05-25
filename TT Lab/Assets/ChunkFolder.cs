@@ -1,11 +1,15 @@
 ﻿using System;
 using TT_Lab.AssetData;
 using TT_Lab.ViewModels.Editors;
+using TT_Lab.ViewModels.ResourceTree;
 
 namespace TT_Lab.Assets
 {
     public class ChunkFolder : Folder
     {
+        private string _iconPath1;
+
+        public override string IconPath => "Scene.png";
 
         public ChunkFolder() : base()
         {
@@ -35,6 +39,11 @@ namespace TT_Lab.Assets
         public override Type GetEditorType()
         {
             return typeof(ChunkEditorViewModel);
+        }
+
+        protected override ResourceTreeElementViewModel CreateResourceTreeElement(ResourceTreeElementViewModel? parent = null)
+        {
+            return new ChunkElementViewModel(URI, parent);
         }
     }
 }

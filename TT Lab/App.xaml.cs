@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 
 namespace TT_Lab
 {
@@ -7,5 +8,9 @@ namespace TT_Lab
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            // PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.All;
+        }
     }
 }

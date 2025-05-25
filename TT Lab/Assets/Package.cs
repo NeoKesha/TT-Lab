@@ -8,12 +8,16 @@ namespace TT_Lab.Assets
 {
     public class Package : Folder
     {
+        private string _iconPath1;
+
         [JsonProperty(Required = Required.Always)]
         public Boolean Enabled { get; set; }
         [JsonProperty(Required = Required.Always)]
         public List<LabURI> Dependencies { get; private set; } = new();
         [JsonProperty(Required = Required.Always)]
         public String Variant { get; set; } = "";
+
+        public override string IconPath => "Package.png";
 
         public Package() : base()
         {

@@ -19,6 +19,7 @@
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type viewmodelsComposite:TabbedEditorViewModel}">
                     <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding IconPath}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="24" Height="24" Margin="0,0,3,0" Stretch="Uniform"/>
                         <TextBlock Text="{Binding DisplayName}" Margin="0,0,10,0"/>
                         <Button Content="X" cal:Message.Attach="CloseEditorTab($dataContext)"/>
                     </StackPanel>

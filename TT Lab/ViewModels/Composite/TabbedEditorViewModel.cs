@@ -35,6 +35,8 @@ namespace TT_Lab.ViewModels.Composite
             get => _editableResource;
             set => _editableResource = value;
         }
+        
+        public String IconPath => $"/Media/LabIcons/{AssetManager.Get().GetAsset(EditableResource).IconPath}";
 
         public Type EditorType
         {

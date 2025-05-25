@@ -12,12 +12,14 @@ public class PrimitiveWrapperViewModel<T> : PropertyChangedBase, IDirtyMarker, I
 {
     private T _value;
     private bool isDirty;
+    private readonly bool useRefComparator = false;
     
     public PrimitiveWrapperViewModel() {}
 
-    public PrimitiveWrapperViewModel(T value)
+    public PrimitiveWrapperViewModel(T value, bool useRefComparator = false)
     {
         _value = value;
+        this.useRefComparator = useRefComparator;
     }
 
     [MarkDirty]
@@ -70,6 +72,7 @@ public class PrimitiveWrapperViewModel<T> : PropertyChangedBase, IDirtyMarker, I
     public bool Equals(PrimitiveWrapperViewModel<T>? other)
     {
         if (other is null) return false;
+        if (useRefComparator) return ReferenceEquals(this, other);
         if (ReferenceEquals(this, other)) return true;
         return EqualityComparer<T>.Default.Equals(_value, other._value);
     }
@@ -77,6 +80,7 @@ public class PrimitiveWrapperViewModel<T> : PropertyChangedBase, IDirtyMarker, I
     public override bool Equals(object? obj)
     {
         if (obj is null) return false;
+        if (useRefComparator) return ReferenceEquals(this, obj);
         if (ReferenceEquals(this, obj)) return true;
         if (obj is T) return _value.Equals(obj);
         if (obj.GetType() != GetType()) return false;
@@ -85,7 +89,7 @@ public class PrimitiveWrapperViewModel<T> : PropertyChangedBase, IDirtyMarker, I
 
     public override int GetHashCode()
     {
-        return EqualityComparer<T>.Default.GetHashCode(_value);
+        return useRefComparator ? base.GetHashCode() : EqualityComparer<T>.Default.GetHashCode(_value);
     }
 
     public static bool operator ==(PrimitiveWrapperViewModel<T>? left, PrimitiveWrapperViewModel<T>? right)

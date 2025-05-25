@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Factory;
 
 namespace TT_Lab.Project
 {
@@ -105,6 +106,13 @@ namespace TT_Lab.Project
         /// Unpacks XBox assets data into project readable format
         /// </summary>
         void UnpackAssetsXbox();
+
+        /// <summary>
+        /// Generates a specifically given chunk
+        /// </summary>
+        /// <param name="chunkUri">Chunk's URI</param>
+        /// <param name="itemFactory">Factory to generate its data from (optional)</param>
+        void PackChunk(LabURI chunkUri, ITwinItemFactory? itemFactory = null);
 
         /// <summary>
         /// Packs all the assets back into Twinsanity's PS2 format

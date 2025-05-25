@@ -37,6 +37,7 @@ public class AnimationViewModel : ResourceEditorViewModel
     private TwinAnimation _twinAnimation;
     private Stopwatch _renderWatch = new Stopwatch();
     private LabURI _selectedOgi = LabURI.Empty;
+    private bool _tryingToClose = false;
 
     public AnimationViewModel()
     {
@@ -44,6 +45,18 @@ public class AnimationViewModel : ResourceEditorViewModel
 
         AnimationScene.SceneHeaderModel = "Animation Viewer";
         InitAnimationScene();
+    }
+
+    public override async Task<Boolean> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        _tryingToClose = true;
+        var result = await base.CanCloseAsync(cancellationToken);
+        if (!result)
+        {
+            _tryingToClose = false;
+        }
+        
+        return result;
     }
 
     protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
@@ -351,6 +364,11 @@ public class AnimationViewModel : ResourceEditorViewModel
 
     private void UpdateAnimationPlayback(object? sender, EventArgs e)
     {
+        if (_tryingToClose)
+        {
+            return;
+        }
+        
         UpdateAnimationPlayback();
     }
 

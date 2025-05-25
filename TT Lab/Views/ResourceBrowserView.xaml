@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:TT_Lab.Views"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              xmlns:viewmodels="clr-namespace:TT_Lab.ViewModels"
              xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
              xmlns:valueConverters="clr-namespace:TT_Lab.ValueConverters"
@@ -17,6 +18,7 @@
     </Window.Style>
     <controls:AdonisWindow.Resources>
         <valueConverters:LabUriConverter x:Key="UriConverter"/>
+        <sys:Boolean x:Key="ShowData">True</sys:Boolean>
     </controls:AdonisWindow.Resources>
     <GroupBox>
         <Grid>
@@ -34,7 +36,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
-                                <TextBlock Text="{Binding Converter={StaticResource UriConverter}}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Converter={StaticResource UriConverter}, ConverterParameter={StaticResource ShowData}}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

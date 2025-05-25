@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using TT_Lab.Attributes;
@@ -118,6 +119,7 @@ public class DirtyTracker
     private void ChildPropertyChanged(Object? sender, PropertyChangedEventArgs e)
     {
         var marker = (IDirtyMarker)sender!;
+        Debug.Assert(_markerToPropMap.ContainsKey(marker), $"Given marker {marker} was not found.");
         var propMap = _markerToPropMap[marker];
         if (e.PropertyName == null || !propMap.Contains(e.PropertyName))
         {

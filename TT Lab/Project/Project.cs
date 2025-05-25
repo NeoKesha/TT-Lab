@@ -1000,6 +1000,60 @@ namespace TT_Lab.Project
             throw new NotImplementedException();
         }
 
+        public void PackChunk(LabURI chunkUri, ITwinItemFactory? itemFactory = null)
+        {
+            var factory = itemFactory ?? new PS2ItemFactory();
+            var assetManager = AssetManager.Get();
+            var chunk = AssetManager.Get().GetAsset(chunkUri);
+            System.IO.Directory.SetCurrentDirectory(ProjectPath);
+            System.IO.Directory.CreateDirectory("build");
+            System.IO.Directory.SetCurrentDirectory("build");
+            System.IO.Directory.CreateDirectory("archives");
+            System.IO.Directory.SetCurrentDirectory("archives");
+            System.IO.Directory.CreateDirectory("Levels");
+            System.IO.Directory.SetCurrentDirectory("Levels");
+            var chunkLevelPath = chunk.Variation;
+            foreach (var pathToken in chunkLevelPath.Split('\\').Skip(1).SkipLast(1))
+            {
+                System.IO.Directory.CreateDirectory(pathToken.Replace("\\", ""));
+                System.IO.Directory.SetCurrentDirectory(pathToken.Replace("\\", ""));
+            }
+            Log.WriteLine($"Writing Level {chunk.Alias}...");
+            var rm2 = factory.GenerateRM();
+            var sm2 = factory.GenerateSM();
+
+            foreach (var asset in chunk.GetData<FolderData>().Children.Select(child => assetManager.GetAsset(child)))
+            {
+                if (asset is Scenery or DynamicScenery or ChunkLinks)
+                {
+                    asset.ResolveChunkResources(factory, sm2);
+                }
+                else
+                {
+                    asset.ResolveChunkResources(factory, rm2);
+                }
+            }
+
+            ((BaseTwinSection)rm2).ChangeItemPosition(Constants.LEVEL_COLLISION_ITEM, 2);
+            ((BaseTwinSection)rm2).ChangeItemPosition(Constants.LEVEL_PARTICLES_ITEM, 2);
+
+            ((BaseTwinSection)sm2).ChangeItemPosition(Constants.SCENERY_SECENERY_ITEM, 1);
+
+            using var rm2File = new System.IO.FileStream($"{chunk.Name}.rm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            using var rm2Writer = new System.IO.BinaryWriter(rm2File);
+            rm2.Write(rm2Writer);
+            rm2Writer.Flush();
+            rm2Writer.Close();
+
+            using var sm2File = new System.IO.FileStream($"{chunk.Name}.sm2", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            using var sm2Writer = new System.IO.BinaryWriter(sm2File);
+            sm2.Write(sm2Writer);
+            sm2Writer.Flush();
+            sm2Writer.Close();
+            
+            Log.WriteLine($"Finished writing {chunk.Alias}");
+        }
+
         public void PackAssetsPS2()
         {
             System.IO.Directory.SetCurrentDirectory(ProjectPath);

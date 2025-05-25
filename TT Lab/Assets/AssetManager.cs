@@ -268,7 +268,18 @@ namespace TT_Lab.Assets
         public ImmutableList<IAsset> GetAllAssetsOf(Type type)
         {
             Debug.Assert(type.IsAssignableTo(typeof(IAsset)), $"Given type {type.Name} must implement IAsset");
-            return _assets.Values.Distinct().Where(asset => asset.GetType() == type).ToImmutableList();
+            return _assets.Values.Distinct().Where(asset => asset.GetType().IsAssignableTo(type)).ToImmutableList();
+        }
+
+        public ImmutableList<LabURI> GetAllAssetUrisOf<T>() where T : IAsset
+        {
+            return _assets.Values.Distinct().Where(asset => asset is T).Select(asset => asset.URI).ToImmutableList();
+        }
+        
+        public ImmutableList<LabURI> GetAllAssetUrisOf(Type type)
+        {
+            Debug.Assert(type.IsAssignableTo(typeof(IAsset)), $"Given type {type.Name} must implement IAsset");
+            return _assets.Values.Distinct().Where(asset => asset.GetType().IsAssignableTo(type)).Select(asset => asset.URI).ToImmutableList();
         }
 
         /// <summary>

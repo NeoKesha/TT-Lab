@@ -109,6 +109,20 @@ public partial class EditableListBox : UserControl
     public static readonly DependencyProperty DataTriggerAttachedValueProperty = DependencyProperty.RegisterAttached(
         "DataTriggerAttachedValue", typeof(object), typeof(EditableListBox), new PropertyMetadata(null, OnDataTriggerValueChanged));
 
+    public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
+        nameof(SelectedItem), typeof(object), typeof(EditableListBox), new PropertyMetadata(null, OnSelectedItemChanged));
+
+    private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var editableListBox = (EditableListBox)d;
+    }
+
+    public object SelectedItem
+    {
+        get => GetValue(SelectedItemProperty);
+        set => SetValue(SelectedItemProperty, value);
+    }
+
     private static void OnDataTriggerValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is DataTrigger dataTrigger)
@@ -161,5 +175,6 @@ public partial class EditableListBox : UserControl
 
         e.Handled = true;
         RaiseEvent(new SelectedItemChangedEventArgs(this, SelectedItemChangedEvent, e.AddedItems[0]));
+        SelectedItem = e.AddedItems[0];
     }
 }

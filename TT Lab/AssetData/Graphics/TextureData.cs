@@ -35,6 +35,7 @@ namespace TT_Lab.AssetData.Graphics
                 Bitmap.Dispose();
             }
         }
+        
         protected override void SaveInternal(string dataPath, JsonSerializerSettings? settings = null)
         {
             if (Bitmap != null && !Disposed)

@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Caliburn.Micro;
 using org.ogre;
 using TT_Lab.AssetData.Code;
 using TT_Lab.Assets;
+using TT_Lab.Assets.Code;
 using TT_Lab.Attributes;
 using TT_Lab.ViewModels.Composite;
 using TT_Lab.ViewModels.Editors.Code.Behaviour;
@@ -86,50 +90,50 @@ public class GameObjectViewModel : ResourceEditorViewModel
         _behaviourSlots = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
         _objectSlots = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
         _soundSlots = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
-        foreach (var ogiSlot in data.OGISlots)
-        {
-            _ogiSlots.Add(new PrimitiveWrapperViewModel<LabURI>(ogiSlot));
-        }
-        foreach (var animSlot in data.AnimationSlots)
-        {
-            _animationSlots.Add(new PrimitiveWrapperViewModel<LabURI>(animSlot));
-        }
-        foreach (var behaviourSlot in data.BehaviourSlots)
-        {
-            _behaviourSlots.Add(new PrimitiveWrapperViewModel<LabURI>(behaviourSlot));
-        }
-        foreach (var objectSlot in data.ObjectSlots)
-        {
-            _objectSlots.Add(new PrimitiveWrapperViewModel<LabURI>(objectSlot));
-        }
-        foreach (var soundSlot in data.SoundSlots)
-        {
-            _soundSlots.Add(new PrimitiveWrapperViewModel<LabURI>(soundSlot));
-        }
         DirtyTracker.AddBindableCollection(_ogiSlots);
         DirtyTracker.AddBindableCollection(_animationSlots);
         DirtyTracker.AddBindableCollection(_behaviourSlots);
         DirtyTracker.AddBindableCollection(_objectSlots);
         DirtyTracker.AddBindableCollection(_soundSlots);
+        foreach (var ogiSlot in data.OGISlots)
+        {
+            _ogiSlots.Add(new PrimitiveWrapperViewModel<LabURI>(ogiSlot, true));
+        }
+        foreach (var animSlot in data.AnimationSlots)
+        {
+            _animationSlots.Add(new PrimitiveWrapperViewModel<LabURI>(animSlot, true));
+        }
+        foreach (var behaviourSlot in data.BehaviourSlots)
+        {
+            _behaviourSlots.Add(new PrimitiveWrapperViewModel<LabURI>(behaviourSlot, true));
+        }
+        foreach (var objectSlot in data.ObjectSlots)
+        {
+            _objectSlots.Add(new PrimitiveWrapperViewModel<LabURI>(objectSlot, true));
+        }
+        foreach (var soundSlot in data.SoundSlots)
+        {
+            _soundSlots.Add(new PrimitiveWrapperViewModel<LabURI>(soundSlot, true));
+        }
         
         _instFlags = new BindableCollection<PrimitiveWrapperViewModel<uint>>();
         _instFloats = new BindableCollection<PrimitiveWrapperViewModel<float>>();
         _instIntegers = new BindableCollection<PrimitiveWrapperViewModel<uint>>();
-        foreach (var instFlags in data.InstFlags)
-        {
-            _instFlags.Add(new PrimitiveWrapperViewModel<uint>(instFlags));
-        }
-        foreach (var instFlags in data.InstFloats)
-        {
-            _instFloats.Add(new PrimitiveWrapperViewModel<float>(instFlags));
-        }
-        foreach (var instFlags in data.InstIntegers)
-        {
-            _instIntegers.Add(new PrimitiveWrapperViewModel<uint>(instFlags));
-        }
         DirtyTracker.AddBindableCollection(_instFlags);
         DirtyTracker.AddBindableCollection(_instFloats);
         DirtyTracker.AddBindableCollection(_instIntegers);
+        foreach (var instFlags in data.InstFlags)
+        {
+            _instFlags.Add(new PrimitiveWrapperViewModel<uint>(instFlags, true));
+        }
+        foreach (var instFlags in data.InstFloats)
+        {
+            _instFloats.Add(new PrimitiveWrapperViewModel<float>(instFlags, true));
+        }
+        foreach (var instFlags in data.InstIntegers)
+        {
+            _instIntegers.Add(new PrimitiveWrapperViewModel<uint>(instFlags, true));
+        }
         
         _refObjects = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
         _refOgis = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
@@ -137,36 +141,36 @@ public class GameObjectViewModel : ResourceEditorViewModel
         _refBehaviourCommandSequences = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
         _refBehaviours = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
         _refSounds = new BindableCollection<PrimitiveWrapperViewModel<LabURI>>();
-        foreach (var refObject in data.RefObjects)
-        {
-            _refObjects.Add(new PrimitiveWrapperViewModel<LabURI>(refObject));
-        }
-        foreach (var refOgi in data.RefOGIs)
-        {
-            _refOgis.Add(new PrimitiveWrapperViewModel<LabURI>(refOgi));
-        }
-        foreach (var refAnimation in data.RefAnimations)
-        {
-            _refAnimations.Add(new PrimitiveWrapperViewModel<LabURI>(refAnimation));
-        }
-        foreach (var refCommandSequence in data.RefBehaviourCommandsSequences)
-        {
-            _refBehaviourCommandSequences.Add(new PrimitiveWrapperViewModel<LabURI>(refCommandSequence));
-        }
-        foreach (var refBehaviour in data.RefBehaviours)
-        {
-            _refBehaviours.Add(new PrimitiveWrapperViewModel<LabURI>(refBehaviour));
-        }
-        foreach (var refSound in data.RefSounds)
-        {
-            _refSounds.Add(new PrimitiveWrapperViewModel<LabURI>(refSound));
-        }
         DirtyTracker.AddBindableCollection(_refObjects);
         DirtyTracker.AddBindableCollection(_refOgis);
         DirtyTracker.AddBindableCollection(_refAnimations);
         DirtyTracker.AddBindableCollection(_refBehaviourCommandSequences);
         DirtyTracker.AddBindableCollection(_refBehaviours);
         DirtyTracker.AddBindableCollection(_refSounds);
+        foreach (var refObject in data.RefObjects)
+        {
+            _refObjects.Add(new PrimitiveWrapperViewModel<LabURI>(refObject, true));
+        }
+        foreach (var refOgi in data.RefOGIs)
+        {
+            _refOgis.Add(new PrimitiveWrapperViewModel<LabURI>(refOgi, true));
+        }
+        foreach (var refAnimation in data.RefAnimations)
+        {
+            _refAnimations.Add(new PrimitiveWrapperViewModel<LabURI>(refAnimation, true));
+        }
+        foreach (var refCommandSequence in data.RefBehaviourCommandsSequences)
+        {
+            _refBehaviourCommandSequences.Add(new PrimitiveWrapperViewModel<LabURI>(refCommandSequence, true));
+        }
+        foreach (var refBehaviour in data.RefBehaviours)
+        {
+            _refBehaviours.Add(new PrimitiveWrapperViewModel<LabURI>(refBehaviour, true));
+        }
+        foreach (var refSound in data.RefSounds)
+        {
+            _refSounds.Add(new PrimitiveWrapperViewModel<LabURI>(refSound, true));
+        }
     }
 
     protected override void Save()
@@ -275,6 +279,8 @@ public class GameObjectViewModel : ResourceEditorViewModel
             }
         }
     }
+
+    public ObservableCollection<LabURI> BehaviourReferencesBrowser => new(AssetManager.Get().GetAllAssetUrisOf<Assets.Code.Behaviour>().AddRange(AssetManager.Get().GetAllAssetUrisOf<BehaviourCommandsSequence>()));
 
     [MarkDirty]
     public byte UnkTypeValue

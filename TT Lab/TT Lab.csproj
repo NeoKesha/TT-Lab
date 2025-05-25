@@ -2925,6 +2925,18 @@
     <Content Include="Media\Programs\skinning.program">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Remove="Media\LabIcons\Folder.png" />
+    <Content Include="Media\LabIcons\Folder.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Media\LabIcons\Package.png" />
+    <Content Include="Media\LabIcons\Package.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Media\LabIcons\Scene.png" />
+    <Content Include="Media\LabIcons\Scene.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
