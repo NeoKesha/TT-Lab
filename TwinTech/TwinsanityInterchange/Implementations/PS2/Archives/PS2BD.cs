@@ -27,13 +27,20 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
         {
             var files = Directory.GetFiles(folderSource, "*.*", SearchOption.AllDirectories);
             var offset = 0;
+            if (!folderSource.EndsWith("\\"))
+            {
+                folderSource += "\\";
+            }
+            
             foreach (var file in files)
             {
                 var head = new BHRecord
                 {
                     Length = (int)(new FileInfo(file)).Length,
-                    Offset = offset
+                    Offset = offset,
+                    Path = file.Replace(folderSource, "")
                 };
+                Header.Records.Add(head);
                 using FileStream fs = new(file, FileMode.Open, FileAccess.Read);
                 using BinaryReader br = new(fs);
                 var last = new BDRecord(head, br.ReadBytes(head.Length));
