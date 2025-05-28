@@ -3,7 +3,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using TT_Lab.AssetData;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Code;
@@ -11,6 +13,7 @@ using TT_Lab.Assets.Factory;
 using TT_Lab.Assets.Global;
 using TT_Lab.Assets.Graphics;
 using TT_Lab.Assets.Instance;
+using TT_Lab.Libraries;
 using TT_Lab.Util;
 using Twinsanity.TwinsanityInterchange.Common.AgentLab;
 using Twinsanity.TwinsanityInterchange.Enumerations;
@@ -253,6 +256,8 @@ namespace TT_Lab.Project
                 {
                     System.IO.File.Copy(newPath, newPath.Replace(DiscContentPathPS2 + System.IO.Path.DirectorySeparatorChar, ""), true);
                 }
+
+                DiscContentPathPS2 = $"{ProjectPath}\\disc\\ps2";
                 
                 System.IO.Directory.SetCurrentDirectory("../");
             }
@@ -275,6 +280,8 @@ namespace TT_Lab.Project
                 {
                     System.IO.File.Copy(newPath, newPath.Replace(DiscContentPathXbox + System.IO.Path.DirectorySeparatorChar, ""), true);
                 }
+                
+                DiscContentPathXbox = $"{ProjectPath}\\disc\\xbox";
                 
                 System.IO.Directory.SetCurrentDirectory("../");
             }
@@ -1141,7 +1148,7 @@ namespace TT_Lab.Project
             Log.WriteLine($"Writing ({++currentGlobalsCount}/{++totalGlobals}) default...");
             var @default = factory.GenerateDefault();
             defaultChunk.ResolveChunkResources(factory, @default);
-            // Default is a special case where we need to put in the meshes which are actually shadows
+            // Default is a special case where we need to put in the meshes which are drop shadows
             var defaultMeshes = (from assetUri in GlobalPackagePS2.GetData().To<FolderData>().Children
                                  let asset = assetManager.GetAsset(assetUri)
                                  where asset is Folder
@@ -1162,11 +1169,34 @@ namespace TT_Lab.Project
 
             System.IO.Directory.SetCurrentDirectory("../..");
             Log.WriteLine("Finished writing main archive files!");
+            CreatePs2ArchivesAndIso();
+        }
+
+        public void CreatePs2ArchivesAndIso()
+        {
+            Log.WriteLine("Packing into BD/BH archives...");
+            var bd = new PS2BD("", $"{DiscContentPathPS2}\\Crash6\\Crash.BH");
+            using var bdFile = new System.IO.FileStream($"{DiscContentPathPS2}\\Crash6\\Crash.BD", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            using var bdWriter = new System.IO.BinaryWriter(bdFile);
+            bd.BuildRecords($"{ProjectPath}\\build\\archives");
+            bd.Write(bdWriter);
+            bdWriter.Flush();
+            bdWriter.Close();
+            
+            Log.WriteLine("Creating PS2 ISO image...");
+            var progress = Ps2ImageMaker.StartPacking(DiscContentPathPS2!, $"{ProjectPath}\\build\\image\\{Name}.iso");
+            while (!progress.Finished)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(0.5));
+                progress = Ps2ImageMaker.PollProgress();
+                Log.WriteLine($"ISO creating progress {progress.ProgressPercentage * 100:F2}%...");
+            }
+            Log.WriteLine($"Finished creating the ISO! Check the {ProjectPath}\\build\\image folder!");
         }
 
         public void PackAssetsXbox()
         {
-            throw new NotImplementedException();
+            Log.WriteLine("Packing XBox assets is not supported yet :(");
         }
 
         private void ResolveGlobalAssets(ITwinItemFactory factory, List<LabURI> assets, ref UInt32 totalGlobals, ref UInt32 currentGlobalsCount)

@@ -14,6 +14,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
 
         public PS2BH()
         {
+            Header = 0x501;
             Records = new List<BHRecord>();
         }
 

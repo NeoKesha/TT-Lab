@@ -125,6 +125,11 @@ namespace TT_Lab.Project
         void PackAssetsXbox();
 
         /// <summary>
+        /// Creates the BD/BH archives and the PS2 compatible ISO
+        /// </summary>
+        void CreatePs2ArchivesAndIso();
+
+        /// <summary>
         /// Dump on disk in JSON format
         /// </summary>
         void Serialize();

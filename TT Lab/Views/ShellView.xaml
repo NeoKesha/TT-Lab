@@ -135,7 +135,8 @@
                 <MenuItem x:Name="CloseProject" Header="Close Project" IsEnabled="{Binding ProjectOpened}"/>
             </MenuItem>
             <MenuItem x:Name="BuildSubMenu" Header="Build" IsEnabled="{Binding ProjectOpened}">
-                <MenuItem x:Name="BuildPs2" Header="Build PS2 ISO"/>
+                <MenuItem x:Name="BuildPs2" Header="Full Build PS2 ISO" ToolTip="Packs all assets and chunks then creates PS2 archives then creates the ISO"/>
+                <MenuItem x:Name="BuildPs2Iso" Header="Build Only PS2 ISO" ToolTip="Creates PS2 archives then creates the ISO"/>
                 <MenuItem x:Name="BuildXbox" Header="Build XBox ISO" IsEnabled="False"/>
             </MenuItem>
             <MenuItem x:Name="ToolsSubMenu" Header="Tools" IsEnabled="False">

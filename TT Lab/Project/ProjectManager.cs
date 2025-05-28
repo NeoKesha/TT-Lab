@@ -225,19 +225,19 @@ namespace TT_Lab.Project
 
             OpenedProject = new Project(name, path, discContentPathPS2, discContentPathXbox);
             OpenedProject.CreateProjectStructure();
-            if (copyDiscContents)
-            {
-                Log.WriteLine("Copying disc contents to project");
-                OpenedProject.CopyDiscContents();
-            }
-            // Unpack assets
-            Directory.SetCurrentDirectory("assets");
             Task.Factory.StartNew(() =>
             {
 #if !DEBUG
                 try
                 {
 #endif
+                if (copyDiscContents)
+                {
+                    Log.WriteLine("Copying disc contents to project...");
+                    OpenedProject.CopyDiscContents();
+                }
+                // Unpack assets
+                Directory.SetCurrentDirectory("assets");
                 Log.WriteLine("Creating base packages...");
                 OpenedProject.CreateBasePackages();
                 Log.WriteLine("Unpacking PS2 assets...");
@@ -363,6 +363,17 @@ namespace TT_Lab.Project
             {
                 var pr = OpenedProject!;
                 pr.PackAssetsPS2();
+                WorkableProject = true;
+            });
+        }
+
+        public void BuildPs2Iso()
+        {
+            WorkableProject = false;
+            Task.Factory.StartNew(() =>
+            {
+                var pr = OpenedProject!;
+                pr.CreatePs2ArchivesAndIso();
                 WorkableProject = true;
             });
         }

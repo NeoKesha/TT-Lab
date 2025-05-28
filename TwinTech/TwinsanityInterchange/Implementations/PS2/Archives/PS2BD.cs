@@ -23,6 +23,25 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Archives
             Items = new List<BDRecord>();
         }
 
+        public void BuildRecords(string folderSource)
+        {
+            var files = Directory.GetFiles(folderSource, "*.*", SearchOption.AllDirectories);
+            var offset = 0;
+            foreach (var file in files)
+            {
+                var head = new BHRecord
+                {
+                    Length = (int)(new FileInfo(file)).Length,
+                    Offset = offset
+                };
+                using FileStream fs = new(file, FileMode.Open, FileAccess.Read);
+                using BinaryReader br = new(fs);
+                var last = new BDRecord(head, br.ReadBytes(head.Length));
+                offset += head.Length;
+                Items.Add(last);
+            }
+        }
+
         public Int32 GetLength()
         {
             return Items.Sum(i => i.Data.Length);

@@ -210,6 +210,11 @@ namespace TT_Lab.ViewModels
             _projectManager.BuildPs2Project();
         }
 
+        public void BuildPs2Iso()
+        {
+            _projectManager.BuildPs2Iso();
+        }
+
         public async Task CloseProject()
         {
             var canClose = await ActiveItem.CanCloseAsync();
