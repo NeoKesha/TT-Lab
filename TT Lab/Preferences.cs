@@ -23,12 +23,18 @@ namespace TT_Lab
         private static readonly string PrefFilePath;
 
         // List of Named settings
-        public static readonly string SillinessEnabled = "SillinessEnabled";
+        public const string SillinessEnabled = "SillinessEnabled";
+        public const string Ps2DiscContentPath = "PS2DiscContentPath";
+        public const string XboxDiscContentPath = "XboxDiscContentPath";
+        public const string ProjectsPath = "ProjectsPath";
 
         static Preferences()
         {
             PrefFilePath = Path.Combine(ExePath, PrefFileName);
             Settings[SillinessEnabled] = true;
+            Settings[Ps2DiscContentPath] = ExePath;
+            Settings[XboxDiscContentPath] = ExePath;
+            Settings[ProjectsPath] = ExePath;
         }
 
         public static void Save()

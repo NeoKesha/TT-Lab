@@ -155,12 +155,16 @@ namespace Twinsanity.TwinsanityInterchange.Common
                 G = (Byte)(Y * 255),
                 B = (Byte)(Z * 255),
                 A = (Byte)(W * 255),
+                AlphaBlendFlag = StoresColorWithAlphaBlend
             };
             return c;
         }
+        public Boolean StoresColorWithAlphaBlend { get; set; }
         public static Vector4 FromColor(Color c)
         {
-            return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
+            var vec = new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
+            vec.StoresColorWithAlphaBlend = c.AlphaBlendFlag;
+            return vec;
         }
 
         private String DebuggerDisplay

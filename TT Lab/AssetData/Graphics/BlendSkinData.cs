@@ -20,10 +20,10 @@ using Texture = TT_Lab.Assets.Graphics.Texture;
 
 namespace TT_Lab.AssetData.Graphics
 {
-    using COLOR_UV = SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1;
+    using COLOR_UV = SharpGLTF.Geometry.VertexTypes.VertexColor2Texture2;
     using JOINT_WEIGHT = SharpGLTF.Geometry.VertexTypes.VertexJoints4;
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
-    using VERTEX_BUILDER = VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
+    using VERTEX_BUILDER = VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor2Texture2, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
 
     [ReferencesAssets]
     public class BlendSkinData : AbstractAssetData
@@ -50,7 +50,9 @@ namespace TT_Lab.AssetData.Graphics
                 return new VERTEX_BUILDER(new VERTEX(-vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
                         new COLOR_UV(
                             vertex.Color.ToSystem(),
-                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)),
+                            new System.Numerics.Vector4(vertex.Position.W, vertex.Position.W, vertex.Position.W, 1.0f),
+                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y),
+                            new System.Numerics.Vector2(vertex.UV.Z, vertex.UV.W)),
                         new JOINT_WEIGHT(
                             (vertex.JointInfo.JointIndex1, vertex.JointInfo.Weight1),
                             (vertex.JointInfo.JointIndex2, vertex.JointInfo.Weight2),
@@ -247,7 +249,7 @@ namespace TT_Lab.AssetData.Graphics
             {
                 assetManager.GetAsset(blend.Material).ResolveChunkResources(factory, materialsSection);
             }
-            return base.ResolveChunkResources(factory, section, id);
+            return base.ResolveChunkResources(factory, section, id, layoutID);
         }
 
         [JsonObject(MemberSerialization = MemberSerialization.OptIn)]

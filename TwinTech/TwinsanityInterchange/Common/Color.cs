@@ -38,6 +38,11 @@ namespace Twinsanity.TwinsanityInterchange.Common
             this.G = G;
             this.B = B;
         }
+
+        public Byte GetAlphaBasedOnBlend()
+        {
+            return AlphaBlendFlag ? (Byte)((A & 127) | (1 << 7)) : A;
+        }
         public Byte A { get; set; }
         public Byte R { get; set; }
         public Byte G { get; set; }

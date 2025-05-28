@@ -17,9 +17,9 @@ namespace TT_Lab.ViewModels
     public class ProjectCreationViewModel : Screen, INotifyDataErrorInfo
     {
         private string _projectName = "New project";
-        private string _projectPath = Settings.Default.ProjectPath;
-        private string _ps2DiscContentPath = Settings.Default.PS2DiscContentPath;
-        private string _xboxDiscContentPath = Settings.Default.XboxDiscContentPath;
+        private string _projectPath = Preferences.GetPreference<string>(Preferences.ProjectsPath);
+        private string _ps2DiscContentPath = Preferences.GetPreference<string>(Preferences.Ps2DiscContentPath);
+        private string _xboxDiscContentPath = ""; // TODO: Add back in when XBox builds are gonna be supported
         private Boolean _copyDiscContents = false;
         private readonly IWindowManager _windowManager;
         private readonly ProjectManager _projectManager;
@@ -225,7 +225,7 @@ namespace TT_Lab.ViewModels
             set
             {
                 _dataValidatorService.ValidateProperty(value);
-                Settings.Default.ProjectPath = _projectPath;
+                Preferences.SetPreference(Preferences.ProjectsPath, value);
                 _projectPath = value;
                 _dataValidatorService.ValidateProperty(ProjectName, nameof(ProjectName));
                 NotifyOfPropertyChange(nameof(ProjectPath));
@@ -240,7 +240,7 @@ namespace TT_Lab.ViewModels
             set
             {
                 _dataValidatorService.ValidateProperty(value);
-                Settings.Default.PS2DiscContentPath = _ps2DiscContentPath;
+                Preferences.SetPreference(Preferences.Ps2DiscContentPath, value);
                 _ps2DiscContentPath = value;
                 NotifyOfPropertyChange(nameof(PS2DiscContentPath));
                 NotifyOfPropertyChange(nameof(CanCreate));
@@ -253,7 +253,7 @@ namespace TT_Lab.ViewModels
             set
             {
                 _dataValidatorService.ValidateProperty(value);
-                Settings.Default.XboxDiscContentPath = _xboxDiscContentPath;
+                Preferences.SetPreference(Preferences.XboxDiscContentPath, value);
                 _xboxDiscContentPath = value;
                 NotifyOfPropertyChange(nameof(XboxDiscContentPath));
                 NotifyOfPropertyChange(nameof(CanCreate));

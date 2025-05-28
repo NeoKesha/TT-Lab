@@ -13,16 +13,11 @@ namespace TT_Lab.ViewModels.Editors.Instance
 {
     public class AiPathViewModel : InstanceSectionResourceEditorViewModel
     {
-        private BindableCollection<PrimitiveWrapperViewModel<LabURI>> positions = new();
+        private BindableCollection<LabURI> positions = new();
         private Enums.Layouts layId;
         private LabURI pathBegin = LabURI.Empty;
         private LabURI pathEnd = LabURI.Empty;
         private UInt16[] args = new UInt16[3];
-
-        public AiPathViewModel()
-        {
-            DirtyTracker.AddBindableCollection(positions);
-        }
 
         protected override void Save()
         {
@@ -51,14 +46,11 @@ namespace TT_Lab.ViewModels.Editors.Instance
             var navPositions = tree.First(avm => avm.Alias == "AI Navigation Positions");
             foreach (var p in navPositions!.Children!)
             {
-                positions.Add(new PrimitiveWrapperViewModel<LabURI>(p.Asset.URI));
+                positions.Add(p.Asset.URI);
             }
         }
 
-        public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Positions
-        {
-            get => positions;
-        }
+        public BindableCollection<LabURI> Positions => positions;
 
         [MarkDirty]
         public Enums.Layouts LayoutID

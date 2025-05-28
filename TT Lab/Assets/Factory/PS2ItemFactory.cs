@@ -152,8 +152,8 @@ namespace TT_Lab.Assets.Factory
                                 continue;
                             }
 
-                            submodel.Vertexes.Add(new Vector4(meshlet.Vertexes[idx].Position, 1.0f));
-                            submodel.UVW.Add(new Vector4(meshlet.Vertexes[idx].UV, 0.0f));
+                            submodel.Vertexes.Add(new Vector4(meshlet.Vertexes[idx].Position));
+                            submodel.UVW.Add(new Vector4(meshlet.Vertexes[idx].UV));
                             submodel.Colors.Add(meshlet.Vertexes[idx].Color);
                             var modelJointInfo = meshlet.Vertexes[idx].JointInfo;
                             var jointInfo = new VertexJointInfo()
@@ -340,8 +340,8 @@ namespace TT_Lab.Assets.Factory
                             continue;
                         }
 
-                        submodel.Vertexes.Add(new Vector4(rawModel.Vertexes[idx].Position, 1.0f));
-                        submodel.UVW.Add(new Vector4(rawModel.Vertexes[idx].UV, 0.0f));
+                        submodel.Vertexes.Add(new Vector4(rawModel.Vertexes[idx].Position));
+                        submodel.UVW.Add(new Vector4(rawModel.Vertexes[idx].UV));
                         submodel.Colors.Add(rawModel.Vertexes[idx].Color);
                         if (rawModel.Vertexes[idx].HasEmitColor)
                         {
@@ -630,8 +630,8 @@ namespace TT_Lab.Assets.Factory
                             continue;
                         }
 
-                        submodel.Vertexes.Add(new Vector4(rawModel.Vertexes[idx].Position, 1.0f));
-                        submodel.UVW.Add(new Vector4(rawModel.Vertexes[idx].UV, 0.0f));
+                        submodel.Vertexes.Add(new Vector4(rawModel.Vertexes[idx].Position));
+                        submodel.UVW.Add(new Vector4(rawModel.Vertexes[idx].UV));
                         submodel.Colors.Add(rawModel.Vertexes[idx].Color);
                         var modelJointInfo = rawModel.Vertexes[idx].JointInfo;
                         var jointInfo = new VertexJointInfo()

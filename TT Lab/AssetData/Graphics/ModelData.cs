@@ -2,11 +2,12 @@
 using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using Caliburn.Micro;
 using Hjg.Pngcs;
+using SharpGLTF.Memory;
 using SharpGLTF.Scenes;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
@@ -21,17 +22,23 @@ using Vector4 = Twinsanity.TwinsanityInterchange.Common.Vector4;
 
 namespace TT_Lab.AssetData.Graphics
 {
-    using COLOR_EMIT_UV = SharpGLTF.Geometry.VertexTypes.VertexColor2Texture1;
-    using COLOR_UV = SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1;
+    
+    using COLOR_EMIT_UV = VertexColor2Texture1WithAlpha;
+    using COLOR_UV = VertexColor1Texture1WithAlpha;
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
-    using VERTEX_BUILDER_VCEU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor2Texture1, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
-    using VERTEX_BUILDER_VCU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
-    using VERTEX_BUILDER_VNCEU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPositionNormal, SharpGLTF.Geometry.VertexTypes.VertexColor2Texture1, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
-    using VERTEX_BUILDER_VNCU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPositionNormal, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
+    using VERTEX_BUILDER_VCEU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, VertexColor2Texture1WithAlpha, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
+    using VERTEX_BUILDER_VCU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, VertexColor1Texture1WithAlpha, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
+    using VERTEX_BUILDER_VNCEU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPositionNormal, VertexColor2Texture1WithAlpha, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
+    using VERTEX_BUILDER_VNCU = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPositionNormal, VertexColor1Texture1WithAlpha, SharpGLTF.Geometry.VertexTypes.VertexEmpty>;
     using VERTEX_NORMAL = SharpGLTF.Geometry.VertexTypes.VertexPositionNormal;
 
     public class ModelData : AbstractAssetData
     {
+        private class HasEmits
+        {
+            public bool Value { get; set; }
+        }
+        
         public ModelData()
         {
             Vertexes = new List<List<Vertex>>();
@@ -71,7 +78,8 @@ namespace TT_Lab.AssetData.Graphics
                         new COLOR_EMIT_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
                             new System.Numerics.Vector4(vertex.EmitColor.X, vertex.EmitColor.Y, vertex.EmitColor.Z, vertex.EmitColor.W),
-                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)
+                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y),
+                            vertex.AlphaBlendingBit
                             ));
             };
 
@@ -82,7 +90,8 @@ namespace TT_Lab.AssetData.Graphics
                         vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z),
                         new COLOR_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
-                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)
+                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y),
+                            vertex.AlphaBlendingBit
                             ));
             };
 
@@ -93,7 +102,8 @@ namespace TT_Lab.AssetData.Graphics
                         new COLOR_EMIT_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
                             new System.Numerics.Vector4(vertex.EmitColor.X, vertex.EmitColor.Y, vertex.EmitColor.Z, vertex.EmitColor.W),
-                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)
+                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y),
+                            vertex.AlphaBlendingBit
                             ));
             };
 
@@ -103,7 +113,8 @@ namespace TT_Lab.AssetData.Graphics
                         -vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
                         new COLOR_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
-                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)
+                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y),
+                            vertex.AlphaBlendingBit
                             ));
             };
 
@@ -131,6 +142,7 @@ namespace TT_Lab.AssetData.Graphics
             void generateMeshWithVNCEU(int idx, List<IndexedFace> faces, List<Vertex> submodel)
             {
                 var mesh = getMeshBuilderVNCEU(idx);
+                mesh.Extras = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(new HasEmits { Value = true }));
                 var vertexGenerator = generateVertexFromTwinVertexVNCEU;
                 foreach (var face in faces)
                 {
@@ -141,13 +153,14 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, System.Numerics.Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             /// Generate mesh with positions, normals, colors and UV coordinates
             void generateMeshWithVNCU(int idx, List<IndexedFace> faces, List<Vertex> submodel)
             {
                 var mesh = getMeshBuilderVNCU(idx);
+                mesh.Extras = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(new HasEmits { Value = false }));
                 var vertexGenerator = generateVertexFromTwinVertexVNCU;
                 foreach (var face in faces)
                 {
@@ -158,13 +171,14 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, System.Numerics.Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             /// Generate mesh with positions, colors, emission and UV coordinates
             void generateMeshWithVCEU(int idx, List<IndexedFace> faces, List<Vertex> submodel)
             {
                 var mesh = getMeshBuilderVCEU(idx);
+                mesh.Extras = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(new HasEmits { Value = true }));
                 var vertexGenerator = generateVertexFromTwinVertexVCEU;
                 foreach (var face in faces)
                 {
@@ -175,13 +189,14 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, System.Numerics.Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             /// Generate mesh with positions, colors and UV coordinates
             void generateMeshWithVCU(int idx, List<IndexedFace> faces, List<Vertex> submodel)
             {
                 var mesh = getMeshBuilderVCU(idx);
+                mesh.Extras = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(new HasEmits { Value = false }));
                 var vertexGenerator = generateVertexFromTwinVertexVCU;
                 foreach (var face in faces)
                 {
@@ -192,7 +207,7 @@ namespace TT_Lab.AssetData.Graphics
                     primitive.AddTriangle(vertexGenerator(ver1), vertexGenerator(ver2), vertexGenerator(ver3));
                 }
 
-                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
+                meshes.Add(new GltfGeometryWrapper(mesh, new List<(NodeBuilder, System.Numerics.Matrix4x4)> { (root, System.Numerics.Matrix4x4.Identity) }));
             }
 
             for (var i = 0; i < Vertexes.Count; i++)
@@ -246,9 +261,13 @@ namespace TT_Lab.AssetData.Graphics
             {
                 var submodel = new List<Vertex>();
                 var faces = new List<IndexedFace>();
+                var hasEmitsStored = (bool)mesh.Extras["Value"]!;
+                var attributeKey = hasEmitsStored ? COLOR_EMIT_UV.ALPHA_BLENDING_ATTRIBUTE : COLOR_UV.ALPHA_BLENDING_ATTRIBUTE;
                 foreach (var primitive in mesh.Primitives)
                 {
                     var vertexes = primitive.GetVertexColumns();
+                    var hasAlphaBlendingBit = primitive.VertexAccessors.Keys.Any(a => a == attributeKey);
+                    var alphaBlendingBits = hasAlphaBlendingBit ? primitive.GetVertexAccessor(attributeKey).AsVector4Array() : null;
                     for (var i = 0; i < vertexes.Positions.Count; i++)
                     {
                         var pos = vertexes.Positions[i].ToTwin();
@@ -256,12 +275,19 @@ namespace TT_Lab.AssetData.Graphics
                         var ver = new Vertex(
                             pos,
                             vertexes.Colors0[i].ToTwin(),
-                            vertexes.TexCoords0[i].ToTwin());
+                            vertexes.TexCoords0[i].ToTwin())
+                        {
+                            AlphaBlendingBit = true
+                        };
+                        if (alphaBlendingBits != null)
+                        {
+                            ver.AlphaBlendingBit = Math.Abs(alphaBlendingBits[i].X - 1.0f) < 0.00001f;
+                        }
                         if (vertexes.Normals != null)
                         {
                             ver.Normal = vertexes.Normals[i].ToTwin();
                         }
-                        if (vertexes.Colors1 != null)
+                        if (hasEmitsStored)
                         {
                             ver.EmitColor = vertexes.Colors1[i].ToTwin();
                         }

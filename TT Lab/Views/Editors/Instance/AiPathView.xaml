@@ -8,6 +8,7 @@
              xmlns:viewModels="clr-namespace:TT_Lab.ViewModels.Editors.Instance"
              xmlns:compositeVm="clr-namespace:TT_Lab.ViewModels.Composite"
              xmlns:Controls="clr-namespace:TT_Lab.Controls"
+             xmlns:composites="clr-namespace:TT_Lab.Views.Composite"
              xmlns:util="clr-namespace:TT_Lab.Util"
              xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              xmlns:twinTech="clr-namespace:Twinsanity.TwinsanityInterchange.Enumerations;assembly=TwinTech"
@@ -37,20 +38,22 @@
 
             <Controls:LabeledDropList Items="{Binding Source={StaticResource InstanceLayouts}}" SelectedItem="{Binding LayoutID}" VerticalAlignment="Center" DropListName="Instance layout" Grid.ColumnSpan="2" Height="48"/>
             <UniformGrid Grid.Row="1" Rows="5">
-                <Controls:LabeledDropList SelectedItem="{Binding PathBegin, Converter={StaticResource WrapperUriConverter}}" Items="{Binding Positions}" DropListName="Path Begin">
-                    <Controls:LabeledDropList.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
-                        </DataTemplate>
-                    </Controls:LabeledDropList.ItemTemplate>
-                </Controls:LabeledDropList>
-                <Controls:LabeledDropList SelectedItem="{Binding PathEnd, Converter={StaticResource WrapperUriConverter}}" Items="{Binding Positions}" DropListName="Path End">
-                    <Controls:LabeledDropList.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/>
-                        </DataTemplate>
-                    </Controls:LabeledDropList.ItemTemplate>
-                </Controls:LabeledDropList>
+                <composites:ResourceBrowserOpener BrowserName="Path Begin" ResourcesToBrowse="{Binding Positions}" LinkedResource="{Binding PathBegin}"/>
+                <composites:ResourceBrowserOpener BrowserName="Path End" ResourcesToBrowse="{Binding Positions}" LinkedResource="{Binding PathEnd}"/>
+                <!-- <Controls:LabeledDropList SelectedItem="{Binding PathBegin, Converter={StaticResource WrapperUriConverter}}" Items="{Binding Positions}" DropListName="Path Begin"> -->
+                <!--     <Controls:LabeledDropList.ItemTemplate> -->
+                <!--         <DataTemplate> -->
+                <!--             <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/> -->
+                <!--         </DataTemplate> -->
+                <!--     </Controls:LabeledDropList.ItemTemplate> -->
+                <!-- </Controls:LabeledDropList> -->
+                <!-- <Controls:LabeledDropList SelectedItem="{Binding PathEnd, Converter={StaticResource WrapperUriConverter}}" Items="{Binding Positions}" DropListName="Path End"> -->
+                <!--     <Controls:LabeledDropList.ItemTemplate> -->
+                <!--         <DataTemplate> -->
+                <!--             <TextBlock Text="{Binding Value, Converter={StaticResource UriConverter}}"/> -->
+                <!--         </DataTemplate> -->
+                <!--     </Controls:LabeledDropList.ItemTemplate> -->
+                <!-- </Controls:LabeledDropList> -->
                 <Controls:LabeledTextBox Text="{Binding Arg1}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 1"/>
                 <Controls:LabeledTextBox Text="{Binding Arg2}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 2"/>
                 <Controls:LabeledTextBox Text="{Binding Arg3}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextBoxName="Argument 3"/>

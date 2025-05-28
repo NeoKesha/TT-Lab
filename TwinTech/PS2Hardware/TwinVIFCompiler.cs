@@ -335,7 +335,7 @@ namespace Twinsanity.PS2Hardware
                                 compiledVector.SetBinaryX((uv.GetBinaryX() & 0xFFFFFF00) | color.R);
                                 compiledVector.SetBinaryY((uv.GetBinaryY() & 0xFFFFFF00) | color.G);
                                 compiledVector.SetBinaryZ((uv.GetBinaryZ() & 0xFFFFFF00) | color.B);
-                                compiledVector.SetBinaryW(color.A | (UInt32)(conns[connIndex++] ? 0x0 : 0x8000));
+                                compiledVector.SetBinaryW(color.GetAlphaBasedOnBlend() | (UInt32)(conns[connIndex++] ? 0x0 : 0x8000));
                                 resultBatch.Add(compiledVector);
                             }
 
@@ -511,7 +511,7 @@ namespace Twinsanity.PS2Hardware
                                 compiledColor.SetBinaryX((UInt32)toColor.R);
                                 compiledColor.SetBinaryY((UInt32)toColor.G);
                                 compiledColor.SetBinaryZ((UInt32)toColor.B);
-                                compiledColor.SetBinaryW((UInt32)toColor.A >> 1);
+                                compiledColor.SetBinaryW((UInt32)toColor.A);
                                 compiledColors.Add(compiledColor);
                             }
 

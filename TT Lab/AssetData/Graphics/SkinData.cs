@@ -2,8 +2,10 @@
 using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Caliburn.Micro;
+using SharpGLTF.Memory;
 using TT_Lab.AssetData.Graphics.SubModels;
 using TT_Lab.Assets;
 using TT_Lab.Assets.Factory;
@@ -19,11 +21,11 @@ using Texture = TT_Lab.Assets.Graphics.Texture;
 
 namespace TT_Lab.AssetData.Graphics
 {
-    using COLOR_UV = SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1;
+    using COLOR_UV = SharpGLTF.Geometry.VertexTypes.VertexColor2Texture2;
     using JOINT_WEIGHT = SharpGLTF.Geometry.VertexTypes.VertexJoints4;
     using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
-    using VERTEX_BUILDER = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor1Texture1, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
-
+    using VERTEX_BUILDER = SharpGLTF.Geometry.VertexBuilder<SharpGLTF.Geometry.VertexTypes.VertexPosition, SharpGLTF.Geometry.VertexTypes.VertexColor2Texture2, SharpGLTF.Geometry.VertexTypes.VertexJoints4>;
+    
     public struct GltfGeometryWrapper
     {
         public SharpGLTF.Geometry.IMeshBuilder<SharpGLTF.Materials.MaterialBuilder> Mesh;
@@ -60,7 +62,9 @@ namespace TT_Lab.AssetData.Graphics
                 return new VERTEX_BUILDER(new VERTEX(-vertex.Position.X, vertex.Position.Y, vertex.Position.Z),
                         new COLOR_UV(
                             new System.Numerics.Vector4(vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W),
-                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y)),
+                            new System.Numerics.Vector4(vertex.Position.W, vertex.Position.W, vertex.Position.W, 1.0f),
+                            new System.Numerics.Vector2(vertex.UV.X, vertex.UV.Y),
+                            new System.Numerics.Vector2(vertex.UV.Z, vertex.UV.W)),
                         new JOINT_WEIGHT(
                             (vertex.JointInfo.JointIndex1, vertex.JointInfo.Weight1),
                             (vertex.JointInfo.JointIndex2, vertex.JointInfo.Weight2),
@@ -122,7 +126,6 @@ namespace TT_Lab.AssetData.Graphics
                 }
 
                 var mesh = new SharpGLTF.Geometry.MeshBuilder<VERTEX, COLOR_UV, JOINT_WEIGHT>($"subskin_{index++}");
-
                 foreach (var face in subSkin.Faces)
                 {
                     var ver1 = subSkin.Vertexes[face.Indexes![0]];
@@ -185,10 +188,13 @@ namespace TT_Lab.AssetData.Graphics
                     {
                         var pos = vertexes.Positions[i].ToTwin();
                         pos.X = -pos.X;
+                        pos.W = vertexes.Colors1[i].X;
                         var ver = new Vertex(
                             pos,
                             vertexes.Colors0[i].ToTwin(),
                             vertexes.TexCoords0[i].ToTwin());
+                        ver.UV.Z = vertexes.TexCoords1[i].X;
+                        ver.UV.W = vertexes.TexCoords1[i].Y;
                         ver.Color = new Twinsanity.TwinsanityInterchange.Common.Vector4(ver.Color.X, ver.Color.Y, ver.Color.Z, ver.Color.W);
                         ver.JointInfo.JointIndex1 = (Int32)vertexes.Joints0[i].X;
                         ver.JointInfo.JointIndex2 = (Int32)vertexes.Joints0[i].Y;

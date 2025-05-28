@@ -53,8 +53,8 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                 var fields = (data[i + 1][0].GetBinaryX() & 0xFF) / verts;
                 var scaleVec = data[i + 2][0];
 
-                var positionVertexBatch = data[i + VERT_DATA_INDEX];     // Position vectors
-                var uvVertexBatch = data[i + VERT_DATA_INDEX + 1]; // UV vectors
+                var positionVertexBatch = data[i + VERT_DATA_INDEX]; // Position vectors and some unknown W component
+                var uvVertexBatch = data[i + VERT_DATA_INDEX + 1]; // UV vectors and something related to calculating lighting
                 var jointInfosVertexBatch = data[i + VERT_DATA_INDEX + 3]; // Weights and joint indices
                 var colorsVertexBatch = data[i + VERT_DATA_INDEX + 2]; // Color vectors
 
@@ -133,8 +133,7 @@ namespace Twinsanity.TwinsanityInterchange.Implementations.PS2.Items.SubItems
                         (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryX() & 0xFF), 255)),
                         (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryY() & 0xFF), 255)),
                         (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryZ() & 0xFF), 255)),
-                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryW() & 0xFF), 255)),
-                        true);
+                        (byte)(Math.Min((int)(colorsVertexBatch[j].GetBinaryW() & 0xFF), 255)));
                     Vertexes.Add(positionVertexBatch[j]);
                     UVW.Add(uvVertexBatch[j]);
                     Colors.Add(Vector4.FromColor(color));

@@ -21,9 +21,9 @@ namespace TT_Lab.ViewModels.Editors.Instance
         private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> paths = new();
         private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> positions = new();
         private Boolean useOnSpawnScript;
-        private PrimitiveWrapperViewModel<LabURI> objectId = new(LabURI.Empty);
+        private LabURI objectId = LabURI.Empty;
         private Int16 refListIndex;
-        private PrimitiveWrapperViewModel<LabURI> onSpawnScriptId = new(LabURI.Empty);
+        private LabURI onSpawnScriptId = LabURI.Empty;
         private Enums.InstanceState stateFlags;
         private readonly BindableCollection<PrimitiveWrapperViewModel<UInt32>> flagParams = new();
         private readonly BindableCollection<PrimitiveWrapperViewModel<Single>> floatParams = new();
@@ -31,8 +31,8 @@ namespace TT_Lab.ViewModels.Editors.Instance
         private Int32 _flagIndex;
         private Int32 _floatIndex;
         private Int32 _intIndex;
-        private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> behaviours = new();
-        private readonly BindableCollection<PrimitiveWrapperViewModel<LabURI>> objects = new();
+        private readonly BindableCollection<LabURI> behaviours = new();
+        private readonly BindableCollection<LabURI> objects = new();
         
         public ObjectInstanceViewModel()
         {
@@ -79,12 +79,12 @@ namespace TT_Lab.ViewModels.Editors.Instance
             {
                 data.Paths.Add(p.Value);
             }
-            data.ObjectId = objectId.Value;
+            data.ObjectId = objectId;
             data.RefListIndex = RefListIndex;
             data.OnSpawnScriptId = LabURI.Empty;
             if (UseOnSpawnScript)
             {
-                data.OnSpawnScriptId = onSpawnScriptId.Value;
+                data.OnSpawnScriptId = onSpawnScriptId;
             }
             data.StateFlags = (UInt32)stateFlags;
             data.ParamList1.Clear();
@@ -131,10 +131,10 @@ namespace TT_Lab.ViewModels.Editors.Instance
             {
                 positions.Add(new PrimitiveWrapperViewModel<LabURI>(p));
             }
-            objectId = new PrimitiveWrapperViewModel<LabURI>(data.ObjectId);
+            objectId = data.ObjectId;
             refListIndex = data.RefListIndex;
-            onSpawnScriptId = new PrimitiveWrapperViewModel<LabURI>(data.OnSpawnScriptId);
-            useOnSpawnScript = onSpawnScriptId.Value != LabURI.Empty;
+            onSpawnScriptId = data.OnSpawnScriptId;
+            useOnSpawnScript = onSpawnScriptId != LabURI.Empty;
             stateFlags = MiscUtils.ConvertEnum<Enums.InstanceState>(data.StateFlags);
             foreach (var f in data.ParamList1)
             {
@@ -154,14 +154,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
             var behaviourAssets = AssetManager.Get().GetAllAssetsOf<BehaviourStarter>();
             foreach (var behaviour in behaviourAssets)
             {
-                behaviours.Add(new PrimitiveWrapperViewModel<LabURI>(behaviour.URI));
+                behaviours.Add(behaviour.URI);
             }
             
             objects.Clear();
             var objectAssets = AssetManager.Get().GetAllAssetsOf<GameObject>();
             foreach (var gameObject in objectAssets)
             {
-                objects.Add(new PrimitiveWrapperViewModel<LabURI>(gameObject.URI));
+                objects.Add(gameObject.URI);
             }
 
             // IoC.Get<IEventAggregator>().PublishOnUIThreadAsync(new ChangeRenderCameraPositionMessage
@@ -179,14 +179,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
         public DeleteItemFromListCommand DeleteLinkedPositionCommand { get; private set; }
         public DeleteItemFromListCommand DeleteLinkedPathCommand { get; private set; }
         
-        public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Behaviours => behaviours;
-        public BindableCollection<PrimitiveWrapperViewModel<LabURI>> Objects => objects;
+        public BindableCollection<LabURI> Behaviours => behaviours;
+        public BindableCollection<LabURI> Objects => objects;
 
         public string Name
         {
             get
             {
-                var obj = AssetManager.Get().GetAsset(objectId.Value);
+                var obj = AssetManager.Get().GetAsset(objectId);
                 var asset = AssetManager.Get().GetAsset(EditableResource);
                 return $"Instance {asset.ID} - {obj.Alias}";
             }
@@ -206,7 +206,7 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
         [MarkDirty]
-        public PrimitiveWrapperViewModel<LabURI> InstanceObject
+        public LabURI InstanceObject
         {
             get => objectId;
             set
@@ -220,14 +220,14 @@ namespace TT_Lab.ViewModels.Editors.Instance
             }
         }
         [MarkDirty]
-        public PrimitiveWrapperViewModel<LabURI>? OnSpawnScript
+        public LabURI OnSpawnScript
         {
-            get => onSpawnScriptId.Value != LabURI.Empty ? onSpawnScriptId : null;
+            get => onSpawnScriptId;
             set
             {
                 if (value != onSpawnScriptId)
                 {
-                    onSpawnScriptId = value == null ? new PrimitiveWrapperViewModel<LabURI>(LabURI.Empty) : value;
+                    onSpawnScriptId = value;
                     
                     NotifyOfPropertyChange();
                 }
