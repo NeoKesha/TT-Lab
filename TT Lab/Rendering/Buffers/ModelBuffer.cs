@@ -63,10 +63,7 @@ public class ModelBuffer
         var materials = rigid.Materials;
         for (var i = 0; i < model.Vertexes.Count; ++i)
         {
-            var materialName = AssetManager.Get().GetAsset<Assets.Graphics.Material>(materials[i]).Name;
             var matData = AssetManager.Get().GetAssetData<MaterialData>(materials[i]);
-            // var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
-            // var hasTexture = texturedShaderIndex != -1;
             var meshPtr = BufferGeneration.GetModelBuffer($"{name}{i}", model.Vertexes[i], model.Faces[i]);
             var node = parent.createChildSceneNode();
             var entity = sceneManager.createEntity(meshPtr);
@@ -74,11 +71,6 @@ public class ModelBuffer
             ushort renderPriority = 0;
             foreach (var baseMaterial in _baseMaterials)
             {
-                // var needsSetup = MaterialManager.CreateOrGetMaterial(materialName, out var material, baseMaterial);
-                // if (hasTexture && needsSetup)
-                // {
-                //     MaterialManager.SetupMaterial(material, matData.Shaders[texturedShaderIndex]);
-                // }
                 var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
                 materialList.Add(material);
                 renderPriority = material.RenderPriority;
@@ -101,10 +93,8 @@ public class ModelBuffer
         shaderSettings.UseSkinning = true;
         foreach (var subSkin in skin.SubSkins)
         {
-            var materialName = AssetManager.Get().GetAsset<Assets.Graphics.Material>(subSkin.Material).Name;
             var matData = AssetManager.Get().GetAssetData<MaterialData>(subSkin.Material);
             var texturedShaderIndex = matData.Shaders.FindIndex(0, s => s.TxtMapping == TwinShader.TextureMapping.ON);
-            var hasTexture = texturedShaderIndex != -1;
             var meshPtr = BufferGeneration.GetModelBuffer($"{name}{index++}", subSkin.Vertexes, subSkin.Faces, RenderOperation.OperationType.OT_TRIANGLE_LIST, true, true);
             var node = parent.createChildSceneNode();
             var entity = sceneManager.createEntity(meshPtr);
@@ -112,11 +102,6 @@ public class ModelBuffer
             ushort renderPriority = 0;
             foreach (var baseMaterial in _baseMaterials)
             {
-                // var needsSetup = MaterialManager.CreateOrGetMaterial(materialName, out var material, baseMaterial);
-                // if (hasTexture && needsSetup)
-                // {
-                //     MaterialManager.SetupMaterial(material, matData.Shaders[texturedShaderIndex]);
-                // }
                 var material = TwinMaterialGenerator.GenerateMaterialFromTwinMaterial(matData, shaderSettings);
                 materialList.Add(material);
                 renderPriority = material.RenderPriority;

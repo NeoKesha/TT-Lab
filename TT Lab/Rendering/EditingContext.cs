@@ -26,6 +26,7 @@ namespace TT_Lab.Rendering
         private readonly BillboardSet _triggersBillboards;
         private readonly BillboardSet _camerasBillboards;
         private readonly BillboardSet _instancesBillboards;
+        private readonly BillboardSet _aiPositionsBillboards;
         private int _currentPaletteIndex = 0;
         private readonly ChunkEditorViewModel _editor;
         private readonly SceneNode _editCtxNode;
@@ -43,39 +44,11 @@ namespace TT_Lab.Rendering
             _editCtxNode = sceneManager.getRootSceneNode().createChildSceneNode("EditorContextNode");
             _cursor = new EditorCursor(this);
             _gizmo = new Gizmo(sceneManager, this);
-            _positionsBillboards = sceneManager.createBillboardSet("PositionsBillboards");
-            _positionsBillboards.setMaterial(MaterialManager.GetMaterial("BillboardPositions"));
-            _positionsBillboards.setDefaultDimensions(2, 2);
-            _positionsBillboards.setCullIndividually(true);
-            _positionsBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
-            // Set the bounding box to be huge, because otherwise the node itself gets culled out and all billboards stop rendering
-            _positionsBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
-            
-            _triggersBillboards = sceneManager.createBillboardSet("TriggersBillboards");
-            _triggersBillboards.setMaterial(MaterialManager.GetMaterial("BillboardTriggers"));
-            _triggersBillboards.setDefaultDimensions(2, 2);
-            _triggersBillboards.setCullIndividually(true);
-            _triggersBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
-            _triggersBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
-            
-            _camerasBillboards = sceneManager.createBillboardSet("CamerasBillboards");
-            _camerasBillboards.setMaterial(MaterialManager.GetMaterial("BillboardCameras"));
-            _camerasBillboards.setDefaultDimensions(2, 2);
-            _camerasBillboards.setCullIndividually(true);
-            _camerasBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
-            _camerasBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
-            
-            _instancesBillboards = sceneManager.createBillboardSet("InstancesBillboards");
-            _instancesBillboards.setMaterial(MaterialManager.GetMaterial("BillboardInstances"));
-            _instancesBillboards.setDefaultDimensions(2, 2);
-            _instancesBillboards.setCullIndividually(true);
-            _instancesBillboards.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
-            _instancesBillboards.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
-            
-            // var positionsNode = _editCtxNode.createChildSceneNode("Positions");
-            // positionsNode.attachObject(_positionsBillboards);
-            // var triggersNode = _editCtxNode.createChildSceneNode("Triggers");
-            // triggersNode.attachObject(_triggersBillboards);
+            _positionsBillboards = CreateBillboardSet(sceneManager, "PositionsBillboards", "BillboardPositions");
+            _triggersBillboards = CreateBillboardSet(sceneManager, "TriggersBillboards", "BillboardTriggers");
+            _camerasBillboards = CreateBillboardSet(sceneManager, "CamerasBillboards", "BillboardCameras");
+            _instancesBillboards = CreateBillboardSet(sceneManager, "InstancesBillboards", "BillboardInstances");
+            _aiPositionsBillboards = CreateBillboardSet(sceneManager, "AiPositionsBillboards", "BillboardAiPositions");
 
             _renderWindow.OnRender += (sender, args) =>
             {
@@ -118,6 +91,11 @@ namespace TT_Lab.Rendering
             return _camerasBillboards;
         }
 
+        public MovableObject GetAiPositionsBillboards()
+        {
+            return _aiPositionsBillboards;
+        }
+
         public Billboard CreatePositionBillboard()
         {
             return _positionsBillboards.createBillboard(0, 0, 0);
@@ -136,6 +114,11 @@ namespace TT_Lab.Rendering
         public Billboard CreateCameraBillboard()
         {
             return _camerasBillboards.createBillboard(0, 0, 0);
+        }
+
+        public Billboard CreateAiPositionBillboard()
+        {
+            return _aiPositionsBillboards.createBillboard(0, 0, 0);
         }
 
         public void Deselect()
@@ -384,6 +367,19 @@ namespace TT_Lab.Rendering
         private void RotateZ(float value)
         {
             SelectedRenderable.getParentSceneNode().roll(new Radian(new Degree(value)));
+        }
+
+        private BillboardSet CreateBillboardSet(SceneManager sceneManager, string billboardName, string billboardMaterial)
+        {
+            var billboardSet = sceneManager.createBillboardSet(billboardName);
+            billboardSet.setMaterial(MaterialManager.GetMaterial(billboardMaterial));
+            billboardSet.setDefaultDimensions(2, 2);
+            billboardSet.setCullIndividually(true);
+            // Set the bounding box to be huge, because otherwise the node itself gets culled out and all billboards stop rendering
+            billboardSet.setBounds(new AxisAlignedBox(-1000, -1000, -1000, 1000, 1000, 1000), 1000);
+            billboardSet.setRenderQueueGroup((byte)RenderQueueGroupID.RENDER_QUEUE_OVERLAY);
+
+            return billboardSet;
         }
     }
 

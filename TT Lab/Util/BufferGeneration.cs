@@ -21,6 +21,11 @@ namespace TT_Lab.Util
                 var col = v.Color.GetColor();
                 if (!v.HasEmitColor)
                 {
+                    if (useSkinning)
+                    {
+                        col.ScaleAlphaUp();
+                    }
+
                     return Color.FromArgb((int)col.ToARGB());
                 }
                 

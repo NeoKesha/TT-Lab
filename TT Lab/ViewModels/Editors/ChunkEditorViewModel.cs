@@ -28,6 +28,7 @@ using TT_Lab.ViewModels.Editors.Instance;
 using TT_Lab.ViewModels.Interfaces;
 using TT_Lab.ViewModels.ResourceTree;
 using Twinsanity.TwinsanityInterchange.Enumerations;
+using AiPosition = TT_Lab.Rendering.Objects.AiPosition;
 using Camera = TT_Lab.Rendering.Objects.Camera;
 using Collision = TT_Lab.Rendering.Objects.Collision;
 using Position = TT_Lab.Rendering.Objects.Position;
@@ -493,6 +494,16 @@ namespace TT_Lab.ViewModels.Editors
                     positionsNode.attachObject(pos);
                 }
                 
+                var aiPositions = _chunkTree.First(avm => avm.Alias == "AI Navigation Positions");
+                var aiPositionsNode = sceneManager.getRootSceneNode().createChildSceneNode();
+                aiPositionsNode.attachObject(_editingContext.GetAiPositionsBillboards());
+                foreach (var aiPosition in aiPositions!.Children)
+                {
+                    var billboard = _editingContext.CreateAiPositionBillboard();
+                    var aiPos = new AiPosition(aiPosition.Alias, sceneManager, billboard, aiPosition.Asset.LayoutID!.Value, aiPosition.Asset.GetData<AiPositionData>());
+                    aiPositionsNode.attachObject(aiPos);
+                }
+                
                 var cameras = _chunkTree.First(avm => avm.Alias == "Cameras");
                 var camerasNode = sceneManager.getRootSceneNode().createChildSceneNode();
                 camerasNode.attachObject(_editingContext.GetCamerasBillboards());
@@ -514,6 +525,7 @@ namespace TT_Lab.ViewModels.Editors
                     ImguiRenderFilterCheckbox("Render Positions", _editingContext.GetPositionBillboards(), DrawFilter.Positions);
                     ImguiRenderFilterCheckbox("Render Triggers", _editingContext.GetTriggersBillboards(), DrawFilter.Triggers);
                     ImguiRenderFilterCheckbox("Render Cameras", _editingContext.GetCamerasBillboards(), DrawFilter.Cameras);
+                    ImguiRenderFilterCheckbox("Render AI Positions", _editingContext.GetAiPositionsBillboards(), DrawFilter.AiPositions);
                     ImguiRenderFilterCheckbox("Render Instances", instanceRenderObject, DrawFilter.Instances);
                     ImGui.End();
 
